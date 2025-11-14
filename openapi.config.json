@@ -1,0 +1,13 @@
+{
+  "input": "http://localhost:8890/api-docs-json",
+  "output": "src/api",
+  "client": "@hey-api/client-fetch",
+  "types": {
+    "enums": "typescript",
+    "style": "PascalCase"
+  },
+  "schemas": true,
+  "services": {
+    "asClass": true
+  }
+}
