@@ -1,4 +1,4 @@
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ImageWithFallback } from '../assets/figma/ImageWithFallback';
 import { Play, Plus, ThumbsUp, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 

@@ -1,4 +1,4 @@
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ImageWithFallback } from '../assets/figma/ImageWithFallback';
 import { Download, Upload, Star, MessageSquare, HardDrive } from 'lucide-react';
 
 interface TorrentCardProps {

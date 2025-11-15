@@ -1,22 +1,16 @@
 # API 集成指南
 
-本项目使用 OpenAPI 自动生成 API 客户端代码，基于 Swagger 文档 (http://localhost:8890/api-docs-json)。
+本项目使用 OpenAPI 自动生成 API 客户端代码，基于后端运行时 Swagger 文档 (http://localhost:8890/api-docs-json)。
 
 ## 📦 安装依赖
 
 项目已经自动安装了以下依赖：
 - `@hey-api/openapi-ts` - OpenAPI 代码生成器
 - `openapi-typescript` - TypeScript 类型生成
-- `axios` - HTTP 客户端
 
 ## 🔧 生成 API 代码
 
-### 使用本地 OpenAPI 文件
-```bash
-npm run api:generate
-```
-
-### 使用实时 Swagger 文档
+### 使用实时 Swagger 文档（标准来源）
 ```bash
 npm run api:generate:live
 ```
@@ -37,29 +31,32 @@ src/api/
 
 ### 1. 基础导入
 ```typescript
-import { AuthService, TorrentService } from './api/services';
-import { useAuth, useTorrents } from './hooks/useApi';
+import { postApiAuthLogin, getApiTorrents } from './api/sdk.gen';
 ```
 
-### 2. 认证服务
+### 2. 认证接口
 ```typescript
-// 登录
-const response = await AuthService.login('user@example.com', 'password');
-
-// 检查认证状态
-const isAuthenticated = AuthService.isAuthenticated();
-
-// 登出
-AuthService.logout();
+// 登录（直接使用 SDK 方法）
+const loginRes = await postApiAuthLogin({
+  body: { username: 'user@example.com', password: 'password' },
+  responseStyle: 'data'
+});
+localStorage.setItem('token', loginRes.token);
 ```
 
-### 3. 种子服务
+### 3. 种子接口
 ```typescript
 // 获取种子列表
-const torrents = await TorrentService.getTorrents('电影', 1, 20);
+const list = await getApiTorrents({
+  query: { category: '电影', page: 1, limit: 20 },
+  responseStyle: 'data'
+});
 
 // 获取种子详情
-const torrent = await TorrentService.getTorrentById(123);
+const detail = await getApiTorrentsById({
+  path: { id: 123 },
+  responseStyle: 'data'
+});
 ```
 
 ### 4. React Hook (推荐)
@@ -76,19 +73,19 @@ function MyComponent() {
 ## 🔧 配置
 
 ### 修改 API 基础地址
-编辑 `src/api/client.ts` 文件：
+在应用初始化处调用 `client.setConfig()`：
 ```typescript
-export const apiConfig: Config = createConfig({
-  baseUrl: 'http://your-api-server.com', // 修改这里
-  // ...
+import { client } from './api/client.gen';
+
+client.setConfig({
+  baseUrl: import.meta.env.VITE_API_BASE_URL
 });
 ```
 
 ### 添加新的 API 端点
-1. 更新 `openapi.json` 文件，添加新的路径定义
-2. 运行 `npm run api:generate` 重新生成代码
-3. 在 `src/api/services.ts` 中添加对应的服务方法
-4. 在 `src/hooks/useApi.ts` 中添加对应的 Hook
+1. 更新后端 Swagger 文档（或本地 `openapi.json`）
+2. 运行 `npm run api:generate:live` 重新生成代码
+3. 在 `src/hooks/useApi.ts` 中按需封装 Hook，或直接在组件使用 `sdk.gen.ts`
 
 ## 📝 示例组件
 

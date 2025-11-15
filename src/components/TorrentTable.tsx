@@ -1,5 +1,5 @@
 import { Download, Upload, MessageSquare, Star } from 'lucide-react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ImageWithFallback } from '../assets/figma/ImageWithFallback';
 import { Badge } from './ui/badge';
 
 interface Torrent {

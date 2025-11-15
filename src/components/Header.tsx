@@ -1,9 +1,10 @@
 import { Search, Bell, Mail, User, TrendingUp, Upload, Download } from 'lucide-react';
 import { Button } from './ui/button';
+import { NavLink } from 'react-router-dom';
 
 export function Header() {
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 bg-[#0F171E] z-50 px-4 md:px-8 border-b border-gray-800">
+    <header className="sticky h-16 bg-[#0F171E] z-50 px-4 md:px-8 border-b border-gray-800" style={{ top: '-64px' }}>
       <div className="flex items-center justify-between h-full max-w-[1920px] mx-auto">
         <div className="flex items-center gap-8">
           <a href="#" className="flex items-center gap-1">
@@ -11,21 +12,11 @@ export function Header() {
             <span className="text-[#00A8E1] text-2xl">Tracker</span>
           </a>
           <nav className="hidden md:flex items-center gap-6">
-            <a href="#" className="text-white hover:text-gray-300 transition-colors">
-              首页
-            </a>
-            <a href="#" className="text-white hover:text-gray-300 transition-colors">
-              种子
-            </a>
-            <a href="#" className="text-white hover:text-gray-300 transition-colors">
-              论坛
-            </a>
-            <a href="#" className="text-white hover:text-gray-300 transition-colors">
-              字幕
-            </a>
-            <a href="#" className="text-white hover:text-gray-300 transition-colors">
-              排行榜
-            </a>
+            <NavLink to="/" className="text-white hover:text-gray-300 transition-colors">首页</NavLink>
+            <NavLink to="/torrents" className="text-white hover:text-gray-300 transition-colors">种子</NavLink>
+            <NavLink to="/forum" className="text-white hover:text-gray-300 transition-colors">论坛</NavLink>
+            <NavLink to="/subtitles" className="text-white hover:text-gray-300 transition-colors">字幕</NavLink>
+            <NavLink to="/ranking" className="text-white hover:text-gray-300 transition-colors">排行榜</NavLink>
           </nav>
         </div>
 

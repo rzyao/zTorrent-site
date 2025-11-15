@@ -1,6 +1,6 @@
 import { Play, Download, Upload, Star, Calendar, HardDrive } from 'lucide-react';
 import { Button } from './ui/button';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ImageWithFallback } from '../assets/figma/ImageWithFallback';
 
 interface FeaturedTorrentProps {
   title: string;
