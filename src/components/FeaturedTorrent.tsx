@@ -28,7 +28,7 @@ export function FeaturedTorrent({
   isFree = false,
 }: FeaturedTorrentProps) {
   return (
-    <div className="relative h-[75vh] w-full">
+    <div className="relative h-[75vh] w-full bg-[#0F171E]">
       <div className="absolute inset-0">
         <ImageWithFallback
           src={backgroundImage}

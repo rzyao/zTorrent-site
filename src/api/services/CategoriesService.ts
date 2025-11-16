@@ -4,6 +4,8 @@
 /* eslint-disable */
 import type { CreateCategoryDto } from '../models/CreateCategoryDto';
 import type { ListCategoriesDto } from '../models/ListCategoriesDto';
+import type { ListUserCategoriesDto } from '../models/ListUserCategoriesDto';
+import type { SetUserCategoriesDto } from '../models/SetUserCategoriesDto';
 import type { UpdateCategoryDto } from '../models/UpdateCategoryDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -26,6 +28,7 @@ export class CategoriesService {
             label?: string;
             description?: string | null;
             enabled?: boolean;
+            isDefault?: boolean;
             sort?: number;
             createdAt?: string;
             updatedAt?: string;
@@ -67,6 +70,7 @@ export class CategoriesService {
             label?: string;
             description?: string | null;
             enabled?: boolean;
+            isDefault?: boolean;
             sort?: number;
             createdAt?: string;
             updatedAt?: string;
@@ -139,6 +143,7 @@ export class CategoriesService {
                 label?: string;
                 description?: string | null;
                 enabled?: boolean;
+                isDefault?: boolean;
                 sort?: number;
                 createdAt?: string;
                 updatedAt?: string;
@@ -152,7 +157,7 @@ export class CategoriesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/categories/list',
+            url: '/categories/admin/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -165,15 +170,47 @@ export class CategoriesService {
         });
     }
     /**
-     * 获取简单列表（按排序）
+     * 获取可用分类（启用）
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static categoriesControllerAvailable(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Array<{
+            id?: string;
+            key?: string;
+            label?: string;
+            description?: string | null;
+            enabled?: boolean;
+            isDefault?: boolean;
+            sort?: number;
+            createdAt?: string;
+            updatedAt?: string;
+        }>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/categories/available',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 获取用户可展示分类
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static categoriesControllerListSimple(
-        requestBody: {
-            enabled?: boolean | null;
-        },
+    public static categoriesControllerListUserCategories(
+        requestBody: ListUserCategoriesDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -192,7 +229,39 @@ export class CategoriesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/categories/list-simple',
+            url: '/categories/user/list',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 设置用户可展示分类
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static categoriesControllerSetUserCategories(
+        requestBody: SetUserCategoriesDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            success?: boolean;
+            count?: number;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/categories/user/set',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

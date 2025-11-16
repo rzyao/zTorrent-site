@@ -14,5 +14,12 @@ export default defineConfig({
   optimizeDeps: {
     include: ['react', 'react-dom', 'sonner'],
     dedupe: ['react', 'react-dom']
+  },
+  server: {
+    watch: {
+      usePolling: true,
+      interval: 300,
+      ignored: ['**/node_modules/**']
+    }
   }
 })

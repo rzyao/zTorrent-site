@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 
-export default function MoviesPage() {
+export default function MoviePage() {
   const { category } = useParams();
   return (
     <>

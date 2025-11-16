@@ -1,4 +1,5 @@
 import { BrowserRouter } from 'react-router-dom';
+import { useEffect } from 'react';
 import { AppToaster } from './components/ui/sonner';
 import AppRoutes from './routes/AppRoutes';
 
@@ -10,6 +11,9 @@ declare global {
 }
 
 export default function App() {
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+  }, []);
   return (
     <BrowserRouter>
       <AppToaster />

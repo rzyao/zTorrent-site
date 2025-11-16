@@ -3,17 +3,19 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AddUserTorrentDto } from '../models/AddUserTorrentDto';
+import type { AdminListTorrentsDto } from '../models/AdminListTorrentsDto';
 import type { AutoUploadTorrentDto } from '../models/AutoUploadTorrentDto';
 import type { CreateTorrentDto } from '../models/CreateTorrentDto';
 import type { DeleteTorrentDto } from '../models/DeleteTorrentDto';
 import type { GetTorrentDto } from '../models/GetTorrentDto';
-import type { ListTorrentsDto } from '../models/ListTorrentsDto';
+import type { ListPendingCoversDto } from '../models/ListPendingCoversDto';
 import type { ListTorrentUsersDto } from '../models/ListTorrentUsersDto';
 import type { ListUserTorrentsDto } from '../models/ListUserTorrentsDto';
 import type { RecordDownloadDto } from '../models/RecordDownloadDto';
 import type { RemoveUserTorrentDto } from '../models/RemoveUserTorrentDto';
 import type { ReportUserTorrentDto } from '../models/ReportUserTorrentDto';
 import type { UpdateTorrentDto } from '../models/UpdateTorrentDto';
+import type { UserListTorrentsDto } from '../models/UserListTorrentsDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -77,6 +79,77 @@ export class TorrentsService {
         });
     }
     /**
+     * 获取尚未压缩处理的封面链接列表
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentsControllerListPendingCovers(
+        requestBody: ListPendingCoversDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            items?: Array<{
+                id?: string;
+                cover?: string;
+            }>;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/covers/pending',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 上传封面缩略图并标记已处理
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentsControllerUploadCoverThumb(
+        requestBody: {
+            id: string;
+            fullBase64?: string | null;
+            thumbBase64: string;
+            mediumBase64?: string | null;
+            largeBase64?: string | null;
+        },
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            ok?: boolean;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/covers/upload-thumb',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
      * 按ID获取种子详情
      * @param requestBody
      * @returns any 成功
@@ -93,7 +166,7 @@ export class TorrentsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/torrents/get',
+            url: '/torrents/detail',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -106,26 +179,62 @@ export class TorrentsService {
         });
     }
     /**
-     * 查询种子列表
+     * 前台用户查询可展示种子列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static torrentsControllerList(
-        requestBody: ListTorrentsDto,
+    public static torrentsControllerUserList(
+        requestBody: UserListTorrentsDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
         data?: {
             items?: Array<Record<string, any>>;
             total?: number;
+            page?: number;
+            limit?: number;
         };
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/torrents/list',
+            url: '/torrents/user/list',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 后台管理员查询种子列表（高级筛选）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentsControllerAdminList(
+        requestBody: AdminListTorrentsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            items?: Array<Record<string, any>>;
+            total?: number;
+            page?: number;
+            limit?: number;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/admin/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

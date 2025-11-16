@@ -23,5 +23,9 @@ export type CreateCategoryDto = {
      * 排序值
      */
     sort?: number;
+    /**
+     * 是否默认展示
+     */
+    isDefault?: boolean;
 };
 

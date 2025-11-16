@@ -5,7 +5,7 @@ import { Input } from '../components/ui/input';
 import { ImageWithFallback } from '../assets/figma/ImageWithFallback';
 import { useAuth } from '../hooks/useApi';
 import { toast } from 'sonner';
-import { authControllerRegistrationEnabled, authControllerVerifyInviteCode, authControllerVerifyRegisterEmailCode } from '../api';
+import { AuthService } from '../api';
 
 interface RegisterProps {
   onBack: () => void;
@@ -81,13 +81,13 @@ export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProp
     (async () => {
       try {
         if (code) {
-          const res: any = await authControllerVerifyInviteCode({
+          const res: any = await AuthService.authControllerVerifyInviteCode({
             body: { inviteCode: code!, email: '' }
           });
           const valid = res?.data?.data?.valid === true;
           setGateMode(valid ? 'normal' : 'invalid_code');
         } else {
-          const status: any = await authControllerRegistrationEnabled();
+          const status: any = await AuthService.authControllerRegistrationEnabled();
           const open = status?.data?.data?.registrationEnabled === true;
           setGateMode(open ? 'normal' : 'invite_only');
         }
@@ -132,7 +132,7 @@ export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProp
     if (!validateStep1()) return;
     setIsVerifyingCode(true);
     try {
-      const res: any = await authControllerVerifyRegisterEmailCode({
+      const res: any = await AuthService.authControllerVerifyRegisterEmailCode({
         body: { email: formData.email, code: formData.emailCode }
       });
       const ok = res?.data?.code === 1000;

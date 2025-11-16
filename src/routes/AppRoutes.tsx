@@ -10,7 +10,7 @@ import SubtitlesPage from '../pages/SubtitlesPage';
 import RankingPage from '../pages/RankingPage';
 import AppLayout from '../layouts/AppLayout';
 import HomeLayout from '../layouts/HomeLayout';
-import MoviesPage from '../pages/MoviesPage';
+import MoviePage from '../pages/MoviePage';
 
 function LoginPageWrapper() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ function LoginPageWrapper() {
     <LoginPage
       onForgotPassword={() => navigate('/forgot-password')}
       onRegister={() => navigate('/register')}
-      onLoginSuccess={() => navigate('/')}
+      onLoginSuccess={() => navigate('/home')}
       onTestApi={() => navigate('/api-test')}
     />
   );
@@ -64,8 +64,8 @@ export default function AppRoutes() {
       >
         <Route index element={<HomePage />} />
         <Route path=":category" element={<HomePage />} />
-        <Route path="movies" element={<MoviesPage />} />
-        <Route path="movies/:category" element={<MoviesPage />} />
+        <Route path="movie" element={<MoviePage />} />
+        <Route path="movie/:category" element={<MoviePage />} />
       </Route>
 
       <Route

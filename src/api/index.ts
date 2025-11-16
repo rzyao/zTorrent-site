@@ -1,134 +1,106 @@
-import axios from 'axios';
-import { OpenAPI } from './core/OpenAPI';
-import { toast } from 'sonner';
+/* generated using openapi-typescript-codegen -- do not edit */
+/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
+export { ApiError } from './core/ApiError';
+export { CancelablePromise, CancelError } from './core/CancelablePromise';
+export { OpenAPI } from './core/OpenAPI';
+export type { OpenAPIConfig } from './core/OpenAPI';
 
-const getToken = () => localStorage.getItem('accessToken') || undefined;
-const logout = () => {
-  localStorage.removeItem('accessToken');
-  try { window.dispatchEvent(new Event('authChange')); } catch { }
-  setTimeout(() => { try { window.location.replace('/login'); } catch { } }, 0);
-};
-const notify = (msg: string) => { try { toast.error(msg); } catch { } };
+export type { AddUserTorrentDto } from './models/AddUserTorrentDto';
+export { AdminListTorrentsDto } from './models/AdminListTorrentsDto';
+export { AdvancedPunishmentRecordRuleDto } from './models/AdvancedPunishmentRecordRuleDto';
+export { AdvancedRuleDto } from './models/AdvancedRuleDto';
+export type { ApplyPunishmentDto } from './models/ApplyPunishmentDto';
+export type { AssignPermissionsDto } from './models/AssignPermissionsDto';
+export type { AssignRolesDto } from './models/AssignRolesDto';
+export type { AutoUploadTorrentDto } from './models/AutoUploadTorrentDto';
+export type { BanDaysIdDto } from './models/BanDaysIdDto';
+export type { BanReasonIdDto } from './models/BanReasonIdDto';
+export type { CreateBanDaysDto } from './models/CreateBanDaysDto';
+export type { CreateBanReasonDto } from './models/CreateBanReasonDto';
+export type { CreateCategoryDto } from './models/CreateCategoryDto';
+export { CreatePermissionDto } from './models/CreatePermissionDto';
+export type { CreatePunishmentTypeDto } from './models/CreatePunishmentTypeDto';
+export type { CreateRoleDto } from './models/CreateRoleDto';
+export type { CreateSettingDto } from './models/CreateSettingDto';
+export type { CreateTorrentDto } from './models/CreateTorrentDto';
+export type { CreateUnbanReasonDto } from './models/CreateUnbanReasonDto';
+export type { DeleteTorrentDto } from './models/DeleteTorrentDto';
+export type { GetTorrentDto } from './models/GetTorrentDto';
+export type { GrantQuotaDto } from './models/GrantQuotaDto';
+export type { InviteStatusDto } from './models/InviteStatusDto';
+export type { ListBanDaysDto } from './models/ListBanDaysDto';
+export type { ListBanReasonDto } from './models/ListBanReasonDto';
+export type { ListBanRecordsDto } from './models/ListBanRecordsDto';
+export type { ListCategoriesDto } from './models/ListCategoriesDto';
+export { ListPendingCoversDto } from './models/ListPendingCoversDto';
+export { ListPermissionsDto } from './models/ListPermissionsDto';
+export { ListPunishmentRecordsDto } from './models/ListPunishmentRecordsDto';
+export type { ListPunishmentTypeDto } from './models/ListPunishmentTypeDto';
+export type { ListRolesDto } from './models/ListRolesDto';
+export type { ListTorrentUsersDto } from './models/ListTorrentUsersDto';
+export type { ListUnbanReasonDto } from './models/ListUnbanReasonDto';
+export type { ListUserCategoriesDto } from './models/ListUserCategoriesDto';
+export { ListUsersDto } from './models/ListUsersDto';
+export type { ListUserTorrentsDto } from './models/ListUserTorrentsDto';
+export type { LoginDto } from './models/LoginDto';
+export type { LoginResultDto } from './models/LoginResultDto';
+export { PermissionDto } from './models/PermissionDto';
+export type { PermissionIdDto } from './models/PermissionIdDto';
+export type { PunishmentTypeIdDto } from './models/PunishmentTypeIdDto';
+export type { QueryUserPunishmentsDto } from './models/QueryUserPunishmentsDto';
+export type { QuickRegisterDto } from './models/QuickRegisterDto';
+export type { RecordDownloadDto } from './models/RecordDownloadDto';
+export type { RegisterDto } from './models/RegisterDto';
+export type { RegisterResultDto } from './models/RegisterResultDto';
+export type { RegistrationStatusDto } from './models/RegistrationStatusDto';
+export type { RemoveUserTorrentDto } from './models/RemoveUserTorrentDto';
+export type { ReportUserTorrentDto } from './models/ReportUserTorrentDto';
+export type { RequestEmailCodeDto } from './models/RequestEmailCodeDto';
+export type { RequestPasswordResetDto } from './models/RequestPasswordResetDto';
+export type { ResetOkDto } from './models/ResetOkDto';
+export type { ResetPasswordDto } from './models/ResetPasswordDto';
+export type { RevokePunishmentDto } from './models/RevokePunishmentDto';
+export type { RoleDto } from './models/RoleDto';
+export type { RoleIdDto } from './models/RoleIdDto';
+export type { SendInviteDto } from './models/SendInviteDto';
+export type { SendReportDto } from './models/SendReportDto';
+export type { SentDto } from './models/SentDto';
+export type { SetRolePermissionsDto } from './models/SetRolePermissionsDto';
+export type { SetUserCategoriesDto } from './models/SetUserCategoriesDto';
+export { TrackerReportDto } from './models/TrackerReportDto';
+export type { UnbanReasonIdDto } from './models/UnbanReasonIdDto';
+export type { UnifiedResponseDto } from './models/UnifiedResponseDto';
+export type { UpdateBanDaysDto } from './models/UpdateBanDaysDto';
+export type { UpdateBanReasonDto } from './models/UpdateBanReasonDto';
+export type { UpdateCategoryDto } from './models/UpdateCategoryDto';
+export { UpdatePermissionDto } from './models/UpdatePermissionDto';
+export type { UpdatePunishmentTypeDto } from './models/UpdatePunishmentTypeDto';
+export type { UpdateRoleDto } from './models/UpdateRoleDto';
+export type { UpdateSettingsDto } from './models/UpdateSettingsDto';
+export type { UpdateTorrentDto } from './models/UpdateTorrentDto';
+export type { UpdateUnbanReasonDto } from './models/UpdateUnbanReasonDto';
+export type { UpdateUserBodyDto } from './models/UpdateUserBodyDto';
+export { UserDto } from './models/UserDto';
+export type { UserIdDto } from './models/UserIdDto';
+export { UserListTorrentsDto } from './models/UserListTorrentsDto';
+export type { VerifyEmailCodeDto } from './models/VerifyEmailCodeDto';
 
-OpenAPI.TOKEN = async () => getToken();
-const envBase = (import.meta as any).env?.VITE_API_BASE_URL;
-OpenAPI.BASE = envBase || 'http://localhost:8890';
-const apiPrefixEnv = (import.meta as any).env?.VITE_API_PREFIX;
-const API_PREFIX = typeof apiPrefixEnv === 'string' ? apiPrefixEnv : '';
-
-const instance = axios.create({ baseURL: OpenAPI.BASE });
-
-instance.interceptors.request.use(
-  (config) => {
-    const token = getToken();
-    if (token) {
-      const h = (config.headers ?? {}) as any;
-      if (typeof h.set === 'function') h.set('Authorization', `Bearer ${token}`);
-      else h.Authorization = `Bearer ${token}`;
-      config.headers = h;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-instance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error?.code === 'ERR_CANCELED') return Promise.reject(error);
-    const status = error?.response?.status;
-    const data = error?.response?.data;
-    const code = data?.code;
-    const message = data?.message;
-    if (!status) {
-      notify('网络错误');
-      return Promise.reject(error);
-    }
-    if (status === 401) {
-      notify(message || '登录已失效，请重新登录');
-      logout();
-    } else if (status === 403) {
-      if (code === 9403) {
-        notify('您已被禁止登录');
-        logout();
-      } else {
-        notify(message || '禁止访问');
-      }
-    } else if (status === 404) {
-      notify(message || '资源不存在');
-    } else if (status === 429) {
-      notify(message || '请求过于频繁');
-    } else if (status >= 500) {
-      notify(message || '服务器错误');
-    } else if (message) {
-      notify(message);
-    }
-    return Promise.reject(error);
-  }
-);
-
-export const client = { instance };
-
-
-const wrapOk = (raw: any) => ({ data: raw });
-const wrapCodeSuccess = (raw: any) => ({ data: { code: 1000, data: raw } });
-
-export const authControllerLogin = async (p: { body: { username: string; password: string } }) => {
-  const res = await instance.post(`${API_PREFIX}/auth/login`, p.body);
-  const raw = res?.data;
-  const token = raw?.token || raw?.data?.accessToken;
-  if (token) return { data: { code: 1000, data: { accessToken: token, user: raw?.user } } };
-  return wrapOk(raw);
-};
-
-export const authControllerRegister = async (p: { body: any }) => {
-  const res = await instance.post(`${API_PREFIX}/auth/register`, p.body);
-  const raw = res?.data;
-  const token = raw?.token || raw?.data?.accessToken;
-  if (token) return { data: { code: 1000, data: { accessToken: token, user: raw?.user } } };
-  return wrapOk(raw);
-};
-
-export const authControllerRequestEmailCode = async (p: { body: { email: string } }) => {
-  const res = await instance.post(`${API_PREFIX}/auth/request-email-code`, p.body);
-  return wrapOk(res?.data);
-};
-
-export const authControllerRegistrationEnabled = async () => {
-  try {
-    const res = await instance.get(`${API_PREFIX}/auth/registration-enabled`);
-    const raw = res?.data;
-    const enabled = raw?.registrationEnabled ?? raw?.data?.registrationEnabled;
-    return { data: { data: { registrationEnabled: enabled } } };
-  } catch {
-    return { data: { data: { registrationEnabled: true } } };
-  }
-};
-
-export const authControllerVerifyInviteCode = async (p: { body: { inviteCode: string; email?: string } }) => {
-  try {
-    const res = await instance.post(`${API_PREFIX}/auth/verify-invite-code`, p.body);
-    const raw = res?.data;
-    const valid = raw?.valid ?? raw?.data?.valid;
-    return { data: { data: { valid } } };
-  } catch {
-    return { data: { data: { valid: true } } };
-  }
-};
-
-export const authControllerVerifyRegisterEmailCode = async (p: { body: { email: string; code: string } }) => {
-  await instance.post(`${API_PREFIX}/auth/verify-register-email-code`, p.body);
-  return wrapCodeSuccess({});
-};
-
-export const torrentsControllerList = async (p: { body?: { category?: string; page?: number; pageSize?: number } }) => {
-  const q = p?.body || {};
-  const res = await instance.get(`${API_PREFIX}/torrents`, { params: { category: q.category, page: q.page, limit: q.pageSize } });
-  return wrapOk(res?.data);
-};
-
-export const torrentsControllerGet = async (p: { body: { id: string } }) => {
-  const id = p?.body?.id;
-  const res = await instance.get(`${API_PREFIX}/torrents/${id}`);
-  return wrapOk(res?.data);
-};
+export { AuthService } from './services/AuthService';
+export { BanDaysService } from './services/BanDaysService';
+export { BanReasonsService } from './services/BanReasonsService';
+export { CategoriesService } from './services/CategoriesService';
+export { DevService } from './services/DevService';
+export { InvitesService } from './services/InvitesService';
+export { MailService } from './services/MailService';
+export { PasskeyService } from './services/PasskeyService';
+export { PermissionsService } from './services/PermissionsService';
+export { PunishmentsService } from './services/PunishmentsService';
+export { PunishmentTypesService } from './services/PunishmentTypesService';
+export { RolesService } from './services/RolesService';
+export { SettingsService } from './services/SettingsService';
+export { TorrentsService } from './services/TorrentsService';
+export { TorrentsTrackerService } from './services/TorrentsTrackerService';
+export { UnbanReasonsService } from './services/UnbanReasonsService';
+export { UsersService } from './services/UsersService';

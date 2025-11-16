@@ -7,12 +7,12 @@ export function Header() {
     <header className="sticky h-16 bg-[#0F171E] z-50 px-4 md:px-8 border-b border-gray-800" style={{ top: '-64px' }}>
       <div className="flex items-center justify-between h-full max-w-[1920px] mx-auto">
         <div className="flex items-center gap-8">
-          <a href="#" className="flex items-center gap-1">
+          <NavLink to="/home" className="flex items-center gap-1">
             <span className="text-white text-2xl">PT</span>
             <span className="text-[#00A8E1] text-2xl">Tracker</span>
-          </a>
+          </NavLink>
           <nav className="hidden md:flex items-center gap-6">
-            <NavLink to="/" className="text-white hover:text-gray-300 transition-colors">首页</NavLink>
+            <NavLink to="/home" className="text-white hover:text-gray-300 transition-colors">首页</NavLink>
             <NavLink to="/torrents" className="text-white hover:text-gray-300 transition-colors">种子</NavLink>
             <NavLink to="/forum" className="text-white hover:text-gray-300 transition-colors">论坛</NavLink>
             <NavLink to="/subtitles" className="text-white hover:text-gray-300 transition-colors">字幕</NavLink>

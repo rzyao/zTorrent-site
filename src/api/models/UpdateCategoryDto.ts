@@ -19,5 +19,9 @@ export type UpdateCategoryDto = {
      * 排序值
      */
     sort?: number;
+    /**
+     * 是否默认展示
+     */
+    isDefault?: boolean;
 };
 

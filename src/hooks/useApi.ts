@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
-import { client, authControllerLogin, authControllerRegister, authControllerRequestEmailCode, torrentsControllerList, torrentsControllerGet } from '../api';
+import { AuthService, TorrentsService, OpenAPI } from '../api';
 
 const envBaseUrl = (import.meta as any).env?.VITE_API_BASE_URL;
 if (envBaseUrl) {
-  (client as any).instance.defaults.baseURL = envBaseUrl;
+  OpenAPI.BASE = envBaseUrl;
 }
 
 // 认证Hook
@@ -17,7 +17,7 @@ export function useAuth() {
     setError(null);
 
     try {
-      const response = await authControllerLogin({ body: { username, password } });
+      const response = await AuthService.authControllerLogin({ username, password, idleLogout30m: autoLogout });
       console.log(response);
 
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data;
@@ -51,7 +51,7 @@ export function useAuth() {
       const params = new URLSearchParams(window.location.search);
       const inviteCodeParam = params.get('inviteCode') || '';
       const type = inviteCodeParam ? 'invite' : 'open';
-      const response = await authControllerRegister({ body: { email, username, password, type, inviteCode: inviteCodeParam } });
+      const response = await AuthService.authControllerRegister({ email, username, password, type, inviteCode: inviteCodeParam });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data;
       const ok = body?.code === 1000;
       if (!ok) {
@@ -76,7 +76,7 @@ export function useAuth() {
     setError(null);
 
     try {
-      const response = await authControllerRequestEmailCode({ body: { email } });
+      const response = await AuthService.authControllerRequestEmailCode({ email });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data;
       return body?.data ?? body;
     } catch (err: any) {
@@ -114,7 +114,7 @@ export function useTorrents() {
     setError(null);
 
     try {
-      const response = await torrentsControllerList({ body: { category, page, pageSize: limit } });
+      const response = await TorrentsService.torrentsControllerList({ category, page, pageSize: limit });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data;
       setTorrents(body?.data ?? body);
       return body?.data ?? body;
@@ -131,7 +131,7 @@ export function useTorrents() {
     setError(null);
 
     try {
-      const response = await torrentsControllerGet({ body: { id: String(id) } });
+      const response = await TorrentsService.torrentsControllerGet({ id: String(id) });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data;
       return body?.data ?? body;
     } catch (err: any) {

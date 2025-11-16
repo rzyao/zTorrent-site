@@ -33,7 +33,7 @@ export class UsersService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/users/list',
+            url: '/users/list-users',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
