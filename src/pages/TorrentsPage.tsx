@@ -42,10 +42,9 @@ interface Torrent {
 
 const sortOptions = [
   { value: 'latest', label: '最新发布' },
-  { value: 'seeders', label: '做种数' },
-  { value: 'size', label: '文件大小' },
-  { value: 'completed', label: '完成数' },
-  { value: 'rating', label: '评分' },
+  { value: 'seeders', label: '最多做种' },
+  { value: 'completed', label: '最多完成' },
+  { value: 'rating', label: '最高评分' },
 ];
 
 // 数据由接口返回
@@ -109,7 +108,7 @@ export default function TorrentsPage() {
     let isCancelled = false;
     const loadCategories = async () => {
       try {
-        const resp = await CategoriesService.categoriesControllerListUserCategories({ userId: '' });
+        const resp = await CategoriesService.categoriesControllerListUserCategories();
         const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
         const data = body?.data ?? body;
         const items = Array.isArray(data) ? data : [];
@@ -131,7 +130,9 @@ export default function TorrentsPage() {
     return true;
   });
   const totalPages = Math.ceil((total || filteredTorrents.length) / itemsPerPage);
-  const displayTorrents = filteredTorrents;
+  const displayTorrents = sortBy === 'rating'
+    ? [...filteredTorrents].sort((a, b) => Number(b?.rating ?? 0) - Number(a?.rating ?? 0))
+    : filteredTorrents;
 
   const getCoverSrc = (item: any) => {
     return (
@@ -180,15 +181,15 @@ export default function TorrentsPage() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="appearance-none bg-gray-900 border border-gray-700 text-white pl-4 pr-10 py-3 rounded-md focus:border-[#00A8E1] focus:ring-[#00A8E1] cursor-pointer"
+                  className="appearance-none bg-gray-900 border border-gray-700 text-white pl-4 pr-1 py-1.5 rounded-md focus:border-[#00A8E1] focus:ring-[#00A8E1] cursor-pointer"
                 >
                   {sortOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
+                    <option className="text-black" key={option.value} value={option.value}>
                       {option.label}
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                {/* <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" /> */}
               </div>
               {/* 筛选按钮 */}
               <Button

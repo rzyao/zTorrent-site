@@ -41,7 +41,6 @@ export type { ListPunishmentTypeDto } from './models/ListPunishmentTypeDto';
 export type { ListRolesDto } from './models/ListRolesDto';
 export type { ListTorrentUsersDto } from './models/ListTorrentUsersDto';
 export type { ListUnbanReasonDto } from './models/ListUnbanReasonDto';
-export type { ListUserCategoriesDto } from './models/ListUserCategoriesDto';
 export { ListUsersDto } from './models/ListUsersDto';
 export type { ListUserTorrentsDto } from './models/ListUserTorrentsDto';
 export type { LoginDto } from './models/LoginDto';

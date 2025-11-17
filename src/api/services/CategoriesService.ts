@@ -4,7 +4,6 @@
 /* eslint-disable */
 import type { CreateCategoryDto } from '../models/CreateCategoryDto';
 import type { ListCategoriesDto } from '../models/ListCategoriesDto';
-import type { ListUserCategoriesDto } from '../models/ListUserCategoriesDto';
 import type { SetUserCategoriesDto } from '../models/SetUserCategoriesDto';
 import type { UpdateCategoryDto } from '../models/UpdateCategoryDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -204,14 +203,11 @@ export class CategoriesService {
         });
     }
     /**
-     * 获取用户可展示分类
-     * @param requestBody
+     * 用户获取可展示分类
      * @returns any 成功
      * @throws ApiError
      */
-    public static categoriesControllerListUserCategories(
-        requestBody: ListUserCategoriesDto,
-    ): CancelablePromise<{
+    public static categoriesControllerListUserCategories(): CancelablePromise<{
         code?: number;
         message?: string;
         data?: Array<{
@@ -230,8 +226,6 @@ export class CategoriesService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/categories/user/list',
-            body: requestBody,
-            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -242,7 +236,7 @@ export class CategoriesService {
         });
     }
     /**
-     * 设置用户可展示分类
+     * 用户设置可展示分类
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
