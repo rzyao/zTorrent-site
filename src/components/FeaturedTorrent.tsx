@@ -1,6 +1,6 @@
 import { Play, Download, Upload, Star, Calendar, HardDrive } from 'lucide-react';
 import { Button } from './ui/button';
-import { ImageWithFallback } from '../assets/figma/ImageWithFallback';
+import { ImageWithFallback } from './figma/ImageWithFallback';
 
 interface FeaturedTorrentProps {
   title: string;
@@ -55,13 +55,13 @@ export function FeaturedTorrent({
               <span className="text-sm">{rating}</span>
             </div>
           </div>
-          
+
           <h1 className="text-4xl md:text-6xl text-white">{title}</h1>
-          
+
           <p className="text-base md:text-lg text-gray-300 line-clamp-3">
             {description}
           </p>
-          
+
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
             <div className="flex items-center gap-2">
               <HardDrive className="w-4 h-4" />
@@ -80,7 +80,7 @@ export function FeaturedTorrent({
               <span>{uploadDate}</span>
             </div>
           </div>
-          
+
           <div className="flex gap-4 pt-4">
             <Button className="bg-white text-black hover:bg-gray-200 px-10 py-6 text-lg gap-3 rounded-md">
               <Download className="w-5 h-5" />

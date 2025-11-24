@@ -1,6 +1,7 @@
 import { VideoCard } from './VideoCard';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
 
 interface Video {
   id: number;
@@ -52,12 +53,12 @@ export function VideoRow({ title, videos }: VideoRowProps) {
       
       <div className="relative">
         {showLeftArrow && (
-          <button
+          <Button
             onClick={() => scroll('left')}
             className="absolute left-0 top-0 bottom-0 z-20 w-12 bg-black/50 hover:bg-black/80 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity"
           >
             <ChevronLeft className="w-8 h-8 text-white" />
-          </button>
+          </Button>
         )}
 
         <div
@@ -74,12 +75,12 @@ export function VideoRow({ title, videos }: VideoRowProps) {
         </div>
 
         {showRightArrow && (
-          <button
+          <Button
             onClick={() => scroll('right')}
             className="absolute right-0 top-0 bottom-0 z-20 w-12 bg-black/50 hover:bg-black/80 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity"
           >
             <ChevronRight className="w-8 h-8 text-white" />
-          </button>
+          </Button>
         )}
       </div>
     </div>

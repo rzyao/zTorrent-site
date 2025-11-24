@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth, useTorrents } from '../hooks/useApi';
+import { Button } from '@/components/ui/button';
 
 // 登录组件示例
 export function LoginExample() {
@@ -42,13 +43,13 @@ export function LoginExample() {
         />
       </div>
       {error && <div className="text-red-500 text-sm">{error}</div>}
-      <button
+      <Button
         type="submit"
         disabled={isLoading}
         className="w-full bg-blue-500 text-white p-2 rounded disabled:opacity-50"
       >
         {isLoading ? '登录中...' : '登录'}
-      </button>
+      </Button>
     </form>
   );
 }
@@ -76,13 +77,13 @@ export function TorrentListExample() {
           placeholder="分类筛选"
           className="flex-1 p-2 border rounded"
         />
-        <button
+        <Button
           onClick={loadTorrents}
           disabled={isLoading}
           className="px-4 py-2 bg-green-500 text-white rounded disabled:opacity-50"
         >
           {isLoading ? '加载中...' : '加载种子'}
-        </button>
+        </Button>
       </div>
       
       {error && <div className="text-red-500">{error}</div>}

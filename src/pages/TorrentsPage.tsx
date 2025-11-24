@@ -14,11 +14,21 @@ import {
   List,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { TorrentsService, CategoriesService } from '@/api';
 import { Input } from '@/components/ui/input';
-import { ImageWithFallback } from '@/assets/figma/ImageWithFallback';
+import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
 import { Badge } from '@/components/ui/badge';
 import { TorrentCard } from '@/components/TorrentCard';
+import { useDictionaryLabels } from '@/hooks/useDictionary';
+import { formatSize } from '@/utils/format';
 
 interface Torrent {
   id: number;
@@ -50,6 +60,7 @@ const sortOptions = [
 // 数据由接口返回
 
 export default function TorrentsPage() {
+  const { getCategoryLabel } = useDictionaryLabels();
   const [selectedCategory, setSelectedCategory] = useState('全部');
   const [sortBy, setSortBy] = useState('latest');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -62,7 +73,7 @@ export default function TorrentsPage() {
   const [total, setTotal] = useState(0);
   const [categories, setCategories] = useState<Array<{ label: string; key?: string }>>([]);
 
-  const getCategoryKey = (label?: string) => {
+  const getcategory = (label?: string) => {
     if (!label || label === '全部') return undefined;
     return categories.find((c) => c.label === label)?.key || undefined;
   };
@@ -78,6 +89,13 @@ export default function TorrentsPage() {
     return 'DESC';
   };
 
+  const tagBadgeColor = (key?: string) => {
+    if (!key) return 'primary';
+    if (key === '完结') return 'green';
+    if (key === '分级') return 'red';
+    return 'primary';
+  };
+
   useEffect(() => {
     let isCancelled = false;
     const load = async () => {
@@ -86,7 +104,7 @@ export default function TorrentsPage() {
         const resp = await TorrentsService.torrentsControllerUserList({
           page: currentPage,
           limit: itemsPerPage,
-          category: getCategoryKey(selectedCategory),
+          category: getcategory(selectedCategory),
           orderBy: mapOrderBy(sortBy) as any,
           order: mapOrder(sortBy) as any,
         });
@@ -135,32 +153,28 @@ export default function TorrentsPage() {
     : filteredTorrents;
 
   const getCoverSrc = (item: any) => {
-    return (
-      item?.thumbnail ??
-      item?.ThumbCoverPath ??
-      item?.MediumCoverPath ??
-      item?.LargeCoverPath ??
-      item?.FullCoverPath ??
-      ''
-    );
+    if (viewMode == 'list') {
+      return (
+        item?.ThumbCoverPath ??
+        item?.cover ??
+        ''
+      );
+    } else if (viewMode == 'grid') {
+      return (
+        item?.MediumCoverPath ??
+        item?.cover ??
+        ''
+      );
+    }
   };
 
-  const formatSize = (value: any) => {
-    const n = typeof value === 'number' ? value : parseInt(String(value), 10);
-    if (!Number.isFinite(n) || n <= 0) return String(value);
-    const TB = 1024 ** 4;
-    const GB = 1024 ** 3;
-    const MB = 1024 ** 2;
-    if (n >= TB) return `${(n / TB).toFixed(2)} T`;
-    if (n >= GB) return `${(n / GB).toFixed(2)} G`;
-    return `${(n / MB).toFixed(2)} M`;
-  };
+
 
   return (
     <div>
       {/* 顶部搜索栏 */}
       <div className="sticky top-0 bg-[#0F171E] border-b border-gray-800 z-40">
-        <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-4">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-8 pt-2 pb-3">
           <div className="flex items-center gap-4">
             {/* 搜索框 */}
             <div className="flex-1 min-w-0 relative">
@@ -178,18 +192,20 @@ export default function TorrentsPage() {
             <div className="flex shrink-0 gap-2">
               {/* 排序选择 */}
               <div className="relative">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="appearance-none bg-gray-900 border border-gray-700 text-white pl-4 pr-1 py-1.5 rounded-md focus:border-[#00A8E1] focus:ring-[#00A8E1] cursor-pointer"
-                >
-                  {sortOptions.map((option) => (
-                    <option className="text-black" key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                {/* <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" /> */}
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-full bg-gray-900 border border-gray-700 text-white pl-4 pr-8 py-1.5 rounded-md focus:border-[#00A8E1] focus:ring-[#00A8E1] cursor-pointer h-9">
+                    <SelectValue placeholder="选择排序方式" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-900 border border-gray-700">
+                    <SelectGroup>
+                      {sortOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value} className="text-white hover:bg-gray-800 focus:bg-gray-800">
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
               {/* 筛选按钮 */}
               <Button
@@ -201,7 +217,7 @@ export default function TorrentsPage() {
               </Button>
               {/* 视图切换按钮 */}
               <div className="flex border border-gray-700 rounded-md overflow-hidden">
-                <button
+                <Button
                   onClick={() => setViewMode('grid')}
                   className={`px-3 py-2 transition-colors ${viewMode === 'grid'
                     ? 'bg-[#00A8E1] text-white'
@@ -209,8 +225,8 @@ export default function TorrentsPage() {
                     }`}
                 >
                   <Grid3x3 className="w-5 h-5" />
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => setViewMode('list')}
                   className={`px-3 py-2 transition-colors ${viewMode === 'list'
                     ? 'bg-[#00A8E1] text-white'
@@ -218,37 +234,37 @@ export default function TorrentsPage() {
                     }`}
                 >
                   <List className="w-5 h-5" />
-                </button>
+                </Button>
               </div>
             </div>
           </div>
           {/* 分类导航 */}
-          <div className="mb-6">
+          <div className="mb-0">
             <div className="flex flex-wrap gap-2 mt-3">
               {categories.map((category) => (
-                <button
+                <Button
                   key={category.label}
                   onClick={() => setSelectedCategory(category.label)}
-                  className={`px-4 py-2 rounded-full transition-colors ${selectedCategory === category.label
+                  className={`px-4 py-1.5 rounded-full transition-colors ${selectedCategory === category.label
                     ? 'bg-[#00A8E1] text-white'
                     : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                     }`}
                 >
                   {category.label}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
 
           {/* 结果统计 */}
-          <div className="flex items-center justify-between mb-6">
+          {/* <div className="flex items-center justify-between mb-6">
             <p className="text-gray-400">
               共找到 <span className="text-[#00A8E1]">{total}</span> 个种子
             </p>
             <p className="text-gray-500 text-sm">
               第 {currentPage} / {totalPages} 页
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -264,9 +280,11 @@ export default function TorrentsPage() {
             {displayTorrents.map((torrent) => (
               <div key={torrent.id}>
                 <TorrentCard
+                  id={torrent.id}
                   thumbnail={getCoverSrc(torrent)}
                   title={torrent.title}
-                  category={torrent.category}
+                  subTitle={torrent.subTitle}
+                  category={getCategoryLabel(torrent.category) || torrent.category}
                   size={torrent.size}
                   seeders={torrent.seeders}
                   leechers={torrent.leechers}
@@ -275,6 +293,7 @@ export default function TorrentsPage() {
                   isHot={torrent.isHot}
                   rating={torrent.rating}
                   comments={torrent.comments}
+                  doubanUrl={torrent.doubanUrl}
                 />
               </div>
             ))}
@@ -301,10 +320,15 @@ export default function TorrentsPage() {
 
                   {/* 信息区 */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start gap-3 mb-3">
-                      <h3 className="text-white flex-1 hover:text-[#00A8E1] transition-colors">
-                        {torrent.title}
-                      </h3>
+                    <div className="flex items-start gap-3  mb-1">
+                      <div className='flex flex-col flex-1'>
+                        <h3 className="text-white flex-1 hover:text-[#00A8E1] transition-colors">
+                          {torrent.title}
+                        </h3>
+                        <h3 className="text-white flex-1 hover:text-[#00A8E1] transition-colors">
+                          {torrent.subTitle}
+                        </h3>
+                      </div>
                       <Button
                         size="sm"
                         className="bg-[#00A8E1] hover:bg-[#00A8E1]/90 text-white flex-shrink-0"
@@ -313,23 +337,33 @@ export default function TorrentsPage() {
                         下载
                       </Button>
                     </div>
-
-                    <div className="flex flex-wrap items-center gap-2 mb-3">
-                      <Badge className="bg-gray-800 text-white text-xs">
-                        {torrent.category}
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <Badge color="blue" border="white" size="sm" className="text-xs">
+                        {getCategoryLabel(torrent.category) || torrent.category}
                       </Badge>
+                      {Array.isArray(torrent.tags)
+                        ? torrent.tags.map((tag, idx) => (
+                          <Badge key={idx} color={tagBadgeColor(tag)} border="white" size="sm" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))
+                        : torrent.tags && (
+                          <Badge outline size="sm" className="text-xs">
+                            {torrent.tags}
+                          </Badge>
+                        )}
                       {torrent.isFree && (
-                        <Badge className="bg-green-500 text-white text-xs">
+                        <Badge color="green" size="sm">
                           FREE
                         </Badge>
                       )}
                       {torrent.isVip && (
-                        <Badge className="bg-yellow-500 text-white text-xs">
+                        <Badge color="yellow" size="sm">
                           VIP
                         </Badge>
                       )}
                       {torrent.isHot && (
-                        <Badge className="bg-red-500 text-white text-xs">
+                        <Badge color="red" size="sm">
                           HOT
                         </Badge>
                       )}
@@ -401,7 +435,7 @@ export default function TorrentsPage() {
               }
 
               return (
-                <button
+                <Button
                   key={i}
                   onClick={() => setCurrentPage(pageNum)}
                   className={`w-10 h-10 rounded-md transition-colors ${currentPage === pageNum
@@ -410,7 +444,7 @@ export default function TorrentsPage() {
                     }`}
                 >
                   {pageNum}
-                </button>
+                </Button>
               );
             })}
           </div>

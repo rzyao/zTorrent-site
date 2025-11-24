@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Mail, Lock, UserPlus, ArrowLeft, User, AlertCircle } from 'lucide-react';
-import { Button } from '../components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Input } from '../components/ui/input';
-import { ImageWithFallback } from '../assets/figma/ImageWithFallback';
+import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { useAuth } from '../hooks/useApi';
 import { toast } from 'sonner';
 import { AuthService } from '../api';
@@ -187,7 +187,7 @@ export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProp
         <div className="max-w-md w-full bg-black/60 border border-gray-800 rounded-md p-6 text-center">
           <h1 className="text-white text-2xl mb-2">目前仅支持邀请注册</h1>
           <p className="text-gray-400 text-sm">请使用邀请链接或邀请码访问该页面。</p>
-          <button onClick={onBack} className="mt-6 text-[#00A8E1] hover:text-[#00A8E1]/80 text-sm">返回登录</button>
+          <Button onClick={onBack} className="mt-6 text-[#00A8E1] hover:text-[#00A8E1]/80 text-sm">返回登录</Button>
         </div>
       </div>
     );
@@ -199,7 +199,7 @@ export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProp
         <div className="max-w-md w-full bg-black/60 border border-gray-800 rounded-md p-6 text-center">
           <h1 className="text-white text-2xl mb-2">邀请码错误</h1>
           <p className="text-gray-400 text-sm">请确认链接或邀请码是否正确与未过期。</p>
-          <button onClick={onBack} className="mt-6 text-[#00A8E1] hover:text-[#00A8E1]/80 text-sm">返回登录</button>
+          <Button onClick={onBack} className="mt-6 text-[#00A8E1] hover:text-[#00A8E1]/80 text-sm">返回登录</Button>
         </div>
       </div>
     );
@@ -349,9 +349,9 @@ export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProp
             {/* 登录提示 */}
             <div className="mt-8 text-center text-sm">
               <span className="text-gray-400">已有账号？</span>
-              <button onClick={onBack} className="ml-2 text-[#00A8E1] hover:text-[#00A8E1]/80 transition-colors">
+              <Button onClick={onBack} className="ml-2 text-[#00A8E1] hover:text-[#00A8E1]/80 transition-colors">
                 前往登录
-              </button>
+              </Button>
             </div>
           </div>
           <div className="mt-6 text-center text-xs text-gray-500">

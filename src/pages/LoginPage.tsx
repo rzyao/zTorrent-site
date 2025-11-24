@@ -3,7 +3,7 @@ import { Eye, EyeOff, User, Lock, LogIn, Clock } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Checkbox } from '../components/ui/checkbox';
-import { ImageWithFallback } from '../assets/figma/ImageWithFallback';
+import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { useAuth } from '../hooks/useApi';
 import { toast } from 'sonner';
 
@@ -69,9 +69,9 @@ export function LoginPage({ onForgotPassword, onRegister, onLoginSuccess, onTest
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <Input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="输入您的密码" className="w-full bg-gray-900/50 border-gray-700 text-white pl-11 pr-12 py-6 rounded-md focus:border-[#00A8E1] focus:ring-[#00A8E1] placeholder:text-gray-500" required />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300">
+                  <Button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300" variant="ghost" size="sm">
                     {showPassword ? (<EyeOff className="w-5 h-5" />) : (<Eye className="w-5 h-5" />)}
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -84,7 +84,7 @@ export function LoginPage({ onForgotPassword, onRegister, onLoginSuccess, onTest
               </div>
 
               <div className="text-right text-sm">
-                <button type="button" onClick={onForgotPassword} className="text-[#00A8E1] hover:text-[#00A8E1]/80 transition-colors">忘记密码？</button>
+                <Button type="button" onClick={onForgotPassword} className="text-[#00A8E1] hover:text-[#00A8E1]/80 transition-colors" variant="link" size="sm">忘记密码？</Button>
               </div>
 
               {authError && (<div className="text-red-400 text-sm text-center bg-red-900/20 p-3 rounded-md border border-red-800">{authError}</div>)}
@@ -96,12 +96,12 @@ export function LoginPage({ onForgotPassword, onRegister, onLoginSuccess, onTest
 
             <div className="mt-8 text-center text-sm">
               <span className="text-gray-400">还没有账号？</span>
-              <button type="button" onClick={onRegister} className="ml-2 text-[#00A8E1] hover:text-[#00A8E1]/80 transition-colors">立即注册</button>
+              <Button type="button" onClick={onRegister} className="ml-2 text-[#00A8E1] hover:text-[#00A8E1]/80 transition-colors" variant="link" size="sm">立即注册</Button>
             </div>
 
             {onTestApi && (
               <div className="mt-4 text-center">
-                <button type="button" onClick={onTestApi} className="text-sm text-blue-400 hover:text-blue-300 transition-colors">API测试 (开发者)</button>
+                <Button type="button" onClick={onTestApi} className="text-sm text-blue-400 hover:text-blue-300 transition-colors">API测试 (开发者)</Button>
               </div>
             )}
           </div>

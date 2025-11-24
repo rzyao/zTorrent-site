@@ -11,6 +11,10 @@ import RankingPage from '../pages/RankingPage';
 import AppLayout from '../layouts/AppLayout';
 import HomeLayout from '../layouts/HomeLayout';
 import MoviePage from '../pages/MoviePage';
+import TorrentDetailPage from '../pages/TorrentDetailPage/index';
+import { UploadTorrentPage } from '../pages/UploadTorrentPage';
+
+
 
 function LoginPageWrapper() {
   const navigate = useNavigate();
@@ -112,9 +116,37 @@ export default function AppRoutes() {
         }
       />
 
+      <Route
+        path="/upload"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <UploadTorrentPage />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
+      <Route
+        path="/torrent-detail/:id"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <TorrentDetailPage />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
+      <Route path="/torrent-detail" element={<Navigate to="/torrents" replace />} />
 
 
-      <Route path="*" element={<Navigate to="/login" replace />} />
+
+      <Route path="*" element={<NotFoundRedirect />} />
     </Routes>
   );
+}
+function NotFoundRedirect() {
+  const isLoggedIn = !!localStorage.getItem('accessToken');
+  return <Navigate to={isLoggedIn ? '/home' : '/login'} replace />;
 }

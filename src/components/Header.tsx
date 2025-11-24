@@ -1,4 +1,4 @@
-import { Search, Bell, Mail, User, TrendingUp, Upload, Download } from 'lucide-react';
+import { Search, Bell, Mail, User, TrendingUp, Upload, Download, ChartSpline } from 'lucide-react';
 import { Button } from './ui/button';
 import { NavLink } from 'react-router-dom';
 
@@ -17,6 +17,7 @@ export function Header() {
             <NavLink to="/forum" className="text-white hover:text-gray-300 transition-colors">论坛</NavLink>
             <NavLink to="/subtitles" className="text-white hover:text-gray-300 transition-colors">字幕</NavLink>
             <NavLink to="/ranking" className="text-white hover:text-gray-300 transition-colors">排行榜</NavLink>
+            <NavLink to="/upload" className="text-white hover:text-gray-300 transition-colors">上传</NavLink>
           </nav>
         </div>
 
@@ -31,7 +32,7 @@ export function Header() {
               <span>2.15TB</span>
             </div>
             <div className="flex items-center gap-1 text-yellow-400">
-              <TrendingUp className="w-4 h-4" />
+              <ChartSpline className="w-4 h-4" />
               <span>2.46</span>
             </div>
           </div>

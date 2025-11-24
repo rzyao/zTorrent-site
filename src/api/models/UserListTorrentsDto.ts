@@ -26,6 +26,7 @@ export namespace UserListTorrentsDto {
         UPLOADED_AT = 'uploadedAt',
         SIZE = 'size',
         SEEDERS = 'seeders',
+        DOWNLOADS = 'downloads',
         DOWNLOADING_COUNT = 'downloadingCount',
         COMPLETED_COUNT = 'completedCount',
     }

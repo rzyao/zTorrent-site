@@ -1,6 +1,7 @@
-import { ImageWithFallback } from '../assets/figma/ImageWithFallback';
+import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Play, Plus, ThumbsUp, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 
 interface VideoCardProps {
   thumbnail: string;
@@ -30,18 +31,18 @@ export function VideoCard({ thumbnail, title, year, rating, duration }: VideoCar
       {isHovered && (
         <div className="absolute top-full left-0 right-0 bg-zinc-900 p-4 rounded-b-md shadow-xl">
           <div className="flex gap-2 mb-3">
-            <button className="w-8 h-8 rounded-full bg-white hover:bg-white/80 flex items-center justify-center transition-colors">
+            <Button className="w-8 h-8 rounded-full bg-white hover:bg-white/80 flex items-center justify-center transition-colors">
               <Play className="w-4 h-4 text-black fill-current ml-0.5" />
-            </button>
-            <button className="w-8 h-8 rounded-full border-2 border-gray-400 hover:border-white flex items-center justify-center transition-colors">
+            </Button>
+            <Button className="w-8 h-8 rounded-full border-2 border-gray-400 hover:border-white flex items-center justify-center transition-colors">
               <Plus className="w-4 h-4 text-white" />
-            </button>
-            <button className="w-8 h-8 rounded-full border-2 border-gray-400 hover:border-white flex items-center justify-center transition-colors">
+            </Button>
+            <Button className="w-8 h-8 rounded-full border-2 border-gray-400 hover:border-white flex items-center justify-center transition-colors">
               <ThumbsUp className="w-4 h-4 text-white" />
-            </button>
-            <button className="w-8 h-8 rounded-full border-2 border-gray-400 hover:border-white flex items-center justify-center transition-colors ml-auto">
+            </Button>
+            <Button className="w-8 h-8 rounded-full border-2 border-gray-400 hover:border-white flex items-center justify-center transition-colors ml-auto">
               <ChevronDown className="w-4 h-4 text-white" />
-            </button>
+            </Button>
           </div>
           <div className="space-y-2">
             <p className="text-white text-sm">{title}</p>

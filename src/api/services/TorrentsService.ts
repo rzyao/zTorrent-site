@@ -5,6 +5,7 @@
 import type { AddUserTorrentDto } from '../models/AddUserTorrentDto';
 import type { AdminListTorrentsDto } from '../models/AdminListTorrentsDto';
 import type { AutoUploadTorrentDto } from '../models/AutoUploadTorrentDto';
+import type { CheckInfoHashDto } from '../models/CheckInfoHashDto';
 import type { CreateTorrentDto } from '../models/CreateTorrentDto';
 import type { DeleteTorrentDto } from '../models/DeleteTorrentDto';
 import type { GetTorrentDto } from '../models/GetTorrentDto';
@@ -138,6 +139,37 @@ export class TorrentsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/torrents/covers/upload-thumb',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 验证 infohash 是否存在
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentsControllerExistsByInfoHash(
+        requestBody: CheckInfoHashDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            exists?: boolean;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/exists/infohash',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

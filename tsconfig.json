@@ -23,7 +23,9 @@
     },
     "types": [
       "node",
-      "express"
+      "express",
+      "react",
+      "react-dom"
     ]
   },
   "include": [

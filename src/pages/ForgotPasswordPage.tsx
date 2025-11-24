@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Mail, Lock, ArrowLeft, Clock, CheckCircle } from 'lucide-react';
-import { Button } from '../components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Input } from '../components/ui/input';
-import { ImageWithFallback } from '../assets/figma/ImageWithFallback';
+import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 
 interface ForgotPasswordPageProps { onBack: () => void; }
 
@@ -42,7 +42,7 @@ export function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) {
         <div className="w-full max-w-md">
           <div className="bg-black/60 backdrop-blur-md rounded-lg p-8 md:p-10 border border-gray-800">
             {step !== 'success' && (
-              <button onClick={onBack} className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6"><ArrowLeft className="w-4 h-4" /><span className="text-xs">返回登录</span></button>
+              <Button onClick={onBack} className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6"><ArrowLeft className="w-4 h-4" /><span className="text-xs">返回登录</span></Button>
             )}
 
             {step !== 'success' && (
@@ -67,7 +67,7 @@ export function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) {
               <div className="text-center mb-8"><h1 className="text-white text-3xl mb-2">验证身份</h1><p className="text-gray-400 text-sm">验证码已发送至</p><p className="text-[#00A8E1] text-sm mt-1">{email}</p></div>
               <form onSubmit={handleVerifyCode} className="space-y-5">
                 <div className="space-y-2"><label className="text-white text-sm">验证码</label><div className="flex gap-2"><Input type="text" placeholder="输入6位验证码" maxLength={6} required className="flex-1 bg-gray-900/50 border-gray-700 text-white text-center text-2xl tracking-widest px-4 py-6 rounded-md focus:border-[#00A8E1] focus:ring-[#00A8E1] placeholder:text-gray-500 placeholder:text-base placeholder:tracking-normal" /></div></div>
-                <div className="flex items-center justify-between text-sm"><div className="flex items-center gap-2 text-gray-400"><Clock className="w-4 h-4" /><span>{countdown > 0 ? `${countdown}秒后可重发` : '验证码已过期'}</span></div><button type="button" onClick={handleResendCode} disabled={countdown > 0} className={`${countdown > 0 ? 'text-gray-600 cursor-not-allowed' : 'text-[#00A8E1] hover:text-[#00A8E1]/80'} transition-colors`}>重新发送</button></div>
+                <div className="flex items-center justify-between text-sm"><div className="flex items-center gap-2 text-gray-400"><Clock className="w-4 h-4" /><span>{countdown > 0 ? `${countdown}秒后可重发` : '验证码已过期'}</span></div><Button type="button" onClick={handleResendCode} disabled={countdown > 0} className={`${countdown > 0 ? 'text-gray-600 cursor-not-allowed' : 'text-[#00A8E1] hover:text-[#00A8E1]/80'} transition-colors`}>重新发送</Button></div>
                 <Button type="submit" className="w-full bg-[#00A8E1] hover:bg-[#00A8E1]/90 text-white py-6 text-lg rounded-md transition-colors">验证并继续</Button>
               </form>
             </>)}

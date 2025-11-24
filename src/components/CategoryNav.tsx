@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const categories = [
   { label: '全部', slug: 'home', api: '' },
@@ -18,7 +19,7 @@ export function CategoryNav({ active = '全部', onSelect }: { active?: string; 
     <div className="sticky top-0 bg-[#0F171E] py-4 px-4 md:px-8 z-40 border-b border-gray-800">
       <div className="flex gap-4 overflow-x-auto scrollbar-hide">
         {categories.map((c) => (
-          <button
+          <Button
             key={c.label}
             className={`px-4 py-2 rounded-full whitespace-nowrap transition-colors ${c.label === active ? 'bg-white text-black' : 'bg-gray-800 text-white hover:bg-gray-700'
               }`}
@@ -31,7 +32,7 @@ export function CategoryNav({ active = '全部', onSelect }: { active?: string; 
             }}
           >
             {c.label}
-          </button>
+          </Button>
         ))}
       </div>
     </div>
