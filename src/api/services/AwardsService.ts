@@ -103,12 +103,12 @@ export class AwardsService {
         });
     }
     /**
-     * 列表种子奖项
+     * 列出种子奖项列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static awardsControllerList(
+    public static awardsControllerListAwards(
         requestBody: ListAwardsDto,
     ): CancelablePromise<{
         code?: number;

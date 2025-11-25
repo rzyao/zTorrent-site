@@ -4,8 +4,8 @@
 /* eslint-disable */
 export type ListUserTorrentsDto = {
     /**
-     * 用户ID
+     * 用户ID（snake_case）
      */
-    userId: string;
+    user_id: string;
 };
 

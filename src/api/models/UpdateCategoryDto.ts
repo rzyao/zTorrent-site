@@ -23,5 +23,22 @@ export type UpdateCategoryDto = {
      * 是否默认展示
      */
     isDefault?: boolean;
+    /**
+     * 类型
+     */
+    type?: UpdateCategoryDto.type;
+    /**
+     * 父分类ID（type=sub时必填）
+     */
+    parentId?: string;
 };
+export namespace UpdateCategoryDto {
+    /**
+     * 类型
+     */
+    export enum type {
+        CATEGORY = 'category',
+        SUB = 'sub',
+    }
+}
 

@@ -157,7 +157,11 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
           promotionEnd: str(data?.promotionEnd),
           views: num(data?.views),
           description: str(data?.description),
-          downloadUrl: str(data?.downloadUrl),
+          // 字段重命名兼容：后端可能将 downloadUrl 重命名为 downloadURL / download_link / download
+          // 这里进行多键回退以确保下载按钮可用
+          downloadUrl: str(
+            (data?.downloadUrl ?? data?.downloadURL ?? data?.download_link ?? data?.download)
+          ),
         };
         if (!cancelled) setTorrentData(mapped);
         console.log(mapped.description);

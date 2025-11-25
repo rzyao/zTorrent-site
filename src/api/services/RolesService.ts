@@ -43,12 +43,12 @@ export class RolesService {
         });
     }
     /**
-     * 角色列表
+     * 列出角色列表
      * @param requestBody
      * @returns any 查询成功
      * @throws ApiError
      */
-    public static rolesControllerList(
+    public static rolesControllerListRoles(
         requestBody: ListRolesDto,
     ): CancelablePromise<{
         code?: number;
@@ -64,7 +64,7 @@ export class RolesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/roles/list',
+            url: '/roles/list-roles',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

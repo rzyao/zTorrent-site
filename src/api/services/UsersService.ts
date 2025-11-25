@@ -17,7 +17,7 @@ export class UsersService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static usersControllerList(
+    public static usersControllerListUsers(
         requestBody: ListUsersDto,
     ): CancelablePromise<{
         code?: number;

@@ -107,12 +107,12 @@ export class PromotionsService {
         });
     }
     /**
-     * 列表促销
+     * 列出促销列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static promotionsControllerList(
+    public static promotionsControllerListPromotions(
         requestBody: ListPromotionsDto,
     ): CancelablePromise<{
         code?: number;
@@ -128,7 +128,7 @@ export class PromotionsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/promotions/list',
+            url: '/promotions/list-promotions',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -233,7 +233,7 @@ export class PromotionsService {
         });
     }
     /**
-     * 列表种子促销
+     * 列出某种子的促销列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
@@ -254,7 +254,7 @@ export class PromotionsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/promotions/torrents/list',
+            url: '/promotions/torrents/list-promotions',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

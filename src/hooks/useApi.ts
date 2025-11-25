@@ -1,10 +1,7 @@
 import { useState, useCallback } from 'react';
 import { AuthService, TorrentsService, OpenAPI } from '../api';
 
-const envBaseUrl = (import.meta as any).env?.VITE_API_BASE_URL;
-if (envBaseUrl) {
-  OpenAPI.BASE = envBaseUrl;
-}
+// OpenAPI.BASE 的设置已在全局布局 AppLayout 中统一处理，避免重复配置导致环境切换不一致
 
 // 认证Hook
 export function useAuth() {
@@ -114,7 +111,10 @@ export function useTorrents() {
     setError(null);
 
     try {
-      const response = await TorrentsService.torrentsControllerList({ category, page, pageSize: limit });
+      // 接口重命名适配：旧方法名 torrentsControllerList → 新方法名 torrentsControllerListTorrentsForUser
+      // 原因：后端 OpenAPI operationId 统一为“用户可展示的种子列表”
+      // 同时参数名 pageSize → limit（参考 UserListTorrentsDto），其余参数保持一致
+      const response = await TorrentsService.torrentsControllerListTorrentsForUser({ category, page, limit });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data;
       setTorrents(body?.data ?? body);
       return body?.data ?? body;

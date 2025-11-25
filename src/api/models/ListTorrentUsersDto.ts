@@ -4,8 +4,8 @@
 /* eslint-disable */
 export type ListTorrentUsersDto = {
     /**
-     * 种子ID
+     * 种子ID（snake_case）
      */
-    torrentId: string;
+    torrent_id: string;
 };
 

@@ -148,7 +148,7 @@ export class PunishmentsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static punishmentsControllerRecordsList(
+    public static punishmentsControllerListPunishmentRecords(
         requestBody: ListPunishmentRecordsDto,
     ): CancelablePromise<{
         code?: number;
@@ -187,7 +187,7 @@ export class PunishmentsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/punishments/list',
+            url: '/punishments/list-records',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

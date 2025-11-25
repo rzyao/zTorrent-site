@@ -107,12 +107,12 @@ export class SeriesService {
         });
     }
     /**
-     * 列表系列
+     * 列出系列列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static seriesControllerList(
+    public static seriesControllerListSeries(
         requestBody: ListSeriesDto,
     ): CancelablePromise<{
         code?: number;

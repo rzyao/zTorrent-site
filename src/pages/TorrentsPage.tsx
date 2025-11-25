@@ -101,7 +101,10 @@ export default function TorrentsPage() {
     const load = async () => {
       try {
         setIsLoading(true);
-        const resp = await TorrentsService.torrentsControllerUserList({
+        // 接口重命名适配：旧方法名 torrentsControllerUserList → 新方法名 torrentsControllerListTorrentsForUser
+        // 原因：后端 OpenAPI operationId 更新，为前台用户列出可展示种子列表统一命名
+        // 参数保持不变（page、limit、category、orderBy、order），对应 UserListTorrentsDto
+        const resp = await TorrentsService.torrentsControllerListTorrentsForUser({
           page: currentPage,
           limit: itemsPerPage,
           category: getcategory(selectedCategory),

@@ -122,10 +122,10 @@ export class TorrentsService {
     public static torrentsControllerUploadCoverThumb(
         requestBody: {
             id: string;
-            fullBase64?: string | null;
-            thumbBase64: string;
-            mediumBase64?: string | null;
-            largeBase64?: string | null;
+            full_base64?: string | null;
+            thumb_base64: string;
+            medium_base64?: string | null;
+            large_base64?: string | null;
         },
     ): CancelablePromise<{
         code?: number;
@@ -211,12 +211,12 @@ export class TorrentsService {
         });
     }
     /**
-     * 前台用户查询可展示种子列表
+     * 前台用户列出可展示种子列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static torrentsControllerUserList(
+    public static torrentsControllerListTorrentsForUser(
         requestBody: UserListTorrentsDto,
     ): CancelablePromise<{
         code?: number;
@@ -232,7 +232,7 @@ export class TorrentsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/torrents/user/list',
+            url: '/torrents/user/list-torrents',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -245,12 +245,12 @@ export class TorrentsService {
         });
     }
     /**
-     * 后台管理员查询种子列表（高级筛选）
+     * 后台管理员列出种子列表（高级筛选）
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static torrentsControllerAdminList(
+    public static torrentsControllerListTorrentsForAdmin(
         requestBody: AdminListTorrentsDto,
     ): CancelablePromise<{
         code?: number;
@@ -266,7 +266,7 @@ export class TorrentsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/torrents/admin/list',
+            url: '/torrents/admin/list-torrents',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -443,7 +443,7 @@ export class TorrentsService {
         code?: number;
         message?: string;
         data?: {
-            torrentIds?: Array<string>;
+            torrent_ids?: Array<string>;
         };
         path?: string;
         timestamp?: string;
@@ -474,7 +474,7 @@ export class TorrentsService {
         code?: number;
         message?: string;
         data?: {
-            userIds?: Array<string>;
+            user_ids?: Array<string>;
         };
         path?: string;
         timestamp?: string;

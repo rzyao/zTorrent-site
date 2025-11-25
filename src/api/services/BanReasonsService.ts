@@ -103,12 +103,12 @@ export class BanReasonsService {
         });
     }
     /**
-     * 列表封禁原因
+     * 列出封禁原因列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static banReasonControllerList(
+    public static banReasonControllerListBanReasons(
         requestBody: ListBanReasonDto,
     ): CancelablePromise<{
         code?: number;
@@ -124,7 +124,7 @@ export class BanReasonsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/ban-reasons/list',
+            url: '/ban-reasons/list-ban-reasons',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

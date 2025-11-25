@@ -103,12 +103,12 @@ export class BanDaysService {
         });
     }
     /**
-     * 列表封禁天数
+     * 列出封禁天数列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static banDaysControllerList(
+    public static banDaysControllerListBanDays(
         requestBody: ListBanDaysDto,
     ): CancelablePromise<{
         code?: number;
@@ -124,7 +124,7 @@ export class BanDaysService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/ban-days/list',
+            url: '/ban-days/list-ban-days',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

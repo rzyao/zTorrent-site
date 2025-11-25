@@ -125,12 +125,12 @@ export class CategoriesService {
         });
     }
     /**
-     * 分页获取分类列表
+     * 分页列出分类列表（管理员）
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static categoriesControllerList(
+    public static categoriesControllerListCategoriesForAdmin(
         requestBody: ListCategoriesDto,
     ): CancelablePromise<{
         code?: number;
@@ -156,7 +156,7 @@ export class CategoriesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/categories/admin/list',
+            url: '/categories/admin/list-categories',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -203,6 +203,49 @@ export class CategoriesService {
         });
     }
     /**
+     * 分类树结构（父分类及其子分类）
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static categoriesControllerTree(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Array<{
+            id?: string;
+            key?: string;
+            label?: string;
+            description?: string | null;
+            enabled?: boolean;
+            isDefault?: boolean;
+            sort?: number;
+            type?: string;
+            children?: Array<{
+                id?: string;
+                key?: string;
+                label?: string;
+                description?: string | null;
+                enabled?: boolean;
+                sort?: number;
+                type?: string;
+                parentId?: string;
+            }>;
+        }>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/categories/tree',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
      * 用户获取可展示分类
      * @returns any 成功
      * @throws ApiError
@@ -225,7 +268,7 @@ export class CategoriesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/categories/user/list',
+            url: '/categories/user/list-categories',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

@@ -107,12 +107,12 @@ export class FilmsService {
         });
     }
     /**
-     * 列表影片
+     * 列出影片列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static filmsControllerList(
+    public static filmsControllerListFilms(
         requestBody: ListFilmsDto,
     ): CancelablePromise<{
         code?: number;

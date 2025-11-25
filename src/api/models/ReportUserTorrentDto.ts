@@ -4,17 +4,17 @@
 /* eslint-disable */
 export type ReportUserTorrentDto = {
     /**
-     * 种子ID
+     * 种子ID（snake_case）
      */
-    torrentId: string;
+    torrent_id: string;
     /**
-     * 是否正在做种
+     * 是否正在做种（snake_case）
      */
-    isSeeding?: boolean;
+    is_seeding?: boolean;
     /**
-     * 是否下载完成
+     * 是否下载完成（snake_case）
      */
-    isCompleted?: boolean;
+    is_completed?: boolean;
     /**
      * 已下载量（bigint字符串）
      */
@@ -24,8 +24,8 @@ export type ReportUserTorrentDto = {
      */
     uploaded?: string;
     /**
-     * 总做种时长（秒）
+     * 总做种时长（秒）（snake_case）
      */
-    seedTimeTotal?: number;
+    seed_time_total?: number;
 };
 

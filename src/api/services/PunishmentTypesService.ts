@@ -103,12 +103,12 @@ export class PunishmentTypesService {
         });
     }
     /**
-     * 列表处罚类型
+     * 列出处罚类型列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static punishmentTypeControllerList(
+    public static punishmentTypeControllerListPunishmentTypes(
         requestBody: ListPunishmentTypeDto,
     ): CancelablePromise<{
         code?: number;
@@ -124,7 +124,7 @@ export class PunishmentTypesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/punishment-types/list',
+            url: '/punishment-types/list-punishment-types',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

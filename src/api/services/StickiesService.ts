@@ -107,12 +107,12 @@ export class StickiesService {
         });
     }
     /**
-     * 列表置顶类型
+     * 列出置顶类型列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static stickiesControllerList(
+    public static stickiesControllerListStickyTypes(
         requestBody: ListStickiesDto,
     ): CancelablePromise<{
         code?: number;
@@ -128,7 +128,7 @@ export class StickiesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/stickies/list',
+            url: '/stickies/list-stickies',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -233,7 +233,7 @@ export class StickiesService {
         });
     }
     /**
-     * 列表种子置顶
+     * 列出某种子的置顶列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
@@ -254,7 +254,7 @@ export class StickiesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/stickies/torrents/list',
+            url: '/stickies/torrents/list-stickies',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

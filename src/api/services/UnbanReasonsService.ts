@@ -103,12 +103,12 @@ export class UnbanReasonsService {
         });
     }
     /**
-     * 列表解封原因
+     * 列出解封原因列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static unbanReasonControllerList(
+    public static unbanReasonControllerListUnbanReasons(
         requestBody: ListUnbanReasonDto,
     ): CancelablePromise<{
         code?: number;
@@ -124,7 +124,7 @@ export class UnbanReasonsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/unban-reasons/list',
+            url: '/unban-reasons/list-unban-reasons',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

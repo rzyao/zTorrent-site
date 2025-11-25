@@ -42,12 +42,12 @@ export class PermissionsService {
         });
     }
     /**
-     * 权限列表
+     * 列出权限列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerList(
+    public static permissionsControllerListPermissions(
         requestBody: ListPermissionsDto,
     ): CancelablePromise<{
         code?: number;
@@ -63,7 +63,7 @@ export class PermissionsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/permissions/list',
+            url: '/permissions/list-permissions',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

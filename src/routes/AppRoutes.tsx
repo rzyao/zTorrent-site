@@ -5,7 +5,7 @@ import { ForgotPasswordPage } from '../pages/ForgotPasswordPage';
 import { ApiTest } from '../pages/ApiTest';
 import HomePage from '../pages/HomePage';
 import TorrentsPage from '../pages/TorrentsPage';
-import ForumPage from '../pages/ForumPage';
+import { ForumPage } from '../pages/ForumPage'; // 修复：ForumPage.tsx 为具名导出，使用具名导入以避免默认导出错误
 import SubtitlesPage from '../pages/SubtitlesPage';
 import RankingPage from '../pages/RankingPage';
 import AppLayout from '../layouts/AppLayout';
@@ -13,6 +13,7 @@ import HomeLayout from '../layouts/HomeLayout';
 import MoviePage from '../pages/MoviePage';
 import TorrentDetailPage from '../pages/TorrentDetailPage/index';
 import { UploadTorrentPage } from '../pages/UploadTorrentPage';
+import { MessagesPage } from '../pages/MessagesPage'; // 新增：引入消息中心页面（具名导出）
 
 
 
@@ -122,6 +123,18 @@ export default function AppRoutes() {
           <AuthRoute>
             <AppLayout>
               <UploadTorrentPage />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
+      {/* 新增：消息中心路由，登录态保护 + 统一布局 */}
+      <Route
+        path="/messages"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <MessagesPage />
             </AppLayout>
           </AuthRoute>
         }

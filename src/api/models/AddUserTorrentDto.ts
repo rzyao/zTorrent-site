@@ -4,12 +4,12 @@
 /* eslint-disable */
 export type AddUserTorrentDto = {
     /**
-     * 用户ID
+     * 用户ID（snake_case）
      */
-    userId: string;
+    user_id: string;
     /**
-     * 种子ID
+     * 种子ID（snake_case）
      */
-    torrentId: string;
+    torrent_id: string;
 };
 

@@ -14,7 +14,7 @@ export type CreateTorrentDto = {
     /**
      * 子分类唯一键数组
      */
-    subCategoryKeys?: Array<string>;
+    subCategories?: Array<string>;
     /**
      * 子分类唯一键数组（兼容字段名：subCaterory）
      */

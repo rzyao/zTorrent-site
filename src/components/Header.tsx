@@ -1,8 +1,9 @@
 import { Search, Bell, Mail, User, TrendingUp, Upload, Download, ChartSpline } from 'lucide-react';
 import { Button } from './ui/button';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 export function Header() {
+  const navigate = useNavigate(); // 新增：用于按钮点击进行路由跳转
   return (
     <header className="sticky h-16 bg-[#0F171E] z-50 px-4 md:px-8 border-b border-gray-800" style={{ top: '-64px' }}>
       <div className="flex items-center justify-between h-full max-w-[1920px] mx-auto">
@@ -40,6 +41,7 @@ export function Header() {
             variant="ghost"
             size="icon"
             className="text-white hover:bg-white/10 rounded-none relative"
+            onClick={() => navigate('/messages?tab=system')}
           >
             <Bell className="w-5 h-5" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
@@ -48,6 +50,7 @@ export function Header() {
             variant="ghost"
             size="icon"
             className="text-white hover:bg-white/10 rounded-none relative"
+            onClick={() => navigate('/messages?tab=inbox')}
           >
             <Mail className="w-5 h-5" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
