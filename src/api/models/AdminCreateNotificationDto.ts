@@ -2,33 +2,33 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type SendMessageDto = {
+export type AdminCreateNotificationDto = {
     /**
-     * 接收者用户ID
+     * 通知类型
      */
-    recipientId: string;
+    type: string;
     /**
-     * 消息内容
+     * 标题
+     */
+    title: string;
+    /**
+     * 内容
      */
     content: string;
     /**
      * 内容格式
      */
-    format?: SendMessageDto.format;
+    contentFormat: AdminCreateNotificationDto.contentFormat;
     /**
      * 附件URL列表
      */
     attachments?: Array<string>;
-    /**
-     * 被回复的消息ID
-     */
-    replyToMessageId?: string;
 };
-export namespace SendMessageDto {
+export namespace AdminCreateNotificationDto {
     /**
      * 内容格式
      */
-    export enum format {
+    export enum contentFormat {
         PLAIN = 'plain',
         MARKDOWN = 'markdown',
         HTML = 'html',

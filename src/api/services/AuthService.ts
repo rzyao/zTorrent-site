@@ -265,4 +265,26 @@ export class AuthService {
             mediaType: 'application/json',
         });
     }
+    /**
+     * 当前用户信息
+     * 返回 JWT 用户的基本信息、角色与权限集合
+     * @returns any 查询成功
+     * @throws ApiError
+     */
+    public static authControllerProfile(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            user?: Record<string, any>;
+            roles?: Array<string>;
+            permissions?: Array<string>;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/auth/profile',
+        });
+    }
 }

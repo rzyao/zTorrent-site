@@ -76,6 +76,35 @@ export class PermissionsService {
         });
     }
     /**
+     * 列出全部权限（前端自行构建树）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static permissionsControllerListPermissionsTree(
+        requestBody: ListPermissionsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Array<PermissionDto>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/permissions/list-permissions-tree',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
      * 权限详情
      * @param requestBody
      * @returns any 成功
@@ -187,6 +216,104 @@ export class PermissionsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/permissions/assign',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 查询权限树
+     * 按可选 scope/type 筛选并返回权限树结构
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static permissionsControllerTree(
+        requestBody: {
+            scope?: 'web' | 'admin' | null;
+            type?: 'api' | 'page' | 'button' | null;
+        },
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Array<{
+            key?: string;
+            name?: string;
+            type?: string;
+            scope?: string;
+            children?: any[];
+        }>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/permissions/tree',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 查询当前用户拥有的权限树
+     * 根据 JWT 用户的权限集过滤后返回权限树
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static permissionsControllerTreeOfUser(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Array<Record<string, any>>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/permissions/tree-of-user',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 批量校验用户是否拥有指定权限键
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static permissionsControllerCheck(
+        requestBody: {
+            keys: Array<string>;
+        },
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            owned?: Array<string>;
+            missing?: Array<string>;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/permissions/check',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

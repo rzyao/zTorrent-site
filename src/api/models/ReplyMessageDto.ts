@@ -2,29 +2,29 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type SendMessageDto = {
+export type ReplyMessageDto = {
     /**
-     * 接收者用户ID
+     * 会话对端用户ID
      */
-    recipientId: string;
+    peerUserId: string;
     /**
-     * 消息内容
+     * 被回复的消息ID
+     */
+    replyToMessageId: string;
+    /**
+     * 回复内容
      */
     content: string;
     /**
      * 内容格式
      */
-    format?: SendMessageDto.format;
+    format?: ReplyMessageDto.format;
     /**
      * 附件URL列表
      */
     attachments?: Array<string>;
-    /**
-     * 被回复的消息ID
-     */
-    replyToMessageId?: string;
 };
-export namespace SendMessageDto {
+export namespace ReplyMessageDto {
     /**
      * 内容格式
      */

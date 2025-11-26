@@ -81,7 +81,7 @@ interface INotification {
   readAt?: string | null;
 }
 
-type MessageType = 'system' | 'inbox' | 'sent';
+type MessageType = 'system' | 'inbox' | 'sent' | 'favorites' | 'threads';
 
 interface Message {
   id: string;
@@ -97,7 +97,9 @@ interface Message {
 
 export function MessagesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = (searchParams.get('tab') as MessageType) || 'inbox';
+  const initialTabRaw = (searchParams.get('tab') || 'inbox') as string;
+  const allowedTabs: MessageType[] = ['system', 'inbox', 'sent', 'favorites', 'threads'];
+  const initialTab = (allowedTabs.includes(initialTabRaw as MessageType) ? initialTabRaw : 'inbox') as MessageType;
   const [activeTab, setActiveTab] = useState<MessageType>(initialTab);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [showCompose, setShowCompose] = useState(false);
@@ -459,7 +461,7 @@ export function MessagesPage() {
 
   useEffect(() => {
     const t = searchParams.get('tab');
-    if (t === 'system' || t === 'inbox' || t === 'sent') {
+    if (t && allowedTabs.includes(t as MessageType)) {
       setActiveTab(t as MessageType);
     }
   }, [searchParams]);
@@ -738,11 +740,11 @@ export function MessagesPage() {
               {/* 我的收藏 */}
               <button
                 onClick={() => {
-                  setActiveTab('favorites' as any);
+                  setActiveTab('favorites');
                   setSelectedMessage(null);
                   setShowCompose(false);
                 }}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all ${activeTab === ('favorites' as any)
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all ${activeTab === 'favorites'
                   ? 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-white'
                   : 'text-neutral-400 hover:bg-neutral-700/30 hover:text-white'
                   }`}
@@ -754,12 +756,12 @@ export function MessagesPage() {
               {/* 会话 */}
               <button
                 onClick={() => {
-                  setActiveTab('threads' as any);
+                  setActiveTab('threads');
                   setSelectedMessage(null);
                   setShowCompose(false);
                   setActiveThreadPeerUserId(null);
                 }}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all ${activeTab === ('threads' as any)
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all ${activeTab === 'threads'
                   ? 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-white'
                   : 'text-neutral-400 hover:bg-neutral-700/30 hover:text-white'
                   }`}
@@ -1048,7 +1050,7 @@ export function MessagesPage() {
               </div>
 
               {/* 内容：根据 Tab 决定渲染消息列表或会话列表/时间线 */}
-              {activeTab === ('threads' as any) ? (
+              {activeTab === 'threads' ? (
                 activeThreadPeerUserId ? (
                   <div className="p-6 space-y-4">
                     <div className="flex items-center justify-between">

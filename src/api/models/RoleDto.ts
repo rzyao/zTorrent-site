@@ -27,5 +27,9 @@ export type RoleDto = {
      * 更新时间
      */
     updatedAt: string;
+    /**
+     * 该角色拥有的权限数量
+     */
+    permissionsCount: number;
 };
 
