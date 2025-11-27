@@ -1,4 +1,4 @@
-import { CategoryNav } from '@/components/CategoryNav';
+import { CategoryNav } from '@/layouts/CategoryNav';
 import { Outlet, useParams, useNavigate, useLocation } from 'react-router-dom';
 
 export default function HomeLayout() {

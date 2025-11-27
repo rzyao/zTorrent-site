@@ -3,22 +3,21 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CreateSettingDto } from '../models/CreateSettingDto';
-import type { UpdateSettingsDto } from '../models/UpdateSettingsDto';
 import type { UpdateSettingsItemsDto } from '../models/UpdateSettingsItemsDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class SettingsService {
     /**
-     * 获取设置列表（详细字段）
+     * 获取设置列表
      * @returns any 成功
      * @throws ApiError
      */
-    public static settingsControllerListSetting(): CancelablePromise<{
+    public static settingsControllerListDetailedSettingsLegacy(): CancelablePromise<{
         code?: number;
         message?: string;
         data?: Array<{
-            id?: string;
+            id?: number;
             createdAt?: string;
             updatedAt?: string;
             deletedAt?: string | null;
@@ -27,6 +26,7 @@ export class SettingsService {
             comment?: string | null;
             type?: 'string' | 'number' | 'boolean' | 'json';
             group?: string;
+            sort?: number;
             description?: string | null;
             mutable?: number;
             jsonSchema?: string | null;
@@ -49,26 +49,43 @@ export class SettingsService {
         });
     }
     /**
-     * 按分组获取系统设置
-     * @param group
+     * 按分组获取设置列表（详细字段）
+     * @param requestBody 按分组查询设置列表的请求体
      * @returns any 成功
      * @throws ApiError
      */
-    public static settingsControllerGetGroup(
-        group: string,
+    public static settingsControllerListSettingsByGroup(
+        requestBody: {
+            group: string;
+        },
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: Array<{
+            id?: number;
+            createdAt?: string;
+            updatedAt?: string;
+            deletedAt?: string | null;
+            key?: string;
+            value?: string;
+            comment?: string | null;
+            type?: 'string' | 'number' | 'boolean' | 'json';
+            group?: string;
+            sort?: number;
+            description?: string | null;
+            mutable?: number;
+            jsonSchema?: string | null;
+            updatedBy?: string | null;
+            version?: number;
+        }>;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/settings/groups/{group}',
-            path: {
-                'group': group,
-            },
+            method: 'POST',
+            url: '/settings/list-setting-by-group',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -79,13 +96,13 @@ export class SettingsService {
         });
     }
     /**
-     * 更新系统设置（部分字段）
+     * 批量更新系统设置（通用 items 数组）
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static settingsControllerUpdate(
-        requestBody: UpdateSettingsDto,
+    public static settingsControllerUpdateSettingsItems(
+        requestBody: UpdateSettingsItemsDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -94,8 +111,8 @@ export class SettingsService {
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
-            method: 'PUT',
-            url: '/settings',
+            method: 'POST',
+            url: '/settings/update-items',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -124,36 +141,7 @@ export class SettingsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/settings',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 批量更新系统设置（通用 items 数组）
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static settingsControllerUpdateItems(
-        requestBody: UpdateSettingsItemsDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: Record<string, any>;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'PUT',
-            url: '/settings/items',
+            url: '/settings/create-setting',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -167,12 +155,14 @@ export class SettingsService {
     }
     /**
      * 按键删除设置
-     * @param key
+     * @param requestBody 按键删除设置的请求体
      * @returns any 成功
      * @throws ApiError
      */
-    public static settingsControllerRemove(
-        key: string,
+    public static settingsControllerDeleteSettingByKey(
+        requestBody: {
+            key: string;
+        },
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -183,11 +173,10 @@ export class SettingsService {
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
-            method: 'DELETE',
-            url: '/settings/{key}',
-            path: {
-                'key': key,
-            },
+            method: 'POST',
+            url: '/settings/delete-setting',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

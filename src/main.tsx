@@ -4,6 +4,8 @@ import App from "./App";
 import "./styles/globals.css";
 import "./index.css";
 // import "./index1.css";
+import { setupAxiosInterceptors } from './api/axiosInterceptors';
+
+setupAxiosInterceptors();
 
 createRoot(document.getElementById("root")!).render(<App />);
-

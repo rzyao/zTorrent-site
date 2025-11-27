@@ -144,7 +144,6 @@ export type { UpdatePunishmentTypeDto } from './models/UpdatePunishmentTypeDto';
 export type { UpdateRoleDto } from './models/UpdateRoleDto';
 export type { UpdateSeriesDto } from './models/UpdateSeriesDto';
 export type { UpdateSeriesFilmDto } from './models/UpdateSeriesFilmDto';
-export type { UpdateSettingsDto } from './models/UpdateSettingsDto';
 export type { UpdateSettingsItemDto } from './models/UpdateSettingsItemDto';
 export type { UpdateSettingsItemsDto } from './models/UpdateSettingsItemsDto';
 export type { UpdateStickyDto } from './models/UpdateStickyDto';

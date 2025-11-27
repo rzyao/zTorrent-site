@@ -1,4 +1,4 @@
-import { Header } from '@/components/Header';
+import { Header } from '@/layouts/Header';
 import { OpenAPI } from '@/api';
 
 const apiBase = (import.meta as any).env?.VITE_API_BASE_URL || '';

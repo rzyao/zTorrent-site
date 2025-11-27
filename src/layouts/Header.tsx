@@ -1,9 +1,9 @@
 import { Search, Bell, Mail, User, TrendingUp, Upload, Download, ChartSpline } from 'lucide-react';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 export function Header() {
-  const navigate = useNavigate(); // 新增：用于按钮点击进行路由跳转
+  const navigate = useNavigate();
   return (
     <header className="sticky h-16 bg-[#0F171E] z-50 px-4 md:px-8 border-b border-gray-800" style={{ top: '-64px' }}>
       <div className="flex items-center justify-between h-full max-w-[1920px] mx-auto">
@@ -19,6 +19,12 @@ export function Header() {
             <NavLink to="/subtitles" className="text-white hover:text-gray-300 transition-colors">字幕</NavLink>
             <NavLink to="/ranking" className="text-white hover:text-gray-300 transition-colors">排行榜</NavLink>
             <NavLink to="/upload" className="text-white hover:text-gray-300 transition-colors">上传</NavLink>
+            <NavLink to="/edit" className="text-white hover:text-gray-300 transition-colors">编辑</NavLink>
+            <NavLink to="/control" className="text-white hover:text-gray-300 transition-colors">控制台</NavLink>
+            <NavLink to="/tickets" className="text-white hover:text-gray-300 transition-colors">工单</NavLink>
+            <NavLink to="/requests" className="text-white hover:text-gray-300 transition-colors">求种</NavLink>
+            <NavLink to="/rules" className="text-white hover:text-gray-300 transition-colors">规则</NavLink>
+            <NavLink to="/staff" className="text-white hover:text-gray-300 transition-colors">管理组</NavLink>
           </nav>
         </div>
 

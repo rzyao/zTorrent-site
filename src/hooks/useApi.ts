@@ -15,17 +15,12 @@ export function useAuth() {
 
     try {
       const response = await AuthService.authControllerLogin({ username, password, idleLogout30m: autoLogout });
-      console.log(response);
-
-      const body = (response as any)?.code !== undefined ? response : (response as any)?.data;
-      const ok = body?.code === 1000;
-      if (!ok) {
-        throw new Error(body?.message || '登录失败');
+      const body = (response as any)?.code !== undefined ? response : (response as any)?.data ?? response as any;
+      const token = body?.data?.accessToken ?? body?.accessToken ?? body?.data?.access_token ?? body?.access_token;
+      if (!token) {
+        throw new Error(body?.message || '登录失败：未返回令牌');
       }
-      const token = body?.data?.accessToken;
-      if (token) {
-        localStorage.setItem('accessToken', token);
-      }
+      localStorage.setItem('accessToken', token);
       setIsAuthenticated(true);
 
       // 触发认证事件，通知路由守卫更新状态
@@ -49,15 +44,12 @@ export function useAuth() {
       const inviteCodeParam = params.get('inviteCode') || '';
       const type = inviteCodeParam ? 'invite' : 'open';
       const response = await AuthService.authControllerRegister({ email, username, password, type, inviteCode: inviteCodeParam });
-      const body = (response as any)?.code !== undefined ? response : (response as any)?.data;
-      const ok = body?.code === 1000;
-      if (!ok) {
-        throw new Error(body?.message || '注册失败');
+      const body = (response as any)?.code !== undefined ? response : (response as any)?.data ?? response as any;
+      const token = body?.data?.accessToken ?? body?.accessToken ?? body?.data?.access_token ?? body?.access_token;
+      if (!token) {
+        throw new Error(body?.message || '注册失败：未返回令牌');
       }
-      const token = body?.data?.accessToken;
-      if (token) {
-        localStorage.setItem('accessToken', token);
-      }
+      localStorage.setItem('accessToken', token);
       setIsAuthenticated(true);
       return response;
     } catch (err: any) {

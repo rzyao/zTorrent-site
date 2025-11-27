@@ -1,4 +1,4 @@
-import { Header } from '../components/Header';
+import { Header } from '../layouts/Header';
 
 export default function SubtitlesPage() {
   return (

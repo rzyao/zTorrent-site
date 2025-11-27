@@ -10,22 +10,35 @@ import TorrentsPage from '../pages/TorrentsPage';
 import { ForumPage } from '../pages/ForumPage'; // 修复：ForumPage.tsx 为具名导出，使用具名导入以避免默认导出错误
 import SubtitlesPage from '../pages/SubtitlesPage';
 import RankingPage from '../pages/RankingPage';
+import { EditPage } from '../pages/edit/EditPage';
 import AppLayout from '../layouts/AppLayout';
 import HomeLayout from '../layouts/HomeLayout';
 import MoviePage from '../pages/MoviePage';
 import TorrentDetailPage from '../pages/TorrentDetailPage/index';
 import { UploadTorrentPage } from '../pages/UploadTorrentPage';
 import { MessagesPage } from '../pages/MessagesPage'; // 新增：引入消息中心页面（具名导出）
+import { ControlPage } from '../pages/ControlPage'; // 新增：控制台页面（具名导出）
+import { RequestsPage } from '../pages/RequestsPage'; // 新增：求种专区页面（具名导出）
+import { RulesPage } from '../pages/RulesPage'; // 新增：站点规则页面（具名导出）
+import { StaffPage } from '../pages/StaffPage';
+import { TicketsPage } from '../pages/TicketsPage';
 
 
 
 function LoginPageWrapper() {
   const navigate = useNavigate();
+  const search = typeof window !== 'undefined' ? window.location.search : '';
+  const params = new URLSearchParams(search);
+  const from = params.get('from') || '/home';
+  const isLoggedIn = !!localStorage.getItem('accessToken');
+  if (isLoggedIn) {
+    return <Navigate to={from} replace />;
+  }
   return (
     <LoginPage
       onForgotPassword={() => navigate('/forgot-password')}
       onRegister={() => navigate('/register')}
-      onLoginSuccess={() => navigate('/home')}
+      onLoginSuccess={() => navigate(from)}
       onTestApi={() => navigate('/api-test')}
     />
   );
@@ -248,6 +261,22 @@ export default function AppRoutes() {
         }
       />
 
+      {/* 求种专区路由：登录态保护 + 统一布局
+          说明：该页面用于发布和浏览求种需求，默认仅要求登录。
+          如需限制为特定角色或权限，可改为：
+          <PermissionRoute requiredPermissions={["page:requests"]}> ... </PermissionRoute>
+      */}
+      <Route
+        path="/requests"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <RequestsPage />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
       <Route
         path="/upload"
         element={
@@ -265,6 +294,26 @@ export default function AppRoutes() {
         }
       />
 
+      {/* 编辑中心路由：登录态保护 + 统一布局
+          说明：当前按登录态开放（AuthRoute）。如需仅对特定角色/权限开放，
+          可改用 PermissionRoute，并设置 requiredPermissions 或 requiredRoles：
+          <PermissionRoute requiredPermissions={["page:edit"]}>
+            <AppLayout>
+              <EditPage />
+            </AppLayout>
+          </PermissionRoute>
+      */}
+      <Route
+        path="/edit"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <EditPage />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
       {/* 新增：消息中心路由，登录态保护 + 统一布局 */}
       <Route
         path="/messages"
@@ -272,6 +321,58 @@ export default function AppRoutes() {
           <AuthRoute>
             <AppLayout>
               <MessagesPage />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
+      {/* 控制台路由：登录态保护 + 统一布局
+          说明：该页面承载账户设置与偏好管理，默认仅要求登录。
+          如需限制给特定角色/权限，可改为：
+          <PermissionRoute requiredPermissions={["page:control"]}> ... </PermissionRoute>
+      */}
+      <Route
+        path="/control"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <ControlPage />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
+      {/* 站点规则路由：登录态保护 + 统一布局
+          说明：该页面展示站点规则与说明，默认仅要求登录。
+          如需开放给未登录用户，可移除 AuthRoute 改为直接渲染。*/}
+      <Route
+        path="/rules"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <RulesPage />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
+      <Route
+        path="/staff"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <StaffPage />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
+      <Route
+        path="/tickets"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <TicketsPage />
             </AppLayout>
           </AuthRoute>
         }

@@ -3,7 +3,6 @@ import { TrendingUp, Clock, Award } from 'lucide-react';
 export function Sidebar() {
   return (
     <div className="space-y-6">
-      {/* 热门种子 */}
       <div className="bg-white border rounded-lg p-4">
         <div className="flex items-center gap-2 mb-3 pb-3 border-b">
           <TrendingUp className="w-5 h-5 text-red-500" />
@@ -33,7 +32,6 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* 最新种子 */}
       <div className="bg-white border rounded-lg p-4">
         <div className="flex items-center gap-2 mb-3 pb-3 border-b">
           <Clock className="w-5 h-5 text-blue-500" />
@@ -60,7 +58,6 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* 排行榜 */}
       <div className="bg-white border rounded-lg p-4">
         <div className="flex items-center gap-2 mb-3 pb-3 border-b">
           <Award className="w-5 h-5 text-yellow-500" />
