@@ -6,15 +6,18 @@ import type { AddUserTorrentDto } from '../models/AddUserTorrentDto';
 import type { AdminListTorrentsDto } from '../models/AdminListTorrentsDto';
 import type { AutoUploadTorrentDto } from '../models/AutoUploadTorrentDto';
 import type { CheckInfoHashDto } from '../models/CheckInfoHashDto';
+import type { CreateSimpleTorrentDto } from '../models/CreateSimpleTorrentDto';
 import type { CreateTorrentDto } from '../models/CreateTorrentDto';
 import type { DeleteTorrentDto } from '../models/DeleteTorrentDto';
 import type { GetTorrentDto } from '../models/GetTorrentDto';
 import type { ListPendingCoversDto } from '../models/ListPendingCoversDto';
+import type { ListTorrentsDto } from '../models/ListTorrentsDto';
 import type { ListTorrentUsersDto } from '../models/ListTorrentUsersDto';
 import type { ListUserTorrentsDto } from '../models/ListUserTorrentsDto';
 import type { RecordDownloadDto } from '../models/RecordDownloadDto';
 import type { RemoveUserTorrentDto } from '../models/RemoveUserTorrentDto';
 import type { ReportUserTorrentDto } from '../models/ReportUserTorrentDto';
+import type { ReviewDto } from '../models/ReviewDto';
 import type { UpdateTorrentDto } from '../models/UpdateTorrentDto';
 import type { UserListTorrentsDto } from '../models/UserListTorrentsDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -279,6 +282,96 @@ export class TorrentsService {
         });
     }
     /**
+     * 简化列出种子列表（分页+关键词）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentsControllerListSimple(
+        requestBody: ListTorrentsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            items?: Array<Record<string, any>>;
+            total?: number;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/list',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 创建种子（Base64 文件 + 元数据）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentsControllerCreate(
+        requestBody: CreateSimpleTorrentDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Record<string, any>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/create',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 审核种子（通过/驳回）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentsControllerReview(
+        requestBody: ReviewDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Record<string, any>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/review',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
      * 更新种子元数据
      * @param requestBody
      * @returns any 成功
@@ -443,7 +536,7 @@ export class TorrentsService {
         code?: number;
         message?: string;
         data?: {
-            torrent_ids?: Array<string>;
+            torrentIds?: Array<string>;
         };
         path?: string;
         timestamp?: string;
@@ -474,7 +567,7 @@ export class TorrentsService {
         code?: number;
         message?: string;
         data?: {
-            user_ids?: Array<string>;
+            userIds?: Array<string>;
         };
         path?: string;
         timestamp?: string;

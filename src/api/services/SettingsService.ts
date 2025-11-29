@@ -186,4 +186,32 @@ export class SettingsService {
             },
         });
     }
+    /**
+     * 读取审核开关（只读）
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static settingsControllerGetReviewSwitches(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            filmReview?: boolean;
+            playlistReview?: boolean;
+            torrentReview?: boolean;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/settings/review-switches',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
 }

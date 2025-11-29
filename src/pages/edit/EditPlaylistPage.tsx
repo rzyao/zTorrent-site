@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ListVideo,
   Plus,
@@ -20,6 +20,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { usePlaylists } from '@/hooks/usePlaylists';
+import { useFilms } from '@/hooks/useFilms';
 
 interface Movie {
   id: string;
@@ -46,6 +48,8 @@ interface Playlist {
 }
 
 export function EditPlaylistPage() {
+  const { listPlaylists, getPlaylist, createPlaylist, updatePlaylist, deletePlaylist, addFilm, removeFilm, reorderFilm } = usePlaylists();
+  const { listFilms } = useFilms();
   const [playlists, setPlaylists] = useState<Playlist[]>([
     {
       id: '1',
@@ -187,6 +191,7 @@ export function EditPlaylistPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddMovie, setShowAddMovie] = useState(false);
+  const [available, setAvailable] = useState<Movie[]>([]);
 
   // 编辑表单状态
   const [editForm, setEditForm] = useState({
@@ -220,73 +225,77 @@ export function EditPlaylistPage() {
     setIsCreating(false);
   };
 
-  const handleSave = () => {
-    if (isCreating) {
-      // 创建新片单
-      const newPlaylist: Playlist = {
-        id: Date.now().toString(),
-        ...editForm,
-        movies: [],
-        createdAt: new Date().toISOString().split('T')[0],
-        updatedAt: new Date().toISOString().split('T')[0],
-        views: 0,
-        likes: 0,
-      };
-      setPlaylists([newPlaylist, ...playlists]);
-      setSelectedPlaylist(newPlaylist);
-      setIsCreating(false);
-    } else if (selectedPlaylist) {
-      // 更新现有片单
-      const updatedPlaylist = {
-        ...selectedPlaylist,
-        ...editForm,
-        updatedAt: new Date().toISOString().split('T')[0],
-      };
-      setPlaylists(
-        playlists.map((p) => (p.id === selectedPlaylist.id ? updatedPlaylist : p))
-      );
-      setSelectedPlaylist(updatedPlaylist);
-      setIsEditing(false);
+  const handleSave = async () => {
+    const payload: any = {
+      title: editForm.title,
+      description: editForm.description,
+      coverUrl: editForm.cover,
+      visibility: editForm.visibility,
+      type: 'general',
+      enabled: true,
+      sort: 0,
+    };
+    try {
+      if (isCreating) {
+        const res = await createPlaylist(payload);
+        const newId = res?.id || res;
+        const detail = await getPlaylist(String(newId));
+        const mapped = mapBackendPlaylistToLocal(detail);
+        setPlaylists([mapped, ...playlists]);
+        setSelectedPlaylist(mapped);
+        setIsCreating(false);
+      } else if (selectedPlaylist) {
+        await updatePlaylist(selectedPlaylist.id, payload);
+        const detail = await getPlaylist(selectedPlaylist.id);
+        const mapped = mapBackendPlaylistToLocal(detail);
+        setPlaylists(playlists.map((p) => (p.id === mapped.id ? mapped : p)));
+        setSelectedPlaylist(mapped);
+        setIsEditing(false);
+      }
+    } catch (e: any) {
+      alert(e?.message || '保存失败');
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('确定要删除这个片单吗？')) {
-      setPlaylists(playlists.filter((p) => p.id !== id));
-      if (selectedPlaylist?.id === id) {
-        setSelectedPlaylist(null);
+      try {
+        await deletePlaylist(id);
+        setPlaylists(playlists.filter((p) => p.id !== id));
+        if (selectedPlaylist?.id === id) {
+          setSelectedPlaylist(null);
+        }
+      } catch (e: any) {
+        alert(e?.message || '删除失败');
       }
     }
   };
 
-  const handleAddMovie = (movie: Movie) => {
+  const handleAddMovie = async (movie: Movie) => {
     if (selectedPlaylist) {
-      // 检查是否已存在
-      if (selectedPlaylist.movies.some((m) => m.id === movie.id)) {
-        alert('该影片已在片单中');
-        return;
+      try {
+        await addFilm(selectedPlaylist.id, movie.id);
+        const detail = await getPlaylist(selectedPlaylist.id);
+        const mapped = mapBackendPlaylistToLocal(detail);
+        setSelectedPlaylist(mapped);
+        setPlaylists(playlists.map((p) => (p.id === mapped.id ? mapped : p)));
+      } catch (e: any) {
+        alert(e?.message || '添加影片失败');
       }
-      const updatedPlaylist = {
-        ...selectedPlaylist,
-        movies: [...selectedPlaylist.movies, movie],
-      };
-      setSelectedPlaylist(updatedPlaylist);
-      setPlaylists(
-        playlists.map((p) => (p.id === selectedPlaylist.id ? updatedPlaylist : p))
-      );
     }
   };
 
-  const handleRemoveMovie = (movieId: string) => {
+  const handleRemoveMovie = async (movieId: string) => {
     if (selectedPlaylist) {
-      const updatedPlaylist = {
-        ...selectedPlaylist,
-        movies: selectedPlaylist.movies.filter((m) => m.id !== movieId),
-      };
-      setSelectedPlaylist(updatedPlaylist);
-      setPlaylists(
-        playlists.map((p) => (p.id === selectedPlaylist.id ? updatedPlaylist : p))
-      );
+      try {
+        await removeFilm(selectedPlaylist.id, movieId);
+        const detail = await getPlaylist(selectedPlaylist.id);
+        const mapped = mapBackendPlaylistToLocal(detail);
+        setSelectedPlaylist(mapped);
+        setPlaylists(playlists.map((p) => (p.id === mapped.id ? mapped : p)));
+      } catch (e: any) {
+        alert(e?.message || '移除影片失败');
+      }
     }
   };
 
@@ -321,6 +330,55 @@ export function EditPlaylistPage() {
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const list = await listPlaylists({ page: 1, limit: 50, keyword: searchQuery });
+        const mapped = (list?.items ?? []).map(mapBackendPlaylistToLocal);
+        setPlaylists(mapped);
+      } catch {}
+      try {
+        const films = await listFilms({ page: 1, limit: 50, keyword: '' });
+        const availableMapped = (films?.items ?? []).map((f: any) => ({
+          id: String(f?.id ?? ''),
+          title: f?.title ?? '',
+          originalTitle: f?.originalTitle ?? '',
+          year: String(f?.year ?? ''),
+          poster: f?.posterUrl ?? f?.coverUrl ?? '',
+          category: f?.category ?? '',
+          rating: Number(f?.rating ?? 0),
+          torrentCount: Number(f?.torrentCount ?? 0),
+        }));
+        setAvailable(availableMapped);
+      } catch {}
+    })();
+  }, [searchQuery]);
+
+  function mapBackendPlaylistToLocal(detail: any): Playlist {
+    const movies = Array.isArray(detail?.movies) ? detail.movies.map((f: any) => ({
+      id: String(f?.id ?? ''),
+      title: f?.title ?? '',
+      originalTitle: f?.originalTitle ?? '',
+      year: String(f?.year ?? ''),
+      poster: f?.posterUrl ?? f?.coverUrl ?? '',
+      category: f?.category ?? '',
+      rating: Number(f?.rating ?? 0),
+      torrentCount: Number(f?.torrentCount ?? 0),
+    })) : [];
+    return {
+      id: String(detail?.id ?? ''),
+      title: detail?.title ?? '',
+      description: detail?.description ?? '',
+      cover: detail?.coverUrl ?? '',
+      visibility: detail?.visibility ?? 'public',
+      movies,
+      createdAt: String(detail?.createdAt ?? ''),
+      updatedAt: String(detail?.updatedAt ?? ''),
+      views: Number(detail?.views ?? 0),
+      likes: Number(detail?.likes ?? 0),
+    };
+  }
 
   return (
     <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-6">

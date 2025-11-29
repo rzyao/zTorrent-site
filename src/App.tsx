@@ -2,6 +2,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { useEffect } from 'react';
 import { AppToaster } from './components/ui/sonner';
 import AppRoutes from './routes/AppRoutes';
+import { AccessProvider } from '@/context/AccessContext';
 import { useDictionaryStore } from './stores/dictionaryStore';
 
 // 全局认证事件
@@ -22,8 +23,10 @@ export default function App() {
   
   return (
     <BrowserRouter>
-      <AppToaster />
-      <AppRoutes />
+      <AccessProvider>
+        <AppToaster />
+        <AppRoutes />
+      </AccessProvider>
     </BrowserRouter>
   );
 }

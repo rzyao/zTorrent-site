@@ -1,13 +1,14 @@
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { AuthService } from '../api';
+import { useAccess } from '@/context/AccessContext';
 import { LoginPage } from '../pages/LoginPage';
 import { Register } from '../pages/Register';
 import { ForgotPasswordPage } from '../pages/ForgotPasswordPage';
 import { ApiTest } from '../pages/ApiTest';
 import HomePage from '../pages/HomePage';
 import TorrentsPage from '../pages/TorrentsPage';
-import { ForumPage } from '../pages/ForumPage'; // 修复：ForumPage.tsx 为具名导出，使用具名导入以避免默认导出错误
+import { ForumPage } from '../pages/forum/ForumPage'; // 修复：ForumPage.tsx 为具名导出，使用具名导入以避免默认导出错误
 import SubtitlesPage from '../pages/SubtitlesPage';
 import RankingPage from '../pages/RankingPage';
 import { EditPage } from '../pages/edit/EditPage';
@@ -22,6 +23,11 @@ import { RequestsPage } from '../pages/RequestsPage'; // 新增：求种专区�
 import { RulesPage } from '../pages/RulesPage'; // 新增：站点规则页面（具名导出）
 import { StaffPage } from '../pages/StaffPage';
 import { TicketsPage } from '../pages/TicketsPage';
+import { ReviewPage } from '../pages/ReviewPage';
+// 系统设置页已移除（管理端页面不在用户端呈现）
+// 新增：魔力值中心页面（具名导出）
+import { BonusPage } from '../pages/BonusPage';
+import { InvitePage } from '../pages/InvitePage';
 
 
 
@@ -69,76 +75,7 @@ function AuthRoute({ children }: { children: React.ReactNode }) {
 /**
  * 用户权限数据（来自后端 /auth/profile）结构
  */
-type UserAccess = {
-  roles: string[];
-  permissions: string[];
-};
-
-/**
- * 拉取并缓存当前用户的角色/权限集合
- * 说明：
- * - 为了最小侵入，此处仅在需要权限校验时拉取，避免每次路由切换重复请求
- * - 解析响应时兼容后端返回的包裹结构（存在 code/message/data）
- */
-function useUserAccess() {
-  const [access, setAccess] = useState<UserAccess>({ roles: [], permissions: [] });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (!token) return;
-
-    let mounted = true;
-    setLoading(true);
-    setError(null);
-
-    AuthService.authControllerProfile()
-      .then((resp: any) => {
-        // 兼容响应包裹：优先取 resp.data，再取 resp
-        const body = resp?.code !== undefined ? resp : resp?.data;
-        const data = body?.data ?? body;
-        const roles: string[] = Array.isArray(data?.roles) ? data.roles : [];
-        const permissions: string[] = Array.isArray(data?.permissions) ? data.permissions : [];
-        if (mounted) setAccess({ roles, permissions });
-      })
-      .catch((e: any) => {
-        if (mounted) setError(e?.message || '获取用户权限失败');
-      })
-      .finally(() => {
-        if (mounted) setLoading(false);
-      });
-
-    // 登录状态变化时（登录/登出），由 useAuth 派发 authChange 事件，这里可选择性重载
-    const reloadOnAuthChange = () => {
-      const t = localStorage.getItem('accessToken');
-      if (!t) {
-        setAccess({ roles: [], permissions: [] });
-        return;
-      }
-      setLoading(true);
-      setError(null);
-      AuthService.authControllerProfile()
-        .then((resp: any) => {
-          const body = resp?.code !== undefined ? resp : resp?.data;
-          const data = body?.data ?? body;
-          const roles: string[] = Array.isArray(data?.roles) ? data.roles : [];
-          const permissions: string[] = Array.isArray(data?.permissions) ? data.permissions : [];
-          setAccess({ roles, permissions });
-        })
-        .catch((e: any) => setError(e?.message || '获取用户权限失败'))
-        .finally(() => setLoading(false));
-    };
-
-    window.addEventListener('authChange', reloadOnAuthChange);
-    return () => {
-      mounted = false;
-      window.removeEventListener('authChange', reloadOnAuthChange);
-    };
-  }, []);
-
-  return { access, loading, error };
-}
+// 统一从 AccessContext 获取权限数据
 
 /**
  * 基于后端权限字符的高级路由守卫
@@ -158,17 +95,19 @@ function PermissionRoute({
   requiredPermissions,
   requiredRoles,
   matchAll = true,
+  combine = 'AND',
 }: {
   children: React.ReactNode;
   requiredPermissions?: string[];
   requiredRoles?: string[];
   matchAll?: boolean;
+  combine?: 'AND' | 'OR';
 }) {
   const isLoggedIn = !!localStorage.getItem('accessToken');
   if (!isLoggedIn) return <Navigate to="/login" replace />;
 
-  const { access, loading } = useUserAccess();
-  if (loading) return <></>; // 可替换为全局加载组件
+  const { access, loading } = useAccess();
+  if (loading) return <div style={{ padding: 24, color: '#ccc' }}>加载中…</div>;
 
   // 检查角色与权限是否满足要求
   const hasRequired = () => {
@@ -187,7 +126,23 @@ function PermissionRoute({
     return hasRoles && hasPerms;
   };
 
-  if (!hasRequired()) return <Navigate to="/home" replace />;
+  const hasAnyRequired = () => {
+    const rolesOk = !requiredRoles || requiredRoles.length === 0 ? true : hasRequired();
+    const permsOk = !requiredPermissions || requiredPermissions.length === 0 ? true : hasRequired();
+    if (combine === 'OR') {
+      const hasRoles = !requiredRoles || requiredRoles.length === 0 ? false : (
+        matchAll ? requiredRoles.every(r => access.roles.includes(r)) : requiredRoles.some(r => access.roles.includes(r))
+      );
+      const hasPerms = !requiredPermissions || requiredPermissions.length === 0 ? false : (
+        matchAll ? requiredPermissions.every(p => access.permissions.includes(p)) : requiredPermissions.some(p => access.permissions.includes(p))
+      );
+      return hasRoles || hasPerms;
+    }
+    return hasRequired();
+  };
+
+  if (access.username === 'admin') return <>{children}</>;
+  if (!hasAnyRequired()) return <Navigate to="/home" replace />;
   return <>{children}</>;
 }
 
@@ -261,6 +216,29 @@ export default function AppRoutes() {
         }
       />
 
+      {/* 新增：魔力值中心路由，登录态保护 + 统一布局 */}
+      <Route
+        path="/invite"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <InvitePage />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
+      <Route
+        path="/bonus"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <BonusPage />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
       {/* 求种专区路由：登录态保护 + 统一布局
           说明：该页面用于发布和浏览求种需求，默认仅要求登录。
           如需限制为特定角色或权限，可改为：
@@ -315,6 +293,17 @@ export default function AppRoutes() {
       />
 
       {/* 新增：消息中心路由，登录态保护 + 统一布局 */}
+      <Route
+        path="/review"
+        element={
+          <PermissionRoute requiredPermissions={["review:write"]} requiredRoles={["admin"]} combine="OR">
+            <AppLayout>
+              <ReviewPage />
+            </AppLayout>
+          </PermissionRoute>
+        }
+      />
+
       <Route
         path="/messages"
         element={
@@ -377,6 +366,8 @@ export default function AppRoutes() {
           </AuthRoute>
         }
       />
+
+      {/* 管理端系统设置页不在用户端路由中呈现，已移除 */}
 
       <Route
         path="/torrent-detail/:id"

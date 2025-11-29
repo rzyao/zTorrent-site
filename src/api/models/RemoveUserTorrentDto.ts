@@ -4,12 +4,12 @@
 /* eslint-disable */
 export type RemoveUserTorrentDto = {
     /**
-     * 用户ID（snake_case）
+     * 用户ID（camelCase），兼容 user_id
      */
-    user_id: string;
+    userId: string;
     /**
-     * 种子ID（snake_case）
+     * 种子ID（camelCase），兼容 torrent_id
      */
-    torrent_id: string;
+    torrentId: string;
 };
 

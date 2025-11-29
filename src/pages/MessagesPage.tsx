@@ -878,15 +878,16 @@ export function MessagesPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-neutral-300 text-sm mb-2 block">格式</label>
-                    <select
-                      value={composeFormat}
-                      onChange={(e) => setComposeFormat(e.target.value as any)}
-                      className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-2.5 text-white text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none transition-all"
-                    >
-                      <option value="plain">纯文本</option>
-                      <option value="markdown">Markdown</option>
-                      <option value="html">HTML</option>
-                    </select>
+                    <Select value={composeFormat} onValueChange={(v) => setComposeFormat(v as any)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择格式" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="plain">纯文本</SelectItem>
+                        <SelectItem value="markdown">Markdown</SelectItem>
+                        <SelectItem value="html">HTML</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <label className="text-neutral-300 text-sm mb-2 block">图片附件</label>
@@ -1121,15 +1122,16 @@ export function MessagesPage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                         <div>
                           <label className="text-neutral-300 text-sm mb-2 block">格式</label>
-                          <select
-                            value={replyFormat}
-                            onChange={(e) => setReplyFormat(e.target.value as any)}
-                            className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-2.5 text-white text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none transition-all"
-                          >
-                            <option value="plain">纯文本</option>
-                            <option value="markdown">Markdown</option>
-                            <option value="html">HTML</option>
-                          </select>
+                          <Select value={replyFormat} onValueChange={(v) => setReplyFormat(v as any)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="选择格式" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="plain">纯文本</SelectItem>
+                              <SelectItem value="markdown">Markdown</SelectItem>
+                              <SelectItem value="html">HTML</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div>
                           <label className="text-neutral-300 text-sm mb-2 block">图片附件</label>

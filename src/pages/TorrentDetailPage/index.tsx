@@ -121,7 +121,10 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
 
   useEffect(() => {
     let cancelled = false;
-    const num = (v: any) => Number(v ?? 0);
+    const num = (v: any) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    };
     const str = (v: any) => String(v ?? '');
     const load = async () => {
       if (!effectiveId) return;
@@ -148,7 +151,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
           completed: num(data?.completed),
           comments: num(data?.comments),
           thanks: num(data?.thanks),
-          rating: Number(data?.rating),
+          rating: num(data?.rating),
           imdb: str(data?.imdb),
           douban: str(data?.douban),
           uploader: str(data?.uploader),
@@ -246,10 +249,12 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
             {torrentData.isFree && (
               <Badge className="bg-green-500 text-white">FREE</Badge>
             )}
-            <div className="flex items-center gap-1 text-yellow-400 ml-2">
-              <Star className="w-4 h-4 fill-yellow-400" />
-              <span>{torrentData.rating}</span>
-            </div>
+            {Number.isFinite(torrentData.rating) && (
+              <div className="flex items-center gap-1 text-yellow-400 ml-2">
+                <Star className="w-4 h-4 fill-yellow-400" />
+                <span>{torrentData.rating}</span>
+              </div>
+            )}
             {torrentData.isFree && (
               <div className="ml-2 flex items-center gap-1 text-green-400 text-sm">
                 <Info className="w-3 h-3" />

@@ -289,8 +289,8 @@ export function StaffPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">
-      <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-4 py-4">
         {/* 页面标题 */}
         <div className="mb-8">
           <div className="flex items-center gap-3">
@@ -340,8 +340,8 @@ export function StaffPage() {
           <button
             onClick={() => setSelectedRole('all')}
             className={`px-6 py-3 rounded-xl transition-all ${selectedRole === 'all'
-                ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25'
-                : 'bg-neutral-800/50 text-neutral-400 hover:text-white hover:bg-neutral-700/50 border border-neutral-700'
+              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25'
+              : 'bg-neutral-800/50 text-neutral-400 hover:text-white hover:bg-neutral-700/50 border border-neutral-700'
               }`}
           >
             <div className="flex items-center gap-2">
@@ -358,8 +358,8 @@ export function StaffPage() {
               key={role}
               onClick={() => setSelectedRole(role)}
               className={`px-6 py-3 rounded-xl transition-all ${selectedRole === role
-                  ? `bg-gradient-to-r ${config.color} text-white shadow-lg`
-                  : `${config.bgColor} ${config.textColor} hover:opacity-80 border ${config.borderColor}`
+                ? `bg-gradient-to-r ${config.color} text-white shadow-lg`
+                : `${config.bgColor} ${config.textColor} hover:opacity-80 border ${config.borderColor}`
                 }`}
             >
               <div className="flex items-center gap-2">

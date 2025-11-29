@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 type TabType = 'profile' | 'preferences' | 'security' | 'notifications' | 'privacy';
 
@@ -127,8 +128,8 @@ export function ControlPage() {
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
-                            ? 'bg-gradient-to-r from-amber-500/20 to-orange-600/20 text-amber-400 border border-amber-500/30'
-                            : 'text-neutral-400 hover:text-white hover:bg-neutral-700/30'
+                          ? 'bg-gradient-to-r from-amber-500/20 to-orange-600/20 text-amber-400 border border-amber-500/30'
+                          : 'text-neutral-400 hover:text-white hover:bg-neutral-700/30'
                           }`}
                       >
                         <Icon className="w-4 h-4" />
@@ -270,19 +271,23 @@ export function ControlPage() {
                   {/* 所在地 */}
                   <div className="space-y-2">
                     <label className="text-neutral-300 text-sm">所在地</label>
-                    <select
+                    <Select
                       value={profileData.location}
-                      onChange={(e) =>
-                        setProfileData({ ...profileData, location: e.target.value })
+                      onValueChange={(value) =>
+                        setProfileData({ ...profileData, location: value })
                       }
-                      className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
                     >
-                      <option value="中国">中国</option>
-                      <option value="美国">美国</option>
-                      <option value="日本">日本</option>
-                      <option value="韩国">韩国</option>
-                      <option value="其他">其他</option>
-                    </select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择所在地" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="中国">中国</SelectItem>
+                        <SelectItem value="美国">美国</SelectItem>
+                        <SelectItem value="日本">日本</SelectItem>
+                        <SelectItem value="韩国">韩国</SelectItem>
+                        <SelectItem value="其他">其他</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   {/* 个人简介 */}
@@ -314,84 +319,100 @@ export function ControlPage() {
                     </div>
                   </div>
 
-                  {/* 语言 */}
+                  {/* 语言：使用自定义 Select 组件替换原生 select，保持偏好状态更新 */}
                   <div className="space-y-2">
                     <label className="text-neutral-300 text-sm flex items-center gap-2">
                       <Globe className="w-4 h-4" />
                       语言
                     </label>
-                    <select
+                    <Select
                       value={preferences.language}
-                      onChange={(e) =>
-                        setPreferences({ ...preferences, language: e.target.value })
+                      onValueChange={(v) =>
+                        setPreferences({ ...preferences, language: v })
                       }
-                      className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
                     >
-                      <option value="zh-CN">简体中文</option>
-                      <option value="zh-TW">繁體中文</option>
-                      <option value="en-US">English</option>
-                      <option value="ja-JP">日本語</option>
-                    </select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择语言" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="zh-CN">简体中文</SelectItem>
+                        <SelectItem value="zh-TW">繁體中文</SelectItem>
+                        <SelectItem value="en-US">English</SelectItem>
+                        <SelectItem value="ja-JP">日本語</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <Separator className="bg-neutral-700/50" />
 
-                  {/* 主题 */}
+                  {/* 主题：统一使用 Select 组件 */}
                   <div className="space-y-2">
                     <label className="text-neutral-300 text-sm flex items-center gap-2">
                       <Monitor className="w-4 h-4" />
                       主题
                     </label>
-                    <select
+                    <Select
                       value={preferences.theme}
-                      onChange={(e) =>
-                        setPreferences({ ...preferences, theme: e.target.value })
+                      onValueChange={(v) =>
+                        setPreferences({ ...preferences, theme: v })
                       }
-                      className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
                     >
-                      <option value="dark">深色模式</option>
-                      <option value="light">浅色模式</option>
-                      <option value="auto">跟随系统</option>
-                    </select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择主题" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="dark">深色模式</SelectItem>
+                        <SelectItem value="light">浅色模式</SelectItem>
+                        <SelectItem value="auto">跟随系统</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <Separator className="bg-neutral-700/50" />
 
-                  {/* 每页种子数 */}
+                  {/* 每页种子数：数值型需转换为整数 */}
                   <div className="space-y-2">
                     <label className="text-neutral-300 text-sm">每页显示种子��</label>
-                    <select
-                      value={preferences.torrentsPerPage}
-                      onChange={(e) =>
+                    <Select
+                      value={String(preferences.torrentsPerPage)}
+                      onValueChange={(v) =>
                         setPreferences({
                           ...preferences,
-                          torrentsPerPage: parseInt(e.target.value),
+                          torrentsPerPage: parseInt(v),
                         })
                       }
-                      className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
                     >
-                      <option value="25">25</option>
-                      <option value="50">50</option>
-                      <option value="75">75</option>
-                      <option value="100">100</option>
-                    </select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择每页数量" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="25">25</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                        <SelectItem value="75">75</SelectItem>
+                        <SelectItem value="100">100</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <Separator className="bg-neutral-700/50" />
 
-                  {/* 默认视图 */}
+                  {/* 默认视图：字符串枚举 */}
                   <div className="space-y-2">
                     <label className="text-neutral-300 text-sm">默认视图</label>
-                    <select
+                    <Select
                       value={preferences.defaultView}
-                      onChange={(e) =>
-                        setPreferences({ ...preferences, defaultView: e.target.value })
+                      onValueChange={(v) =>
+                        setPreferences({ ...preferences, defaultView: v })
                       }
-                      className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
                     >
-                      <option value="grid">网格视图</option>
-                      <option value="list">列表视图</option>
-                    </select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择默认视图" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="grid">网格视图</SelectItem>
+                        <SelectItem value="list">列表视图</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <Separator className="bg-neutral-700/50" />
@@ -530,22 +551,26 @@ export function ControlPage() {
                   {/* 会话超时 */}
                   <div className="space-y-2">
                     <label className="text-neutral-300 text-sm">会话超时（分钟）</label>
-                    <select
-                      value={security.sessionTimeout}
-                      onChange={(e) =>
+                    <Select
+                      value={String(security.sessionTimeout)}
+                      onValueChange={(v) =>
                         setSecurity({
                           ...security,
-                          sessionTimeout: parseInt(e.target.value),
+                          sessionTimeout: parseInt(v),
                         })
                       }
-                      className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
                     >
-                      <option value="30">30分钟</option>
-                      <option value="60">1小时</option>
-                      <option value="120">2小时</option>
-                      <option value="240">4小时</option>
-                      <option value="480">8小时</option>
-                    </select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择会话超时" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="30">30分钟</SelectItem>
+                        <SelectItem value="60">1小时</SelectItem>
+                        <SelectItem value="120">2小时</SelectItem>
+                        <SelectItem value="240">4小时</SelectItem>
+                        <SelectItem value="480">8小时</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <p className="text-neutral-500 text-xs">
                       无操作后自动退出登录的时间
                     </p>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, memo } from 'react';
 import {
   MessageSquare,
   ThumbsUp,
@@ -19,9 +19,11 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { ForumCategoriesService } from '@/api/services/ForumCategoriesService';
 import { ForumThreadsService } from '@/api/services/ForumThreadsService';
 import { ForumPostsService } from '@/api/services/ForumPostsService';
+import { RichTextEditor } from './RichTextEditor';
 
 /**
  * 统一响应解包辅助函数
@@ -67,6 +69,7 @@ interface IForumThread {
   categoryId: string;
   title: string;
   authorId: string;
+  authorUsername?: string;
   content: string;
   status: 'normal' | 'locked' | 'hidden' | 'deleted';
   highlightMeta?: { status?: string[]; timeType?: number | null; endTime?: string | null } | null;
@@ -80,6 +83,7 @@ interface IForumPost {
   id: string;
   threadId: string;
   authorId: string;
+  authorUsername?: string;
   content: string;
   parentId?: string | null;
   status: 'normal' | 'hidden' | 'deleted';
@@ -117,6 +121,23 @@ interface Reply {
   likes: number;
 }
 
+const ContentPreview = memo(function ContentPreview({ html }: { html: string }) {
+  return (
+    <div
+      className="bg-neutral-900/40 rounded-lg p-6 text-neutral-300 leading-relaxed mb-6 prose prose-invert max-w-none"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+});
+const ReplyContent = memo(function ReplyContent({ html }: { html: string }) {
+  return (
+    <div
+      className="text-neutral-300 text-sm leading-relaxed mb-3 prose prose-invert max-w-none"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+});
+
 export function ForumPage() {
   const [activeCategory, setActiveCategory] = useState<ForumCategory>('all');
   const [selectedPost, setSelectedPost] = useState<ForumPost | null>(null);
@@ -127,24 +148,42 @@ export function ForumPage() {
    * 新增：基于后端的真实数据状态管理（不影响旧模拟数据变量，后续将替换 UI 引用）
    */
   const [activeCategoryId, setActiveCategoryId] = useState<string>('all');
+  const [newThreadCategoryId, setNewThreadCategoryId] = useState<string>('');
   const [serverCategories, setServerCategories] = useState<Array<{ id: string; name: string }>>([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
   const [threads, setThreads] = useState<IForumThread[]>([]);
   const [threadsTotal, setThreadsTotal] = useState(0);
   const [selectedThread, setSelectedThread] = useState<IForumThread | null>(null);
+  const [threadDetail, setThreadDetail] = useState<IForumThread | null>(null);
   const [posts, setPosts] = useState<IForumPost[]>([]);
   const [postsPage, setPostsPage] = useState(1);
   const [postsLimit, setPostsLimit] = useState(20);
   const [postsTotal, setPostsTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [replyParentId, setReplyParentId] = useState<string | null>(null);
+  const [newThreadTitle, setNewThreadTitle] = useState('');
+  const [newThreadContent, setNewThreadContent] = useState('');
+  const [replyContent, setReplyContent] = useState('');
+
+  const postsMap = useMemo(() => {
+    const map = new Map<string, IForumPost>();
+    posts.forEach(p => map.set(p.id, p));
+    return map;
+  }, [posts]);
 
   /** 高亮样式解析：将后端的状态数组映射为布尔标志 */
   const parseHighlight = useMemo(() => (statuses?: string[]) => {
     const set = new Set(statuses || []);
     return { bold: set.has('bold'), red: set.has('red'), hot: set.has('badge:hot') };
   }, []);
+
+  const getCategoryName = useMemo(() => (id?: string) => {
+    if (!id) return '-';
+    const found = serverCategories.find(c => c.id === id);
+    return found?.name ?? id;
+  }, [serverCategories]);
 
   /** 拉取板块列表并注入一个虚拟“全部”项 */
   useEffect(() => {
@@ -184,25 +223,66 @@ export function ForumPage() {
     })();
   }, [activeCategoryId, searchQuery, page, limit]);
 
-  /** 当进入详情时，拉取主题详情与回帖列表 */
+  // 拉取主题详情（避免更新 selectedThread 导致副作用循环）
   useEffect(() => {
+    let cancelled = false;
     (async () => {
-      if (!selectedThread) return;
+      if (!selectedThread) { setThreadDetail(null); return; }
       try {
         const detailResp = await ForumThreadsService.forumThreadsControllerGetThread({ id: selectedThread.id });
         const detail = unwrapResponse<IForumThread>(detailResp);
-        setSelectedThread(detail);
-
-        const postsResp = await ForumPostsService.forumPostsControllerListPosts({ threadId: selectedThread.id, page: postsPage, limit: postsLimit });
-        const postsData = unwrapResponse<{ items?: IForumPost[]; total?: number; page?: number; limit?: number }>(postsResp);
-        setPosts(Array.isArray(postsData?.items) ? postsData.items! : []);
-        setPostsTotal(Number(postsData?.total || 0));
+        if (!cancelled) setThreadDetail(detail);
       } catch (err: any) {
-        setError(extractErrorMessage(err));
+        if (!cancelled) setError(extractErrorMessage(err));
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedThread, postsPage, postsLimit]);
+    return () => { cancelled = true; };
+  }, [selectedThread?.id]);
+
+  // 拉取回帖列表
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!selectedThread) return;
+      try {
+        const postsResp = await ForumPostsService.forumPostsControllerListPosts({ threadId: selectedThread.id, page: postsPage, limit: postsLimit });
+        const postsData = unwrapResponse<{ items?: IForumPost[]; total?: number; page?: number; limit?: number }>(postsResp);
+        if (!cancelled) {
+          setPosts(Array.isArray(postsData?.items) ? postsData.items! : []);
+          setPostsTotal(Number(postsData?.total || 0));
+        }
+      } catch (err: any) {
+        if (!cancelled) setError(extractErrorMessage(err));
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [selectedThread?.id, postsPage, postsLimit]);
+
+  const renderPreview = (text: string) => {
+    let html = text || '';
+    html = html.replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold text-white mt-4 mb-2">$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold text-white mt-4 mb-2">$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1 class="text-2xl font-semibold text-white mt-4 mb-2">$1</h1>');
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>');
+    html = html.replace(/\*(.+?)\*/g, '<em class="italic">$1</em>');
+    html = html.replace(/~~(.+?)~~/g, '<del class="line-through text-neutral-400">$1</del>');
+    html = html.replace(/<u>(.+?)<\/u>/g, '<u class="underline">$1</u>');
+    html = html.replace(/`([^`]+)`/g, '<code class="bg-neutral-800 text-amber-400 px-1.5 py-0.5 rounded text-sm">$1</code>');
+    html = html.replace(/```\n?([\s\S]*?)\n?```/g, '<pre class="bg-neutral-800 text-neutral-300 p-4 rounded-lg overflow-x-auto my-3"><code>$1</code></pre>');
+    html = html.replace(/^> (.+$)/gim, '<blockquote class="border-l-4 border-amber-500 pl-4 py-2 my-3 text-neutral-300 bg-neutral-800/50 rounded">$1</blockquote>');
+    html = html.replace(/^\- (.+$)/gim, '<li class="ml-4">• $1</li>');
+    html = html.replace(/^\d+\. (.+$)/gim, '<li class="ml-4 list-decimal">$1</li>');
+    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full rounded-lg my-3" />');
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-amber-400 hover:text-amber-300 underline" target="_blank" rel="noopener noreferrer">$1</a>');
+    html = html.replace(/\n/g, '<br />');
+    return html;
+  };
+
+
+  const contentHtml = useMemo(
+    () => renderPreview(threadDetail?.content ?? selectedThread?.content ?? ''),
+    [threadDetail?.content, selectedThread?.content]
+  );
 
   // 模拟数据 - 帖子列表
   const forumPosts: ForumPost[] = [
@@ -327,36 +407,6 @@ export function ForumPage() {
     },
   ];
 
-  // 模拟数据 - 回复列表
-  const mockReplies: Reply[] = [
-    {
-      id: 'r1',
-      author: 'Helper001',
-      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Helper001',
-      authorLevel: 'VIP',
-      content: '检查一下端口转发设置，还有确认客户端是否开启了DHT和PEX。',
-      timestamp: '2024-11-22 13:30',
-      likes: 12,
-    },
-    {
-      id: 'r2',
-      author: 'Expert123',
-      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Expert123',
-      authorLevel: '资深',
-      content: '可能是Tracker连接有问题，试试手动更新Tracker。另外，选择做种人多的资源下载速度会更快。',
-      timestamp: '2024-11-22 14:15',
-      likes: 8,
-    },
-    {
-      id: 'r3',
-      author: 'PTMaster',
-      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=PTMaster',
-      authorLevel: 'VIP',
-      content: '建议参考这个教程：https://example.com/pt-guide 里面有详细的客户端配置说明。',
-      timestamp: '2024-11-22 15:00',
-      likes: 15,
-    },
-  ];
 
   const categories = [
     { id: 'all' as ForumCategory, name: '全部', icon: MessageSquare },
@@ -391,8 +441,8 @@ export function ForumPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">
-      <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-4 py-4">
         {/* 页面标题 */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
@@ -401,14 +451,14 @@ export function ForumPage() {
                 <MessageSquare className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-white text-3xl">论坛</h1>
+                <h1 className="text-white text-2xl">论坛</h1>
                 <p className="text-neutral-400 text-sm mt-1">
                   交流经验，分享资源，共建和谐社区
                 </p>
               </div>
             </div>
             <Button
-              onClick={() => setShowNewPost(true)}
+              onClick={() => { setShowNewPost(true); setNewThreadCategoryId(activeCategoryId === 'all' ? '' : activeCategoryId); }}
               className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -477,17 +527,23 @@ export function ForumPage() {
               <div className="p-6 space-y-4">
                 <div>
                   <label className="text-neutral-300 text-sm mb-2 block">
-                    分类 <span className="text-red-400">*</span>
+                    板块 <span className="text-red-400">*</span>
                   </label>
-                  <select
-                    className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-2.5 text-white text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none transition-all"
-                    value={activeCategoryId === 'all' ? '' : activeCategoryId}
-                    onChange={(e) => setActiveCategoryId(e.target.value || 'all')}
+                  {/* 板块选择：自定义 Select，保留动态选项映射与错误清理 */}
+                  <Select
+                    value={newThreadCategoryId}
+                    onValueChange={(v) => { const value = v === 'none' ? '' : v; setNewThreadCategoryId(value); if (error) setError(null); }}
                   >
-                    {serverCategories.filter(c => c.id !== 'all').map(c => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="请选择板块" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">请选择板块</SelectItem>
+                      {serverCategories.filter(c => c.id !== 'all').map(c => (
+                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <label className="text-neutral-300 text-sm mb-2 block">
@@ -497,18 +553,19 @@ export function ForumPage() {
                     type="text"
                     placeholder="输入帖子标题"
                     className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-2.5 text-white text-sm placeholder:text-neutral-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none transition-all"
-                    id="new-thread-title"
+                    value={newThreadTitle}
+                    onChange={(e) => setNewThreadTitle(e.target.value)}
                   />
                 </div>
                 <div>
                   <label className="text-neutral-300 text-sm mb-2 block">
                     内容 <span className="text-red-400">*</span>
                   </label>
-                  <textarea
-                    rows={12}
-                    placeholder="输入帖子内容..."
-                    className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-3 text-white text-sm placeholder:text-neutral-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none resize-none transition-all"
-                    id="new-thread-content"
+                  <RichTextEditor
+                    value={newThreadContent}
+                    onChange={setNewThreadContent}
+                    placeholder="输入帖子内容，支持Markdown格式和图片..."
+                    minHeight="300px"
                   />
                 </div>
                 <div className="flex justify-end gap-3">
@@ -523,20 +580,24 @@ export function ForumPage() {
                     className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
                     onClick={async () => {
                       try {
-                        const title = (document.getElementById('new-thread-title') as HTMLInputElement)?.value?.trim();
-                        const content = (document.getElementById('new-thread-content') as HTMLTextAreaElement)?.value?.trim();
-                        const catId = activeCategoryId === 'all' ? undefined : activeCategoryId;
+                        const title = newThreadTitle.trim();
+                        const content = newThreadContent.trim();
+                        const catId = newThreadCategoryId?.trim();
                         if (!catId) { setError('请先选择板块'); return; }
                         if (!title || !content) { setError('标题与内容不能为空'); return; }
                         const resp = await ForumThreadsService.forumThreadsControllerCreate({ categoryId: catId, title, content });
                         unwrapResponse<IForumThread>(resp);
                         setShowNewPost(false);
                         setPage(1);
+                        setActiveCategoryId(catId);
                         const listResp = await ForumThreadsService.forumThreadsControllerListThreads({ page: 1, limit, categoryId: catId, search: searchQuery || undefined });
                         const listData = unwrapResponse<{ items?: IForumThread[]; total?: number; page?: number; limit?: number }>(listResp);
                         setThreads(Array.isArray(listData?.items) ? listData.items! : []);
                         setThreadsTotal(Number(listData?.total || 0));
                         setError(null);
+                        setNewThreadCategoryId('');
+                        setNewThreadTitle('');
+                        setNewThreadContent('');
                       } catch (err: any) {
                         setError(extractErrorMessage(err));
                       }
@@ -565,12 +626,12 @@ export function ForumPage() {
                         )}
                       </div>
                       <h2 className={`text-white text-xl mb-3 ${parseHighlight(selectedThread?.highlightMeta?.status).bold ? 'font-bold' : ''} ${parseHighlight(selectedThread?.highlightMeta?.status).red ? 'text-red-400' : ''}`}>
-                        {selectedThread.title}
+                        {threadDetail?.title ?? selectedThread.title}
                       </h2>
                       <div className="flex items-center gap-4 text-sm text-neutral-400">
                         <div className="flex items-center gap-2">
                           <User className="w-4 h-4" />
-                          <span>{selectedThread.authorId}</span>
+                          <span>{(threadDetail?.authorUsername ?? threadDetail?.authorId) || (selectedThread.authorUsername || selectedThread.authorId)}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4" />
@@ -593,9 +654,7 @@ export function ForumPage() {
                   </div>
                 </div>
                 <div className="p-6">
-                  <div className="bg-neutral-900/40 rounded-lg p-6 text-neutral-300 leading-relaxed whitespace-pre-wrap mb-6">
-                    {selectedThread.content}
-                  </div>
+                  <ContentPreview html={contentHtml} />
                   <div className="flex items-center gap-3">
                     <Button
                       variant="outline"
@@ -609,6 +668,12 @@ export function ForumPage() {
                       variant="outline"
                       size="sm"
                       className="border-neutral-700 text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                      onClick={() => {
+                        const el = document.getElementById('reply-editor');
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        const ta = document.querySelector('#reply-editor textarea') as HTMLTextAreaElement | null;
+                        if (ta) ta.focus();
+                      }}
                     >
                       <Reply className="w-4 h-4 mr-2" />
                       回复
@@ -627,7 +692,7 @@ export function ForumPage() {
                 </div>
                 <div className="divide-y divide-neutral-700/50">
                   {posts.map((reply) => (
-                    <div key={reply.id} className="p-6">
+                    <div key={reply.id} id={`reply-${reply.id}`} className="p-6">
                       <div className="flex gap-4">
                         <div className="flex-shrink-0">
                           <div className="w-10 h-10 rounded-lg bg-neutral-700 flex items-center justify-center">
@@ -635,15 +700,36 @@ export function ForumPage() {
                           </div>
                         </div>
                         <div className="flex-1">
+                          {reply.parentId && (
+                            <div className="mb-3 border-l-4 border-amber-500 bg-neutral-900/40 rounded-lg p-3 pl-4">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs text-neutral-400">
+                                  回复：@{(postsMap.get(reply.parentId)?.authorUsername || postsMap.get(reply.parentId)?.authorId || '')}
+                                </span>
+                                {postsMap.get(reply.parentId) && (
+                                  <button
+                                    className="text-xs text-amber-400 hover:text-amber-300"
+                                    onClick={() => {
+                                      const el = document.getElementById(`reply-${reply.parentId}`);
+                                      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    }}
+                                  >查看原回复</button>
+                                )}
+                              </div>
+                              <div className="text-xs text-neutral-300 whitespace-pre-wrap">
+                                {(postsMap.get(reply.parentId)?.content || '引用内容暂不可见（该楼层不在当前页）')
+                                  .slice(0, 200)}
+                              </div>
+                            </div>
+                          )}
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="text-white text-sm">{reply.authorId}</span>
+                            {/* 楼中楼用户名 */}
+                            <span className="text-[#feb800] text-sm" >{reply.authorUsername || reply.authorId}</span>
                             <span className="text-neutral-500 text-xs ml-auto">
                               {reply.createdAt || ''}
                             </span>
                           </div>
-                          <p className="text-neutral-300 text-sm leading-relaxed mb-3">
-                            {reply.content}
-                          </p>
+                          <ReplyContent html={renderPreview(reply.content || '')} />
                           <div className="flex items-center gap-3">
                             <Button
                               variant="ghost"
@@ -657,6 +743,11 @@ export function ForumPage() {
                               variant="ghost"
                               size="sm"
                               className="text-neutral-400 hover:text-white h-8 px-3"
+                              onClick={() => {
+                                setReplyParentId(reply.id);
+                                const mention = `@${reply.authorUsername || reply.authorId} `;
+                                setReplyContent(prev => prev.startsWith(mention) ? prev : mention + (prev || ''));
+                              }}
                             >
                               <Reply className="w-3 h-3 mr-1" />
                               回复
@@ -669,13 +760,27 @@ export function ForumPage() {
                 </div>
 
                 {/* 回复输入框 */}
-                <div className="border-t border-neutral-700/50 p-6">
-                  <textarea
-                    rows={4}
-                    placeholder="写下你的回复..."
-                    className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-3 text-white text-sm placeholder:text-neutral-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none resize-none transition-all mb-3"
-                    id="reply-content"
-                    disabled={selectedThread?.status === 'locked'}
+                <div className="border-t border-neutral-700/50 p-6" id="reply-editor">
+                  {replyParentId && (
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm text-neutral-400">
+                        正在回复：@
+                        {posts.find(p => p.id === replyParentId)?.authorUsername || posts.find(p => p.id === replyParentId)?.authorId || ''}
+                      </span>
+                      <button
+                        className="text-xs text-neutral-400 hover:text-white"
+                        onClick={() => {
+                          setReplyParentId(null);
+                          setReplyContent(prev => prev.replace(/^@[^\s]+\s/, ''));
+                        }}
+                      >取消</button>
+                    </div>
+                  )}
+                  <RichTextEditor
+                    value={replyContent}
+                    onChange={setReplyContent}
+                    placeholder="写下你的回复，支持Markdown格式和图片..."
+                    minHeight="150px"
                   />
                   <div className="flex justify-end">
                     <Button
@@ -684,15 +789,16 @@ export function ForumPage() {
                       onClick={async () => {
                         if (!selectedThread) return;
                         try {
-                          const content = (document.getElementById('reply-content') as HTMLTextAreaElement)?.value?.trim();
+                          const content = replyContent.trim();
                           if (!content) { setError('回复内容不能为空'); return; }
-                          const resp = await ForumPostsService.forumPostsControllerCreate({ threadId: selectedThread.id, content });
+                          const resp = await ForumPostsService.forumPostsControllerCreate({ threadId: selectedThread.id, content, parentId: replyParentId || undefined });
                           unwrapResponse<IForumPost>(resp);
                           const postsResp = await ForumPostsService.forumPostsControllerListPosts({ threadId: selectedThread.id, page: postsPage, limit: postsLimit });
                           const postsData = unwrapResponse<{ items?: IForumPost[]; total?: number; page?: number; limit?: number }>(postsResp);
                           setPosts(Array.isArray(postsData?.items) ? postsData.items! : []);
                           setPostsTotal(Number(postsData?.total || 0));
-                          (document.getElementById('reply-content') as HTMLTextAreaElement).value = '';
+                          setReplyContent('');
+                          setReplyParentId(null);
                           setError(null);
                         } catch (err: any) {
                           setError(extractErrorMessage(err));
@@ -750,9 +856,9 @@ export function ForumPage() {
                                 {parseHighlight(post.highlightMeta?.status).hot && (
                                   <Badge className="bg-orange-500 text-white text-xs">热帖</Badge>
                                 )}
-                                <Badge className="bg-neutral-700 text-neutral-300 text-xs">{post.categoryId}</Badge>
+                                <Badge className="bg-neutral-700 text-neutral-300 text-xs">{getCategoryName(post.categoryId)}</Badge>
                                 <span className="text-xs text-neutral-500 md:hidden">
-                                  {post.authorId} · {post.repliesCount}回复 · {post.viewsCount}查看
+                                  {(post as any).authorUsername || post.authorId} · {post.repliesCount}回复 · {post.viewsCount}查看
                                 </span>
                               </div>
                             </div>
@@ -762,7 +868,7 @@ export function ForumPage() {
                         {/* 作者列 */}
                         <div className="col-span-2 text-center hidden md:block">
                           <div className="flex flex-col items-center gap-1">
-                            <span className="text-neutral-300 text-sm">{post.authorId}</span>
+                            <span className="text-neutral-300 text-sm">{(post as any).authorUsername || post.authorId}</span>
                           </div>
                         </div>
 

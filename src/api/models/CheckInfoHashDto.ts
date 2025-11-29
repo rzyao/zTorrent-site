@@ -4,8 +4,8 @@
 /* eslint-disable */
 export type CheckInfoHashDto = {
     /**
-     * info_hash
+     * infoHash（兼容 info_hash）
      */
-    info_hash: string;
+    infoHash: string;
 };
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Film,
   Plus,
@@ -24,6 +24,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { useFilms } from '@/hooks/useFilms';
+import { TorrentsService } from '@/api/services/TorrentsService';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 interface Torrent {
   id: string;
@@ -60,6 +63,7 @@ interface Movie {
 }
 
 export function EditMoviePage() {
+  const { listFilms, getFilm, createFilm, updateFilm, deleteFilm, addTorrent, removeTorrent } = useFilms();
   const [movies, setMovies] = useState<Movie[]>([
     {
       id: '1',
@@ -187,6 +191,8 @@ export function EditMoviePage() {
   const [isCreating, setIsCreating] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showTorrentForm, setShowTorrentForm] = useState(false);
+  const [torrentFileBase64, setTorrentFileBase64] = useState<string>('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // 影片编辑表单状态
   const [movieForm, setMovieForm] = useState({
@@ -256,84 +262,115 @@ export function EditMoviePage() {
     setIsCreating(false);
   };
 
-  const handleSaveMovie = () => {
-    if (isCreating) {
-      const newMovie: Movie = {
-        id: Date.now().toString(),
-        ...movieForm,
-        torrents: [],
-        createdAt: new Date().toISOString().split('T')[0],
-        updatedAt: new Date().toISOString().split('T')[0],
-      };
-      setMovies([newMovie, ...movies]);
-      setSelectedMovie(newMovie);
-      setIsCreating(false);
-    } else if (selectedMovie) {
-      setMovies(
-        movies.map((m) =>
-          m.id === selectedMovie.id
-            ? {
-              ...m,
-              ...movieForm,
-              updatedAt: new Date().toISOString().split('T')[0],
-            }
-            : m
-        )
-      );
-      setSelectedMovie({
-        ...selectedMovie,
-        ...movieForm,
-      });
-      setIsEditing(false);
+  const handleSaveMovie = async () => {
+    const payload = {
+      title: movieForm.title,
+      description: movieForm.description,
+      coverUrl: movieForm.poster,
+      originalTitle: movieForm.originalTitle,
+      year: movieForm.year,
+      category: movieForm.category === '电影' ? 'film' : movieForm.category === '剧集' ? 'series' : movieForm.category === '纪录片' ? 'documentary' : 'anime',
+      rating: movieForm.rating,
+      duration: movieForm.duration,
+      director: movieForm.director,
+      posterUrl: movieForm.poster,
+      backdropUrl: movieForm.backdrop,
+      genres: movieForm.genres,
+      cast: movieForm.cast,
+      enabled: true,
+      sort: 0,
+    } as any;
+
+    const { valid, errs } = validateFilmForm(movieForm);
+    if (!valid) {
+      setErrors(errs);
+      return alert('请先修正表单中的错误后再提交');
+    }
+    try {
+      if (isCreating) {
+        const res = await createFilm(payload);
+        const newId = res?.id || res;
+        const detail = await getFilm(String(newId));
+        const mapped = mapBackendFilmToLocal(detail);
+        setMovies([mapped, ...movies]);
+        setSelectedMovie(mapped);
+        setIsCreating(false);
+      } else if (selectedMovie) {
+        await updateFilm(selectedMovie.id, payload);
+        const detail = await getFilm(selectedMovie.id);
+        const mapped = mapBackendFilmToLocal(detail);
+        setMovies(movies.map((m) => (m.id === selectedMovie.id ? mapped : m)));
+        setSelectedMovie(mapped);
+        setIsEditing(false);
+      }
+    } catch (e: any) {
+      alert(e?.message || '保存失败');
     }
   };
 
-  const handleDeleteMovie = (id: string) => {
+  const handleDeleteMovie = async (id: string) => {
     if (confirm('确定要删除这部影片吗？所有关联的种子也会被删除。')) {
-      setMovies(movies.filter((m) => m.id !== id));
-      if (selectedMovie?.id === id) {
-        setSelectedMovie(null);
+      try {
+        await deleteFilm(id);
+        setMovies(movies.filter((m) => m.id !== id));
+        if (selectedMovie?.id === id) {
+          setSelectedMovie(null);
+        }
+      } catch (e: any) {
+        alert(e?.message || '删除失败');
       }
     }
   };
 
-  const handleAddTorrent = () => {
-    if (selectedMovie) {
-      const newTorrent: Torrent = {
-        id: 't' + Date.now(),
-        ...torrentForm,
-        seeders: 0,
-        leechers: 0,
-        uploadDate: new Date().toISOString().split('T')[0],
+  const handleAddTorrent = async () => {
+    if (selectedMovie && torrentFileBase64) {
+      const autoPayload: any = {
+        name: torrentForm.version || selectedMovie.title,
+        standard: torrentForm.quality,
+        videoCodec: torrentForm.codec,
+        audioCodec: torrentForm.audio,
+        source: torrentForm.source,
+        fileBase64: torrentFileBase64,
       };
-      const updatedMovie = {
-        ...selectedMovie,
-        torrents: [...selectedMovie.torrents, newTorrent],
-      };
-      setSelectedMovie(updatedMovie);
-      setMovies(movies.map((m) => (m.id === selectedMovie.id ? updatedMovie : m)));
-      setShowTorrentForm(false);
-      setTorrentForm({
-        version: '',
-        size: '',
-        quality: '1080p',
-        source: 'BluRay',
-        codec: 'H.264',
-        audio: 'DTS-HD MA',
-        isFree: false,
-        isVip: false,
-      });
+      try {
+        const uploadRes: any = await TorrentsService.torrentsControllerUploadAuto(autoPayload);
+        const body = uploadRes?.code !== undefined ? uploadRes : uploadRes?.data ?? uploadRes;
+        const torrentId = body?.data?.id ?? body?.id;
+        if (!torrentId) throw new Error('创建种子失败');
+        await addTorrent(selectedMovie.id, String(torrentId));
+        const detail = await getFilm(selectedMovie.id);
+        const mapped = mapBackendFilmToLocal(detail);
+        setSelectedMovie(mapped);
+        setMovies(movies.map((m) => (m.id === mapped.id ? mapped : m)));
+        setShowTorrentForm(false);
+        setTorrentForm({
+          version: '',
+          size: '',
+          quality: '1080p',
+          source: 'BluRay',
+          codec: 'H.264',
+          audio: 'DTS-HD MA',
+          isFree: false,
+          isVip: false,
+        });
+        setTorrentFileBase64('');
+      } catch (e: any) {
+        alert(e?.message || '添加种子失败');
+      }
     }
   };
 
-  const handleRemoveTorrent = (torrentId: string) => {
+  const handleRemoveTorrent = async (torrentId: string) => {
     if (selectedMovie) {
-      const updatedMovie = {
-        ...selectedMovie,
-        torrents: selectedMovie.torrents.filter((t) => t.id !== torrentId),
-      };
-      setSelectedMovie(updatedMovie);
-      setMovies(movies.map((m) => (m.id === selectedMovie.id ? updatedMovie : m)));
+      try {
+        await removeTorrent(selectedMovie.id, torrentId);
+        const detail = await getFilm(selectedMovie.id);
+        const mapped = mapBackendFilmToLocal(detail);
+        setSelectedMovie(mapped);
+        setMovies(movies.map((m) => (m.id === mapped.id ? mapped : m)));
+      } catch (e: any) {
+        alert(e?.message || '移除失败');
+      }
     }
   };
 
@@ -343,6 +380,84 @@ export function EditMoviePage() {
       m.originalTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
       m.director.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const list = await listFilms({ page: 1, limit: 50, keyword: searchQuery });
+        const mapped = (list?.items ?? []).map(mapBackendFilmToLocal);
+        setMovies(mapped);
+      } catch (e) {
+        // ignore
+      }
+    })();
+  }, [searchQuery]);
+
+  function isValidUrl(url: string) {
+    if (!url) return true;
+    try {
+      const u = new URL(url);
+      return u.protocol === 'http:' || u.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }
+
+  function isValidYear(year: string) {
+    if (!year) return false;
+    return /^\d{4}(-\d{4})?$/.test(year);
+  }
+
+  function isValidRating(r: number) {
+    return r >= 0 && r <= 10;
+  }
+
+  function validateFilmForm(form: any) {
+    const errs: Record<string, string> = {};
+    if (!form.title?.trim()) errs.title = '标题为必填项';
+    if (!isValidYear(String(form.year || ''))) errs.year = '年份格式必须为YYYY或YYYY-YYYY';
+    if (!['电影', '剧集', '纪录片', '动漫'].includes(form.category)) errs.category = '类别必须为有效枚举';
+    if (!isValidRating(Number(form.rating ?? 0))) errs.rating = '评分需在0到10之间';
+    if (!isValidUrl(String(form.poster || ''))) errs.poster = '海报URL必须以http/https开头';
+    if (!isValidUrl(String(form.backdrop || ''))) errs.backdrop = '背景URL必须以http/https开头';
+    return { valid: Object.keys(errs).length === 0, errs };
+  }
+
+  function mapBackendFilmToLocal(detail: any): Movie {
+    const genres = Array.isArray(detail?.genres) ? detail.genres.map((g: any) => (typeof g === 'string' ? g : g?.name)).filter(Boolean) : [];
+    const torrents = Array.isArray(detail?.torrents) ? detail.torrents.map((t: any) => ({
+      id: String(t?.id ?? t?.torrentId ?? ''),
+      version: t?.version ?? t?.name ?? '',
+      size: t?.size ?? '',
+      quality: t?.quality ?? detail?.standard ?? '',
+      source: t?.source ?? '',
+      codec: t?.codec ?? t?.videoCodec ?? '',
+      audio: t?.audio ?? t?.audioCodec ?? '',
+      seeders: t?.seeders ?? 0,
+      leechers: t?.leechers ?? 0,
+      uploadDate: t?.uploadDate ?? '',
+      isFree: t?.isFree ?? false,
+      isVip: t?.isVip ?? false,
+    })) : [];
+    return {
+      id: String(detail?.id ?? ''),
+      title: detail?.title ?? '',
+      originalTitle: detail?.originalTitle ?? '',
+      year: String(detail?.year ?? ''),
+      poster: detail?.posterUrl ?? detail?.coverUrl ?? '',
+      backdrop: detail?.backdropUrl ?? '',
+      category: detail?.category === 'series' ? '剧集' : detail?.category === 'documentary' ? '纪录片' : detail?.category === 'anime' ? '动漫' : '电影',
+      genres,
+      rating: Number(detail?.rating ?? 0),
+      duration: detail?.duration ?? '',
+      director: detail?.director ?? '',
+      cast: Array.isArray(detail?.cast) ? detail.cast : [],
+      description: detail?.description ?? '',
+      torrents,
+      createdAt: String(detail?.createdAt ?? ''),
+      updatedAt: String(detail?.updatedAt ?? ''),
+    };
+  }
 
   return (
     <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-6">
@@ -508,7 +623,7 @@ export function EditMoviePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* 中文标题 */}
                   <div className="space-y-2">
-                    <label className="text-neutral-300 text-sm">中文标题</label>
+                    <label className="text-neutral-300 text-sm">中文标题 <span className="text-red-500">*</span></label>
                     <input
                       type="text"
                       value={movieForm.title}
@@ -516,8 +631,10 @@ export function EditMoviePage() {
                         setMovieForm({ ...movieForm, title: e.target.value })
                       }
                       placeholder="例如: 星际穿越"
-                      className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                      aria-invalid={Boolean(errors.title)}
+                      className={`w-full bg-neutral-900/50 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 border ${errors.title ? 'border-red-500' : 'border-neutral-700'}`}
                     />
+                    {errors.title && <p className="text-red-500 text-xs">{errors.title}</p>}
                   </div>
 
                   {/* 原始标题 */}
@@ -536,7 +653,7 @@ export function EditMoviePage() {
 
                   {/* 年份 */}
                   <div className="space-y-2">
-                    <label className="text-neutral-300 text-sm">年份</label>
+                    <label className="text-neutral-300 text-sm">年份 <span className="text-red-500">*</span></label>
                     <input
                       type="text"
                       value={movieForm.year}
@@ -544,26 +661,31 @@ export function EditMoviePage() {
                         setMovieForm({ ...movieForm, year: e.target.value })
                       }
                       placeholder="例如: 2014"
-                      className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                      aria-invalid={Boolean(errors.year)}
+                      className={`w-full bg-neutral-900/50 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 border ${errors.year ? 'border-red-500' : 'border-neutral-700'}`}
                     />
+                    {errors.year && <p className="text-red-500 text-xs">{errors.year}</p>}
                   </div>
 
-                  {/* 类别 */}
+                  {/* 类别：使用自定义 Select 保持校验与样式统一 */}
                   <div className="space-y-2">
-                    <label className="text-neutral-300 text-sm">类别</label>
-                    <select
+                    <label className="text-neutral-300 text-sm">类别 <span className="text-red-500">*</span></label>
+                    <Select
                       value={movieForm.category}
-                      onChange={(e) =>
-                        setMovieForm({ ...movieForm, category: e.target.value })
-                      }
-                      className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                      onValueChange={(v) => setMovieForm({ ...movieForm, category: v })}
                     >
-                      <option value="电影">电影</option>
-                      <option value="剧集">剧集</option>
-                      <option value="纪录片">纪录片</option>
-                      <option value="动漫">动漫</option>
-                      <option value="综艺">综艺</option>
-                    </select>
+                      <SelectTrigger aria-invalid={Boolean(errors.category)}>
+                        <SelectValue placeholder="选择类别" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="电影">电影</SelectItem>
+                        <SelectItem value="剧集">剧集</SelectItem>
+                        <SelectItem value="纪录片">纪录片</SelectItem>
+                        <SelectItem value="动漫">动漫</SelectItem>
+                        <SelectItem value="综艺">综艺</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {errors.category && <p className="text-red-500 text-xs">{errors.category}</p>}
                   </div>
 
                   {/* 评分 */}
@@ -582,8 +704,10 @@ export function EditMoviePage() {
                         })
                       }
                       placeholder="例如: 9.8"
-                      className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                      aria-invalid={Boolean(errors.rating)}
+                      className={`w-full bg-neutral-900/50 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 border ${errors.rating ? 'border-red-500' : 'border-neutral-700'}`}
                     />
+                    {errors.rating && <p className="text-red-500 text-xs">{errors.rating}</p>}
                   </div>
 
                   {/* 时长 */}
@@ -596,7 +720,7 @@ export function EditMoviePage() {
                         setMovieForm({ ...movieForm, duration: e.target.value })
                       }
                       placeholder="例如: 169分钟 或 全8季"
-                      className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                      className={`w-full bg-neutral-900/50 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 border border-neutral-700`}
                     />
                   </div>
                 </div>
@@ -708,7 +832,7 @@ export function EditMoviePage() {
                 <div className="flex gap-3 pt-4">
                   <Button
                     onClick={handleSaveMovie}
-                    disabled={!movieForm.title}
+                    disabled={!movieForm.title || Object.keys(errors).length > 0}
                     className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
                   >
                     <Save className="w-4 h-4 mr-2" />
@@ -872,56 +996,66 @@ export function EditMoviePage() {
 
                         <div>
                           <label className="text-neutral-300 text-sm">质量</label>
-                          <select
-                            value={torrentForm.quality}
-                            onChange={(e) =>
-                              setTorrentForm({
-                                ...torrentForm,
-                                quality: e.target.value,
-                              })
-                            }
-                            className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 mt-2"
-                          >
-                            <option value="2160p">2160p (4K)</option>
-                            <option value="1080p">1080p</option>
-                            <option value="720p">720p</option>
-                            <option value="480p">480p</option>
-                          </select>
+                          <Select value={torrentForm.quality} onValueChange={(v) => setTorrentForm({ ...torrentForm, quality: v })}>
+                            <SelectTrigger className="mt-2">
+                              <SelectValue placeholder="选择质量" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="2160p">2160p (4K)</SelectItem>
+                              <SelectItem value="1080p">1080p</SelectItem>
+                              <SelectItem value="720p">720p</SelectItem>
+                              <SelectItem value="480p">480p</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
 
                         <div>
                           <label className="text-neutral-300 text-sm">来源</label>
-                          <select
-                            value={torrentForm.source}
-                            onChange={(e) =>
-                              setTorrentForm({
-                                ...torrentForm,
-                                source: e.target.value,
-                              })
-                            }
-                            className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 mt-2"
-                          >
-                            <option value="BluRay">BluRay</option>
-                            <option value="WEB-DL">WEB-DL</option>
-                            <option value="HDTV">HDTV</option>
-                            <option value="REMUX">REMUX</option>
-                          </select>
+                          <Select value={torrentForm.source} onValueChange={(v) => setTorrentForm({ ...torrentForm, source: v })}>
+                            <SelectTrigger className="mt-2">
+                              <SelectValue placeholder="选择来源" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="BluRay">BluRay</SelectItem>
+                              <SelectItem value="WEB-DL">WEB-DL</SelectItem>
+                              <SelectItem value="HDTV">HDTV</SelectItem>
+                              <SelectItem value="REMUX">REMUX</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
 
                         <div>
                           <label className="text-neutral-300 text-sm">编码</label>
-                          <select
-                            value={torrentForm.codec}
-                            onChange={(e) =>
-                              setTorrentForm({ ...torrentForm, codec: e.target.value })
-                            }
-                            className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 mt-2"
-                          >
-                            <option value="H.265">H.265 (HEVC)</option>
-                            <option value="H.264">H.264 (AVC)</option>
-                            <option value="AV1">AV1</option>
-                          </select>
+                          <Select value={torrentForm.codec} onValueChange={(v) => setTorrentForm({ ...torrentForm, codec: v })}>
+                            <SelectTrigger className="mt-2">
+                              <SelectValue placeholder="选择编码" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="H.265">H.265 (HEVC)</SelectItem>
+                              <SelectItem value="H.264">H.264 (AVC)</SelectItem>
+                              <SelectItem value="AV1">AV1</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
+                      </div>
+
+                      <div className="mt-4">
+                        <label className="text-neutral-300 text-sm">上传 .torrent 文件</label>
+                        <input
+                          type="file"
+                          accept=".torrent"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            const buf = await file.arrayBuffer();
+                            const bytes = new Uint8Array(buf);
+                            let binary = '';
+                            for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+                            const b64 = btoa(binary);
+                            setTorrentFileBase64(b64);
+                          }}
+                          className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 mt-2"
+                        />
                       </div>
 
                       <div className="flex items-center gap-4 pt-2">
