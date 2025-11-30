@@ -5,31 +5,39 @@
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-
 export class AuditService {
     /**
      * 统一审核历史查询
-     * @param requestParams
+     * @param type
+     * @param resourceId
      * @returns any 成功
      * @throws ApiError
      */
     public static auditControllerHistory(
-        requestParams: { type: 'film' | 'playlist' | 'torrent'; resourceId: string },
+        type: string,
+        resourceId: string,
     ): CancelablePromise<{
         code?: number;
         message?: string;
         data?: {
-            items?: Array<Record<string, any>>;
+            items?: Array<{
+                reviewer?: string;
+                action?: string;
+                note?: string | null;
+                timestamp?: string;
+            }>;
             total?: number;
         };
         path?: string;
         timestamp?: string;
     }> {
-        const { type, resourceId } = requestParams;
         return __request(OpenAPI, {
             method: 'GET',
-            url: `/audit/history`,
-            query: { type, resourceId },
+            url: '/audit/history',
+            query: {
+                'type': type,
+                'resourceId': resourceId,
+            },
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -40,4 +48,3 @@ export class AuditService {
         });
     }
 }
-

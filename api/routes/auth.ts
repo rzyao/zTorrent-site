@@ -13,7 +13,7 @@ const router = Router()
 router.post('/register', async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, username, password, verificationCode } = req.body
-    
+
     if (!email || !username || !password || !verificationCode) {
       res.status(400).json({
         success: false,
@@ -28,7 +28,7 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
     // 3. Hash the password
     // 4. Create user in database
     // 5. Generate JWT token
-    
+
     // For now, we'll return a mock success response
     const mockToken = 'mock-jwt-token-' + Date.now()
     const mockUser = {
@@ -36,7 +36,7 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
       email,
       username
     }
-    
+
     res.status(200).json({
       success: true,
       message: '注册成功',
@@ -59,7 +59,7 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
 router.post('/login', async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, password, autoLogout } = req.body
-    
+
     if (!username || !password) {
       res.status(400).json({
         success: false,
@@ -73,7 +73,7 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
     // 2. Verify password hash
     // 3. Generate JWT token
     // 4. Update last login time
-    
+
     // For now, we'll return a mock success response
     const mockToken = 'mock-jwt-token-' + Date.now()
     const mockUser = {
@@ -81,7 +81,7 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
       email: username.includes('@') ? username : `${username}@example.com`,
       username: username.includes('@') ? username.split('@')[0] : username
     }
-    
+
     res.status(200).json({
       success: true,
       message: '登录成功',
@@ -108,7 +108,7 @@ router.post('/logout', async (req: Request, res: Response): Promise<void> => {
     // 1. Invalidate the JWT token
     // 2. Clear any server-side sessions
     // 3. Log the logout event
-    
+
     res.status(200).json({
       success: true,
       message: '登出成功'
@@ -129,7 +129,7 @@ router.post('/logout', async (req: Request, res: Response): Promise<void> => {
 router.post('/request-email-code', async (req: Request, res: Response): Promise<void> => {
   try {
     const { email } = req.body
-    
+
     if (!email) {
       res.status(400).json({
         success: false,
@@ -150,14 +150,14 @@ router.post('/request-email-code', async (req: Request, res: Response): Promise<
 
     // Generate a 6-digit verification code
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
-    
+
     // In a real application, you would:
     // 1. Store the code in database with expiration time
     // 2. Send the code via email service
     // For now, we'll just return success with a mock expiry time
-    
+
     console.log(`Verification code for ${email}: ${verificationCode}`)
-    
+
     res.status(200).json({
       success: true,
       message: '验证码已发送到您的邮箱',

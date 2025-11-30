@@ -26,7 +26,9 @@ export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProp
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [codeSent, setCodeSent] = useState(false);
-  const [expirySeconds, setExpirySeconds] = useState<number | null>(null);
+  // 已移除对秒级有效期的维护，统一使用分钟数
+  // 新增：直接保存有效期分钟数，底部展示优先使用该值，减少换算
+  const [expiryMinutes, setExpiryMinutes] = useState<number | null>(null);
   const [formData, setFormData] = useState<FormData>({ username: '', email: '', emailCode: '', password: '' });
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isVerifyingCode, setIsVerifyingCode] = useState(false);
@@ -55,11 +57,18 @@ export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProp
     try {
       const resp: any = await sendVerificationCode(formData.email);
       setCodeSent(true);
-      if (resp && typeof resp.expiry === 'number') {
-        setExpirySeconds(resp.expiry);
+      // 解析有效期：优先使用后端新增的 expiresMinutes，其次回退到 expiresSeconds/旧字段 expiry
+      // 仅使用后端返回的分钟字段，不再维护秒级有效期或旧字段兼容
+      let minutes: number | null = null;
+      if (resp && typeof resp.expiresMinutes === 'number') {
+        minutes = resp.expiresMinutes;
+      }
+      if (minutes !== null) {
+        // 保存分钟数供底部展示使用
+        setExpiryMinutes(minutes);
       }
       setCountdown(60);
-      toast.success('验证码已发送到您的邮箱，请查收');
+      toast.success(`验证码已发送到您的邮箱，请查收（有效期${minutes ?? 10}分钟）`);
     } catch (error: any) {
       toast.error(error.message || '发送验证码失败，请重试');
     } finally {
@@ -77,18 +86,27 @@ export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProp
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('inviteCode') || inviteCode;
+    const emailParam = params.get('email') || undefined;
+    const usernameParam = params.get('username') || undefined;
     if (code) setInviteCodeFromUrl(code);
+    if (emailParam && !formData.email) {
+      setFormData((prev) => ({ ...prev, email: emailParam }));
+    }
+    if (usernameParam && !formData.username) {
+      setFormData((prev) => ({ ...prev, username: usernameParam }));
+    }
     (async () => {
       try {
         if (code) {
           const res: any = await AuthService.authControllerVerifyInviteCode({
-            body: { inviteCode: code!, email: '' }
+            inviteCode: code!,
+            email: emailParam || ''
           });
-          const valid = res?.data?.data?.valid === true;
+          const valid = res?.data?.valid === true;
           setGateMode(valid ? 'normal' : 'invalid_code');
         } else {
           const status: any = await AuthService.authControllerRegistrationEnabled();
-          const open = status?.data?.data?.registrationEnabled === true;
+          const open = status?.data?.registrationEnabled === true;
           setGateMode(open ? 'normal' : 'invite_only');
         }
       } catch {
@@ -133,18 +151,24 @@ export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProp
     setIsVerifyingCode(true);
     try {
       const res: any = await AuthService.authControllerVerifyRegisterEmailCode({
-        body: { email: formData.email, code: formData.emailCode }
+        email: formData.email,
+        code: formData.emailCode
       });
-      const ok = res?.data?.code === 1000;
+      const ok = res?.code === 1000;
       if (!ok) {
-        const msg = res?.data?.message || '验证码验证失败';
+        const msg = res?.message || '验证码错误或已过期';
         toast.error(msg);
         setErrors((prev) => ({ ...prev, emailCode: msg }));
         return;
       }
       setCurrentStep(2);
     } catch (err: any) {
-      const msg = err?.message || '验证码验证失败';
+      const msg =
+        (err && (err as any).body && (err as any).body.message) ||
+        (err && (err as any).data && (err as any).data.message) ||
+        (err && (err as any).response && (err as any).response.data && (err as any).response.data.message) ||
+        err?.message ||
+        '验证码错误或已过期';
       toast.error(msg);
       setErrors((prev) => ({ ...prev, emailCode: msg }));
     } finally {
@@ -277,7 +301,6 @@ export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProp
                       </Button>
                     </div>
                     {errors.emailCode && <p className="text-xs text-red-400">{errors.emailCode}</p>}
-                    <p className="text-xs text-gray-500">验证码有效期{expirySeconds ? Math.ceil(expirySeconds / 60) : 10}分钟</p>
                   </div>
                   {/* 下一步按钮 */}
                   <Button type="button" onClick={handleNextStep} disabled={isVerifyingCode} className="w-full bg-[#00A8E1] hover:bg-[#00A8E1]/90 text-white py-6 text-lg rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">

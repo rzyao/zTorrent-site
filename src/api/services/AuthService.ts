@@ -103,7 +103,7 @@ export class AuthService {
     }
     /**
      * 请求注册邮箱验证码
-     * 向指定邮箱发送一次性6位验证码，10分钟有效。统一返回不暴露邮箱是否存在。
+     * 向指定邮箱发送一次性6位验证码（有效期由系统设置决定）。统一返回不暴露邮箱是否存在。
      * @param requestBody
      * @returns any 验证码已发送（或已受限）
      * @throws ApiError
@@ -126,7 +126,7 @@ export class AuthService {
     }
     /**
      * 验证注册邮箱验证码
-     * 校验邮箱与验证码是否匹配且在10分钟有效期，通过后允许后续注册提交
+     * 校验邮箱与验证码是否匹配且在系统设置的有效期内，通过后允许后续注册提交
      * @param requestBody
      * @returns any 验证通过
      * @throws ApiError
@@ -215,7 +215,7 @@ export class AuthService {
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
+            method: 'POST',
             url: '/auth/invite-enabled',
         });
     }

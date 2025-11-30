@@ -225,7 +225,10 @@ export class TorrentsService {
         code?: number;
         message?: string;
         data?: {
-            items?: Array<Record<string, any>>;
+            items?: Array<{
+                seedersRealtime?: number;
+                leechersRealtime?: number;
+            }>;
             total?: number;
             page?: number;
             limit?: number;
