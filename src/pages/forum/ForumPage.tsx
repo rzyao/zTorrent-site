@@ -24,6 +24,7 @@ import { ForumCategoriesService } from '@/api/services/ForumCategoriesService';
 import { ForumThreadsService } from '@/api/services/ForumThreadsService';
 import { ForumPostsService } from '@/api/services/ForumPostsService';
 import { RichTextEditor } from './RichTextEditor';
+import { OpenAPI } from '@/api/core/OpenAPI';
 
 /**
  * 统一响应解包辅助函数
@@ -89,6 +90,10 @@ interface IForumPost {
   status: 'normal' | 'hidden' | 'deleted';
   editedAt?: string | null;
   createdAt?: string | null;
+  /**
+   * 可选：单条回帖浏览次数（后端暂未提供，前端本地统计/占位展示）
+   */
+  viewsCount?: number;
 }
 
 type ForumCategory = 'all' | 'announcement' | 'help' | 'resource' | 'tech' | 'chat';
@@ -173,6 +178,40 @@ export function ForumPage() {
     return map;
   }, [posts]);
 
+  /**
+   * 浏览次数统计：本地防重复标记与 TTL 控制
+   * - key: forum:viewed:<threadId>
+   * - value: JSON { ts: number }
+   * - ttl: 15 分钟，避免刷新/短时间重复计数
+   */
+  const VIEW_TTL_MS = 15 * 60 * 1000;
+  const getViewKey = (id: string) => `forum:viewed:${id}`;
+  const now = () => Date.now();
+  const shouldCountView = (id: string) => {
+    try {
+      const raw = localStorage.getItem(getViewKey(id));
+      if (!raw) return true;
+      const data = JSON.parse(raw);
+      return typeof data?.ts !== 'number' || (now() - data.ts) > VIEW_TTL_MS;
+    } catch {
+      return true;
+    }
+  };
+  const markViewed = (id: string) => {
+    try { localStorage.setItem(getViewKey(id), JSON.stringify({ ts: now() })); } catch {}
+  };
+  // 跨标签页同步防重复标记
+  useEffect(() => {
+    const handler = (e: StorageEvent) => {
+      if (e.key && e.key.startsWith('forum:viewed:')) {
+        // 触发一次状态更新以便 UI 响应（不重新拉取，避免抖动）
+        setSelectedThread(st => st ? { ...st } : st);
+      }
+    };
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
+  }, []);
+
   /** 高亮样式解析：将后端的状态数组映射为布尔标志 */
   const parseHighlight = useMemo(() => (statuses?: string[]) => {
     const set = new Set(statuses || []);
@@ -231,7 +270,42 @@ export function ForumPage() {
       try {
         const detailResp = await ForumThreadsService.forumThreadsControllerGetThread({ id: selectedThread.id });
         const detail = unwrapResponse<IForumThread>(detailResp);
-        if (!cancelled) setThreadDetail(detail);
+        if (!cancelled) {
+          setThreadDetail(detail);
+          // 若后端在详情接口内已递增，则使用返回的最新 viewsCount 同步 UI
+          if (typeof detail?.viewsCount === 'number' && detail.viewsCount !== selectedThread.viewsCount) {
+            setSelectedThread(prev => prev && prev.id === detail.id ? { ...prev, viewsCount: detail.viewsCount } : prev);
+            setThreads(prev => prev.map(t => t.id === detail.id ? { ...t, viewsCount: detail.viewsCount } : t));
+            markViewed(detail.id);
+          } else {
+            // 否则显式触发递增（带防重复与乐观更新）
+            if (shouldCountView(selectedThread.id)) {
+              const old = selectedThread.viewsCount;
+              // 乐观 +1
+              setSelectedThread(prev => prev && prev.id === selectedThread.id ? { ...prev, viewsCount: old + 1 } : prev);
+              setThreads(prev => prev.map(t => t.id === selectedThread.id ? { ...t, viewsCount: t.viewsCount + 1 } : t));
+              try {
+                const incResp = await ForumThreadsService.forumThreadsControllerIncViews({ id: selectedThread.id });
+                const incData = unwrapResponse<{ viewsCount?: number }>(incResp) as any;
+                const latest = typeof incData?.viewsCount === 'number' ? incData.viewsCount : undefined;
+                if (typeof latest === 'number') {
+                  setSelectedThread(prev => prev && prev.id === selectedThread.id ? { ...prev, viewsCount: latest } : prev);
+                  setThreads(prev => prev.map(t => t.id === selectedThread.id ? { ...t, viewsCount: latest } : t));
+                }
+                markViewed(selectedThread.id);
+              } catch (err: any) {
+                // 如果未配置后端 BASE，视为本地开发打桩环境：保留乐观值以便验证 UI 逻辑
+                if (OpenAPI.BASE) {
+                  // 回滚乐观更新（真实后端错误场景）
+                  setSelectedThread(prev => prev && prev.id === selectedThread.id ? { ...prev, viewsCount: old } : prev);
+                  setThreads(prev => prev.map(t => t.id === selectedThread.id ? { ...t, viewsCount: old } : t));
+                }
+                // 记录错误以便提示（非阻断）
+                setError(extractErrorMessage(err));
+              }
+            }
+          }
+        }
       } catch (err: any) {
         if (!cancelled) setError(extractErrorMessage(err));
       }
@@ -258,6 +332,24 @@ export function ForumPage() {
     return () => { cancelled = true; };
   }, [selectedThread?.id, postsPage, postsLimit]);
 
+  /**
+   * 页面可见性变化后备统计：当 BASE 配置存在且当前主题尚未计数时，使用 sendBeacon 发送统计
+   */
+  useEffect(() => {
+    const handler = () => {
+      try {
+        if (document.visibilityState === 'hidden' && selectedThread && shouldCountView(selectedThread.id) && OpenAPI.BASE) {
+          const url = `${OpenAPI.BASE.replace(/\/$/, '')}/forum/threads/inc-views`;
+          const payload = JSON.stringify({ id: selectedThread.id });
+          navigator.sendBeacon(url, new Blob([payload], { type: 'application/json' }));
+          markViewed(selectedThread.id);
+        }
+      } catch {}
+    };
+    document.addEventListener('visibilitychange', handler);
+    return () => document.removeEventListener('visibilitychange', handler);
+  }, [selectedThread?.id]);
+
   const renderPreview = (text: string) => {
     let html = text || '';
     html = html.replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold text-white mt-4 mb-2">$1</h3>');
@@ -274,6 +366,57 @@ export function ForumPage() {
     html = html.replace(/^\d+\. (.+$)/gim, '<li class="ml-4 list-decimal">$1</li>');
     html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full rounded-lg my-3" />');
     html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-amber-400 hover:text-amber-300 underline" target="_blank" rel="noopener noreferrer">$1</a>');
+    html = html.replace(/\n/g, '<br />');
+    return html;
+  };
+
+  /**
+   * 引用内容渲染（带图片尺寸限制）
+   * 目标：将 Markdown/HTML 图片在“引用块”中以受限尺寸展示，避免撑破布局
+   * 限制：max-height 160px、max-width 100%、object-fit contain
+   */
+  const renderPreviewQuote = (text: string) => {
+    const sanitizeImageSrc = (src: string) => {
+      try {
+        const s = String(src).trim();
+        return /^https?:\/\//i.test(s) ? s : '';
+      } catch {
+        return '';
+      }
+    };
+    let html = text || '';
+    // 标题/行内样式与普通文本处理，复用主体规则
+    html = html.replace(/^### (.*$)/gim, '<h3 class="text-sm font-semibold text-white mt-2 mb-1">$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2 class="text-sm font-semibold text-white mt-2 mb-1">$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1 class="text-sm font-semibold text-white mt-2 mb-1">$1</h1>');
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>');
+    html = html.replace(/\*(.+?)\*/g, '<em class="italic">$1</em>');
+    html = html.replace(/~~(.+?)~~/g, '<del class="line-through text-neutral-400">$1</del>');
+    html = html.replace(/<u>(.+?)<\/u>/g, '<u class="underline">$1</u>');
+    html = html.replace(/`([^`]+)`/g, '<code class="bg-neutral-800 text-amber-400 px-1 py-0.5 rounded text-xs">$1</code>');
+    html = html.replace(/```\n?([\s\S]*?)\n?```/g, '<pre class="bg-neutral-800 text-neutral-300 p-3 rounded-lg overflow-x-auto my-2"><code>$1</code></pre>');
+    html = html.replace(/^> (.+$)/gim, '<blockquote class="border-l-4 border-amber-500 pl-3 py-2 my-2 text-neutral-300 bg-neutral-800/50 rounded">$1</blockquote>');
+    html = html.replace(/^\- (.+$)/gim, '<li class="ml-4">• $1</li>');
+    html = html.replace(/^\d+\. (.+$)/gim, '<li class="ml-4 list-decimal">$1</li>');
+    // Markdown 图片：受限尺寸
+    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_m, alt, url) => {
+      const src = sanitizeImageSrc(url);
+      return src
+        ? `<img src="${src}" alt="${alt}" class="rounded-lg my-2" style="max-width:100%;max-height:160px;object-fit:contain" />`
+        : `<span class="text-neutral-500">[图片链接不安全或无效]</span>`;
+    });
+    // 原生 <img>：注入尺寸限制与 src 过滤
+    html = html.replace(/<img[^>]*src=["']([^"']+)["'][^>]*>/gi, (_m, url) => {
+      const src = sanitizeImageSrc(url);
+      return src
+        ? `<img src="${src}" class="rounded-lg my-2" style="max-width:100%;max-height:160px;object-fit:contain" />`
+        : `<span class="text-neutral-500">[图片链接不安全或无效]</span>`;
+    });
+    // 链接
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, text2, href) => {
+      const safe = /^https?:\/\//i.test(href) ? href : '#';
+      return `<a href="${safe}" class="text-amber-400 hover:text-amber-300 underline" target="_blank" rel="noopener noreferrer">${text2}</a>`;
+    });
     html = html.replace(/\n/g, '<br />');
     return html;
   };
@@ -637,10 +780,10 @@ export function ForumPage() {
                           <Clock className="w-4 h-4" />
                           <span>{selectedThread.lastPostAt || '-'}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Eye className="w-4 h-4" />
-                          <span>{selectedThread.viewsCount}</span>
-                        </div>
+                    <div className="flex items-center gap-2">
+                      <Eye className="w-4 h-4" />
+                      <span>{(threadDetail?.viewsCount ?? selectedThread.viewsCount)}</span>
+                    </div>
                       </div>
                     </div>
                     <Button
@@ -712,13 +855,16 @@ export function ForumPage() {
                                     onClick={() => {
                                       const el = document.getElementById(`reply-${reply.parentId}`);
                                       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                      // 本地回帖浏览统计：查看原回复即认为该楼层被浏览
+                                      const pid = reply.parentId!;
+                                      setPosts(prev => prev.map(p => p.id === pid ? { ...p, viewsCount: (p.viewsCount ?? 0) + 1 } : p));
                                     }}
                                   >查看原回复</button>
                                 )}
                               </div>
-                              <div className="text-xs text-neutral-300 whitespace-pre-wrap">
-                                {(postsMap.get(reply.parentId)?.content || '引用内容暂不可见（该楼层不在当前页）')
-                                  .slice(0, 200)}
+                              {/* 引用内容：使用带图片限制的 HTML 渲染，避免图片撑破引用块 */}
+                              <div className="text-xs text-neutral-300">
+                                <ReplyContent html={renderPreviewQuote(postsMap.get(reply.parentId)?.content || '引用内容暂不可见（该楼层不在当前页）')} />
                               </div>
                             </div>
                           )}
@@ -752,6 +898,11 @@ export function ForumPage() {
                               <Reply className="w-3 h-3 mr-1" />
                               回复
                             </Button>
+                            {/* 回帖浏览数占位展示（前端本地统计） */}
+                            <div className="flex items-center gap-1 text-neutral-500 text-xs ml-auto">
+                              <Eye className="w-3 h-3" />
+                              <span>{reply.viewsCount ?? 0}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -852,7 +1003,7 @@ export function ForumPage() {
                               <h3 className={`text-white text-sm mb-1 hover:text-amber-400 transition-colors line-clamp-1 ${parseHighlight(post.highlightMeta?.status).bold ? 'font-bold' : ''} ${parseHighlight(post.highlightMeta?.status).red ? 'text-red-400' : ''}`}>
                                 {post.title}
                               </h3>
-                              <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex items-center gap-2 flex-wrap">
                                 {parseHighlight(post.highlightMeta?.status).hot && (
                                   <Badge className="bg-orange-500 text-white text-xs">热帖</Badge>
                                 )}
@@ -900,6 +1051,8 @@ export function ForumPage() {
             </div>
           )}
         </div>
+        {/* 页面可见性变化：后备统计（仅当配置了 OpenAPI.BASE） */}
+        {/* 事件监听在组件层通过 useEffect 注册，避免脚本标签副作用 */}
         {error && (
           <div className="mt-4">
             <div className="bg-red-500/15 border border-red-500/50 text-red-300 rounded-lg px-4 py-3 mx-4 md:mx-0">
