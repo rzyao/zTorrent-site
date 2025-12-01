@@ -25,6 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { isValidPassword, passwordErrorMessage } from '../utils/validation';
 
 type TabType = 'profile' | 'preferences' | 'security' | 'notifications' | 'privacy';
 
@@ -79,6 +80,27 @@ export function ControlPage() {
     allowMessages: true,
     showOnlineStatus: true,
   });
+
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [passwordErrors, setPasswordErrors] = useState<{ current?: string; new?: string; confirm?: string }>({});
+
+  const canUpdatePassword = () => {
+    if (!currentPassword) return false;
+    if (!isValidPassword(newPassword)) return false;
+    if (confirmNewPassword !== newPassword) return false;
+    return true;
+  };
+
+  const handleUpdatePassword = () => {
+    const errs: { current?: string; new?: string; confirm?: string } = {};
+    if (!currentPassword) errs.current = '请输入当前密码';
+    if (!isValidPassword(newPassword)) errs.new = passwordErrorMessage();
+    if (confirmNewPassword !== newPassword) errs.confirm = '两次输入的密码不一致';
+    setPasswordErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+  };
 
   const handleSave = () => {
     setSaveSuccess(true);
@@ -484,20 +506,31 @@ export function ControlPage() {
                             type="password"
                             placeholder="当前密码"
                             className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
                           />
+                          {passwordErrors.current && (<p className="text-xs text-red-400">{passwordErrors.current}</p>)}
                           <input
                             type="password"
                             placeholder="新密码"
                             className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
                           />
+                          {passwordErrors.new && (<p className="text-xs text-red-400">{passwordErrors.new}</p>)}
                           <input
                             type="password"
                             placeholder="确认新密码"
                             className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                            value={confirmNewPassword}
+                            onChange={(e) => setConfirmNewPassword(e.target.value)}
                           />
+                          {passwordErrors.confirm && (<p className="text-xs text-red-400">{passwordErrors.confirm}</p>)}
                           <Button
                             size="sm"
                             className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                            onClick={handleUpdatePassword}
+                            disabled={!canUpdatePassword()}
                           >
                             更新密码
                           </Button>

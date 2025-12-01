@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '../components/ui/input';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { useAuth } from '../hooks/useApi';
+import { isValidPassword, passwordErrorMessage } from '../utils/validation';
 import { toast } from 'sonner';
 import { AuthService } from '../api';
 
@@ -140,8 +141,8 @@ export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProp
     }
     if (!formData.password) {
       newErrors.password = '请输入密码';
-    } else if (formData.password.length < 8) {
-      newErrors.password = '密码长度至少8个字符';
+    } else if (!isValidPassword(formData.password)) {
+      newErrors.password = passwordErrorMessage();
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -188,7 +189,13 @@ export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProp
       await register(formData.email, formData.username, formData.password);
       window.location.replace('/');
     } catch (error: any) {
-      toast.error(error.message || '注册失败，请重试');
+      const msg =
+        (error && (error as any).body && (error as any).body.message) ||
+        (error && (error as any).data && (error as any).data.message) ||
+        (error && (error as any).response && (error as any).response.data && (error as any).response.data.message) ||
+        error?.message ||
+        '注册失败，请重试';
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }

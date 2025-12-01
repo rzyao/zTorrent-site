@@ -2,14 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type UpdateSettingsItemDto = {
+export type ResendInviteDto = {
     /**
-     * 设置键
+     * 邀请记录ID（Snowflake字符串）
      */
-    key: string;
+    recordId: string;
     /**
-     * 设置值（可为任意类型）
+     * 覆盖目标邮箱（需谨慎）
      */
-    value: Record<string, any>;
+    email?: string;
 };
 

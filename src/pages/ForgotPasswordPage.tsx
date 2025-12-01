@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { isValidPassword, passwordErrorMessage } from '../utils/validation';
 import { Mail, Lock, ArrowLeft, Clock, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '../components/ui/input';
@@ -10,6 +11,9 @@ export function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) {
   const [step, setStep] = useState<'email' | 'verify' | 'reset' | 'success'>('email');
   const [countdown, setCountdown] = useState(0);
   const [email, setEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [errors, setErrors] = useState<{ newPassword?: string; confirmPassword?: string }>({});
 
   const handleSendCode = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +28,19 @@ export function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) {
   };
 
   const handleVerifyCode = (e: React.FormEvent) => { e.preventDefault(); setStep('reset'); };
-  const handleResetPassword = (e: React.FormEvent) => { e.preventDefault(); setStep('success'); };
+  const handleResetPassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    const errs: { newPassword?: string; confirmPassword?: string } = {};
+    if (!isValidPassword(newPassword)) {
+      errs.newPassword = passwordErrorMessage();
+    }
+    if (confirmPassword !== newPassword) {
+      errs.confirmPassword = '两次输入的密码不一致';
+    }
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+    setStep('success');
+  };
 
   return (
     <div className="min-h-screen bg-[#0F171E] relative overflow-hidden">
@@ -75,8 +91,8 @@ export function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) {
             {step === 'reset' && (<>
               <div className="text-center mb-8"><h1 className="text-white text-3xl mb-2">设置新密码</h1><p className="text-gray-400 text-sm">请设置一个安全的新密码</p></div>
               <form onSubmit={handleResetPassword} className="space-y-5">
-                <div className="space-y-2"><label className="text-white text-sm">新密码</label><div className="relative"><Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" /><Input type="password" placeholder="输入新密码" required className="w-full bg-gray-900/50 border-gray-700 text-white pl-11 pr-4 py-6 rounded-md focus:border-[#00A8E1] focus:ring-[#00A8E1] placeholder:text-gray-500" /></div><p className="text-xs text-gray-500">至少8个字符，包含字母和数字</p></div>
-                <div className="space-y-2"><label className="text-white text-sm">确认新密码</label><div className="relative"><Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" /><Input type="password" placeholder="再次输入新密码" required className="w-full bg-gray-900/50 border-gray-700 text-white pl-11 pr-4 py-6 rounded-md focus:border-[#00A8E1] focus:ring-[#00A8E1] placeholder:text-gray-500" /></div></div>
+                <div className="space-y-2"><label className="text-white text-sm">新密码</label><div className="relative"><Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" /><Input type="password" placeholder="输入新密码" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required className="w-full bg-gray-900/50 border-gray-700 text-white pl-11 pr-4 py-6 rounded-md focus:border-[#00A8E1] focus:ring-[#00A8E1] placeholder:text-gray-500" /></div>{errors.newPassword && <p className="text-xs text-red-400">{errors.newPassword}</p>}<p className="text-xs text-gray-500">至少8个字符，包含字母和数字</p></div>
+                <div className="space-y-2"><label className="text-white text-sm">确认新密码</label><div className="relative"><Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" /><Input type="password" placeholder="再次输入新密码" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required className="w-full bg-gray-900/50 border-gray-700 text-white pl-11 pr-4 py-6 rounded-md focus:border-[#00A8E1] focus:ring-[#00A8E1] placeholder:text-gray-500" /></div>{errors.confirmPassword && <p className="text-xs text-red-400">{errors.confirmPassword}</p>}</div>
                 <div className="bg-blue-900/20 border border-blue-800/30 rounded-md p-4"><p className="text-xs text-blue-300"><strong>密码安全提示：</strong><br />• 使用大小写字母、数字和特殊符号组合<br />• 避免使用常见密码或个人信息<br />• 定期更换密码以保障账号安全</p></div>
                 <Button type="submit" className="w-full bg-[#00A8E1] hover:bg-[#00A8E1]/90 text-white py-6 text-lg rounded-md transition-colors">重置密码</Button>
               </form>

@@ -23,6 +23,8 @@ import { Separator } from '@/components/ui/separator';
 import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
 import { useParams } from 'react-router-dom';
 import { TorrentsService } from '@/api';
+import { useTorrentDownload } from '@/features/download/useTorrentDownload';
+import { useAccess } from '@/context/AccessContext';
 import { formatSize } from '@/utils/format';
 import {
   Carousel,
@@ -38,6 +40,11 @@ import { processDescription } from './utils/processDescription';
 import { FileListItem } from './components/FileListItem';
 
 export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps) {
+  const { access } = useAccess();
+  const { downloadByTorrentId } = useTorrentDownload({
+    onInfo: (m) => console.info(m),
+    onError: (m) => alert(m),
+  });
   const { id } = useParams();
   const effectiveId = torrentId ?? id;
   const [isDescExpanded, setIsDescExpanded] = useState(true);
@@ -325,9 +332,9 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
           <div className="flex flex-wrap items-center gap-2">
             <Button
               className="bg-[#00A8E1] hover:bg-[#00A8E1]/90 text-white h-9"
-              onClick={() => {
-                window.open(torrentData.downloadUrl, '_blank');
-              }}
+              onClick={() => downloadByTorrentId(String(torrentData.id), String(torrentData.title || 'download'))}
+              disabled={!access?.permissions?.includes('download_torrent')}
+              title={!access?.permissions?.includes('download_torrent') ? '无下载权限' : undefined}
             >
               <Download className="w-4 h-4 mr-1" />
               下载种子

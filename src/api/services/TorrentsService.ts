@@ -54,6 +54,39 @@ export class TorrentsService {
         });
     }
     /**
+     * 生成一次性下载链接
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentsControllerCreateDownloadUrl(
+        requestBody: {
+            torrentId: string;
+        },
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            url?: string;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/download-url',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
      * 脚本自动上传种子（Base64）
      * @param requestBody
      * @returns any 成功

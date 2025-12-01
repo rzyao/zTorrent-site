@@ -5,7 +5,6 @@
 import type { InviteStatusDto } from '../models/InviteStatusDto';
 import type { LoginDto } from '../models/LoginDto';
 import type { LoginResultDto } from '../models/LoginResultDto';
-import type { QuickRegisterDto } from '../models/QuickRegisterDto';
 import type { RegisterDto } from '../models/RegisterDto';
 import type { RegisterResultDto } from '../models/RegisterResultDto';
 import type { RegistrationStatusDto } from '../models/RegistrationStatusDto';
@@ -72,32 +71,6 @@ export class AuthService {
             mediaType: 'application/json',
             errors: {
                 409: `用户名或邮箱已存在`,
-            },
-        });
-    }
-    /**
-     * 快捷注册（调试用）
-     * 仅输入用户名和密码完成注册，自动生成邮箱与passkey
-     * @param requestBody
-     * @returns any 注册成功并返回令牌
-     * @throws ApiError
-     */
-    public static authControllerQuickRegister(
-        requestBody: QuickRegisterDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: RegisterResultDto;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/auth/quick-register',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                409: `用户名已存在`,
             },
         });
     }

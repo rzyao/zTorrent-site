@@ -2,14 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type CreateSettingDto = {
+export type LevelIdDto = {
     /**
-     * 设置键
+     * Level ID
      */
-    key: string;
-    /**
-     * 设置值（字符串）
-     */
-    value: string;
+    id: string;
 };
 

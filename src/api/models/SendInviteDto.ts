@@ -5,12 +5,8 @@
 export type SendInviteDto = {
     email: string;
     /**
-     * 邀请有效天数（可选）
+     * 被邀请者的用户名（用于重复校验）
      */
-    expiresDays?: number;
-    /**
-     * 邀请者展示名称（邮件显示）
-     */
-    inviterName?: string;
+    username: string;
 };
 

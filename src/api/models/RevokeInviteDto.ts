@@ -2,8 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type QuickRegisterDto = {
-    username: string;
-    password: string;
+export type RevokeInviteDto = {
+    /**
+     * 邀请记录ID（Snowflake字符串）
+     */
+    recordId: string;
+    reason?: string;
 };
 

@@ -27,6 +27,7 @@ interface TorrentCardProps {
   rating?: number;
   comments?: number;
   doubanUrl?: string;
+  onDownload?: () => void;
 }
 
 
@@ -46,6 +47,7 @@ export function TorrentCard({
   rating,
   comments,
   doubanUrl,
+  onDownload,
 }: TorrentCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   console.log(doubanUrl);
@@ -125,7 +127,12 @@ export function TorrentCard({
                 <span className="text-sm text-red-400">{leechers}</span>
               </div>
             </div>
-            <Button className="bg-white hover:bg-gray-200 text-black px-6 py-2 rounded-md transition-colors">
+            <Button
+              className="bg-white hover:bg-gray-200 text-black px-6 py-2 rounded-md transition-colors"
+              onClick={onDownload}
+              disabled={!onDownload}
+              title={!onDownload ? '无下载权限' : undefined}
+            >
               下载
             </Button>
           </div>

@@ -8,7 +8,7 @@ export type ResetPasswordDto = {
      */
     token: string;
     /**
-     * 新密码（至少6位）
+     * 新密码（至少8位，需包含字母和数字）
      */
     newPassword: string;
 };

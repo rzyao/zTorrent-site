@@ -53,8 +53,14 @@ export function useAuth() {
       setIsAuthenticated(true);
       return response;
     } catch (err: any) {
-      setError(err.message || '注册失败');
-      throw err;
+      const msg =
+        (err && (err as any).body && (err as any).body.message) ||
+        (err && (err as any).data && (err as any).data.message) ||
+        (err && (err as any).response && (err as any).response.data && (err as any).response.data.message) ||
+        err?.message ||
+        '注册失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }

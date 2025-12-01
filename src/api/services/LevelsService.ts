@@ -2,87 +2,40 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { UpdateSettingMetaDto } from '../models/UpdateSettingMetaDto';
+import type { CreateLevelDto } from '../models/CreateLevelDto';
+import type { LevelIdDto } from '../models/LevelIdDto';
+import type { UpdateLevelDto } from '../models/UpdateLevelDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class SettingsService {
+export class LevelsService {
     /**
-     * 获取设置列表
+     * 创建等级
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static settingsControllerListDetailedSettingsLegacy(): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: Array<{
-            id?: number;
-            createdAt?: string;
-            updatedAt?: string;
-            deletedAt?: string | null;
-            key?: string;
-            value?: string;
-            comment?: string | null;
-            type?: 'string' | 'number' | 'boolean' | 'json' | 'datetime' | 'rate' | 'password';
-            group?: string;
-            sort?: number;
-            description?: string | null;
-            mutable?: number;
-            jsonSchema?: string | null;
-            updatedBy?: string | null;
-            version?: number;
-        }>;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/settings/list-setting',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 按分组获取设置列表（详细字段）
-     * @param requestBody 按分组查询设置列表的请求体
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static settingsControllerListSettingsByGroup(
-        requestBody: {
-            group: string;
-        },
+    public static levelsControllerCreate(
+        requestBody: CreateLevelDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Array<{
-            id?: number;
+        data?: {
+            id?: string;
+            key?: string;
+            label?: string;
+            rank?: number;
+            description?: string | null;
+            isActive?: boolean;
             createdAt?: string;
             updatedAt?: string;
-            deletedAt?: string | null;
-            key?: string;
-            value?: string;
-            comment?: string | null;
-            type?: 'string' | 'number' | 'boolean' | 'json' | 'datetime' | 'rate' | 'password';
-            group?: string;
-            sort?: number;
-            description?: string | null;
-            mutable?: number;
-            jsonSchema?: string | null;
-            updatedBy?: string | null;
-            version?: number;
-        }>;
+        };
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/settings/list-setting-by-group',
+            url: '/levels/create',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -95,17 +48,90 @@ export class SettingsService {
         });
     }
     /**
-     * 批量更新系统设置（仅更新值，不支持重命名）
-     * @param requestBody 批量更新：按 key 更新对应的 value（不支持重命名）
+     * 分页查询等级列表
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static settingsControllerUpdateSettingsItems(
+    public static levelsControllerList(
         requestBody: {
-            items: Array<{
-                key: string;
-                value?: string;
+            key?: string | null;
+            label?: string | null;
+            page?: number;
+            limit?: number;
+        },
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            items?: Array<{
+                id?: string;
+                key?: string;
+                label?: string;
+                rank?: number;
+                description?: string | null;
+                isActive?: boolean;
+                createdAt?: string;
+                updatedAt?: string;
             }>;
+            total?: number;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/levels/list-levels',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 等级详情
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static levelsControllerDetail(
+        requestBody: LevelIdDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Record<string, any>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/levels/detail',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 更新等级
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static levelsControllerUpdate(
+        requestBody: {
+            id?: string;
+            data?: UpdateLevelDto;
         },
     ): CancelablePromise<{
         code?: number;
@@ -116,7 +142,7 @@ export class SettingsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/settings/update-items',
+            url: '/levels/update',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -124,36 +150,30 @@ export class SettingsService {
                 401: `未认证`,
                 403: `禁止访问或账号禁用`,
                 404: `资源不存在`,
-                409: `资源冲突`,
                 500: `服务器错误`,
             },
         });
     }
     /**
-     * 新增设置（仅当键不存在时创建；存在则返回冲突）
-     * @param requestBody 创建设置项请求体（key/value 必填，其余可选）
+     * 删除等级
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static settingsControllerCreate(
-        requestBody: {
-            key: string;
-            description?: string;
-            type?: 'string' | 'number' | 'boolean' | 'json' | 'datetime' | 'rate' | 'password';
-            group?: string;
-            mutable?: boolean;
-            sort?: number;
-        },
+    public static levelsControllerRemove(
+        requestBody: LevelIdDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: string;
+        data?: {
+            success?: boolean;
+        };
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/settings/create-setting',
+            url: '/levels/delete',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -161,20 +181,20 @@ export class SettingsService {
                 401: `未认证`,
                 403: `禁止访问或账号禁用`,
                 404: `资源不存在`,
-                409: `资源冲突`,
                 500: `服务器错误`,
             },
         });
     }
     /**
-     * 按键删除设置
-     * @param requestBody 按键删除设置的请求体
+     * 设置等级的权限（覆盖式）
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static settingsControllerDeleteSettingByKey(
+    public static levelsControllerSetPermissions(
         requestBody: {
-            key: string;
+            levelKey: string;
+            permissionKeys?: Array<string>;
         },
     ): CancelablePromise<{
         code?: number;
@@ -187,7 +207,7 @@ export class SettingsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/settings/delete-setting',
+            url: '/levels/permissions',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -200,64 +220,34 @@ export class SettingsService {
         });
     }
     /**
-     * 更新设置项的元数据（支持重命名 key）
+     * 查询等级的权限列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static settingsControllerUpdateSettingMeta(
-        requestBody: UpdateSettingMetaDto,
+    public static levelsControllerListPermissions(
+        requestBody: {
+            levelKey: string;
+        },
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            id?: number;
+        data?: Array<{
+            id?: string;
             key?: string;
-            description?: string | null;
+            name?: string;
             type?: string;
-            group?: string;
-            mutable?: number;
-            sort?: number;
-            jsonSchema?: string | null;
-            updatedBy?: string | null;
-            version?: number;
-        };
+            scope?: string;
+            description?: string | null;
+        }>;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/settings/update-setting-meta',
+            url: '/levels/list-permissions',
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 读取审核开关（只读）
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static settingsControllerGetReviewSwitches(): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: {
-            filmReview?: boolean;
-            playlistReview?: boolean;
-            torrentReview?: boolean;
-        };
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/settings/review-switches',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
