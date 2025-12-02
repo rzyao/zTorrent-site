@@ -2,6 +2,7 @@ import { FeaturedTorrent } from '../components/FeaturedTorrent';
 import { TorrentRow } from '../components/TorrentRow';
 import { useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 
 const featuredTorrent = {
   title: '星际穿越 Interstellar (2014)',
@@ -339,6 +340,7 @@ const movieTorrents = [
 ];
 
 export default function HomePage() {
+  useDynamicTitle('首页');
   const [params, setParams] = useSearchParams();
   const initial = params.get('category') || '全部';
   const [activeCategory, setActiveCategory] = useState(initial);

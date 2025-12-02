@@ -14,32 +14,32 @@ export const processDescription = (description: string) => {
 
   let processed = description
 
-  // 处理链接
+  // 处理链接（暖色调：链接采用 amber-400，增强可读性且更具亲和感）
   processed = processed.replace(
     /<a class=\"faqlink\" href=\"([^\"]+)\"[^>]*>([^<]+)<\/a>/g,
-    '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #00A8E1; text-decoration: underline;">$2</a>'
+    '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #fbbf24; text-decoration: underline;">$2</a>'
   );
 
-  // 处理span标签的颜色样式
+  // 处理span标签的颜色样式（暖色调映射）
   processed = processed.replace(
     /<span style="color: Blue;[^"]*">\s*<font size="5">\s*([^<]+)\s*<\/font>\s*<\/span>/g,
-    '<span style="color: #60a5fa; word-break: break-word;"><font size="5">$1</font></span>'
+    '<span style="color: #fbbf24; word-break: break-word;"><font size="5">$1</font></span>'
   );
 
-  // 处理通用的span颜色样式
+  // 处理通用的span颜色样式（将 Blue 映射为 amber-400）
   processed = processed.replace(
     /<span style="color: ([^;"]+);([^"]*)"([^>]*)>/g,
     (match, color, otherStyles, otherAttrs) => {
-      // 将蓝色映射为浅蓝色，其他颜色保持不变
-      const newColor = color.toLowerCase() === 'blue' ? '#60a5fa' : color;
+      // 将蓝色映射为暖色 amber，其他颜色保持不变
+      const newColor = color.toLowerCase() === 'blue' ? '#fbbf24' : color;
       return `<span style="color: ${newColor};${otherStyles}"${otherAttrs}>`;
     }
   );
 
-  // 处理fieldset和legend
+  // 处理fieldset和legend（暖色调：边框/背景/标题采用 amber 系）
   processed = processed.replace(
     /<fieldset><legend>\s*([^<]+)\s*<\/legend>/g,
-    '<fieldset style="border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 0.5rem; padding: 1rem; background-color: rgba(59, 130, 246, 0.05); margin: 1rem 0; color: #d1d5db;"><legend style="color: #60a5fa; padding: 0 0.5rem;">$1</legend>'
+    '<fieldset style="border: 2px solid rgba(245, 158, 11, 0.3); border-radius: 0.5rem; padding: 1rem; background-color: rgba(245, 158, 11, 0.05); margin: 1rem 0; color: #d1d5db;"><legend style="color: #fbbf24; padding: 0 0.5rem;">$1</legend>'
   );
 
   // 处理段落

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { useSearchParams } from 'react-router-dom';
 import {
   Mail,
@@ -96,6 +97,7 @@ interface Message {
 }
 
 export function MessagesPage() {
+  useDynamicTitle('消息');
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTabRaw = (searchParams.get('tab') || 'inbox') as string;
   const allowedTabs: MessageType[] = ['system', 'inbox', 'sent', 'favorites', 'threads'];

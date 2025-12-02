@@ -18,6 +18,17 @@ export class StoreService {
         });
     }
     /**
+     * 商品列表（POST）
+     * @returns any
+     * @throws ApiError
+     */
+    public static storeControllerListItemsPost(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/store/items/list',
+        });
+    }
+    /**
      * 购买商品
      * @returns any
      * @throws ApiError
@@ -81,6 +92,17 @@ export class StoreService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/store/orders/list',
+        });
+    }
+    /**
+     * 订单详情
+     * @returns any
+     * @throws ApiError
+     */
+    public static storeControllerOrderDetail(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/store/orders/detail',
         });
     }
 }

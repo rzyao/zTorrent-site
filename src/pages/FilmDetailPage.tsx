@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { TorrentsService } from '@/api';
 import {
   Download,
@@ -48,6 +49,7 @@ interface TorrentDetailPageProps {
 
 
 export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps) {
+  useDynamicTitle('影片详情');
   const [activeTab, setActiveTab] = useState('comments');
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [hasThanked, setHasThanked] = useState(false);

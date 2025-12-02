@@ -1,7 +1,9 @@
 import { addToast } from '@heroui/toast';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { Button } from '../components/ui/button';
 
 export function SimpleToastTest() {
+  useDynamicTitle('测试');
   const showTestToast = () => {
     addToast({
       title: '测试 Toast',

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import {
   Search as SearchIcon,
   Plus,
@@ -60,6 +61,7 @@ interface Request {
 }
 
 export function RequestsPage() {
+  useDynamicTitle('求种');
   const [view, setView] = useState<'list' | 'create' | 'detail'>('list');
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');

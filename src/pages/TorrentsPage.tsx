@@ -62,7 +62,10 @@ const sortOptions = [
 
 export default function TorrentsPage() {
   const { getCategoryLabel } = useDictionaryLabels();
-  const { downloadByTorrentId } = useTorrentDownload();
+  const { downloadByTorrentId } = useTorrentDownload({
+    onInfo: (m) => console.info(m),
+    onError: (m) => alert(m),
+  });
   const [selectedCategory, setSelectedCategory] = useState('全部');
   const [sortBy, setSortBy] = useState('latest');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');

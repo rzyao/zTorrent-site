@@ -5,7 +5,9 @@ import { request as __request } from '../core/request';
  * 魔力值/积分相关接口轻量封装
  */
 export type BonusBalance = {
-  balance?: number;
+  balance?: string | number;
+  lockedBalance?: string | number;
+  updatedAt?: string;
   [key: string]: any;
 };
 
@@ -14,15 +16,69 @@ function unwrap<T>(body: any): T {
   return maybeWrapped as T;
 }
 
-/**
- * 查询用户积分余额
- * GET /bonus/balance
- */
 export async function getBonusBalance(): Promise<BonusBalance> {
   const resp = await __request(OpenAPI, {
-    method: 'GET',
+    method: 'POST',
     url: '/bonus/balance',
+    body: {},
+    mediaType: 'application/json',
   });
   return unwrap<BonusBalance>(resp);
 }
 
+export type BonusOverview = {
+  balance: string | number;
+  totalEarned: string | number;
+  totalSpent: string | number;
+  monthTrend: Array<{ month: string; earned: string | number; spent: string | number }>;
+  rank?: number;
+  updatedAt?: string;
+};
+
+export async function getBonusOverview(): Promise<BonusOverview> {
+  const resp = await __request(OpenAPI, {
+    method: 'POST',
+    url: '/bonus/overview',
+    body: {},
+    mediaType: 'application/json',
+  });
+  return unwrap<BonusOverview>(resp);
+}
+
+export type LedgerItem = {
+  id: string;
+  userId?: string;
+  delta: string | number;
+  reason: string;
+  refType?: string | null;
+  refId?: string | null;
+  externalRef?: string | null;
+  metadata?: Record<string, any> | null;
+  createdAt: string;
+};
+
+export type LedgerRequest = {
+  page?: number;
+  pageSize?: number;
+  from?: string;
+  to?: string;
+  types?: Array<'earn' | 'spend'>;
+  reasons?: string[];
+};
+
+export type LedgerResponse = {
+  page: number;
+  pageSize: number;
+  total: number;
+  items: LedgerItem[];
+};
+
+export async function getBonusLedger(body: LedgerRequest): Promise<LedgerResponse> {
+  const resp = await __request(OpenAPI, {
+    method: 'POST',
+    url: '/bonus/ledger',
+    body,
+    mediaType: 'application/json',
+  });
+  return unwrap<LedgerResponse>(resp);
+}

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { Sparkles, TrendingUp, TrendingDown, Gift, Award, Star, Zap, Clock, Users, Download, Upload, MessageSquare, UserPlus, Calendar, ArrowUpRight, ArrowDownRight, Filter, Search, Copy, Mail } from 'lucide-react';
 import type { StoreItem } from '../api/custom/store';
-import { getStoreItems, purchaseItem } from '../api/custom/store';
-import { getBonusBalance } from '../api/custom/bonus';
-import { AuthService, MailService } from '../api';
+import { getStoreItems, purchaseItem, getOrderDetail } from '../api/custom/store';
+import { getBonusBalance, getBonusOverview, getBonusLedger } from '../api/custom/bonus';
+import { MailService } from '../api';
+import { getProfile } from '../api/custom/auth';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../components/ui/dialog';
 
 interface MagicRecord {
@@ -17,28 +19,17 @@ interface MagicRecord {
 }
 
 export function BonusPage() {
+  useDynamicTitle('魔力值');
   const [activeTab, setActiveTab] = useState<'overview' | 'records' | 'shop'>('overview');
   const [filterType, setFilterType] = useState<'all' | 'earn' | 'spend'>('all');
 
-  // 模拟魔力值数据
-  const userMagic = {
-    current: 12580,
-    totalEarned: 45320,
-    totalSpent: 32740,
-    rank: 156,
-  };
+  const [overview, setOverview] = useState<{ current: number; totalEarned: number; totalSpent: number; rank?: number } | null>(null);
+  const [overviewLoading, setOverviewLoading] = useState(false);
+  const [overviewError, setOverviewError] = useState<string | null>(null);
 
-  // 魔力值记录
-  const magicRecords: MagicRecord[] = [
-    { id: '1', type: 'earn', amount: 100, reason: '每日签到', description: '连续签到第7天奖励', timestamp: '2小时前', icon: Calendar },
-    { id: '2', type: 'spend', amount: -500, reason: '购买邀请码', description: '购买邀请码 x1', timestamp: '5小时前', icon: UserPlus },
-    { id: '3', type: 'earn', amount: 200, reason: '上传种子', description: '上传新种子: 肖申克的救赎', timestamp: '1天前', icon: Upload },
-    { id: '4', type: 'earn', amount: 50, reason: '保种奖励', description: '保种超过30天奖励', timestamp: '1天前', icon: Zap },
-    { id: '5', type: 'spend', amount: -1000, reason: '求种悬赏', description: '发布求种: 星际穿越 4K', timestamp: '2天前', icon: MessageSquare },
-    { id: '6', type: 'earn', amount: 150, reason: '分享率奖励', description: '分享率突破2.0', timestamp: '3天前', icon: TrendingUp },
-    { id: '7', type: 'earn', amount: 300, reason: '上传数据达标', description: '总上传量突破5TB', timestamp: '4天前', icon: Award },
-    { id: '8', type: 'spend', amount: -200, reason: '兑换VIP', description: '兑换VIP会员1个月', timestamp: '5天前', icon: Star },
-  ];
+  const [records, setRecords] = useState<MagicRecord[]>([]);
+  const [recordsLoading, setRecordsLoading] = useState(false);
+  const [recordsError, setRecordsError] = useState<string | null>(null);
 
   // 获取魔力值的方式
   const earnMethods = [
@@ -74,11 +65,10 @@ export function BonusPage() {
     if (activeTab !== 'shop') return;
     setItemsLoading(true);
     setItemsError(null);
-    getStoreItems()
+    getStoreItems({ page: 1, pageSize: 50, status: 'active' })
       .then((resp: StoreItem[]) => setStoreItems(Array.isArray(resp) ? resp : []))
       .catch((e: any) => setItemsError(e?.message || '加载商城商品失败'))
       .finally(() => setItemsLoading(false));
-    // 简单埋点：商城列表曝光
     try { console.info('[store_list_view]'); } catch { }
   }, [activeTab]);
 
@@ -91,14 +81,13 @@ export function BonusPage() {
     setQuantity(1);
     getBonusBalance()
       .then((b) => {
-        const val = Number((b as any)?.balance ?? (b as any)?.points ?? 0);
+        const raw = (b as any)?.balance ?? (b as any)?.points ?? 0;
+        const val = typeof raw === 'string' ? parseInt(raw, 10) : Number(raw);
         setBalance(Number.isFinite(val) ? val : null);
       })
       .catch(() => setBalance(null));
-    AuthService.authControllerProfile()
-      .then((resp: any) => {
-        const body = resp?.code !== undefined ? resp : resp?.data;
-        const data = body?.data ?? body;
+    getProfile()
+      .then((data: any) => {
         const id = String(data?.user?.id ?? data?.user?._id ?? data?.sub ?? '');
         setUserId(id || undefined);
       })
@@ -122,13 +111,51 @@ export function BonusPage() {
     }
   };
 
-  const filteredRecords = magicRecords.filter(record => {
-    if (filterType === 'all') return true;
-    return record.type === filterType;
-  });
+  useEffect(() => {
+    if (activeTab !== 'overview') return;
+    setOverviewLoading(true);
+    setOverviewError(null);
+    getBonusOverview()
+      .then((o) => {
+        const current = typeof o.balance === 'string' ? parseInt(o.balance as string, 10) : Number(o.balance);
+        const totalEarned = typeof o.totalEarned === 'string' ? parseInt(o.totalEarned as string, 10) : Number(o.totalEarned);
+        const totalSpent = typeof o.totalSpent === 'string' ? parseInt(o.totalSpent as string, 10) : Number(o.totalSpent);
+        setOverview({ current, totalEarned, totalSpent, rank: o.rank });
+      })
+      .catch((e: any) => setOverviewError(e?.message || '加载概览失败'))
+      .finally(() => setOverviewLoading(false));
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab !== 'records') return;
+    setRecordsLoading(true);
+    setRecordsError(null);
+    const types: Array<'earn' | 'spend'> = filterType === 'all' ? ['earn', 'spend'] : [filterType as 'earn' | 'spend'];
+    getBonusLedger({ page: 1, pageSize: 20, types })
+      .then((res) => {
+        const mapped: MagicRecord[] = (res.items || []).map((it) => {
+          const amt = typeof it.delta === 'string' ? parseInt(it.delta as string, 10) : Number(it.delta);
+          const t: 'earn' | 'spend' = amt >= 0 ? 'earn' : 'spend';
+          const reason = it.reason || '';
+          const icon = reason === 'purchase' ? UserPlus : reason === 'upload_torrent' ? Upload : Zap;
+          return {
+            id: it.id,
+            type: t,
+            amount: Math.abs(amt),
+            reason,
+            description: it.externalRef || '',
+            timestamp: it.createdAt,
+            icon,
+          };
+        });
+        setRecords(mapped);
+      })
+      .catch((e: any) => setRecordsError(e?.message || '加载流水失败'))
+      .finally(() => setRecordsLoading(false));
+  }, [activeTab, filterType]);
 
   return (
-    <div className="min-h-screen bg-[#0F171E] pt-16">
+    <div className="min-h-screen bg-[#0F171E]">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
         {/* 页面标题 */}
         <div className="mb-8">
@@ -148,10 +175,10 @@ export function BonusPage() {
               <span className="text-neutral-400 text-sm">当前魔力值</span>
               <Sparkles className="w-5 h-5 text-amber-400" />
             </div>
-            <div className="text-white text-3xl mb-1">{userMagic.current.toLocaleString()}</div>
+            <div className="text-white text-3xl mb-1">{(overview?.current ?? 0).toLocaleString()}</div>
             <div className="text-amber-400 text-sm flex items-center gap-1">
               <TrendingUp className="w-3 h-3" />
-              <span>排名第 {userMagic.rank}</span>
+              <span>排名第 {overview?.rank ?? '-'}</span>
             </div>
           </div>
 
@@ -160,7 +187,7 @@ export function BonusPage() {
               <span className="text-neutral-400 text-sm">累计获得</span>
               <ArrowUpRight className="w-5 h-5 text-green-400" />
             </div>
-            <div className="text-white text-3xl mb-1">{userMagic.totalEarned.toLocaleString()}</div>
+            <div className="text-white text-3xl mb-1">{(overview?.totalEarned ?? 0).toLocaleString()}</div>
             <div className="text-green-400 text-sm">历史总收入</div>
           </div>
 
@@ -169,7 +196,7 @@ export function BonusPage() {
               <span className="text-neutral-400 text-sm">累计消耗</span>
               <ArrowDownRight className="w-5 h-5 text-red-400" />
             </div>
-            <div className="text-white text-3xl mb-1">{userMagic.totalSpent.toLocaleString()}</div>
+            <div className="text-white text-3xl mb-1">{(overview?.totalSpent ?? 0).toLocaleString()}</div>
             <div className="text-red-400 text-sm">历史总支出</div>
           </div>
 
@@ -178,7 +205,7 @@ export function BonusPage() {
               <span className="text-neutral-400 text-sm">净收益</span>
               <TrendingUp className="w-5 h-5 text-blue-400" />
             </div>
-            <div className="text-white text-3xl mb-1">{(userMagic.totalEarned - userMagic.totalSpent).toLocaleString()}</div>
+            <div className="text-white text-3xl mb-1">{((overview?.totalEarned ?? 0) - (overview?.totalSpent ?? 0)).toLocaleString()}</div>
             <div className="text-blue-400 text-sm">收入 - 支出</div>
           </div>
         </div>
@@ -298,7 +325,9 @@ export function BonusPage() {
 
             {/* 记录列表 */}
             <div className="space-y-3">
-              {filteredRecords.map((record) => (
+              {recordsLoading && <div className="text-neutral-400">正在加载收支记录...</div>}
+              {recordsError && !recordsLoading && <div className="text-red-400">{recordsError}</div>}
+              {!recordsLoading && !recordsError && records.map((record) => (
                 <div
                   key={record.id}
                   className="bg-neutral-900 border border-neutral-700 rounded-xl p-4 hover:border-neutral-600 transition-colors"
@@ -471,15 +500,22 @@ export function BonusPage() {
                           try {
                             setSubmitting(true);
                             setErrorMsg(null);
-                            const resp = await purchaseItem(lastParams);
-                            const ok = (resp?.deliveryResult?.ok ?? false) || resp?.status === 'delivered';
-                            if (ok) {
-                              const code = String(resp?.deliveryResult?.code ?? '');
-                              setResultCode(code || '');
-                              console.info('[store_purchase_success]', { orderId: resp?.id });
+                            const idKey = (globalThis as any).crypto?.randomUUID?.() || Math.random().toString(36).slice(2);
+                            const resp = await purchaseItem(lastParams, String(idKey));
+                            const orderId = resp?.id;
+                            if (!orderId) {
+                              setErrorMsg('未返回订单号');
                             } else {
-                              setErrorMsg((resp as any)?.message || '购买失败');
-                              console.info('[store_purchase_failure]', { orderId: resp?.id });
+                              const detail = await getOrderDetail({ id: orderId });
+                              const ok = (detail?.deliveryResult?.ok ?? false) || detail?.status === 'delivered';
+                              if (ok) {
+                                const code = String(detail?.deliveryResult?.code ?? '');
+                                setResultCode(code || '');
+                                console.info('[store_purchase_success]', { orderId: detail?.id });
+                              } else {
+                                setErrorMsg('购买未完成或失败');
+                                console.info('[store_purchase_failure]', { orderId: detail?.id });
+                              }
                             }
                           } catch (e: any) {
                             setErrorMsg(e?.message || '购买失败');
@@ -548,15 +584,22 @@ export function BonusPage() {
                         const payload = selectedItem.key === 'invite_code' ? { email } : {};
                         const params = { userId, itemKey: selectedItem.key, quantity, payload };
                         setLastParams(params);
-                        const resp = await purchaseItem(params);
-                        const ok = (resp?.deliveryResult?.ok ?? false) || resp?.status === 'delivered';
-                        if (ok) {
-                          const code = String(resp?.deliveryResult?.code ?? '');
-                          setResultCode(code || '');
-                          console.info('[store_purchase_success]', { orderId: resp?.id });
+                        const idKey = (globalThis as any).crypto?.randomUUID?.() || Math.random().toString(36).slice(2);
+                        const resp = await purchaseItem(params, String(idKey));
+                        const orderId = resp?.id;
+                        if (!orderId) {
+                          setErrorMsg('未返回订单号');
                         } else {
-                          setErrorMsg((resp as any)?.message || '购买失败');
-                          console.info('[store_purchase_failure]', { orderId: resp?.id });
+                          const detail = await getOrderDetail({ id: orderId });
+                          const ok = (detail?.deliveryResult?.ok ?? false) || detail?.status === 'delivered';
+                          if (ok) {
+                            const code = String(detail?.deliveryResult?.code ?? '');
+                            setResultCode(code || '');
+                            console.info('[store_purchase_success]', { orderId: detail?.id });
+                          } else {
+                            setErrorMsg('购买未完成或失败');
+                            console.info('[store_purchase_failure]', { orderId: detail?.id });
+                          }
                         }
                       } catch (e: any) {
                         setErrorMsg(e?.message || '购买失败');

@@ -1,0 +1,380 @@
+import { useState, useEffect } from 'react';
+import { Film, Star, Calendar, Users, Eye, Play, Search, Filter, BookmarkPlus, TrendingUp, Clock, Award, Loader2 } from 'lucide-react';
+import { FilmsService } from '@/api/services/FilmsService';
+import { CollectFilmDto } from '@/api/models/CollectFilmDto';
+import { PublicFilmDto } from '@/api/models/PublicFilmDto';
+import { ListFilmsDto } from '@/api/models/ListFilmsDto';
+import { FilmIdDto } from '@/api/models/FilmIdDto';
+
+
+
+export function FilmsPage() {
+  const [activeTab, setActiveTab] = useState<'all' | 'trending' | 'latest' | 'classic'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'rating' | 'latest' | 'popular'>('rating');
+  const [selectedGenre, setSelectedGenre] = useState<string>('all');
+
+  // 数据状态
+  const [movies, setMovies] = useState<PublicFilmDto[]>([]);
+  const [genres, setGenres] = useState<string[]>(['全部']);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [total, setTotal] = useState(0);
+
+  // 获取影片列表
+  const fetchMovies = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const requestBody: ListFilmsDto = {
+        page: 1,
+        limit: 100, // 暂时获取较多数据，避免分页
+        tab: activeTab === 'all' ? undefined : activeTab as ListFilmsDto.tab,
+        genre: selectedGenre === 'all' || selectedGenre === '全部' ? undefined : selectedGenre,
+        search: searchQuery || undefined,
+        sortBy: sortBy as ListFilmsDto.sortBy,
+        year: undefined
+      };
+
+      const response = await FilmsService.filmsControllerListFilms(requestBody);
+
+      if (response.data?.items) {
+        setMovies(response.data.items as PublicFilmDto[]);
+        setTotal(response.data.total || 0);
+      }
+    } catch (err: any) {
+      console.error('获取影片列表失败:', err);
+      setError(err.message || '获取影片列表失败，请稍后重试');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 获取类型列表
+  const fetchGenres = async () => {
+    // 暂时使用静态数据，等待后端接口部署
+    setGenres(['全部', '科幻', '剧情', '动作', '犯罪', '冒险', '动画', '奇幻', '悬疑', '惊悚', '历史', '战争']);
+
+    try {
+      const response = await FilmsService.filmsControllerListGenres();
+      if (response.data?.genres) {
+        setGenres(['全部', ...response.data.genres]);
+      }
+    } catch (err) {
+      console.warn('获取类型列表失败，使用默认列表');
+      // 保持默认列表
+    }
+  };
+
+  // 初始化：获取类型列表
+  useEffect(() => {
+    fetchGenres();
+  }, []);
+
+  // 监听筛选条件变化，重新获取影片列表
+  useEffect(() => {
+    fetchMovies();
+  }, [activeTab, selectedGenre, searchQuery, sortBy]);
+
+  const handleCollectToggle = async (movieId: string) => {
+    try {
+      const movieIndex = movies.findIndex(m => m.id === movieId);
+      if (movieIndex === -1) return;
+
+      const movie = movies[movieIndex];
+      const newIsCollected = !movie.isCollected;
+
+      // 乐观更新
+      const newPublicFilmDtos = [...movies];
+      newPublicFilmDtos[movieIndex] = {
+        ...movie,
+        isCollected: newIsCollected,
+        collectionsCount: movie.collectionsCount + (newIsCollected ? 1 : -1)
+      };
+      setMovies(newPublicFilmDtos);
+
+      // 调用 API
+      await FilmsService.filmsControllerCollectMovie({
+        filmId: movieId,
+        action: newIsCollected ? CollectFilmDto.action.COLLECT : CollectFilmDto.action.UNCOLLECT
+      });
+
+    } catch (err) {
+      console.error('收藏操作失败:', err);
+      // 回滚状态
+      fetchMovies();
+      // 这里可以添加一个 toast 提示
+    }
+  };
+
+  const handleMovieClick = async (movie: PublicFilmDto) => {
+    console.log('Open movie:', movie);
+    // 增加浏览次数
+    try {
+      await FilmsService.filmsControllerViewMovie({ id: movie.id });
+    } catch (err) {
+      console.error('增加浏览次数失败:', err);
+    }
+    // 实际应用中这里会导航到影片详情页
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0F171E]">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
+        {/* 页面标题 */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+              <Film className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-white text-3xl">影片浏览</h1>
+          </div>
+          <p className="text-neutral-400 ml-13">发现和收藏优质影片资源</p>
+        </div>
+
+        {/* 标签页切换 */}
+        <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
+          <button
+            onClick={() => setActiveTab('all')}
+            className={`px-6 py-2.5 rounded-xl transition-all whitespace-nowrap ${activeTab === 'all'
+              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
+              : 'bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800'
+              }`}
+          >
+            <div className="flex items-center gap-2">
+              <Film className="w-4 h-4" />
+              <span>全部影片</span>
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('trending')}
+            className={`px-6 py-2.5 rounded-xl transition-all whitespace-nowrap ${activeTab === 'trending'
+              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
+              : 'bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800'
+              }`}
+          >
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" />
+              <span>热门影片</span>
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('latest')}
+            className={`px-6 py-2.5 rounded-xl transition-all whitespace-nowrap ${activeTab === 'latest'
+              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
+              : 'bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800'
+              }`}
+          >
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              <span>最新上映</span>
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('classic')}
+            className={`px-6 py-2.5 rounded-xl transition-all whitespace-nowrap ${activeTab === 'classic'
+              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
+              : 'bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800'
+              }`}
+          >
+            <div className="flex items-center gap-2">
+              <Award className="w-4 h-4" />
+              <span>经典影片</span>
+            </div>
+          </button>
+        </div>
+
+        {/* 搜索和筛选 */}
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 mb-6">
+          <div className="flex-1 relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="搜索影片名称、导演..."
+              className="w-full bg-neutral-900 border border-neutral-700 rounded-xl pl-12 pr-4 py-3 text-white placeholder:text-neutral-500 focus:outline-none focus:border-amber-500/50"
+            />
+          </div>
+          <div className="relative">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="appearance-none bg-neutral-900 border border-neutral-700 rounded-xl pl-4 pr-10 py-3 text-white focus:outline-none focus:border-amber-500/50 cursor-pointer w-full md:w-auto"
+            >
+              <option value="rating">评分最高</option>
+              <option value="latest">最新上映</option>
+              <option value="popular">最受欢迎</option>
+            </select>
+            <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500 pointer-events-none" />
+          </div>
+        </div>
+
+        {/* 类型筛选 */}
+        <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
+          {genres.map((genre) => (
+            <button
+              key={genre}
+              onClick={() => setSelectedGenre(genre)}
+              className={`px-4 py-2 rounded-lg transition-all whitespace-nowrap ${selectedGenre === genre || (selectedGenre === 'all' && genre === '全部')
+                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                : 'bg-neutral-900 text-neutral-400 border border-neutral-700 hover:bg-neutral-800 hover:text-white'
+                }`}
+            >
+              {genre}
+            </button>
+          ))}
+        </div>
+
+        {/* 加载状态 */}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="w-10 h-10 text-amber-500 animate-spin mb-4" />
+            <p className="text-neutral-400">正在加载影片...</p>
+          </div>
+        )}
+
+        {/* 错误状态 */}
+        {error && (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-20 h-20 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-4">
+              <Film className="w-10 h-10 text-red-500" />
+            </div>
+            <h3 className="text-white text-xl mb-2">加载失败</h3>
+            <p className="text-neutral-500 mb-6">{error}</p>
+            <button
+              onClick={fetchMovies}
+              className="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl transition-colors"
+            >
+              重试
+            </button>
+          </div>
+        )}
+
+        {/* 影片网格 */}
+        {!loading && !error && (
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+              {movies.map((movie) => (
+                <div
+                  key={movie.id}
+                  className="group bg-neutral-900 border border-neutral-700 rounded-2xl overflow-hidden hover:border-amber-500/50 transition-all hover:shadow-lg hover:shadow-amber-500/10 cursor-pointer"
+                  onClick={() => handleMovieClick(movie)}
+                >
+                  {/* 海报 */}
+                  <div className="relative aspect-[2/3] overflow-hidden">
+                    <img
+                      src={movie.poster || 'https://via.placeholder.com/300x450?text=No+Poster'}
+                      alt={movie.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                    {/* 悬浮播放按钮 */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="w-12 h-12 rounded-full bg-amber-500/90 flex items-center justify-center">
+                        <Play className="w-6 h-6 text-white ml-0.5" fill="currentColor" />
+                      </div>
+                    </div>
+
+                    {/* 评分标签 */}
+                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-sm flex items-center gap-1">
+                      <Star className="w-3.5 h-3.5 text-amber-400" fill="currentColor" />
+                      <span className="text-white text-sm">{movie.rating}</span>
+                    </div>
+
+                    {/* 年份标签 */}
+                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-sm">
+                      <span className="text-white text-sm">{movie.year}</span>
+                    </div>
+
+                    {/* 收藏按钮 */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCollectToggle(movie.id);
+                      }}
+                      className={`absolute bottom-3 right-3 w-8 h-8 rounded-lg backdrop-blur-sm flex items-center justify-center transition-all ${movie.isCollected
+                        ? 'bg-amber-500/80 text-white'
+                        : 'bg-black/60 text-neutral-400 hover:bg-black/80 hover:text-white'
+                        }`}
+                    >
+                      <BookmarkPlus className={`w-4 h-4 ${movie.isCollected ? 'fill-current' : ''}`} />
+                    </button>
+
+                    {/* 底部信息 */}
+                    <div className="absolute bottom-0 left-0 right-0 p-3">
+                      <h3 className="text-white text-sm mb-1 line-clamp-1 group-hover:text-amber-400 transition-colors">
+                        {movie.title}
+                      </h3>
+                      <p className="text-neutral-400 text-xs line-clamp-1">
+                        {movie.originalTitle}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 详细信息（悬浮显示） */}
+                  <div className="p-4 space-y-3">
+                    {/* 导演 */}
+                    <div className="flex items-center gap-2 text-sm">
+                      <Users className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                      <span className="text-neutral-400 truncate">{movie.director}</span>
+                    </div>
+
+                    {/* 时长和国家 */}
+                    <div className="flex items-center gap-3 text-xs text-neutral-500">
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        <span>{movie.duration}分钟</span>
+                      </div>
+                      <span>•</span>
+                      <span>{movie.country}</span>
+                    </div>
+
+                    {/* 类型标签 */}
+                    <div className="flex flex-wrap gap-1.5">
+                      {(movie.genre || []).slice(0, 3).map((g, index) => (
+                        <span
+                          key={index}
+                          className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 text-xs border border-amber-500/20"
+                        >
+                          {g}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* 统计信息 */}
+                    <div className="flex items-center justify-between pt-3 border-t border-neutral-800 text-xs">
+                      <div className="flex items-center gap-1 text-neutral-500">
+                        <Film className="w-3 h-3" />
+                        <span>{movie.torrentsCount} ��子</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-neutral-500">
+                        <Eye className="w-3 h-3" />
+                        <span>{(movie.viewsCount / 1000).toFixed(1)}k</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* 空状态 */}
+            {movies.length === 0 && (
+              <div className="text-center py-16">
+                <div className="w-20 h-20 rounded-2xl bg-neutral-900 border border-neutral-700 flex items-center justify-center mx-auto mb-4">
+                  <Film className="w-10 h-10 text-neutral-600" />
+                </div>
+                <h3 className="text-white text-xl mb-2">暂无影片</h3>
+                <p className="text-neutral-500 mb-6">
+                  没有找到符合条件的影片
+                </p>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

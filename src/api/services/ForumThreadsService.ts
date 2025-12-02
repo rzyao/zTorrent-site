@@ -166,34 +166,4 @@ export class ForumThreadsService {
             },
         });
     }
-
-    /**
-     * 递增主题浏览次数
-     * 说明：后端若未在 `get-thread` 内置递增，可显式调用该端点实现统计。
-     * 请求：`POST /forum/threads/inc-views`
-     * 返回：最新 `viewsCount` 或统一响应包装（兼容 unwrapResponse）。
-     */
-    public static forumThreadsControllerIncViews(
-        requestBody: ForumThreadIdDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: Record<string, any>;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/forum/threads/inc-views',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
 }

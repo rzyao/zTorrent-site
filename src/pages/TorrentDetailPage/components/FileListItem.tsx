@@ -19,7 +19,8 @@ export const FileListItem = ({ item, depth = 0 }: FileListItemProps) => {
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronUp className="w-4 h-4 text-gray-400" />}
-          <Folder className="w-4 h-4 text-[#00A8E1]" />
+          {/* 暖色调替换：文件夹图标由 violet 改为 amber，更亲和且在深色背景下对比良好 */}
+          <Folder className="w-4 h-4 text-amber-400" />
           <span className="text-white">{item.name}</span>
         </div>
         {isOpen && item.children?.map((child: FileItem, index: number) => (

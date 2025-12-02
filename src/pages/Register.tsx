@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { Mail, Lock, UserPlus, ArrowLeft, User, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '../components/ui/input';
@@ -21,6 +22,7 @@ interface FormData {
 }
 
 export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProps) {
+  useDynamicTitle('注册');
   const { register, sendVerificationCode, isLoading: hookLoading, error: hookError } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { FilmsService, PlaylistsService, TorrentsService, SettingsService } from '../api';
 import { AuditService } from '../api/services/AuditService';
 import { Film, List, Package, Check, X, Clock, User, Calendar, Tag, Eye, AlertTriangle, Search, Filter, ChevronDown, MessageSquare, History, Star, Shield, Image as ImageIcon } from 'lucide-react';
@@ -32,6 +33,7 @@ interface ReviewItem {
 type AuditHistory = { id: string; reviewer: string; action: 'approved' | 'rejected'; date: string; notes: string };
 
 export function ReviewPage() {
+  useDynamicTitle('审核');
   const [typeFilter, setTypeFilter] = useState<ReviewType | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<ReviewStatus | 'all'>('pending');
   const [timeRange, setTimeRange] = useState<'today' | 'week' | 'month' | 'all'>('all');
@@ -242,7 +244,8 @@ export function ReviewPage() {
       if (!showHistory || !selectedItem) return;
       setHistoryLoading(true);
       try {
-        const resp = await AuditService.auditControllerHistory({ type: selectedItem.type === 'movie' ? 'film' : selectedItem.type, resourceId: selectedItem.id });
+        const typeKey = selectedItem.type === 'movie' ? 'film' : selectedItem.type;
+        const resp = await AuditService.auditControllerHistory(typeKey, String(selectedItem.id));
         const data = unwrapResponse(resp);
         const items: any[] = Array.isArray(data?.items) ? data.items : [];
         const mapped: AuditHistory[] = items.map((h: any, idx: number) => ({
@@ -349,7 +352,7 @@ export function ReviewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950">
       <div className="max-w-[1600px] mx-auto p-8">
         {/* 页面标题 + 审核开关只读状态 */}
         <div className="mb-8">

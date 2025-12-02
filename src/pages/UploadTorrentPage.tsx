@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { useNavigate } from 'react-router-dom';
 import {
   Upload,
@@ -33,6 +34,7 @@ import { parseMediaInfo, MediaInfoResult } from '@/types/UploadTorrentPage';
 import { useUploadStore } from '@/stores/uploadStore';
 
 export function UploadTorrentPage() {
+  useDynamicTitle('上传');
   const navigate = useNavigate();
   const { selectedCategory, setSelectedCategory, selectedSubCategories, setSelectedSubCategories, toggleSubCategory } = useUploadStore();
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);

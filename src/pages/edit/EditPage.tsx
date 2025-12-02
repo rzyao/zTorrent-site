@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { Film, List } from 'lucide-react';
 import { EditMoviePage } from './EditMoviePage';
 import { EditPlaylistPage } from './EditPlaylistPage';
 
 export function EditPage() {
+  useDynamicTitle('编辑');
   const [activeTab, setActiveTab] = useState<'movie' | 'playlist'>('movie');
 
   return (

@@ -5,11 +5,14 @@
 import type { AddFilmTorrentDto } from '../models/AddFilmTorrentDto';
 import type { AdminListFilmsDto } from '../models/AdminListFilmsDto';
 import type { AdminListPendingFilmsDto } from '../models/AdminListPendingFilmsDto';
+import type { CollectFilmDto } from '../models/CollectFilmDto';
 import type { CreateFilmDto } from '../models/CreateFilmDto';
 import type { FilmIdDto } from '../models/FilmIdDto';
 import type { FilmTorrentIdDto } from '../models/FilmTorrentIdDto';
 import type { ListFilmsDto } from '../models/ListFilmsDto';
 import type { ListFilmTorrentsDto } from '../models/ListFilmTorrentsDto';
+import type { PublicFilmDetailDto } from '../models/PublicFilmDetailDto';
+import type { PublicFilmDto } from '../models/PublicFilmDto';
 import type { ReviewDto } from '../models/ReviewDto';
 import type { UpdateFilmDto } from '../models/UpdateFilmDto';
 import type { UpdateFilmTorrentDto } from '../models/UpdateFilmTorrentDto';
@@ -110,51 +113,17 @@ export class FilmsService {
         });
     }
     /**
-     * 列出影片列表
+     * 获取影片详情（浏览）
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static filmsControllerListFilms(
-        requestBody: ListFilmsDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: {
-            items?: Array<Record<string, any>>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/films/list-films',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 获取影片详情
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static filmsControllerGetFilm(
+    public static filmsControllerGetMovieDetail(
         requestBody: FilmIdDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: PublicFilmDetailDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -418,6 +387,130 @@ export class FilmsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/films/list-film-torrents',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 列出影片列表（聚合接口）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static filmsControllerListFilms(
+        requestBody: ListFilmsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            items?: Array<PublicFilmDto>;
+            total?: number;
+            page?: number;
+            limit?: number;
+            totalPages?: number;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/films/list-films',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 收藏/取消收藏影片
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static filmsControllerCollectMovie(
+        requestBody: CollectFilmDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            success?: boolean;
+            message?: string;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/films/collect-film',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 获取所有类型列表
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static filmsControllerListGenres(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            genres?: Array<string>;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/films/list-genres',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 增加影片浏览次数
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static filmsControllerViewMovie(
+        requestBody: FilmIdDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            success?: boolean;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/films/view-film',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

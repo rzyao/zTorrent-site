@@ -24,21 +24,45 @@ export type UpdateCategoryDto = {
      */
     isDefault?: boolean;
     /**
-     * 类型
+     * 分级
      */
-    type?: UpdateCategoryDto.type;
+    genre?: UpdateCategoryDto.genre;
     /**
-     * 父分类ID（type=sub时必填）
+     * 所属模块类型
+     */
+    kind?: UpdateCategoryDto.kind;
+    /**
+     * 层级（根=0）
+     */
+    level?: number;
+    /**
+     * 父分类ID（level>0时建议提供）
      */
     parentId?: string;
+    /**
+     * 备用样式类名
+     */
+    class?: string;
+    /**
+     * 备用样式
+     */
+    style?: string;
 };
 export namespace UpdateCategoryDto {
     /**
-     * 类型
+     * 分级
      */
-    export enum type {
-        CATEGORY = 'category',
-        SUB = 'sub',
+    export enum genre {
+        GENERAL = 'General',
+        ADULT = 'Adult',
+    }
+    /**
+     * 所属模块类型
+     */
+    export enum kind {
+        TORRENT = 'torrent',
+        FILM = 'film',
+        PLAYLIST = 'playlist',
     }
 }
 

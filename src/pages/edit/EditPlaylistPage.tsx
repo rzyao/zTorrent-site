@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import {
   ListVideo,
   Plus,
@@ -48,6 +49,7 @@ interface Playlist {
 }
 
 export function EditPlaylistPage() {
+  useDynamicTitle('片单编辑');
   const { listPlaylists, getPlaylist, createPlaylist, updatePlaylist, deletePlaylist, addFilm, removeFilm, reorderFilm } = usePlaylists();
   const { listFilms } = useFilms();
   const [playlists, setPlaylists] = useState<Playlist[]>([

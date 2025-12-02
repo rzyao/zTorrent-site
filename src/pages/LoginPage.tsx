@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { Eye, EyeOff, User, Lock, LogIn, Clock } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -15,6 +16,7 @@ interface LoginPageProps {
 }
 
 export function LoginPage({ onForgotPassword, onRegister, onLoginSuccess, onTestApi }: LoginPageProps) {
+  useDynamicTitle('登录');
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

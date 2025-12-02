@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import {
   Ticket,
   Plus,
@@ -33,10 +34,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { TicketsService, type ListTicketsDto, type CreateTicketDto, type UploadAttachmentDto, type ReplyDto, type CloseTicketDto, type ConfirmResolvedDto, type TicketDetailDto } from '@/api';
+import { customToast } from '@/hooks/useToast';
 
 interface TicketMessage {
   id: string;
   author: string;
+  authorName: string;
   authorRole: 'user' | 'staff';
   content: string;
   timestamp: string;
@@ -54,186 +58,29 @@ interface Ticket {
 }
 
 export function TicketsPage() {
+  useDynamicTitle('工单');
   const [view, setView] = useState<'list' | 'create' | 'detail'>('list');
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [newReply, setNewReply] = useState('');
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(20);
+  const [loadingList, setLoadingList] = useState(false);
+  const [listError, setListError] = useState<string | null>(null);
+  const [stats, setStats] = useState<Record<string, number>>({ pending: 0, processing: 0, resolved: 0, closed: 0 });
+  const [tickets, setTickets] = useState<Ticket[]>([]);
 
   // 新工单表单
   const [newTicketTitle, setNewTicketTitle] = useState('');
   const [newTicketCategory, setNewTicketCategory] = useState('technical');
   const [newTicketPriority, setNewTicketPriority] = useState('normal');
   const [newTicketContent, setNewTicketContent] = useState('');
+  const [createAttachments, setCreateAttachments] = useState<Array<{ attachmentId: string; url: string; name: string; size: number }>>([]);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const tickets: Ticket[] = [
-    {
-      id: 'TK-2024-001',
-      title: '下载速度异常缓慢',
-      category: 'technical',
-      status: 'processing',
-      priority: 'high',
-      createdAt: '2024-11-26 10:30',
-      updatedAt: '2024-11-26 14:15',
-      messages: [
-        {
-          id: '1',
-          author: 'UserName',
-          authorRole: 'user',
-          content:
-            '您好，我最近下载种子的速度非常慢，平均只有100KB/s，但我的宽带是1000M的。已经尝试更换端口和重启客户端，问题依然存在。请帮忙查看一下是什么原因。',
-          timestamp: '2024-11-26 10:30',
-        },
-        {
-          id: '2',
-          author: 'TechSupport',
-          authorRole: 'staff',
-          content:
-            '您好，我们已经收到您的反馈。请问您使用的是什么BT客户端？另外，您的IP地址是否是动态IP？请提供更多信息以便我们进一步排查问题。',
-          timestamp: '2024-11-26 12:45',
-        },
-        {
-          id: '3',
-          author: 'UserName',
-          authorRole: 'user',
-          content:
-            '我使用的是qBittorrent 4.6.0版本，IP地址是固定的。另外我发现只有从你们站点下载的种子速度慢，其他站点的种子速度正常。',
-          timestamp: '2024-11-26 13:20',
-        },
-        {
-          id: '4',
-          author: 'TechSupport',
-          authorRole: 'staff',
-          content:
-            '感谢您提供的详细信息。我们检查发现您的账号触发了下载限速机制，这可能是因为您的分享率略低。建议您先上传一些种子提升分享率，或者下载一些FREE标记的种子。我们已经临时解除了限速，请重新尝试下载。',
-          timestamp: '2024-11-26 14:15',
-        },
-      ],
-    },
-    {
-      id: 'TK-2024-002',
-      title: '账号无法登录',
-      category: 'account',
-      status: 'resolved',
-      priority: 'urgent',
-      createdAt: '2024-11-25 15:20',
-      updatedAt: '2024-11-25 16:45',
-      messages: [
-        {
-          id: '1',
-          author: 'UserName2',
-          authorRole: 'user',
-          content:
-            '我的账号突然无法登录了，提示"账号已被禁用"。我没有违反任何规则，请帮忙查看一下。',
-          timestamp: '2024-11-25 15:20',
-        },
-        {
-          id: '2',
-          author: 'AdminTeam',
-          authorRole: 'staff',
-          content:
-            '您好，经查询您的账号因为连续H&R（下载后不做种）被系统自动禁用。我们看到您有5个种子下载后立即停止了做种，这违反了站点规则。请承诺以后遵守规则，我们可以解除禁用。',
-          timestamp: '2024-11-25 16:00',
-        },
-        {
-          id: '3',
-          author: 'UserName2',
-          authorRole: 'user',
-          content:
-            '非常抱歉，我是新手不太了解规则。我保证以后会遵守做种规则，下载后至少保持72小时。',
-          timestamp: '2024-11-25 16:30',
-        },
-        {
-          id: '4',
-          author: 'AdminTeam',
-          authorRole: 'staff',
-          content:
-            '好的，我们已经解除了您的账号禁用。请务必遵守站点规则，特别注意H&R规则。建议您阅读一下站点规则页面，避免再次违规。',
-          timestamp: '2024-11-25 16:45',
-        },
-      ],
-    },
-    {
-      id: 'TK-2024-003',
-      title: '种子信息错误',
-      category: 'resource',
-      status: 'pending',
-      priority: 'normal',
-      createdAt: '2024-11-26 09:15',
-      updatedAt: '2024-11-26 09:15',
-      messages: [
-        {
-          id: '1',
-          author: 'UserName3',
-          authorRole: 'user',
-          content:
-            '种子ID #12345 的信息有误，标题写的是"星际穿越"，但实际下载的是"盗梦空间"。建议修正或删除这个种子。',
-          timestamp: '2024-11-26 09:15',
-        },
-      ],
-    },
-    {
-      id: 'TK-2024-004',
-      title: '举报恶意用户',
-      category: 'report',
-      status: 'pending',
-      priority: 'high',
-      createdAt: '2024-11-26 08:30',
-      updatedAt: '2024-11-26 08:30',
-      messages: [
-        {
-          id: '1',
-          author: 'UserName4',
-          authorRole: 'user',
-          content:
-            '用户"BadUser123"在论坛中多次发布广告信息和不当内容，严重影响社区环境。请管理员处理。',
-          timestamp: '2024-11-26 08:30',
-        },
-      ],
-    },
-    {
-      id: 'TK-2024-005',
-      title: '魔力值兑换问题',
-      category: 'other',
-      status: 'closed',
-      priority: 'low',
-      createdAt: '2024-11-24 14:00',
-      updatedAt: '2024-11-24 15:30',
-      messages: [
-        {
-          id: '1',
-          author: 'UserName5',
-          authorRole: 'user',
-          content:
-            '我兑换了1000魔力值购买VIP，但是VIP状态还没有生效。',
-          timestamp: '2024-11-24 14:00',
-        },
-        {
-          id: '2',
-          author: 'SupportTeam',
-          authorRole: 'staff',
-          content:
-            '您好，VIP生效需要几分钟时间，请退出后重新登录。如果还是没有生效，请告诉我们。',
-          timestamp: '2024-11-24 14:30',
-        },
-        {
-          id: '3',
-          author: 'UserName5',
-          authorRole: 'user',
-          content: '已经生效了，谢谢！',
-          timestamp: '2024-11-24 15:00',
-        },
-        {
-          id: '4',
-          author: 'SupportTeam',
-          authorRole: 'staff',
-          content: '不客气，祝您使用愉快！工单已关闭。',
-          timestamp: '2024-11-24 15:30',
-        },
-      ],
-    },
-  ];
+
 
   const categoryConfig = {
     technical: {
@@ -302,40 +149,144 @@ export function TicketsPage() {
     urgent: { label: '紧急', color: 'text-red-400', bgColor: 'bg-red-500/20' },
   };
 
-  const filteredTickets = tickets.filter((ticket) => {
-    if (filterStatus !== 'all' && ticket.status !== filterStatus) return false;
-    if (filterCategory !== 'all' && ticket.category !== filterCategory)
-      return false;
-    if (
-      searchQuery &&
-      !ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      !ticket.id.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-      return false;
-    return true;
-  });
+  function success(resp: any) {
+    return resp && (resp.code === 0 || resp.code === 1000);
+  }
 
-  const handleCreateTicket = () => {
-    // 这里处理创建工单的逻辑
-    console.log('创建工单:', {
+  async function loadList() {
+    setLoadingList(true);
+    setListError(null);
+    try {
+      const body: ListTicketsDto = {
+        page,
+        pageSize,
+        status: filterStatus !== 'all' ? (filterStatus as ListTicketsDto.status) : undefined,
+        category: filterCategory !== 'all' ? (filterCategory as ListTicketsDto.category) : undefined,
+        keyword: searchQuery || undefined,
+      };
+      const resp = await TicketsService.ticketsControllerList(body);
+      if (success(resp)) {
+        const data = resp.data || {};
+        const items = (data.items || []) as any[];
+        setTickets(
+          items.map((t) => ({
+            id: t.id,
+            title: t.title,
+            category: t.category,
+            status: t.status,
+            priority: t.priority,
+            createdAt: t.createdAt,
+            updatedAt: t.updatedAt,
+            messages: Array.isArray(t.messages) ? t.messages : [],
+          }))
+        );
+      } else {
+        setListError(resp?.message || '加载失败');
+        customToast.error(resp?.message || '加载工单列表失败');
+      }
+    } catch (e: any) {
+      setListError(e?.message || '网络错误');
+      customToast.error(e?.message || '网络错误');
+    } finally {
+      setLoadingList(false);
+    }
+  }
+
+  async function loadStats() {
+    try {
+      const resp = await TicketsService.ticketsControllerStats();
+      if (success(resp)) {
+        setStats(resp.data || { pending: 0, processing: 0, resolved: 0, closed: 0 });
+      }
+    } catch { }
+  }
+
+  useEffect(() => {
+    loadList();
+    loadStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, pageSize, filterStatus, filterCategory, searchQuery]);
+
+  const filteredTickets = tickets;
+
+  async function handleCreateTicket() {
+    const body: CreateTicketDto = {
       title: newTicketTitle,
-      category: newTicketCategory,
-      priority: newTicketPriority,
+      category: newTicketCategory as CreateTicketDto.category,
+      priority: newTicketPriority as CreateTicketDto.priority,
       content: newTicketContent,
-    });
-    // 重置表单
-    setNewTicketTitle('');
-    setNewTicketCategory('technical');
-    setNewTicketPriority('normal');
-    setNewTicketContent('');
-    setView('list');
-  };
+      attachments: createAttachments,
+      clientRequestId: (self as any)?.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`,
+    };
+    try {
+      const resp = await TicketsService.ticketsControllerCreate(body);
+      if (resp && (resp.code === 0 || resp.code === 1000)) {
+        customToast.success('工单创建成功');
+        const newId = resp?.data?.ticketId as string;
+        setNewTicketTitle('');
+        setNewTicketCategory('technical');
+        setNewTicketPriority('normal');
+        setNewTicketContent('');
+        setCreateAttachments([]);
+        await loadList();
+        if (newId) {
+          await openDetail(newId);
+          setView('detail');
+        } else {
+          setView('list');
+        }
+      } else {
+        customToast.error(resp?.message || '创建失败');
+      }
+    } catch (e: any) {
+      customToast.error(e?.message || '网络错误');
+    }
+  }
 
-  const handleSendReply = () => {
+  async function handleSendReply() {
     if (!newReply.trim() || !selectedTicket) return;
-    console.log('发送回复:', newReply);
-    setNewReply('');
-  };
+    const body: ReplyDto = {
+      ticketId: selectedTicket.id,
+      content: newReply,
+      attachments: [],
+      clientRequestId: (self as any)?.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`,
+    };
+    try {
+      const resp = await TicketsService.ticketsControllerReply(body);
+      if (resp && (resp.code === 0 || resp.code === 1000)) {
+        customToast.success('回复已发送');
+        setNewReply('');
+        await openDetail(selectedTicket.id);
+      } else {
+        customToast.error(resp?.message || '回复失败');
+      }
+    } catch (e: any) {
+      customToast.error(e?.message || '网络错误');
+    }
+  }
+
+  async function openDetail(ticketId: string) {
+    try {
+      const body: TicketDetailDto = { ticketId };
+      const resp = await TicketsService.ticketsControllerDetail(body);
+      if (resp && (resp.code === 0 || resp.code === 1000)) {
+        const t = resp.data;
+        const normalized: Ticket = {
+          id: t.id,
+          title: t.title,
+          category: t.category,
+          status: t.status,
+          priority: t.priority,
+          createdAt: t.createdAt,
+          updatedAt: t.updatedAt,
+          messages: Array.isArray(t.messages) ? t.messages : [],
+        };
+        setSelectedTicket(normalized);
+      }
+    } catch (e: any) {
+      customToast.error(e?.message || '加载详情失败');
+    }
+  }
 
   // 创建工单视图
   if (view === 'create') {
@@ -444,12 +395,15 @@ export function TicketsPage() {
                 </p>
               </div>
 
-              {/* 附件（占位符） */}
+              {/* 附件 */}
               <div>
                 <label className="text-neutral-300 text-sm mb-2 block">
                   附件（可选）
                 </label>
-                <div className="border-2 border-dashed border-neutral-700 rounded-xl p-8 text-center hover:border-amber-500/50 transition-colors cursor-pointer">
+                <div
+                  className="border-2 border-dashed border-neutral-700 rounded-xl p-8 text-center hover:border-amber-500/50 transition-colors cursor-pointer"
+                  onClick={() => fileInputRef.current?.click()}
+                >
                   <Paperclip className="w-8 h-8 text-neutral-500 mx-auto mb-2" />
                   <p className="text-neutral-400 text-sm">
                     点击上传截图或相关文件
@@ -458,6 +412,47 @@ export function TicketsPage() {
                     支持 JPG、PNG、PDF，最大 10MB
                   </p>
                 </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".png,.jpg,.jpeg,.pdf,.txt"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    try {
+                      const form: any = {
+                        purpose: 'create' as UploadAttachmentDto['purpose'],
+                        file,
+                      };
+                      const resp = await TicketsService.ticketsControllerUpload(form as any);
+                      if (resp && (resp.code === 0 || resp.code === 1000)) {
+                        const att = resp.data;
+                        setCreateAttachments((prev) => [
+                          ...prev,
+                          {
+                            attachmentId: att.attachmentId,
+                            url: att.url,
+                            name: att.name,
+                            size: att.size,
+                          },
+                        ]);
+                        customToast.success('附件上传成功');
+                      } else {
+                        customToast.error(resp?.message || '附件上传失败');
+                      }
+                    } catch (err: any) {
+                      customToast.error(err?.message || '网络错误');
+                    } finally {
+                      e.target.value = '';
+                    }
+                  }}
+                />
+                {createAttachments.length > 0 && (
+                  <div className="mt-3 text-neutral-400 text-sm">
+                    已添加附件：{createAttachments.map((a) => a.name).join('、')}
+                  </div>
+                )}
               </div>
 
               {/* 提交按钮 */}
@@ -564,7 +559,7 @@ export function TicketsPage() {
                               : 'text-neutral-300'
                               }`}
                           >
-                            {message.author}
+                            {message.authorName ?? message.author}
                           </span>
                           {message.authorRole === 'staff' && (
                             <Badge className="bg-amber-500/20 text-amber-400 text-xs">
@@ -658,6 +653,21 @@ export function TicketsPage() {
                   <div className="space-y-3">
                     {selectedTicket.status === 'resolved' && (
                       <Button
+                        onClick={async () => {
+                          try {
+                            const body: ConfirmResolvedDto = { ticketId: selectedTicket.id };
+                            const resp = await TicketsService.ticketsControllerConfirmResolved(body);
+                            if (resp && (resp.code === 0 || resp.code === 1000)) {
+                              customToast.success('工单已结案');
+                              await openDetail(selectedTicket.id);
+                              await loadList();
+                            } else {
+                              customToast.error(resp?.message || '结案失败');
+                            }
+                          } catch (e: any) {
+                            customToast.error(e?.message || '网络错误');
+                          }
+                        }}
                         className="w-full bg-green-500/20 text-green-400 hover:bg-green-500/30"
                         variant="outline"
                       >
@@ -666,6 +676,21 @@ export function TicketsPage() {
                       </Button>
                     )}
                     <Button
+                      onClick={async () => {
+                        try {
+                          const body: CloseTicketDto = { ticketId: selectedTicket.id, reason: '用户主动关闭' };
+                          const resp = await TicketsService.ticketsControllerClose(body);
+                          if (resp && (resp.code === 0 || resp.code === 1000)) {
+                            customToast.success('工单已关闭');
+                            await openDetail(selectedTicket.id);
+                            await loadList();
+                          } else {
+                            customToast.error(resp?.message || '关闭失败');
+                          }
+                        } catch (e: any) {
+                          customToast.error(e?.message || '网络错误');
+                        }
+                      }}
                       className="w-full border-neutral-700 text-neutral-300 hover:bg-neutral-800"
                       variant="outline"
                     >
@@ -711,7 +736,7 @@ export function TicketsPage() {
         {/* 统计卡片 */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           {Object.entries(statusConfig).map(([key, config]) => {
-            const count = tickets.filter((t) => t.status === key).length;
+            const count = (stats as any)[key] || 0;
             return (
               <div
                 key={key}
@@ -786,8 +811,8 @@ export function TicketsPage() {
               return (
                 <div
                   key={ticket.id}
-                  onClick={() => {
-                    setSelectedTicket(ticket);
+                  onClick={async () => {
+                    await openDetail(ticket.id);
                     setView('detail');
                   }}
                   className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 hover:border-amber-500/30 transition-all cursor-pointer group"

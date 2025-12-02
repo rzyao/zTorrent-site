@@ -5,10 +5,24 @@ import { Button } from '@/components/ui/button';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAccess } from '@/context/AccessContext';
 import { UserAvatar } from '@/components/UserAvatar';
+import { useSiteConfig } from '@/context/SiteConfigContext';
+import { ensureNamespace } from '@/utils/tabTitle';
+import { useUserSummary } from '@/context/UserSummaryContext';
+
+// 格式化字节数为人类可读格式
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return (bytes / Math.pow(k, i)).toFixed(2) + sizes[i];
+}
 
 export function Header() {
   const navigate = useNavigate();
   const { access } = useAccess();
+  const { logoSvg, logoUrl, title } = useSiteConfig();
+  const { data: userSummary } = useUserSummary();
   // 控制用户菜单显示状态
   const [showUserMenu, setShowUserMenu] = useState(false);
   // 下拉菜单容器引用，用于检测外部点击
@@ -39,9 +53,22 @@ export function Header() {
     <header className="sticky h-16 bg-[#0F171E] z-50 px-4 md:px-8 border-b border-gray-800" style={{ top: '-64px' }}>
       <div className="flex items-center justify-between h-full max-w-[1920px] mx-auto">
         <div className="flex items-center gap-8">
-          <NavLink to="/home" className="flex items-center gap-1">
-            <span className="text-white text-2xl">PT</span>
-            <span className="text-[#00A8E1] text-2xl">Tracker</span>
+          <NavLink to="/home" className="flex items-center gap-2">
+            {logoSvg && logoSvg.trim().length > 0 ? (
+              <img
+                src={`data:image/svg+xml;utf8,${encodeURIComponent(ensureNamespace(logoSvg))}`}
+                alt="Logo"
+                className="h-10 md:h-12"
+              />
+            ) : logoUrl && logoUrl.trim().length > 0 ? (
+              <img src={logoUrl} alt="Logo" className="h-10 md:h-12" />
+            ) : (
+              <>
+                <span className="text-white text-2xl">PT</span>
+                <span className="text-[#00A8E1] text-2xl">Tracker</span>
+              </>
+            )}
+            <span className="text-white text-xl md:text-2xl">{title || ''}</span>
           </NavLink>
           <nav className="hidden md:flex items-center gap-6">
             <NavLink to="/home" className="text-white hover:text-gray-300 transition-colors">首页</NavLink>
@@ -49,6 +76,9 @@ export function Header() {
             <NavLink to="/forum" className="text-white hover:text-gray-300 transition-colors">论坛</NavLink>
             <NavLink to="/subtitles" className="text-white hover:text-gray-300 transition-colors">字幕</NavLink>
             <NavLink to="/ranking" className="text-white hover:text-gray-300 transition-colors">排行榜</NavLink>
+            {/* 新增：影片与片单导航入口，保持与现有样式一致 */}
+            <NavLink to="/films" className="text-white hover:text-gray-300 transition-colors">影片</NavLink>
+            <NavLink to="/playlists" className="text-white hover:text-gray-300 transition-colors">片单</NavLink>
             <NavLink to="/upload" className="text-white hover:text-gray-300 transition-colors">上传</NavLink>
             <NavLink to="/edit" className="text-white hover:text-gray-300 transition-colors">编辑</NavLink>
             {canReview && (
@@ -66,15 +96,15 @@ export function Header() {
           <div className="hidden lg:flex items-center gap-4 text-sm">
             <div className="flex items-center gap-1 text-green-400">
               <Upload className="w-4 h-4" />
-              <span>5.28TB</span>
+              <span>{userSummary ? formatBytes(userSummary.uploadedBytes) : '0B'}</span>
             </div>
             <div className="flex items-center gap-1 text-red-400">
               <Download className="w-4 h-4" />
-              <span>2.15TB</span>
+              <span>{userSummary ? formatBytes(userSummary.downloadedBytes) : '0B'}</span>
             </div>
             <div className="flex items-center gap-1 text-yellow-400">
               <ChartSpline className="w-4 h-4" />
-              <span>2.46</span>
+              <span>{userSummary ? userSummary.ratio.toFixed(2) : '0.00'}</span>
             </div>
           </div>
           <Button
@@ -84,7 +114,9 @@ export function Header() {
             onClick={() => navigate('/messages?tab=system')}
           >
             <Bell className="w-5 h-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+            {userSummary && userSummary.unreadNotifications > 0 && (
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+            )}
           </Button>
           <Button
             variant="ghost"
@@ -93,7 +125,9 @@ export function Header() {
             onClick={() => navigate('/messages?tab=inbox')}
           >
             <Mail className="w-5 h-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+            {userSummary && userSummary.unreadInbox > 0 && (
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+            )}
           </Button>
           {/* 新增：魔力值入口按钮，点击跳转到 /bonus */}
           <Button
@@ -129,21 +163,21 @@ export function Header() {
                     <div className="bg-neutral-800/50 rounded-lg p-2 text-center">
                       <div className="text-green-400 flex items-center justify-center gap-1">
                         <Upload className="w-3 h-3" />
-                        5.28TB
+                        {userSummary ? formatBytes(userSummary.uploadedBytes) : '0B'}
                       </div>
                       <div className="text-neutral-500 mt-1">上传</div>
                     </div>
                     <div className="bg-neutral-800/50 rounded-lg p-2 text-center">
                       <div className="text-red-400 flex items-center justify-center gap-1">
                         <Download className="w-3 h-3" />
-                        2.15TB
+                        {userSummary ? formatBytes(userSummary.downloadedBytes) : '0B'}
                       </div>
                       <div className="text-neutral-500 mt-1">下载</div>
                     </div>
                     <div className="bg-neutral-800/50 rounded-lg p-2 text-center">
                       <div className="text-yellow-400 flex items-center justify-center gap-1">
                         <TrendingUp className="w-3 h-3" />
-                        2.46
+                        {userSummary ? userSummary.ratio.toFixed(2) : '0.00'}
                       </div>
                       <div className="text-neutral-500 mt-1">分享率</div>
                     </div>

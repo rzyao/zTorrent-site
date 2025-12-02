@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import {
   Film,
   Plus,
@@ -63,6 +64,7 @@ interface Movie {
 }
 
 export function EditMoviePage() {
+  useDynamicTitle('影片编辑');
   const { listFilms, getFilm, createFilm, updateFilm, deleteFilm, addTorrent, removeTorrent } = useFilms();
   const [movies, setMovies] = useState<Movie[]>([
     {

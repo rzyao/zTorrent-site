@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import {
   BookOpen,
   Shield,
@@ -34,6 +35,7 @@ interface RuleSection {
 }
 
 export function RulesPage() {
+  useDynamicTitle('规则');
   const [expandedSection, setExpandedSection] = useState<string>('general');
 
   const ruleSections: RuleSection[] = [

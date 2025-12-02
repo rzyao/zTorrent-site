@@ -3,7 +3,9 @@ import { useEffect } from 'react';
 import { AppToaster } from './components/ui/sonner';
 import AppRoutes from './routes/AppRoutes';
 import { AccessProvider } from '@/context/AccessContext';
+import { UserSummaryProvider } from '@/context/UserSummaryContext';
 import { useDictionaryStore } from './stores/dictionaryStore';
+import { RouteRecorder } from './components/RouteRecorder';
 
 // 全局认证事件
 declare global {
@@ -23,9 +25,12 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <RouteRecorder />
       <AccessProvider>
-        <AppToaster />
-        <AppRoutes />
+        <UserSummaryProvider>
+          <AppToaster />
+          <AppRoutes />
+        </UserSummaryProvider>
       </AccessProvider>
     </BrowserRouter>
   );

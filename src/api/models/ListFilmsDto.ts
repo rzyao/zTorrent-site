@@ -22,6 +22,18 @@ export type ListFilmsDto = {
      * 流派ID集合（长度≤20）
      */
     genreIds?: Array<string>;
+    /**
+     * 标签筛选：all(全部)、trending(热门)、latest(最新)、classic(经典)
+     */
+    tab?: ListFilmsDto.tab;
+    /**
+     * 类型筛选，多个用逗号分隔（名称）
+     */
+    genre?: string;
+    /**
+     * 排序方式：rating(评分)、latest(最新)、popular(受欢迎)
+     */
+    sortBy?: ListFilmsDto.sortBy;
 };
 export namespace ListFilmsDto {
     export enum category {
@@ -29,6 +41,23 @@ export namespace ListFilmsDto {
         SERIES = 'series',
         DOCUMENTARY = 'documentary',
         ANIME = 'anime',
+    }
+    /**
+     * 标签筛选：all(全部)、trending(热门)、latest(最新)、classic(经典)
+     */
+    export enum tab {
+        ALL = 'all',
+        TRENDING = 'trending',
+        LATEST = 'latest',
+        CLASSIC = 'classic',
+    }
+    /**
+     * 排序方式：rating(评分)、latest(最新)、popular(受欢迎)
+     */
+    export enum sortBy {
+        RATING = 'rating',
+        LATEST = 'latest',
+        POPULAR = 'popular',
     }
 }
 

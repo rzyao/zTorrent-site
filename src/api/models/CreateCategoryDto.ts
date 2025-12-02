@@ -28,21 +28,45 @@ export type CreateCategoryDto = {
      */
     isDefault?: boolean;
     /**
-     * 类型
+     * 分级
      */
-    type?: CreateCategoryDto.type;
+    genre: CreateCategoryDto.genre;
     /**
-     * 父分类ID（type=sub时必填）
+     * 所属模块类型
+     */
+    kind: CreateCategoryDto.kind;
+    /**
+     * 层级（根=0）
+     */
+    level?: number;
+    /**
+     * 父分类ID（level>0时必须）
      */
     parentId?: string;
+    /**
+     * 备用样式类名
+     */
+    class?: string;
+    /**
+     * 备用样式
+     */
+    style?: string;
 };
 export namespace CreateCategoryDto {
     /**
-     * 类型
+     * 分级
      */
-    export enum type {
-        CATEGORY = 'category',
-        SUB = 'sub',
+    export enum genre {
+        GENERAL = 'General',
+        ADULT = 'Adult',
+    }
+    /**
+     * 所属模块类型
+     */
+    export enum kind {
+        TORRENT = 'torrent',
+        FILM = 'film',
+        PLAYLIST = 'playlist',
     }
 }
 

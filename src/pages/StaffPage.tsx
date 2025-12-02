@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import {
   Shield,
   Crown,
@@ -38,6 +39,7 @@ interface StaffMember {
 }
 
 export function StaffPage() {
+  useDynamicTitle('管理组');
   const [selectedRole, setSelectedRole] = useState<string>('all');
 
   const staffMembers: StaffMember[] = [

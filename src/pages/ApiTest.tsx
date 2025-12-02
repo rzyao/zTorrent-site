@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { useAuth } from '../hooks/useApi';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 
 export function ApiTest() {
+  useDynamicTitle('接口测试');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');

@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { AuthService } from '../api';
 import { useAccess } from '@/context/AccessContext';
@@ -28,6 +28,10 @@ import { ReviewPage } from '../pages/ReviewPage';
 // 新增：魔力值中心页面（具名导出）
 import { BonusPage } from '../pages/BonusPage';
 import { InvitePage } from '../pages/InvitePage';
+// 新增：影片浏览与片单页面（具名导出）
+import { FilmsPage } from '../pages/FilmsPage';
+import { PlaylistsPage } from '../pages/PlaylistsPage';
+import { PlaylistDetailPage } from '../pages/PlaylistDetailPage';
 
 
 
@@ -216,6 +220,42 @@ export default function AppRoutes() {
         }
       />
 
+      {/* 新增：影片浏览路由，登录态保护 + 统一布局 */}
+      <Route
+        path="/films"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <FilmsPage />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
+      {/* 新增：片单浏览路由，登录态保护 + 统一布局 */}
+      <Route
+        path="/playlists"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <PlaylistsPage />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
+      {/* 片单详情路由 */}
+      <Route
+        path="/Playlist-detail/:id"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <PlaylistDetailPageWrapper />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
       {/* 新增：魔力值中心路由，登录态保护 + 统一布局 */}
       <Route
         path="/invite"
@@ -386,6 +426,19 @@ export default function AppRoutes() {
 
       <Route path="*" element={<NotFoundRedirect />} />
     </Routes>
+  );
+}
+function PlaylistDetailPageWrapper() {
+  const navigate = useNavigate();
+  const params = useParams();
+  const id = params.id ?? '';
+  if (!id) return <Navigate to="/playlists" replace />;
+  return (
+    <PlaylistDetailPage
+      playlistId={id}
+      onBack={() => navigate('/playlists')}
+      onFilmClick={() => { }}
+    />
   );
 }
 function NotFoundRedirect() {

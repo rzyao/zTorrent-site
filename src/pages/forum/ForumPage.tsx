@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, memo } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import {
   MessageSquare,
   ThumbsUp,
@@ -144,6 +145,7 @@ const ReplyContent = memo(function ReplyContent({ html }: { html: string }) {
 });
 
 export function ForumPage() {
+  useDynamicTitle('论坛');
   const [activeCategory, setActiveCategory] = useState<ForumCategory>('all');
   const [selectedPost, setSelectedPost] = useState<ForumPost | null>(null);
   const [showNewPost, setShowNewPost] = useState(false);

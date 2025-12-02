@@ -1,6 +1,8 @@
 import { Header } from '../layouts/Header';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 
 export default function SubtitlesPage() {
+  useDynamicTitle('字幕');
   return (
     <div className="min-h-screen bg-[#0F171E]">
       <Header />

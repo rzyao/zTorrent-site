@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import {
   Settings,
   User,
@@ -30,6 +31,7 @@ import { isValidPassword, passwordErrorMessage } from '../utils/validation';
 type TabType = 'profile' | 'preferences' | 'security' | 'notifications' | 'privacy';
 
 export function ControlPage() {
+  useDynamicTitle('控制台');
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const [saveSuccess, setSaveSuccess] = useState(false);
 

@@ -24,6 +24,17 @@ export class BonusService {
         });
     }
     /**
+     * 查询积分余额（POST）
+     * @returns any
+     * @throws ApiError
+     */
+    public static bonusControllerBalancePost(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/bonus/balance',
+        });
+    }
+    /**
      * 查询积分流水
      * @param userId
      * @returns any
@@ -41,6 +52,17 @@ export class BonusService {
         });
     }
     /**
+     * 查询积分流水（POST）
+     * @returns any
+     * @throws ApiError
+     */
+    public static bonusControllerLedgerPost(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/bonus/ledger',
+        });
+    }
+    /**
      * 按规则计算并发放积分（管理员/系统）
      * @returns any
      * @throws ApiError
@@ -49,6 +71,17 @@ export class BonusService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/bonus/apply',
+        });
+    }
+    /**
+     * 积分概览
+     * @returns any
+     * @throws ApiError
+     */
+    public static bonusControllerOverview(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/bonus/overview',
         });
     }
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { isValidPassword, passwordErrorMessage } from '../utils/validation';
 import { Mail, Lock, ArrowLeft, Clock, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 interface ForgotPasswordPageProps { onBack: () => void; }
 
 export function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) {
+  useDynamicTitle('找回密码');
   const [step, setStep] = useState<'email' | 'verify' | 'reset' | 'success'>('email');
   const [countdown, setCountdown] = useState(0);
   const [email, setEmail] = useState('');

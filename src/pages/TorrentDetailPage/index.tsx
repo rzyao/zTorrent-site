@@ -237,7 +237,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
     <ContextMenu>
       {/* 将最外层容器作为触发器，右键弹出菜单；asChild 保留原有 DOM 结构与样式 */}
       <ContextMenuTrigger asChild>
-        <div className="min-h-screen bg-[#0F171E] pt-16">
+        <div className="min-h-screen bg-[#0F171E] pt-8">
           <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8">
             {/* 标题区域 */}
             <div className="mb-6">
@@ -258,8 +258,8 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
 
               {/* 标签和状态 */}
               <div className="flex flex-wrap items-center gap-2 mb-3">
-                <Badge className="bg-blue-500 text-white">{torrentData.category}</Badge>
-                <Badge className="bg-cyan-500 text-white">{torrentData.standard}</Badge>
+                <Badge className="bg-amber-600 text-white">{torrentData.category}</Badge>
+                <Badge className="bg-orange-600 text-white">{torrentData.standard}</Badge>
                 {torrentData.isFree && (
                   <Badge className="bg-green-500 text-white">FREE</Badge>
                 )}
@@ -314,7 +314,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
                       href={`https://www.imdb.com/title/${torrentData.imdb}/`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#00A8E1] hover:underline"
+                      className="text-amber-400 hover:underline"
                     >
                       IMDb: {torrentData.imdb}
                     </a>
@@ -327,7 +327,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
                       href={`https://movie.douban.com/subject/${torrentData.douban}/`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#00A8E1] hover:underline"
+                      className="text-amber-400 hover:underline"
                     >
                       豆瓣: {torrentData.douban}
                     </a>
@@ -338,7 +338,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
               {/* 操作按钮和统计信息 */}
               <div className="flex flex-wrap items-center gap-2">
                 <Button
-                  className="bg-[#00A8E1] hover:bg-[#00A8E1]/90 text-white h-9"
+                  className="bg-amber-600 hover:bg-amber-700 text-white h-9"
                   onClick={() => downloadByTorrentId(String(torrentData.id), String(torrentData.title || 'download'))}
                 >
                   <Download className="w-4 h-4 mr-1" />
@@ -413,9 +413,9 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
                       ) : (
                         <div className="space-y-4 text-gray-300 leading-relaxed">
                           {/* 引用框 */}
-                          <fieldset className="border-2 border-blue-500/30 rounded p-4 bg-blue-500/5">
-                            <legend className="text-blue-400 px-2">引用</legend>
-                            <div className="text-blue-400 text-center">
+                          <fieldset className="border-2 border-amber-500/30 rounded p-4 bg-amber-500/5">
+                            <legend className="text-amber-400 px-2">引用</legend>
+                            <div className="text-amber-400 text-center">
                               <span className="text-xl">暂无简介信息</span>
                             </div>
                           </fieldset>
@@ -530,10 +530,10 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
                       <textarea
                         rows={4}
                         placeholder="发表你的看法..."
-                        className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-1 focus:ring-[#00A8E1] outline-none resize-none"
+                        className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 text-white placeholder:text-gray-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none resize-none"
                       />
                       <div className="flex justify-end mt-2">
-                        <Button className="bg-[#00A8E1] hover:bg-[#00A8E1]/90 text-white">
+                        <Button className="bg-amber-600 hover:bg-amber-700 text-white">
                           <MessageSquare className="w-4 h-4 mr-2" />
                           发表评论
                         </Button>
@@ -557,7 +557,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
                             </div>
                             <p className="text-gray-300 mb-3">{comment.content}</p>
                             <div className="flex items-center gap-4 text-sm">
-                              <Button className="flex items-center gap-1 text-gray-400 hover:text-[#00A8E1]">
+                              <Button className="flex items-center gap-1 text-gray-400 hover:text-amber-400">
                                 <ThumbsUp className="w-4 h-4" />
                                 <span>赞</span>
                               </Button>
@@ -630,11 +630,12 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
                         <tr className="border-b border-gray-800">
                           <td className="px-4 py-2.5 text-gray-400">IMDb</td>
                           <td className="px-4 py-2.5">
+                            {/* 暖色调替换：侧边栏链接颜色由 violet 改为 amber，提升可读性与统一性 */}
                             <a
                               href={`https://www.imdb.com/title/${torrentData.imdb}/`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[#00A8E1] hover:underline text-xs"
+                              className="text-amber-400 hover:underline text-xs"
                             >
                               {torrentData.imdb}
                             </a>
@@ -647,7 +648,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
                               href={`https://movie.douban.com/subject/${torrentData.douban}/`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[#00A8E1] hover:underline text-xs"
+                              className="text-amber-400 hover:underline text-xs"
                             >
                               {torrentData.douban}
                             </a>

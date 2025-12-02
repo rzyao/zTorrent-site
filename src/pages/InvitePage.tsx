@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { UserPlus, Mail, Copy, Check, Clock, Users, Gift, Sparkles, Calendar, Shield, AlertCircle, Plus, Eye, EyeOff, Send, CheckCircle, XCircle, X, TrendingUp, Download, Upload } from 'lucide-react';
 
 interface InviteCode {
@@ -35,6 +36,7 @@ interface InvitedUser {
 }
 
 export function InvitePage() {
+  useDynamicTitle('邀请管理');
   const [activeTab, setActiveTab] = useState<'codes' | 'records' | 'users'>('codes');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [showCode, setShowCode] = useState<{ [key: string]: boolean }>({});
