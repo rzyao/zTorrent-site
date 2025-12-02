@@ -20,7 +20,7 @@ export default function App() {
     // Load dictionaries on app initialization
     fetchDictionaries();
   }, [fetchDictionaries]);
-  
+
   return (
     <BrowserRouter>
       <AccessProvider>

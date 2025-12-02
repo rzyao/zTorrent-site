@@ -24,7 +24,6 @@ import {
 } from '@/components/ui/select';
 import { TorrentsService, CategoriesService } from '@/api';
 import { useTorrentDownload } from '@/features/download/useTorrentDownload';
-import { useAccess } from '@/context/AccessContext';
 import { Input } from '@/components/ui/input';
 import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
 import { Badge } from '@/components/ui/badge';
@@ -63,11 +62,7 @@ const sortOptions = [
 
 export default function TorrentsPage() {
   const { getCategoryLabel } = useDictionaryLabels();
-  const { access } = useAccess();
-  const { downloadByTorrentId } = useTorrentDownload({
-    onInfo: (m) => console.info(m),
-    onError: (m) => alert(m),
-  });
+  const { downloadByTorrentId } = useTorrentDownload();
   const [selectedCategory, setSelectedCategory] = useState('全部');
   const [sortBy, setSortBy] = useState('latest');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -304,9 +299,7 @@ export default function TorrentsPage() {
                   rating={torrent.rating}
                   comments={torrent.comments}
                   doubanUrl={torrent.doubanUrl}
-                  onDownload={access?.permissions?.includes('download_torrent')
-                    ? () => downloadByTorrentId(String(torrent.id), String(torrent.title || 'download'))
-                    : undefined}
+                  onDownload={() => downloadByTorrentId(String(torrent.id), String(torrent.title || 'download'))}
                 />
               </div>
             ))}
@@ -342,26 +335,14 @@ export default function TorrentsPage() {
                           {torrent.subTitle}
                         </h3>
                       </div>
-                      {access?.permissions?.includes('download_torrent') ? (
-                        <Button
-                          size="sm"
-                          className="bg-[#00A8E1] hover:bg-[#00A8E1]/90 text-white flex-shrink-0"
-                          onClick={() => downloadByTorrentId(String(torrent.id), String(torrent.title || 'download'))}
-                        >
-                          <Download className="w-4 h-4 mr-1" />
-                          下载
-                        </Button>
-                      ) : (
-                        <Button
-                          size="sm"
-                          className="bg-gray-800 text-gray-400 flex-shrink-0 cursor-not-allowed"
-                          disabled
-                          title="无下载权限"
-                        >
-                          <Download className="w-4 h-4 mr-1" />
-                          下载
-                        </Button>
-                      )}
+                      <Button
+                        size="sm"
+                        className="bg-[#00A8E1] hover:bg-[#00A8E1]/90 text-white flex-shrink-0"
+                        onClick={() => downloadByTorrentId(String(torrent.id), String(torrent.title || 'download'))}
+                      >
+                        <Download className="w-4 h-4 mr-1" />
+                        下载
+                      </Button>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 mb-1">
                       <Badge color="blue" border="white" size="sm" className="text-xs">

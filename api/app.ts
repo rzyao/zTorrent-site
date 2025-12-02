@@ -65,3 +65,9 @@ app.use((req: Request, res: Response) => {
 })
 
 export default app
+const staticDir = path.resolve(__dirname, '../dist')
+app.use(express.static(staticDir))
+app.get('*', (req: Request, res: Response, next: NextFunction) => {
+  if (req.path.startsWith('/api/')) return next()
+  res.sendFile(path.join(staticDir, 'index.html'))
+})

@@ -1,7 +1,9 @@
 import { useRef } from 'react';
-import { TorrentsService, DownloadsService } from '@/api';
+import { TorrentsService } from '@/api';
+import { OpenAPI } from '@/api/core/OpenAPI';
 import { ApiError } from '@/api/core/ApiError';
 import { parseFilenameFromContentDisposition, saveBlobAsFile } from '@/utils/http/saveBlobAsFile';
+import { customToast } from '@/hooks/useToast';
 
 export type UseTorrentDownloadOptions = {
   onInfo?: (message: string) => void;
@@ -18,8 +20,8 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
   const lastDownloadAtRef = useRef<Map<string, number>>(new Map());
   const THROTTLE_MS = 5000;
 
-  const info = (m: string) => opts?.onInfo?.(m);
-  const error = (m: string) => opts?.onError?.(m);
+  const info = (m: string) => (opts?.onInfo ? opts.onInfo(m) : customToast.info(m));
+  const error = (m: string) => (opts?.onError ? opts.onError(m) : customToast.error(m));
 
   /**
    * 根据种子 ID 生成一次性链接并下载保存。
@@ -36,37 +38,66 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
     lastDownloadAtRef.current.set(torrentId, now);
 
     try {
-      const resp = await TorrentsService.torrentsControllerCreateDownloadUrl({ torrentId });
-      const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
-      const data = body?.data ?? body;
-      const url: string = String(data?.url ?? '');
-      if (!url) throw new Error('下载链接生成失败');
+      let url: string = '';
+      try {
+        const resp = await TorrentsService.torrentsControllerCreateDownloadUrl({ torrentId });
+        const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
+        const data = body?.data ?? body;
+        url = String(data?.url ?? '');
+        if (!url) throw new Error('下载链接生成失败');
+      } catch (e: any) {
+        const apiBody = (e as ApiError)?.body ?? undefined;
+        const serverMessage = String(
+          apiBody?.message ?? apiBody?.data?.message ?? apiBody?.msg ?? apiBody?.error ?? apiBody?.detail ?? apiBody?.description ?? ''
+        ).trim();
+        error(serverMessage || '下载错误');
+        return;
+      }
 
-      // 支持两种下载方式：
-      // 1) 绝对 URL：直接 fetch → Blob
-      // 2) token：调用 DownloadsService → Blob
       const tokenMatch = /\/download\/(?<token>[^/?#]+)/.exec(url);
       let blob: Blob;
       let contentDisposition: string | undefined;
       let contentType: string | undefined;
-      if (tokenMatch?.groups?.token) {
-        const token = tokenMatch.groups.token;
-        blob = await DownloadsService.downloadsControllerDownload(token);
-        // 通过原生 __request 无法得到 header，这里在保存时仅用回退文件名
-      } else {
-        const res = await fetch(url, { method: 'GET' });
-        if (!res.ok) {
-          const status = res.status;
-          if (status === 401) throw Object.assign(new Error('未登录或令牌无效'), { status });
-          if (status === 403) throw Object.assign(new Error('无权限或无下载权限'), { status });
-          if (status === 404) throw Object.assign(new Error('链接无效、过期或已被消费'), { status });
-          if (status === 429) throw Object.assign(new Error('触发限流，请稍后再试'), { status });
-          throw Object.assign(new Error(`HTTP ${status}`), { status });
+      const downloadUrl = tokenMatch?.groups?.token
+        ? `${(OpenAPI as any).BASE || ''}/download/${tokenMatch.groups.token}`
+        : url;
+
+      const res = await fetch(downloadUrl, { method: 'GET' });
+      if (!res.ok) {
+        /**
+         * 尝试读取后端返回的具体错误信息：优先 JSON 的 message 字段，回退 msg/error/detail/description，再回退纯文本。
+         * 这样用户能看到“Token 已过期/已消费”等更明确的错误，而非通用语义。
+         */
+        let serverMessage: string | undefined;
+        try {
+          const json = await res.json();
+          const body = (json?.code !== undefined) ? json : (json?.data ? json : { data: json });
+          const data = body?.data ?? json;
+          serverMessage = String(
+            (body?.message ?? data?.message ?? json?.message ?? json?.msg ?? json?.error ?? json?.detail ?? json?.description ?? '')
+          ).trim() || undefined;
+        } catch {
+          try {
+            const text = await res.text();
+            serverMessage = (text && text.length <= 2000) ? text : undefined;
+          } catch {}
         }
-        contentDisposition = res.headers.get('Content-Disposition') ?? res.headers.get('content-disposition') ?? undefined;
-        contentType = res.headers.get('Content-Type') ?? res.headers.get('content-type') ?? undefined;
-        blob = await res.blob();
+
+        const status = res.status;
+        const baseError = (() => {
+          if (status === 401) return '未登录或令牌无效';
+          if (status === 403) return '无权限或无下载权限';
+          if (status === 404) return '链接无效、过期或已被消费';
+          if (status === 429) return '触发限流，请稍后再试';
+          return `HTTP ${status}`;
+        })();
+
+        const finalMessage = serverMessage || baseError;
+        throw Object.assign(new Error(finalMessage), { status, serverMessage });
       }
+      contentDisposition = res.headers.get('Content-Disposition') ?? res.headers.get('content-disposition') ?? undefined;
+      contentType = res.headers.get('Content-Type') ?? res.headers.get('content-type') ?? undefined;
+      blob = await res.blob();
 
       const filenameFromHeader = parseFilenameFromContentDisposition(contentDisposition);
       const filename = filenameFromHeader || (name ? `${name}.torrent` : 'download.torrent');
@@ -74,6 +105,7 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
         info?.('警告：响应类型非 application/x-bittorrent');
       }
       saveBlobAsFile(blob, filename);
+      customToast.success('下载已开始');
 
       // 成功后记录下载（可选，不影响用户体验）
       try {
@@ -81,6 +113,10 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
       } catch (_) {}
     } catch (e: any) {
       const status = (e as ApiError)?.status ?? e?.status;
+      const serverMessage = e?.serverMessage as string | undefined;
+      if (serverMessage && serverMessage.trim()) {
+        return error?.(serverMessage);
+      }
       if (status === 401) return error?.('未登录或令牌无效');
       if (status === 403) return error?.('无权限或无下载权限');
       if (status === 404) return error?.('链接无效、过期或已被消费');
@@ -91,4 +127,3 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
 
   return { downloadByTorrentId };
 }
-
