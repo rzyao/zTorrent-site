@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import FilmDetail from '@/pages/FilmDetailPage';
 import { ArrowLeft, Heart, Share2, Eye, Film, Clock, Star, Play, Plus, Edit, Trash2, Grid, List as ListIcon, Calendar, Award, TrendingUp, Bookmark } from 'lucide-react';
 import { PlaylistsService } from '@/api';
+import { useNavigate } from 'react-router-dom';
 
 interface PlaylistDetailPageProps {
   playlistId: string;
@@ -11,11 +10,10 @@ interface PlaylistDetailPageProps {
 }
 
 export function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: PlaylistDetailPageProps) {
+  const navigate = useNavigate();
   const [isFollowing, setIsFollowing] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState<'order' | 'rating' | 'year'>('order');
-  const [filmDialogOpen, setFilmDialogOpen] = useState(false);
-  const [selectedFilmId, setSelectedFilmId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [playlist, setPlaylist] = useState<any | null>(null);
@@ -43,20 +41,20 @@ export function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: Playlist
         const raw = resp?.data ?? resp;
         const adapted = {
           id: raw?.id ?? playlistId,
-          title: raw?.title ?? '',
+          title: raw?.name ?? '',
           description: raw?.description ?? '',
-          coverImage: raw?.coverImage ?? raw?.coverUrl ?? raw?.backdropUrl ?? '',
-          creator: raw?.creator?.name ?? raw?.ownerName ?? '',
-          creatorAvatar: raw?.creator?.avatarText ?? raw?.ownerAvatarText ?? '',
-          moviesCount: Array.isArray(raw?.films) ? raw.films.length : raw?.moviesCount ?? 0,
-          followersCount: raw?.followersCount ?? raw?.likesCount ?? 0,
-          viewsCount: raw?.viewsCount ?? 0,
-          rating: raw?.rating ?? 0,
-          createdAt: raw?.createdAt ?? '',
-          updatedAt: raw?.updatedAt ?? '',
-          tags: raw?.tags ?? [],
+          coverImage: raw?.coverUrl ?? raw?.backdropUrl ?? '',
+          creator: '',
+          creatorAvatar: '',
+          moviesCount: Array.isArray(raw?.films) ? raw.films.length : 0,
+          followersCount: Number(raw?.stats?.likes ?? 0),
+          viewsCount: Number(raw?.stats?.views ?? 0),
+          rating: 0,
+          createdAt: raw?.meta?.createdAt ?? '',
+          updatedAt: raw?.meta?.updatedAt ?? '',
+          tags: Array.isArray(raw?.tags) ? raw.tags : [],
           films: raw?.films ?? [],
-          isLiked: raw?.isLiked ?? false,
+          isLiked: false,
         };
         if (!mounted) return;
         setPlaylist(adapted);
@@ -80,8 +78,10 @@ export function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: Playlist
 
   useEffect(() => {
     const rawFilms: any[] = (playlist?.films ?? []) as any[];
+    // 适配片单返回的影片项：优先使用后端提供的 filmId 作为影片主键
+    // 修复：此前使用了 f.id，可能为片单项的局部 ID，导致跳转到 /film/:id 携带错误 ID
     const adapted = rawFilms.map((f: any, idx: number) => ({
-      id: String(f?.id ?? idx),
+      id: String(f?.filmId ?? f?.id ?? idx),
       title: f?.title ?? '',
       originalTitle: f?.originalTitle ?? '',
       year: Number(f?.year ?? 0),
@@ -98,15 +98,18 @@ export function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: Playlist
     setMovies(adapted);
   }, [playlist]);
 
+  // 点击影片卡片时跳转到影片详情页
+  // 变更说明：原逻辑为在片单页内以弹窗方式打开影片详情（根据是否存在第一个种子决定），
+  // 这导致用户感知为未跳转到详情页。现统一改为路由跳转到 `/film/:id`，
+  // 并通过查询参数保留来源追踪信息，便于后续统计或回溯。
   const openFilm = (id: string) => {
-    const m = movies.find((x) => String(x.id) === String(id));
-    const torrentId = m?.torrents?.[0]?.id ?? null;
-    if (torrentId != null) {
-      setSelectedFilmId(String(torrentId));
-      setFilmDialogOpen(true);
-    } else {
-      if (onFilmClick) onFilmClick(id);
-    }
+    const qs = new URLSearchParams();
+    // 来源片单 ID
+    qs.set('source_playlist_id', String(playlistId));
+    // 来源影片 ID（片单内被点击的影片）
+    qs.set('source_film_id', String(id));
+    // 路由跳转到影片详情页，保留来源追踪查询参数
+    navigate(`/film/${id}?${qs.toString()}`, { replace: false });
   };
 
   const handleToggleFollow = async () => {
@@ -411,12 +414,7 @@ export function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: Playlist
           </div>
         )}
       </div>
-      {/* 影片详情弹窗 */}
-      <Dialog open={filmDialogOpen} onOpenChange={setFilmDialogOpen}>
-        <DialogContent className="max-w-6xl w-full bg-[#0F171E] border border-white/10 p-0">
-          {selectedFilmId ? <FilmDetail torrentId={Number(selectedFilmId)} /> : null}
-        </DialogContent>
-      </Dialog>
+      {/* 原弹窗详情已移除，统一走路由跳转到 /film/:id */}
     </div>
   );
 }

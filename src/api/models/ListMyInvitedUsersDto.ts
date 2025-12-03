@@ -2,11 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ListAwardsDto = {
-    page?: number;
-    limit?: number;
-    torrentId?: string;
-    search?: string;
-    enabled?: boolean;
+export type ListMyInvitedUsersDto = {
+    page: number;
+    limit: number;
+    'q'?: string;
 };
 

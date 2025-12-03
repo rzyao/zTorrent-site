@@ -7,23 +7,25 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class ImagesService {
     /**
-     * 上传图片
-     * @param formData
+     * 上传图片（JSON base64）
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
     public static imagesControllerUpload(
-        formData: {
-            file: Blob;
+        requestBody: {
+            /**
+             * base64 编码图片内容
+             */
+            content: string;
+            filename: string;
+            mimeType: string;
         },
     ): CancelablePromise<{
         code?: number;
         message?: string;
         data?: {
             url?: string;
-            filename?: string;
-            size?: number;
-            mimetype?: string;
         };
         path?: string;
         timestamp?: string;
@@ -31,8 +33,8 @@ export class ImagesService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/images/upload',
-            formData: formData,
-            mediaType: 'multipart/form-data',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

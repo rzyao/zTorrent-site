@@ -3,6 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AdminListPlaylistsDto } from '../models/AdminListPlaylistsDto';
+import type { PlaylistDTO } from '../models/PlaylistDTO';
+import type { PlaylistItemDTO } from '../models/PlaylistItemDTO';
+import type { PlaylistSummaryDTO } from '../models/PlaylistSummaryDTO';
 import type { ReviewDto } from '../models/ReviewDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -16,18 +19,16 @@ export class PlaylistsService {
      */
     public static playlistsControllerCreate(
         requestBody: {
-            title: string;
+            name: string;
             description?: string | null;
+            visibility: 'public' | 'private' | 'friends';
             coverUrl?: string | null;
-            type?: 'general' | 'topic' | 'series' | 'director' | 'curation';
-            visibility?: 'public' | 'private' | 'friends';
-            enabled?: boolean;
-            sort?: number;
+            tags?: Array<string> | null;
         },
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: PlaylistDTO;
         path?: string;
         timestamp?: string;
     }> {
@@ -54,20 +55,16 @@ export class PlaylistsService {
     public static playlistsControllerUpdate(
         requestBody: {
             id: string;
-            data: {
-                title?: string;
-                description?: string | null;
-                coverUrl?: string | null;
-                type?: 'general' | 'topic' | 'series' | 'director' | 'curation';
-                visibility?: 'public' | 'private' | 'friends';
-                enabled?: boolean;
-                sort?: number;
-            };
+            name?: string | null;
+            description?: string | null;
+            visibility?: 'public' | 'private' | 'friends' | null;
+            coverUrl?: string | null;
+            tags?: Array<string> | null;
         },
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: PlaylistDTO;
         path?: string;
         timestamp?: string;
     }> {
@@ -99,7 +96,7 @@ export class PlaylistsService {
         code?: number;
         message?: string;
         data?: {
-            success?: boolean;
+            deleted?: boolean;
         };
         path?: string;
         timestamp?: string;
@@ -137,10 +134,8 @@ export class PlaylistsService {
         code?: number;
         message?: string;
         data?: {
-            items?: Array<Record<string, any>>;
+            items?: Array<PlaylistSummaryDTO>;
             total?: number;
-            page?: number;
-            limit?: number;
         };
         path?: string;
         timestamp?: string;
@@ -172,7 +167,7 @@ export class PlaylistsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: PlaylistDTO;
         path?: string;
         timestamp?: string;
     }> {
@@ -205,7 +200,7 @@ export class PlaylistsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: PlaylistDTO;
         path?: string;
         timestamp?: string;
     }> {
@@ -237,9 +232,7 @@ export class PlaylistsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            success?: boolean;
-        };
+        data?: PlaylistDTO;
         path?: string;
         timestamp?: string;
     }> {
@@ -266,13 +259,14 @@ export class PlaylistsService {
     public static playlistsControllerReorder(
         requestBody: {
             playlistId: string;
-            filmId: string;
-            sort: number;
+            order: Array<string>;
         },
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: {
+            films?: Array<PlaylistItemDTO>;
+        };
         path?: string;
         timestamp?: string;
     }> {
@@ -311,7 +305,7 @@ export class PlaylistsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/playlists/increment-views',
+            url: '/playlists/inc-views',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

@@ -21,6 +21,8 @@ import { Separator } from '@/components/ui/separator';
 import { OpenAPI, MessagesService } from '@/api';
 import { request as __request } from '@/api/core/request';
 import { toast } from 'sonner';
+import { Select, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import { SelectTrigger } from '@/components/ui/select';
 
 /**
  * 统一响应解包辅助函数
@@ -651,7 +653,7 @@ export function MessagesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">
+    <div className="min-h-screen bg-[#0F171E] ">
       <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-8">
         {/* 页面标题 */}
         <div className="mb-8">

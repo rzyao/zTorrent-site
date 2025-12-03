@@ -51,22 +51,22 @@ export function PlaylistsPage() {
         // Wait, the API has `ownerUserId`.
       });
 
-      // Map API response to UI model
+      // 映射 PlaylistSummaryDTO 到页面展示模型（不做旧兼容）
       const list = (res.data?.items || []).map((item: any) => ({
-        id: item.id || item._id,
-        title: item.title,
-        description: item.description,
+        id: String(item.id),
+        title: item.name,
+        description: '',
         coverImage: item.coverUrl,
-        creator: item.user?.nickname || item.user?.username || 'Unknown',
-        creatorAvatar: (item.user?.nickname || item.user?.username || 'U')[0].toUpperCase(), // Fallback avatar
-        moviesCount: item.stats?.movies || 0,
-        followersCount: item.stats?.likes || 0, // Mapping likes to followers/likes
-        viewsCount: item.stats?.views || 0,
-        rating: 0, // API doesn't seem to return rating in stats yet
-        isFollowing: item.isLiked || false, // Mapping isLiked to isFollowing
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
-        tags: item.tags || [],
+        creator: '',
+        creatorAvatar: '',
+        moviesCount: Number(item.filmCount ?? 0),
+        followersCount: Number(item.stats?.likes ?? 0),
+        viewsCount: Number(item.stats?.views ?? 0),
+        rating: 0,
+        isFollowing: false,
+        createdAt: item.meta?.createdAt ?? '',
+        updatedAt: item.meta?.updatedAt ?? '',
+        tags: Array.isArray(item.tags) ? item.tags : [],
       }));
 
       setItems(list);
@@ -118,7 +118,7 @@ export function PlaylistsPage() {
       // Update local state for views
       setItems(prev => prev.map(p => (p.id === playlist.id ? { ...p, viewsCount: p.viewsCount + 1 } : p)));
     } catch (e) { }
-    navigate(`/Playlist-detail/${playlist.id}`);
+    navigate(`/playlist/${playlist.id}`);
   };
 
   return (

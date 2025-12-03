@@ -18,6 +18,7 @@ import type { RecordDownloadDto } from '../models/RecordDownloadDto';
 import type { RemoveUserTorrentDto } from '../models/RemoveUserTorrentDto';
 import type { ReportUserTorrentDto } from '../models/ReportUserTorrentDto';
 import type { ReviewDto } from '../models/ReviewDto';
+import type { SearchTorrentsDto } from '../models/SearchTorrentsDto';
 import type { UpdateTorrentDto } from '../models/UpdateTorrentDto';
 import type { UserListTorrentsDto } from '../models/UserListTorrentsDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -62,6 +63,10 @@ export class TorrentsService {
     public static torrentsControllerCreateDownloadUrl(
         requestBody: {
             torrentId: string;
+            source: {
+                filmId: string;
+                playListId: string;
+            };
         },
     ): CancelablePromise<{
         code?: number;
@@ -272,6 +277,37 @@ export class TorrentsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/torrents/user/list-torrents',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 搜索：字符串+影片ID；排除已关联该影片的种子
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentsControllerSearch(
+        requestBody: SearchTorrentsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            items?: Array<Record<string, any>>;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/search',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

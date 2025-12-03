@@ -2,7 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type AwardIdDto = {
+export type FilmListItemDTO = {
     id: string;
+    title: string;
+    poster?: string;
+    year?: number;
+    duration?: number;
+    genres?: Array<string>;
 };
 

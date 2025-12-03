@@ -4,6 +4,7 @@ import { OpenAPI } from '@/api/core/OpenAPI';
 import { ApiError } from '@/api/core/ApiError';
 import { parseFilenameFromContentDisposition, saveBlobAsFile } from '@/utils/http/saveBlobAsFile';
 import { customToast } from '@/hooks/useToast';
+import { useSourceTracker } from '@/hooks/useSourceTracker';
 
 export type UseTorrentDownloadOptions = {
   onInfo?: (message: string) => void;
@@ -19,6 +20,7 @@ export type UseTorrentDownloadOptions = {
 export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
   const lastDownloadAtRef = useRef<Map<string, number>>(new Map());
   const THROTTLE_MS = 5000;
+  const { sourcePayload } = useSourceTracker();
 
   const info = (m: string) => (opts?.onInfo ? opts.onInfo(m) : customToast.info(m));
   const error = (m: string) => (opts?.onError ? opts.onError(m) : customToast.error(m));
@@ -28,7 +30,11 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
    * @param torrentId 种子 ID
    * @param name 期望文件名（回退使用）
    */
-  const downloadByTorrentId = async (torrentId: string, name?: string) => {
+  const downloadByTorrentId = async (
+    torrentId: string,
+    name?: string,
+    sourceOverride?: { filmId: string; playListId: string }
+  ) => {
     const now = Date.now();
     const last = lastDownloadAtRef.current.get(torrentId) || 0;
     if (now - last < THROTTLE_MS) {
@@ -40,7 +46,8 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
     try {
       let url: string = '';
       try {
-        const resp = await TorrentsService.torrentsControllerCreateDownloadUrl({ torrentId });
+        const source = sourceOverride ?? sourcePayload ?? { filmId: '', playListId: '' };
+        const resp = await TorrentsService.torrentsControllerCreateDownloadUrl({ torrentId, source });
         const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
         const data = body?.data ?? body;
         url = String(data?.url ?? '');

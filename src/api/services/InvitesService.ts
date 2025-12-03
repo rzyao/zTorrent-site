@@ -4,8 +4,12 @@
 /* eslint-disable */
 import type { ExportInvitesDto } from '../models/ExportInvitesDto';
 import type { GrantQuotaDto } from '../models/GrantQuotaDto';
+import type { ListInviteCodesDto } from '../models/ListInviteCodesDto';
 import type { ListInviteQuotaDto } from '../models/ListInviteQuotaDto';
+import type { ListInviteRecordsDto } from '../models/ListInviteRecordsDto';
 import type { ListInvitesDto } from '../models/ListInvitesDto';
+import type { ListMyInvitedUsersDto } from '../models/ListMyInvitedUsersDto';
+import type { OverviewInvitesDto } from '../models/OverviewInvitesDto';
 import type { ResendInviteDto } from '../models/ResendInviteDto';
 import type { RevokeInviteDto } from '../models/RevokeInviteDto';
 import type { SendInviteDto } from '../models/SendInviteDto';
@@ -73,6 +77,168 @@ export class InvitesService {
             url: '/invites/quota/list',
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 我的邀请码列表（预生成码）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static invitesControllerListCodes(
+        requestBody: ListInviteCodesDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            items?: any[];
+            page?: number;
+            limit?: number;
+            total?: number;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/invites/codes/list',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 邀请记录列表（对齐前端枚举与字段）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static invitesControllerListRecords(
+        requestBody: ListInviteRecordsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            items?: any[];
+            page?: number;
+            limit?: number;
+            total?: number;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/invites/records/list',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 我的后宫（被邀请用户列表）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static invitesControllerMyUsers(
+        requestBody: ListMyInvitedUsersDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            items?: any[];
+            page?: number;
+            limit?: number;
+            total?: number;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/invites/my-users',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 邀请概览统计（顶部卡片）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static invitesControllerOverview(
+        requestBody: OverviewInvitesDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            totalInvites?: number;
+            usedInvites?: number;
+            remainingInvites?: number;
+            invitedUsers?: number;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/invites/overview',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 邀请返利规则（展示用）
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static invitesControllerRewardRules(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            rules?: any[];
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/invites/rewards/rules',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -221,8 +387,12 @@ export class InvitesService {
         code?: number;
         message?: string;
         data?: {
-            code?: string;
             recordId?: string;
+            code?: string;
+            /**
+             * 邀请过期时间（ISO8601），可能为空
+             */
+            expiresAt?: string | null;
         };
         path?: string;
         timestamp?: string;

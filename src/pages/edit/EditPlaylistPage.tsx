@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import {
   ListVideo,
@@ -23,6 +23,9 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { usePlaylists } from '@/hooks/usePlaylists';
 import { useFilms } from '@/hooks/useFilms';
+import { ImagesService } from '@/api/services/ImagesService';
+import { FilmsService } from '@/api/services/FilmsService';
+import { customToast } from '@/hooks/useToast';
 
 interface Movie {
   id: string;
@@ -50,150 +53,24 @@ interface Playlist {
 
 export function EditPlaylistPage() {
   useDynamicTitle('片单编辑');
+  // 对接片单相关接口的 Hook
   const { listPlaylists, getPlaylist, createPlaylist, updatePlaylist, deletePlaylist, addFilm, removeFilm, reorderFilm } = usePlaylists();
   const { listFilms } = useFilms();
-  const [playlists, setPlaylists] = useState<Playlist[]>([
-    {
-      id: '1',
-      title: '诺兰电影全集',
-      description: '克里斯托弗·诺兰导演的经典作品合集，包含《星际穿越》、《盗梦空间》等杰作。',
-      cover: 'https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=400',
-      visibility: 'public',
-      movies: [
-        {
-          id: 'm1',
-          title: '星际穿越',
-          originalTitle: 'Interstellar',
-          year: '2014',
-          poster: 'https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=200',
-          category: '科幻',
-          rating: 9.8,
-          torrentCount: 3,
-        },
-        {
-          id: 'm2',
-          title: '盗梦空间',
-          originalTitle: 'Inception',
-          year: '2010',
-          poster: 'https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=200',
-          category: '科幻',
-          rating: 9.6,
-          torrentCount: 1,
-        },
-        {
-          id: 'm3',
-          title: '蝙蝠侠：黑暗骑士',
-          originalTitle: 'The Dark Knight',
-          year: '2008',
-          poster: 'https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=200',
-          category: '动作',
-          rating: 9.7,
-          torrentCount: 2,
-        },
-      ],
-      createdAt: '2024-11-15',
-      updatedAt: '2024-11-22',
-      views: 1248,
-      likes: 89,
-    },
-    {
-      id: '2',
-      title: '经典科幻电影',
-      description: '精选的科幻电影杰作，适合科幻爱好者收藏。',
-      cover: 'https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=400',
-      visibility: 'public',
-      movies: [
-        {
-          id: 'm4',
-          title: '黑客帝国',
-          originalTitle: 'The Matrix',
-          year: '1999',
-          poster: 'https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=200',
-          category: '科幻',
-          rating: 9.4,
-          torrentCount: 4,
-        },
-        {
-          id: 'm5',
-          title: '银翼杀手2049',
-          originalTitle: 'Blade Runner 2049',
-          year: '2017',
-          poster: 'https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=200',
-          category: '科幻',
-          rating: 9.1,
-          torrentCount: 2,
-        },
-      ],
-      createdAt: '2024-11-18',
-      updatedAt: '2024-11-20',
-      views: 856,
-      likes: 64,
-    },
-    {
-      id: '3',
-      title: '我的私人收藏',
-      description: '个人珍藏的精品影片，仅自己可见。',
-      cover: 'https://images.unsplash.com/photo-1613399421098-f943ea81f1c4?w=400',
-      visibility: 'private',
-      movies: [
-        {
-          id: 'm6',
-          title: '教父',
-          originalTitle: 'The Godfather',
-          year: '1972',
-          poster: 'https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=200',
-          category: '剧情',
-          rating: 9.9,
-          torrentCount: 3,
-        },
-      ],
-      createdAt: '2024-11-10',
-      updatedAt: '2024-11-21',
-      views: 23,
-      likes: 0,
-    },
-  ]);
+  // 片单列表状态：不做旧兼容，移除模拟初始数据，统一使用后端返回
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
-  // 可选的影片库（用于添加到片单）
-  const availableMovies: Movie[] = [
-    {
-      id: 'am1',
-      title: '肖申克的救赎',
-      originalTitle: 'The Shawshank Redemption',
-      year: '1994',
-      poster: 'https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=200',
-      category: '剧情',
-      rating: 9.8,
-      torrentCount: 2,
-    },
-    {
-      id: 'am2',
-      title: '辛德勒的名单',
-      originalTitle: "Schindler's List",
-      year: '1993',
-      poster: 'https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=200',
-      category: '剧情',
-      rating: 9.8,
-      torrentCount: 1,
-    },
-    {
-      id: 'am3',
-      title: '低俗小说',
-      originalTitle: 'Pulp Fiction',
-      year: '1994',
-      poster: 'https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=200',
-      category: '剧情',
-      rating: 9.5,
-      torrentCount: 2,
-    },
-  ];
+  // 可选影片库：由后端接口 `filmsControllerListFilms` 加载填充
+  const [available, setAvailable] = useState<Movie[]>([]);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddMovie, setShowAddMovie] = useState(false);
-  const [available, setAvailable] = useState<Movie[]>([]);
+  const [addQuery, setAddQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<Movie[]>([]);
 
   // 编辑表单状态
   const [editForm, setEditForm] = useState({
@@ -227,15 +104,14 @@ export function EditPlaylistPage() {
     setIsCreating(false);
   };
 
+  // 保存片单（创建或更新）：按最新 OpenAPI 字段对接
   const handleSave = async () => {
     const payload: any = {
-      title: editForm.title,
+      name: editForm.title,
       description: editForm.description,
       coverUrl: editForm.cover,
       visibility: editForm.visibility,
-      type: 'general',
-      enabled: true,
-      sort: 0,
+      tags: [],
     };
     try {
       if (isCreating) {
@@ -247,7 +123,7 @@ export function EditPlaylistPage() {
         setSelectedPlaylist(mapped);
         setIsCreating(false);
       } else if (selectedPlaylist) {
-        await updatePlaylist(selectedPlaylist.id, payload);
+        await updatePlaylist(selectedPlaylist.id, { ...payload, id: selectedPlaylist.id });
         const detail = await getPlaylist(selectedPlaylist.id);
         const mapped = mapBackendPlaylistToLocal(detail);
         setPlaylists(playlists.map((p) => (p.id === mapped.id ? mapped : p)));
@@ -255,7 +131,7 @@ export function EditPlaylistPage() {
         setIsEditing(false);
       }
     } catch (e: any) {
-      alert(e?.message || '保存失败');
+      customToast.error(e?.message || '保存失败');
     }
   };
 
@@ -268,11 +144,12 @@ export function EditPlaylistPage() {
           setSelectedPlaylist(null);
         }
       } catch (e: any) {
-        alert(e?.message || '删除失败');
+        customToast.error(e?.message || '删除失败');
       }
     }
   };
 
+  // 添加影片到片单：成功后刷新片单详情
   const handleAddMovie = async (movie: Movie) => {
     if (selectedPlaylist) {
       try {
@@ -282,11 +159,12 @@ export function EditPlaylistPage() {
         setSelectedPlaylist(mapped);
         setPlaylists(playlists.map((p) => (p.id === mapped.id ? mapped : p)));
       } catch (e: any) {
-        alert(e?.message || '添加影片失败');
+        customToast.error(e?.message || '添加影片失败');
       }
     }
   };
 
+  // 从片单移除影片：成功后刷新片单详情
   const handleRemoveMovie = async (movieId: string) => {
     if (selectedPlaylist) {
       try {
@@ -296,8 +174,53 @@ export function EditPlaylistPage() {
         setSelectedPlaylist(mapped);
         setPlaylists(playlists.map((p) => (p.id === mapped.id ? mapped : p)));
       } catch (e: any) {
-        alert(e?.message || '移除影片失败');
+        customToast.error(e?.message || '移除影片失败');
       }
+    }
+  };
+
+  // 上/下移动影片以变更排序，并提交后端
+  const handleMoveMovie = async (index: number, direction: 'up' | 'down') => {
+    if (!selectedPlaylist) return;
+    const len = selectedPlaylist.movies.length;
+    const target = direction === 'up' ? index - 1 : index + 1;
+    if (target < 0 || target >= len) return;
+    const nextMovies = [...selectedPlaylist.movies];
+    const [m] = nextMovies.splice(index, 1);
+    nextMovies.splice(target, 0, m);
+    const order = nextMovies.map((x) => x.id);
+    try {
+      await reorderFilm(selectedPlaylist.id, order);
+      const detail = await getPlaylist(selectedPlaylist.id);
+      const mapped = mapBackendPlaylistToLocal(detail);
+      setSelectedPlaylist(mapped);
+      setPlaylists(playlists.map((p) => (p.id === mapped.id ? mapped : p)));
+    } catch (e: any) {
+      customToast.error(e?.message || '更新排序失败');
+    }
+  };
+
+  // 上传封面：使用 ImagesService，按 JSON Base64 对接
+  const handleUploadCoverClick = () => {
+    fileInputRef.current?.click();
+  };
+  const handleUploadCoverFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const reader = new FileReader();
+      const asDataUrl: string = await new Promise((resolve, reject) => {
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(new Error('读取文件失败'));
+        reader.readAsDataURL(file);
+      });
+      const base64 = asDataUrl.split(',')[1] || '';
+      const resp = await ImagesService.imagesControllerUpload({ content: base64, filename: file.name, mimeType: file.type });
+      const url = (resp?.data?.url ?? (resp as any)?.data?.url ?? '') as string;
+      if (!url) throw new Error('上传失败');
+      setEditForm((prev) => ({ ...prev, cover: url }));
+    } catch (err: any) {
+      customToast.error(err?.message || '上传封面失败');
     }
   };
 
@@ -336,49 +259,131 @@ export function EditPlaylistPage() {
   useEffect(() => {
     (async () => {
       try {
+        // 加载片单列表并映射为本地展示模型
         const list = await listPlaylists({ page: 1, limit: 50, keyword: searchQuery });
-        const mapped = (list?.items ?? []).map(mapBackendPlaylistToLocal);
+        const mapped = (list?.items ?? []).map(mapBackendPlaylistSummaryToLocal);
         setPlaylists(mapped);
-      } catch {}
+      } catch { }
       try {
+        // 加载可选影片列表用于添加面板
         const films = await listFilms({ page: 1, limit: 50, keyword: '' });
         const availableMapped = (films?.items ?? []).map((f: any) => ({
           id: String(f?.id ?? ''),
           title: f?.title ?? '',
           originalTitle: f?.originalTitle ?? '',
           year: String(f?.year ?? ''),
-          poster: f?.posterUrl ?? f?.coverUrl ?? '',
+          poster: f?.poster ?? f?.posterUrl ?? f?.coverUrl ?? '',
           category: f?.category ?? '',
           rating: Number(f?.rating ?? 0),
           torrentCount: Number(f?.torrentCount ?? 0),
         }));
         setAvailable(availableMapped);
-      } catch {}
+      } catch { }
     })();
   }, [searchQuery]);
 
+  useEffect(() => {
+    if (!showAddMovie) return;
+    const q = addQuery.trim();
+    if (!q) {
+      setSearchResults([]);
+      return;
+    }
+    setIsSearching(true);
+    const handler = setTimeout(async () => {
+      try {
+        const films = await listFilms({ page: 1, limit: 50, keyword: q });
+        const mapped = (films?.items ?? []).map(mapFilmListItemToMovie);
+        setSearchResults(mapped);
+      } catch (e: any) {
+        customToast.error(e?.message || '搜索失败');
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [addQuery, showAddMovie]);
+
+  useEffect(() => {
+    (async () => {
+      if (!selectedPlaylist?.id || isCreating || isEditing) return;
+      try {
+        const detail = await getPlaylist(selectedPlaylist.id);
+        const mapped = mapBackendPlaylistToLocal(detail);
+        setSelectedPlaylist(mapped);
+      } catch { }
+      try {
+        const res = await FilmsService.filmsControllerSearchFilmsForPlaylist({ search: '', playlistId: selectedPlaylist.id, limit: 100 });
+        const items = (res?.data?.items ?? []) as any[];
+        if (Array.isArray(items) && items.length > 0) {
+          const movies = items.map(mapFilmListItemToMovie);
+          setSelectedPlaylist((prev) => (prev ? { ...prev, movies } : prev));
+        }
+      } catch { }
+    })();
+  }, [selectedPlaylist?.id, isCreating, isEditing]);
+
+  // 详情映射：PlaylistDTO -> 页面本地模型
   function mapBackendPlaylistToLocal(detail: any): Playlist {
-    const movies = Array.isArray(detail?.movies) ? detail.movies.map((f: any) => ({
-      id: String(f?.id ?? ''),
+    const movies = Array.isArray(detail?.films) ? detail.films.map((f: any) => ({
+      id: String(f?.filmId ?? f?.id ?? ''),
       title: f?.title ?? '',
       originalTitle: f?.originalTitle ?? '',
       year: String(f?.year ?? ''),
-      poster: f?.posterUrl ?? f?.coverUrl ?? '',
+      poster: f?.poster ?? f?.posterUrl ?? f?.coverUrl ?? '',
       category: f?.category ?? '',
       rating: Number(f?.rating ?? 0),
       torrentCount: Number(f?.torrentCount ?? 0),
     })) : [];
     return {
       id: String(detail?.id ?? ''),
-      title: detail?.title ?? '',
+      title: detail?.name ?? detail?.title ?? '',
       description: detail?.description ?? '',
       cover: detail?.coverUrl ?? '',
       visibility: detail?.visibility ?? 'public',
       movies,
-      createdAt: String(detail?.createdAt ?? ''),
-      updatedAt: String(detail?.updatedAt ?? ''),
-      views: Number(detail?.views ?? 0),
-      likes: Number(detail?.likes ?? 0),
+      createdAt: String(detail?.meta?.createdAt ?? detail?.createdAt ?? ''),
+      updatedAt: String(detail?.meta?.updatedAt ?? detail?.updatedAt ?? ''),
+      views: Number(detail?.stats?.views ?? detail?.views ?? 0),
+      likes: Number(detail?.stats?.likes ?? detail?.likes ?? 0),
+    };
+  }
+
+  // 列表项映射：PlaylistSummaryDTO -> 页面本地模型（用于左侧列表）
+  function mapBackendPlaylistSummaryToLocal(summary: any): Playlist {
+    return {
+      id: String(summary?.id ?? ''),
+      title: summary?.name ?? '',
+      description: '',
+      cover: summary?.coverUrl ?? '',
+      visibility: summary?.visibility ?? 'public',
+      movies: new Array(Number(summary?.filmCount ?? 0)).fill(0).map((_, i) => ({
+        id: String(i + 1),
+        title: '',
+        originalTitle: '',
+        year: '',
+        poster: '',
+        category: '',
+        rating: 0,
+        torrentCount: 0,
+      })),
+      createdAt: String(summary?.meta?.createdAt ?? ''),
+      updatedAt: String(summary?.meta?.updatedAt ?? ''),
+      views: Number(summary?.stats?.views ?? 0),
+      likes: Number(summary?.stats?.likes ?? 0),
+    };
+  }
+
+  function mapFilmListItemToMovie(f: any): Movie {
+    return {
+      id: String(f?.id ?? ''),
+      title: f?.title ?? '',
+      originalTitle: f?.originalTitle ?? '',
+      year: String(f?.year ?? ''),
+      poster: f?.poster ?? f?.posterUrl ?? f?.coverUrl ?? '',
+      category: f?.category ?? '',
+      rating: Number(f?.rating ?? 0),
+      torrentCount: Number(f?.torrentCount ?? 0),
     };
   }
 
@@ -593,8 +598,10 @@ export function EditPlaylistPage() {
                       placeholder="输入图片URL..."
                       className="flex-1 bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
                     />
+                    <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleUploadCoverFile} />
                     <Button
                       variant="outline"
+                      onClick={handleUploadCoverClick}
                       className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
                     >
                       <ImageIcon className="w-4 h-4 mr-2" />
@@ -772,8 +779,24 @@ export function EditPlaylistPage() {
                   {showAddMovie && (
                     <div className="mb-6 p-6 rounded-xl bg-neutral-900/30 border border-amber-500/30">
                       <h4 className="text-white mb-4">从影片库选择</h4>
+                      <div className="relative mb-4">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                        <input
+                          type="text"
+                          value={addQuery}
+                          onChange={(e) => setAddQuery(e.target.value)}
+                          placeholder="搜索影片标题或原名..."
+                          className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                        />
+                      </div>
+                      {isSearching && (
+                        <p className="text-neutral-500 text-sm mb-3">正在搜索...</p>
+                      )}
+                      {addQuery.trim() && !isSearching && searchResults.length === 0 && (
+                        <p className="text-neutral-500 text-sm mb-3">暂无匹配影片</p>
+                      )}
                       <div className="grid grid-cols-1 gap-3 max-h-64 overflow-y-auto">
-                        {availableMovies.map((movie) => (
+                        {(addQuery.trim() ? searchResults : available).map((movie) => (
                           <div
                             key={movie.id}
                             className="flex items-center gap-3 p-3 rounded-lg bg-neutral-800/50 border border-neutral-700/50 hover:border-amber-500/30 transition-all"
@@ -864,6 +887,11 @@ export function EditPlaylistPage() {
                               </span>
                               <span>{movie.torrentCount} 个版本</span>
                             </div>
+                          </div>
+                          {/* 排序操作：上移/下移 */}
+                          <div className="flex items-center gap-2">
+                            <Button size="sm" variant="ghost" className="text-neutral-400 hover:text-white" onClick={() => handleMoveMovie(index, 'up')}>上移</Button>
+                            <Button size="sm" variant="ghost" className="text-neutral-400 hover:text-white" onClick={() => handleMoveMovie(index, 'down')}>下移</Button>
                           </div>
                           <Button
                             size="sm"

@@ -291,7 +291,7 @@ export function TicketsPage() {
   // 创建工单视图
   if (view === 'create') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">
+      <div className="min-h-screen bg-[#0F171E] ">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-8">
           {/* 页面标题 */}
           <div className="mb-8 flex items-center justify-between">
@@ -486,7 +486,7 @@ export function TicketsPage() {
     const priorityInfo = priorityConfig[selectedTicket.priority];
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">
+      <div className="min-h-screen bg-[#0F171E] ">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-8">
           {/* 页面标题 */}
           <div className="mb-8 flex items-center justify-between">
@@ -709,7 +709,7 @@ export function TicketsPage() {
 
   // 工单列表视图
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950">
+    <div className="min-h-screen bg-[#0F171E]">
       <div className="max-w-[1600px] mx-auto px-4 md:px-4 py-4">
         {/* 页面标题 */}
         <div className="mb-4 flex items-center justify-between">

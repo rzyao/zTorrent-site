@@ -8,5 +8,9 @@ export type SendInviteDto = {
      * 被邀请者的用户名（用于重复校验）
      */
     username: string;
+    /**
+     * 预生成邀请码ID（可选）
+     */
+    codeId?: string;
 };
 

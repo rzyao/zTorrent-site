@@ -30,13 +30,32 @@ export class StoreService {
     }
     /**
      * 购买商品
-     * @returns any
+     * @returns any 成功
      * @throws ApiError
      */
-    public static storeControllerPurchase(): CancelablePromise<any> {
+    public static storeControllerPurchase(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            id?: string;
+            status?: string;
+            pointsCharged?: string;
+            quantity?: number;
+            deliveryResult?: Record<string, any>;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/store/purchase',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
         });
     }
     /**

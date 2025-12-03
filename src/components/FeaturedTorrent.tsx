@@ -39,7 +39,7 @@ export function FeaturedTorrent({
         <div className="absolute inset-0 bg-gradient-to-r from-[#0F171E] via-[#0F171E]/40 to-transparent" />
       </div>
 
-      <div className="relative h-full flex items-center px-4 md:px-8">
+      <div className="relative h-full flex items-center pb-16 px-4 md:px-8">
         <div className="max-w-2xl space-y-5">
           <div className="flex items-center gap-3">
             <div className="bg-gray-800 px-3 py-1 text-white text-sm rounded">

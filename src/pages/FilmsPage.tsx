@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { Film, Star, Calendar, Users, Eye, Play, Search, Filter, BookmarkPlus, TrendingUp, Clock, Award, Loader2 } from 'lucide-react';
 import { FilmsService } from '@/api/services/FilmsService';
 import { CollectFilmDto } from '@/api/models/CollectFilmDto';
-import { PublicFilmDto } from '@/api/models/PublicFilmDto';
+import { PublicFilmDetailDto as PublicFilmDto } from '@/api/models/PublicFilmDetailDto';
 import { ListFilmsDto } from '@/api/models/ListFilmsDto';
-import { FilmIdDto } from '@/api/models/FilmIdDto';
+import { useNavigate } from 'react-router-dom';
 
 
 
 export function FilmsPage() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'all' | 'trending' | 'latest' | 'classic'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'rating' | 'latest' | 'popular'>('rating');
@@ -59,7 +60,9 @@ export function FilmsPage() {
     try {
       const response = await FilmsService.filmsControllerListGenres();
       if (response.data?.genres) {
-        setGenres(['全部', ...response.data.genres]);
+        // 过滤掉空字符串和重复项
+        const uniqueGenres = Array.from(new Set(response.data.genres.filter(g => g && g.trim() !== '')));
+        setGenres(['全部', ...uniqueGenres]);
       }
     } catch (err) {
       console.warn('获取类型列表失败，使用默认列表');
@@ -116,7 +119,7 @@ export function FilmsPage() {
     } catch (err) {
       console.error('增加浏览次数失败:', err);
     }
-    // 实际应用中这里会导航到影片详情页
+    navigate(`/film/${movie.id}`);
   };
 
   return (
@@ -265,7 +268,7 @@ export function FilmsPage() {
                   {/* 海报 */}
                   <div className="relative aspect-[2/3] overflow-hidden">
                     <img
-                      src={movie.poster || 'https://via.placeholder.com/300x450?text=No+Poster'}
+                      src={(movie as any).posterUrl || movie.poster || 'https://via.placeholder.com/300x450?text=No+Poster'}
                       alt={movie.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />

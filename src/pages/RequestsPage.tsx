@@ -373,7 +373,7 @@ export function RequestsPage() {
   // 创建求种视图
   if (view === 'create') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">
+      <div className="min-h-screen bg-[#0F171E] ">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-8">
           <div className="mb-8 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -511,7 +511,7 @@ export function RequestsPage() {
     const statusInfo = statusConfig[selectedRequest.status];
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">
+      <div className="min-h-screen bg-[#0F171E] ">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-8">
           <div className="mb-8 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -724,7 +724,7 @@ export function RequestsPage() {
 
   // 求种列表视图
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">
+    <div className="min-h-screen bg-[#0F171E]">
       <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-8">
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-3">

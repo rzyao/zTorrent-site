@@ -4,11 +4,11 @@
 /* eslint-disable */
 export type UnifiedResponseDto = {
     /**
-     * 业务状态码。1000 表示成功，非 1000 表示业务/系统错误。
+     * 业务状态码。0 表示成功，非 0 表示错误。
      */
     code: number;
     /**
-     * 面向用户的提示信息。
+     * 统一成功消息，错误时为约定字符串。
      */
     message: string;
     /**

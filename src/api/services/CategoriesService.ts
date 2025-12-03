@@ -298,7 +298,7 @@ export class CategoriesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/categories/user/set',
+            url: '/categories/user/set-categories',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

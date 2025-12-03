@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { UserPlus, Mail, Copy, Check, Clock, Users, Gift, Sparkles, Calendar, Shield, AlertCircle, Plus, Eye, EyeOff, Send, CheckCircle, XCircle, X, TrendingUp, Download, Upload } from 'lucide-react';
+import { InvitesService } from '@/api';
+import { getBonusOverview } from '@/api/custom/bonus';
+import { getStoreItems, purchaseItem } from '@/api/custom/store';
 
 interface InviteCode {
   id: string;
@@ -44,48 +47,108 @@ export function InvitePage() {
   const [selectedCode, setSelectedCode] = useState<InviteCode | null>(null);
   const [recipientName, setRecipientName] = useState('');
   const [recipientEmail, setRecipientEmail] = useState('');
+  const [userInviteStats, setUserInviteStats] = useState({ totalInvites: 0, usedInvites: 0, remainingInvites: 0, invitedUsers: 0, magicPoints: 0 });
+  const [inviteCodes, setInviteCodes] = useState<InviteCode[]>([]);
+  const [inviteRecords, setInviteRecords] = useState<SentInvite[]>([]);
+  const [invitedUsers, setInvitedUsers] = useState<InvitedUser[]>([]);
+  const [loadedCodes, setLoadedCodes] = useState(false);
+  const [loadedRecords, setLoadedRecords] = useState(false);
+  const [loadedUsers, setLoadedUsers] = useState(false);
 
-  // 模拟用户数据
-  const userInviteStats = {
-    totalInvites: 15,
-    usedInvites: 8,
-    remainingInvites: 7,
-    invitedUsers: 8,
-    magicPoints: 12580,
+  const extractData = (resp: any) => {
+    const body = resp?.code !== undefined ? resp : resp?.data;
+    return body?.data ?? body;
   };
-
-  // 模拟邀请码数据
-  const inviteCodes: InviteCode[] = [
-    { id: '1', code: 'MOVIE2024ABC123', status: 'unused', createdAt: '2024-11-20', expiresAt: '2024-12-20' },
-    { id: '2', code: 'FILM2024XYZ789', status: 'unused', createdAt: '2024-11-18', expiresAt: '2024-12-18' },
-    { id: '3', code: 'CINEMA2024DEF456', status: 'unused', createdAt: '2024-11-15', expiresAt: '2024-12-15' },
-    { id: '4', code: 'TORRENT2024STU901', status: 'unused', createdAt: '2024-11-22', expiresAt: '2024-12-22' },
-    { id: '5', code: 'STREAM2024VWX234', status: 'unused', createdAt: '2024-11-25', expiresAt: '2024-12-25' },
-  ];
-
-  // 邀请记录（所有状态）
-  const inviteRecords: SentInvite[] = [
-    { id: '1', code: 'STREAM2024JKL012', recipientName: 'MovieFan88', recipientEmail: 'moviefan88@email.com', status: 'registered', sentAt: '2024-11-05 14:30', registeredAt: '2024-11-08 10:15', expiresAt: '2024-12-05' },
-    { id: '2', code: 'VIDEO2024GHI789', recipientName: 'User123', recipientEmail: 'user123@email.com', status: 'registered', sentAt: '2024-11-10 09:20', registeredAt: '2024-11-12 16:45', expiresAt: '2024-12-10' },
-    { id: '3', code: 'MOVIE2024ABC456', recipientName: '张三', recipientEmail: 'zhangsan@email.com', status: 'pending', sentAt: '2024-11-20 11:00', expiresAt: '2024-12-20' },
-    { id: '4', code: 'FILM2024XYZ123', recipientName: '李四', recipientEmail: 'lisi@email.com', status: 'pending', sentAt: '2024-11-18 15:45', expiresAt: '2024-12-18' },
-    { id: '5', code: 'CINEMA2024DEF789', recipientName: '王五', recipientEmail: 'wangwu@email.com', status: 'pending', sentAt: '2024-11-15 13:20', expiresAt: '2024-12-15' },
-    { id: '6', code: 'TORRENT2024MNO345', recipientName: 'OldFriend', recipientEmail: 'oldfriend@email.com', status: 'expired', sentAt: '2024-10-01 10:00', expiresAt: '2024-11-01' },
-    { id: '7', code: 'CLASSIC2024PQR678', recipientName: '赵六', recipientEmail: 'zhaoliu@email.com', status: 'expired', sentAt: '2024-09-28 14:30', expiresAt: '2024-10-28' },
-    { id: '8', code: 'ANIME2024HIJ901', recipientName: 'CinemaLover', recipientEmail: 'cinemalover@email.com', status: 'registered', sentAt: '2024-10-20 16:20', registeredAt: '2024-10-25 09:30', expiresAt: '2024-11-20' },
-  ];
-
-  // 我的后宫（被邀请的用户）
-  const invitedUsers: InvitedUser[] = [
-    { id: '1', username: 'MovieFan88', email: 'moviefan88@email.com', joinedAt: '2024-11-08', uploadData: '2.5 TB', downloadData: '1.2 TB', shareRatio: '2.15', status: 'active', inviteCode: 'STREAM2024JKL012' },
-    { id: '2', username: 'User123', email: 'user123@email.com', joinedAt: '2024-11-12', uploadData: '1.8 TB', downloadData: '0.9 TB', shareRatio: '1.85', status: 'active', inviteCode: 'VIDEO2024GHI789' },
-    { id: '3', username: 'CinemaLover', email: 'cinemalover@email.com', joinedAt: '2024-10-25', uploadData: '5.2 TB', downloadData: '1.5 TB', shareRatio: '3.42', status: 'active', inviteCode: 'ANIME2024HIJ901' },
-    { id: '4', username: 'FilmCollector', email: 'filmcollector@email.com', joinedAt: '2024-10-18', uploadData: '3.1 TB', downloadData: '1.1 TB', shareRatio: '2.68', status: 'active', inviteCode: 'RETRO2024KLM234' },
-    { id: '5', username: 'TorrentKing', email: 'torrentking@email.com', joinedAt: '2024-10-10', uploadData: '8.5 TB', downloadData: '2.0 TB', shareRatio: '4.22', status: 'vip', inviteCode: 'MASTER2024NOP567' },
-    { id: '6', username: 'SeriesAddict', email: 'seriesaddict@email.com', joinedAt: '2024-09-15', uploadData: '4.8 TB', downloadData: '1.8 TB', shareRatio: '2.95', status: 'active', inviteCode: 'SERIES2024QRS890' },
-    { id: '7', username: 'DocuFan', email: 'docufan@email.com', joinedAt: '2024-09-01', uploadData: '6.2 TB', downloadData: '2.1 TB', shareRatio: '3.18', status: 'vip', inviteCode: 'DOCU2024TUV123' },
-    { id: '8', username: 'AnimeNinja', email: 'animeninja@email.com', joinedAt: '2024-08-20', uploadData: '7.3 TB', downloadData: '2.5 TB', shareRatio: '3.89', status: 'active', inviteCode: 'NINJA2024WXY456' },
-  ];
+  const formatBytesToTB = (bytes: number) => {
+    const tb = bytes / Math.pow(1024, 4);
+    return `${tb.toFixed(2)} TB`;
+  };
+  const formatRatio = (ratio: number) => ratio.toFixed(2);
+  const formatDate = (iso?: string | null) => {
+    if (!iso) return '';
+    const d = new Date(iso);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const da = String(d.getDate()).padStart(2, '0');
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    return `${y}-${m}-${da} ${hh}:${mm}`;
+  };
+  const loadOverview = async () => {
+    try {
+      const resp = await InvitesService.invitesControllerOverview({});
+      const data = extractData(resp);
+      const bonus = await getBonusOverview();
+      const mp = typeof bonus?.balance === 'string' ? parseFloat(bonus.balance) : Number(bonus?.balance || 0);
+      setUserInviteStats({
+        totalInvites: Number(data?.totalInvites || 0),
+        usedInvites: Number(data?.usedInvites || 0),
+        remainingInvites: Number(data?.remainingInvites || 0),
+        invitedUsers: Number(data?.invitedUsers || 0),
+        magicPoints: mp,
+      });
+    } catch { }
+  };
+  const loadCodes = async () => {
+    try {
+      const resp = await InvitesService.invitesControllerListCodes({ page: 1, limit: 50 });
+      const data = extractData(resp);
+      const items = (data?.items || []).map((it: any) => ({
+        id: String(it.id),
+        code: String(it.code),
+        status: String(it.status) as InviteCode['status'],
+        createdAt: formatDate(it.createdAt),
+        usedAt: it.usedAt ? formatDate(it.usedAt) : undefined,
+        usedBy: it.usedBy ? String(it.usedBy) : undefined,
+        expiresAt: formatDate(it.expiresAt),
+      }));
+      setInviteCodes(items);
+      setLoadedCodes(true);
+    } catch { }
+  };
+  const loadRecords = async () => {
+    try {
+      const resp = await InvitesService.invitesControllerListRecords({ page: 1, limit: 50 });
+      const data = extractData(resp);
+      const items = (data?.items || []).map((it: any) => ({
+        id: String(it.id),
+        code: String(it.code),
+        recipientName: String(it.recipientName || ''),
+        recipientEmail: String(it.recipientEmail || ''),
+        status: String(it.status) as SentInvite['status'],
+        sentAt: formatDate(it.sentAt),
+        registeredAt: it.registeredAt ? formatDate(it.registeredAt) : undefined,
+        expiresAt: formatDate(it.expiresAt),
+      }));
+      setInviteRecords(items);
+      setLoadedRecords(true);
+    } catch { }
+  };
+  const loadUsers = async () => {
+    try {
+      const resp = await InvitesService.invitesControllerMyUsers({ page: 1, limit: 50 });
+      const data = extractData(resp);
+      const items = (data?.items || []).map((it: any) => ({
+        id: String(it.id),
+        username: String(it.username),
+        email: String(it.email),
+        joinedAt: formatDate(it.joinedAt).split(' ')[0],
+        uploadData: formatBytesToTB(Number(it.uploadedBytes || 0)),
+        downloadData: formatBytesToTB(Number(it.downloadedBytes || 0)),
+        shareRatio: formatRatio(Number(it.ratio || 0)),
+        status: String(it.status) === 'vip' ? 'vip' : 'active',
+        inviteCode: String(it.inviteCode || ''),
+      }));
+      setInvitedUsers(items);
+      setLoadedUsers(true);
+    } catch { }
+  };
+  useEffect(() => {
+    loadOverview();
+    if (activeTab === 'codes' && !loadedCodes) loadCodes();
+    if (activeTab === 'records' && !loadedRecords) loadRecords();
+    if (activeTab === 'users' && !loadedUsers) loadUsers();
+  }, [activeTab]);
 
   const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -116,9 +179,14 @@ export function InvitePage() {
   };
 
   const handleSendInvite = () => {
-    // 这里处理发送邀请的逻辑
-    console.log('发送邀请给:', recipientName, recipientEmail, '邀请码:', selectedCode?.code);
-    handleCloseSendModal();
+    const codeId = selectedCode?.id;
+    InvitesService.invitesControllerSendPrivate({ email: recipientEmail, username: recipientName, codeId })
+      .then(() => {
+        handleCloseSendModal();
+        loadRecords();
+        loadCodes();
+      })
+      .catch(() => { });
   };
 
   const getStatusColor = (status: string) => {
@@ -155,7 +223,7 @@ export function InvitePage() {
   const unusedCodes = inviteCodes.filter(code => code.status === 'unused');
 
   return (
-    <div className="min-h-screen bg-[#0F171E] pt-16">
+    <div className="min-h-screen bg-[#0F171E]">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
         {/* 页面标题 */}
         <div className="mb-8">
@@ -215,31 +283,28 @@ export function InvitePage() {
         <div className="flex gap-2 mb-6 border-b border-neutral-700">
           <button
             onClick={() => setActiveTab('codes')}
-            className={`px-6 py-3 transition-all ${
-              activeTab === 'codes'
-                ? 'text-amber-400 border-b-2 border-amber-400'
-                : 'text-neutral-400 hover:text-white'
-            }`}
+            className={`px-6 py-3 transition-all ${activeTab === 'codes'
+              ? 'text-amber-400 border-b-2 border-amber-400'
+              : 'text-neutral-400 hover:text-white'
+              }`}
           >
             我的邀请码
           </button>
           <button
             onClick={() => setActiveTab('records')}
-            className={`px-6 py-3 transition-all ${
-              activeTab === 'records'
-                ? 'text-amber-400 border-b-2 border-amber-400'
-                : 'text-neutral-400 hover:text-white'
-            }`}
+            className={`px-6 py-3 transition-all ${activeTab === 'records'
+              ? 'text-amber-400 border-b-2 border-amber-400'
+              : 'text-neutral-400 hover:text-white'
+              }`}
           >
             邀请记录
           </button>
           <button
             onClick={() => setActiveTab('users')}
-            className={`px-6 py-3 transition-all ${
-              activeTab === 'users'
-                ? 'text-amber-400 border-b-2 border-amber-400'
-                : 'text-neutral-400 hover:text-white'
-            }`}
+            className={`px-6 py-3 transition-all ${activeTab === 'users'
+              ? 'text-amber-400 border-b-2 border-amber-400'
+              : 'text-neutral-400 hover:text-white'
+              }`}
           >
             我的后宫
           </button>
@@ -342,7 +407,7 @@ export function InvitePage() {
                         <p className="text-neutral-400 text-sm">使用魔力值直接购买邀请码</p>
                       </div>
                     </div>
-                    
+
                     <div className="bg-neutral-800 rounded-lg p-4 mb-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-neutral-400 text-sm">价格</span>
@@ -357,7 +422,17 @@ export function InvitePage() {
                       </div>
                     </div>
 
-                    <button className="w-full py-3 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2">
+                    <button onClick={async () => {
+                      try {
+                        const items = await getStoreItems({ status: 'active' });
+                        const target = items.find(i => i.key === 'invite_code');
+                        if (!target) return;
+                        const idk = `invite-${Date.now()}`;
+                        await purchaseItem({ itemKey: 'invite_code', quantity: 1 }, idk);
+                        await loadCodes();
+                        await loadOverview();
+                      } catch { }
+                    }} className="w-full py-3 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2">
                       <Plus className="w-5 h-5" />
                       <span>立即兑换</span>
                     </button>
@@ -376,7 +451,7 @@ export function InvitePage() {
                         <p className="text-neutral-400 text-sm">达成成就可获得免费邀请码</p>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-3 mb-4">
                       <div className="bg-neutral-800 rounded-lg p-3 flex items-center justify-between">
                         <span className="text-neutral-300 text-sm">上传量达到 10TB</span>
@@ -410,7 +485,7 @@ export function InvitePage() {
                         <p className="text-neutral-400 text-sm">VIP会员每月赠送邀请码</p>
                       </div>
                     </div>
-                    
+
                     <div className="bg-neutral-800 rounded-lg p-4 mb-4">
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-neutral-300">普通VIP</span>
@@ -440,7 +515,7 @@ export function InvitePage() {
                         <p className="text-neutral-400 text-sm">被邀请人达标可获得奖励</p>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-3 mb-4">
                       <div className="bg-neutral-800 rounded-lg p-3">
                         <div className="flex items-center justify-between mb-1">
@@ -503,11 +578,10 @@ export function InvitePage() {
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-2">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm ${
-                                invite.status === 'registered' ? 'bg-gradient-to-br from-green-500 to-emerald-600' :
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm ${invite.status === 'registered' ? 'bg-gradient-to-br from-green-500 to-emerald-600' :
                                 invite.status === 'pending' ? 'bg-gradient-to-br from-yellow-500 to-orange-600' :
-                                'bg-neutral-700'
-                              }`}>
+                                  'bg-neutral-700'
+                                }`}>
                                 {invite.recipientName.charAt(0)}
                               </div>
                               <span className={invite.status === 'expired' ? 'text-neutral-500' : 'text-white'}>
@@ -527,8 +601,8 @@ export function InvitePage() {
                           <td className="px-6 py-4">
                             <span className={
                               invite.status === 'registered' ? 'text-green-400' :
-                              invite.status === 'pending' ? 'text-neutral-400' :
-                              'text-neutral-500'
+                                invite.status === 'pending' ? 'text-neutral-400' :
+                                  'text-neutral-500'
                             }>
                               {invite.status === 'registered' ? invite.registeredAt : invite.expiresAt}
                             </span>
@@ -616,11 +690,10 @@ export function InvitePage() {
                           <span className="text-amber-400">{user.shareRatio}</span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`px-2 py-1 rounded text-xs ${
-                            user.status === 'vip' 
-                              ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' 
-                              : 'bg-green-500/20 text-green-400 border border-green-500/30'
-                          }`}>
+                          <span className={`px-2 py-1 rounded text-xs ${user.status === 'vip'
+                            ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                            : 'bg-green-500/20 text-green-400 border border-green-500/30'
+                            }`}>
                             {user.status === 'vip' ? 'VIP会员' : '活跃'}
                           </span>
                         </td>

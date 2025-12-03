@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useDynamicTitle } from '@/hooks/useDynamicTitle';
-import { TorrentsService } from '@/api';
+import { FilmsService } from '@/api/services/FilmsService';
 import {
   Download,
   Upload,
@@ -40,17 +41,20 @@ import {
 } from '../components/ui/carousel';
 import { Dialog, DialogContent } from '../components/ui/dialog';
 import { formatSize } from '@/utils/format';
+import { TorrentTable } from '@/components/TorrentTable';
 
-interface TorrentDetailPageProps {
-  torrentId?: number;
+interface FilmDetailPageProps {
+  filmId?: string;
 }
 
 
 
 
-export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps) {
+export default function FilmDetailPage({ filmId }: FilmDetailPageProps) {
   useDynamicTitle('影片详情');
-  const [activeTab, setActiveTab] = useState('comments');
+  const params = useParams();
+  const effectiveFilmId = filmId ?? (params?.id ? String(params.id) : undefined);
+  const [activeTab, setActiveTab] = useState('torrents');
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [hasThanked, setHasThanked] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -67,70 +71,110 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
 
   const mapDetail = (raw: any) => {
     return {
-      id: raw?.id ?? 0,
+      id: str(raw?.id),
       title: str(raw?.title),
-      subtitle: str(raw?.subTitle ?? raw?.Subtitle),
-      poster: raw?.cover,
-      backdrop: raw?.backdrop ?? defaultBackdrop,
+      subtitle: str(raw?.originalTitle),
+      poster: str(raw?.poster ?? raw?.posterUrl ?? ''),
+      backdrop: str(raw?.backdrop ?? raw?.backdropUrl ?? defaultBackdrop),
       category: str(raw?.category),
-      subCategory: str(raw?.subCategory ?? raw?.SubCategory),
-      year: num(raw?.year),
-      duration: str(raw?.duration),
+      subCategory: '',
+      year: Number(raw?.year ?? 0),
+      duration: raw?.duration != null ? `${raw?.duration}分钟` : '',
       director: str(raw?.director),
-      cast: arr(raw?.cast),
-      imdb: str(raw?.imdb),
-      douban: str(raw?.douban),
+      cast: [],
+      imdb: str(raw?.imdbLink ?? ''),
+      douban: str(raw?.doubanLink ?? ''),
       rating: num(raw?.rating),
-      ratingCount: num(raw?.ratingCount),
+      ratingCount: 0,
       description: str(raw?.description),
-      stills: arr(raw?.stills),
-      awards: Array.isArray(raw?.awards) ? raw.awards : [],
-      size: str(raw?.size),
-      files: num(raw?.files),
-      seeders: num(raw?.seeders),
-      leechers: num(raw?.leechers),
-      completed: num(raw?.completed),
-      uploadDate: str(raw?.uploadDate),
+      stills: [],
+      awards: Array.isArray(raw?.awards) ? raw.awards.map((a: any) => ({ name: String(a), won: false, year: '', category: '' })) : [],
+      size: '',
+      files: 0,
+      seeders: 0,
+      leechers: 0,
+      completed: 0,
+      uploadDate: '',
       uploader: {
-        name: str(raw?.uploader?.name),
-        avatar: str(raw?.uploader?.avatar),
-        level: str(raw?.uploader?.level),
-        uploads: num(raw?.uploader?.uploads),
-        ratio: str(raw?.uploader?.ratio),
+        name: '',
+        avatar: '',
+        level: '',
+        uploads: 0,
+        ratio: '',
       },
-      isFree: Boolean(raw?.isFree),
-      isHot: Boolean(raw?.isHot),
-      isVip: Boolean(raw?.isVip),
-      videoCodec: str(raw?.videoCodec),
-      videoResolution: str(raw?.videoResolution),
-      videoFrameRate: str(raw?.videoFrameRate),
-      videoBitRate: str(raw?.videoBitRate),
-      audioCodec: str(raw?.audioCodec),
-      audioBitRate: str(raw?.audioBitRate),
-      audioLanguages: arr(raw?.audioLanguages),
-      subtitles: arr(raw?.subtitles),
-      fileList: Array.isArray(raw?.fileList)
-        ? raw.fileList.map((f: any) => ({ name: str(f?.name), size: str(f?.size) }))
+      isFree: false,
+      isHot: false,
+      isVip: false,
+      videoCodec: '',
+      videoResolution: '',
+      videoFrameRate: '',
+      videoBitRate: '',
+      audioCodec: '',
+      audioBitRate: '',
+      audioLanguages: [],
+      subtitles: [],
+      fileList: [],
+      views: num(raw?.viewsCount),
+      bookmarks: num(raw?.collectionsCount),
+      thanks: 0,
+      comments: [],
+      relatedTorrents: [],
+      otherVersions: Array.isArray(raw?.torrents)
+        ? raw.torrents.map((t: any) => ({ id: t?.id, title: t?.quality ?? '', seeders: t?.seeders ?? 0, size: t?.size ?? '' }))
         : [],
-      views: num(raw?.views),
-      bookmarks: num(raw?.bookmarks),
-      thanks: num(raw?.thanks),
-      comments: Array.isArray(raw?.comments) ? raw.comments : [],
-      relatedTorrents: Array.isArray(raw?.relatedTorrents) ? raw.relatedTorrents : [],
-      otherVersions: Array.isArray(raw?.otherVersions) ? raw.otherVersions : [],
+      torrents: [],
     };
   };
 
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
-      if (!torrentId) return;
+      if (!effectiveFilmId) return;
       try {
         setLoading(true);
-        const resp = await TorrentsService.torrentsControllerGet({ id: String(torrentId) });
+        const resp = await FilmsService.filmsControllerGetMovieDetail({ id: String(effectiveFilmId) } as any);
         const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
         const data = body?.data ?? body;
         if (!cancelled) setDetail(mapDetail(data));
+        try {
+          const listResp: any = await FilmsService.filmsControllerListTorrents({ filmId: String(effectiveFilmId), page: 1, limit: 100 });
+          const listBody = listResp?.code !== undefined ? listResp : listResp?.data ?? listResp;
+          const items = listBody?.data?.items ?? listBody?.items ?? [];
+          if (!cancelled) {
+            setDetail((prev: any) => {
+              const mapped = Array.isArray(items)
+                ? items.map((t: any) => ({
+                  id: String(t?.id ?? t?.torrentId ?? ''),
+                  title: String(t?.version ?? t?.title ?? t?.quality ?? ''),
+                  subTitle: String(t?.subTitle ?? t?.subtitle ?? ''),
+                  category: String(t?.category ?? prev?.category ?? ''),
+                  image: String(
+                    t?.ThumbCoverPath ??
+                    t?.MediumCoverPath ??
+                    t?.cover ??
+                    t?.originalCoverUrl ??
+                    ''
+                  ),
+                  size: String(t?.size ?? ''),
+                  seeders: Number(t?.seeders ?? 0),
+                  leechers: Number(t?.leechers ?? 0),
+                  completed: 0,
+                  uploader: String(t?.uploader ?? ''),
+                  uploadTime: String(t?.uploadDate ?? ''),
+                  uploadDate: String(t?.uploadedAt ?? t?.uploadDate ?? ''),
+                  isFree: Boolean(t?.isFree ?? false),
+                  isVip: Boolean(t?.isVip ?? false),
+                  isHot: false,
+                  comments: 0,
+                  rating: Number(prev?.rating ?? 0),
+                }))
+                : [];
+              return { ...prev, torrents: mapped };
+            });
+          }
+        } catch {
+          // ignore list error, keep torrents empty
+        }
       } catch (e: any) {
         if (!cancelled) setError(String(e?.message ?? ''));
       } finally {
@@ -139,7 +183,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
     };
     load();
     return () => { cancelled = true; };
-  }, [torrentId]);
+  }, [effectiveFilmId]);
 
   if (loading) {
     return <div className="min-h-screen bg-[#0F171E]" />;
@@ -251,7 +295,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
 
               {/* 简介 */}
               <p className="text-gray-300 text-base leading-relaxed max-w-3xl">
-                {/* {torrentDetail.description} */}
+                {torrentDetail.description}
               </p>
 
               {/* 导演演员 */}
@@ -268,10 +312,6 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
 
               {/* 操作按钮和统计信息 */}
               <div className="flex flex-wrap gap-3 pt-4">
-                <Button className="bg-[#00A8E1] hover:bg-[#00A8E1]/90 text-white px-8 py-6 text-lg">
-                  <Download className="w-5 h-5 mr-2" />
-                  立即下载
-                </Button>
                 <Button
                   variant="outline"
                   onClick={() => setIsBookmarked(!isBookmarked)}
@@ -302,37 +342,6 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
                   分享
                 </Button>
 
-
-                {/* 统计信息 - 移至按钮右侧 */}
-                <div className="flex items-center gap-4 mr-auto  px-6 py-2 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Upload className="w-4 h-4 text-green-400" />
-                    <div>
-                      <p className="text-green-400 text-sm">{torrentDetail.seeders}</p>
-                    </div>
-                  </div>
-                  <Separator orientation="vertical" className="h-10 bg-gray-700" />
-                  <div className="flex items-center gap-2">
-                    <Download className="w-4 h-4 text-red-400" />
-                    <div>
-                      <p className="text-red-400 text-sm">{torrentDetail.leechers}</p>
-                    </div>
-                  </div>
-                  <Separator orientation="vertical" className="h-10 bg-gray-700" />
-                  <div className="flex items-center gap-2">
-                    <Award className="w-4 h-4 text-blue-400" />
-                    <div>
-                      <p className="text-blue-400 text-sm">{torrentDetail.completed}</p>
-                    </div>
-                  </div>
-                  <Separator orientation="vertical" className="h-10 bg-gray-700" />
-                  <div className="flex items-center gap-2">
-                    <HardDrive className="w-4 h-4 text-purple-400" />
-                    <div>
-                      <p className="text-purple-400 text-sm">{formatSize(torrentDetail.size)}</p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -375,188 +384,27 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
                 </div>
               </div>
             )}
-            <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-2">
-              <div className="space-y-6">
-                {/* 其他版本 */}
-                <div className="bg-gray-900/50 rounded-lg border border-gray-800 p-6">
-                  <h3 className="text-white mb-4">其他版本</h3>
-                  <div className="space-y-4">
-                    {Array.isArray(torrentDetail.otherVersions) && torrentDetail.otherVersions.length > 0 ? torrentDetail.otherVersions.map((version: any) => (
-                      <div key={version.id} className="group cursor-pointer">
-                        <div className="flex gap-3">
-                          <div className="relative w-20 h-28 rounded overflow-hidden flex-shrink-0">
-                            <ImageWithFallback
-                              src={torrentDetail.poster}
-                              alt={version.title}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                            />
-                            {version.isFree && (
-                              <Badge className="absolute top-1 left-1 bg-green-500 text-white text-xs px-1 py-0">
-                                FREE
-                              </Badge>
-                            )}
-                            {version.isVip && (
-                              <Badge className="absolute top-1 left-1 bg-yellow-500 text-white text-xs px-1 py-0">
-                                VIP
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-white text-sm mb-2 line-clamp-2 group-hover:text-[#00A8E1] transition-colors">
-                              {version.title}
-                            </h4>
-                            <div className="flex items-center gap-2 mb-1">
-                              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                              <span className="text-yellow-400 text-xs">{torrentDetail.rating}</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-xs text-gray-400">
-                              <div className="flex items-center gap-1">
-                                <Upload className="w-3 h-3 text-green-400" />
-                                <span>{version.seeders}</span>
-                              </div>
-                              <span>{version.size}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )) : <div className="text-gray-400 text-sm">暂无其他版本</div>}
-                  </div>
-                </div>
-              </div>
+            <div className="grid grid-cols-1 gap-2">
               <div className="space-y-6">
                 {/* 标签页 */}
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                   <TabsList className="bg-gray-900 border border-gray-800 w-full justify-start">
+                    <TabsTrigger value="torrents" className="data-[state=active]:bg-[#00A8E1]">
+                      种子列表
+                    </TabsTrigger>
                     <TabsTrigger value="comments" className="data-[state=active]:bg-[#00A8E1]">
                       评论 ({Array.isArray(torrentDetail.comments) ? torrentDetail.comments.length : 0})
                     </TabsTrigger>
-                    <TabsTrigger value="info" className="data-[state=active]:bg-[#00A8E1]">
-                      种子信息
-                    </TabsTrigger>
-                    <TabsTrigger value="files" className="data-[state=active]:bg-[#00A8E1]">
-                      文件列表
-                    </TabsTrigger>
-
                   </TabsList>
 
-                  {/* 种子信息 */}
-                  <TabsContent value="info" className="bg-gray-900/50 rounded-lg border border-gray-800 p-6">
-                    <div className="space-y-6">
-                      {/* 基本统计 */}
-                      <div>
-                        <h3 className="text-white text-lg mb-4">基本信息</h3>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          <div className="bg-gray-900 rounded-lg p-4 text-center">
-                            <Upload className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                            <p className="text-2xl text-white mb-1">{torrentDetail.seeders}</p>
-                            <p className="text-xs text-gray-400">做种</p>
-                          </div>
-                          <div className="bg-gray-900 rounded-lg p-4 text-center">
-                            <Download className="w-8 h-8 text-red-400 mx-auto mb-2" />
-                            <p className="text-2xl text-white mb-1">{torrentDetail.leechers}</p>
-                            <p className="text-xs text-gray-400">下载</p>
-                          </div>
-                          <div className="bg-gray-900 rounded-lg p-4 text-center">
-                            <Award className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-                            <p className="text-2xl text-white mb-1">{torrentDetail.completed}</p>
-                            <p className="text-xs text-gray-400">完成</p>
-                          </div>
-                          <div className="bg-gray-900 rounded-lg p-4 text-center">
-                            <HardDrive className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-                            <p className="text-2xl text-white mb-1">{formatSize(torrentDetail.size)}</p>
-                            <p className="text-xs text-gray-400">大小</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <Separator className="bg-gray-800" />
-
-                      {/* 技术规格 */}
-                      <div>
-                        <h3 className="text-white text-lg mb-4">技术规格</h3>
-                        <div className="space-y-3 text-sm">
-                          <div className="flex justify-between py-2 border-b border-gray-800">
-                            <span className="text-gray-400">视频编码:</span>
-                            <span className="text-white">{torrentDetail.videoCodec}</span>
-                          </div>
-                          <div className="flex justify-between py-2 border-b border-gray-800">
-                            <span className="text-gray-400">视频分辨率:</span>
-                            <span className="text-white">{torrentDetail.videoResolution}</span>
-                          </div>
-                          <div className="flex justify-between py-2 border-b border-gray-800">
-                            <span className="text-gray-400">帧率:</span>
-                            <span className="text-white">{torrentDetail.videoFrameRate}</span>
-                          </div>
-                          <div className="flex justify-between py-2 border-b border-gray-800">
-                            <span className="text-gray-400">视频码率:</span>
-                            <span className="text-white">{torrentDetail.videoBitRate}</span>
-                          </div>
-                          <div className="flex justify-between py-2 border-b border-gray-800">
-                            <span className="text-gray-400">音频编码:</span>
-                            <span className="text-white">{torrentDetail.audioCodec}</span>
-                          </div>
-                          <div className="flex justify-between py-2 border-b border-gray-800">
-                            <span className="text-gray-400">音频码率:</span>
-                            <span className="text-white">{torrentDetail.audioBitRate}</span>
-                          </div>
-                          <div className="flex justify-between py-2 border-b border-gray-800">
-                            <span className="text-gray-400">音频语言:</span>
-                            <span className="text-white">{Array.isArray(torrentDetail.audioLanguages) ? torrentDetail.audioLanguages.join(' / ') : String(torrentDetail.audioLanguages ?? '')}</span>
-                          </div>
-                          <div className="flex justify-between py-2">
-                            <span className="text-gray-400">字幕:</span>
-                            <span className="text-white">{Array.isArray(torrentDetail.subtitles) ? torrentDetail.subtitles.join(' / ') : String(torrentDetail.subtitles ?? '')}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <Separator className="bg-gray-800" />
-
-                      {/* 其他信息 */}
-                      <div>
-                        <h3 className="text-white text-lg mb-4">其他信息</h3>
-                        <div className="space-y-3 text-sm">
-                          <div className="flex justify-between py-2 border-b border-gray-800">
-                            <span className="text-gray-400">文件数量:</span>
-                            <span className="text-white">{torrentDetail.files} 个文件</span>
-                          </div>
-                          <div className="flex justify-between py-2 border-b border-gray-800">
-                            <span className="text-gray-400">上传时间:</span>
-                            <span className="text-white">{torrentDetail.uploadDate}</span>
-                          </div>
-                          <div className="flex justify-between py-2 border-b border-gray-800">
-                            <span className="text-gray-400">浏览次数:</span>
-                            <span className="text-white">{torrentDetail.views.toLocaleString()}</span>
-                          </div>
-                          <div className="flex justify-between py-2 border-b border-gray-800">
-                            <span className="text-gray-400">收藏次数:</span>
-                            <span className="text-white">{torrentDetail.bookmarks.toLocaleString()}</span>
-                          </div>
-                          <div className="flex justify-between py-2">
-                            <span className="text-gray-400">感谢次数:</span>
-                            <span className="text-white">{Number(torrentDetail.thanks ?? 0).toLocaleString()}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </TabsContent>
-
-                  {/* 文件列表 */}
-                  <TabsContent value="files" className="bg-gray-900/50 rounded-lg border border-gray-800 p-6">
-                    <div className="space-y-2">
-                      {Array.isArray(torrentDetail.fileList) ? torrentDetail.fileList.map((file, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between py-3 px-4 bg-gray-900 rounded-md hover:bg-gray-800 transition-colors"
-                        >
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <HardDrive className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                            <span className="text-white text-sm truncate">{file.name}</span>
-                          </div>
-                          <span className="text-gray-400 text-sm ml-4 flex-shrink-0">{file.size}</span>
-                        </div>
-                      )) : null}
-                    </div>
+                  {/* 种子列表 */}
+                  <TabsContent value="torrents" className="bg-gray-900/50 rounded-lg border border-gray-800 p-6">
+                    <h3 className="text-white mb-4">种子列表</h3>
+                    {Array.isArray(torrentDetail.torrents) && torrentDetail.torrents.length > 0 ? (
+                      <TorrentTable torrents={torrentDetail.torrents} />
+                    ) : (
+                      <div className="text-gray-400 text-sm">暂无种子</div>
+                    )}
                   </TabsContent>
 
                   {/* 评论 */}
@@ -626,6 +474,49 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
                     )) : null}
                   </TabsContent>
                 </Tabs>
+
+                {/* 相关推荐模块：移动到标签页模块下方，统一主内容流式浏览 */}
+                <div className="bg-gray-900/50 rounded-lg border border-gray-800 p-6">
+                  <h3 className="text-white mb-4">相关推荐</h3>
+                  {Array.isArray(torrentDetail.relatedTorrents) && torrentDetail.relatedTorrents.length > 0 ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {torrentDetail.relatedTorrents.map((rec: any) => (
+                        <div
+                          key={rec.id}
+                          className="group cursor-pointer bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-[#00A8E1] transition-colors"
+                        >
+                          <div className="relative aspect-[2/3] w-full">
+                            <ImageWithFallback
+                              src={rec.thumbnail}
+                              alt={rec.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                            {rec.isFree && (
+                              <Badge className="absolute top-2 left-2 bg-green-500 text-white text-xs px-1 py-0">FREE</Badge>
+                            )}
+                            {rec.isHot && (
+                              <Badge className="absolute top-2 left-2 bg-red-500 text-white text-xs px-1 py-0">HOT</Badge>
+                            )}
+                          </div>
+                          <div className="p-3 space-y-2">
+                            <h4 className="text-white text-sm line-clamp-2 group-hover:text-[#00A8E1] transition-colors">{rec.title}</h4>
+                            <div className="flex items-center gap-2 text-xs">
+                              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                              <span className="text-yellow-400">{rec.rating}</span>
+                              <span className="text-gray-500">|</span>
+                              <Upload className="w-3 h-3 text-green-400" />
+                              <span className="text-gray-400">{rec.seeders}</span>
+                              <span className="text-gray-500">|</span>
+                              <span className="text-gray-400">{rec.size}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-gray-400 text-sm">暂无相关推荐</div>
+                  )}
+                </div>
               </div>
 
             </div>
@@ -672,33 +563,6 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
                 </div>
               </div>
             )}
-            {/* 上传者信息 */}
-            <div className="bg-gray-900/50 rounded-lg border border-gray-800 p-6">
-              <h3 className="text-white mb-4">上传者</h3>
-              <div className="flex items-center gap-3 mb-4">
-                <Avatar className="w-12 h-12 bg-gray-700 flex items-center justify-center text-white">
-                  <User className="w-6 h-6" />
-                </Avatar>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-white">{torrentDetail.uploader.name}</span>
-                    <Badge className="bg-yellow-500 text-white text-xs">
-                      {torrentDetail.uploader.level}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-gray-400">分享率: {torrentDetail.uploader.ratio}</p>
-                </div>
-              </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">上传数:</span>
-                  <span className="text-white">{torrentDetail.uploader.uploads}</span>
-                </div>
-              </div>
-              <Button className="w-full mt-4 bg-gray-800 hover:bg-gray-700 text-white border border-gray-700">
-                查看主页
-              </Button>
-            </div>
 
             {/* 相关推荐 */}
             <div className="bg-gray-900/50 rounded-lg border border-gray-800 p-6">

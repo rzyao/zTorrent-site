@@ -26,10 +26,15 @@ import { ForumThreadsService } from '@/api/services/ForumThreadsService';
 import { ForumPostsService } from '@/api/services/ForumPostsService';
 import { RichTextEditor } from './RichTextEditor';
 import { OpenAPI } from '@/api/core/OpenAPI';
+import { request as __request } from '@/api/core/request';
 
 /**
  * 统一响应解包辅助函数
- * 用途：兼容后端可能返回的两种结构（封装/直返）
+ * 目的：与 OpenAPI 生成的服务返回保持兼容，抽取业务数据
+ * 行为：
+ * - 后端统一封装 `{ code, message, data, ... }` 时，优先返回其中的 `data`
+ * - 若直接返回对象（无外层封装），则原样返回该对象
+ * - 对于底层 `__request` 返回体，同样适用上述规则
  */
 function unwrapResponse<T = any>(response: any): T {
   const body = response?.code !== undefined ? response : response?.data;
@@ -38,7 +43,11 @@ function unwrapResponse<T = any>(response: any): T {
 
 /**
  * 统一错误信息提取辅助函数
- * 用途：从 ApiError 中提取后端 `message`，无则回退通用 message
+ * 目的：规范化展示后端错误信息，避免不同来源报错格式差异影响用户提示
+ * 行为：
+ * - 优先使用 `ApiError.body.message`（OpenAPI 生成的错误包装）
+ * - 其次回退至 `err.message`
+ * - 最后使用通用文案 `请求失败`
  */
 function extractErrorMessage(err: any): string {
   try {
@@ -200,7 +209,7 @@ export function ForumPage() {
     }
   };
   const markViewed = (id: string) => {
-    try { localStorage.setItem(getViewKey(id), JSON.stringify({ ts: now() })); } catch {}
+    try { localStorage.setItem(getViewKey(id), JSON.stringify({ ts: now() })); } catch { }
   };
   // 跨标签页同步防重复标记
   useEffect(() => {
@@ -287,7 +296,19 @@ export function ForumPage() {
               setSelectedThread(prev => prev && prev.id === selectedThread.id ? { ...prev, viewsCount: old + 1 } : prev);
               setThreads(prev => prev.map(t => t.id === selectedThread.id ? { ...t, viewsCount: t.viewsCount + 1 } : t));
               try {
-                const incResp = await ForumThreadsService.forumThreadsControllerIncViews({ id: selectedThread.id });
+                /**
+                 * 兼容 OpenAPI 生成物目前未提供 inc-views 方法的情况：
+                 * 直接使用底层 __request 调用后端统计端点。
+                 * - 路径：/forum/threads/inc-views
+                 * - 方法：POST
+                 * - Body：{ id }
+                 */
+                const incResp = await __request(OpenAPI, {
+                  method: 'POST',
+                  url: '/forum/threads/inc-views',
+                  body: { id: selectedThread.id },
+                  mediaType: 'application/json',
+                });
                 const incData = unwrapResponse<{ viewsCount?: number }>(incResp) as any;
                 const latest = typeof incData?.viewsCount === 'number' ? incData.viewsCount : undefined;
                 if (typeof latest === 'number') {
@@ -346,7 +367,7 @@ export function ForumPage() {
           navigator.sendBeacon(url, new Blob([payload], { type: 'application/json' }));
           markViewed(selectedThread.id);
         }
-      } catch {}
+      } catch { }
     };
     document.addEventListener('visibilitychange', handler);
     return () => document.removeEventListener('visibilitychange', handler);
@@ -429,164 +450,14 @@ export function ForumPage() {
     [threadDetail?.content, selectedThread?.content]
   );
 
-  // 模拟数据 - 帖子列表
-  const forumPosts: ForumPost[] = [
-    {
-      id: '1',
-      title: '【公告】站点升级维护通知 - 11月25日凌晨2:00',
-      category: '公告',
-      author: '管理员',
-      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin',
-      authorLevel: '管理员',
-      content: '各位用户大家好！\n\n为了提供更好的服务，本站将于11月25日凌晨2:00-4:00进行系统升级维护。届时网站将暂时无法访问。\n\n本次升级内容：\n1. 优化服务器性能\n2. 修复已知bug\n3. 增加新功能\n\n感谢大家的理解与支持！',
-      replies: 45,
-      views: 1283,
-      likes: 89,
-      timestamp: '2024-11-22 09:00',
-      lastReply: '2024-11-22 15:30',
-      isPinned: true,
-    },
-    {
-      id: '2',
-      title: '【教程】新手必看：如何保持良好的分享率',
-      category: '教程',
-      author: 'PTMaster',
-      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=PTMaster',
-      authorLevel: 'VIP',
-      content: '很多新手朋友经常问如何保持好的分享率，这里总结一些经验：\n\n1. 选择热门资源下载\n2. 下载完成后保持做种\n3. 合理使用魔力值\n4. 参与站点活动\n\n详细说明见正文...',
-      replies: 234,
-      views: 5678,
-      likes: 456,
-      timestamp: '2024-11-20 14:20',
-      lastReply: '2024-11-22 16:45',
-      isPinned: true,
-      isElite: true,
-    },
-    {
-      id: '3',
-      title: '求助：下载速度一直很慢，怎么办？',
-      category: '求助',
-      author: 'Newbie123',
-      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Newbie123',
-      authorLevel: '新手',
-      content: '我刚加入PT站，下载速度一直很慢，只有几百KB/s。我的宽带是100M的，应该不是网速问题。有老手能指点一下吗？',
-      replies: 28,
-      views: 892,
-      likes: 15,
-      timestamp: '2024-11-22 13:15',
-      lastReply: '2024-11-22 16:20',
-      isHot: true,
-    },
-    {
-      id: '4',
-      title: '【分享】4K HDR电影资源合集 - 持续更新',
-      category: '资源',
-      author: 'MovieLover',
-      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=MovieLover',
-      authorLevel: 'VIP',
-      content: '整理了一些优质的4K HDR电影资源，包括最新上映的大片和经典老片。画质都是顶级的，欢迎大家下载！',
-      replies: 567,
-      views: 12456,
-      likes: 789,
-      timestamp: '2024-11-18 10:30',
-      lastReply: '2024-11-22 17:00',
-      isHot: true,
-      isElite: true,
-    },
-    {
-      id: '5',
-      title: '讨论：你们觉得Remux和原盘哪个更好？',
-      category: '讨论',
-      author: 'TechGeek',
-      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TechGeek',
-      authorLevel: '资深',
-      content: 'Remux去掉了菜单和花絮，文件小一些。原盘完整保留所有内容。大家更喜欢哪种？',
-      replies: 145,
-      views: 3421,
-      likes: 67,
-      timestamp: '2024-11-21 16:45',
-      lastReply: '2024-11-22 15:50',
-    },
-    {
-      id: '6',
-      title: '【技术】详解PT下载客户端的配置优化',
-      category: '技术',
-      author: 'DevExpert',
-      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=DevExpert',
-      authorLevel: 'VIP',
-      content: '分享一下qBittorrent、Transmission等客户端的详细配置方法，包括端口转发、连接数优化等。',
-      replies: 89,
-      views: 2134,
-      likes: 123,
-      timestamp: '2024-11-19 11:20',
-      lastReply: '2024-11-22 14:30',
-      isElite: true,
-    },
-    {
-      id: '7',
-      title: '感谢大佬们的分享！',
-      category: '闲聊',
-      author: 'ThankfulUser',
-      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ThankfulUser',
-      authorLevel: '用户',
-      content: '刚加入这个站点一个月，下载了很多优质资源。感谢所有发布者和做种的朋友们！',
-      replies: 34,
-      views: 678,
-      likes: 45,
-      timestamp: '2024-11-22 12:00',
-      lastReply: '2024-11-22 16:10',
-    },
-    {
-      id: '8',
-      title: '【求助】上传的种子一直没有人下载怎么办？',
-      category: '求助',
-      author: 'Uploader001',
-      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Uploader001',
-      authorLevel: '用户',
-      content: '我上传了几个蓝光原盘，但一直没什么人下载。是资源不够热门还是有什么问题？',
-      replies: 23,
-      views: 456,
-      likes: 8,
-      timestamp: '2024-11-22 10:30',
-      lastReply: '2024-11-22 15:15',
-    },
-  ];
-
-
-  const categories = [
-    { id: 'all' as ForumCategory, name: '全部', icon: MessageSquare },
-    { id: 'announcement' as ForumCategory, name: '公告', icon: Pin },
-    { id: 'help' as ForumCategory, name: '求助', icon: MessageCircle },
-    { id: 'resource' as ForumCategory, name: '资源', icon: Star },
-    { id: 'tech' as ForumCategory, name: '技术', icon: Award },
-    { id: 'chat' as ForumCategory, name: '闲聊', icon: MessageSquare },
-  ];
-
-  const filteredPosts = forumPosts.filter(post => {
-    const matchesCategory = activeCategory === 'all' ||
-      (activeCategory === 'announcement' && post.category === '公告') ||
-      (activeCategory === 'help' && post.category === '求助') ||
-      (activeCategory === 'resource' && post.category === '资源') ||
-      (activeCategory === 'tech' && post.category === '技术') ||
-      (activeCategory === 'chat' && post.category === '闲聊');
-
-    const matchesSearch = searchQuery === '' ||
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.author.toLowerCase().includes(searchQuery.toLowerCase());
-
-    return matchesCategory && matchesSearch;
-  });
-
-  // 置顶帖子排在前面
-  const sortedPosts = [...filteredPosts].sort((a, b) => {
-    if (a.isPinned && !b.isPinned) return -1;
-    if (!a.isPinned && b.isPinned) return 1;
-    return 0;
-  });
+  /**
+   * 清理模拟数据：论坛列表与分类完全依赖后端数据
+   * - 删除本地 forumPosts/categories/filteredPosts/sortedPosts 等旧逻辑
+   * - 统一使用 serverCategories 与 threads 进行渲染与交互
+   */
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950">
+    <div className="min-h-screen bg-[#0F171E]">
       <div className="max-w-[1600px] mx-auto px-4 md:px-4 py-4">
         {/* 页面标题 */}
         <div className="mb-8">
@@ -782,10 +653,10 @@ export function ForumPage() {
                           <Clock className="w-4 h-4" />
                           <span>{selectedThread.lastPostAt || '-'}</span>
                         </div>
-                    <div className="flex items-center gap-2">
-                      <Eye className="w-4 h-4" />
-                      <span>{(threadDetail?.viewsCount ?? selectedThread.viewsCount)}</span>
-                    </div>
+                        <div className="flex items-center gap-2">
+                          <Eye className="w-4 h-4" />
+                          <span>{(threadDetail?.viewsCount ?? selectedThread.viewsCount)}</span>
+                        </div>
                       </div>
                     </div>
                     <Button
@@ -1005,13 +876,13 @@ export function ForumPage() {
                               <h3 className={`text-white text-sm mb-1 hover:text-amber-400 transition-colors line-clamp-1 ${parseHighlight(post.highlightMeta?.status).bold ? 'font-bold' : ''} ${parseHighlight(post.highlightMeta?.status).red ? 'text-red-400' : ''}`}>
                                 {post.title}
                               </h3>
-                          <div className="flex items-center gap-2 flex-wrap">
+                              <div className="flex items-center gap-2 flex-wrap">
                                 {parseHighlight(post.highlightMeta?.status).hot && (
                                   <Badge className="bg-orange-500 text-white text-xs">热帖</Badge>
                                 )}
                                 <Badge className="bg-neutral-700 text-neutral-300 text-xs">{getCategoryName(post.categoryId)}</Badge>
                                 <span className="text-xs text-neutral-500 md:hidden">
-                                  {(post as any).authorUsername || post.authorId} · {post.repliesCount}回复 · {post.viewsCount}查看
+                                  {post.authorUsername || post.authorId} · {post.repliesCount}回复 · {post.viewsCount}查看
                                 </span>
                               </div>
                             </div>
@@ -1021,7 +892,7 @@ export function ForumPage() {
                         {/* 作者列 */}
                         <div className="col-span-2 text-center hidden md:block">
                           <div className="flex flex-col items-center gap-1">
-                            <span className="text-neutral-300 text-sm">{(post as any).authorUsername || post.authorId}</span>
+                            <span className="text-neutral-300 text-sm">{post.authorUsername || post.authorId}</span>
                           </div>
                         </div>
 

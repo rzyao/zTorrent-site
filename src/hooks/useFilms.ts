@@ -15,7 +15,7 @@ function unwrap(response: any) {
   const body = response?.code !== undefined ? response : response?.data ?? response;
   const code = body?.code ?? 0;
   if (code !== 1000 && code !== 0) {
-    const msg = body?.message || '请求失败';
+    const msg = body?.data?.message || body?.message || '请求失败';
     throw new Error(msg);
   }
   return body?.data ?? body;
@@ -38,8 +38,9 @@ export function useFilms() {
       setTotal(data?.total ?? 0);
       return data;
     } catch (e: any) {
-      setError(e.message || '获取影片列表失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '获取影片列表失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -49,12 +50,13 @@ export function useFilms() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await FilmsService.filmsControllerGetFilm({ id } as any);
+      const res = await FilmsService.filmsControllerGetMovieDetail({ id } as any);
       const data = unwrap(res);
       return data;
     } catch (e: any) {
-      setError(e.message || '获取影片详情失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '获取影片详情失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -68,8 +70,9 @@ export function useFilms() {
       const data = unwrap(res);
       return data;
     } catch (e: any) {
-      setError(e.message || '创建影片失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '创建影片失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -83,8 +86,9 @@ export function useFilms() {
       const data = unwrap(res);
       return data;
     } catch (e: any) {
-      setError(e.message || '更新影片失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '更新影片失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -98,8 +102,9 @@ export function useFilms() {
       const data = unwrap(res);
       return data;
     } catch (e: any) {
-      setError(e.message || '删除影片失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '删除影片失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -113,8 +118,9 @@ export function useFilms() {
       const data = unwrap(res);
       return data;
     } catch (e: any) {
-      setError(e.message || '绑定影片种子失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '绑定影片种子失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -128,8 +134,9 @@ export function useFilms() {
       const data = unwrap(res);
       return data;
     } catch (e: any) {
-      setError(e.message || '移除影片种子失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '移除影片种子失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -149,4 +156,3 @@ export function useFilms() {
     error,
   };
 }
-

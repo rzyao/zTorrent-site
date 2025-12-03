@@ -352,7 +352,7 @@ export function ReviewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950">
+    <div className="min-h-screen bg-[#0F171E]">
       <div className="max-w-[1600px] mx-auto p-8">
         {/* 页面标题 + 审核开关只读状态 */}
         <div className="mb-8">

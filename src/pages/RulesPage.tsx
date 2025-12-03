@@ -382,7 +382,7 @@ export function RulesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">
+    <div className="min-h-screen bg-[#0F171E]">
       <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8">
         {/* 页面标题 */}
         <div className="mb-8">
@@ -445,8 +445,8 @@ export function RulesPage() {
                     key={section.id}
                     onClick={() => toggleSection(section.id)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${expandedSection === section.id
-                        ? 'bg-gradient-to-r from-amber-500/20 to-orange-600/20 border border-amber-500/30 text-amber-400'
-                        : 'text-neutral-400 hover:text-white hover:bg-neutral-700/30'
+                      ? 'bg-gradient-to-r from-amber-500/20 to-orange-600/20 border border-amber-500/30 text-amber-400'
+                      : 'text-neutral-400 hover:text-white hover:bg-neutral-700/30'
                       }`}
                   >
                     {section.icon}
@@ -496,8 +496,8 @@ export function RulesPage() {
                 <div
                   key={section.id}
                   className={`bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden transition-all ${expandedSection === section.id
-                      ? 'border-amber-500/30 shadow-lg shadow-amber-500/10'
-                      : ''
+                    ? 'border-amber-500/30 shadow-lg shadow-amber-500/10'
+                    : ''
                     }`}
                 >
                   {/* 章节标题 */}
@@ -508,16 +508,16 @@ export function RulesPage() {
                     <div className="flex items-center gap-4">
                       <div
                         className={`w-10 h-10 rounded-lg flex items-center justify-center ${expandedSection === section.id
-                            ? 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30'
-                            : 'bg-neutral-700/50'
+                          ? 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30'
+                          : 'bg-neutral-700/50'
                           }`}
                       >
                         {section.icon}
                       </div>
                       <h2
                         className={`text-xl ${expandedSection === section.id
-                            ? 'text-white'
-                            : 'text-neutral-300'
+                          ? 'text-white'
+                          : 'text-neutral-300'
                           }`}
                       >
                         {section.title}

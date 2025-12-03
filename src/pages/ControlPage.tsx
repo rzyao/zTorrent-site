@@ -11,12 +11,10 @@ import {
   Eye,
   Mail,
   Download,
-  Upload,
   Key,
   Smartphone,
   Monitor,
   Save,
-  RefreshCw,
   AlertCircle,
   Check,
   ChevronRight,
@@ -38,7 +36,6 @@ export function ControlPage() {
   // 个人信息状态
   const [profileData, setProfileData] = useState({
     username: 'MovieLover2024',
-    email: 'user@example.com',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=MovieLover2024',
     signature: '热爱分享，热爱电影',
     location: '中国',
@@ -49,17 +46,13 @@ export function ControlPage() {
   const [preferences, setPreferences] = useState({
     language: 'zh-CN',
     theme: 'dark',
-    torrentsPerPage: 50,
     defaultView: 'grid',
-    autoDownload: false,
-    showSpoilers: false,
   });
 
   // 安全设置状态
   const [security, setSecurity] = useState({
     twoFactorEnabled: false,
     loginNotifications: true,
-    sessionTimeout: 60,
     trustedDevices: 3,
   });
 
@@ -70,7 +63,6 @@ export function ControlPage() {
     privateMessages: true,
     systemAnnouncements: true,
     downloadComplete: false,
-    uploadSuccess: true,
     ratioWarnings: true,
   });
 
@@ -78,7 +70,6 @@ export function ControlPage() {
   const [privacy, setPrivacy] = useState({
     showProfile: true,
     showStats: true,
-    showActivity: false,
     allowMessages: true,
     showOnlineStatus: true,
   });
@@ -118,7 +109,7 @@ export function ControlPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">
+    <div className="min-h-screen  bg-[#0F171E]">
       <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-8">
         {/* 页面标题 */}
         <div className="mb-8">
@@ -240,43 +231,9 @@ export function ControlPage() {
 
                   <Separator className="bg-neutral-700/50" />
 
-                  {/* 用户名 */}
-                  <div className="space-y-2">
-                    <label className="text-neutral-300 text-sm">用户名</label>
-                    <input
-                      type="text"
-                      value={profileData.username}
-                      onChange={(e) =>
-                        setProfileData({ ...profileData, username: e.target.value })
-                      }
-                      className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
-                    />
-                    <p className="text-neutral-500 text-xs">
-                      用户名一年只能修改一次
-                    </p>
-                  </div>
+                  {/* 用户名编辑已移除：保留展示用途 */}
 
-                  {/* 邮箱 */}
-                  <div className="space-y-2">
-                    <label className="text-neutral-300 text-sm">邮箱</label>
-                    <div className="flex gap-3">
-                      <input
-                        type="email"
-                        value={profileData.email}
-                        onChange={(e) =>
-                          setProfileData({ ...profileData, email: e.target.value })
-                        }
-                        className="flex-1 bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
-                      >
-                        验证邮箱
-                      </Button>
-                    </div>
-                  </div>
+                  {/* 邮箱编辑已移除：保留其他个人信息 */}
 
                   {/* 个性签名 */}
                   <div className="space-y-2">
@@ -394,31 +351,7 @@ export function ControlPage() {
 
                   <Separator className="bg-neutral-700/50" />
 
-                  {/* 每页种子数：数值型需转换为整数 */}
-                  <div className="space-y-2">
-                    <label className="text-neutral-300 text-sm">每页显示种子��</label>
-                    <Select
-                      value={String(preferences.torrentsPerPage)}
-                      onValueChange={(v) =>
-                        setPreferences({
-                          ...preferences,
-                          torrentsPerPage: parseInt(v),
-                        })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="选择每页数量" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="25">25</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                        <SelectItem value="75">75</SelectItem>
-                        <SelectItem value="100">100</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <Separator className="bg-neutral-700/50" />
+                  {/* 每页显示种子数设置已移除 */}
 
                   {/* 默认视图：字符串枚举 */}
                   <div className="space-y-2">
@@ -441,43 +374,9 @@ export function ControlPage() {
 
                   <Separator className="bg-neutral-700/50" />
 
-                  {/* 自动下载 */}
-                  <div className="flex items-center justify-between p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 text-neutral-300 text-sm mb-1">
-                        <Download className="w-4 h-4" />
-                        自动下载种子文件
-                      </div>
-                      <p className="text-neutral-500 text-xs">
-                        点击下载按钮时自动下载种子文件
-                      </p>
-                    </div>
-                    <Switch
-                      checked={preferences.autoDownload}
-                      onCheckedChange={(checked) =>
-                        setPreferences({ ...preferences, autoDownload: checked })
-                      }
-                    />
-                  </div>
+                  {/* 自动下载设置已移除 */}
 
-                  {/* 显示剧透 */}
-                  <div className="flex items-center justify-between p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 text-neutral-300 text-sm mb-1">
-                        <Eye className="w-4 h-4" />
-                        显示剧透内容
-                      </div>
-                      <p className="text-neutral-500 text-xs">
-                        在评论区自动显示被标记为剧透的内容
-                      </p>
-                    </div>
-                    <Switch
-                      checked={preferences.showSpoilers}
-                      onCheckedChange={(checked) =>
-                        setPreferences({ ...preferences, showSpoilers: checked })
-                      }
-                    />
-                  </div>
+                  {/* 显示剧透设置已移除 */}
                 </div>
               )}
 
@@ -583,33 +482,7 @@ export function ControlPage() {
 
                   <Separator className="bg-neutral-700/50" />
 
-                  {/* 会话超时 */}
-                  <div className="space-y-2">
-                    <label className="text-neutral-300 text-sm">会话超时（分钟）</label>
-                    <Select
-                      value={String(security.sessionTimeout)}
-                      onValueChange={(v) =>
-                        setSecurity({
-                          ...security,
-                          sessionTimeout: parseInt(v),
-                        })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="选择会话超时" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="30">30分钟</SelectItem>
-                        <SelectItem value="60">1小时</SelectItem>
-                        <SelectItem value="120">2小时</SelectItem>
-                        <SelectItem value="240">4小时</SelectItem>
-                        <SelectItem value="480">8小时</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <p className="text-neutral-500 text-xs">
-                      无操作后自动退出登录的时间
-                    </p>
-                  </div>
+                  {/* 会话超时设置已移除 */}
 
                   <Separator className="bg-neutral-700/50" />
 
@@ -661,7 +534,7 @@ export function ControlPage() {
                     <div className="flex items-start gap-3">
                       <Key className="w-5 h-5 text-amber-400 mt-0.5" />
                       <div className="flex-1">
-                        <h3 className="text-white text-sm mb-1">Passkey 登录</h3>
+                        <h3 className="text-white text-sm mb-1">重置 Passkey</h3>
                         <p className="text-neutral-400 text-xs mb-3">
                           使用生物识别或设备PIN快速登录
                         </p>
@@ -670,7 +543,7 @@ export function ControlPage() {
                           variant="outline"
                           className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
                         >
-                          设置 Passkey
+                          重置 Passkey
                         </Button>
                       </div>
                     </div>
@@ -784,24 +657,7 @@ export function ControlPage() {
                     />
                   </div>
 
-                  {/* 上传成功 */}
-                  <div className="flex items-center justify-between p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 text-neutral-300 text-sm mb-1">
-                        <Upload className="w-4 h-4" />
-                        上传成功
-                      </div>
-                      <p className="text-neutral-500 text-xs">
-                        种子上传成功并通过审核时通知您
-                      </p>
-                    </div>
-                    <Switch
-                      checked={notifications.uploadSuccess}
-                      onCheckedChange={(checked) =>
-                        setNotifications({ ...notifications, uploadSuccess: checked })
-                      }
-                    />
-                  </div>
+                  {/* 上传成功通知已移除 */}
 
                   {/* 分享率警告 */}
                   <div className="flex items-center justify-between p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
@@ -869,21 +725,7 @@ export function ControlPage() {
                     />
                   </div>
 
-                  {/* 显示活动 */}
-                  <div className="flex items-center justify-between p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
-                    <div className="flex-1">
-                      <div className="text-neutral-300 text-sm mb-1">显示活动记录</div>
-                      <p className="text-neutral-500 text-xs">
-                        在个人资料中显示最近的活动
-                      </p>
-                    </div>
-                    <Switch
-                      checked={privacy.showActivity}
-                      onCheckedChange={(checked) =>
-                        setPrivacy({ ...privacy, showActivity: checked })
-                      }
-                    />
-                  </div>
+                  {/* 显示活动记录设置已移除 */}
 
                   <Separator className="bg-neutral-700/50" />
 
@@ -944,25 +786,7 @@ export function ControlPage() {
                     </div>
                   </div>
 
-                  {/* 账户删除 */}
-                  <div className="p-5 rounded-xl bg-gradient-to-br from-red-500/10 to-rose-600/10 border border-red-500/30">
-                    <div className="flex items-start gap-3">
-                      <AlertCircle className="w-5 h-5 text-red-400 mt-0.5" />
-                      <div className="flex-1">
-                        <h3 className="text-white text-sm mb-1">删除账户</h3>
-                        <p className="text-neutral-400 text-xs mb-3">
-                          永久删除您的账户和所有相关数据，此操作不可恢复
-                        </p>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="border-red-500/30 text-red-400 hover:bg-red-500/10"
-                        >
-                          删除账户
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
+                  {/* 删除账户设置已移除 */}
                 </div>
               )}
 
@@ -977,13 +801,6 @@ export function ControlPage() {
                   )}
                 </div>
                 <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    className="border-neutral-700 text-neutral-400 hover:text-white hover:bg-neutral-700/30"
-                  >
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    重置
-                  </Button>
                   <Button
                     onClick={handleSave}
                     className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"

@@ -27,13 +27,19 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useFilms } from '@/hooks/useFilms';
 import { TorrentsService } from '@/api/services/TorrentsService';
+import { FilmsService } from '@/api/services/FilmsService';
+import { PtGenService } from '@/api/services/PtGenService';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { formatSize } from '@/utils/format';
 
 interface Torrent {
   id: string;
+  title?: string;
+  subTitle?: string;
   version: string; // 例如: "4K HDR REMUX", "1080p BluRay"
   size: string;
   quality: string;
+  standard?: string;
   source: string; // BluRay, WEB-DL, HDTV
   codec: string; // H.264, H.265, AV1
   audio: string; // DTS-HD MA, Dolby Atmos
@@ -87,6 +93,7 @@ export function EditMoviePage() {
           version: '4K HDR REMUX 国英双语',
           size: '68.5 GB',
           quality: '2160p',
+          standard: '2160p',
           source: 'BluRay',
           codec: 'H.265',
           audio: 'Dolby Atmos',
@@ -100,6 +107,7 @@ export function EditMoviePage() {
           version: '1080p BluRay 国语',
           size: '18.2 GB',
           quality: '1080p',
+          standard: '1080p',
           source: 'BluRay',
           codec: 'H.264',
           audio: 'DTS-HD MA',
@@ -112,6 +120,7 @@ export function EditMoviePage() {
           version: '720p WEB-DL',
           size: '4.5 GB',
           quality: '720p',
+          standard: '720p',
           source: 'WEB-DL',
           codec: 'H.264',
           audio: 'AAC',
@@ -143,6 +152,7 @@ export function EditMoviePage() {
           version: '4K UHD BluRay',
           size: '76.3 GB',
           quality: '2160p',
+          standard: '2160p',
           source: 'BluRay',
           codec: 'H.265',
           audio: 'DTS-HD MA',
@@ -174,6 +184,7 @@ export function EditMoviePage() {
           version: '全八季 1080p BluRay 内封中字',
           size: '124.8 GB',
           quality: '1080p',
+          standard: '1080p',
           source: 'BluRay',
           codec: 'H.264',
           audio: 'DTS-HD MA',
@@ -192,9 +203,15 @@ export function EditMoviePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showTorrentForm, setShowTorrentForm] = useState(false);
-  const [torrentFileBase64, setTorrentFileBase64] = useState<string>('');
+  // 是否显示“选择已有种子”的搜索面板
+  const [showTorrentSearch, setShowTorrentSearch] = useState(false);
+  // 影片编辑表单错误
   const [errors, setErrors] = useState<Record<string, string>>({});
+  // 种子搜索相关状态
+  const [torrentSearchQuery, setTorrentSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   // 影片编辑表单状态
   const [movieForm, setMovieForm] = useState({
@@ -210,19 +227,17 @@ export function EditMoviePage() {
     director: '',
     cast: [] as string[],
     description: '',
+    // 新增字段：按需从 PT-Gen 映射填充
+    awards: [] as string[],
+    region: [] as string[],
+    language: [] as string[],
+    doubanLink: '',
+    imdbLink: '',
+    doubanRatingAverage: 0 as number,
+    imdbRatingAverage: 0 as number,
   });
 
-  // 种子编辑表单状态
-  const [torrentForm, setTorrentForm] = useState({
-    version: '',
-    size: '',
-    quality: '1080p',
-    source: 'BluRay',
-    codec: 'H.264',
-    audio: 'DTS-HD MA',
-    isFree: false,
-    isVip: false,
-  });
+  // 旧的“上传并创建新种子”表单已移除，改为“搜索并绑定已有种子”
 
   const handleCreateNew = () => {
     setMovieForm({
@@ -238,6 +253,13 @@ export function EditMoviePage() {
       director: '',
       cast: [],
       description: '',
+      awards: [],
+      region: [],
+      language: [],
+      doubanLink: '',
+      imdbLink: '',
+      doubanRatingAverage: 0,
+      imdbRatingAverage: 0,
     });
     setIsCreating(true);
     setIsEditing(false);
@@ -258,6 +280,14 @@ export function EditMoviePage() {
       director: movie.director,
       cast: movie.cast,
       description: movie.description,
+      // 新增字段在现有详情数据中不存在，编辑模式下置为空，避免未定义
+      awards: [],
+      region: [],
+      language: [],
+      doubanLink: '',
+      imdbLink: '',
+      doubanRatingAverage: 0,
+      imdbRatingAverage: 0,
     });
     setSelectedMovie(movie);
     setIsEditing(true);
@@ -268,7 +298,7 @@ export function EditMoviePage() {
     const payload = {
       title: movieForm.title,
       description: movieForm.description,
-      coverUrl: movieForm.poster,
+      // 后端已移除 coverUrl 字段，避免 400 "property coverUrl should not exist"
       originalTitle: movieForm.originalTitle,
       year: movieForm.year,
       category: movieForm.category === '电影' ? 'film' : movieForm.category === '剧集' ? 'series' : movieForm.category === '纪录片' ? 'documentary' : 'anime',
@@ -279,6 +309,13 @@ export function EditMoviePage() {
       backdropUrl: movieForm.backdrop,
       genres: movieForm.genres,
       cast: movieForm.cast,
+      awards: movieForm.awards,
+      region: movieForm.region,
+      language: movieForm.language,
+      doubanLink: movieForm.doubanLink,
+      imdbLink: movieForm.imdbLink,
+      doubanRatingAverage: movieForm.doubanRatingAverage,
+      imdbRatingAverage: movieForm.imdbRatingAverage,
       enabled: true,
       sort: 0,
     } as any;
@@ -324,41 +361,42 @@ export function EditMoviePage() {
     }
   };
 
-  const handleAddTorrent = async () => {
-    if (selectedMovie && torrentFileBase64) {
-      const autoPayload: any = {
-        name: torrentForm.version || selectedMovie.title,
-        standard: torrentForm.quality,
-        videoCodec: torrentForm.codec,
-        audioCodec: torrentForm.audio,
-        source: torrentForm.source,
-        fileBase64: torrentFileBase64,
-      };
-      try {
-        const uploadRes: any = await TorrentsService.torrentsControllerUploadAuto(autoPayload);
-        const body = uploadRes?.code !== undefined ? uploadRes : uploadRes?.data ?? uploadRes;
-        const torrentId = body?.data?.id ?? body?.id;
-        if (!torrentId) throw new Error('创建种子失败');
-        await addTorrent(selectedMovie.id, String(torrentId));
-        const detail = await getFilm(selectedMovie.id);
-        const mapped = mapBackendFilmToLocal(detail);
-        setSelectedMovie(mapped);
-        setMovies(movies.map((m) => (m.id === mapped.id ? mapped : m)));
-        setShowTorrentForm(false);
-        setTorrentForm({
-          version: '',
-          size: '',
-          quality: '1080p',
-          source: 'BluRay',
-          codec: 'H.264',
-          audio: 'DTS-HD MA',
-          isFree: false,
-          isVip: false,
-        });
-        setTorrentFileBase64('');
-      } catch (e: any) {
-        alert(e?.message || '添加种子失败');
-      }
+  // 绑定已有种子到当前影片
+  const handleBindExistingTorrent = async (torrentId: string) => {
+    if (!selectedMovie) return;
+    try {
+      await addTorrent(selectedMovie.id, String(torrentId));
+      // 绑定成功后通过列表接口刷新已绑定种子
+      const resp: any = await FilmsService.filmsControllerListTorrents({ filmId: selectedMovie.id, page: 1, limit: 100 });
+      const body = resp?.code !== undefined ? resp : resp?.data ?? resp;
+      const items = body?.data?.items ?? body?.items ?? [];
+        const mappedTorrents = Array.isArray(items)
+          ? items.map((t: any) => ({
+              id: String(t?.id ?? t?.torrentId ?? ''),
+              title: t?.title ?? '',
+              subTitle: t?.subTitle ?? '',
+              version: t?.version ?? t?.name ?? t?.quality ?? '',
+              size: t?.size ?? '',
+              quality: t?.quality ?? '',
+              standard: t?.standard ?? '',
+              source: t?.source ?? '',
+              codec: t?.codec ?? t?.videoCodec ?? '',
+              audio: t?.audio ?? t?.audioCodec ?? '',
+              seeders: t?.seeders ?? 0,
+              leechers: t?.leechers ?? 0,
+              uploadDate: t?.uploadDate ?? '',
+              isFree: t?.isFree ?? false,
+              isVip: t?.isVip ?? false,
+            }))
+          : [];
+      const next = { ...(selectedMovie as any), torrents: mappedTorrents } as Movie;
+      setSelectedMovie(next);
+      setMovies(movies.map((m) => (m.id === next.id ? next : m)));
+      setShowTorrentSearch(false);
+      setTorrentSearchQuery('');
+      setSearchResults([]);
+    } catch (e: any) {
+      alert(e?.message || '绑定失败');
     }
   };
 
@@ -366,10 +404,32 @@ export function EditMoviePage() {
     if (selectedMovie) {
       try {
         await removeTorrent(selectedMovie.id, torrentId);
-        const detail = await getFilm(selectedMovie.id);
-        const mapped = mapBackendFilmToLocal(detail);
-        setSelectedMovie(mapped);
-        setMovies(movies.map((m) => (m.id === mapped.id ? mapped : m)));
+        // 移除后通过列表接口刷新已绑定种子
+        const resp: any = await FilmsService.filmsControllerListTorrents({ filmId: selectedMovie.id, page: 1, limit: 100 });
+        const body = resp?.code !== undefined ? resp : resp?.data ?? resp;
+        const items = body?.data?.items ?? body?.items ?? [];
+        const mappedTorrents = Array.isArray(items)
+          ? items.map((t: any) => ({
+              id: String(t?.id ?? t?.torrentId ?? ''),
+              title: t?.title ?? '',
+              subTitle: t?.subTitle ?? '',
+              version: t?.version ?? t?.name ?? t?.quality ?? '',
+              size: t?.size ?? '',
+              quality: t?.quality ?? '',
+              standard: t?.standard ?? '',
+              source: t?.source ?? '',
+              codec: t?.codec ?? t?.videoCodec ?? '',
+              audio: t?.audio ?? t?.audioCodec ?? '',
+              seeders: t?.seeders ?? 0,
+              leechers: t?.leechers ?? 0,
+              uploadDate: t?.uploadDate ?? '',
+              isFree: t?.isFree ?? false,
+              isVip: t?.isVip ?? false,
+            }))
+          : [];
+        const next = { ...(selectedMovie as any), torrents: mappedTorrents } as Movie;
+        setSelectedMovie(next);
+        setMovies(movies.map((m) => (m.id === next.id ? next : m)));
       } catch (e: any) {
         alert(e?.message || '移除失败');
       }
@@ -395,6 +455,70 @@ export function EditMoviePage() {
     })();
   }, [searchQuery]);
 
+  // 选中影片时，通过列表接口刷新该影片的已绑定种子
+  useEffect(() => {
+    (async () => {
+      if (!selectedMovie) return;
+      try {
+        const resp: any = await FilmsService.filmsControllerListTorrents({ filmId: selectedMovie.id, page: 1, limit: 100 });
+        const body = resp?.code !== undefined ? resp : resp?.data ?? resp;
+        const items = body?.data?.items ?? body?.items ?? [];
+        const mappedTorrents = Array.isArray(items)
+          ? items.map((t: any) => ({
+              id: String(t?.id ?? t?.torrentId ?? ''),
+              title: t?.title ?? '',
+              subTitle: t?.subTitle ?? '',
+              version: t?.version ?? t?.name ?? t?.quality ?? '',
+              size: t?.size ?? '',
+              quality: t?.quality ?? '',
+              standard: t?.standard ?? '',
+              source: t?.source ?? '',
+              codec: t?.codec ?? t?.videoCodec ?? '',
+              audio: t?.audio ?? t?.audioCodec ?? '',
+              seeders: t?.seeders ?? 0,
+              leechers: t?.leechers ?? 0,
+              uploadDate: t?.uploadDate ?? '',
+              isFree: t?.isFree ?? false,
+              isVip: t?.isVip ?? false,
+            }))
+          : [];
+        const next = { ...(selectedMovie as any), torrents: mappedTorrents } as Movie;
+        setSelectedMovie(next);
+        setMovies(movies.map((m) => (m.id === next.id ? next : m)));
+      } catch (e) {
+        // ignore
+      }
+    })();
+  }, [selectedMovie?.id]);
+
+  // 防抖搜索已有种子（排除已绑定当前影片）
+  useEffect(() => {
+    if (!showTorrentSearch || !selectedMovie) return;
+    const q = torrentSearchQuery.trim();
+    if (q.length < 2) {
+      // 少于2字符不发起搜索，避免空查询带来的不确定结果
+      setSearchResults([]);
+      setSearchError(null);
+      return;
+    }
+    setIsSearching(true);
+    setSearchError(null);
+    const timer = setTimeout(async () => {
+      try {
+        const resp: any = await TorrentsService.torrentsControllerSearch({ q, filmId: selectedMovie.id });
+        const body = resp?.code !== undefined ? resp : resp?.data ?? resp;
+        const items = body?.data?.items ?? body?.items ?? [];
+        setSearchResults(Array.isArray(items) ? items : []);
+      } catch (e: any) {
+        const msg = e?.body?.data?.message || e?.body?.message || e?.message || '搜索失败';
+        setSearchError(msg);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [torrentSearchQuery, showTorrentSearch, selectedMovie]);
+
   function isValidUrl(url: string) {
     if (!url) return true;
     try {
@@ -414,6 +538,83 @@ export function EditMoviePage() {
     return r >= 0 && r <= 10;
   }
 
+  // 新增：基础清洗与解析工具
+  function stripBackticksAndTrim(s: any) {
+    const raw = String(s ?? '').trim();
+    if (!raw) return '';
+    return raw.replace(/^`+|`+$/g, '').trim();
+  }
+
+  function parseDurationToMinutes(text: string) {
+    const t = String(text || '').trim();
+    const m = t.match(/(\d+)(?=\s*分钟)/);
+    return m ? m[1] : t;
+  }
+
+  // 新增：PT-Gen 工具栏状态
+  const [ptGenUrl, setPtGenUrl] = useState('');
+  const [ptGenLoading, setPtGenLoading] = useState(false);
+  const [ptGenError, setPtGenError] = useState('');
+
+  // 新增：应用 PT-Gen 返回数据到表单
+  function applyPtGenToForm(data: any) {
+    const cleanedPoster = stripBackticksAndTrim(data?.poster);
+    const cleanedDouban = stripBackticksAndTrim(data?.doubanLink);
+    const cleanedImdb = stripBackticksAndTrim(data?.imdbLink);
+    const avgDouban = Number(data?.doubanRatingAverage ?? 0);
+    const avgImdb = Number(data?.imdbRatingAverage ?? 0);
+    const genres = Array.isArray(data?.genre) ? data.genre.filter(Boolean) : [];
+    const region = Array.isArray(data?.region) ? data.region.filter(Boolean) : [];
+    const language = Array.isArray(data?.language) ? data.language.filter(Boolean) : [];
+    const directors = Array.isArray(data?.director) ? data.director.map((d: any) => d?.name).filter(Boolean).join(' / ') : (data?.director ?? '');
+    const casts = Array.isArray(data?.cast) ? data.cast.map((c: any) => c?.name).filter(Boolean) : [];
+    const awards = Array.isArray(data?.awards) ? data.awards.filter(Boolean) : [];
+
+    setMovieForm((prev) => ({
+      ...prev,
+      title: data?.chineseTitle ?? prev.title,
+      originalTitle: data?.foreignTitle ?? prev.originalTitle,
+      year: String(data?.year ?? prev.year ?? ''),
+      poster: cleanedPoster || prev.poster,
+      genres: genres.length ? genres : prev.genres,
+      duration: parseDurationToMinutes(data?.duration ?? prev.duration ?? ''),
+      director: directors || prev.director,
+      cast: casts.length ? casts : prev.cast,
+      description: data?.introduction ?? prev.description,
+      // 新增字段
+      awards: awards.length ? awards : prev.awards,
+      region: region.length ? region : prev.region,
+      language: language.length ? language : prev.language,
+      doubanLink: cleanedDouban || prev.doubanLink,
+      imdbLink: cleanedImdb || prev.imdbLink,
+      doubanRatingAverage: isNaN(avgDouban) ? prev.doubanRatingAverage : avgDouban,
+      imdbRatingAverage: isNaN(avgImdb) ? prev.imdbRatingAverage : avgImdb,
+      // 评分：保留原有 rating 但若为空则用豆瓣/IMDb 平均分
+      rating: prev.rating || (!isNaN(avgDouban) && avgDouban ? avgDouban : (!isNaN(avgImdb) && avgImdb ? avgImdb : prev.rating)),
+    }));
+  }
+
+  // 新增：触发 PT-Gen 获取并填充
+  async function fetchPtGenAndFill() {
+    setPtGenError('');
+    if (!ptGenUrl.trim()) {
+      setPtGenError('请输入有效的影片页面链接');
+      return;
+    }
+    try {
+      setPtGenLoading(true);
+      const res: any = await PtGenService.ptGenControllerFetch({ url: ptGenUrl.trim() });
+      const body = res?.code !== undefined ? res : res?.data ?? res;
+      const data = body?.data?.raw ? body?.data : body?.data ?? body;
+      if (!data) throw new Error('未获取到有效数据');
+      applyPtGenToForm(data);
+    } catch (e: any) {
+      setPtGenError(e?.message || '获取失败');
+    } finally {
+      setPtGenLoading(false);
+    }
+  }
+
   function validateFilmForm(form: any) {
     const errs: Record<string, string> = {};
     if (!form.title?.trim()) errs.title = '标题为必填项';
@@ -422,16 +623,29 @@ export function EditMoviePage() {
     if (!isValidRating(Number(form.rating ?? 0))) errs.rating = '评分需在0到10之间';
     if (!isValidUrl(String(form.poster || ''))) errs.poster = '海报URL必须以http/https开头';
     if (!isValidUrl(String(form.backdrop || ''))) errs.backdrop = '背景URL必须以http/https开头';
+    // 新增字段的基础校验
+    if (form.doubanLink && !isValidUrl(String(form.doubanLink))) errs.doubanLink = '豆瓣链接必须为有效URL';
+    if (form.imdbLink && !isValidUrl(String(form.imdbLink))) errs.imdbLink = 'IMDb链接必须为有效URL';
+    if (!isValidRating(Number(form.doubanRatingAverage ?? 0))) errs.doubanRatingAverage = '豆瓣平均分需在0到10之间';
+    if (!isValidRating(Number(form.imdbRatingAverage ?? 0))) errs.imdbRatingAverage = 'IMDb平均分需在0到10之间';
     return { valid: Object.keys(errs).length === 0, errs };
   }
 
   function mapBackendFilmToLocal(detail: any): Movie {
-    const genres = Array.isArray(detail?.genres) ? detail.genres.map((g: any) => (typeof g === 'string' ? g : g?.name)).filter(Boolean) : [];
-    const torrents = Array.isArray(detail?.torrents) ? detail.torrents.map((t: any) => ({
+    const genres = Array.isArray(detail?.genre)
+      ? detail.genre.filter(Boolean)
+      : Array.isArray(detail?.genres)
+        ? detail.genres.map((g: any) => (typeof g === 'string' ? g : g?.name)).filter(Boolean)
+        : [];
+  const torrents = Array.isArray(detail?.torrents)
+    ? detail.torrents.map((t: any) => ({
       id: String(t?.id ?? t?.torrentId ?? ''),
-      version: t?.version ?? t?.name ?? '',
+      title: t?.title ?? '',
+      subTitle: t?.subTitle ?? '',
+      version: t?.version ?? t?.name ?? t?.quality ?? '',
       size: t?.size ?? '',
-      quality: t?.quality ?? detail?.standard ?? '',
+      quality: t?.quality ?? '',
+      standard: t?.standard ?? '',
       source: t?.source ?? '',
       codec: t?.codec ?? t?.videoCodec ?? '',
       audio: t?.audio ?? t?.audioCodec ?? '',
@@ -440,18 +654,19 @@ export function EditMoviePage() {
       uploadDate: t?.uploadDate ?? '',
       isFree: t?.isFree ?? false,
       isVip: t?.isVip ?? false,
-    })) : [];
+    }))
+    : [];
     return {
       id: String(detail?.id ?? ''),
       title: detail?.title ?? '',
       originalTitle: detail?.originalTitle ?? '',
       year: String(detail?.year ?? ''),
-      poster: detail?.posterUrl ?? detail?.coverUrl ?? '',
-      backdrop: detail?.backdropUrl ?? '',
+      poster: detail?.poster ?? detail?.posterUrl ?? detail?.coverUrl ?? '',
+      backdrop: detail?.backdrop ?? detail?.backdropUrl ?? '',
       category: detail?.category === 'series' ? '剧集' : detail?.category === 'documentary' ? '纪录片' : detail?.category === 'anime' ? '动漫' : '电影',
       genres,
       rating: Number(detail?.rating ?? 0),
-      duration: detail?.duration ?? '',
+      duration: typeof detail?.duration === 'number' ? `${detail.duration}分钟` : (detail?.duration ?? ''),
       director: detail?.director ?? '',
       cast: Array.isArray(detail?.cast) ? detail.cast : [],
       description: detail?.description ?? '',
@@ -518,7 +733,7 @@ export function EditMoviePage() {
                       setSelectedMovie(movie);
                       setIsEditing(false);
                       setIsCreating(false);
-                      setShowTorrentForm(false);
+                      setShowTorrentSearch(false);
                     }}
                     className={`p-4 rounded-xl cursor-pointer transition-all ${selectedMovie?.id === movie.id
                       ? 'bg-gradient-to-r from-amber-500/20 to-orange-600/20 border border-amber-500/30'
@@ -527,7 +742,7 @@ export function EditMoviePage() {
                   >
                     <div className="flex gap-3">
                       <img
-                        src={movie.poster}
+                        src={movie.poster || undefined}
                         alt={movie.title}
                         className="w-16 h-24 rounded-lg object-cover"
                       />
@@ -621,6 +836,31 @@ export function EditMoviePage() {
                     <X className="w-5 h-5" />
                   </Button>
                 </div>
+
+                {/* PT-Gen 工具栏：仅在添加影片时展示 */}
+                {isCreating && (
+                  <div className="p-4 rounded-xl bg-neutral-900/30 border border-amber-500/30">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="text"
+                        value={ptGenUrl}
+                        onChange={(e) => setPtGenUrl(e.target.value)}
+                        placeholder="输入 Douban/IMDb 页面链接，例：https://movie.douban.com/subject/4092781/"
+                        className="flex-1 bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                      />
+                      <Button
+                        onClick={fetchPtGenAndFill}
+                        disabled={ptGenLoading}
+                        className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                      >
+                        {ptGenLoading ? '获取中...' : '获取并填充'}
+                      </Button>
+                    </div>
+                    {ptGenError && (
+                      <p className="text-red-500 text-xs mt-2">{ptGenError}</p>
+                    )}
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* 中文标题 */}
@@ -779,6 +1019,115 @@ export function EditMoviePage() {
                   />
                 </div>
 
+                {/* 新增：扩展信息（PT-Gen填充） */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* 语言（用逗号分隔） */}
+                  <div className="space-y-2">
+                    <label className="text-neutral-300 text-sm">语言（用逗号分隔）</label>
+                    <input
+                      type="text"
+                      value={movieForm.language.join(', ')}
+                      onChange={(e) =>
+                        setMovieForm({
+                          ...movieForm,
+                          language: e.target.value.split(',').map((s) => s.trim()).filter(Boolean),
+                        })
+                      }
+                      placeholder="例如: 韩语, 英语"
+                      className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                    />
+                  </div>
+
+                  {/* 地区（用逗号分隔） */}
+                  <div className="space-y-2">
+                    <label className="text-neutral-300 text-sm">地区（用逗号分隔）</label>
+                    <input
+                      type="text"
+                      value={movieForm.region.join(', ')}
+                      onChange={(e) =>
+                        setMovieForm({
+                          ...movieForm,
+                          region: e.target.value.split(',').map((s) => s.trim()).filter(Boolean),
+                        })
+                      }
+                      placeholder="例如: 韩国"
+                      className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                    />
+                  </div>
+
+                  {/* 豆瓣链接 */}
+                  <div className="space-y-2">
+                    <label className="text-neutral-300 text-sm">豆瓣链接</label>
+                    <input
+                      type="text"
+                      value={movieForm.doubanLink}
+                      onChange={(e) => setMovieForm({ ...movieForm, doubanLink: e.target.value })}
+                      placeholder="例如: https://movie.douban.com/subject/4092781/"
+                      aria-invalid={Boolean(movieForm.doubanLink && !isValidUrl(movieForm.doubanLink))}
+                      className={`w-full bg-neutral-900/50 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 border ${movieForm.doubanLink && !isValidUrl(movieForm.doubanLink) ? 'border-red-500' : 'border-neutral-700'}`}
+                    />
+                    {errors.doubanLink && <p className="text-red-500 text-xs">{errors.doubanLink}</p>}
+                  </div>
+
+                  {/* IMDb 链接 */}
+                  <div className="space-y-2">
+                    <label className="text-neutral-300 text-sm">IMDb 链接</label>
+                    <input
+                      type="text"
+                      value={movieForm.imdbLink}
+                      onChange={(e) => setMovieForm({ ...movieForm, imdbLink: e.target.value })}
+                      placeholder="例如: https://www.imdb.com/title/tt1527793/"
+                      aria-invalid={Boolean(movieForm.imdbLink && !isValidUrl(movieForm.imdbLink))}
+                      className={`w-full bg-neutral-900/50 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 border ${movieForm.imdbLink && !isValidUrl(movieForm.imdbLink) ? 'border-red-500' : 'border-neutral-700'}`}
+                    />
+                    {errors.imdbLink && <p className="text-red-500 text-xs">{errors.imdbLink}</p>}
+                  </div>
+
+                  {/* 豆瓣评分平均 */}
+                  <div className="space-y-2">
+                    <label className="text-neutral-300 text-sm">豆瓣评分（平均）</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="10"
+                      value={movieForm.doubanRatingAverage}
+                      onChange={(e) => setMovieForm({ ...movieForm, doubanRatingAverage: parseFloat(e.target.value) })}
+                      placeholder="例如: 7.3"
+                      className={`w-full bg-neutral-900/50 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 border ${!isValidRating(Number(movieForm.doubanRatingAverage ?? 0)) ? 'border-red-500' : 'border-neutral-700'}`}
+                    />
+                    {errors.doubanRatingAverage && <p className="text-red-500 text-xs">{errors.doubanRatingAverage}</p>}
+                  </div>
+
+                  {/* IMDb 评分平均 */}
+                  <div className="space-y-2">
+                    <label className="text-neutral-300 text-sm">IMDb 评分（平均）</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="10"
+                      value={movieForm.imdbRatingAverage}
+                      onChange={(e) => setMovieForm({ ...movieForm, imdbRatingAverage: parseFloat(e.target.value) })}
+                      placeholder="例如: 7.6"
+                      className={`w-full bg-neutral-900/50 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 border ${!isValidRating(Number(movieForm.imdbRatingAverage ?? 0)) ? 'border-red-500' : 'border-neutral-700'}`}
+                    />
+                    {errors.imdbRatingAverage && <p className="text-red-500 text-xs">{errors.imdbRatingAverage}</p>}
+                  </div>
+                </div>
+
+                {/* 获奖情况（多行） */}
+                <div className="space-y-2">
+                  <label className="text-neutral-300 text-sm">获奖情况（每行一条）</label>
+                  <textarea
+                    value={movieForm.awards.join('\n')}
+                    onChange={(e) => setMovieForm({ ...movieForm, awards: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean) })}
+                    rows={4}
+                    placeholder="例如: 第82届威尼斯电影节 主竞赛单元 金狮奖(提名)"
+                    className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 resize-none"
+                  />
+                </div>
+
                 {/* 简介 */}
                 <div className="space-y-2">
                   <label className="text-neutral-300 text-sm">简介</label>
@@ -860,7 +1209,7 @@ export function EditMoviePage() {
                 {/* 影片头部 */}
                 <div className="flex items-start gap-4">
                   <img
-                    src={selectedMovie.poster}
+                    src={selectedMovie.poster || undefined}
                     alt={selectedMovie.title}
                     className="w-32 h-48 rounded-xl object-cover"
                   />
@@ -943,7 +1292,7 @@ export function EditMoviePage() {
                     </h3>
                     <Button
                       size="sm"
-                      onClick={() => setShowTorrentForm(true)}
+                      onClick={() => setShowTorrentSearch(true)}
                       className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
                     >
                       <Plus className="w-4 h-4 mr-2" />
@@ -951,154 +1300,101 @@ export function EditMoviePage() {
                     </Button>
                   </div>
 
-                  {/* 添加种子表单 */}
-                  {showTorrentForm && (
+                  {/* 选择已有种子面板：搜索并绑定 */}
+                  {showTorrentSearch && (
                     <div className="mb-6 p-6 rounded-xl bg-neutral-900/30 border border-amber-500/30 space-y-4">
                       <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-white">添加新种子版本</h4>
+                        <h4 className="text-white">选择已有种子</h4>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => setShowTorrentForm(false)}
+                          onClick={() => { setShowTorrentSearch(false); setTorrentSearchQuery(''); setSearchResults([]); }}
                           className="text-neutral-400 hover:text-white"
                         >
                           <X className="w-4 h-4" />
                         </Button>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="col-span-2">
-                          <label className="text-neutral-300 text-sm">版本描述</label>
-                          <input
-                            type="text"
-                            value={torrentForm.version}
-                            onChange={(e) =>
-                              setTorrentForm({
-                                ...torrentForm,
-                                version: e.target.value,
-                              })
-                            }
-                            placeholder="例如: 4K HDR REMUX 国英双语"
-                            className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 mt-2"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-neutral-300 text-sm">文件大小</label>
-                          <input
-                            type="text"
-                            value={torrentForm.size}
-                            onChange={(e) =>
-                              setTorrentForm({ ...torrentForm, size: e.target.value })
-                            }
-                            placeholder="例如: 68.5 GB"
-                            className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 mt-2"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-neutral-300 text-sm">质量</label>
-                          <Select value={torrentForm.quality} onValueChange={(v) => setTorrentForm({ ...torrentForm, quality: v })}>
-                            <SelectTrigger className="mt-2">
-                              <SelectValue placeholder="选择质量" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="2160p">2160p (4K)</SelectItem>
-                              <SelectItem value="1080p">1080p</SelectItem>
-                              <SelectItem value="720p">720p</SelectItem>
-                              <SelectItem value="480p">480p</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        <div>
-                          <label className="text-neutral-300 text-sm">来源</label>
-                          <Select value={torrentForm.source} onValueChange={(v) => setTorrentForm({ ...torrentForm, source: v })}>
-                            <SelectTrigger className="mt-2">
-                              <SelectValue placeholder="选择来源" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="BluRay">BluRay</SelectItem>
-                              <SelectItem value="WEB-DL">WEB-DL</SelectItem>
-                              <SelectItem value="HDTV">HDTV</SelectItem>
-                              <SelectItem value="REMUX">REMUX</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        <div>
-                          <label className="text-neutral-300 text-sm">编码</label>
-                          <Select value={torrentForm.codec} onValueChange={(v) => setTorrentForm({ ...torrentForm, codec: v })}>
-                            <SelectTrigger className="mt-2">
-                              <SelectValue placeholder="选择编码" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="H.265">H.265 (HEVC)</SelectItem>
-                              <SelectItem value="H.264">H.264 (AVC)</SelectItem>
-                              <SelectItem value="AV1">AV1</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-
-                      <div className="mt-4">
-                        <label className="text-neutral-300 text-sm">上传 .torrent 文件</label>
+                      {/* 搜索输入框 */}
+                      <div>
+                        <label className="text-neutral-300 text-sm">搜索种子（ID或关键词）</label>
                         <input
-                          type="file"
-                          accept=".torrent"
-                          onChange={async (e) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
-                            const buf = await file.arrayBuffer();
-                            const bytes = new Uint8Array(buf);
-                            let binary = '';
-                            for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-                            const b64 = btoa(binary);
-                            setTorrentFileBase64(b64);
-                          }}
-                          className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 mt-2"
+                          type="text"
+                          value={torrentSearchQuery}
+                          onChange={(e) => setTorrentSearchQuery(e.target.value)}
+                          placeholder="例如：4K / BluRay / 种子ID"
+                          className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 mt-2"
                         />
+                        <p className="text-xs text-neutral-500 mt-1">输入≥2个字符后开始搜索，已绑定到当前影片的种子会被排除</p>
                       </div>
 
-                      <div className="flex items-center gap-4 pt-2">
-                        <label className="flex items-center gap-2 text-sm text-neutral-300">
-                          <input
-                            type="checkbox"
-                            checked={torrentForm.isFree}
-                            onChange={(e) =>
-                              setTorrentForm({
-                                ...torrentForm,
-                                isFree: e.target.checked,
-                              })
-                            }
-                            className="w-4 h-4 rounded border-neutral-700 bg-neutral-900"
-                          />
-                          免费下载
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-neutral-300">
-                          <input
-                            type="checkbox"
-                            checked={torrentForm.isVip}
-                            onChange={(e) =>
-                              setTorrentForm({
-                                ...torrentForm,
-                                isVip: e.target.checked,
-                              })
-                            }
-                            className="w-4 h-4 rounded border-neutral-700 bg-neutral-900"
-                          />
-                          VIP专享
-                        </label>
-                      </div>
+                      {/* 搜索状态与错误提示 */}
+                      {isSearching && (
+                        <p className="text-sm text-neutral-400">正在搜索...</p>
+                      )}
+                      {searchError && (
+                        <p className="text-sm text-red-400">{searchError}</p>
+                      )}
 
-                      <Button
-                        onClick={handleAddTorrent}
-                        disabled={!torrentForm.version || !torrentForm.size}
-                        className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
-                      >
-                        <Save className="w-4 h-4 mr-2" />
-                        添加种子
-                      </Button>
+                      {/* 结果列表 */}
+                      <div className="space-y-3">
+                        {searchResults.length === 0 && !isSearching ? (
+                          <div className="text-center py-8 border border-dashed border-neutral-700 rounded-xl">
+                            <Video className="w-10 h-10 text-neutral-600 mx-auto mb-3" />
+                            <p className="text-neutral-500 text-sm">暂无结果，请输入更具体的关键词</p>
+                          </div>
+                        ) : (
+                          searchResults.map((item: any) => {
+                            const id = String(item?.id ?? item?.torrentId ?? '');
+                            const title = item?.title ?? '';
+                            const subTitle = item?.subTitle ?? '';
+                          const version = item?.version ?? item?.quality ?? '';
+                          const size = item?.size ?? '';
+                          const standard = item?.standard ?? '';
+                          const source = item?.source ?? '';
+                          const codec = item?.codec ?? item?.videoCodec ?? '';
+                          const audio = item?.audio ?? item?.audioCodec ?? '';
+                            const seeders = item?.seeders ?? 0;
+                            const leechers = item?.leechers ?? 0;
+                            return (
+                              <div key={id} className="p-4 rounded-xl bg-neutral-900/30 border border-neutral-700/50 hover:border-neutral-600 transition-all">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <div className="mb-1">
+                                      <h4 className="text-white">{title || version || '未命名种子'}</h4>
+                                      {subTitle && (
+                                        <p className="text-xs text-neutral-400 mt-0.5">{subTitle}</p>
+                                      )}
+                                    </div>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs text-neutral-400">
+                                      <div><span className="text-neutral-500">大小:</span> {formatSize(size)}</div>
+                                      <div><span className="text-neutral-500">分辨率:</span> {standard}</div>
+                                      <div><span className="text-neutral-500">来源:</span> {source}</div>
+                                      <div><span className="text-neutral-500">编码:</span> {codec}</div>
+                                      <div><span className="text-neutral-500">音频:</span> {audio}</div>
+                                      <div className="flex items-center gap-1">
+                                        <UploadIcon className="w-3 h-3 text-green-400" />
+                                        <span className="text-green-400">{seeders}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1">
+                                        <Download className="w-3 h-3 text-red-400" />
+                                        <span className="text-red-400">{leechers}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleBindExistingTorrent(id)}
+                                    className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                                  >
+                                    绑定到当前影片
+                                  </Button>
+                                </div>
+                              </div>
+                            );
+                          })
+                        )}
+                      </div>
                     </div>
                   )}
 
@@ -1111,7 +1407,7 @@ export function EditMoviePage() {
                       </p>
                       <Button
                         size="sm"
-                        onClick={() => setShowTorrentForm(true)}
+                        onClick={() => setShowTorrentSearch(true)}
                         className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
                       >
                         <Plus className="w-4 h-4 mr-2" />
@@ -1127,27 +1423,32 @@ export function EditMoviePage() {
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <h4 className="text-white">{torrent.version}</h4>
-                                {torrent.isFree && (
-                                  <Badge className="bg-green-500/20 text-green-400 text-xs">
-                                    FREE
-                                  </Badge>
+                              <div className="mb-2">
+                                <h4 className="text-white">{torrent.title || torrent.version}</h4>
+                                {torrent.subTitle && (
+                                  <p className="text-xs text-neutral-400 mt-0.5">{torrent.subTitle}</p>
                                 )}
-                                {torrent.isVip && (
-                                  <Badge className="bg-purple-500/20 text-purple-400 text-xs">
-                                    VIP
-                                  </Badge>
-                                )}
+                                <div className="flex items-center gap-2 mt-1">
+                                  {torrent.isFree && (
+                                    <Badge className="bg-green-500/20 text-green-400 text-xs">
+                                      FREE
+                                    </Badge>
+                                  )}
+                                  {torrent.isVip && (
+                                    <Badge className="bg-purple-500/20 text-purple-400 text-xs">
+                                      VIP
+                                    </Badge>
+                                  )}
+                                </div>
                               </div>
                               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs text-neutral-400">
                                 <div>
                                   <span className="text-neutral-500">大小:</span>{' '}
-                                  {torrent.size}
+                                  {formatSize(torrent.size)}
                                 </div>
                                 <div>
-                                  <span className="text-neutral-500">质量:</span>{' '}
-                                  {torrent.quality}
+                                  <span className="text-neutral-500">分辨率:</span>{' '}
+                                  {torrent.standard}
                                 </div>
                                 <div>
                                   <span className="text-neutral-500">来源:</span>{' '}

@@ -32,6 +32,8 @@ import { InvitePage } from '../pages/InvitePage';
 import { FilmsPage } from '../pages/FilmsPage';
 import { PlaylistsPage } from '../pages/PlaylistsPage';
 import { PlaylistDetailPage } from '../pages/PlaylistDetailPage';
+import FilmDetailPage from '../pages/FilmDetailPage';
+import { TorrentHistoryPage } from '../pages/TorrentHistoryPage';
 
 
 
@@ -231,6 +233,17 @@ export default function AppRoutes() {
           </AuthRoute>
         }
       />
+      {/* 影片详情路由 */}
+      <Route
+        path="/film/:id"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <FilmDetailRoute />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
 
       {/* 新增：片单浏览路由，登录态保护 + 统一布局 */}
       <Route
@@ -246,7 +259,7 @@ export default function AppRoutes() {
 
       {/* 片单详情路由 */}
       <Route
-        path="/Playlist-detail/:id"
+        path="/playlist/:id"
         element={
           <AuthRoute>
             <AppLayout>
@@ -274,6 +287,17 @@ export default function AppRoutes() {
           <AuthRoute>
             <AppLayout>
               <BonusPage />
+            </AppLayout>
+          </AuthRoute>
+        }
+      />
+
+      <Route
+        path="/torrent-history"
+        element={
+          <AuthRoute>
+            <AppLayout>
+              <TorrentHistoryPage />
             </AppLayout>
           </AuthRoute>
         }
@@ -440,6 +464,12 @@ function PlaylistDetailPageWrapper() {
       onFilmClick={() => { }}
     />
   );
+}
+function FilmDetailRoute() {
+  const params = useParams();
+  const id = params.id ?? '';
+  if (!id) return <Navigate to="/films" replace />;
+  return <FilmDetailPage filmId={String(id)} />;
 }
 function NotFoundRedirect() {
   const isLoggedIn = !!localStorage.getItem('accessToken');

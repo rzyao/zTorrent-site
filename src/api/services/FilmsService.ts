@@ -8,12 +8,13 @@ import type { AdminListPendingFilmsDto } from '../models/AdminListPendingFilmsDt
 import type { CollectFilmDto } from '../models/CollectFilmDto';
 import type { CreateFilmDto } from '../models/CreateFilmDto';
 import type { FilmIdDto } from '../models/FilmIdDto';
+import type { FilmListItemDTO } from '../models/FilmListItemDTO';
 import type { FilmTorrentIdDto } from '../models/FilmTorrentIdDto';
 import type { ListFilmsDto } from '../models/ListFilmsDto';
 import type { ListFilmTorrentsDto } from '../models/ListFilmTorrentsDto';
 import type { PublicFilmDetailDto } from '../models/PublicFilmDetailDto';
-import type { PublicFilmDto } from '../models/PublicFilmDto';
 import type { ReviewDto } from '../models/ReviewDto';
+import type { SearchFilmsForPlaylistDto } from '../models/SearchFilmsForPlaylistDto';
 import type { UpdateFilmDto } from '../models/UpdateFilmDto';
 import type { UpdateFilmTorrentDto } from '../models/UpdateFilmTorrentDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -410,11 +411,8 @@ export class FilmsService {
         code?: number;
         message?: string;
         data?: {
-            items?: Array<PublicFilmDto>;
+            items?: Array<FilmListItemDTO>;
             total?: number;
-            page?: number;
-            limit?: number;
-            totalPages?: number;
         };
         path?: string;
         timestamp?: string;
@@ -422,6 +420,55 @@ export class FilmsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/films/list-films',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 片单添加用的影片搜索（排除已关联）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static filmsControllerSearchFilmsForPlaylist(
+        requestBody: SearchFilmsForPlaylistDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            items?: Array<{
+                id?: string;
+                title?: string;
+                originalTitle?: string;
+                year?: string;
+                director?: string;
+                posterUrl?: string;
+                backdropUrl?: string;
+                rating?: number;
+                duration?: string;
+                description?: string;
+                genres?: Array<string>;
+                language?: Array<string>;
+                region?: Array<string>;
+                awards?: Array<string>;
+                torrentsCount?: number;
+                ownerId?: string;
+                ownerName?: string;
+            }>;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/films/search-for-playlist',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

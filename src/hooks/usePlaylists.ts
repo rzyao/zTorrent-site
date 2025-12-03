@@ -5,7 +5,7 @@ function unwrap(response: any) {
   const body = response?.code !== undefined ? response : response?.data ?? response;
   const code = body?.code ?? 0;
   if (code !== 1000 && code !== 0) {
-    const msg = body?.message || '请求失败';
+    const msg = body?.data?.message || body?.message || '请求失败';
     throw new Error(msg);
   }
   return body?.data ?? body;
@@ -27,8 +27,9 @@ export function usePlaylists() {
       setTotal(data?.total ?? 0);
       return data;
     } catch (e: any) {
-      setError(e.message || '获取片单列表失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '获取片单列表失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -42,8 +43,9 @@ export function usePlaylists() {
       const data = unwrap(res);
       return data;
     } catch (e: any) {
-      setError(e.message || '获取片单详情失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '获取片单详情失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -57,8 +59,9 @@ export function usePlaylists() {
       const data = unwrap(res);
       return data;
     } catch (e: any) {
-      setError(e.message || '创建片单失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '创建片单失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -68,12 +71,13 @@ export function usePlaylists() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerUpdate({ id, data: payload });
+      const res = await PlaylistsService.playlistsControllerUpdate({ id, ...payload });
       const data = unwrap(res);
       return data;
     } catch (e: any) {
-      setError(e.message || '更新片单失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '更新片单失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -87,8 +91,9 @@ export function usePlaylists() {
       const data = unwrap(res);
       return data;
     } catch (e: any) {
-      setError(e.message || '删除片单失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '删除片单失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -102,8 +107,9 @@ export function usePlaylists() {
       const data = unwrap(res);
       return data;
     } catch (e: any) {
-      setError(e.message || '添加影片到片单失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '添加影片到片单失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -117,23 +123,27 @@ export function usePlaylists() {
       const data = unwrap(res);
       return data;
     } catch (e: any) {
-      setError(e.message || '从片单移除影片失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '从片单移除影片失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  const reorderFilm = useCallback(async (playlistId: string, filmId: string, sort: number) => {
+  // 片单内影片排序：按照给定的 filmId 顺序更新排序
+  // 说明：后端已按文档更新为提交 order: string[]，返回最新 films 列表或完整 PlaylistDTO
+  const reorderFilm = useCallback(async (playlistId: string, order: string[]) => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerReorder({ playlistId, filmId, sort });
+      const res = await PlaylistsService.playlistsControllerReorder({ playlistId, order });
       const data = unwrap(res);
       return data;
     } catch (e: any) {
-      setError(e.message || '片单影片排序失败');
-      throw e;
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '片单影片排序失败';
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -154,4 +164,3 @@ export function usePlaylists() {
     error,
   };
 }
-

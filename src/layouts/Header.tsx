@@ -1,5 +1,5 @@
 // 替换右上角搜索为魔力值入口：移除 Search，新增 Sparkles 图标
-import { Bell, Mail, User, TrendingUp, Upload, Download, ChartSpline, ChevronDown, Settings, LogOut, UserCircle, Sparkles, UserPlus } from 'lucide-react';
+import { Bell, Mail, User, TrendingUp, Upload, Download, ChartSpline, ChevronDown, Settings, LogOut, UserCircle, Sparkles, UserPlus, History } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -94,19 +94,31 @@ export function Header() {
 
         <div className="flex items-center gap-4">
           <div className="hidden lg:flex items-center gap-4 text-sm">
+            {/* 上传量显示 */}
             <div className="flex items-center gap-1 text-green-400">
               <Upload className="w-4 h-4" />
               <span>{userSummary ? formatBytes(userSummary.uploadedBytes) : '0B'}</span>
             </div>
+            {/* 下载量显示 */}
             <div className="flex items-center gap-1 text-red-400">
               <Download className="w-4 h-4" />
               <span>{userSummary ? formatBytes(userSummary.downloadedBytes) : '0B'}</span>
             </div>
+            {/* _ratio显示 */}
             <div className="flex items-center gap-1 text-yellow-400">
               <ChartSpline className="w-4 h-4" />
               <span>{userSummary ? userSummary.ratio.toFixed(2) : '0.00'}</span>
             </div>
           </div>
+          {/* 魔力值入口按钮，点击跳转到 /bonus */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-white/10 rounded-none"
+            onClick={() => navigate('/bonus')}
+          >
+            <Sparkles className="w-5 h-5 text-amber-400" />
+          </Button>
           <Button
             variant="ghost"
             size="icon"
@@ -129,15 +141,7 @@ export function Header() {
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
             )}
           </Button>
-          {/* 新增：魔力值入口按钮，点击跳转到 /bonus */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white hover:bg-white/10 rounded-none"
-            onClick={() => navigate('/bonus')}
-          >
-            <Sparkles className="w-5 h-5 text-amber-400" />
-          </Button>
+
           {/* 用户菜单 */}
           <div className="relative" ref={userMenuRef}>
             <button
@@ -185,6 +189,16 @@ export function Header() {
                 </div>
                 {/* 菜单项 */}
                 <div className="py-2">
+                  <button
+                    onClick={() => {
+                      setShowUserMenu(false);
+                      navigate('/torrent-history');
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
+                  >
+                    <History className="w-5 h-5 text-amber-400" />
+                    <span>种子记录</span>
+                  </button>
                   <button
                     onClick={() => {
                       setShowUserMenu(false);

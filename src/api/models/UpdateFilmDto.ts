@@ -5,7 +5,6 @@
 export type UpdateFilmDto = {
     title?: string;
     description?: string;
-    coverUrl?: string;
     enabled?: boolean;
     sort?: number;
     originalTitle?: string;
@@ -27,9 +26,37 @@ export type UpdateFilmDto = {
      */
     genres?: Array<string>;
     /**
-     * 长度≤20
+     * 长度≤50
      */
     cast?: Array<string>;
+    /**
+     * 获奖列表
+     */
+    awards?: Array<string>;
+    /**
+     * 地区标签
+     */
+    region?: Array<string>;
+    /**
+     * 语言列表
+     */
+    language?: Array<string>;
+    /**
+     * 豆瓣链接（http/https）
+     */
+    doubanLink?: string;
+    /**
+     * IMDb 链接（http/https）
+     */
+    imdbLink?: string;
+    /**
+     * 豆瓣平均分（0–10，建议一位小数）
+     */
+    doubanRatingAverage?: number;
+    /**
+     * IMDb 平均分（0–10，建议一位小数）
+     */
+    imdbRatingAverage?: number;
 };
 export namespace UpdateFilmDto {
     export enum category {

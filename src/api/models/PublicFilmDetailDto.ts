@@ -49,9 +49,33 @@ export type PublicFilmDetailDto = {
      */
     country: string;
     /**
-     * 语言
+     * 语言列表
      */
-    language: string;
+    language: Array<string>;
+    /**
+     * 地区标签
+     */
+    region: Array<string>;
+    /**
+     * 获奖列表
+     */
+    awards: Array<string>;
+    /**
+     * 豆瓣链接（http/https）
+     */
+    doubanLink: string;
+    /**
+     * IMDb 链接（http/https）
+     */
+    imdbLink: string;
+    /**
+     * 豆瓣平均分（0–10）
+     */
+    doubanRatingAverage: number;
+    /**
+     * IMDb 平均分（0–10）
+     */
+    imdbRatingAverage: number;
     /**
      * 简介
      */
@@ -72,6 +96,14 @@ export type PublicFilmDetailDto = {
      * 当前用户是否已收藏
      */
     isCollected: boolean;
+    /**
+     * 影片所有者用户ID
+     */
+    ownerId: string;
+    /**
+     * 影片所有者用户名
+     */
+    ownerName: string;
     /**
      * 种子列表
      */
