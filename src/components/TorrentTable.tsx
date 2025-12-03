@@ -1,6 +1,6 @@
 // 组件依赖：图标库（状态/指标）、路由跳转、图片占位、徽标、按钮、下载 Hook、格式化工具
 import { Download, Upload, MessageSquare, Star, HardDrive, Calendar, Award } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Badge } from './ui/badge';
 import { Button } from '@/components/ui/button';
@@ -31,12 +31,21 @@ interface Torrent {
 // 组件入参：待渲染的种子列表数据
 interface TorrentTableProps {
   torrents: Torrent[];
+  filmId?: string;
 }
 
 // 统一列表视图样式的种子表格组件
-export function TorrentTable({ torrents }: TorrentTableProps) {
+export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
   // 下载能力：生成一次性链接并保存 .torrent 文件
   const { downloadByTorrentId } = useTorrentDownload();
+  const location = useLocation();
+  const mergedSearch = (() => {
+    const p = new URLSearchParams(location.search);
+    if (filmId) p.set('source_film_id', filmId);
+    const s = p.toString();
+    return s ? `?${s}` : '';
+  })();
+  const mergedHash = location.hash;
   return (
     // 列表容器：与 TorrentsPage 列表视图一致的间距与外边距
     <div className="space-y-4 mb-8">
@@ -63,7 +72,9 @@ export function TorrentTable({ torrents }: TorrentTableProps) {
                 <div className="flex flex-col flex-1 min-w-0">
                   {/* 标题：保持可点击跳转详情，悬停高亮 */}
                   <h3 className="text-white flex-1 hover:text-[#00A8E1] transition-colors">
-                    <Link to={`/torrent-detail/${torrent.id}`}>{torrent.title}</Link>
+                    <Link to={{ pathname: `/torrent/${torrent.id}`, search: mergedSearch, hash: mergedHash }}>
+                      {torrent.title}
+                    </Link>
                   </h3>
                   {torrent.subTitle && (
                     // 副标题：存在时显示并与标题同样交互样式

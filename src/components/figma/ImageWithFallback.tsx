@@ -7,6 +7,23 @@ export const ImageWithFallback = React.forwardRef<HTMLImageElement, React.ImgHTM
   (props, ref) => {
     const [didError, setDidError] = useState(false)
     const [loaded, setLoaded] = useState(false)
+    const imgRef = React.useRef<HTMLImageElement | null>(null)
+
+    // 合并 ref
+    const handleRef = (node: HTMLImageElement) => {
+      imgRef.current = node
+      if (typeof ref === 'function') {
+        ref(node)
+      } else if (ref) {
+        (ref as { current: HTMLImageElement | null }).current = node
+      }
+    }
+
+    React.useEffect(() => {
+      if (imgRef.current?.complete) {
+        setLoaded(true)
+      }
+    }, [])
 
     const handleError = () => {
       setDidError(true)
@@ -26,12 +43,16 @@ export const ImageWithFallback = React.forwardRef<HTMLImageElement, React.ImgHTM
       </div>
     ) : (
       <img
-        ref={ref}
+        ref={handleRef}
         referrerPolicy="no-referrer"
         src={src}
         alt={alt}
         className={className}
-        style={{ ...(style || {}), opacity: loaded ? 1 : 0, transition: 'opacity 200ms ease-in' }}
+        style={{
+          ...(style || {}),
+          opacity: loaded ? 1 : 0,
+          transition: loaded ? 'opacity 200ms ease-in' : 'none'
+        }}
         {...rest}
         onError={handleError}
         onLoad={() => setLoaded(true)}

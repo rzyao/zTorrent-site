@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useParams, Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { AuthService } from '../api';
 import { useAccess } from '@/context/AccessContext';
@@ -161,293 +161,73 @@ export default function AppRoutes() {
       <Route path="/forgot-password" element={<ForgotPasswordPageWrapper />} />
       <Route path="/api-test" element={<ApiTest />} />
       <Route path="/" element={<Navigate to="/home" replace />} />
-      {/* 受保护路由 */}
+      {/* 受保护路由统一持久布局：AuthRoute + AppLayout 持久化，内部通过 Outlet 渲染子页面 */}
       <Route
-        path="/home"
         element={
           <AuthRoute>
             <AppLayout>
-              <HomeLayout />
+              <Outlet />
             </AppLayout>
           </AuthRoute>
         }
       >
-        <Route index element={<HomePage />} />
-        <Route path=":category" element={<HomePage />} />
-        <Route path="movie" element={<MoviePage />} />
-        <Route path="movie/:category" element={<MoviePage />} />
+        <Route
+          path="/home"
+          element={<HomeLayout />}
+        >
+          <Route index element={<HomePage />} />
+          <Route path=":category" element={<HomePage />} />
+          <Route path="movie" element={<MoviePage />} />
+          <Route path="movie/:category" element={<MoviePage />} />
+        </Route>
+
+        <Route path="/torrents" element={<TorrentsPage />} />
+        <Route path="/forum" element={<ForumPage />} />
+        <Route path="/subtitles" element={<SubtitlesPage />} />
+        <Route path="/ranking" element={<RankingPage />} />
+
+        {/* 影片与片单 */}
+        <Route path="/films" element={<FilmsPage />} />
+        <Route path="/film/:id" element={<FilmDetailRoute />} />
+        <Route path="/playlists" element={<PlaylistsPage />} />
+        <Route path="/playlist/:id" element={<PlaylistDetailPageWrapper />} />
+
+        {/* 魔力值与邀请、历史 */}
+        <Route path="/invite" element={<InvitePage />} />
+        <Route path="/bonus" element={<BonusPage />} />
+        <Route path="/torrent-history" element={<TorrentHistoryPage />} />
+
+        {/* 求种与上传、编辑 */}
+        <Route path="/requests" element={<RequestsPage />} />
+        <Route path="/upload" element={<UploadTorrentPage />} />
+        <Route path="/edit" element={<EditPage />} />
+
+        {/* 审核页需权限守卫，但保持持久布局不重挂载 */}
+        <Route
+          path="/review"
+          element={
+            <PermissionRoute requiredPermissions={["review:write"]} requiredRoles={["admin"]} combine="OR">
+              <ReviewPage />
+            </PermissionRoute>
+          }
+        />
+
+        <Route path="/messages" element={<MessagesPage />} />
+
+        {/* 控制台 */}
+        <Route path="/control" element={<ControlPage />} />
+
+        {/* 规则、管理组、工单 */}
+        <Route path="/rules" element={<RulesPage />} />
+        <Route path="/staff" element={<StaffPage />} />
+        <Route path="/tickets" element={<TicketsPage />} />
+
+        {/* 详情与重定向 */}
+        <Route path="/torrent/:id" element={<TorrentDetailPage />} />
+        <Route path="/torrent" element={<Navigate to="/torrents" replace />} />
       </Route>
 
-      <Route
-        path="/torrents"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <TorrentsPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      <Route
-        path="/forum"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <ForumPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      <Route
-        path="/subtitles"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <SubtitlesPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      <Route
-        path="/ranking"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <RankingPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      {/* 新增：影片浏览路由，登录态保护 + 统一布局 */}
-      <Route
-        path="/films"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <FilmsPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-      {/* 影片详情路由 */}
-      <Route
-        path="/film/:id"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <FilmDetailRoute />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      {/* 新增：片单浏览路由，登录态保护 + 统一布局 */}
-      <Route
-        path="/playlists"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <PlaylistsPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      {/* 片单详情路由 */}
-      <Route
-        path="/playlist/:id"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <PlaylistDetailPageWrapper />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      {/* 新增：魔力值中心路由，登录态保护 + 统一布局 */}
-      <Route
-        path="/invite"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <InvitePage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      <Route
-        path="/bonus"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <BonusPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      <Route
-        path="/torrent-history"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <TorrentHistoryPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      {/* 求种专区路由：登录态保护 + 统一布局
-          说明：该页面用于发布和浏览求种需求，默认仅要求登录。
-          如需限制为特定角色或权限，可改为：
-          <PermissionRoute requiredPermissions={["page:requests"]}> ... </PermissionRoute>
-      */}
-      <Route
-        path="/requests"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <RequestsPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      <Route
-        path="/upload"
-        element={
-          // 示例：如需按权限控制上传页，替换为 PermissionRoute 并标注所需权限键
-          // <PermissionRoute requiredPermissions={["page:upload"]}>
-          //   <AppLayout>
-          //     <UploadTorrentPage />
-          //   </AppLayout>
-          // </PermissionRoute>
-          <AuthRoute>
-            <AppLayout>
-              <UploadTorrentPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      {/* 编辑中心路由：登录态保护 + 统一布局
-          说明：当前按登录态开放（AuthRoute）。如需仅对特定角色/权限开放，
-          可改用 PermissionRoute，并设置 requiredPermissions 或 requiredRoles：
-          <PermissionRoute requiredPermissions={["page:edit"]}>
-            <AppLayout>
-              <EditPage />
-            </AppLayout>
-          </PermissionRoute>
-      */}
-      <Route
-        path="/edit"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <EditPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      {/* 新增：消息中心路由，登录态保护 + 统一布局 */}
-      <Route
-        path="/review"
-        element={
-          <PermissionRoute requiredPermissions={["review:write"]} requiredRoles={["admin"]} combine="OR">
-            <AppLayout>
-              <ReviewPage />
-            </AppLayout>
-          </PermissionRoute>
-        }
-      />
-
-      <Route
-        path="/messages"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <MessagesPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      {/* 控制台路由：登录态保护 + 统一布局
-          说明：该页面承载账户设置与偏好管理，默认仅要求登录。
-          如需限制给特定角色/权限，可改为：
-          <PermissionRoute requiredPermissions={["page:control"]}> ... </PermissionRoute>
-      */}
-      <Route
-        path="/control"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <ControlPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      {/* 站点规则路由：登录态保护 + 统一布局
-          说明：该页面展示站点规则与说明，默认仅要求登录。
-          如需开放给未登录用户，可移除 AuthRoute 改为直接渲染。*/}
-      <Route
-        path="/rules"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <RulesPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      <Route
-        path="/staff"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <StaffPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      <Route
-        path="/tickets"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <TicketsPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      {/* 管理端系统设置页不在用户端路由中呈现，已移除 */}
-
-      <Route
-        path="/torrent-detail/:id"
-        element={
-          <AuthRoute>
-            <AppLayout>
-              <TorrentDetailPage />
-            </AppLayout>
-          </AuthRoute>
-        }
-      />
-
-      <Route path="/torrent-detail" element={<Navigate to="/torrents" replace />} />
-
-
-
+      {/* 未登录或未匹配路径的重定向 */}
       <Route path="*" element={<NotFoundRedirect />} />
     </Routes>
   );

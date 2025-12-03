@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useLocation } from 'react-router-dom'
 
 export const SOURCE_KEYS = {
   PLAYLIST: 'source_playlist_id',
@@ -12,8 +12,14 @@ export type SourcePayload = {
 
 export function useSourceTracker(currentFilmId: string = '') {
   const [searchParams] = useSearchParams()
+  const location = useLocation()
 
-  const sourceFilmId = currentFilmId || searchParams.get(SOURCE_KEYS.FILM) || ''
+  const filmIdFromRoute = (() => {
+    const m = location.pathname.match(/^\/film\/([^\/?#]+)/)
+    return m ? decodeURIComponent(m[1]) : ''
+  })()
+
+  const sourceFilmId = currentFilmId || filmIdFromRoute || searchParams.get(SOURCE_KEYS.FILM) || ''
   const sourcePlaylistId = searchParams.get(SOURCE_KEYS.PLAYLIST) || ''
 
   const sourcePayload: SourcePayload = {

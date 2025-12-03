@@ -20,7 +20,7 @@ function formatBytes(bytes: number): string {
 
 export function Header() {
   const navigate = useNavigate();
-  const { access } = useAccess();
+  const { access, loading } = useAccess();
   const { logoSvg, logoUrl, title } = useSiteConfig();
   const { data: userSummary } = useUserSummary();
   // 控制用户菜单显示状态
@@ -48,7 +48,11 @@ export function Header() {
       document.removeEventListener('keydown', handleEscape);
     };
   }, [showUserMenu]);
-  const canReview = access?.permissions?.includes('review:write') || access?.roles?.includes('admin') || access?.roles?.includes('superadmin') || access?.username === 'admin';
+  const canReview = !loading && (
+    (access?.permissions?.includes('review:write') ||
+      access?.roles?.includes('admin') ||
+      access?.roles?.includes('superadmin'))
+  );
   return (
     <header className="sticky h-16 bg-[#0F171E] z-50 px-4 md:px-8 border-b border-gray-800" style={{ top: '-64px' }}>
       <div className="flex items-center justify-between h-full max-w-[1920px] mx-auto">
@@ -84,7 +88,6 @@ export function Header() {
             {canReview && (
               <NavLink to="/review" className="text-white hover:text-gray-300 transition-colors">审核</NavLink>
             )}
-            <NavLink to="/control" className="text-white hover:text-gray-300 transition-colors">控制台</NavLink>
             <NavLink to="/tickets" className="text-white hover:text-gray-300 transition-colors">工单</NavLink>
             <NavLink to="/requests" className="text-white hover:text-gray-300 transition-colors">求种</NavLink>
             <NavLink to="/rules" className="text-white hover:text-gray-300 transition-colors">规则</NavLink>

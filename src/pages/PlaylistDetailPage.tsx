@@ -107,7 +107,7 @@ export function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: Playlist
     // 来源片单 ID
     qs.set('source_playlist_id', String(playlistId));
     // 来源影片 ID（片单内被点击的影片）
-    qs.set('source_film_id', String(id));
+    // qs.set('source_film_id', String(id));
     // 路由跳转到影片详情页，保留来源追踪查询参数
     navigate(`/film/${id}?${qs.toString()}`, { replace: false });
   };

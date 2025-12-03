@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Upload, Download, CheckCircle, XCircle, Clock, ArrowUpDown, Search, Filter } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { Upload, Download, CheckCircle, XCircle, Clock, ArrowUpDown, Search, Filter, Loader2 } from 'lucide-react';
 
 interface Torrent {
   id: number;
@@ -137,11 +138,24 @@ const mockTorrents: Torrent[] = [
   },
 ];
 
+// 模拟 API 请求
+const fetchTorrents = async (): Promise<Torrent[]> => {
+  // 模拟网络延迟
+  await new Promise(resolve => setTimeout(resolve, 800));
+  return mockTorrents;
+};
+
 export function TorrentHistoryPage() {
   const [activeTab, setActiveTab] = useState<'uploaded' | 'seeding' | 'downloading' | 'completed' | 'incomplete'>('seeding');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredTorrents = mockTorrents.filter(torrent => {
+  // 使用 React Query 获取数据
+  const { data: torrents = [], isLoading, isFetching } = useQuery({
+    queryKey: ['torrentHistory'],
+    queryFn: fetchTorrents,
+  });
+
+  const filteredTorrents = torrents.filter(torrent => {
     const matchesTab = torrent.status === activeTab;
     const matchesSearch = torrent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       torrent.category.toLowerCase().includes(searchQuery.toLowerCase());
@@ -149,11 +163,11 @@ export function TorrentHistoryPage() {
   });
 
   const stats = {
-    uploaded: mockTorrents.filter(t => t.status === 'uploaded').length,
-    seeding: mockTorrents.filter(t => t.status === 'seeding').length,
-    downloading: mockTorrents.filter(t => t.status === 'downloading').length,
-    completed: mockTorrents.filter(t => t.status === 'completed').length,
-    incomplete: mockTorrents.filter(t => t.status === 'incomplete').length,
+    uploaded: torrents.filter(t => t.status === 'uploaded').length,
+    seeding: torrents.filter(t => t.status === 'seeding').length,
+    downloading: torrents.filter(t => t.status === 'downloading').length,
+    completed: torrents.filter(t => t.status === 'completed').length,
+    incomplete: torrents.filter(t => t.status === 'incomplete').length,
   };
 
   const getStatusColor = (status: string) => {
@@ -211,9 +225,17 @@ export function TorrentHistoryPage() {
     <div className="min-h-screen bg-[#0F171E] pt-6 pb-12 px-4 md:px-8">
       <div className="max-w-[1920px] mx-auto">
         {/* 页面标题 */}
-        <div className="mb-8">
-          <h1 className="text-3xl text-white mb-2">种子记录</h1>
-          <p className="text-neutral-400">查看您的种子发布、下载和做种历史记录</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl text-white mb-2">种子记录</h1>
+            <p className="text-neutral-400">查看您的种子发布、下载和做种历史记录</p>
+          </div>
+          {isFetching && !isLoading && (
+            <div className="flex items-center gap-2 text-neutral-400 text-sm bg-neutral-900/50 px-3 py-1.5 rounded-full border border-neutral-800">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              <span>更新中...</span>
+            </div>
+          )}
         </div>
 
         {/* 标签切换 */}
@@ -308,10 +330,15 @@ export function TorrentHistoryPage() {
         </div>
 
         {/* 种子列表 */}
-        <div className="bg-neutral-900/50 border border-neutral-800 rounded-xl overflow-hidden">
-          {filteredTorrents.length === 0 ? (
-            <div className="p-12 text-center text-neutral-500">
-              <Clock className="w-16 h-16 mx-auto mb-4 opacity-50" />
+        <div className="bg-neutral-900/50 border border-neutral-800 rounded-xl overflow-hidden min-h-[400px]">
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center h-[400px] text-neutral-500">
+              <Loader2 className="w-8 h-8 animate-spin mb-4 text-amber-500" />
+              <p>加载数据中...</p>
+            </div>
+          ) : filteredTorrents.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-[400px] text-neutral-500">
+              <Clock className="w-16 h-16 mb-4 opacity-50" />
               <p>暂无{getStatusText(activeTab)}记录</p>
             </div>
           ) : (

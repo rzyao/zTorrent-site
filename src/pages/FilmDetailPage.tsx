@@ -401,7 +401,8 @@ export default function FilmDetailPage({ filmId }: FilmDetailPageProps) {
                   <TabsContent value="torrents" className="bg-gray-900/50 rounded-lg border border-gray-800 p-6">
                     <h3 className="text-white mb-4">种子列表</h3>
                     {Array.isArray(torrentDetail.torrents) && torrentDetail.torrents.length > 0 ? (
-                      <TorrentTable torrents={torrentDetail.torrents} />
+                      // 传递影片 ID 给子组件，便于 TorrentTable 内部进行关联查询或交互
+                      <TorrentTable torrents={torrentDetail.torrents} filmId={effectiveFilmId} />
                     ) : (
                       <div className="text-gray-400 text-sm">暂无种子</div>
                     )}

@@ -8,4 +8,10 @@ import { setupAxiosInterceptors } from './api/axiosInterceptors';
 
 setupAxiosInterceptors();
 
-createRoot(document.getElementById("root")!).render(<App />);
+import { QueryProvider } from "./providers/QueryProvider";
+
+createRoot(document.getElementById("root")!).render(
+    <QueryProvider>
+        <App />
+    </QueryProvider>
+);

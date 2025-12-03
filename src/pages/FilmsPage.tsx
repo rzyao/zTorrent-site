@@ -1,114 +1,120 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Film, Star, Calendar, Users, Eye, Play, Search, Filter, BookmarkPlus, TrendingUp, Clock, Award, Loader2 } from 'lucide-react';
 import { FilmsService } from '@/api/services/FilmsService';
 import { CollectFilmDto } from '@/api/models/CollectFilmDto';
 import { PublicFilmDetailDto as PublicFilmDto } from '@/api/models/PublicFilmDetailDto';
 import { ListFilmsDto } from '@/api/models/ListFilmsDto';
 import { useNavigate } from 'react-router-dom';
+import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
 
 
 
 export function FilmsPage() {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'all' | 'trending' | 'latest' | 'classic'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'rating' | 'latest' | 'popular'>('rating');
   const [selectedGenre, setSelectedGenre] = useState<string>('all');
 
-  // 数据状态
-  const [movies, setMovies] = useState<PublicFilmDto[]>([]);
-  const [genres, setGenres] = useState<string[]>(['全部']);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [total, setTotal] = useState(0);
+  // 获取类型列表
+  const { data: genres = ['全部'] } = useQuery({
+    queryKey: ['filmGenres'],
+    queryFn: async () => {
+      try {
+        const response = await FilmsService.filmsControllerListGenres();
+        if (response.data?.genres) {
+          const uniqueGenres = Array.from(new Set(response.data.genres.filter(g => g && g.trim() !== '')));
+          return ['全部', ...uniqueGenres];
+        }
+        return ['全部', '科幻', '剧情', '动作', '犯罪', '冒险', '动画', '奇幻', '悬疑', '惊悚', '历史', '战争'];
+      } catch (err) {
+        console.warn('获取类型列表失败，使用默认列表');
+        return ['全部', '科幻', '剧情', '动作', '犯罪', '冒险', '动画', '奇幻', '悬疑', '惊悚', '历史', '战争'];
+      }
+    },
+    staleTime: 1000 * 60 * 60, // 类型列表很少变化，缓存 1 小时
+  });
 
   // 获取影片列表
-  const fetchMovies = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
+  const { data: filmsData, isLoading: loading, error: queryError, isFetching } = useQuery({
+    queryKey: ['films', { activeTab, selectedGenre, searchQuery, sortBy }],
+    queryFn: async () => {
       const requestBody: ListFilmsDto = {
         page: 1,
-        limit: 100, // 暂时获取较多数据，避免分页
+        limit: 100,
         tab: activeTab === 'all' ? undefined : activeTab as ListFilmsDto.tab,
         genre: selectedGenre === 'all' || selectedGenre === '全部' ? undefined : selectedGenre,
         search: searchQuery || undefined,
         sortBy: sortBy as ListFilmsDto.sortBy,
         year: undefined
       };
-
       const response = await FilmsService.filmsControllerListFilms(requestBody);
-
-      if (response.data?.items) {
-        setMovies(response.data.items as PublicFilmDto[]);
-        setTotal(response.data.total || 0);
-      }
-    } catch (err: any) {
-      console.error('获取影片列表失败:', err);
-      setError(err.message || '获取影片列表失败，请稍后重试');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 获取类型列表
-  const fetchGenres = async () => {
-    // 暂时使用静态数据，等待后端接口部署
-    setGenres(['全部', '科幻', '剧情', '动作', '犯罪', '冒险', '动画', '奇幻', '悬疑', '惊悚', '历史', '战争']);
-
-    try {
-      const response = await FilmsService.filmsControllerListGenres();
-      if (response.data?.genres) {
-        // 过滤掉空字符串和重复项
-        const uniqueGenres = Array.from(new Set(response.data.genres.filter(g => g && g.trim() !== '')));
-        setGenres(['全部', ...uniqueGenres]);
-      }
-    } catch (err) {
-      console.warn('获取类型列表失败，使用默认列表');
-      // 保持默认列表
-    }
-  };
-
-  // 初始化：获取类型列表
-  useEffect(() => {
-    fetchGenres();
-  }, []);
-
-  // 监听筛选条件变化，重新获取影片列表
-  useEffect(() => {
-    fetchMovies();
-  }, [activeTab, selectedGenre, searchQuery, sortBy]);
-
-  const handleCollectToggle = async (movieId: string) => {
-    try {
-      const movieIndex = movies.findIndex(m => m.id === movieId);
-      if (movieIndex === -1) return;
-
-      const movie = movies[movieIndex];
-      const newIsCollected = !movie.isCollected;
-
-      // 乐观更新
-      const newPublicFilmDtos = [...movies];
-      newPublicFilmDtos[movieIndex] = {
-        ...movie,
-        isCollected: newIsCollected,
-        collectionsCount: movie.collectionsCount + (newIsCollected ? 1 : -1)
+      return {
+        items: (response.data?.items || []) as PublicFilmDto[],
+        total: response.data?.total || 0
       };
-      setMovies(newPublicFilmDtos);
+    },
+    // 保持之前的数据直到新数据加载完成，避免闪烁
+    placeholderData: (previousData) => previousData,
+  });
 
-      // 调用 API
+  const movies = filmsData?.items || [];
+  const error = queryError ? (queryError as Error).message || '获取影片列表失败' : null;
+
+  // 收藏操作 Mutation
+  const collectMutation = useMutation({
+    mutationFn: async ({ movieId, newIsCollected }: { movieId: string, newIsCollected: boolean }) => {
       await FilmsService.filmsControllerCollectMovie({
         filmId: movieId,
         action: newIsCollected ? CollectFilmDto.action.COLLECT : CollectFilmDto.action.UNCOLLECT
       });
+    },
+    onMutate: async ({ movieId, newIsCollected }) => {
+      // 取消正在进行的查询
+      await queryClient.cancelQueries({ queryKey: ['films'] });
 
-    } catch (err) {
+      // 获取之前的快照
+      const previousFilmsData = queryClient.getQueryData(['films', { activeTab, selectedGenre, searchQuery, sortBy }]);
+
+      // 乐观更新
+      queryClient.setQueryData(['films', { activeTab, selectedGenre, searchQuery, sortBy }], (old: any) => {
+        if (!old?.items) return old;
+        return {
+          ...old,
+          items: old.items.map((movie: PublicFilmDto) => {
+            if (movie.id === movieId) {
+              return {
+                ...movie,
+                isCollected: newIsCollected,
+                collectionsCount: movie.collectionsCount + (newIsCollected ? 1 : -1)
+              };
+            }
+            return movie;
+          })
+        };
+      });
+
+      return { previousFilmsData };
+    },
+    onError: (err, newTodo, context: any) => {
+      // 出错时回滚
+      if (context?.previousFilmsData) {
+        queryClient.setQueryData(['films', { activeTab, selectedGenre, searchQuery, sortBy }], context.previousFilmsData);
+      }
       console.error('收藏操作失败:', err);
-      // 回滚状态
-      fetchMovies();
-      // 这里可以添加一个 toast 提示
+    },
+    onSettled: () => {
+      // 完成后重新获取（可选，如果乐观更新足够准确可以不加）
+      // queryClient.invalidateQueries({ queryKey: ['films'] });
     }
+  });
+
+  const handleCollectToggle = (movieId: string) => {
+    const movie = movies.find(m => m.id === movieId);
+    if (!movie) return;
+    collectMutation.mutate({ movieId, newIsCollected: !movie.isCollected });
   };
 
   const handleMovieClick = async (movie: PublicFilmDto) => {
@@ -126,14 +132,22 @@ export function FilmsPage() {
     <div className="min-h-screen bg-[#0F171E]">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
         {/* 页面标题 */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
-              <Film className="w-6 h-6 text-white" />
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                <Film className="w-6 h-6 text-white" />
+              </div>
+              <h1 className="text-white text-3xl">影片浏览</h1>
             </div>
-            <h1 className="text-white text-3xl">影片浏览</h1>
+            <p className="text-neutral-400 ml-13">发现和收藏优质影片资源</p>
           </div>
-          <p className="text-neutral-400 ml-13">发现和收藏优质影片资源</p>
+          {isFetching && !loading && (
+            <div className="flex items-center gap-2 text-neutral-400 text-sm bg-neutral-900/50 px-3 py-1.5 rounded-full border border-neutral-800">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              <span>更新中...</span>
+            </div>
+          )}
         </div>
 
         {/* 标签页切换 */}
@@ -247,7 +261,7 @@ export function FilmsPage() {
             <h3 className="text-white text-xl mb-2">加载失败</h3>
             <p className="text-neutral-500 mb-6">{error}</p>
             <button
-              onClick={fetchMovies}
+              onClick={() => queryClient.invalidateQueries({ queryKey: ['films'] })}
               className="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl transition-colors"
             >
               重试
