@@ -100,6 +100,7 @@ export type { FilmTorrentItemDto } from './models/FilmTorrentItemDto';
 export type { ForumCategoryIdDto } from './models/ForumCategoryIdDto';
 export type { ForumThreadIdDto } from './models/ForumThreadIdDto';
 export type { GenresDto } from './models/GenresDto';
+export type { GetDefaultFilmCategoryIdsDto } from './models/GetDefaultFilmCategoryIdsDto';
 export type { GetDefaultTorrentCategoryKeysDto } from './models/GetDefaultTorrentCategoryKeysDto';
 export type { GetPlaylistDto } from './models/GetPlaylistDto';
 export type { GetTorrentDto } from './models/GetTorrentDto';

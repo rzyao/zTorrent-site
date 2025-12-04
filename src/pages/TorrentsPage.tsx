@@ -22,7 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { TorrentsService, CategoriesService } from '@/api';
+import { TorrentsService, UsersService } from '@/api';
+import { getProfile } from '@/api/custom/auth';
 import { useTorrentDownload } from '@/features/download/useTorrentDownload';
 import { Input } from '@/components/ui/input';
 import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
@@ -61,7 +62,7 @@ const sortOptions = [
 // 数据由接口返回
 
 export default function TorrentsPage() {
-  const { getCategoryLabel } = useDictionaryLabels();
+  const { getCategoryLabel, refreshDictionaries } = useDictionaryLabels();
   const { downloadByTorrentId } = useTorrentDownload({
     onInfo: (m) => console.info(m),
     onError: (m) => alert(m),
@@ -134,11 +135,16 @@ export default function TorrentsPage() {
     let isCancelled = false;
     const loadCategories = async () => {
       try {
-        const resp = await CategoriesService.categoriesControllerListUserCategories();
-        const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
-        const data = body?.data ?? body;
-        const items = Array.isArray(data) ? data : [];
-        const mapped = items.map((c: any) => ({ label: String(c?.label ?? ''), key: String(c?.key ?? '') })).filter((c: any) => c.label);
+        const prof = await getProfile();
+        const id = String(prof?.user?.id ?? prof?.user?._id ?? prof?.sub ?? '');
+        if (!id) return;
+        const resp = await UsersService.usersPreferencesControllerGetDefaultTorrentCategoryKeys({ id });
+        const keys = Array.isArray(resp?.data) ? resp.data : [];
+        let mapped = keys.map((key: string) => ({ key, label: getCategoryLabel(key) || key }));
+        if (mapped.some((m) => !m.label || m.label === m.key)) {
+          await refreshDictionaries();
+          mapped = keys.map((key: string) => ({ key, label: getCategoryLabel(key) || key }));
+        }
         if (!isCancelled) {
           setCategories([{ label: '全部' }, ...mapped]);
         }

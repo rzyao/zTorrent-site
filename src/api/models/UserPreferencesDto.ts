@@ -12,9 +12,9 @@ export type UserPreferencesDto = {
      */
     defaultTorrentCategories: Array<string>;
     /**
-     * 默认展示的影片类型 name 列表
+     * 默认展示的影片类型 ID 列表
      */
-    defaultFilmGenres: Array<string>;
+    defaultFilmCategories: Array<string>;
 };
 export namespace UserPreferencesDto {
     export enum language {

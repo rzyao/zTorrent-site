@@ -8,7 +8,7 @@ export type UpdateUserPreferencesDto = {
     defaultView?: UpdateUserPreferencesDto.defaultView;
     showAdult?: boolean;
     defaultTorrentCategories?: Array<string>;
-    defaultFilmGenres?: Array<string>;
+    defaultFilmCategories?: Array<string>;
 };
 export namespace UpdateUserPreferencesDto {
     export enum language {

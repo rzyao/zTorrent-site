@@ -1,9 +1,7 @@
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Palette, Globe, Monitor } from 'lucide-react';
-import { MultiSelectPopover } from '../common/MultiSelectPopover';
 import type { PreferencesData, KeyLabelOption } from '../../types';
 
 interface PreferencesTabProps {
@@ -14,7 +12,7 @@ interface PreferencesTabProps {
   torrentCategoryOptions: KeyLabelOption[];
   selectedTorrentCategories: string[];
   setSelectedTorrentCategories: (fn: (prev: string[]) => string[]) => void;
-  filmGenreOptions: string[];
+  filmGenreOptions: KeyLabelOption[];
   selectedFilmGenres: string[];
   setSelectedFilmGenres: (fn: (prev: string[]) => string[]) => void;
 }
@@ -153,27 +151,33 @@ export function PreferencesTab(props: PreferencesTabProps) {
         <label className="text-neutral-300 text-sm">影片分类默认展示（多选）</label>
         <div className="flex items-center justify-between p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
           <div className="flex-1">
-            <div className="text-neutral-400 text-xs mb-2">已选 {selectedFilmGenres.length} 项</div>
+            <div className="text-neutral-400 text-xs mb-2">共 {filmGenreOptions.length} 项，可点击选择</div>
             <div className="flex flex-wrap gap-2">
-              {selectedFilmGenres.map((g) => (
-                <Badge key={g} className="bg-amber-500/20 text-amber-400 border border-amber-500/30">{g}</Badge>
-              ))}
-              {selectedFilmGenres.length === 0 && <span className="text-neutral-500 text-xs">未选择</span>}
+              {filmGenreOptions.map((opt) => {
+                const checked = selectedFilmGenres.includes(opt.key);
+                return (
+                  <button
+                    key={opt.key}
+                    className={`px-2 py-1 rounded-md border text-xs transition-colors ${checked
+                      ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                      : 'bg-neutral-800/50 text-neutral-300 border-neutral-700 hover:bg-neutral-700/60'
+                      }`}
+                    onClick={() => {
+                      setSelectedFilmGenres((prev) => {
+                        if (checked) return prev.filter((k) => k !== opt.key);
+                        if (!prev.includes(opt.key)) return [...prev, opt.key];
+                        return prev;
+                      });
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+              {filmGenreOptions.length === 0 && <span className="text-neutral-500 text-xs">暂无可选分类</span>}
             </div>
           </div>
-          <MultiSelectPopover
-            label="选择分类"
-            options={filmGenreOptions}
-            isChecked={(g) => selectedFilmGenres.includes(String(g))}
-            onToggle={(g, checked) => {
-              setSelectedFilmGenres((prev) => {
-                const value = String(g);
-                if (checked && !prev.includes(value)) return [...prev, value];
-                if (!checked) return prev.filter((x) => x !== value);
-                return prev;
-              });
-            }}
-          />
+          <div className="hidden" />
         </div>
       </div>
     </div>

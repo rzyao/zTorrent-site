@@ -7,6 +7,8 @@ import { PublicFilmDetailDto as PublicFilmDto } from '@/api/models/PublicFilmDet
 import { ListFilmsDto } from '@/api/models/ListFilmsDto';
 import { useNavigate } from 'react-router-dom';
 import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
+import { useDictionaryLabels } from '@/hooks/useDictionary';
+import { getProfile } from '@/api/custom/auth';
 
 
 
@@ -17,24 +19,33 @@ export function FilmsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'rating' | 'latest' | 'popular'>('rating');
   const [selectedGenre, setSelectedGenre] = useState<string>('all');
+  const { getCategoryLabel, refreshDictionaries } = useDictionaryLabels();
 
-  // 获取类型列表
-  const { data: genres = ['全部'] } = useQuery({
-    queryKey: ['filmGenres'],
+  const { data: genres = [{ key: 'all', label: '全部' }] } = useQuery({
+    queryKey: ['filmGenresDefault'],
     queryFn: async () => {
-      try {
-        const response = await FilmsService.filmsControllerListGenres();
-        if (response.data?.genres) {
-          const uniqueGenres = Array.from(new Set(response.data.genres.filter(g => g && g.trim() !== '')));
-          return ['全部', ...uniqueGenres];
-        }
-        return ['全部', '科幻', '剧情', '动作', '犯罪', '冒险', '动画', '奇幻', '悬疑', '惊悚', '历史', '战争'];
-      } catch (err) {
-        console.warn('获取类型列表失败，使用默认列表');
-        return ['全部', '科幻', '剧情', '动作', '犯罪', '冒险', '动画', '奇幻', '悬疑', '惊悚', '历史', '战争'];
+      const prof = await getProfile();
+      const id = String(prof?.user?.id ?? prof?.user?._id ?? prof?.sub ?? '');
+      if (!id) return [{ key: 'all', label: '全部' }];
+      const { OpenAPI } = await import('@/api/core/OpenAPI');
+      const { request: __request } = await import('@/api/core/request');
+      const resp: any = await __request(OpenAPI, {
+        method: 'POST',
+        url: '/users/preferences/get-default-film-category-ids',
+        body: { id },
+        mediaType: 'application/json',
+      });
+      const body = resp?.code !== undefined ? resp : resp?.data;
+      const data = body?.data ?? body;
+      const keys: string[] = Array.isArray(data) ? data.map((x: any) => String(x)) : [];
+      let mapped = keys.map((key) => ({ key, label: getCategoryLabel(key) || key }));
+      if (mapped.some((m) => !m.label || m.label === m.key)) {
+        await refreshDictionaries();
+        mapped = keys.map((key) => ({ key, label: getCategoryLabel(key) || key }));
       }
+      return [{ key: 'all', label: '全部' }, ...mapped];
     },
-    staleTime: 1000 * 60 * 60, // 类型列表很少变化，缓存 1 小时
+    staleTime: 1000 * 60 * 60,
   });
 
   // 获取影片列表
@@ -45,7 +56,7 @@ export function FilmsPage() {
         page: 1,
         limit: 100,
         tab: activeTab === 'all' ? undefined : activeTab as ListFilmsDto.tab,
-        genre: selectedGenre === 'all' || selectedGenre === '全部' ? undefined : selectedGenre,
+        genre: selectedGenre === 'all' ? undefined : selectedGenre,
         search: searchQuery || undefined,
         sortBy: sortBy as ListFilmsDto.sortBy,
         year: undefined
@@ -232,14 +243,14 @@ export function FilmsPage() {
         <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
           {genres.map((genre) => (
             <button
-              key={genre}
-              onClick={() => setSelectedGenre(genre)}
-              className={`px-4 py-2 rounded-lg transition-all whitespace-nowrap ${selectedGenre === genre || (selectedGenre === 'all' && genre === '全部')
+              key={genre.key}
+              onClick={() => setSelectedGenre(genre.key)}
+              className={`px-4 py-2 rounded-lg transition-all whitespace-nowrap ${selectedGenre === genre.key
                 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                 : 'bg-neutral-900 text-neutral-400 border border-neutral-700 hover:bg-neutral-800 hover:text-white'
                 }`}
             >
-              {genre}
+              {genre.label}
             </button>
           ))}
         </div>

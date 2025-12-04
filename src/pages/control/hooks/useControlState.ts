@@ -54,8 +54,9 @@ export function useControlState() {
   const [selectedTorrentCategories, setSelectedTorrentCategories] = useState<string[]>([]);
 
   // 影片分类（Genre，多选）
-  const [filmGenreOptions, setFilmGenreOptions] = useState<string[]>([]);
+  const [filmGenreOptions, setFilmGenreOptions] = useState<KeyLabelOption[]>([]);
   const [selectedFilmGenres, setSelectedFilmGenres] = useState<string[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const [baselineAdultMode, setBaselineAdultMode] = useState<boolean>(false);
   const [baselinePreferences, setBaselinePreferences] = useState<PreferencesData>({ language: 'zh-CN', theme: 'dark', defaultView: 'grid' });
@@ -90,6 +91,7 @@ export function useControlState() {
   // 选项数据加载与回退（字典优先、接口回退、静态占位）
   const { getAllCategories, refreshDictionaries } = useDictionaryLabels();
   useEffect(() => {
+    if (activeTab !== 'preferences') return;
     const loadCategories = async () => {
       try {
         const resp = await UsersService.usersPreferencesControllerListGeneralTorrentRootCategories();
@@ -120,37 +122,74 @@ export function useControlState() {
     };
     const loadGenres = async () => {
       try {
-        const resp = await FilmsService.filmsControllerListGenres();
-        const genres = resp?.data?.genres || [];
-        const cleaned = Array.from(new Set(genres.filter((g: any) => g && String(g).trim() !== '')));
-        if (cleaned.length > 0) {
-          setFilmGenreOptions(cleaned);
-          return;
+        const resp = await (await import('@/api/core/request')).request((await import('@/api/core/OpenAPI')).OpenAPI, {
+          method: 'POST',
+          url: '/users/preferences/list-general-film-root-categories',
+        });
+        const body: any = resp?.code !== undefined ? resp : (resp as any)?.data;
+        const data = body?.data ?? body;
+        const items: any[] = Array.isArray(data) ? data : [];
+        const mapped: KeyLabelOption[] = items
+          .map((c: any) => ({ key: String(c?.id ?? c?.key ?? ''), label: String(c?.label ?? c?.name ?? '') }))
+          .filter((c) => c.key && c.label);
+        if (mapped.length > 0) {
+          setFilmGenreOptions(mapped);
+        } else {
+          setFilmGenreOptions([]);
         }
-      } catch {}
-      setFilmGenreOptions(['科幻', '剧情', '动作', '犯罪', '冒险', '动画', '奇幻', '悬疑', '惊悚', '历史', '战争']);
+      } catch {
+        setFilmGenreOptions([]);
+      }
     };
     loadCategories();
     loadGenres();
-  }, []);
+  }, [activeTab]);
 
   useEffect(() => {
-    const loadDefaultCategoryKeys = async () => {
+    if (activeTab !== 'preferences' || currentUserId) return;
+    (async () => {
       try {
         const prof = await getProfile();
         const id = String(prof?.user?.id ?? prof?.user?._id ?? prof?.sub ?? '');
-        if (!id) return;
-        const resp = await UsersService.usersPreferencesControllerGetDefaultTorrentCategoryKeys({ id });
+        if (id) setCurrentUserId(id);
+      } catch {}
+    })();
+  }, [activeTab, currentUserId]);
+
+  useEffect(() => {
+    if (activeTab !== 'preferences' || !currentUserId) return;
+    (async () => {
+      try {
+        const resp = await UsersService.usersPreferencesControllerGetDefaultTorrentCategoryKeys({ id: currentUserId });
         const keys = Array.isArray(resp?.data) ? resp.data : [];
         setSelectedTorrentCategories(keys);
         setBaselineTorrentCategories(keys);
       } catch {}
-    };
-    loadDefaultCategoryKeys();
-  }, []);
+    })();
+  }, [activeTab, currentUserId]);
+
+  useEffect(() => {
+    if (activeTab !== 'preferences' || !currentUserId) return;
+    (async () => {
+      try {
+        const resp = await (await import('@/api/core/request')).request((await import('@/api/core/OpenAPI')).OpenAPI, {
+          method: 'POST',
+          url: '/users/preferences/get-default-film-category-ids',
+          body: { id: currentUserId },
+          mediaType: 'application/json',
+        });
+        const body: any = resp?.code !== undefined ? resp : (resp as any)?.data;
+        const data = body?.data ?? body;
+        const ids: string[] = Array.isArray(data) ? data.map((x: any) => String(x)) : [];
+        setSelectedFilmGenres(ids);
+        setBaselineFilmGenres(ids);
+      } catch {}
+    })();
+  }, [activeTab, currentUserId]);
 
   // 初始化服务端偏好
   useEffect(() => {
+    if (activeTab !== 'preferences') return;
     const loadPreferences = async () => {
       try {
         const resp = await UsersService.usersPreferencesControllerGet();
@@ -163,7 +202,6 @@ export function useControlState() {
           });
           setAdultMode(Boolean(data.showAdult));
           setSelectedTorrentCategories(Array.isArray(data.defaultTorrentCategories) ? data.defaultTorrentCategories : []);
-          setSelectedFilmGenres(Array.isArray(data.defaultFilmGenres) ? data.defaultFilmGenres : []);
           setBaselinePreferences({
             language: (data.language as PreferencesData['language']) ?? 'zh-CN',
             theme: (data.theme as PreferencesData['theme']) ?? 'dark',
@@ -171,18 +209,17 @@ export function useControlState() {
           });
           setBaselineAdultMode(Boolean(data.showAdult));
           setBaselineTorrentCategories(Array.isArray(data.defaultTorrentCategories) ? data.defaultTorrentCategories : []);
-          setBaselineFilmGenres(Array.isArray(data.defaultFilmGenres) ? data.defaultFilmGenres : []);
         }
       } catch {}
     };
     loadPreferences();
-  }, []);
+  }, [activeTab]);
 
   // 保存偏好
   const handleSave = async () => {
     try {
       const validCategories = selectedTorrentCategories.filter((k) => torrentCategoryOptions.some((c) => c.key === k));
-      const validGenres = selectedFilmGenres.filter((g) => filmGenreOptions.includes(g));
+      const validGenres = selectedFilmGenres.filter((g) => filmGenreOptions.some((opt) => opt.key === g));
       const body = {
         showAdult: adultMode,
         defaultTorrentCategories: validCategories,
@@ -201,7 +238,7 @@ export function useControlState() {
         });
         setAdultMode(Boolean(data.showAdult));
         setSelectedTorrentCategories(Array.isArray(data.defaultTorrentCategories) ? data.defaultTorrentCategories : []);
-        setSelectedFilmGenres(Array.isArray(data.defaultFilmGenres) ? data.defaultFilmGenres : []);
+        setSelectedFilmGenres(validGenres);
         setBaselinePreferences({
           language: (data.language as PreferencesData['language']) ?? preferences.language,
           theme: (data.theme as PreferencesData['theme']) ?? preferences.theme,
@@ -209,7 +246,7 @@ export function useControlState() {
         });
         setBaselineAdultMode(Boolean(data.showAdult));
         setBaselineTorrentCategories(Array.isArray(data.defaultTorrentCategories) ? data.defaultTorrentCategories : []);
-        setBaselineFilmGenres(Array.isArray(data.defaultFilmGenres) ? data.defaultFilmGenres : []);
+        setBaselineFilmGenres(validGenres);
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 3000);
       }
