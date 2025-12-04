@@ -3,11 +3,18 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AssignPermissionsDto } from '../models/AssignPermissionsDto';
+import type { AssignPermissionsResponseDto } from '../models/AssignPermissionsResponseDto';
+import type { CheckPermissionsRequestDto } from '../models/CheckPermissionsRequestDto';
+import type { CheckPermissionsResponseDto } from '../models/CheckPermissionsResponseDto';
 import type { CreatePermissionDto } from '../models/CreatePermissionDto';
+import type { DeletePermissionResponseDto } from '../models/DeletePermissionResponseDto';
 import type { ListPermissionsDto } from '../models/ListPermissionsDto';
+import type { ListPermissionsResponseDto } from '../models/ListPermissionsResponseDto';
 import type { PermissionDto } from '../models/PermissionDto';
 import type { PermissionIdDto } from '../models/PermissionIdDto';
-import type { UpdatePermissionDto } from '../models/UpdatePermissionDto';
+import type { PermissionTreeNodeDto } from '../models/PermissionTreeNodeDto';
+import type { PermissionTreeRequestDto } from '../models/PermissionTreeRequestDto';
+import type { UpdatePermissionRequestDto } from '../models/UpdatePermissionRequestDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -52,12 +59,7 @@ export class PermissionsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<PermissionDto>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
+        data?: ListPermissionsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -140,10 +142,7 @@ export class PermissionsService {
      * @throws ApiError
      */
     public static permissionsControllerUpdate(
-        requestBody: {
-            id?: string;
-            data?: UpdatePermissionDto;
-        },
+        requestBody: UpdatePermissionRequestDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -176,9 +175,7 @@ export class PermissionsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            success?: boolean;
-        };
+        data?: DeletePermissionResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -207,9 +204,7 @@ export class PermissionsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            ok?: boolean;
-        };
+        data?: AssignPermissionsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -235,20 +230,11 @@ export class PermissionsService {
      * @throws ApiError
      */
     public static permissionsControllerTree(
-        requestBody: {
-            scope?: 'web' | 'admin' | null;
-            type?: 'api' | 'page' | 'button' | null;
-        },
+        requestBody: PermissionTreeRequestDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Array<{
-            key?: string;
-            name?: string;
-            type?: string;
-            scope?: string;
-            children?: any[];
-        }>;
+        data?: Array<PermissionTreeNodeDto>;
         path?: string;
         timestamp?: string;
     }> {
@@ -275,7 +261,7 @@ export class PermissionsService {
     public static permissionsControllerTreeOfUser(): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Array<Record<string, any>>;
+        data?: Array<PermissionTreeNodeDto>;
         path?: string;
         timestamp?: string;
     }> {
@@ -298,16 +284,11 @@ export class PermissionsService {
      * @throws ApiError
      */
     public static permissionsControllerCheck(
-        requestBody: {
-            keys: Array<string>;
-        },
+        requestBody: CheckPermissionsRequestDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            owned?: Array<string>;
-            missing?: Array<string>;
-        };
+        data?: CheckPermissionsResponseDto;
         path?: string;
         timestamp?: string;
     }> {

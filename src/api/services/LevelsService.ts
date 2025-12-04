@@ -3,8 +3,16 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CreateLevelDto } from '../models/CreateLevelDto';
+import type { CreateLevelResponseDto } from '../models/CreateLevelResponseDto';
+import type { EmptyObjectDto } from '../models/EmptyObjectDto';
 import type { LevelIdDto } from '../models/LevelIdDto';
-import type { UpdateLevelDto } from '../models/UpdateLevelDto';
+import type { LevelPermissionDto } from '../models/LevelPermissionDto';
+import type { ListLevelPermissionsRequestDto } from '../models/ListLevelPermissionsRequestDto';
+import type { ListLevelsRequestDto } from '../models/ListLevelsRequestDto';
+import type { ListLevelsResponseDto } from '../models/ListLevelsResponseDto';
+import type { SetLevelPermissionsRequestDto } from '../models/SetLevelPermissionsRequestDto';
+import type { SuccessDto } from '../models/SuccessDto';
+import type { UpdateLevelRequestDto } from '../models/UpdateLevelRequestDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -20,16 +28,7 @@ export class LevelsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            id?: string;
-            key?: string;
-            label?: string;
-            rank?: number;
-            description?: string | null;
-            isActive?: boolean;
-            createdAt?: string;
-            updatedAt?: string;
-        };
+        data?: CreateLevelResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -54,28 +53,11 @@ export class LevelsService {
      * @throws ApiError
      */
     public static levelsControllerList(
-        requestBody: {
-            key?: string | null;
-            label?: string | null;
-            page?: number;
-            limit?: number;
-        },
+        requestBody: ListLevelsRequestDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<{
-                id?: string;
-                key?: string;
-                label?: string;
-                rank?: number;
-                description?: string | null;
-                isActive?: boolean;
-                createdAt?: string;
-                updatedAt?: string;
-            }>;
-            total?: number;
-        };
+        data?: ListLevelsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -104,7 +86,7 @@ export class LevelsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -129,14 +111,11 @@ export class LevelsService {
      * @throws ApiError
      */
     public static levelsControllerUpdate(
-        requestBody: {
-            id?: string;
-            data?: UpdateLevelDto;
-        },
+        requestBody: UpdateLevelRequestDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -165,9 +144,7 @@ export class LevelsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            success?: boolean;
-        };
+        data?: SuccessDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -192,16 +169,11 @@ export class LevelsService {
      * @throws ApiError
      */
     public static levelsControllerSetPermissions(
-        requestBody: {
-            levelKey: string;
-            permissionKeys?: Array<string>;
-        },
+        requestBody: SetLevelPermissionsRequestDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            success?: boolean;
-        };
+        data?: SuccessDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -226,20 +198,11 @@ export class LevelsService {
      * @throws ApiError
      */
     public static levelsControllerListPermissions(
-        requestBody: {
-            levelKey: string;
-        },
+        requestBody: ListLevelPermissionsRequestDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Array<{
-            id?: string;
-            key?: string;
-            name?: string;
-            type?: string;
-            scope?: string;
-            description?: string | null;
-        }>;
+        data?: Array<LevelPermissionDto>;
         path?: string;
         timestamp?: string;
     }> {

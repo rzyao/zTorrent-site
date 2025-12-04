@@ -4,8 +4,12 @@
 /* eslint-disable */
 import type { ApplyPunishmentDto } from '../models/ApplyPunishmentDto';
 import type { ListPunishmentRecordsDto } from '../models/ListPunishmentRecordsDto';
+import type { ListPunishmentRecordsResponseDto } from '../models/ListPunishmentRecordsResponseDto';
+import type { QueryUserActivePunishmentsResponseDto } from '../models/QueryUserActivePunishmentsResponseDto';
+import type { QueryUserAllPunishmentsResponseDto } from '../models/QueryUserAllPunishmentsResponseDto';
 import type { QueryUserPunishmentsDto } from '../models/QueryUserPunishmentsDto';
 import type { RevokePunishmentDto } from '../models/RevokePunishmentDto';
+import type { RevokePunishmentResponseDto } from '../models/RevokePunishmentResponseDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -50,10 +54,7 @@ export class PunishmentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        /**
-         * 返回撤销后归档到历史表的记录
-         */
-        data?: any;
+        data?: RevokePunishmentResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -78,28 +79,7 @@ export class PunishmentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        /**
-         * 返回生效中的处罚记录（未撤销且未过期）
-         */
-        data?: Array<{
-            id?: string;
-            userId?: string;
-            type?: string;
-            typeLabel?: string;
-            reason?: string;
-            reasonLabel?: string;
-            detailReason?: string | null;
-            durationDays?: number;
-            startsAt?: string;
-            expiresAt?: string;
-            handlerId?: string;
-            handlerUsername?: string | null;
-            revoked?: boolean;
-            revokeReason?: string | null;
-            revokeReasonLabel?: string | null;
-            revokeDetailReason?: string | null;
-            createdAt?: string;
-        }>;
+        data?: QueryUserActivePunishmentsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -128,10 +108,7 @@ export class PunishmentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        /**
-         * 返回当前生效与历史归档的处罚记录
-         */
-        data?: any;
+        data?: QueryUserAllPunishmentsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -153,35 +130,7 @@ export class PunishmentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        /**
-         * 返回分页后的所有处罚记录
-         */
-        data?: {
-            items?: Array<{
-                id?: string;
-                userId?: string;
-                userUsername?: string | null;
-                type?: string;
-                typeLabel?: string;
-                reason?: string;
-                reasonLabel?: string;
-                detailReason?: string | null;
-                durationDays?: number;
-                startsAt?: string;
-                expiresAt?: string;
-                handlerId?: string;
-                handlerUsername?: string | null;
-                revoked?: boolean;
-                revokeReason?: string | null;
-                revokeReasonLabel?: string | null;
-                revokeDetailReason?: string | null;
-                createdAt?: string;
-                recordSource?: 'active' | 'history';
-            }>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
+        data?: ListPunishmentRecordsResponseDto;
         path?: string;
         timestamp?: string;
     }> {

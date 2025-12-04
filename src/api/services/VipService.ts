@@ -2,6 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { VipMonthlyInvitesResponseDto } from '../models/VipMonthlyInvitesResponseDto';
+import type { VipStatusResponseDto } from '../models/VipStatusResponseDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -14,12 +16,7 @@ export class VipService {
     public static vipControllerStatus(): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            levelKey?: string;
-            label?: string;
-            expiresAt?: string;
-            active?: boolean;
-        };
+        data?: VipStatusResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -43,12 +40,7 @@ export class VipService {
     public static vipControllerMonthlyInvites(): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            month?: string;
-            granted?: number;
-            remaining?: number;
-            lastGrantedAt?: string;
-        };
+        data?: VipMonthlyInvitesResponseDto;
         path?: string;
         timestamp?: string;
     }> {

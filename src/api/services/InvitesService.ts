@@ -3,17 +3,31 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ExportInvitesDto } from '../models/ExportInvitesDto';
+import type { ExportInvitesResponseDto } from '../models/ExportInvitesResponseDto';
 import type { GrantQuotaDto } from '../models/GrantQuotaDto';
+import type { GrantQuotaResponseDto } from '../models/GrantQuotaResponseDto';
 import type { ListInviteCodesDto } from '../models/ListInviteCodesDto';
+import type { ListInviteCodesResponseDto } from '../models/ListInviteCodesResponseDto';
 import type { ListInviteQuotaDto } from '../models/ListInviteQuotaDto';
+import type { ListInviteQuotaResponseDto } from '../models/ListInviteQuotaResponseDto';
 import type { ListInviteRecordsDto } from '../models/ListInviteRecordsDto';
+import type { ListInviteRecordsResponseDto } from '../models/ListInviteRecordsResponseDto';
 import type { ListInvitesDto } from '../models/ListInvitesDto';
+import type { ListInvitesResponseDto } from '../models/ListInvitesResponseDto';
 import type { ListMyInvitedUsersDto } from '../models/ListMyInvitedUsersDto';
+import type { ListMyInvitedUsersResponseDto } from '../models/ListMyInvitedUsersResponseDto';
 import type { OverviewInvitesDto } from '../models/OverviewInvitesDto';
+import type { OverviewInvitesResponseDto } from '../models/OverviewInvitesResponseDto';
 import type { ResendInviteDto } from '../models/ResendInviteDto';
+import type { ResendInviteResponseDto } from '../models/ResendInviteResponseDto';
 import type { RevokeInviteDto } from '../models/RevokeInviteDto';
+import type { RevokeInviteResponseDto } from '../models/RevokeInviteResponseDto';
+import type { RewardRulesResponseDto } from '../models/RewardRulesResponseDto';
 import type { SendInviteDto } from '../models/SendInviteDto';
+import type { SendOfficialInviteResponseDto } from '../models/SendOfficialInviteResponseDto';
+import type { SendPrivateInviteResponseDto } from '../models/SendPrivateInviteResponseDto';
 import type { StatisticsDto } from '../models/StatisticsDto';
+import type { StatisticsResponseDto } from '../models/StatisticsResponseDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -29,12 +43,7 @@ export class InvitesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: any[];
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
+        data?: ListInvitesResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -63,12 +72,7 @@ export class InvitesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: any[];
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
+        data?: ListInviteQuotaResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -97,12 +101,7 @@ export class InvitesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: any[];
-            page?: number;
-            limit?: number;
-            total?: number;
-        };
+        data?: ListInviteCodesResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -131,12 +130,7 @@ export class InvitesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: any[];
-            page?: number;
-            limit?: number;
-            total?: number;
-        };
+        data?: ListInviteRecordsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -165,12 +159,7 @@ export class InvitesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: any[];
-            page?: number;
-            limit?: number;
-            total?: number;
-        };
+        data?: ListMyInvitedUsersResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -199,12 +188,7 @@ export class InvitesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            totalInvites?: number;
-            usedInvites?: number;
-            remainingInvites?: number;
-            invitedUsers?: number;
-        };
+        data?: OverviewInvitesResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -230,9 +214,7 @@ export class InvitesService {
     public static invitesControllerRewardRules(): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            rules?: any[];
-        };
+        data?: RewardRulesResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -259,10 +241,7 @@ export class InvitesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            recordId?: number;
-            status?: string;
-        };
+        data?: RevokeInviteResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -291,10 +270,7 @@ export class InvitesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            recordId?: number;
-            lastEmailSentAt?: string;
-        };
+        data?: ResendInviteResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -323,9 +299,7 @@ export class InvitesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            buckets?: any[];
-        };
+        data?: StatisticsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -354,10 +328,7 @@ export class InvitesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            url?: string;
-            expiresAt?: string;
-        };
+        data?: ExportInvitesResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -386,14 +357,7 @@ export class InvitesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            recordId?: string;
-            code?: string;
-            /**
-             * 邀请过期时间（ISO8601），可能为空
-             */
-            expiresAt?: string | null;
-        };
+        data?: SendPrivateInviteResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -422,10 +386,7 @@ export class InvitesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            code?: string;
-            recordId?: string;
-        };
+        data?: SendOfficialInviteResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -454,9 +415,7 @@ export class InvitesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            added?: number;
-        };
+        data?: GrantQuotaResponseDto;
         path?: string;
         timestamp?: string;
     }> {

@@ -2,21 +2,29 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { ActionResultDto } from '../models/ActionResultDto';
 import type { AddFilmTorrentDto } from '../models/AddFilmTorrentDto';
 import type { AdminListFilmsDto } from '../models/AdminListFilmsDto';
+import type { AdminListFilmsResponseDto } from '../models/AdminListFilmsResponseDto';
 import type { AdminListPendingFilmsDto } from '../models/AdminListPendingFilmsDto';
 import type { CollectFilmDto } from '../models/CollectFilmDto';
 import type { CreateFilmDto } from '../models/CreateFilmDto';
+import type { EmptyObjectDto } from '../models/EmptyObjectDto';
 import type { FilmIdDto } from '../models/FilmIdDto';
-import type { FilmListItemDTO } from '../models/FilmListItemDTO';
 import type { FilmTorrentIdDto } from '../models/FilmTorrentIdDto';
+import type { GenresDto } from '../models/GenresDto';
 import type { ListFilmsDto } from '../models/ListFilmsDto';
+import type { ListFilmsResponseDto } from '../models/ListFilmsResponseDto';
 import type { ListFilmTorrentsDto } from '../models/ListFilmTorrentsDto';
+import type { ListFilmTorrentsResponseDto } from '../models/ListFilmTorrentsResponseDto';
 import type { PublicFilmDetailDto } from '../models/PublicFilmDetailDto';
+import type { RemoveFilmTorrentDto } from '../models/RemoveFilmTorrentDto';
 import type { ReviewDto } from '../models/ReviewDto';
 import type { SearchFilmsForPlaylistDto } from '../models/SearchFilmsForPlaylistDto';
-import type { UpdateFilmDto } from '../models/UpdateFilmDto';
-import type { UpdateFilmTorrentDto } from '../models/UpdateFilmTorrentDto';
+import type { SearchFilmsPlaylistResponseDto } from '../models/SearchFilmsPlaylistResponseDto';
+import type { SuccessDto } from '../models/SuccessDto';
+import type { UpdateFilmTorrentWrapperDto } from '../models/UpdateFilmTorrentWrapperDto';
+import type { UpdateFilmWrapperDto } from '../models/UpdateFilmWrapperDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -32,7 +40,7 @@ export class FilmsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -57,14 +65,11 @@ export class FilmsService {
      * @throws ApiError
      */
     public static filmsControllerUpdate(
-        requestBody: {
-            id: string;
-            data: UpdateFilmDto;
-        },
+        requestBody: UpdateFilmWrapperDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -93,9 +98,7 @@ export class FilmsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            success?: boolean;
-        };
+        data?: SuccessDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -153,7 +156,7 @@ export class FilmsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -178,14 +181,11 @@ export class FilmsService {
      * @throws ApiError
      */
     public static filmsControllerUpdateTorrent(
-        requestBody: {
-            id: string;
-            data: UpdateFilmTorrentDto;
-        },
+        requestBody: UpdateFilmTorrentWrapperDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -214,9 +214,7 @@ export class FilmsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            success?: boolean;
-        };
+        data?: SuccessDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -241,16 +239,11 @@ export class FilmsService {
      * @throws ApiError
      */
     public static filmsControllerRemoveTorrent(
-        requestBody: {
-            filmId: string;
-            torrentId: string;
-        },
+        requestBody: RemoveFilmTorrentDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            success?: boolean;
-        };
+        data?: SuccessDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -279,7 +272,7 @@ export class FilmsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -308,12 +301,7 @@ export class FilmsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<Record<string, any>>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
+        data?: AdminListFilmsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -342,12 +330,7 @@ export class FilmsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<Record<string, any>>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
+        data?: AdminListFilmsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -376,12 +359,7 @@ export class FilmsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<Record<string, any>>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
+        data?: ListFilmTorrentsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -410,10 +388,7 @@ export class FilmsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<FilmListItemDTO>;
-            total?: number;
-        };
+        data?: ListFilmsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -442,27 +417,7 @@ export class FilmsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<{
-                id?: string;
-                title?: string;
-                originalTitle?: string;
-                year?: string;
-                director?: string;
-                posterUrl?: string;
-                backdropUrl?: string;
-                rating?: number;
-                duration?: string;
-                description?: string;
-                genres?: Array<string>;
-                language?: Array<string>;
-                region?: Array<string>;
-                awards?: Array<string>;
-                torrentsCount?: number;
-                ownerId?: string;
-                ownerName?: string;
-            }>;
-        };
+        data?: SearchFilmsPlaylistResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -491,10 +446,7 @@ export class FilmsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            success?: boolean;
-            message?: string;
-        };
+        data?: ActionResultDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -520,9 +472,7 @@ export class FilmsService {
     public static filmsControllerListGenres(): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            genres?: Array<string>;
-        };
+        data?: GenresDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -549,9 +499,7 @@ export class FilmsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            success?: boolean;
-        };
+        data?: SuccessDto;
         path?: string;
         timestamp?: string;
     }> {

@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { OkDto } from '../models/OkDto';
 import type { TrackerReportDto } from '../models/TrackerReportDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -18,9 +19,7 @@ export class TorrentsTrackerService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            ok?: boolean;
-        };
+        data?: OkDto;
         path?: string;
         timestamp?: string;
     }> {

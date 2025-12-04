@@ -32,8 +32,8 @@ import { InvitePage } from '../pages/InvitePage';
 import { FilmsPage } from '../pages/FilmsPage';
 import { PlaylistsPage } from '../pages/PlaylistsPage';
 import { PlaylistDetailPage } from '../pages/PlaylistDetailPage';
-import FilmDetailPage from '../pages/FilmDetailPage';
-import { TorrentHistoryPage } from '../pages/TorrentHistoryPage';
+import FilmDetailPage from '../pages/FilmDetail';
+import { TorrentRecordPage } from '../pages/TorrentRecord';
 
 
 
@@ -257,7 +257,7 @@ export default function AppRoutes() {
         } />
         <Route path="/torrent-history" element={
           <PermissionRoute requiredPermissions={['page:torrent-history']}>
-            <TorrentHistoryPage />
+            <TorrentRecordPage />
           </PermissionRoute>
         } />
 
@@ -320,7 +320,7 @@ export default function AppRoutes() {
 
         {/* 详情与重定向 */}
         <Route path="/torrent/:id" element={
-          <PermissionRoute requiredPermissions={['page:torrents']}>
+          <PermissionRoute requiredPermissions={['page:torrent']}>
             <TorrentDetailPage />
           </PermissionRoute>
         } />

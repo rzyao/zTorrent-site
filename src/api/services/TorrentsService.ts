@@ -4,23 +4,38 @@
 /* eslint-disable */
 import type { AddUserTorrentDto } from '../models/AddUserTorrentDto';
 import type { AdminListTorrentsDto } from '../models/AdminListTorrentsDto';
+import type { AdminListTorrentsResponseDto } from '../models/AdminListTorrentsResponseDto';
 import type { AutoUploadTorrentDto } from '../models/AutoUploadTorrentDto';
 import type { CheckInfoHashDto } from '../models/CheckInfoHashDto';
+import type { CreateDownloadUrlDto } from '../models/CreateDownloadUrlDto';
 import type { CreateSimpleTorrentDto } from '../models/CreateSimpleTorrentDto';
 import type { CreateTorrentDto } from '../models/CreateTorrentDto';
 import type { DeleteTorrentDto } from '../models/DeleteTorrentDto';
+import type { EmptyObjectDto } from '../models/EmptyObjectDto';
+import type { ExistsDto } from '../models/ExistsDto';
 import type { GetTorrentDto } from '../models/GetTorrentDto';
 import type { ListPendingCoversDto } from '../models/ListPendingCoversDto';
+import type { ListPendingCoversResponseDto } from '../models/ListPendingCoversResponseDto';
 import type { ListTorrentsDto } from '../models/ListTorrentsDto';
+import type { ListTorrentsResponseDto } from '../models/ListTorrentsResponseDto';
 import type { ListTorrentUsersDto } from '../models/ListTorrentUsersDto';
+import type { ListTorrentUsersResponseDto } from '../models/ListTorrentUsersResponseDto';
 import type { ListUserTorrentsDto } from '../models/ListUserTorrentsDto';
+import type { ListUserTorrentsResponseDto } from '../models/ListUserTorrentsResponseDto';
+import type { OkDto } from '../models/OkDto';
 import type { RecordDownloadDto } from '../models/RecordDownloadDto';
 import type { RemoveUserTorrentDto } from '../models/RemoveUserTorrentDto';
+import type { RemoveUserTorrentResponseDto } from '../models/RemoveUserTorrentResponseDto';
 import type { ReportUserTorrentDto } from '../models/ReportUserTorrentDto';
+import type { ReportUserTorrentResponseDto } from '../models/ReportUserTorrentResponseDto';
 import type { ReviewDto } from '../models/ReviewDto';
 import type { SearchTorrentsDto } from '../models/SearchTorrentsDto';
+import type { SearchTorrentsResponseDto } from '../models/SearchTorrentsResponseDto';
 import type { UpdateTorrentDto } from '../models/UpdateTorrentDto';
+import type { UploadCoverThumbDto } from '../models/UploadCoverThumbDto';
+import type { UrlDto } from '../models/UrlDto';
 import type { UserListTorrentsDto } from '../models/UserListTorrentsDto';
+import type { UserListTorrentsResponseDto } from '../models/UserListTorrentsResponseDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -36,7 +51,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -61,19 +76,11 @@ export class TorrentsService {
      * @throws ApiError
      */
     public static torrentsControllerCreateDownloadUrl(
-        requestBody: {
-            torrentId: string;
-            source: {
-                filmId: string;
-                playListId: string;
-            };
-        },
+        requestBody: CreateDownloadUrlDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            url?: string;
-        };
+        data?: UrlDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -102,7 +109,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -131,12 +138,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<{
-                id?: string;
-                cover?: string;
-            }>;
-        };
+        data?: ListPendingCoversResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -161,19 +163,11 @@ export class TorrentsService {
      * @throws ApiError
      */
     public static torrentsControllerUploadCoverThumb(
-        requestBody: {
-            id: string;
-            full_base64?: string | null;
-            thumb_base64: string;
-            medium_base64?: string | null;
-            large_base64?: string | null;
-        },
+        requestBody: UploadCoverThumbDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            ok?: boolean;
-        };
+        data?: OkDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -202,9 +196,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            exists?: boolean;
-        };
+        data?: ExistsDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -233,7 +225,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -262,15 +254,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<{
-                seedersRealtime?: number;
-                leechersRealtime?: number;
-            }>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
+        data?: UserListTorrentsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -299,9 +283,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<Record<string, any>>;
-        };
+        data?: SearchTorrentsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -330,12 +312,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<Record<string, any>>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
+        data?: AdminListTorrentsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -364,10 +341,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<Record<string, any>>;
-            total?: number;
-        };
+        data?: ListTorrentsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -396,7 +370,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -425,7 +399,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -454,7 +428,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -483,9 +457,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            ok?: boolean;
-        };
+        data?: OkDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -514,9 +486,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            ok?: boolean;
-        };
+        data?: OkDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -545,9 +515,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            ok?: boolean;
-        };
+        data?: OkDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -576,9 +544,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            ok?: boolean;
-        };
+        data?: RemoveUserTorrentResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -607,9 +573,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            torrentIds?: Array<string>;
-        };
+        data?: ListUserTorrentsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -638,9 +602,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            userIds?: Array<string>;
-        };
+        data?: ListTorrentUsersResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -669,9 +631,7 @@ export class TorrentsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            ok?: boolean;
-        };
+        data?: ReportUserTorrentResponseDto;
         path?: string;
         timestamp?: string;
     }> {

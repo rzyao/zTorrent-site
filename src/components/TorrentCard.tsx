@@ -10,7 +10,7 @@ import { log } from 'console';
 
 // Lazy load TorrentDetailPage to avoid circular dependency
 const TorrentDetailPage = lazy(() => import('@/pages/TorrentDetailPage/index'));
-const FilmDetailPage = lazy(() => import('@/pages/FilmDetailPage'));
+const FilmDetailPage = lazy(() => import('@/pages/FilmDetail'));
 
 interface TorrentCardProps {
   id: string | number;

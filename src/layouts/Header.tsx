@@ -89,8 +89,8 @@ export function Header() {
             <NavLink to="/home" className="text-white hover:text-gray-300 transition-colors">首页</NavLink>
             <NavLink to="/torrents" className="text-white hover:text-gray-300 transition-colors">种子</NavLink>
             <NavLink to="/forum" className="text-white hover:text-gray-300 transition-colors">论坛</NavLink>
-            <NavLink to="/subtitles" className="text-white hover:text-gray-300 transition-colors">字幕</NavLink>
-            <NavLink to="/ranking" className="text-white hover:text-gray-300 transition-colors">排行榜</NavLink>
+            {/* <NavLink to="/subtitles" className="text-white hover:text-gray-300 transition-colors">字幕</NavLink>
+            <NavLink to="/ranking" className="text-white hover:text-gray-300 transition-colors">排行榜</NavLink> */}
             {/* 新增：影片与片单导航入口，保持与现有样式一致 */}
             <NavLink to="/films" className="text-white hover:text-gray-300 transition-colors">影片</NavLink>
             <NavLink to="/playlists" className="text-white hover:text-gray-300 transition-colors">片单</NavLink>

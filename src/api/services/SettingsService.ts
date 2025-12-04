@@ -2,7 +2,15 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { CreateSettingDto } from '../models/CreateSettingDto';
+import type { DeleteSettingDto } from '../models/DeleteSettingDto';
+import type { DeleteSettingResponseDto } from '../models/DeleteSettingResponseDto';
+import type { EmptyObjectDto } from '../models/EmptyObjectDto';
+import type { ListSettingsByGroupDto } from '../models/ListSettingsByGroupDto';
+import type { ReviewSwitchesResponseDto } from '../models/ReviewSwitchesResponseDto';
+import type { SettingItemDto } from '../models/SettingItemDto';
 import type { UpdateSettingMetaDto } from '../models/UpdateSettingMetaDto';
+import type { UpdateSettingsItemsDto } from '../models/UpdateSettingsItemsDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -15,23 +23,7 @@ export class SettingsService {
     public static settingsControllerListDetailedSettingsLegacy(): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Array<{
-            id?: number;
-            createdAt?: string;
-            updatedAt?: string;
-            deletedAt?: string | null;
-            key?: string;
-            value?: string;
-            comment?: string | null;
-            type?: 'string' | 'number' | 'boolean' | 'json' | 'datetime' | 'rate' | 'password';
-            group?: string;
-            sort?: number;
-            description?: string | null;
-            mutable?: number;
-            jsonSchema?: string | null;
-            updatedBy?: string | null;
-            version?: number;
-        }>;
+        data?: Array<SettingItemDto>;
         path?: string;
         timestamp?: string;
     }> {
@@ -49,34 +41,16 @@ export class SettingsService {
     }
     /**
      * 按分组获取设置列表（详细字段）
-     * @param requestBody 按分组查询设置列表的请求体
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
     public static settingsControllerListSettingsByGroup(
-        requestBody: {
-            group: string;
-        },
+        requestBody: ListSettingsByGroupDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Array<{
-            id?: number;
-            createdAt?: string;
-            updatedAt?: string;
-            deletedAt?: string | null;
-            key?: string;
-            value?: string;
-            comment?: string | null;
-            type?: 'string' | 'number' | 'boolean' | 'json' | 'datetime' | 'rate' | 'password';
-            group?: string;
-            sort?: number;
-            description?: string | null;
-            mutable?: number;
-            jsonSchema?: string | null;
-            updatedBy?: string | null;
-            version?: number;
-        }>;
+        data?: Array<SettingItemDto>;
         path?: string;
         timestamp?: string;
     }> {
@@ -96,21 +70,16 @@ export class SettingsService {
     }
     /**
      * 批量更新系统设置（仅更新值，不支持重命名）
-     * @param requestBody 批量更新：按 key 更新对应的 value（不支持重命名）
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
     public static settingsControllerUpdateSettingsItems(
-        requestBody: {
-            items: Array<{
-                key: string;
-                value?: string;
-            }>;
-        },
+        requestBody: UpdateSettingsItemsDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -131,19 +100,12 @@ export class SettingsService {
     }
     /**
      * 新增设置（仅当键不存在时创建；存在则返回冲突）
-     * @param requestBody 创建设置项请求体（key/value 必填，其余可选）
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
     public static settingsControllerCreate(
-        requestBody: {
-            key: string;
-            description?: string;
-            type?: 'string' | 'number' | 'boolean' | 'json' | 'datetime' | 'rate' | 'password';
-            group?: string;
-            mutable?: boolean;
-            sort?: number;
-        },
+        requestBody: CreateSettingDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -168,20 +130,16 @@ export class SettingsService {
     }
     /**
      * 按键删除设置
-     * @param requestBody 按键删除设置的请求体
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
     public static settingsControllerDeleteSettingByKey(
-        requestBody: {
-            key: string;
-        },
+        requestBody: DeleteSettingDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            success?: boolean;
-        };
+        data?: DeleteSettingResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -210,18 +168,7 @@ export class SettingsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            id?: number;
-            key?: string;
-            description?: string | null;
-            type?: string;
-            group?: string;
-            mutable?: number;
-            sort?: number;
-            jsonSchema?: string | null;
-            updatedBy?: string | null;
-            version?: number;
-        };
+        data?: SettingItemDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -247,11 +194,7 @@ export class SettingsService {
     public static settingsControllerGetReviewSwitches(): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            filmReview?: boolean;
-            playlistReview?: boolean;
-            torrentReview?: boolean;
-        };
+        data?: ReviewSwitchesResponseDto;
         path?: string;
         timestamp?: string;
     }> {

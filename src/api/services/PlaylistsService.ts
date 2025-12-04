@@ -2,11 +2,26 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AddFilmToPlaylistDto } from '../models/AddFilmToPlaylistDto';
 import type { AdminListPlaylistsDto } from '../models/AdminListPlaylistsDto';
+import type { AdminListPlaylistsResponseDto } from '../models/AdminListPlaylistsResponseDto';
+import type { CreatePlaylistDto } from '../models/CreatePlaylistDto';
+import type { DeletePlaylistDto } from '../models/DeletePlaylistDto';
+import type { DeletePlaylistResponseDto } from '../models/DeletePlaylistResponseDto';
+import type { EmptyObjectDto } from '../models/EmptyObjectDto';
+import type { GetPlaylistDto } from '../models/GetPlaylistDto';
+import type { IncrementViewsDto } from '../models/IncrementViewsDto';
+import type { IncrementViewsResponseDto } from '../models/IncrementViewsResponseDto';
+import type { LikePlaylistDto } from '../models/LikePlaylistDto';
+import type { LikePlaylistResponseDto } from '../models/LikePlaylistResponseDto';
+import type { ListPlaylistsDto } from '../models/ListPlaylistsDto';
+import type { ListPlaylistsResponseDto } from '../models/ListPlaylistsResponseDto';
 import type { PlaylistDTO } from '../models/PlaylistDTO';
-import type { PlaylistItemDTO } from '../models/PlaylistItemDTO';
-import type { PlaylistSummaryDTO } from '../models/PlaylistSummaryDTO';
+import type { RemoveFilmFromPlaylistDto } from '../models/RemoveFilmFromPlaylistDto';
+import type { ReorderFilmsInPlaylistDto } from '../models/ReorderFilmsInPlaylistDto';
+import type { ReorderFilmsInPlaylistResponseDto } from '../models/ReorderFilmsInPlaylistResponseDto';
 import type { ReviewDto } from '../models/ReviewDto';
+import type { UpdatePlaylistDto } from '../models/UpdatePlaylistDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -18,13 +33,7 @@ export class PlaylistsService {
      * @throws ApiError
      */
     public static playlistsControllerCreate(
-        requestBody: {
-            name: string;
-            description?: string | null;
-            visibility: 'public' | 'private' | 'friends';
-            coverUrl?: string | null;
-            tags?: Array<string> | null;
-        },
+        requestBody: CreatePlaylistDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -53,14 +62,7 @@ export class PlaylistsService {
      * @throws ApiError
      */
     public static playlistsControllerUpdate(
-        requestBody: {
-            id: string;
-            name?: string | null;
-            description?: string | null;
-            visibility?: 'public' | 'private' | 'friends' | null;
-            coverUrl?: string | null;
-            tags?: Array<string> | null;
-        },
+        requestBody: UpdatePlaylistDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -89,15 +91,11 @@ export class PlaylistsService {
      * @throws ApiError
      */
     public static playlistsControllerDelete(
-        requestBody: {
-            id: string;
-        },
+        requestBody: DeletePlaylistDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            deleted?: boolean;
-        };
+        data?: DeletePlaylistResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -122,21 +120,11 @@ export class PlaylistsService {
      * @throws ApiError
      */
     public static playlistsControllerList(
-        requestBody: {
-            page?: number;
-            limit?: number;
-            keyword?: string | null;
-            type?: 'general' | 'topic' | 'series' | 'director' | 'curation';
-            visibility?: 'public' | 'private' | 'friends';
-            ownerUserId?: string | null;
-        },
+        requestBody: ListPlaylistsDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<PlaylistSummaryDTO>;
-            total?: number;
-        };
+        data?: ListPlaylistsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -161,9 +149,7 @@ export class PlaylistsService {
      * @throws ApiError
      */
     public static playlistsControllerGet(
-        requestBody: {
-            id: string;
-        },
+        requestBody: GetPlaylistDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -192,11 +178,7 @@ export class PlaylistsService {
      * @throws ApiError
      */
     public static playlistsControllerAddFilm(
-        requestBody: {
-            playlistId: string;
-            filmId: string;
-            sort?: number;
-        },
+        requestBody: AddFilmToPlaylistDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -225,10 +207,7 @@ export class PlaylistsService {
      * @throws ApiError
      */
     public static playlistsControllerRemoveFilm(
-        requestBody: {
-            playlistId: string;
-            filmId: string;
-        },
+        requestBody: RemoveFilmFromPlaylistDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -257,16 +236,11 @@ export class PlaylistsService {
      * @throws ApiError
      */
     public static playlistsControllerReorder(
-        requestBody: {
-            playlistId: string;
-            order: Array<string>;
-        },
+        requestBody: ReorderFilmsInPlaylistDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            films?: Array<PlaylistItemDTO>;
-        };
+        data?: ReorderFilmsInPlaylistResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -291,15 +265,11 @@ export class PlaylistsService {
      * @throws ApiError
      */
     public static playlistsControllerIncViews(
-        requestBody: {
-            id: string;
-        },
+        requestBody: IncrementViewsDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            views?: number;
-        };
+        data?: IncrementViewsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -324,15 +294,11 @@ export class PlaylistsService {
      * @throws ApiError
      */
     public static playlistsControllerLike(
-        requestBody: {
-            id: string;
-        },
+        requestBody: LikePlaylistDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            likes?: number;
-        };
+        data?: LikePlaylistResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -361,7 +327,7 @@ export class PlaylistsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: EmptyObjectDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -390,12 +356,7 @@ export class PlaylistsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<Record<string, any>>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
+        data?: AdminListPlaylistsResponseDto;
         path?: string;
         timestamp?: string;
     }> {

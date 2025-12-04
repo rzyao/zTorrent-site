@@ -3,13 +3,17 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AssignRolesDto } from '../models/AssignRolesDto';
+import type { AssignRolesResponseDto } from '../models/AssignRolesResponseDto';
 import type { CreateRoleDto } from '../models/CreateRoleDto';
+import type { DeleteRoleResponseDto } from '../models/DeleteRoleResponseDto';
 import type { ListRolesDto } from '../models/ListRolesDto';
+import type { ListRolesResponseDto } from '../models/ListRolesResponseDto';
 import type { PermissionDto } from '../models/PermissionDto';
 import type { RoleDto } from '../models/RoleDto';
 import type { RoleIdDto } from '../models/RoleIdDto';
 import type { SetRolePermissionsDto } from '../models/SetRolePermissionsDto';
-import type { UpdateRoleDto } from '../models/UpdateRoleDto';
+import type { SetRolePermissionsResponseDto } from '../models/SetRolePermissionsResponseDto';
+import type { UpdateRoleRequestDto } from '../models/UpdateRoleRequestDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -46,7 +50,7 @@ export class RolesService {
     /**
      * 列出角色列表
      * @param requestBody
-     * @returns any 查询成功
+     * @returns any 成功
      * @throws ApiError
      */
     public static rolesControllerListRoles(
@@ -54,12 +58,7 @@ export class RolesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<RoleDto>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
+        data?: ListRolesResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -113,10 +112,7 @@ export class RolesService {
      * @throws ApiError
      */
     public static rolesControllerUpdate(
-        requestBody: {
-            id?: string;
-            data?: UpdateRoleDto;
-        },
+        requestBody: UpdateRoleRequestDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -141,7 +137,7 @@ export class RolesService {
     /**
      * 删除角色
      * @param requestBody
-     * @returns any 删除成功
+     * @returns any 成功
      * @throws ApiError
      */
     public static rolesControllerRemove(
@@ -149,9 +145,7 @@ export class RolesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            success?: boolean;
-        };
+        data?: DeleteRoleResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -172,7 +166,7 @@ export class RolesService {
     /**
      * 设置角色权限（覆盖式）
      * @param requestBody
-     * @returns any 设置成功
+     * @returns any 成功
      * @throws ApiError
      */
     public static rolesControllerSetRolePermissions(
@@ -180,9 +174,7 @@ export class RolesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            ok?: boolean;
-        };
+        data?: SetRolePermissionsResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -203,7 +195,7 @@ export class RolesService {
     /**
      * 为用户分配角色（覆盖式）
      * @param requestBody
-     * @returns any 分配成功
+     * @returns any 成功
      * @throws ApiError
      */
     public static rolesControllerAssignRoles(
@@ -211,9 +203,7 @@ export class RolesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            ok?: boolean;
-        };
+        data?: AssignRolesResponseDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -234,7 +224,7 @@ export class RolesService {
     /**
      * 查询指定角色的权限（按ID）
      * @param requestBody
-     * @returns any 查询成功
+     * @returns any 成功
      * @throws ApiError
      */
     public static rolesControllerRolePermissions(

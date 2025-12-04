@@ -2,9 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AdminListCategoriesResultDto } from '../models/AdminListCategoriesResultDto';
+import type { CategoryDto } from '../models/CategoryDto';
+import type { CategoryTreeParentDto } from '../models/CategoryTreeParentDto';
 import type { CreateCategoryDto } from '../models/CreateCategoryDto';
 import type { ListCategoriesDto } from '../models/ListCategoriesDto';
 import type { SetUserCategoriesDto } from '../models/SetUserCategoriesDto';
+import type { SuccessCountDto } from '../models/SuccessCountDto';
+import type { SuccessDto } from '../models/SuccessDto';
 import type { UpdateCategoryDto } from '../models/UpdateCategoryDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -21,17 +26,7 @@ export class CategoriesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            id?: string;
-            key?: string;
-            label?: string;
-            description?: string | null;
-            enabled?: boolean;
-            isDefault?: boolean;
-            sort?: number;
-            createdAt?: string;
-            updatedAt?: string;
-        };
+        data?: CategoryDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -63,17 +58,7 @@ export class CategoriesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            id?: string;
-            key?: string;
-            label?: string;
-            description?: string | null;
-            enabled?: boolean;
-            isDefault?: boolean;
-            sort?: number;
-            createdAt?: string;
-            updatedAt?: string;
-        };
+        data?: CategoryDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -104,9 +89,7 @@ export class CategoriesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            success?: boolean;
-        };
+        data?: SuccessDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -135,22 +118,7 @@ export class CategoriesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<{
-                id?: string;
-                key?: string;
-                label?: string;
-                description?: string | null;
-                enabled?: boolean;
-                isDefault?: boolean;
-                sort?: number;
-                createdAt?: string;
-                updatedAt?: string;
-            }>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
+        data?: AdminListCategoriesResultDto;
         path?: string;
         timestamp?: string;
     }> {
@@ -176,17 +144,7 @@ export class CategoriesService {
     public static categoriesControllerAvailable(): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Array<{
-            id?: string;
-            key?: string;
-            label?: string;
-            description?: string | null;
-            enabled?: boolean;
-            isDefault?: boolean;
-            sort?: number;
-            createdAt?: string;
-            updatedAt?: string;
-        }>;
+        data?: Array<CategoryDto>;
         path?: string;
         timestamp?: string;
     }> {
@@ -210,26 +168,7 @@ export class CategoriesService {
     public static categoriesControllerTree(): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Array<{
-            id?: string;
-            key?: string;
-            label?: string;
-            description?: string | null;
-            enabled?: boolean;
-            isDefault?: boolean;
-            sort?: number;
-            type?: string;
-            children?: Array<{
-                id?: string;
-                key?: string;
-                label?: string;
-                description?: string | null;
-                enabled?: boolean;
-                sort?: number;
-                type?: string;
-                parentId?: string;
-            }>;
-        }>;
+        data?: Array<CategoryTreeParentDto>;
         path?: string;
         timestamp?: string;
     }> {
@@ -253,16 +192,7 @@ export class CategoriesService {
     public static categoriesControllerListUserCategories(): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Array<{
-            id?: string;
-            key?: string;
-            label?: string;
-            description?: string | null;
-            enabled?: boolean;
-            sort?: number;
-            createdAt?: string;
-            updatedAt?: string;
-        }>;
+        data?: Array<CategoryDto>;
         path?: string;
         timestamp?: string;
     }> {
@@ -289,10 +219,7 @@ export class CategoriesService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            success?: boolean;
-            count?: number;
-        };
+        data?: SuccessCountDto;
         path?: string;
         timestamp?: string;
     }> {
