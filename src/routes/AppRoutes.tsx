@@ -38,6 +38,21 @@ import { TorrentHistoryPage } from '../pages/TorrentHistoryPage';
 
 
 
+/**
+ * 公开页守卫：仅允许未登录访问（登录后自动跳转到来源或首页）
+ * 设计考虑：
+ * - 登录后的用户不应访问注册、忘记密码等公开页面；避免产生错误流程与体验混乱
+ * - 与 LoginPageWrapper 的 from 回跳逻辑保持一致，优先尊重查询参数中的 from
+ */
+function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
+  const search = typeof window !== 'undefined' ? window.location.search : '';
+  const params = new URLSearchParams(search);
+  const from = params.get('from') || '/home';
+  const isLoggedIn = !!localStorage.getItem('accessToken');
+  if (isLoggedIn) return <Navigate to={from} replace />;
+  return <>{children}</>;
+}
+
 function LoginPageWrapper() {
   const navigate = useNavigate();
   const search = typeof window !== 'undefined' ? window.location.search : '';
@@ -157,9 +172,9 @@ export default function AppRoutes() {
   return (
     <Routes>
       {/* 公开路由 登录、注册、忘记密码页面 */}
-      <Route path="/login" element={<LoginPageWrapper />} />
-      <Route path="/register" element={<RegisterPageWrapper />} />
-      <Route path="/forgot-password" element={<ForgotPasswordPageWrapper />} />
+      <Route path="/login" element={<PublicOnlyRoute><LoginPageWrapper /></PublicOnlyRoute>} />
+      <Route path="/register" element={<PublicOnlyRoute><RegisterPageWrapper /></PublicOnlyRoute>} />
+      <Route path="/forgot-password" element={<PublicOnlyRoute><ForgotPasswordPageWrapper /></PublicOnlyRoute>} />
       <Route path="/api-test" element={<ApiTest />} />
       <Route path="/" element={<Navigate to="/home" replace />} />
       {/* 受保护路由统一持久布局：AuthRoute + AppLayout 持久化，内部通过 Outlet 渲染子页面 */}
