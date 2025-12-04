@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAccess } from '@/context/AccessContext';
+import { PERMS } from '@/permissions/permissions.gen';
 import { UserAvatar } from '@/components/UserAvatar';
 import { useSiteConfig } from '@/context/SiteConfigContext';
 import { ensureNamespace } from '@/utils/tabTitle';
@@ -49,7 +50,7 @@ export function Header() {
     };
   }, [showUserMenu]);
   const canReview = !loading && (
-    (access?.permissions?.includes('review:write') ||
+    (access?.permissions?.includes(PERMS.review.write) ||
       access?.roles?.includes('admin') ||
       access?.roles?.includes('superadmin'))
   );

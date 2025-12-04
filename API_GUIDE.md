@@ -78,7 +78,7 @@ function MyComponent() {
 import { client } from './api/client.gen';
 
 client.setConfig({
-  baseUrl: import.meta.env.VITE_API_BASE_URL
+  baseUrl: import.meta.env.VITE_BASE_URL
 });
 ```
 

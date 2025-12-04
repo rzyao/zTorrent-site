@@ -113,16 +113,37 @@ export function UploadTorrentPage() {
     }
   };
 
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const result = reader.result as string;
+        // Remove data:image/png;base64, prefix
+        const base64 = result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   const onPosterInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
       setPosterUploading(true);
-      const res = await ImagesService.imagesControllerUpload({ file });
+      const base64 = await fileToBase64(file);
+      const res = await ImagesService.imagesControllerUpload({
+        content: base64,
+        filename: file.name,
+        mimeType: file.type,
+      });
       const url = res.data?.url;
       if (url) {
         setUploadedPoster(url);
       }
+    } catch (err: any) {
+      customToast.error(err?.message || '上传海报失败');
     } finally {
       setPosterUploading(false);
       e.target.value = '';
@@ -134,12 +155,21 @@ export function UploadTorrentPage() {
     if (!files.length) return;
     try {
       setShotsUploading(true);
-      const uploads = files.map((file) => ImagesService.imagesControllerUpload({ file }));
+      const uploads = files.map(async (file) => {
+        const base64 = await fileToBase64(file);
+        return ImagesService.imagesControllerUpload({
+          content: base64,
+          filename: file.name,
+          mimeType: file.type,
+        });
+      });
       const results = await Promise.all(uploads);
       const urls = results.map((r) => r.data?.url).filter((u): u is string => !!u);
       if (urls.length) {
         setScreenshots((prev) => [...prev, ...urls]);
       }
+    } catch (err: any) {
+      customToast.error(err?.message || '上传截图失败');
     } finally {
       setShotsUploading(false);
       e.target.value = '';

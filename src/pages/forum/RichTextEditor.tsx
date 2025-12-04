@@ -117,6 +117,19 @@ export function RichTextEditor({
     }
   };
 
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const result = reader.result as string;
+        const base64 = result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   const doUploadImage = async (file: File) => {
     setUploadError(null);
     if (!file || !file.type.startsWith('image/')) {
@@ -130,7 +143,12 @@ export function RichTextEditor({
     setUploading(true);
     try {
       const uploader = onUploadImage || (async (f: File) => {
-        const res = await ImagesService.imagesControllerUpload({ file: f });
+        const base64 = await fileToBase64(f);
+        const res = await ImagesService.imagesControllerUpload({
+          content: base64,
+          filename: f.name,
+          mimeType: f.type,
+        });
         const url = (res as any)?.data?.url || (res as any)?.url;
         if (!url) throw new Error('上传失败');
         return url as string;

@@ -7,7 +7,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class ImagesService {
     /**
-     * 上传图片（JSON base64）
+     * 上传图片（JSON base64 或二进制）
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
@@ -15,11 +15,14 @@ export class ImagesService {
     public static imagesControllerUpload(
         requestBody: {
             /**
-             * base64 编码图片内容
+             * base64 内容或 dataURL；也可传二进制数组
              */
             content: string;
             filename: string;
-            mimeType: string;
+            /**
+             * 可选，实际以内容自动识别为准
+             */
+            mimeType?: string;
         },
     ): CancelablePromise<{
         code?: number;

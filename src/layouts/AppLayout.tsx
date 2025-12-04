@@ -1,11 +1,9 @@
 import { Header } from '@/layouts/Header';
-import { OpenAPI } from '@/api';
+import { initOpenAPI } from '@/api/setup';
 import { SiteConfigProvider } from '@/context/SiteConfigContext';
 import { useDynamicFavicon } from '@/hooks/useDynamicFavicon';
 
-const apiBase = (import.meta as any).env?.VITE_API_BASE_URL || '';
-OpenAPI.BASE = apiBase;
-OpenAPI.TOKEN = async () => localStorage.getItem('accessToken') || '';
+initOpenAPI();
 
 function FaviconInjector() {
   useDynamicFavicon();

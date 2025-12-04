@@ -32,6 +32,14 @@ export function UserSummaryProvider({ children }: { children: React.ReactNode })
     // 获取用户统计数据
     const fetchSummary = useCallback(async () => {
         try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+            if (!token) {
+                setError(null);
+                setData(null);
+                setIsLoading(false);
+                return;
+            }
+
             setError(null);
             const response = await DashboardService.dashboardControllerSummary();
 

@@ -1,0 +1,32 @@
+# 权限唯一信源（Config-First）
+# 顶层为模块（menu），下挂页面（page）、页面内动作（action）
+
+- name: 系统管理
+  code: sys:manage
+  type: menu
+  children:
+    - name: 用户管理
+      code: sys:user
+      type: page
+      actions:
+        - name: 查询
+          code: sys:user:query
+          api: GET /users
+        - name: 新增
+          code: sys:user:add
+          api: POST /users
+
+- name: 内容审核
+  code: review
+  type: menu
+  children:
+    - name: 审核中心
+      code: review:center
+      type: page
+      actions:
+        - name: 审核查询
+          code: review:query
+          api: GET /reviews
+        - name: 审核写入
+          code: review:write
+          api: POST /reviews

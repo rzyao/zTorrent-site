@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate, useNavigate, useParams, Outlet } from 'react-router-dom';
+import { PERMS, PermissionCode } from '@/permissions/permissions.gen';
 import { useEffect, useState } from 'react';
 import { AuthService } from '../api';
 import { useAccess } from '@/context/AccessContext';
@@ -104,7 +105,7 @@ function PermissionRoute({
   combine = 'AND',
 }: {
   children: React.ReactNode;
-  requiredPermissions?: string[];
+  requiredPermissions?: PermissionCode[];
   requiredRoles?: string[];
   matchAll?: boolean;
   combine?: 'AND' | 'OR';
@@ -206,7 +207,7 @@ export default function AppRoutes() {
         <Route
           path="/review"
           element={
-            <PermissionRoute requiredPermissions={["review:write"]} requiredRoles={["admin"]} combine="OR">
+            <PermissionRoute requiredPermissions={[PERMS.review.write]} requiredRoles={["admin"]} combine="OR">
               <ReviewPage />
             </PermissionRoute>
           }

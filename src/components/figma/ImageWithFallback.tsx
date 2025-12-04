@@ -25,6 +25,11 @@ export const ImageWithFallback = React.forwardRef<HTMLImageElement, React.ImgHTM
       }
     }, [])
 
+    React.useEffect(() => {
+      setDidError(false)
+      setLoaded(false)
+    }, [props.src])
+
     const handleError = () => {
       setDidError(true)
     }

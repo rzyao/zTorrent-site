@@ -73,14 +73,20 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.20.3",
-    "vite": "6.3.5"
+    "vite": "6.3.5",
+    "ajv": "^8.17.1",
+    "yaml": "^2.5.1"
   },
   "scripts": {
     "dev": "npm run client:dev",
+    "prebuild": "node scripts/generate-permissions.mjs",
     "build": "vite build",
+    "prepare": "node scripts/generate-permissions.mjs",
+    "permissions:gen": "node scripts/generate-permissions.mjs",
+    "test:permissions": "node scripts/test-permissions.mjs",
     "api:generate": "npx openapi-typescript-codegen --input http://localhost:8890/api-docs-json --output src/api --client axios",
-    "client:dev": "vite",
+    "client:dev": "vite --mode development",
     "server:dev": "nodemon"
   },
   "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd"
-}
+  }

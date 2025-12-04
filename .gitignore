@@ -1,6 +1,6 @@
 .vscode
+.trae
+.vercel
 node_modules
-dist/
-build/
 .env*
 openapi-ts-error-*.log
