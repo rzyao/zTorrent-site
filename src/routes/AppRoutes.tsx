@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate, useNavigate, useParams, Outlet } from 'react-router-dom';
-import { PERMS, PermissionCode } from '@/permissions/permissions.gen';
 import { useEffect, useState } from 'react';
 import { AuthService } from '../api';
 import { useAccess } from '@/context/AccessContext';
@@ -37,21 +36,6 @@ import FilmDetailPage from '../pages/FilmDetailPage';
 import { TorrentHistoryPage } from '../pages/TorrentHistoryPage';
 
 
-
-/**
- * 公开页守卫：仅允许未登录访问（登录后自动跳转到来源或首页）
- * 设计考虑：
- * - 登录后的用户不应访问注册、忘记密码等公开页面；避免产生错误流程与体验混乱
- * - 与 LoginPageWrapper 的 from 回跳逻辑保持一致，优先尊重查询参数中的 from
- */
-function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
-  const search = typeof window !== 'undefined' ? window.location.search : '';
-  const params = new URLSearchParams(search);
-  const from = params.get('from') || '/home';
-  const isLoggedIn = !!localStorage.getItem('accessToken');
-  if (isLoggedIn) return <Navigate to={from} replace />;
-  return <>{children}</>;
-}
 
 function LoginPageWrapper() {
   const navigate = useNavigate();
@@ -120,7 +104,7 @@ function PermissionRoute({
   combine = 'AND',
 }: {
   children: React.ReactNode;
-  requiredPermissions?: PermissionCode[];
+  requiredPermissions?: string[];
   requiredRoles?: string[];
   matchAll?: boolean;
   combine?: 'AND' | 'OR';
@@ -172,9 +156,9 @@ export default function AppRoutes() {
   return (
     <Routes>
       {/* 公开路由 登录、注册、忘记密码页面 */}
-      <Route path="/login" element={<PublicOnlyRoute><LoginPageWrapper /></PublicOnlyRoute>} />
-      <Route path="/register" element={<PublicOnlyRoute><RegisterPageWrapper /></PublicOnlyRoute>} />
-      <Route path="/forgot-password" element={<PublicOnlyRoute><ForgotPasswordPageWrapper /></PublicOnlyRoute>} />
+      <Route path="/login" element={<LoginPageWrapper />} />
+      <Route path="/register" element={<RegisterPageWrapper />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPageWrapper />} />
       <Route path="/api-test" element={<ApiTest />} />
       <Route path="/" element={<Navigate to="/home" replace />} />
       {/* 受保护路由统一持久布局：AuthRoute + AppLayout 持久化，内部通过 Outlet 渲染子页面 */}
@@ -189,57 +173,157 @@ export default function AppRoutes() {
       >
         <Route
           path="/home"
-          element={<HomeLayout />}
+          element={
+            <PermissionRoute>
+              <HomeLayout />
+            </PermissionRoute>
+          }
         >
-          <Route index element={<HomePage />} />
-          <Route path=":category" element={<HomePage />} />
-          <Route path="movie" element={<MoviePage />} />
-          <Route path="movie/:category" element={<MoviePage />} />
+          <Route index element={
+            <PermissionRoute requiredPermissions={['page:home']}>
+              <HomePage />
+            </PermissionRoute>
+          } />
+          <Route path=":category" element={
+            <PermissionRoute requiredPermissions={['page:home']}>
+              <HomePage />
+            </PermissionRoute>
+          } />
+          <Route path="movie" element={
+            <PermissionRoute requiredPermissions={['page:movie']}>
+              <MoviePage />
+            </PermissionRoute>
+          } />
+          <Route path="movie/:category" element={
+            <PermissionRoute requiredPermissions={['page:movie']}>
+              <MoviePage />
+            </PermissionRoute>
+          } />
         </Route>
 
-        <Route path="/torrents" element={<TorrentsPage />} />
-        <Route path="/forum" element={<ForumPage />} />
-        <Route path="/subtitles" element={<SubtitlesPage />} />
-        <Route path="/ranking" element={<RankingPage />} />
+        <Route path="/torrents" element={
+          <PermissionRoute requiredPermissions={['page:torrents']}>
+            <TorrentsPage />
+          </PermissionRoute>
+        } />
+        <Route path="/forum" element={
+          <PermissionRoute requiredPermissions={['page:forum']}>
+            <ForumPage />
+          </PermissionRoute>
+        } />
+        <Route path="/subtitles" element={
+          <PermissionRoute requiredPermissions={['page:subtitles']}>
+            <SubtitlesPage />
+          </PermissionRoute>
+        } />
+        <Route path="/ranking" element={
+          <PermissionRoute requiredPermissions={['page:ranking']}>
+            <RankingPage />
+          </PermissionRoute>
+        } />
 
         {/* 影片与片单 */}
-        <Route path="/films" element={<FilmsPage />} />
-        <Route path="/film/:id" element={<FilmDetailRoute />} />
-        <Route path="/playlists" element={<PlaylistsPage />} />
-        <Route path="/playlist/:id" element={<PlaylistDetailPageWrapper />} />
+        <Route path="/films" element={
+          <PermissionRoute requiredPermissions={['page:films']}>
+            <FilmsPage />
+          </PermissionRoute>
+        } />
+        <Route path="/film/:id" element={
+          <PermissionRoute requiredPermissions={['page:films']}>
+            <FilmDetailRoute />
+          </PermissionRoute>
+        } />
+        <Route path="/playlists" element={
+          <PermissionRoute requiredPermissions={['page:playlists']}>
+            <PlaylistsPage />
+          </PermissionRoute>
+        } />
+        <Route path="/playlist/:id" element={
+          <PermissionRoute requiredPermissions={['page:playlists']}>
+            <PlaylistDetailPageWrapper />
+          </PermissionRoute>
+        } />
 
         {/* 魔力值与邀请、历史 */}
-        <Route path="/invite" element={<InvitePage />} />
-        <Route path="/bonus" element={<BonusPage />} />
-        <Route path="/torrent-history" element={<TorrentHistoryPage />} />
+        <Route path="/invite" element={
+          <PermissionRoute requiredPermissions={['page:invite']}>
+            <InvitePage />
+          </PermissionRoute>
+        } />
+        <Route path="/bonus" element={
+          <PermissionRoute requiredPermissions={['page:bonus']}>
+            <BonusPage />
+          </PermissionRoute>
+        } />
+        <Route path="/torrent-history" element={
+          <PermissionRoute requiredPermissions={['page:torrent-history']}>
+            <TorrentHistoryPage />
+          </PermissionRoute>
+        } />
 
         {/* 求种与上传、编辑 */}
-        <Route path="/requests" element={<RequestsPage />} />
-        <Route path="/upload" element={<UploadTorrentPage />} />
-        <Route path="/edit" element={<EditPage />} />
+        <Route path="/requests" element={
+          <PermissionRoute requiredPermissions={['page:requests']}>
+            <RequestsPage />
+          </PermissionRoute>
+        } />
+        <Route path="/upload" element={
+          <PermissionRoute requiredPermissions={['page:upload']}>
+            <UploadTorrentPage />
+          </PermissionRoute>
+        } />
+        <Route path="/edit" element={
+          <PermissionRoute requiredPermissions={['page:edit']}>
+            <EditPage />
+          </PermissionRoute>
+        } />
 
         {/* 审核页需权限守卫，但保持持久布局不重挂载 */}
         <Route
           path="/review"
           element={
-            <PermissionRoute requiredPermissions={[PERMS.review.write]} requiredRoles={["admin"]} combine="OR">
+            <PermissionRoute requiredPermissions={["review:write"]} requiredRoles={["admin"]} combine="OR">
               <ReviewPage />
             </PermissionRoute>
           }
         />
 
-        <Route path="/messages" element={<MessagesPage />} />
+        <Route path="/messages" element={
+          <PermissionRoute requiredPermissions={['page:messages']}>
+            <MessagesPage />
+          </PermissionRoute>
+        } />
 
-        {/* 控制台 */}
-        <Route path="/control" element={<ControlPage />} />
+        {/* 控制面板 */}
+        <Route path="/control" element={
+          <PermissionRoute requiredPermissions={['page:control']}>
+            <ControlPage />
+          </PermissionRoute>
+        } />
 
         {/* 规则、管理组、工单 */}
-        <Route path="/rules" element={<RulesPage />} />
-        <Route path="/staff" element={<StaffPage />} />
-        <Route path="/tickets" element={<TicketsPage />} />
+        <Route path="/rules" element={
+          <PermissionRoute requiredPermissions={['page:rules']}>
+            <RulesPage />
+          </PermissionRoute>
+        } />
+        <Route path="/staff" element={
+          <PermissionRoute requiredPermissions={['page:staff']}>
+            <StaffPage />
+          </PermissionRoute>
+        } />
+        <Route path="/tickets" element={
+          <PermissionRoute requiredPermissions={['page:tickets']}>
+            <TicketsPage />
+          </PermissionRoute>
+        } />
 
         {/* 详情与重定向 */}
-        <Route path="/torrent/:id" element={<TorrentDetailPage />} />
+        <Route path="/torrent/:id" element={
+          <PermissionRoute requiredPermissions={['page:torrents']}>
+            <TorrentDetailPage />
+          </PermissionRoute>
+        } />
         <Route path="/torrent" element={<Navigate to="/torrents" replace />} />
       </Route>
 

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAccess } from '@/context/AccessContext';
-import { PERMS } from '@/permissions/permissions.gen';
+import { canAccess } from '@/utils/access';
 import { UserAvatar } from '@/components/UserAvatar';
 import { useSiteConfig } from '@/context/SiteConfigContext';
 import { ensureNamespace } from '@/utils/tabTitle';
@@ -49,11 +49,21 @@ export function Header() {
       document.removeEventListener('keydown', handleEscape);
     };
   }, [showUserMenu]);
-  const canReview = !loading && (
-    (access?.permissions?.includes(PERMS.review.write) ||
-      access?.roles?.includes('admin') ||
-      access?.roles?.includes('superadmin'))
-  );
+  // 导航显示权限：根据 access.roles / access.permissions 控制菜单显示
+  const canReview = !loading && canAccess(access, {
+    requiredPermissions: ['review:write'],
+    requiredRoles: ['admin', 'superadmin'],
+    combine: 'OR',
+  });
+  const canUpload = !loading && canAccess(access, { requiredPermissions: ['page:upload'] });
+  const canEdit = !loading && canAccess(access, { requiredPermissions: ['page:edit'] });
+  const canInvite = !loading && canAccess(access, { requiredPermissions: ['page:invite'] });
+  const canBonus = !loading && canAccess(access, { requiredPermissions: ['page:bonus'] });
+  const canControl = !loading && canAccess(access, {
+    requiredRoles: ['admin'],
+    requiredPermissions: ['control:access'],
+    combine: 'OR',
+  });
   return (
     <header className="sticky h-16 bg-[#0F171E] z-50 px-4 md:px-8 border-b border-gray-800" style={{ top: '-64px' }}>
       <div className="flex items-center justify-between h-full max-w-[1920px] mx-auto">
@@ -84,8 +94,12 @@ export function Header() {
             {/* 新增：影片与片单导航入口，保持与现有样式一致 */}
             <NavLink to="/films" className="text-white hover:text-gray-300 transition-colors">影片</NavLink>
             <NavLink to="/playlists" className="text-white hover:text-gray-300 transition-colors">片单</NavLink>
-            <NavLink to="/upload" className="text-white hover:text-gray-300 transition-colors">上传</NavLink>
-            <NavLink to="/edit" className="text-white hover:text-gray-300 transition-colors">编辑</NavLink>
+            {canUpload && (
+              <NavLink to="/upload" className="text-white hover:text-gray-300 transition-colors">上传</NavLink>
+            )}
+            {canEdit && (
+              <NavLink to="/edit" className="text-white hover:text-gray-300 transition-colors">编辑</NavLink>
+            )}
             {canReview && (
               <NavLink to="/review" className="text-white hover:text-gray-300 transition-colors">审核</NavLink>
             )}
@@ -114,15 +128,17 @@ export function Header() {
               <span>{userSummary ? userSummary.ratio.toFixed(2) : '0.00'}</span>
             </div>
           </div>
-          {/* 魔力值入口按钮，点击跳转到 /bonus */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white hover:bg-white/10 rounded-none"
-            onClick={() => navigate('/bonus')}
-          >
-            <Sparkles className="w-5 h-5 text-amber-400" />
-          </Button>
+          {/* 魔力值入口按钮，点击跳转到 /bonus（基于权限控制显示） */}
+          {canBonus && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-white/10 rounded-none"
+              onClick={() => navigate('/bonus')}
+            >
+              <Sparkles className="w-5 h-5 text-amber-400" />
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon"
@@ -203,26 +219,42 @@ export function Header() {
                     <History className="w-5 h-5 text-amber-400" />
                     <span>种子记录</span>
                   </button>
-                  <button
-                    onClick={() => {
-                      setShowUserMenu(false);
-                      navigate('/invite');
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
-                  >
-                    <UserPlus className="w-5 h-5 text-amber-400" />
-                    <span>邀请管理</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowUserMenu(false);
-                      navigate('/control');
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
-                  >
-                    <Settings className="w-5 h-5 text-amber-400" />
-                    <span>控制台</span>
-                  </button>
+                  {canInvite && (
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        navigate('/invite');
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
+                    >
+                      <UserPlus className="w-5 h-5 text-amber-400" />
+                      <span>邀请管理</span>
+                    </button>
+                  )}
+                  {canBonus && (
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        navigate('/bonus');
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
+                    >
+                      <UserPlus className="w-5 h-5 text-amber-400" />
+                      <span>魔力管理</span>
+                    </button>
+                  )}
+                  {canControl && (
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        navigate('/control');
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
+                    >
+                      <Settings className="w-5 h-5 text-amber-400" />
+                      <span>控制面板</span>
+                    </button>
+                  )}
                 </div>
 
                 {/* 退出登录 */}

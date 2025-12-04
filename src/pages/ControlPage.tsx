@@ -118,7 +118,7 @@ export function ControlPage() {
               <Settings className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-white text-3xl">控制台</h1>
+              <h1 className="text-white text-3xl">控制面板</h1>
               <p className="text-neutral-400 text-sm mt-1">
                 管理您的账户设置和个人偏好
               </p>
