@@ -2,5 +2,4 @@
 .trae
 .vercel
 node_modules
-.env*
 openapi-ts-error-*.log

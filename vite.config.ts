@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => {
               if (id.includes('@tanstack')) return 'query'
               return 'vendor'
             }
-            if (id.includes('/src/api/')) return 'sdk'
+            if (id.includes('/src/api/')) return 'api'
             if (id.includes('/src/pages/')) return 'pages'
             return undefined
           }
