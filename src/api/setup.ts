@@ -13,7 +13,17 @@ import { OpenAPI } from './core/OpenAPI';
  * - BASE：来自 `import.meta.env.VITE_BASE_URL`，并移除尾部斜杠
  * - TOKEN：统一从 localStorage 读取 `accessToken`（如你不需要可删除该段）
  */
+// 通过全局标记确保仅初始化一次，避免在 HMR 或重复导入下污染配置
 export function initOpenAPI(): void {
+  if (typeof window !== 'undefined') {
+    // @ts-expect-error 自定义全局标记，避免多次初始化
+    if ((window as any).__openapi_inited) {
+      console.warn('initOpenAPI() should be called only once');
+      return;
+    }
+    // @ts-expect-error 自定义全局标记，避免多次初始化
+    (window as any).__openapi_inited = true;
+  }
   // 读取 Vite 环境变量（Vite 在不同 mode 下会自动加载对应的 .env.* 文件）
   const base = import.meta.env.VITE_BASE_URL || '';
 
