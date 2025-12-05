@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AggregatePermissionsResponseDto } from '../models/AggregatePermissionsResponseDto';
 import type { AssignPermissionsDto } from '../models/AssignPermissionsDto';
 import type { AssignPermissionsResponseDto } from '../models/AssignPermissionsResponseDto';
 import type { CheckPermissionsRequestDto } from '../models/CheckPermissionsRequestDto';
@@ -297,6 +298,30 @@ export class PermissionsService {
             url: '/permissions/check',
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 聚合并返回当前用户的权限键集合
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static permissionsControllerAggregateOfUser(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: AggregatePermissionsResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/permissions/aggregate-of-user',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

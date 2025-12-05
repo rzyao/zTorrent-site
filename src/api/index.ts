@@ -36,6 +36,7 @@ export type { AdminReverseDto } from './models/AdminReverseDto';
 export type { AdminUnfreezeDto } from './models/AdminUnfreezeDto';
 export { AdvancedPunishmentRecordRuleDto } from './models/AdvancedPunishmentRecordRuleDto';
 export { AdvancedRuleDto } from './models/AdvancedRuleDto';
+export type { AggregatePermissionsResponseDto } from './models/AggregatePermissionsResponseDto';
 export type { ApplyPunishmentDto } from './models/ApplyPunishmentDto';
 export type { AssignPermissionsDto } from './models/AssignPermissionsDto';
 export type { AssignPermissionsResponseDto } from './models/AssignPermissionsResponseDto';

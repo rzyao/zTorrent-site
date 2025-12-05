@@ -8,6 +8,10 @@ export type CreatePlaylistDto = {
     coverUrl?: string;
     visibility: CreatePlaylistDto.visibility;
     tags?: Array<string>;
+    /**
+     * 分类唯一键（categories.key，kind=playlist）
+     */
+    category?: string;
 };
 export namespace CreatePlaylistDto {
     export enum visibility {

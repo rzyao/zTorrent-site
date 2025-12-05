@@ -162,10 +162,17 @@ export class CategoriesService {
     }
     /**
      * 分类树结构（父分类及其子分类）
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static categoriesControllerTree(): CancelablePromise<{
+    public static categoriesControllerTree(
+        requestBody: {
+            kind?: 'torrent' | 'film' | 'playlist';
+            genre?: 'General' | 'Adult';
+            enabled?: boolean;
+        },
+    ): CancelablePromise<{
         code?: number;
         message?: string;
         data?: Array<CategoryTreeParentDto>;
@@ -175,6 +182,8 @@ export class CategoriesService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/categories/tree',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
