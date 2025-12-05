@@ -45,21 +45,25 @@
 
 .scrollbar-themed {
   scrollbar-width: thin;
-  scrollbar-color: #f97316 rgba(38,38,38,0.6);
+  scrollbar-color: #f97316 rgba(38, 38, 38, 0.6);
 }
+
 .scrollbar-themed::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
+
 .scrollbar-themed::-webkit-scrollbar-track {
-  background: rgba(38,38,38,0.6);
+  background: rgba(38, 38, 38, 0.6);
   border-radius: 0.5rem;
 }
+
 .scrollbar-themed::-webkit-scrollbar-thumb {
   background: #f97316;
   border-radius: 0.5rem;
-  border: 2px solid rgba(38,38,38,0.6);
+  border: 2px solid rgba(38, 38, 38, 0.6);
 }
+
 .scrollbar-themed::-webkit-scrollbar-thumb:hover {
   background: #fb923c;
 }

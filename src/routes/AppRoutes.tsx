@@ -268,10 +268,9 @@ export default function AppRoutes() {
           </PermissionRoute>
         } />
         <Route path="/upload" element={
-          <PermissionRoute requiredPermissions={['page:upload']}>
-            <UploadTorrentPage />
-          </PermissionRoute>
+          <UploadTorrentPage />
         } />
+
         <Route path="/edit" element={
           <PermissionRoute requiredPermissions={['page:edit']}>
             <EditPage />

@@ -32,6 +32,8 @@ import { customToast } from '@/hooks/useToast';
 import { categoryTree } from '@/types/UploadTorrentPage';
 import { parseMediaInfo, MediaInfoResult } from '@/types/UploadTorrentPage';
 import { useUploadStore } from '@/stores/uploadStore';
+import { extractDataFromHash, mapDataToForm } from '@/utils/hashParser';
+import { extractErrorMessage } from '@/utils/errorMessage';
 
 export function UploadTorrentPage() {
   useDynamicTitle('上传');
@@ -62,88 +64,45 @@ export function UploadTorrentPage() {
 
   useEffect(() => {
     if (location.hash && location.hash.includes('#separator#')) {
-      try {
-        const hashContent = location.hash.split('#separator#')[1];
-        if (!hashContent) return;
+      const rawData = extractDataFromHash(location.hash);
+      const mappedData = mapDataToForm(rawData);
 
-        // Base64 decode
-        const decodedBase64 = atob(hashContent);
-        // URL decode
-        const decodedString = decodeURIComponent(decodedBase64);
+      // Apply Mapped Data to State
+      if (mappedData.title) setTitle(mappedData.title);
+      if (mappedData.subTitle) setSubTitle(mappedData.subTitle);
+      if (mappedData.imdbUrl) setImdbUrl(mappedData.imdbUrl);
+      if (mappedData.doubanUrl) setDoubanUrl(mappedData.doubanUrl);
+      if (mappedData.description) setDescription(mappedData.description);
 
-        // Split by #linkstr#
-        const parts = decodedString.split('#linkstr#');
-        const data: Record<string, string> = {};
+      // Only set poster if not already manually uploaded
+      if (mappedData.uploadedPoster && !uploadedPoster) setUploadedPoster(mappedData.uploadedPoster);
 
-        for (let i = 0; i < parts.length; i += 2) {
-          const key = parts[i];
-          const value = parts[i + 1];
-          // We check value !== undefined because if the string ends with key, value is undefined
-          if (key) {
-            data[key] = value || '';
+      if (mappedData.selectedCategory) setSelectedCategory(mappedData.selectedCategory);
+      // 若副分类为空数组也需要清空已有选择；因此只判断 undefined
+      if (mappedData.selectedSubCategories !== undefined) setSelectedSubCategories(mappedData.selectedSubCategories);
+
+      if (mappedData.region) setRegion(mappedData.region);
+      if (mappedData.videoStandard) setVideoStandard(mappedData.videoStandard);
+      if (mappedData.videoFormat) setVideoFormat(mappedData.videoFormat);
+      if (mappedData.audioFormat) setAudioFormat(mappedData.audioFormat);
+      if (mappedData.videoResolution) setVideoResolution(mappedData.videoResolution);
+
+      if (mappedData.mediaInfoText) {
+        setMediaInfoText(mappedData.mediaInfoText);
+        try {
+          const parsed = parseMediaInfo(mappedData.mediaInfoText);
+          setMediaInfo(parsed);
+          // 当用户未显式提供质量参数时，使用解析结果进行回填以提升易用性
+          if (!videoResolution && parsed.Video?.resolution) {
+            setVideoResolution(parsed.Video.resolution);
           }
-        }
-
-        // Map fields
-        if (data.name) setTitle(data.name);
-        if (data.small_descr) setSubTitle(data.small_descr);
-        if (data.url) setImdbUrl(data.url);
-        if (data.dburl) setDoubanUrl(data.dburl);
-        if (data.descr) {
-          setDescription(data.descr);
-          // Extract first image from description as poster
-          const imgMatch = data.descr.match(/\[img\](.*?)\[\/img\]/);
-          if (imgMatch && imgMatch[1]) {
-            setUploadedPoster(imgMatch[1]);
+          if (!videoStandard && parsed.Video?.standard) {
+            setVideoStandard(parsed.Video.standard);
           }
-        }
-
-        // Map Category (type -> category name)
-        if (data.type) {
-          const cat = categoryTree.find((c) => c.name === data.type);
-          if (cat) {
-            setSelectedCategory(cat.id);
-            // If we want to be safe, clear subcategories when changing main category
-            setSelectedSubCategories([]);
+          if (!audioFormat && parsed.Audio?.format) {
+            setAudioFormat(parsed.Audio.format);
           }
-        }
-
-        // Map Region
-        if (data.source_sel) {
-          const regionMap: Record<string, string> = {
-            '大陆': '中国大陆',
-            '香港': '中国香港',
-            '台湾': '中国台湾',
-          };
-          setRegion(regionMap[data.source_sel] || data.source_sel);
-        }
-
-        // Map Resolution
-        if (data.standard_sel) {
-          const std = data.standard_sel.toLowerCase();
-          if (std.includes('1080p')) setVideoStandard('Full HD 1080p');
-          else if (std.includes('1080i')) setVideoStandard('Full HD 1080i');
-          else if (std.includes('720p')) setVideoStandard('HD 720p');
-          else if (std.includes('2160') || std.includes('4k')) setVideoStandard('4K UHD');
-          else setVideoStandard(data.standard_sel);
-        }
-
-        // Map Video Codec
-        if (data.codec_sel) {
-          const v = data.codec_sel.toUpperCase();
-          if (v.includes('H265') || v.includes('HEVC')) setVideoFormat('H.265/HEVC');
-          else if (v.includes('H264') || v.includes('AVC')) setVideoFormat('H.264/AVC');
-          else setVideoFormat(data.codec_sel);
-        }
-
-        // Map Audio Codec
-        if (data.audiocodec_sel) {
-          setAudioFormat(data.audiocodec_sel);
-        }
-
-      } catch (e) {
-        console.error('Autofill error:', e);
-        customToast.error('自动填充解析失败');
+        } catch (e) { console.error("Re-parsing MediaInfo for state failed", e); }
       }
     }
   }, [location.hash, categoryTree]);
@@ -371,9 +330,9 @@ export function UploadTorrentPage() {
         setAudioFormat(mediaInfo.Audio.format);
       }
       /* 解析成功后，更新视频编码 */
-      if (mediaInfo.Video?.format) {
-        setVideoFormat(mediaInfo.Video.format);
-      }
+      // if (mediaInfo.Video?.format) {
+      //   setVideoFormat(mediaInfo.Video.format);
+      // }
     } catch (err: any) {
       customToast.error(err?.message || '解析 MediaInfo 失败');
     }
@@ -425,7 +384,7 @@ export function UploadTorrentPage() {
       customToast.success(msg);
       navigate('/torrents');
     } catch (err: any) {
-      const msg = err?.message || '发布失败';
+      const msg = extractErrorMessage(err, '发布失败');
       customToast.error(msg);
     } finally {
       setSubmitting(false);
@@ -617,7 +576,7 @@ export function UploadTorrentPage() {
                   {/* 分辨率 */}
                   <div className="flex flex-row items-center gap-2">
                     <label className="text-neutral-400 text-sm flex items-center gap-1 whitespace-nowrap">分辨率 :</label>
-                    <Select value={videoStandard || undefined} onValueChange={setVideoStandard}>
+                    <Select value={videoStandard} onValueChange={setVideoStandard}>
                       <SelectTrigger className="bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-3 py-2 text-white text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 outline-none transition-all">
                         <SelectValue placeholder="请选择" />
                       </SelectTrigger>
@@ -641,7 +600,7 @@ export function UploadTorrentPage() {
                   {/* 视频编码 */}
                   <div className="flex flex-row items-center gap-2">
                     <label className="text-neutral-400 text-sm flex items-center gap-1 whitespace-nowrap">视频编码 :</label>
-                    <Select value={videoFormat || undefined} onValueChange={setVideoFormat}>
+                    <Select value={videoFormat} onValueChange={setVideoFormat}>
                       <SelectTrigger className="bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-3 py-2 text-white text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 outline-none transition-all">
                         <SelectValue placeholder="请选择" />
                       </SelectTrigger>
@@ -652,6 +611,11 @@ export function UploadTorrentPage() {
                               {opt}
                             </SelectItem>
                           ))}
+                          {videoFormat && !videoCodecOptions.includes(videoFormat) && (
+                            <SelectItem value={videoFormat} className="text-white hover:bg-neutral-700 focus:bg-neutral-700">
+                              {videoFormat}
+                            </SelectItem>
+                          )}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -660,7 +624,7 @@ export function UploadTorrentPage() {
                   {/* 音频编码 */}
                   <div className="flex flex-row items-center gap-2">
                     <label className="text-neutral-400 text-sm flex items-center gap-1 whitespace-nowrap">音频编码 :</label>
-                    <Select value={audioFormat || undefined} onValueChange={setAudioFormat}>
+                    <Select value={audioFormat} onValueChange={setAudioFormat}>
                       <SelectTrigger className="bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-3 py-2 text-white text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 outline-none transition-all">
                         <SelectValue placeholder="请选择" />
                       </SelectTrigger>
@@ -671,6 +635,11 @@ export function UploadTorrentPage() {
                               {opt}
                             </SelectItem>
                           ))}
+                          {audioFormat && !audioCodecOptions.includes(audioFormat) && (
+                            <SelectItem value={audioFormat} className="text-white hover:bg-neutral-700 focus:bg-neutral-700">
+                              {audioFormat}
+                            </SelectItem>
+                          )}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -692,7 +661,7 @@ export function UploadTorrentPage() {
 
               <Separator className="bg-neutral-700/40" />
 
-              {/* MediaInfo */}
+              {/* MediaInfo输入框 */}
               <div className="grid grid-cols-1 grid-cols-[160px_1fr] gap-2">
                 <label className="text-neutral-300 text-sm pt-2">MediaInfo</label>
                 <div className="col-span-1">
@@ -700,6 +669,7 @@ export function UploadTorrentPage() {
                     rows={10}
                     placeholder="请粘贴 MediaInfo 或 BDInfo 信息..."
                     className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-3 text-white text-sm placeholder:text-neutral-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 outline-none resize-none font-mono transition-all scrollbar-themed"
+                    value={mediaInfoText}
                     onChange={handleMediaInfoChange}
                   />
                   <p className="text-neutral-500 text-xs mt-2 flex items-center gap-1">
@@ -736,7 +706,7 @@ export function UploadTorrentPage() {
               <div className="grid grid-cols-1 grid-cols-[160px_1fr] gap-2">
                 <label className="text-neutral-300 text-sm flex items-center gap-1">国家/地区</label>
                 <div className="col-span-1">
-                  <Select value={region || undefined} onValueChange={setRegion}>
+                  <Select value={region} onValueChange={setRegion}>
                     <SelectTrigger className="w-[200px] bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-2.5 text-white text-sm focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/30 outline-none transition-all">
                       <SelectValue placeholder="请选择国家/地区" />
                     </SelectTrigger>
@@ -882,7 +852,7 @@ export function UploadTorrentPage() {
               <textarea
                 rows={15}
                 placeholder="请输入资源简介，支持BBCode格式...&#10;&#10;例如：&#10;[b]粗体文字[/b]&#10;[i]斜体文字[/i]&#10;[img]图片链接[/img]&#10;[url]链接地址[/url]"
-                className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-3 text-white text-sm placeholder:text-neutral-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/30 outline-none resize-none transition-all"
+                className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-3 text-white text-sm placeholder:text-neutral-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/30 outline-none resize-none transition-all scrollbar-themed"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />

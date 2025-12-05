@@ -13,6 +13,8 @@
 // @match        http*://*/upload*php*
 // @match        https://pixhost.to*
 // @match        https://*/upload/*
+// @match        http://localhost:5173/upload*
+// @match        http://guoyuan.de/upload*
 // @match        https://*.open.cd/plugin_upload.php*
 // @match        https://www.myanonamouse.net/t/*
 // @match        https://img.hdbits.org/
@@ -1816,6 +1818,9 @@ function find_origin_site(url) {
     }
     if (url.match(/^https:\/\/.{0,4}?chddiy.xyz\//) || url.match(/^https:\/\/ptchdbits.co\//)) {
         return 'CHDBits';
+    }
+    if (url.match(/localhost:5173|127\.0\.0\.1:5173/)) {
+        return 'Guoyuan';
     }
     return 'other';
 }
@@ -4506,6 +4511,14 @@ function fill_torrent(forward_site, container, name) {
     } else if (forward_site == 'YemaPT') {
         $('#fileList').wait(function () {
             ant_form_instance?.context?.setFieldsValue({ 'fileList': [...container.files].map(f => { f.originFileObj = f; return f }) }); //files要转为数组，并且添加originFileObj属性为自身
+        });
+    }
+    else if (forward_site == 'Guoyuan') {
+        $('input[accept=".torrent"]').wait(function () {
+            var fileInput = $('input[accept=".torrent"]')[0];
+            fileInput.files = container.files;
+            var event = new Event('change', { bubbles: true });
+            fileInput.dispatchEvent(event);
         });
     }
     else {
@@ -12763,7 +12776,7 @@ function auto_feed() {
                 console.log("【果园】Clicked. raw_info:", JSON.stringify(raw_info));
                 var hash = dictToString(raw_info);
                 console.log("Hash generated length:", hash.length);
-                var targetUrl = 'http://localhost:5174/upload#separator#' + hash;
+                var targetUrl = 'http://localhost:5173/upload?#separator#' + hash;
                 window.open(targetUrl, '_blank');
             } catch (e) {
                 console.error("【果园】Error:", e);
@@ -14778,6 +14791,12 @@ function auto_feed() {
             if (forward_site == 'HDT' && allinput[i].name == 'infosite') {
                 allinput[i].value = raw_info.url.replace('http:', 'https:').replace(/(tt\d+[^/]$)/, '$1/');
             }
+        }
+
+        if (forward_site == 'Guoyuan') {
+            console.log("Guoyuan detected: Triggering torrent file upload only.");
+            addTorrent(raw_info.torrent_url, raw_info.torrent_name, forward_site, "");
+            return;
         }
 
         //填写简介，一般都是textarea，特殊情况后续处理--CMCT改版兼容

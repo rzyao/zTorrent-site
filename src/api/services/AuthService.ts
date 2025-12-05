@@ -284,6 +284,10 @@ export class AuthService {
             user?: Record<string, any>;
             roles?: Array<string>;
             permissions?: Array<string>;
+            avatar?: string | null;
+            signature?: string | null;
+            location?: string | null;
+            bio?: string | null;
         };
         path?: string;
         timestamp?: string;
@@ -306,6 +310,10 @@ export class AuthService {
             user?: Record<string, any>;
             roles?: Array<string>;
             permissions?: Array<string>;
+            avatar?: string | null;
+            signature?: string | null;
+            location?: string | null;
+            bio?: string | null;
         };
         path?: string;
         timestamp?: string;

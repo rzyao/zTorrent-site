@@ -5,6 +5,8 @@ import { UsersService } from '@/api/services/UsersService';
 import { OpenAPI } from '@/api/core/OpenAPI';
 import { getProfile } from '@/api/custom/auth';
 import { FilmsService } from '@/api/services/FilmsService';
+import type { UpdateUserPreferencesDto } from '@/api/models/UpdateUserPreferencesDto';
+import type { UpdateUserPrivacyDto } from '@/api/models/UpdateUserPrivacyDto';
 import type {
   TabType,
   ProfileData,
@@ -80,6 +82,14 @@ export function useControlState() {
     downloadComplete: false,
     ratioWarnings: true,
   });
+  const [baselineNotifications, setBaselineNotifications] = useState<NotificationsData>({
+    emailNotifications: true,
+    torrentComments: true,
+    privateMessages: true,
+    systemAnnouncements: true,
+    downloadComplete: false,
+    ratioWarnings: true,
+  });
 
   // 隐私设置
   const [privacy, setPrivacy] = useState<PrivacyData>({
@@ -88,6 +98,36 @@ export function useControlState() {
     allowMessages: true,
     showOnlineStatus: true,
   });
+  // 隐私设置基线（用于增量保存与变更检测）
+  const [baselinePrivacy, setBaselinePrivacy] = useState<PrivacyData>({
+    showProfile: true,
+    showStats: true,
+    allowMessages: true,
+    showOnlineStatus: true,
+  });
+
+  // 加载隐私设置（进入隐私 Tab 时）
+  useEffect(() => {
+    if (activeTab !== 'privacy') return;
+    (async () => {
+      try {
+        const resp = await UsersService.usersPrivacyControllerGet();
+        const data = resp?.data as any;
+        if (data) {
+          const next: PrivacyData = {
+            showProfile: Boolean(data.showProfile),
+            showStats: Boolean(data.showStats),
+            allowMessages: Boolean(data.allowMessages),
+            showOnlineStatus: Boolean(data.showOnlineStatus),
+          };
+          setPrivacy(next);
+          setBaselinePrivacy(next);
+        }
+      } catch {
+        // 保持默认值，不影响页面展示
+      }
+    })();
+  }, [activeTab]);
 
   // 选项数据加载与回退（字典优先、接口回退、静态占位）
   const { getAllCategories, refreshDictionaries } = useDictionaryLabels();
@@ -123,11 +163,13 @@ export function useControlState() {
     };
     const loadGenres = async () => {
       try {
-        const resp = await (await import('@/api/core/request')).request((await import('@/api/core/OpenAPI')).OpenAPI, {
+        const { request } = await import('@/api/core/request');
+        const { OpenAPI } = await import('@/api/core/OpenAPI');
+        const resp: any = await request<any>(OpenAPI, {
           method: 'POST',
           url: '/users/preferences/list-general-film-root-categories',
         });
-        const body: any = resp?.code !== undefined ? resp : (resp as any)?.data;
+        const body: any = (resp && typeof resp === 'object' && 'code' in resp) ? resp : (resp as any)?.data;
         const data = body?.data ?? body;
         const items: any[] = Array.isArray(data) ? data : [];
         const mapped: KeyLabelOption[] = items
@@ -147,13 +189,35 @@ export function useControlState() {
   }, [activeTab]);
 
   useEffect(() => {
+    if (activeTab !== 'notifications') return;
+    (async () => {
+      try {
+        const resp = await UsersService.usersNotificationsControllerGet();
+        const data = resp?.data as any;
+        if (data) {
+          const next: NotificationsData = {
+            emailNotifications: Boolean(data.emailNotifications),
+            torrentComments: Boolean(data.torrentComments),
+            privateMessages: Boolean(data.privateMessages),
+            systemAnnouncements: Boolean(data.systemAnnouncements),
+            downloadComplete: Boolean(data.downloadComplete),
+            ratioWarnings: Boolean(data.ratioWarnings),
+          };
+          setNotifications(next);
+          setBaselineNotifications(next);
+        }
+      } catch { }
+    })();
+  }, [activeTab]);
+
+  useEffect(() => {
     if (activeTab !== 'preferences' || currentUserId) return;
     (async () => {
       try {
         const prof = await getProfile();
         const id = String(prof?.user?.id ?? prof?.user?._id ?? prof?.sub ?? '');
         if (id) setCurrentUserId(id);
-      } catch {}
+      } catch { }
     })();
   }, [activeTab, currentUserId]);
 
@@ -165,7 +229,7 @@ export function useControlState() {
         const keys = Array.isArray(resp?.data) ? resp.data : [];
         setSelectedTorrentCategories(keys);
         setBaselineTorrentCategories(keys);
-      } catch {}
+      } catch { }
     })();
   }, [activeTab, currentUserId]);
 
@@ -173,18 +237,20 @@ export function useControlState() {
     if (activeTab !== 'preferences' || !currentUserId) return;
     (async () => {
       try {
-        const resp = await (await import('@/api/core/request')).request((await import('@/api/core/OpenAPI')).OpenAPI, {
+        const { request } = await import('@/api/core/request');
+        const { OpenAPI } = await import('@/api/core/OpenAPI');
+        const resp: any = await request<any>(OpenAPI, {
           method: 'POST',
           url: '/users/preferences/get-default-film-category-ids',
           body: { id: currentUserId },
           mediaType: 'application/json',
         });
-        const body: any = resp?.code !== undefined ? resp : (resp as any)?.data;
+        const body: any = (resp && typeof resp === 'object' && 'code' in resp) ? resp : (resp as any)?.data;
         const data = body?.data ?? body;
         const ids: string[] = Array.isArray(data) ? data.map((x: any) => String(x)) : [];
         setSelectedFilmGenres(ids);
         setBaselineFilmGenres(ids);
-      } catch {}
+      } catch { }
     })();
   }, [activeTab, currentUserId]);
 
@@ -211,7 +277,7 @@ export function useControlState() {
           bio: String((prof as any)?.bio ?? profileData.bio ?? ''),
         };
         setProfileData(next);
-      } catch {}
+      } catch { }
     })();
   }, [activeTab]);
 
@@ -237,7 +303,7 @@ export function useControlState() {
           setBaselineAdultMode(Boolean(data.showAdult));
           setBaselineTorrentCategories(Array.isArray(data.defaultTorrentCategories) ? data.defaultTorrentCategories : []);
         }
-      } catch {}
+      } catch { }
     };
     loadPreferences();
   }, [activeTab]);
@@ -245,15 +311,75 @@ export function useControlState() {
   // 保存偏好
   const handleSave = async () => {
     try {
+      if (activeTab === 'notifications') {
+        const body: any = {};
+        if (notifications.emailNotifications !== baselineNotifications.emailNotifications) body.emailNotifications = notifications.emailNotifications;
+        if (notifications.torrentComments !== baselineNotifications.torrentComments) body.torrentComments = notifications.torrentComments;
+        if (notifications.privateMessages !== baselineNotifications.privateMessages) body.privateMessages = notifications.privateMessages;
+        if (notifications.systemAnnouncements !== baselineNotifications.systemAnnouncements) body.systemAnnouncements = notifications.systemAnnouncements;
+        if (notifications.downloadComplete !== baselineNotifications.downloadComplete) body.downloadComplete = notifications.downloadComplete;
+        if (notifications.ratioWarnings !== baselineNotifications.ratioWarnings) body.ratioWarnings = notifications.ratioWarnings;
+        const hasChanges = Object.keys(body).length > 0;
+        if (!hasChanges) {
+          setSaveSuccess(true);
+          setTimeout(() => setSaveSuccess(false), 3000);
+          return;
+        }
+        const resp = await UsersService.usersNotificationsControllerSave(body);
+        const data = resp?.data as any;
+        if (data) {
+          const next: NotificationsData = {
+            emailNotifications: Boolean(data.emailNotifications),
+            torrentComments: Boolean(data.torrentComments),
+            privateMessages: Boolean(data.privateMessages),
+            systemAnnouncements: Boolean(data.systemAnnouncements),
+            downloadComplete: Boolean(data.downloadComplete),
+            ratioWarnings: Boolean(data.ratioWarnings),
+          };
+          setNotifications(next);
+          setBaselineNotifications(next);
+          setSaveSuccess(true);
+          setTimeout(() => setSaveSuccess(false), 3000);
+        }
+        return;
+      }
+      if (activeTab === 'privacy') {
+        const body: Partial<UpdateUserPrivacyDto> = {};
+        if (privacy.showProfile !== baselinePrivacy.showProfile) body.showProfile = privacy.showProfile;
+        if (privacy.showStats !== baselinePrivacy.showStats) body.showStats = privacy.showStats;
+        if (privacy.allowMessages !== baselinePrivacy.allowMessages) body.allowMessages = privacy.allowMessages;
+        if (privacy.showOnlineStatus !== baselinePrivacy.showOnlineStatus) body.showOnlineStatus = privacy.showOnlineStatus;
+        const hasChanges = Object.keys(body).length > 0;
+        if (!hasChanges) {
+          setSaveSuccess(true);
+          setTimeout(() => setSaveSuccess(false), 3000);
+          return;
+        }
+        const resp = await UsersService.usersPrivacyControllerSave(body as UpdateUserPrivacyDto);
+        const data = resp?.data as any;
+        if (data) {
+          const next: PrivacyData = {
+            showProfile: Boolean(data.showProfile),
+            showStats: Boolean(data.showStats),
+            allowMessages: Boolean(data.allowMessages),
+            showOnlineStatus: Boolean(data.showOnlineStatus),
+          };
+          setPrivacy(next);
+          setBaselinePrivacy(next);
+          setSaveSuccess(true);
+          setTimeout(() => setSaveSuccess(false), 3000);
+        }
+        return;
+      }
       const validCategories = selectedTorrentCategories.filter((k) => torrentCategoryOptions.some((c) => c.key === k));
       const validGenres = selectedFilmGenres.filter((g) => filmGenreOptions.some((opt) => opt.key === g));
-      const body = {
+      const body: UpdateUserPreferencesDto = {
         showAdult: adultMode,
         defaultTorrentCategories: validCategories,
-        defaultFilmGenres: validGenres,
-        language: preferences.language,
-        theme: preferences.theme,
-        defaultView: preferences.defaultView,
+        defaultFilmCategories: validGenres,
+        language: preferences.language as UpdateUserPreferencesDto.language,
+        theme: preferences.theme as UpdateUserPreferencesDto.theme,
+        defaultView: preferences.defaultView as UpdateUserPreferencesDto.defaultView,
       };
       const resp = await UsersService.usersPreferencesControllerSave(body);
       const data = resp?.data;
@@ -265,7 +391,7 @@ export function useControlState() {
         });
         setAdultMode(Boolean(data.showAdult));
         setSelectedTorrentCategories(Array.isArray(data.defaultTorrentCategories) ? data.defaultTorrentCategories : []);
-        setSelectedFilmGenres(validGenres);
+        setSelectedFilmGenres(Array.isArray((data as any)?.defaultFilmCategories) ? (data as any).defaultFilmCategories : validGenres);
         setBaselinePreferences({
           language: (data.language as PreferencesData['language']) ?? preferences.language,
           theme: (data.theme as PreferencesData['theme']) ?? preferences.theme,
@@ -273,7 +399,7 @@ export function useControlState() {
         });
         setBaselineAdultMode(Boolean(data.showAdult));
         setBaselineTorrentCategories(Array.isArray(data.defaultTorrentCategories) ? data.defaultTorrentCategories : []);
-        setBaselineFilmGenres(validGenres);
+        setBaselineFilmGenres(Array.isArray((data as any)?.defaultFilmCategories) ? (data as any).defaultFilmCategories : validGenres);
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 3000);
       }
@@ -295,6 +421,16 @@ export function useControlState() {
     if (preferences.defaultView !== baselinePreferences.defaultView) return true;
     if (!eqSet(selectedTorrentCategories, baselineTorrentCategories)) return true;
     if (!eqSet(selectedFilmGenres, baselineFilmGenres)) return true;
+    if (notifications.emailNotifications !== baselineNotifications.emailNotifications) return true;
+    if (notifications.torrentComments !== baselineNotifications.torrentComments) return true;
+    if (notifications.privateMessages !== baselineNotifications.privateMessages) return true;
+    if (notifications.systemAnnouncements !== baselineNotifications.systemAnnouncements) return true;
+    if (notifications.downloadComplete !== baselineNotifications.downloadComplete) return true;
+    if (notifications.ratioWarnings !== baselineNotifications.ratioWarnings) return true;
+    if (privacy.showProfile !== baselinePrivacy.showProfile) return true;
+    if (privacy.showStats !== baselinePrivacy.showStats) return true;
+    if (privacy.allowMessages !== baselinePrivacy.allowMessages) return true;
+    if (privacy.showOnlineStatus !== baselinePrivacy.showOnlineStatus) return true;
     return false;
   })();
 

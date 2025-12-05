@@ -11,9 +11,20 @@ import {
 import { cn } from "./utils";
 
 function Select({
+  value,
+  onValueChange,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Root>) {
-  return <SelectPrimitive.Root data-slot="select" {...props} />;
+  // 包装 onValueChange，过滤 Radix Select BubbleInput 触发的空值重置
+  const handleValueChange = (newValue: string) => {
+    // 如果新值为空，但当前已有值，忽略这次调用
+    if (newValue === '' && value && value !== '') {
+      return;
+    }
+    onValueChange?.(newValue);
+  };
+
+  return <SelectPrimitive.Root data-slot="select" value={value} onValueChange={handleValueChange} {...props} />;
 }
 
 function SelectGroup({

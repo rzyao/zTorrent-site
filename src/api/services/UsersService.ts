@@ -12,11 +12,15 @@ import type { ListUsersDto } from '../models/ListUsersDto';
 import type { ListUsersResponseDto } from '../models/ListUsersResponseDto';
 import type { SetUserAvatarDto } from '../models/SetUserAvatarDto';
 import type { UpdateUserBodyDto } from '../models/UpdateUserBodyDto';
+import type { UpdateUserNotificationsDto } from '../models/UpdateUserNotificationsDto';
 import type { UpdateUserPreferencesDto } from '../models/UpdateUserPreferencesDto';
+import type { UpdateUserPrivacyDto } from '../models/UpdateUserPrivacyDto';
 import type { UpdateUserProfileDto } from '../models/UpdateUserProfileDto';
 import type { UserDto } from '../models/UserDto';
 import type { UserIdDto } from '../models/UserIdDto';
+import type { UserNotificationsDto } from '../models/UserNotificationsDto';
 import type { UserPreferencesDto } from '../models/UserPreferencesDto';
+import type { UserPrivacyDto } from '../models/UserPrivacyDto';
 import type { UserProfileDataDto } from '../models/UserProfileDataDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -363,6 +367,110 @@ export class UsersService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/users/preferences/get-default-film-category-ids',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * @returns any 获取当前用户通知设置
+     * @throws ApiError
+     */
+    public static usersNotificationsControllerGet(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: UserNotificationsDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/users/notifications/get',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * @param requestBody
+     * @returns any 增量保存当前用户通知设置
+     * @throws ApiError
+     */
+    public static usersNotificationsControllerSave(
+        requestBody: UpdateUserNotificationsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: UserNotificationsDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/users/notifications/save',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 获取隐私设置
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static usersPrivacyControllerGet(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: UserPrivacyDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/users/privacy/get',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 增量保存隐私设置
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static usersPrivacyControllerSave(
+        requestBody: UpdateUserPrivacyDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: UserPrivacyDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/users/privacy/save',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

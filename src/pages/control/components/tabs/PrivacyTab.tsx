@@ -1,7 +1,6 @@
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
-import { Eye, Mail, Download } from 'lucide-react';
+import { Eye, Mail } from 'lucide-react';
 import type { PrivacyData } from '../../types';
 
 interface PrivacyTabProps {
@@ -10,7 +9,7 @@ interface PrivacyTabProps {
 }
 
 // 隐私设置 Tab
-// 职责：公开资料、显示统计、私信、在线状态、数据导出
+// 职责：公开资料、显示统计、私信、在线状态
 export function PrivacyTab({ privacy, setPrivacy }: PrivacyTabProps) {
   return (
     <div className="space-y-6">
@@ -62,20 +61,7 @@ export function PrivacyTab({ privacy, setPrivacy }: PrivacyTabProps) {
         <Switch checked={privacy.showOnlineStatus} onCheckedChange={(checked) => setPrivacy({ ...privacy, showOnlineStatus: checked })} />
       </div>
 
-      <Separator className="bg-neutral-700/50" />
 
-      {/* 数据导出 */}
-      <div className="p-5 rounded-xl bg-gradient-to-br from-neutral-800/50 to-stone-900/50 border border-neutral-700/50">
-        <div className="flex items-start gap-3">
-          <Download className="w-5 h-5 text-amber-400 mt-0.5" />
-          <div className="flex-1">
-            <h3 className="text-white text-sm mb-1">导出数据</h3>
-            <p className="text-neutral-400 text-xs mb-3">下载您在本站的所有数据副本</p>
-            <Button size="sm" variant="outline" className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10">请求导出</Button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
-
