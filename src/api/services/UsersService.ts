@@ -10,11 +10,14 @@ import type { GetDefaultTorrentCategoryKeysDto } from '../models/GetDefaultTorre
 import type { ListBanRecordsDto } from '../models/ListBanRecordsDto';
 import type { ListUsersDto } from '../models/ListUsersDto';
 import type { ListUsersResponseDto } from '../models/ListUsersResponseDto';
+import type { SetUserAvatarDto } from '../models/SetUserAvatarDto';
 import type { UpdateUserBodyDto } from '../models/UpdateUserBodyDto';
 import type { UpdateUserPreferencesDto } from '../models/UpdateUserPreferencesDto';
+import type { UpdateUserProfileDto } from '../models/UpdateUserProfileDto';
 import type { UserDto } from '../models/UserDto';
 import type { UserIdDto } from '../models/UserIdDto';
 import type { UserPreferencesDto } from '../models/UserPreferencesDto';
+import type { UserProfileDataDto } from '../models/UserProfileDataDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -157,6 +160,64 @@ export class UsersService {
             errors: {
                 401: `未授权或令牌无效`,
                 403: `无权限或被封禁`,
+            },
+        });
+    }
+    /**
+     * 更新个人资料
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static usersProfileControllerUpdate(
+        requestBody: UpdateUserProfileDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: UserProfileDataDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/users/profile/update',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 设置头像
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static usersProfileControllerSetAvatar(
+        requestBody: SetUserAvatarDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: UserProfileDataDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/users/profile/set-avatar',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
             },
         });
     }

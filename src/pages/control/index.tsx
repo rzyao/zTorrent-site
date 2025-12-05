@@ -59,22 +59,6 @@ export function ControlPage() {
               {state.activeTab === 'profile' && (
                 <div className="space-y-6">
                   <ProfileTab profileData={state.profileData} setProfileData={state.setProfileData} />
-                  {/* 所在地选择使用 Select 组件，以保持 UI 与原页面一致 */}
-                  <div className="space-y-2">
-                    <label className="text-neutral-300 text-sm">所在地</label>
-                    <Select value={state.profileData.location} onValueChange={(value) => state.setProfileData({ ...state.profileData, location: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="选择所在地" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="中国">中国</SelectItem>
-                        <SelectItem value="美国">美国</SelectItem>
-                        <SelectItem value="日本">日本</SelectItem>
-                        <SelectItem value="韩国">韩国</SelectItem>
-                        <SelectItem value="其他">其他</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
                 </div>
               )}
 
@@ -121,22 +105,23 @@ export function ControlPage() {
                 <PrivacyTab privacy={state.privacy} setPrivacy={state.setPrivacy} />
               )}
 
-              {/* 保存按钮区 */}
-              <div className="flex items-center justify-between mt-8 pt-6 border-t border-neutral-700/50">
-                <div className="flex items-center gap-2">
-                  {state.saveSuccess && (<span className="inline-flex items-center gap-2 text-green-400 text-sm"><span className="w-2 h-2 rounded-full bg-green-400" /> 设置已保存</span>)}
+              {state.activeTab !== 'profile' && (
+                <div className="flex items-center justify-between mt-8 pt-6 border-t border-neutral-700/50">
+                  <div className="flex items-center gap-2">
+                    {state.saveSuccess && (<span className="inline-flex items-center gap-2 text-green-400 text-sm"><span className="w-2 h-2 rounded-full bg-green-400" /> 设置已保存</span>)}
+                  </div>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={state.handleSave}
+                      className={state.hasUnsavedChanges
+                        ? 'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25'
+                        : 'bg-neutral-700 text-neutral-300 hover:bg-neutral-600'}
+                    >
+                      <Save className="w-4 h-4 mr-2" /> 保存设置
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-3">
-                  <Button
-                    onClick={state.handleSave}
-                    className={state.hasUnsavedChanges
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25'
-                      : 'bg-neutral-700 text-neutral-300 hover:bg-neutral-600'}
-                  >
-                    <Save className="w-4 h-4 mr-2" /> 保存设置
-                  </Button>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

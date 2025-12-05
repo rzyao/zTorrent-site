@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useDynamicTitle } from '@/hooks/useDynamicTitle';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Upload,
   Info,
@@ -58,6 +58,95 @@ export function UploadTorrentPage() {
   const [doubanUrl, setDoubanUrl] = useState('');
   const [torrentFile, setTorrentFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash && location.hash.includes('#separator#')) {
+      try {
+        const hashContent = location.hash.split('#separator#')[1];
+        if (!hashContent) return;
+
+        // Base64 decode
+        const decodedBase64 = atob(hashContent);
+        // URL decode
+        const decodedString = decodeURIComponent(decodedBase64);
+
+        // Split by #linkstr#
+        const parts = decodedString.split('#linkstr#');
+        const data: Record<string, string> = {};
+
+        for (let i = 0; i < parts.length; i += 2) {
+          const key = parts[i];
+          const value = parts[i + 1];
+          // We check value !== undefined because if the string ends with key, value is undefined
+          if (key) {
+            data[key] = value || '';
+          }
+        }
+
+        // Map fields
+        if (data.name) setTitle(data.name);
+        if (data.small_descr) setSubTitle(data.small_descr);
+        if (data.url) setImdbUrl(data.url);
+        if (data.dburl) setDoubanUrl(data.dburl);
+        if (data.descr) {
+          setDescription(data.descr);
+          // Extract first image from description as poster
+          const imgMatch = data.descr.match(/\[img\](.*?)\[\/img\]/);
+          if (imgMatch && imgMatch[1]) {
+            setUploadedPoster(imgMatch[1]);
+          }
+        }
+
+        // Map Category (type -> category name)
+        if (data.type) {
+          const cat = categoryTree.find((c) => c.name === data.type);
+          if (cat) {
+            setSelectedCategory(cat.id);
+            // If we want to be safe, clear subcategories when changing main category
+            setSelectedSubCategories([]);
+          }
+        }
+
+        // Map Region
+        if (data.source_sel) {
+          const regionMap: Record<string, string> = {
+            '大陆': '中国大陆',
+            '香港': '中国香港',
+            '台湾': '中国台湾',
+          };
+          setRegion(regionMap[data.source_sel] || data.source_sel);
+        }
+
+        // Map Resolution
+        if (data.standard_sel) {
+          const std = data.standard_sel.toLowerCase();
+          if (std.includes('1080p')) setVideoStandard('Full HD 1080p');
+          else if (std.includes('1080i')) setVideoStandard('Full HD 1080i');
+          else if (std.includes('720p')) setVideoStandard('HD 720p');
+          else if (std.includes('2160') || std.includes('4k')) setVideoStandard('4K UHD');
+          else setVideoStandard(data.standard_sel);
+        }
+
+        // Map Video Codec
+        if (data.codec_sel) {
+          const v = data.codec_sel.toUpperCase();
+          if (v.includes('H265') || v.includes('HEVC')) setVideoFormat('H.265/HEVC');
+          else if (v.includes('H264') || v.includes('AVC')) setVideoFormat('H.264/AVC');
+          else setVideoFormat(data.codec_sel);
+        }
+
+        // Map Audio Codec
+        if (data.audiocodec_sel) {
+          setAudioFormat(data.audiocodec_sel);
+        }
+
+      } catch (e) {
+        console.error('Autofill error:', e);
+        customToast.error('自动填充解析失败');
+      }
+    }
+  }, [location.hash, categoryTree]);
 
   // 主/副分类基于 categoryTree 渲染
   const mainCategories = categoryTree;

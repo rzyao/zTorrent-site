@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
-import { AuthService, TorrentsService, OpenAPI } from '../api';
+import { AuthService, TorrentsService, OpenAPI, UsersService, ImagesService } from '../api';
+import type { UpdateUserProfileDto } from '../api';
 import { extractErrorMessage } from '../utils/errorMessage';
 
 // OpenAPI.BASE 的设置已在全局布局 AppLayout 中统一处理，避免重复配置导致环境切换不一致
@@ -143,5 +144,91 @@ export function useTorrents() {
     torrents,
     isLoading,
     error
+  };
+}
+
+export function useUserProfile() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const toAbsoluteUrl = useCallback((u: string) => {
+    if (/^https?:\/\//i.test(u)) return u;
+    if (/^data:/i.test(u)) return u;
+    const base = String(OpenAPI.BASE || (typeof window !== 'undefined' ? window.location.origin : '') || '').replace(/\/$/, '');
+    const path = u.startsWith('/') ? u : `/${u}`;
+    return `${base}${path}`;
+  }, []);
+
+  const updateProfile = useCallback(async (payload: Partial<UpdateUserProfileDto>) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await UsersService.usersProfileControllerUpdate(payload as any);
+      const body = (response as any)?.code !== undefined ? response : (response as any)?.data ?? (response as any);
+      return body?.data ?? body;
+    } catch (err: any) {
+      const msg = extractErrorMessage(err, '更新资料失败');
+      setError(msg);
+      throw new Error(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const setAvatar = useCallback(async (url: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await UsersService.usersProfileControllerSetAvatar({ url: toAbsoluteUrl(url) });
+      const body = (response as any)?.code !== undefined ? response : (response as any)?.data ?? (response as any);
+      return body?.data ?? body;
+    } catch (err: any) {
+      const msg = extractErrorMessage(err, '设置头像失败');
+      setError(msg);
+      throw new Error(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const uploadAvatar = useCallback(async (file: File) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const type = file.type;
+      const size = file.size;
+      if (!['image/png', 'image/jpeg'].includes(type)) {
+        throw new Error('仅支持 JPG/PNG 格式');
+      }
+      if (size > 2 * 1024 * 1024) {
+        throw new Error('图片大小不能超过 2MB');
+      }
+      const dataUrl: string = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(new Error('读取文件失败'));
+        reader.readAsDataURL(file);
+      });
+      const response = await ImagesService.imagesControllerUpload({ content: dataUrl, filename: file.name, mimeType: type });
+      const body = (response as any)?.code !== undefined ? response : (response as any)?.data ?? (response as any);
+      const url = body?.data?.url ?? body?.url ?? undefined;
+      if (!url) {
+        throw new Error('上传失败');
+      }
+      return toAbsoluteUrl(String(url));
+    } catch (err: any) {
+      const msg = extractErrorMessage(err, '上传头像失败');
+      setError(msg);
+      throw new Error(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return {
+    updateProfile,
+    setAvatar,
+    uploadAvatar,
+    isLoading,
+    error,
   };
 }

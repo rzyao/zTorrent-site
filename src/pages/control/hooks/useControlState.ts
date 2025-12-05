@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { useDictionaryLabels } from '@/hooks/useDictionary';
 import { UsersService } from '@/api/services/UsersService';
+import { OpenAPI } from '@/api/core/OpenAPI';
 import { getProfile } from '@/api/custom/auth';
 import { FilmsService } from '@/api/services/FilmsService';
 import type {
@@ -188,6 +189,32 @@ export function useControlState() {
   }, [activeTab, currentUserId]);
 
   // 初始化服务端偏好
+  useEffect(() => {
+    if (activeTab !== 'profile') return;
+    (async () => {
+      try {
+        const prof = await getProfile();
+        const user = (prof as any)?.user ?? {};
+        const rawAvatar = String((prof as any)?.avatar ?? profileData.avatar ?? '');
+        const absoluteAvatar = (() => {
+          if (/^https?:\/\//i.test(rawAvatar)) return rawAvatar;
+          if (/^data:/i.test(rawAvatar)) return rawAvatar;
+          const base = String(OpenAPI.BASE || (typeof window !== 'undefined' ? window.location.origin : '') || '').replace(/\/$/, '');
+          const path = rawAvatar ? (rawAvatar.startsWith('/') ? rawAvatar : `/${rawAvatar}`) : '';
+          return path ? `${base}${path}` : rawAvatar;
+        })();
+        const next: ProfileData = {
+          username: String(user?.username ?? profileData.username ?? ''),
+          avatar: absoluteAvatar,
+          signature: String((prof as any)?.signature ?? profileData.signature ?? ''),
+          location: String((prof as any)?.location ?? profileData.location ?? ''),
+          bio: String((prof as any)?.bio ?? profileData.bio ?? ''),
+        };
+        setProfileData(next);
+      } catch {}
+    })();
+  }, [activeTab]);
+
   useEffect(() => {
     if (activeTab !== 'preferences') return;
     const loadPreferences = async () => {
