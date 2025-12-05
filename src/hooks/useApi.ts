@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { AuthService, TorrentsService, OpenAPI } from '../api';
+import { extractErrorMessage } from '../utils/errorMessage';
 
 // OpenAPI.BASE 的设置已在全局布局 AppLayout 中统一处理，避免重复配置导致环境切换不一致
 
@@ -28,8 +29,9 @@ export function useAuth() {
 
       return response;
     } catch (err: any) {
-      setError(err.message || '登录失败');
-      throw err;
+      const msg = extractErrorMessage(err, '登录失败');
+      setError(msg);
+      throw new Error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -53,12 +55,7 @@ export function useAuth() {
       setIsAuthenticated(true);
       return response;
     } catch (err: any) {
-      const msg =
-        (err && (err as any).body && (err as any).body.message) ||
-        (err && (err as any).data && (err as any).data.message) ||
-        (err && (err as any).response && (err as any).response.data && (err as any).response.data.message) ||
-        err?.message ||
-        '注册失败';
+      const msg = extractErrorMessage(err, '注册失败');
       setError(msg);
       throw new Error(msg);
     } finally {
