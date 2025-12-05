@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useNavigate, useParams, Outlet } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense, lazy } from 'react';
 import { AuthService } from '../api';
 import { useAccess } from '@/context/AccessContext';
 import { LoginPage } from '../pages/LoginPage';
@@ -15,7 +15,6 @@ import { EditPage } from '../pages/edit/EditPage';
 import AppLayout from '../layouts/AppLayout';
 import HomeLayout from '../layouts/HomeLayout';
 import MoviePage from '../pages/MoviePage';
-import TorrentDetailPage from '../pages/TorrentDetailPage/index';
 import { UploadTorrentPage } from '../pages/UploadTorrentPage';
 import { MessagesPage } from '../pages/MessagesPage'; // 新增：引入消息中心页面（具名导出）
 import { ControlPage } from '../pages/ControlPage'; // 新增：控制台页面（具名导出）
@@ -32,7 +31,9 @@ import { InvitePage } from '../pages/InvitePage';
 import { FilmsPage } from '../pages/FilmsPage';
 import { PlaylistsPage } from '../pages/PlaylistsPage';
 import { PlaylistDetailPage } from '../pages/PlaylistDetailPage';
-import FilmDetailPage from '../pages/FilmDetail';
+// 说明：通过 React.lazy 懒加载重量级详情页，降低首屏主包体积
+const LazyTorrentDetailPage = lazy(() => import('../pages/TorrentDetailPage/index'));
+const LazyFilmDetailPage = lazy(() => import('../pages/FilmDetail'));
 import { TorrentRecordPage } from '../pages/TorrentRecord';
 
 
@@ -320,7 +321,10 @@ export default function AppRoutes() {
         {/* 详情与重定向 */}
         <Route path="/torrent/:id" element={
           <PermissionRoute requiredPermissions={['page:torrent']}>
-            <TorrentDetailPage />
+            {/* 使用 Suspense 包裹懒加载组件，fallback 为加载占位 */}
+            <Suspense fallback={<div style={{ padding: 24, color: '#ccc' }}>加载中…</div>}>
+              <LazyTorrentDetailPage />
+            </Suspense>
           </PermissionRoute>
         } />
         <Route path="/torrent" element={<Navigate to="/torrents" replace />} />
@@ -348,7 +352,12 @@ function FilmDetailRoute() {
   const params = useParams();
   const id = params.id ?? '';
   if (!id) return <Navigate to="/films" replace />;
-  return <FilmDetailPage filmId={String(id)} />;
+  return (
+    // 使用 Suspense 以在懒加载期间展示占位，提高用户体验
+    <Suspense fallback={<div style={{ padding: 24, color: '#ccc' }}>加载中…</div>}>
+      <LazyFilmDetailPage filmId={String(id)} />
+    </Suspense>
+  );
 }
 function NotFoundRedirect() {
   const isLoggedIn = !!localStorage.getItem('accessToken');

@@ -15,7 +15,7 @@ import { OpenAPI } from './core/OpenAPI';
  */
 export function initOpenAPI(): void {
   // 读取 Vite 环境变量（Vite 在不同 mode 下会自动加载对应的 .env.* 文件）
-  const base = import.meta.env?.VITE_BASE_URL ?? '';
+  const base = import.meta.env.VITE_BASE_URL || '';
 
   // 规整基础地址，移除尾部单个斜杠，减少 URL 拼接错误概率
   const normalized = String(base).trim().replace(/\/$/, '');

@@ -13,7 +13,7 @@
 // @match        http*://*/upload*php*
 // @match        https://pixhost.to*
 // @match        https://*/upload/*
-// @match        https://guoyuan.de/upload*
+// @match        http://localhost:5173/upload*
 // @match        http://guoyuan.de/upload*
 // @match        https://*.open.cd/plugin_upload.php*
 // @match        https://www.myanonamouse.net/t/*
@@ -1819,7 +1819,7 @@ function find_origin_site(url) {
     if (url.match(/^https:\/\/.{0,4}?chddiy.xyz\//) || url.match(/^https:\/\/ptchdbits.co\//)) {
         return 'CHDBits';
     }
-    if (url.match(/guoyuan\.de/)) {
+    if (url.match(/localhost:5173|127\.0\.0\.1:5173/)) {
         return 'Guoyuan';
     }
     return 'other';
@@ -12776,7 +12776,7 @@ function auto_feed() {
                 console.log("【果园】Clicked. raw_info:", JSON.stringify(raw_info));
                 var hash = dictToString(raw_info);
                 console.log("Hash generated length:", hash.length);
-                var targetUrl = 'https://guoyuan.de/upload?#separator#' + hash;
+                var targetUrl = 'http://localhost:5173/upload?#separator#' + hash;
                 window.open(targetUrl, '_blank');
             } catch (e) {
                 console.error("【果园】Error:", e);
