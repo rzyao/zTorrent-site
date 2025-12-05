@@ -49,6 +49,7 @@ export type { BanRecordDto } from './models/BanRecordDto';
 export type { CategoryDto } from './models/CategoryDto';
 export type { CategoryTreeChildDto } from './models/CategoryTreeChildDto';
 export type { CategoryTreeParentDto } from './models/CategoryTreeParentDto';
+export type { ChangePasswordDto } from './models/ChangePasswordDto';
 export type { CheckInfoHashDto } from './models/CheckInfoHashDto';
 export type { CheckPermissionsRequestDto } from './models/CheckPermissionsRequestDto';
 export type { CheckPermissionsResponseDto } from './models/CheckPermissionsResponseDto';

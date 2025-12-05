@@ -5,6 +5,6 @@
 import type { DownloadUrlSourceDto } from './DownloadUrlSourceDto';
 export type CreateDownloadUrlDto = {
     torrentId: string;
-    source: DownloadUrlSourceDto;
+    source?: DownloadUrlSourceDto;
 };
 

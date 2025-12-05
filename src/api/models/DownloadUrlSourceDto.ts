@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type DownloadUrlSourceDto = {
-    filmId: string;
-    playListId: string;
+    filmId?: string;
+    playListId?: string;
 };
 

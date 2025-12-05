@@ -61,7 +61,7 @@ export function Header() {
   const canBonus = !loading && canAccess(access, { requiredPermissions: ['page:bonus'] });
   const canControl = !loading && canAccess(access, {
     requiredRoles: ['admin'],
-    requiredPermissions: ['control:access'],
+    requiredPermissions: ['page:control'],
     combine: 'OR',
   });
   return (

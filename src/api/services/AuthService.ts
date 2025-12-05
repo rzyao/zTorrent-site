@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { ChangePasswordDto } from '../models/ChangePasswordDto';
 import type { InviteStatusDto } from '../models/InviteStatusDto';
 import type { LoginDto } from '../models/LoginDto';
 import type { LoginResultDto } from '../models/LoginResultDto';
@@ -236,6 +237,38 @@ export class AuthService {
             url: '/auth/reset-password',
             body: requestBody,
             mediaType: 'application/json',
+        });
+    }
+    /**
+     * 修改密码
+     * 已登录用户提供当前密码与新密码，成功后立即生效
+     * @param requestBody
+     * @returns any 修改成功
+     * @throws ApiError
+     */
+    public static authControllerChangePassword(
+        requestBody: ChangePasswordDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            ok?: boolean;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/auth/change-password',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
         });
     }
     /**
