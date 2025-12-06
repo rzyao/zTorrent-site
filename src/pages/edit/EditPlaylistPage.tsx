@@ -430,7 +430,7 @@ export function EditPlaylistPage() {
               </div>
             </div>
 
-            <div className="p-4 space-y-2 max-h-[calc(100vh-300px)] overflow-y-auto">
+            <div className="p-4 space-y-2 max-h-[calc(100vh-300px)] overflow-y-auto placeholder:text-neutral-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/30 outline-none resize-none transition-all scrollbar-themed">
               {filteredPlaylists.length === 0 ? (
                 <div className="text-center py-12">
                   <ListVideo className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
