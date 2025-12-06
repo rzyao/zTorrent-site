@@ -16,7 +16,11 @@ const categories = [
 export function CategoryNav({ active = '全部', onSelect, inline = false, items }: { active?: string; onSelect?: (category: string) => void; inline?: boolean; items?: Array<{ label: string; sort?: number }> }) {
   const navigate = useNavigate();
   const list = Array.isArray(items) && items.length ? items : categories;
-  const sortedList = [...list].sort((a: any, b: any) => Number(a?.sort ?? Number.POSITIVE_INFINITY) - Number(b?.sort ?? Number.POSITIVE_INFINITY));
+  const sortedList = [...list].sort((a: any, b: any) => {
+    if (a?.label === '全部') return -1;
+    if (b?.label === '全部') return 1;
+    return Number(a?.sort ?? Number.POSITIVE_INFINITY) - Number(b?.sort ?? Number.POSITIVE_INFINITY);
+  });
   if (inline) {
     return (
       <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">

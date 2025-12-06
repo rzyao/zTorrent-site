@@ -140,17 +140,19 @@ export function FilmsPage() {
 
   return (
     <div className="min-h-screen bg-[#0F171E]">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-2 md:py-8">
         {/* 页面标题 */}
-        <div className="mb-8 flex items-center justify-between">
+        {/* Mobile Adaption: Adjusted layout for mobile (flex-col) and spacing */}
+        <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-0 hidden md:block">
           <div>
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
                 <Film className="w-6 h-6 text-white" />
               </div>
-              <h1 className="text-white text-2xl md:text-3xl">影片浏览</h1>
+              <h1 className="text-white text-2xl md:text-3xl font-bold">影片浏览</h1>
             </div>
-            <p className="text-neutral-400 ml-13">发现和收藏优质影片资源</p>
+            {/* Mobile Adaption: Reset margin on mobile, adjusted text size */}
+            <p className="text-neutral-400 text-sm md:text-base ml-1 md:ml-13">发现和收藏优质影片资源</p>
           </div>
           {isFetching && !loading && (
             <div className="flex items-center gap-2 text-neutral-400 text-sm bg-neutral-900/50 px-3 py-1.5 rounded-full border border-neutral-800">
@@ -161,7 +163,7 @@ export function FilmsPage() {
         </div>
 
         {/* 标签页切换 */}
-        <div className="sticky top-0 z-20 -mx-4 px-4 md:mx-0 flex items-center gap-2 mb-6 overflow-x-auto pb-2 bg-[#0F171E]/95 md:bg-transparent backdrop-blur md:backdrop-blur-0 snap-x snap-mandatory">
+        <div className="sticky top-0 z-20  px-4 md:mx-0 flex items-center gap-2 mb-6 overflow-x-auto pb-2 bg-[#0F171E]/95 md:bg-transparent backdrop-blur md:backdrop-blur-0 snap-x snap-mandatory">
           <button
             onClick={() => setActiveTab('all')}
             className={`px-6 py-2.5 rounded-xl transition-all whitespace-nowrap snap-start ${activeTab === 'all'
@@ -323,12 +325,12 @@ export function FilmsPage() {
                         e.stopPropagation();
                         handleCollectToggle(movie.id);
                       }}
-                      className={`absolute bottom-3 right-3 w-8 h-8 rounded-lg backdrop-blur-sm flex items-center justify-center transition-all ${movie.isCollected
+                      className={`absolute bottom-3 right-3 w-10 h-10 md:w-8 md:h-8 rounded-lg backdrop-blur-sm flex items-center justify-center transition-all ${movie.isCollected
                         ? 'bg-amber-500/80 text-white'
                         : 'bg-black/60 text-neutral-400 hover:bg-black/80 hover:text-white'
                         }`}
                     >
-                      <BookmarkPlus className={`w-4 h-4 ${movie.isCollected ? 'fill-current' : ''}`} />
+                      <BookmarkPlus className={`w-5 h-5 md:w-4 md:h-4 ${movie.isCollected ? 'fill-current' : ''}`} />
                     </button>
 
                     {/* 底部信息 */}
@@ -343,17 +345,19 @@ export function FilmsPage() {
                   </div>
 
                   {/* 详细信息（悬浮显示） */}
-                  <div className="p-4 space-y-3">
+                  {/* Mobile Adaption: Reduced padding (p-3) for mobile */}
+                  <div className="p-3 md:p-4 space-y-2 md:space-y-3">
                     {/* 导演 */}
-                    <div className="flex items-center gap-2 text-sm">
-                      <Users className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                    {/* Mobile Adaption: Adjusted font size */}
+                    <div className="flex items-center gap-2 text-xs md:text-sm">
+                      <Users className="w-3 md:w-3.5 h-3 md:h-3.5 text-amber-400 flex-shrink-0" />
                       <span className="text-neutral-400 truncate">{movie.director}</span>
                     </div>
 
                     {/* 时长和国家 */}
-                    <div className="flex items-center gap-3 text-xs text-neutral-500">
+                    <div className="flex items-center gap-2 md:gap-3 text-[10px] md:text-xs text-neutral-500">
                       <div className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
+                        <Clock className="w-2.5 h-2.5 md:w-3 md:h-3" />
                         <span>{movie.duration}分钟</span>
                       </div>
                       <span>•</span>
@@ -361,11 +365,11 @@ export function FilmsPage() {
                     </div>
 
                     {/* 类型标签 */}
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap gap-1 md:gap-1.5">
                       {(movie.genre || []).slice(0, 3).map((g, index) => (
                         <span
                           key={index}
-                          className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 text-xs border border-amber-500/20"
+                          className="px-1.5 md:px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 text-[10px] md:text-xs border border-amber-500/20"
                         >
                           {g}
                         </span>
@@ -373,13 +377,13 @@ export function FilmsPage() {
                     </div>
 
                     {/* 统计信息 */}
-                    <div className="flex items-center justify-between pt-3 border-t border-neutral-800 text-xs">
+                    <div className="flex items-center justify-between pt-2 md:pt-3 border-t border-neutral-800 text-[10px] md:text-xs">
                       <div className="flex items-center gap-1 text-neutral-500">
-                        <Film className="w-3 h-3" />
+                        <Film className="w-2.5 h-2.5 md:w-3 md:h-3" />
                         <span>{movie.torrentsCount} 种子</span>
                       </div>
                       <div className="flex items-center gap-1 text-neutral-500">
-                        <Eye className="w-3 h-3" />
+                        <Eye className="w-2.5 h-2.5 md:w-3 md:h-3" />
                         <span>{(movie.viewsCount / 1000).toFixed(1)}k</span>
                       </div>
                     </div>
