@@ -10,14 +10,11 @@ export class AutoLogoutManager {
     
     const isEnabled = localStorage.getItem('auto_logout') === 'true';
     if (!isEnabled) {
-      console.log('自动退出功能未启用');
       return;
     }
 
-    console.log(`启动自动退出计时器: ${this.TIMEOUT_MINUTES}分钟`);
     
     this.timeoutId = setTimeout(() => {
-      console.log('自动退出时间到，执行退出操作');
       this.logout();
     }, this.TIMEOUT_MS);
 
@@ -30,7 +27,6 @@ export class AutoLogoutManager {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
       this.timeoutId = null;
-      console.log('自动退出计时器已停止');
     }
     this.removeActivityListeners();
   }
@@ -38,7 +34,6 @@ export class AutoLogoutManager {
   // 重置计时器（用户活动时调用）
   static reset() {
     if (this.timeoutId) {
-      console.log('用户活动检测到，重置自动退出计时器');
       this.start();
     }
   }

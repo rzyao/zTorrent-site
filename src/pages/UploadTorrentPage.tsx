@@ -380,7 +380,8 @@ export function UploadTorrentPage() {
       };
       const resp = await TorrentsService.torrentsControllerUpload(formData as any);
       const body: any = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
-      const msg = body?.message || '发布成功';
+      const data: any = body?.data ?? body;
+      const msg = data?.message ?? '发布成功';
       customToast.success(msg);
       navigate('/torrents');
     } catch (err: any) {
@@ -409,7 +410,7 @@ export function UploadTorrentPage() {
       if (!raw) throw new Error(body?.message ?? '未获取到简介内容');
       setDescription(raw);
     } catch (e: any) {
-      console.log(e);
+      console.error(e);
       setPtGenError(String(e?.message ?? '获取失败'));
     } finally {
       setPtGenLoading(false);

@@ -6,6 +6,7 @@ export interface UserSummary {
     downloadedBytes: number;
     ratio: number;
     bonus: string;
+    bonusPoints: number;
     unreadNotifications: number;
     unreadInbox: number;
 }
@@ -49,6 +50,7 @@ export function UserSummaryProvider({ children }: { children: React.ReactNode })
                     downloadedBytes: response.data.downloadedBytes || 0,
                     ratio: response.data.ratio || 0,
                     bonus: response.data.bonus || '0',
+                    bonusPoints: Number.parseFloat(response.data.bonus || '0'),
                     unreadNotifications: response.data.unreadNotifications || 0,
                     unreadInbox: response.data.unreadInbox || 0,
                 });

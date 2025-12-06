@@ -43,9 +43,11 @@ function SelectTrigger({
   className,
   size = "default",
   children,
+  hideChevron,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
   size?: "sm" | "default";
+  hideChevron?: boolean;
 }) {
   return (
     <SelectPrimitive.Trigger
@@ -58,10 +60,11 @@ function SelectTrigger({
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon asChild>
-        {/* 箭头在打开时旋转 180°，参考 Header 中头像菜单的交互 */}
-        <ChevronDown className="size-4 opacity-50 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-      </SelectPrimitive.Icon>
+      {!hideChevron && (
+        <SelectPrimitive.Icon asChild>
+          <ChevronDown className="size-4 opacity-50 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+        </SelectPrimitive.Icon>
+      )}
     </SelectPrimitive.Trigger>
   );
 }

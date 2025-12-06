@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TorrentsService } from '@/api';
 import { OpenAPI } from '@/api/core/OpenAPI';
 import { ApiError } from '@/api/core/ApiError';
@@ -21,6 +22,7 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
   const lastDownloadAtRef = useRef<Map<string, number>>(new Map());
   const THROTTLE_MS = 5000;
   const { sourcePayload } = useSourceTracker();
+  const navigate = useNavigate();
 
   const info = (m: string) => (opts?.onInfo ? opts.onInfo(m) : customToast.info(m));
   const error = (m: string) => (opts?.onError ? opts.onError(m) : customToast.error(m));
@@ -87,7 +89,7 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
           try {
             const text = await res.text();
             serverMessage = (text && text.length <= 2000) ? text : undefined;
-          } catch {}
+          } catch { }
         }
 
         const status = res.status;
@@ -111,13 +113,16 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
       if (contentType && contentType !== 'application/x-bittorrent') {
         info?.('警告：响应类型非 application/x-bittorrent');
       }
+      // 提示策略调整：取消“开始下载”提示，仅在成功/失败时提示。
+      // 成功的判定：已成功获取 .torrent Blob 并触发保存文件动作。
       saveBlobAsFile(blob, filename);
-      customToast.success('下载已开始');
+      customToast.success('下载成功');
+      navigate(`/torrent/${torrentId}`);
 
       // 成功后记录下载（可选，不影响用户体验）
       try {
         await TorrentsService.torrentsControllerRecordDownload({ torrentId });
-      } catch (_) {}
+      } catch (_) { }
     } catch (e: any) {
       const status = (e as ApiError)?.status ?? e?.status;
       const serverMessage = e?.serverMessage as string | undefined;

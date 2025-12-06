@@ -177,7 +177,6 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
           ),
         };
         if (!cancelled) setTorrentData(mapped);
-        console.log(mapped.description);
         const files = Array.isArray(data?.fileList)
           ? data.fileList.map((f: any) => ({ name: str(f?.name), size: str(f?.size), type: 'file' }))
           : fileList;

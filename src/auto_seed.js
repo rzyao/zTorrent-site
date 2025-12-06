@@ -113,6 +113,8 @@
 // @updateURL https://update.greasyfork.org/scripts/424132/auto_feed.meta.js
 // ==/UserScript==
 
+const console = { ...window.console, log: () => { } };
+
 /*
 日志：
 

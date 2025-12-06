@@ -129,7 +129,6 @@ export function FilmsPage() {
   };
 
   const handleMovieClick = async (movie: PublicFilmDto) => {
-    console.log('Open movie:', movie);
     // 增加浏览次数
     try {
       await FilmsService.filmsControllerViewMovie({ id: movie.id });

@@ -50,7 +50,6 @@ export function TorrentCard({
   onDownload,
 }: TorrentCardProps) {
   const [isOpen, setIsOpen] = useState(false);
-  console.log(doubanUrl);
 
   /* 点击 TorrentCard 时，根据 category 是否为电影来判断是否打开 TorrentDetailPage 或 FilmDetailPage */
   useEffect(() => {

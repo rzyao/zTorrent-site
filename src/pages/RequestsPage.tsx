@@ -351,12 +351,6 @@ export function RequestsPage() {
     });
 
   const handleCreateRequest = () => {
-    console.log('创建求种:', {
-      title: newRequestTitle,
-      category: newRequestCategory,
-      description: newRequestDescription,
-      bounty: newRequestBounty,
-    });
     setNewRequestTitle('');
     setNewRequestCategory('movie');
     setNewRequestDescription('');
@@ -366,7 +360,6 @@ export function RequestsPage() {
 
   const handleSendComment = () => {
     if (!newComment.trim() || !selectedRequest) return;
-    console.log('发送评论:', newComment);
     setNewComment('');
   };
 
