@@ -99,7 +99,6 @@ export function Header() {
             <nav className="hidden md:flex items-center gap-6">
               <NavLink to="/home" className="text-white hover:text-gray-300 transition-colors">首页</NavLink>
               <NavLink to="/torrents" className="text-white hover:text-gray-300 transition-colors">种子</NavLink>
-              <NavLink to="/forum" className="text-white hover:text-gray-300 transition-colors">论坛</NavLink>
               {/* <NavLink to="/subtitles" className="text-white hover:text-gray-300 transition-colors">字幕</NavLink>
             <NavLink to="/ranking" className="text-white hover:text-gray-300 transition-colors">排行榜</NavLink> */}
               {/* 新增：影片与片单导航入口，保持与现有样式一致 */}
@@ -108,16 +107,17 @@ export function Header() {
               {canUpload && (
                 <NavLink to="/upload" className="text-white hover:text-gray-300 transition-colors">上传</NavLink>
               )}
+              <NavLink to="/requests" className="text-white hover:text-gray-300 transition-colors">求种</NavLink>
               {canEdit && (
                 <NavLink to="/edit" className="text-white hover:text-gray-300 transition-colors">编辑</NavLink>
               )}
+              <NavLink to="/forum" className="text-white hover:text-gray-300 transition-colors">论坛</NavLink>
+              <NavLink to="/tickets" className="text-white hover:text-gray-300 transition-colors">工单</NavLink>
+              <NavLink to="/rules" className="text-white hover:text-gray-300 transition-colors">规则</NavLink>
+              <NavLink to="/staff" className="text-white hover:text-gray-300 transition-colors">管理组</NavLink>
               {canReview && (
                 <NavLink to="/review" className="text-white hover:text-gray-300 transition-colors">审核</NavLink>
               )}
-              <NavLink to="/tickets" className="text-white hover:text-gray-300 transition-colors">工单</NavLink>
-              <NavLink to="/requests" className="text-white hover:text-gray-300 transition-colors">求种</NavLink>
-              <NavLink to="/rules" className="text-white hover:text-gray-300 transition-colors">规则</NavLink>
-              <NavLink to="/staff" className="text-white hover:text-gray-300 transition-colors">管理组</NavLink>
             </nav>
           </div>
 
@@ -176,7 +176,7 @@ export function Header() {
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white/10 transition-colors rounded-lg"
               >
-                <UserAvatar username={access?.username || '用户'} size="sm" />
+                <UserAvatar username={access?.username || '用户'} avatarUrl={access?.avatar || null} size="sm" />
                 {/* <ChevronDown className={`w-4 h-4 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} /> */}
               </button>
 
@@ -185,7 +185,7 @@ export function Header() {
                   {/* 用户信息区域 */}
                   <div className="bg-gradient-to-br from-amber-500/20 to-orange-600/20 border-b border-neutral-700 p-4">
                     <div className="flex items-center gap-3 mb-3">
-                      <UserAvatar username={access?.username || '用户'} size="lg" className="shadow-amber-500/30" />
+                      <UserAvatar username={access?.username || '用户'} avatarUrl={access?.avatar || null} size="lg" className="shadow-amber-500/30" />
                       <div className="flex-1 min-w-0">
                         <div className="text-white truncate">{access?.username || '用户'}</div>
                         <div className="text-xs text-neutral-400">VIP会员</div>

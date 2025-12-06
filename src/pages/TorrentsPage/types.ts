@@ -50,6 +50,8 @@ export interface CategoryItem {
   label: string;
   /** 分类键（用于请求） */
   key?: string;
+  /** 排序值（来自字典或后端配置） */
+  sort?: number;
 }
 
 export type ViewMode = 'grid' | 'list';
@@ -58,4 +60,3 @@ export interface SortOption {
   value: 'latest' | 'seeders' | 'completed' | 'rating' | 'size';
   label: string;
 }
-

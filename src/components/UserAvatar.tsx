@@ -2,9 +2,10 @@ interface UserAvatarProps {
   username?: string;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  avatarUrl?: string | null;
 }
 
-export function UserAvatar({ username = 'User', size = 'md', className = '' }: UserAvatarProps) {
+export function UserAvatar({ username = 'User', size = 'md', className = '', avatarUrl = null }: UserAvatarProps) {
   // 根据用户名生成颜色
   const getColorFromUsername = (name: string) => {
     let hash = 0;
@@ -34,6 +35,16 @@ export function UserAvatar({ username = 'User', size = 'md', className = '' }: U
 
   const colorClass = getColorFromUsername(username);
   const initial = username.charAt(0).toUpperCase();
+
+  if (typeof avatarUrl === 'string' && avatarUrl.trim().length > 0) {
+    return (
+      <img
+        src={avatarUrl}
+        alt={username}
+        className={`rounded-full object-cover shadow-lg ${sizeClasses[size]} ${className}`}
+      />
+    );
+  }
 
   return (
     <div

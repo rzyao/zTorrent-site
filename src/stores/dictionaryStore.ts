@@ -20,6 +20,7 @@ import { DictionaryService } from '@/api/services/DictionaryService';
 interface DictionaryItem {
   key: string;
   label: string;
+  sort?: number;
 }
 
 /**
@@ -78,11 +79,11 @@ export const useDictionaryStore = create<DictionaryState>((set, get) => ({
        * - 映射：`label` 缺失则回退使用 `key`，确保 UI 始终有展示文本
        * - 返回：`DictionaryItem[]`
        */
-      const normalize = (arr?: Array<{ key?: string; label?: string }>): DictionaryItem[] => {
+      const normalize = (arr?: Array<{ key?: string; label?: string; sort?: number }>): DictionaryItem[] => {
         if (!Array.isArray(arr)) return [];
         return arr
           .filter((it) => typeof it?.key === 'string' && it.key!.length > 0)
-          .map((it) => ({ key: String(it.key), label: String(it.label ?? it.key) }));
+          .map((it) => ({ key: String(it.key), label: String(it.label ?? it.key), sort: typeof it.sort === 'number' ? it.sort : undefined }));
       };
 
       // 将各可选字段进行逐类规范化，统一为前端 `DictionaryData` 结构

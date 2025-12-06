@@ -759,8 +759,11 @@ export function RequestsPage() {
           })}
         </div>
 
-        {/* 筛选和搜索 */}
-        <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 mb-6">
+        {/* 筛选和搜索（顶部吸附）
+          使用 position: sticky + top-0，当该组件触达视窗顶部时固定不动；
+          在到达顶部之前保持原始文档流位置与尺寸不变；z-40 提升层级避免被列表遮挡。
+        */}
+        <div className="sticky top-0 z-40 bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative">
               <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />

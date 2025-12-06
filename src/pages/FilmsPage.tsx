@@ -148,7 +148,7 @@ export function FilmsPage() {
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
                 <Film className="w-6 h-6 text-white" />
               </div>
-              <h1 className="text-white text-3xl">影片浏览</h1>
+              <h1 className="text-white text-2xl md:text-3xl">影片浏览</h1>
             </div>
             <p className="text-neutral-400 ml-13">发现和收藏优质影片资源</p>
           </div>
@@ -161,10 +161,10 @@ export function FilmsPage() {
         </div>
 
         {/* 标签页切换 */}
-        <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
+        <div className="sticky top-0 z-20 -mx-4 px-4 md:mx-0 flex items-center gap-2 mb-6 overflow-x-auto pb-2 bg-[#0F171E]/95 md:bg-transparent backdrop-blur md:backdrop-blur-0 snap-x snap-mandatory">
           <button
             onClick={() => setActiveTab('all')}
-            className={`px-6 py-2.5 rounded-xl transition-all whitespace-nowrap ${activeTab === 'all'
+            className={`px-6 py-2.5 rounded-xl transition-all whitespace-nowrap snap-start ${activeTab === 'all'
               ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
               : 'bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800'
               }`}
@@ -176,7 +176,7 @@ export function FilmsPage() {
           </button>
           <button
             onClick={() => setActiveTab('trending')}
-            className={`px-6 py-2.5 rounded-xl transition-all whitespace-nowrap ${activeTab === 'trending'
+            className={`px-6 py-2.5 rounded-xl transition-all whitespace-nowrap snap-start ${activeTab === 'trending'
               ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
               : 'bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800'
               }`}
@@ -188,7 +188,7 @@ export function FilmsPage() {
           </button>
           <button
             onClick={() => setActiveTab('latest')}
-            className={`px-6 py-2.5 rounded-xl transition-all whitespace-nowrap ${activeTab === 'latest'
+            className={`px-6 py-2.5 rounded-xl transition-all whitespace-nowrap snap-start ${activeTab === 'latest'
               ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
               : 'bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800'
               }`}
@@ -200,7 +200,7 @@ export function FilmsPage() {
           </button>
           <button
             onClick={() => setActiveTab('classic')}
-            className={`px-6 py-2.5 rounded-xl transition-all whitespace-nowrap ${activeTab === 'classic'
+            className={`px-6 py-2.5 rounded-xl transition-all whitespace-nowrap snap-start ${activeTab === 'classic'
               ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
               : 'bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800'
               }`}
@@ -239,12 +239,12 @@ export function FilmsPage() {
         </div>
 
         {/* 类型筛选 */}
-        <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
+        <div className="-mx-4 px-4 md:mx-0 flex items-center gap-2 mb-8 overflow-x-auto pb-2 snap-x snap-mandatory">
           {genres.map((genre) => (
             <button
               key={genre.key}
               onClick={() => setSelectedGenre(genre.key)}
-              className={`px-4 py-2 rounded-lg transition-all whitespace-nowrap ${selectedGenre === genre.key
+              className={`px-4 py-2 rounded-lg transition-all whitespace-nowrap snap-start ${selectedGenre === genre.key
                 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                 : 'bg-neutral-900 text-neutral-400 border border-neutral-700 hover:bg-neutral-800 hover:text-white'
                 }`}
@@ -282,7 +282,7 @@ export function FilmsPage() {
         {/* 影片网格 */}
         {!loading && !error && (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
               {movies.map((movie) => (
                 <div
                   key={movie.id}
@@ -291,10 +291,11 @@ export function FilmsPage() {
                 >
                   {/* 海报 */}
                   <div className="relative aspect-[2/3] overflow-hidden">
-                    <img
+                    <ImageWithFallback
                       src={(movie as any).posterUrl || movie.poster || 'https://via.placeholder.com/300x450?text=No+Poster'}
                       alt={movie.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
@@ -375,7 +376,7 @@ export function FilmsPage() {
                     <div className="flex items-center justify-between pt-3 border-t border-neutral-800 text-xs">
                       <div className="flex items-center gap-1 text-neutral-500">
                         <Film className="w-3 h-3" />
-                        <span>{movie.torrentsCount} ��子</span>
+                        <span>{movie.torrentsCount} 种子</span>
                       </div>
                       <div className="flex items-center gap-1 text-neutral-500">
                         <Eye className="w-3 h-3" />

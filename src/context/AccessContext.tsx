@@ -5,6 +5,7 @@ export type UserAccess = {
   roles: string[];
   permissions: string[];
   username?: string;
+  avatar?: string | null;
 };
 
 type AccessState = {
@@ -15,21 +16,23 @@ type AccessState = {
 };
 
 const AccessContext = createContext<AccessState>({
-  access: { roles: [], permissions: [], username: '' },
+  access: { roles: [], permissions: [], username: '', avatar: null },
   loading: false,
   error: null,
-  reload: () => {},
+  reload: () => { },
 });
 
 export function AccessProvider({ children }: { children: React.ReactNode }) {
-  const [access, setAccess] = useState<UserAccess>({ roles: [], permissions: [], username: '' });
-  const [loading, setLoading] = useState(false);
+  const [access, setAccess] = useState<UserAccess>({ roles: [], permissions: [], username: '', avatar: null });
+  // Initialize loading state based on token existence to avoid premature redirects
+  const [loading, setLoading] = useState(() => !!localStorage.getItem('accessToken'));
   const [error, setError] = useState<string | null>(null);
 
   const load = () => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
-      setAccess({ roles: [], permissions: [], username: '' });
+      setAccess({ roles: [], permissions: [], username: '', avatar: null });
+      setLoading(false);
       return;
     }
     setLoading(true);
@@ -46,6 +49,7 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
         let username: string = '';
         let permissionsFromProfile: string[] = [];
         let permissionsFromAggregate: string[] = [];
+        let avatar: string | null = null;
 
         if (profileRes.status === 'fulfilled') {
           const resp: any = profileRes.value;
@@ -54,6 +58,8 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
           roles = Array.isArray(data?.roles) ? data.roles : [];
           permissionsFromProfile = Array.isArray(data?.permissions) ? data.permissions : [];
           username = String(data?.username ?? data?.user?.username ?? '');
+          const rawAvatar = (data?.avatar ?? data?.user?.avatar ?? null) as any;
+          avatar = typeof rawAvatar === 'string' && rawAvatar.trim().length > 0 ? rawAvatar : null;
         } else {
           setError((profileRes as any)?.reason?.message || '获取用户信息失败');
         }
@@ -68,7 +74,7 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
         }
 
         const permissions = permissionsFromAggregate.length > 0 ? permissionsFromAggregate : permissionsFromProfile;
-        setAccess({ roles, permissions, username });
+        setAccess({ roles, permissions, username, avatar });
       })
       .catch((e: any) => setError(e?.message || '获取权限数据失败'))
       .finally(() => setLoading(false));

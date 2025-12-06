@@ -68,7 +68,7 @@ export function Toolbar(props: ToolbarProps) {
         <div className="flex flex-col flex-wrap md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
           {/* 分类导航 */}
           <div className="w-full md:flex-auto md:w-auto md:min-w-0 md:pr-2 overflow-x-auto">
-            <CategoryNav inline active={selectedCategory} onSelect={onSelectCategory} items={categories.map((c) => ({ label: c.label }))} />
+            <CategoryNav inline active={selectedCategory} onSelect={onSelectCategory} items={categories.map((c) => ({ label: c.label, sort: (c as any).sort }))} />
           </div>
 
           {/* 搜索 / 排序 / 视图切换 / 筛选 */}

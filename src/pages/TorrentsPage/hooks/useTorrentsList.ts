@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { TorrentsService, UsersService } from '@/api';
-import { getProfile } from '@/api/custom/auth';
+import { TorrentsService } from '@/api';
+import { CategoriesService } from '@/api/services/CategoriesService';
 import { useDictionaryLabels } from '@/hooks/useDictionary';
 import type { CategoryItem, SortOption } from '../types';
 
@@ -98,22 +98,32 @@ export function useTorrentsList() {
     let isCancelled = false;
     const loadCategories = async () => {
       try {
-        const prof = await getProfile();
-        const id = String(prof?.user?.id ?? prof?.user?._id ?? prof?.sub ?? '');
-        if (!id) return;
-        const resp = await UsersService.usersPreferencesControllerGetDefaultTorrentCategoryKeys({ id });
-        const keys = Array.isArray(resp?.data) ? resp.data : [];
-        // 先尝试映射；如词典未准备好则刷新后重试一次
-        let mapped: CategoryItem[] = keys.map((key: string) => ({ key, label: getCategoryLabel(key) || key }));
+        const resp = await CategoriesService.categoriesControllerListUserCategories();
+        // 兼容两种返回结构：
+        // A) 直接返回封装对象 { code, message, data }
+        // B) Axios 风格返回 { data: { code, message, data } }
+        const body: any = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
+        const raw: any = body?.data ?? body;
+        const arr = Array.isArray(raw) ? raw : [];
+        if (!arr.length) return;
+        let mapped: CategoryItem[] = arr.map((dto: any) => ({
+          key: String(dto.key),
+          label: getCategoryLabel(dto.key) || String(dto.label ?? dto.key),
+          sort: typeof dto.sort === 'number' ? dto.sort : undefined,
+        }));
         if (mapped.some((m) => !m.label || m.label === m.key)) {
           await refreshDictionaries();
-          mapped = keys.map((key: string) => ({ key, label: getCategoryLabel(key) || key }));
+          mapped = arr.map((dto: any) => ({
+            key: String(dto.key),
+            label: getCategoryLabel(dto.key) || String(dto.label ?? dto.key),
+            sort: typeof dto.sort === 'number' ? dto.sort : undefined,
+          }));
         }
+        const sorted = [...mapped].sort((a, b) => Number(a.sort ?? Number.POSITIVE_INFINITY) - Number(b.sort ?? Number.POSITIVE_INFINITY));
         if (!isCancelled) {
-          setCategories([{ label: '全部' }, ...mapped]);
+          setCategories([{ label: '全部' }, ...sorted]);
         }
       } catch {
-        // 忽略错误：分类非关键阻塞，保持空列表即可
       }
     };
     loadCategories();
