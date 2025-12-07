@@ -22,22 +22,22 @@ export function useTorrentRecord({ activeTab, searchQuery }: UseTorrentRecordPro
       let resp: any;
       switch (activeTab) {
         case 'uploaded':
-          resp = await TorrentRecordService.torrentRecordControllerFindPublished(searchQuery, 50, 1);
+          resp = await TorrentRecordService.torrentRecordControllerFindPublished(undefined, searchQuery, 50, 1);
           break;
         case 'seeding':
-          resp = await TorrentRecordService.torrentRecordControllerFindSeeding(searchQuery, 50, 1);
+          resp = await TorrentRecordService.torrentRecordControllerFindSeeding(undefined, searchQuery, 50, 1);
           break;
         case 'downloading':
-          resp = await TorrentRecordService.torrentRecordControllerFindDownloading(searchQuery, 50, 1);
+          resp = await TorrentRecordService.torrentRecordControllerFindDownloading(undefined, searchQuery, 50, 1);
           break;
         case 'completed':
-          resp = await TorrentRecordService.torrentRecordControllerFindCompleted(searchQuery, 50, 1);
+          resp = await TorrentRecordService.torrentRecordControllerFindCompleted(undefined, searchQuery, 50, 1);
           break;
         case 'incomplete':
-          resp = await TorrentRecordService.torrentRecordControllerFindIncomplete(searchQuery, 50, 1);
+          resp = await TorrentRecordService.torrentRecordControllerFindIncomplete(undefined, searchQuery, 50, 1);
           break;
         default:
-          resp = await TorrentRecordService.torrentRecordControllerFindSeeding(searchQuery, 50, 1);
+          resp = await TorrentRecordService.torrentRecordControllerFindSeeding(undefined, searchQuery, 50, 1);
           break;
       }
       const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data ?? (resp as any);
