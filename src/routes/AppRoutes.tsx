@@ -35,6 +35,7 @@ import { PlaylistDetailPage } from '../pages/PlaylistDetailPage';
 const LazyTorrentDetailPage = lazy(() => import('../pages/TorrentDetailPage/index'));
 const LazyFilmDetailPage = lazy(() => import('../pages/FilmDetail'));
 import { TorrentRecordPage } from '../pages/TorrentRecord';
+import { RSSPage } from '../pages/RSSPage';
 
 
 
@@ -317,6 +318,8 @@ export default function AppRoutes() {
             <TicketsPage />
           </PermissionRoute>
         } />
+
+        <Route path="/rss" element={<RSSPage />} />
 
         {/* 详情与重定向 */}
         <Route path="/torrent/:id" element={

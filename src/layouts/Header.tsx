@@ -114,6 +114,7 @@ export function Header() {
               <NavLink to="/forum" className="text-white hover:text-gray-300 transition-colors">论坛</NavLink>
               <NavLink to="/tickets" className="text-white hover:text-gray-300 transition-colors">工单</NavLink>
               <NavLink to="/rules" className="text-white hover:text-gray-300 transition-colors">规则</NavLink>
+              <NavLink to="/rss" className="text-white hover:text-gray-300 transition-colors">RSS订阅</NavLink>
               <NavLink to="/staff" className="text-white hover:text-gray-300 transition-colors">管理组</NavLink>
               {canReview && (
                 <NavLink to="/review" className="text-white hover:text-gray-300 transition-colors">审核</NavLink>
@@ -375,6 +376,13 @@ export function Header() {
             onClick={() => setShowMobileMenu(false)}
           >
             规则
+          </NavLink>
+          <NavLink
+            to="/rss"
+            className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
+            onClick={() => setShowMobileMenu(false)}
+          >
+            RSS订阅
           </NavLink>
           <NavLink
             to="/staff"
