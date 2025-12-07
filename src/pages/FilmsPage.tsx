@@ -163,7 +163,7 @@ export function FilmsPage() {
         </div>
 
         {/* 标签页切换 */}
-        <div className="sticky top-0 z-20  px-4 md:mx-0 flex items-center gap-2 mb-6 overflow-x-auto pb-2 bg-[#0F171E]/95 md:bg-transparent backdrop-blur md:backdrop-blur-0 snap-x snap-mandatory">
+        <div className="sticky top-0 md:relative z-20  px-4 md:mx-0 flex items-center gap-2 mb-6 overflow-x-auto pb-2 bg-[#0F171E]/95 md:bg-transparent backdrop-blur md:backdrop-blur-0 snap-x snap-mandatory">
           <button
             onClick={() => setActiveTab('all')}
             className={`px-6 py-2.5 rounded-xl transition-all whitespace-nowrap snap-start ${activeTab === 'all'

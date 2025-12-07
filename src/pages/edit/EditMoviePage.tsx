@@ -370,25 +370,25 @@ export function EditMoviePage() {
       const resp: any = await FilmsService.filmsControllerListTorrents({ filmId: selectedMovie.id, page: 1, limit: 100 });
       const body = resp?.code !== undefined ? resp : resp?.data ?? resp;
       const items = body?.data?.items ?? body?.items ?? [];
-        const mappedTorrents = Array.isArray(items)
-          ? items.map((t: any) => ({
-              id: String(t?.id ?? t?.torrentId ?? ''),
-              title: t?.title ?? '',
-              subTitle: t?.subTitle ?? '',
-              version: t?.version ?? t?.name ?? t?.quality ?? '',
-              size: t?.size ?? '',
-              quality: t?.quality ?? '',
-              standard: t?.standard ?? '',
-              source: t?.source ?? '',
-              codec: t?.codec ?? t?.videoCodec ?? '',
-              audio: t?.audio ?? t?.audioCodec ?? '',
-              seeders: t?.seeders ?? 0,
-              leechers: t?.leechers ?? 0,
-              uploadDate: t?.uploadDate ?? '',
-              isFree: t?.isFree ?? false,
-              isVip: t?.isVip ?? false,
-            }))
-          : [];
+      const mappedTorrents = Array.isArray(items)
+        ? items.map((t: any) => ({
+          id: String(t?.id ?? t?.torrentId ?? ''),
+          title: t?.title ?? '',
+          subTitle: t?.subTitle ?? '',
+          version: t?.version ?? t?.name ?? t?.quality ?? '',
+          size: t?.size ?? '',
+          quality: t?.quality ?? '',
+          standard: t?.standard ?? '',
+          source: t?.source ?? '',
+          codec: t?.codec ?? t?.videoCodec ?? '',
+          audio: t?.audio ?? t?.audioCodec ?? '',
+          seeders: t?.seeders ?? 0,
+          leechers: t?.leechers ?? 0,
+          uploadDate: t?.uploadDate ?? '',
+          isFree: t?.isFree ?? false,
+          isVip: t?.isVip ?? false,
+        }))
+        : [];
       const next = { ...(selectedMovie as any), torrents: mappedTorrents } as Movie;
       setSelectedMovie(next);
       setMovies(movies.map((m) => (m.id === next.id ? next : m)));
@@ -410,22 +410,22 @@ export function EditMoviePage() {
         const items = body?.data?.items ?? body?.items ?? [];
         const mappedTorrents = Array.isArray(items)
           ? items.map((t: any) => ({
-              id: String(t?.id ?? t?.torrentId ?? ''),
-              title: t?.title ?? '',
-              subTitle: t?.subTitle ?? '',
-              version: t?.version ?? t?.name ?? t?.quality ?? '',
-              size: t?.size ?? '',
-              quality: t?.quality ?? '',
-              standard: t?.standard ?? '',
-              source: t?.source ?? '',
-              codec: t?.codec ?? t?.videoCodec ?? '',
-              audio: t?.audio ?? t?.audioCodec ?? '',
-              seeders: t?.seeders ?? 0,
-              leechers: t?.leechers ?? 0,
-              uploadDate: t?.uploadDate ?? '',
-              isFree: t?.isFree ?? false,
-              isVip: t?.isVip ?? false,
-            }))
+            id: String(t?.id ?? t?.torrentId ?? ''),
+            title: t?.title ?? '',
+            subTitle: t?.subTitle ?? '',
+            version: t?.version ?? t?.name ?? t?.quality ?? '',
+            size: t?.size ?? '',
+            quality: t?.quality ?? '',
+            standard: t?.standard ?? '',
+            source: t?.source ?? '',
+            codec: t?.codec ?? t?.videoCodec ?? '',
+            audio: t?.audio ?? t?.audioCodec ?? '',
+            seeders: t?.seeders ?? 0,
+            leechers: t?.leechers ?? 0,
+            uploadDate: t?.uploadDate ?? '',
+            isFree: t?.isFree ?? false,
+            isVip: t?.isVip ?? false,
+          }))
           : [];
         const next = { ...(selectedMovie as any), torrents: mappedTorrents } as Movie;
         setSelectedMovie(next);
@@ -465,22 +465,22 @@ export function EditMoviePage() {
         const items = body?.data?.items ?? body?.items ?? [];
         const mappedTorrents = Array.isArray(items)
           ? items.map((t: any) => ({
-              id: String(t?.id ?? t?.torrentId ?? ''),
-              title: t?.title ?? '',
-              subTitle: t?.subTitle ?? '',
-              version: t?.version ?? t?.name ?? t?.quality ?? '',
-              size: t?.size ?? '',
-              quality: t?.quality ?? '',
-              standard: t?.standard ?? '',
-              source: t?.source ?? '',
-              codec: t?.codec ?? t?.videoCodec ?? '',
-              audio: t?.audio ?? t?.audioCodec ?? '',
-              seeders: t?.seeders ?? 0,
-              leechers: t?.leechers ?? 0,
-              uploadDate: t?.uploadDate ?? '',
-              isFree: t?.isFree ?? false,
-              isVip: t?.isVip ?? false,
-            }))
+            id: String(t?.id ?? t?.torrentId ?? ''),
+            title: t?.title ?? '',
+            subTitle: t?.subTitle ?? '',
+            version: t?.version ?? t?.name ?? t?.quality ?? '',
+            size: t?.size ?? '',
+            quality: t?.quality ?? '',
+            standard: t?.standard ?? '',
+            source: t?.source ?? '',
+            codec: t?.codec ?? t?.videoCodec ?? '',
+            audio: t?.audio ?? t?.audioCodec ?? '',
+            seeders: t?.seeders ?? 0,
+            leechers: t?.leechers ?? 0,
+            uploadDate: t?.uploadDate ?? '',
+            isFree: t?.isFree ?? false,
+            isVip: t?.isVip ?? false,
+          }))
           : [];
         const next = { ...(selectedMovie as any), torrents: mappedTorrents } as Movie;
         setSelectedMovie(next);
@@ -637,25 +637,25 @@ export function EditMoviePage() {
       : Array.isArray(detail?.genres)
         ? detail.genres.map((g: any) => (typeof g === 'string' ? g : g?.name)).filter(Boolean)
         : [];
-  const torrents = Array.isArray(detail?.torrents)
-    ? detail.torrents.map((t: any) => ({
-      id: String(t?.id ?? t?.torrentId ?? ''),
-      title: t?.title ?? '',
-      subTitle: t?.subTitle ?? '',
-      version: t?.version ?? t?.name ?? t?.quality ?? '',
-      size: t?.size ?? '',
-      quality: t?.quality ?? '',
-      standard: t?.standard ?? '',
-      source: t?.source ?? '',
-      codec: t?.codec ?? t?.videoCodec ?? '',
-      audio: t?.audio ?? t?.audioCodec ?? '',
-      seeders: t?.seeders ?? 0,
-      leechers: t?.leechers ?? 0,
-      uploadDate: t?.uploadDate ?? '',
-      isFree: t?.isFree ?? false,
-      isVip: t?.isVip ?? false,
-    }))
-    : [];
+    const torrents = Array.isArray(detail?.torrents)
+      ? detail.torrents.map((t: any) => ({
+        id: String(t?.id ?? t?.torrentId ?? ''),
+        title: t?.title ?? '',
+        subTitle: t?.subTitle ?? '',
+        version: t?.version ?? t?.name ?? t?.quality ?? '',
+        size: t?.size ?? '',
+        quality: t?.quality ?? '',
+        standard: t?.standard ?? '',
+        source: t?.source ?? '',
+        codec: t?.codec ?? t?.videoCodec ?? '',
+        audio: t?.audio ?? t?.audioCodec ?? '',
+        seeders: t?.seeders ?? 0,
+        leechers: t?.leechers ?? 0,
+        uploadDate: t?.uploadDate ?? '',
+        isFree: t?.isFree ?? false,
+        isVip: t?.isVip ?? false,
+      }))
+      : [];
     return {
       id: String(detail?.id ?? ''),
       title: detail?.title ?? '',
@@ -719,7 +719,7 @@ export function EditMoviePage() {
               </div>
             </div>
 
-            <div className="p-4 space-y-2 max-h-[calc(100vh-300px)] overflow-y-auto">
+            <div className="p-4 space-y-2 max-h-[calc(100vh-300px)] overflow-y-auto scrollbar-themed">
               {filteredMovies.length === 0 ? (
                 <div className="text-center py-12">
                   <Film className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
@@ -1348,12 +1348,12 @@ export function EditMoviePage() {
                             const id = String(item?.id ?? item?.torrentId ?? '');
                             const title = item?.title ?? '';
                             const subTitle = item?.subTitle ?? '';
-                          const version = item?.version ?? item?.quality ?? '';
-                          const size = item?.size ?? '';
-                          const standard = item?.standard ?? '';
-                          const source = item?.source ?? '';
-                          const codec = item?.codec ?? item?.videoCodec ?? '';
-                          const audio = item?.audio ?? item?.audioCodec ?? '';
+                            const version = item?.version ?? item?.quality ?? '';
+                            const size = item?.size ?? '';
+                            const standard = item?.standard ?? '';
+                            const source = item?.source ?? '';
+                            const codec = item?.codec ?? item?.videoCodec ?? '';
+                            const audio = item?.audio ?? item?.audioCodec ?? '';
                             const seeders = item?.seeders ?? 0;
                             const leechers = item?.leechers ?? 0;
                             return (
