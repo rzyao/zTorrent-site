@@ -2,7 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AddUserTorrentDto } from '../models/AddUserTorrentDto';
 import type { AdminListTorrentsDto } from '../models/AdminListTorrentsDto';
 import type { AdminListTorrentsResponseDto } from '../models/AdminListTorrentsResponseDto';
 import type { AutoUploadTorrentDto } from '../models/AutoUploadTorrentDto';
@@ -18,16 +17,8 @@ import type { ListPendingCoversDto } from '../models/ListPendingCoversDto';
 import type { ListPendingCoversResponseDto } from '../models/ListPendingCoversResponseDto';
 import type { ListTorrentsDto } from '../models/ListTorrentsDto';
 import type { ListTorrentsResponseDto } from '../models/ListTorrentsResponseDto';
-import type { ListTorrentUsersDto } from '../models/ListTorrentUsersDto';
-import type { ListTorrentUsersResponseDto } from '../models/ListTorrentUsersResponseDto';
-import type { ListUserTorrentsDto } from '../models/ListUserTorrentsDto';
-import type { ListUserTorrentsResponseDto } from '../models/ListUserTorrentsResponseDto';
 import type { OkDto } from '../models/OkDto';
 import type { RecordDownloadDto } from '../models/RecordDownloadDto';
-import type { RemoveUserTorrentDto } from '../models/RemoveUserTorrentDto';
-import type { RemoveUserTorrentResponseDto } from '../models/RemoveUserTorrentResponseDto';
-import type { ReportUserTorrentDto } from '../models/ReportUserTorrentDto';
-import type { ReportUserTorrentResponseDto } from '../models/ReportUserTorrentResponseDto';
 import type { ReviewDto } from '../models/ReviewDto';
 import type { SearchTorrentsDto } from '../models/SearchTorrentsDto';
 import type { SearchTorrentsResponseDto } from '../models/SearchTorrentsResponseDto';
@@ -493,151 +484,6 @@ export class TorrentsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/torrents/record-download',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 创建用户-种子关联
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static torrentsControllerAddUserTorrent(
-        requestBody: AddUserTorrentDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: OkDto;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/torrents/user-torrents/add',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 移除用户-种子关联
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static torrentsControllerRemoveUserTorrent(
-        requestBody: RemoveUserTorrentDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: RemoveUserTorrentResponseDto;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/torrents/user-torrents/remove',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 按用户查询其关联的种子ID列表
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static torrentsControllerListUserTorrents(
-        requestBody: ListUserTorrentsDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: ListUserTorrentsResponseDto;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/torrents/user-torrents/list-by-user',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 按种子查询其关联的用户ID列表
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static torrentsControllerListTorrentUsers(
-        requestBody: ListTorrentUsersDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: ListTorrentUsersResponseDto;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/torrents/user-torrents/list-by-torrent',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 上报用户-种子做种与统计数据（仅本人）
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static torrentsControllerReportUserTorrent(
-        requestBody: ReportUserTorrentDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: ReportUserTorrentResponseDto;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/torrents/user-torrents/report',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

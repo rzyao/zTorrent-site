@@ -43,13 +43,14 @@ export function TorrentRecordTable({ isLoading, torrents, activeTab }: TorrentRe
             <tr>
               <th className="px-6 py-4 text-left text-sm text-neutral-400">种子名称</th>
               <th className="px-6 py-4 text-left text-sm text-neutral-400">分类</th>
+              <th className="px-6 py-4 text-left text-sm text-neutral-400">发布时间</th>
               <th className="px-6 py-4 text-left text-sm text-neutral-400">大小</th>
               <th className="px-6 py-4 text-left text-sm text-neutral-400">上传量</th>
               <th className="px-6 py-4 text-left text-sm text-neutral-400">下载量</th>
+              <th className="px-6 py-4 text-left text-sm text-neutral-400">分享率</th>
               {showTotalDownloads && (
                 <th className="px-6 py-4 text-left text-sm text-neutral-400">总下载数</th>
               )}
-              <th className="px-6 py-4 text-left text-sm text-neutral-400">分享率</th>
               {showProgress && (
                 <th className="px-6 py-4 text-left text-sm text-neutral-400">进度</th>
               )}
@@ -66,11 +67,10 @@ export function TorrentRecordTable({ isLoading, torrents, activeTab }: TorrentRe
                 <tr key={torrent.id} className="hover:bg-neutral-800/30 transition-colors">
                   <td className="px-6 py-4">
                     <div className="text-white hover:text-amber-400 cursor-pointer transition-colors max-w-md truncate">
-                      {torrent.name}
+                      {torrent.title}
                     </div>
-                    <div className="text-xs text-neutral-500 mt-1">
-                      发布于 {torrent.uploadDate}
-                      {torrent.completeDate && ` • 完成于 ${torrent.completeDate}`}
+                    <div className="text-xs text-neutral-500 mt-1 max-w-md truncate">
+                      {torrent.subTitle}
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -78,17 +78,19 @@ export function TorrentRecordTable({ isLoading, torrents, activeTab }: TorrentRe
                       {torrent.category}
                     </span>
                   </td>
+                  <td className="px-6 py-4 text-neutral-300">{torrent.uploadDate}</td>
                   <td className="px-6 py-4 text-neutral-300">{torrent.size}</td>
                   <td className="px-6 py-4 text-green-400">{torrent.uploaded}</td>
                   <td className="px-6 py-4 text-red-400">{torrent.downloaded}</td>
-                  {showTotalDownloads && (
-                    <td className="px-6 py-4 text-neutral-300">{torrent.totalDownloads}</td>
-                  )}
                   <td className="px-6 py-4">
                     <span className={torrent.ratio >= 1 ? 'text-green-400' : 'text-amber-400'}>
                       {torrent.ratio.toFixed(2)}
                     </span>
                   </td>
+
+                  {showTotalDownloads && (
+                    <td className="px-6 py-4 text-neutral-300">{torrent.totalDownloads}</td>
+                  )}
                   {showProgress && (
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">

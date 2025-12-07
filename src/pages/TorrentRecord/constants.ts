@@ -1,4 +1,4 @@
-import { Upload, Download, CheckCircle, XCircle, Clock, ArrowUpDown } from 'lucide-react';
+import { Upload, Download, CheckCircle, XCircle, Clock, ArrowUpDown, Activity } from 'lucide-react';
 import { TorrentStatus } from './types';
 
 /** 标签页配置 */
@@ -25,6 +25,11 @@ export const STATUS_CONFIG: Record<string, { color: string; icon: any; text: str
     color: 'text-blue-400',
     icon: Download,
     text: '下载中',
+  },
+  active: {
+    color: 'text-teal-400',
+    icon: Activity,
+    text: '活跃',
   },
   completed: {
     color: 'text-amber-400',

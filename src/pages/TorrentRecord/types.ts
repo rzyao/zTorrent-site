@@ -1,9 +1,11 @@
 /** 种子状态类型 */
-export type TorrentStatus = 'uploaded' | 'seeding' | 'downloading' | 'completed' | 'incomplete';
+export type TorrentStatus = 'uploaded' | 'seeding' | 'downloading' | 'completed' | 'incomplete' | 'active';
 
 /** 种子数据接口 */
 export interface Torrent {
   id: number;
+  title: string;
+  subTitle: string;
   name: string;
   category: string;
   size: string;

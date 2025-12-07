@@ -26,6 +26,9 @@ export type DeliveryResult = {
   ok?: boolean;
   code?: string;
   recordId?: string;
+  added?: number;
+  targetUserId?: string;
+  expiresAt?: string;
 };
 
 export type PurchaseResult = {
@@ -79,6 +82,10 @@ export async function purchaseItem(requestBody: PurchaseRequest, idempotencyKey?
     headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
   });
   return unwrap<PurchaseResult>(resp);
+}
+
+export async function purchaseInviteCode(quantity: number = 1, idempotencyKey?: string): Promise<PurchaseResult> {
+  return purchaseItem({ itemKey: 'invite_code', quantity }, idempotencyKey);
 }
 
 export type OrderDetail = {

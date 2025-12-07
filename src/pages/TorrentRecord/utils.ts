@@ -4,6 +4,8 @@ import { Torrent, TorrentStatus } from './types';
 export function transformTorrentData(item: any, activeTab: TorrentStatus): Torrent {
   return {
     id: Number(item.id ?? 0),
+    title: String(item.title ?? item.name ?? ''),
+    subTitle: String(item.subTitle ?? ''),
     name: String(item.name ?? ''),
     category: String(item.category_name ?? item.category ?? ''),
     size: formatSize(Number(item.size_bytes ?? item.size ?? 0)),
@@ -20,7 +22,7 @@ export function transformTorrentData(item: any, activeTab: TorrentStatus): Torre
       0
     ),
     progress: Number(item.progress_percent ?? item.progress ?? 0),
-    uploadDate: String(item.upload_date ?? item.created_at ?? '').slice(0, 10),
+    uploadDate: String(item.uploadedAt ?? item.upload_date ?? item.created_at ?? '').slice(0, 10),
     completeDate: item.complete_date
       ? String(item.complete_date).slice(0, 10)
       : item.completed_at

@@ -10,7 +10,15 @@ export type AdminAdjustDto = {
     /**
      * 变动值（字符串大整数，支持负数）
      */
-    delta: string;
+    delta?: string;
+    /**
+     * 变动数量（正数），需配合 type 使用
+     */
+    amount?: Record<string, any>;
+    /**
+     * 变动类型：add | reduce
+     */
+    type?: string;
     /**
      * 调账原因（必填）
      */

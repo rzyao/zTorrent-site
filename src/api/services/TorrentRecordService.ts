@@ -7,7 +7,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class TorrentRecordService {
     /**
-     * 用户已发布的种子列表（可指定userId）
+     * 用户已发布的种子列表（可指定userId）；返回字段新增 downloads/seeders/leechers
      * @param userId 指定用户ID，缺省为当前登录用户
      * @param search
      * @param limit

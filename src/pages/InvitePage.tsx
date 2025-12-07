@@ -3,7 +3,10 @@ import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { UserPlus, Mail, Copy, Check, Clock, Users, Gift, Sparkles, Calendar, Shield, AlertCircle, Plus, Eye, EyeOff, Send, CheckCircle, XCircle, X, TrendingUp, Download, Upload } from 'lucide-react';
 import { InvitesService } from '@/api';
 import { getBonusOverview } from '@/api/custom/bonus';
-import { getStoreItems, purchaseItem } from '@/api/custom/store';
+import { getStoreItems } from '@/api/custom/store';
+import type { StoreItem } from '@/api/custom/store';
+import { usePurchase } from '@/hooks/usePurchase';
+import { PurchaseSuccessModal } from '@/components/purchase/PurchaseSuccessModal';
 
 interface InviteCode {
   id: string;
@@ -54,6 +57,10 @@ export function InvitePage() {
   const [loadedCodes, setLoadedCodes] = useState(false);
   const [loadedRecords, setLoadedRecords] = useState(false);
   const [loadedUsers, setLoadedUsers] = useState(false);
+  const { purchase, lastSuccess, clearLastSuccess } = usePurchase();
+  const [successOpen, setSuccessOpen] = useState(false);
+  const [quotaItems, setQuotaItems] = useState<{ invite_quota?: StoreItem; temp_invite_quota?: StoreItem }>({});
+  const [quotaQty, setQuotaQty] = useState<{ permanent: number; temp: number }>({ permanent: 1, temp: 1 });
 
   const extractData = (resp: any) => {
     const body = resp?.code !== undefined ? resp : resp?.data;
@@ -91,7 +98,7 @@ export function InvitePage() {
   };
   const loadCodes = async () => {
     try {
-      const resp = await InvitesService.invitesControllerListCodes({ page: 1, limit: 50 });
+      const resp = await InvitesService.invitesControllerListCodes({ page: 1, limit: 50, status: 'unused' as any });
       const data = extractData(resp);
       const items = (data?.items || []).map((it: any) => ({
         id: String(it.id),
@@ -148,6 +155,17 @@ export function InvitePage() {
     if (activeTab === 'codes' && !loadedCodes) loadCodes();
     if (activeTab === 'records' && !loadedRecords) loadRecords();
     if (activeTab === 'users' && !loadedUsers) loadUsers();
+    if (activeTab === 'codes') {
+      getStoreItems({ status: 'active', page: 1, pageSize: 50 })
+        .then((items) => {
+          const arr = Array.isArray(items) ? items : [];
+          setQuotaItems({
+            invite_quota: arr.find(i => i.key === 'invite_quota'),
+            temp_invite_quota: arr.find(i => i.key === 'temp_invite_quota'),
+          });
+        })
+        .catch(() => { });
+    }
   }, [activeTab]);
 
   const handleCopyCode = (code: string) => {
@@ -395,7 +413,7 @@ export function InvitePage() {
                 获取邀请码
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* 魔力值购买 */}
+                {/* 购买永久邀请名额 */}
                 <div className="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden hover:border-amber-500/30 transition-all">
                   <div className="p-6">
                     <div className="flex items-start gap-4 mb-6">
@@ -403,8 +421,8 @@ export function InvitePage() {
                         <Sparkles className="w-7 h-7 text-amber-400" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-white text-lg mb-1">魔力值兑换</h3>
-                        <p className="text-neutral-400 text-sm">使用魔力值直接购买邀请码</p>
+                        <h3 className="text-white text-lg mb-1">购买永久邀请名额</h3>
+                        <p className="text-neutral-400 text-sm">购买后永久增加可用邀请名额</p>
                       </div>
                     </div>
 
@@ -413,28 +431,86 @@ export function InvitePage() {
                         <span className="text-neutral-400 text-sm">价格</span>
                         <div className="flex items-center gap-1 text-amber-400">
                           <Sparkles className="w-4 h-4" />
-                          <span className="text-xl">500</span>
+                          <span className="text-xl">{quotaItems.invite_quota?.pricePoints ?? '-'}</span>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between mb-2">
                         <span className="text-neutral-400 text-sm">您的魔力值</span>
                         <span className="text-white">{userInviteStats.magicPoints.toLocaleString()}</span>
                       </div>
+                      <div>
+                        <label className="block text-neutral-400 text-sm mb-1">数量</label>
+                        <input type="number" min={1} value={quotaQty.permanent} onChange={(e) => setQuotaQty(s => ({ ...s, permanent: Math.max(1, Number(e.target.value || 1)) }))} className="w-full px-3 py-2 rounded-md bg-neutral-800 border border-neutral-700 text-white outline-none focus:border-amber-500" />
+                      </div>
+                      {quotaItems.invite_quota && Number(quotaItems.invite_quota.pricePoints) * quotaQty.permanent > userInviteStats.magicPoints && (
+                        <div className="text-red-400 text-sm mt-2">余额不足，请先获取更多魔力值</div>
+                      )}
                     </div>
 
-                    <button onClick={async () => {
-                      try {
-                        const items = await getStoreItems({ status: 'active' });
-                        const target = items.find(i => i.key === 'invite_code');
-                        if (!target) return;
-                        const idk = `invite-${Date.now()}`;
-                        await purchaseItem({ itemKey: 'invite_code', quantity: 1 }, idk);
-                        await loadCodes();
-                        await loadOverview();
-                      } catch { }
-                    }} className="w-full py-3 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2">
+                    <button
+                      disabled={!quotaItems.invite_quota || quotaItems.invite_quota.status !== 'active' || (quotaItems.invite_quota && Number(quotaItems.invite_quota.pricePoints) * quotaQty.permanent > userInviteStats.magicPoints)}
+                      onClick={async () => {
+                        try {
+                          if (!quotaItems.invite_quota) return;
+                          await purchase({ itemKey: 'invite_quota', quantity: quotaQty.permanent }, { refreshBonus: true, onRefresh: async () => { await loadOverview(); } });
+                          setSuccessOpen(true);
+                        } catch { }
+                      }}
+                      className={`w-full py-3 rounded-lg ${!quotaItems.invite_quota || quotaItems.invite_quota.status !== 'active' || (quotaItems.invite_quota && Number(quotaItems.invite_quota.pricePoints) * quotaQty.permanent > userInviteStats.magicPoints) ? 'bg-neutral-800 text-neutral-400 cursor-not-allowed' : 'bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/20'} flex items-center justify-center gap-2`}
+                    >
                       <Plus className="w-5 h-5" />
-                      <span>立即兑换</span>
+                      <span>购买永久名额</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 购买临时邀请名额 */}
+                <div className="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden hover:border-amber-500/30 transition-all">
+                  <div className="p-6">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="w-7 h-7 text-amber-400" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-white text-lg mb-1">购买临时邀请名额</h3>
+                        <p className="text-neutral-400 text-sm">购买后增加临时邀请名额（存在有效期）</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-neutral-800 rounded-lg p-4 mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-neutral-400 text-sm">价格</span>
+                        <div className="flex items-center gap-1 text-amber-400">
+                          <Sparkles className="w-4 h-4" />
+                          <span className="text-xl">{quotaItems.temp_invite_quota?.pricePoints ?? '-'}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify之间 mb-2">
+                        <span className="text-neutral-400 text-sm">您的魔力值</span>
+                        <span className="text-white">{userInviteStats.magicPoints.toLocaleString()}</span>
+                      </div>
+                      <div>
+                        <label className="block text-neutral-400 text-sm mb-1">数量</label>
+                        <input type="number" min={1} value={quotaQty.temp} onChange={(e) => setQuotaQty(s => ({ ...s, temp: Math.max(1, Number(e.target.value || 1)) }))} className="w-full px-3 py-2 rounded-md bg-neutral-800 border border-neutral-700 text白色 outline-none focus:border-amber-500" />
+                      </div>
+                      {quotaItems.temp_invite_quota && Number(quotaItems.temp_invite_quota.pricePoints) * quotaQty.temp > userInviteStats.magicPoints && (
+                        <div className="text-red-400 text-sm mt-2">余额不足，请先获取更多魔力值</div>
+                      )}
+                    </div>
+
+                    <button
+                      disabled={!quotaItems.temp_invite_quota || quotaItems.temp_invite_quota.status !== 'active' || (quotaItems.temp_invite_quota && Number(quotaItems.temp_invite_quota.pricePoints) * quotaQty.temp > userInviteStats.magicPoints)}
+                      onClick={async () => {
+                        try {
+                          if (!quotaItems.temp_invite_quota) return;
+                          await purchase({ itemKey: 'temp_invite_quota', quantity: quotaQty.temp }, { refreshBonus: true, onRefresh: async () => { await loadOverview(); } });
+                          setSuccessOpen(true);
+                        } catch { }
+                      }}
+                      className={`w-full py-3 rounded-lg ${!quotaItems.temp_invite_quota || quotaItems.temp_invite_quota.status !== 'active' || (quotaItems.temp_invite_quota && Number(quotaItems.temp_invite_quota.pricePoints) * quotaQty.temp > userInviteStats.magicPoints) ? 'bg-neutral-800 text-neutral-400 cursor-not-allowed' : 'bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/20'} flex items-center justify-center gap-2`}
+                    >
+                      <Plus className="w-5 h-5" />
+                      <span>购买临时名额</span>
                     </button>
                   </div>
                 </div>
@@ -537,6 +613,7 @@ export function InvitePage() {
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         )}
@@ -797,6 +874,7 @@ export function InvitePage() {
           </div>
         </div>
       )}
+      <PurchaseSuccessModal open={successOpen} onOpenChange={(v) => { setSuccessOpen(v); if (!v) clearLastSuccess(); }} payload={lastSuccess} />
     </div>
   );
 }

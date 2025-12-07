@@ -91,7 +91,7 @@ export class InvitesService {
         });
     }
     /**
-     * 我的邀请码列表（预生成码）
+     * 我的邀请码列表（真实邀请记录）
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
