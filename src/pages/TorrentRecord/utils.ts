@@ -12,6 +12,13 @@ export function transformTorrentData(item: any, activeTab: TorrentStatus): Torre
     ratio: typeof item.ratio === 'number' ? item.ratio : Number(item.share_ratio ?? 0),
     seeders: Number(item.seeders ?? item.seeders_count ?? 0),
     leechers: Number(item.leechers ?? item.leechers_count ?? 0),
+    // 总下载次数：优先读取后端新增的次数字段，兼容多种命名
+    totalDownloads: Number(
+      item.downloads ??
+      item.download_count ??
+      item.totalDownloads ??
+      0
+    ),
     progress: Number(item.progress_percent ?? item.progress ?? 0),
     uploadDate: String(item.upload_date ?? item.created_at ?? '').slice(0, 10),
     completeDate: item.complete_date

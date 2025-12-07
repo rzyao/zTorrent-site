@@ -12,6 +12,9 @@ export function TorrentRecordTable({ isLoading, torrents, activeTab }: TorrentRe
   const getStatusConfig = (status: string) => {
     return STATUS_CONFIG[status] || STATUS_CONFIG.default;
   };
+  const showProgress = !(activeTab === 'uploaded' || activeTab === 'seeding');
+  // 总下载数列显示策略：除“完成种子”外均显示
+  const showTotalDownloads = activeTab !== 'completed';
 
   if (isLoading) {
     return (
@@ -43,8 +46,13 @@ export function TorrentRecordTable({ isLoading, torrents, activeTab }: TorrentRe
               <th className="px-6 py-4 text-left text-sm text-neutral-400">大小</th>
               <th className="px-6 py-4 text-left text-sm text-neutral-400">上传量</th>
               <th className="px-6 py-4 text-left text-sm text-neutral-400">下载量</th>
+              {showTotalDownloads && (
+                <th className="px-6 py-4 text-left text-sm text-neutral-400">总下载数</th>
+              )}
               <th className="px-6 py-4 text-left text-sm text-neutral-400">分享率</th>
-              <th className="px-6 py-4 text-left text-sm text-neutral-400">进度</th>
+              {showProgress && (
+                <th className="px-6 py-4 text-left text-sm text-neutral-400">进度</th>
+              )}
               <th className="px-6 py-4 text-left text-sm text-neutral-400">做种/下载</th>
               <th className="px-6 py-4 text-left text-sm text-neutral-400">状态</th>
             </tr>
@@ -73,25 +81,31 @@ export function TorrentRecordTable({ isLoading, torrents, activeTab }: TorrentRe
                   <td className="px-6 py-4 text-neutral-300">{torrent.size}</td>
                   <td className="px-6 py-4 text-green-400">{torrent.uploaded}</td>
                   <td className="px-6 py-4 text-red-400">{torrent.downloaded}</td>
+                  {showTotalDownloads && (
+                    <td className="px-6 py-4 text-neutral-300">{torrent.totalDownloads}</td>
+                  )}
                   <td className="px-6 py-4">
                     <span className={torrent.ratio >= 1 ? 'text-green-400' : 'text-amber-400'}>
                       {torrent.ratio.toFixed(2)}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-2 bg-neutral-800 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full transition-all ${torrent.progress === 100
-                            ? 'bg-gradient-to-r from-green-500 to-green-600'
-                            : 'bg-gradient-to-r from-amber-500 to-orange-600'
-                            }`}
-                          style={{ width: `${torrent.progress}%` }}
-                        />
+                  {showProgress && (
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-2 bg-neutral-800 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full transition-all ${torrent.progress === 100
+                              ? 'bg-gradient-to-r from-green-500 to-green-600'
+                              : 'bg-gradient-to-r from-amber-500 to-orange-600'
+                              }`}
+                            style={{ width: `${torrent.progress}%` }}
+                          />
+                        </div>
+                        <span className="text-sm text-neutral-400 min-w-[45px]">{torrent.progress}%</span>
                       </div>
-                      <span className="text-sm text-neutral-400 min-w-[45px]">{torrent.progress}%</span>
-                    </div>
-                  </td>
+                    </td>
+                  )}
+                  {/* 做种/下载人数来自接口字段 seeders/leechers */}
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3 text-sm">
                       <div className="flex items-center gap-1 text-green-400">
