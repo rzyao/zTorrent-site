@@ -7,11 +7,11 @@ import {
   BarChart3,
   HelpCircle,
 } from 'lucide-react';
-import { MyTicketsView } from './tickets/MyTicketsView';
-import { TicketManagementView } from './tickets/TicketManagementView';
-import { MyTodosView } from './tickets/MyTodosView';
-import { TicketStatsView } from './tickets/TicketStatsView';
-import { TicketFAQView } from './tickets/TicketFAQView';
+import { MyTicketsView } from './Tickets/MyTicketsView';
+import { TicketManagementView } from './Tickets/TicketManagementView';
+import { MyTodosView } from './Tickets/MyTodosView';
+import { TicketStatsView } from './Tickets/TicketStatsView';
+import { TicketFAQView } from './Tickets/TicketFAQView';
 
 type TabType = 'myTickets' | 'management' | 'todos' | 'stats' | 'faq';
 
@@ -79,8 +79,8 @@ export function TicketsPage() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all ${activeTab === tab.id
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25'
-                      : 'text-neutral-400 hover:text-white hover:bg-neutral-700/50'
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25'
+                    : 'text-neutral-400 hover:text-white hover:bg-neutral-700/50'
                     }`}
                 >
                   {tab.icon}
