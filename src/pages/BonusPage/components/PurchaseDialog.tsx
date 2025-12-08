@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Sparkles, Copy, Mail } from 'lucide-react';
+import { Sparkles, Copy, Mail, Loader2 } from 'lucide-react';
 import type { StoreItem } from '@/api/custom/store';
 import { MailService } from '@/api';
 
@@ -96,8 +96,11 @@ export function PurchaseDialog({
             )}
 
             <DialogFooter className="flex items-center justify-end gap-2">
-              <button className="px-4 py-2 rounded bg-neutral-700 hover:bg-neutral-600 text-white" onClick={() => onOpenChange(false)}>取消</button>
-              <button className={`px-4 py-2 rounded text-white ${submitting ? 'bg-neutral-700 cursor-not-allowed' : 'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700'}`} disabled={submitting || (selectedItem.key === 'invite_code' && !/^\S+@\S+\.\S+$/.test(email)) || (balance !== null && Number(selectedItem.pricePoints) * quantity > (balance ?? 0))} onClick={onSubmit}>确认购买</button>
+              <button className="px-4 py-2 rounded bg-neutral-700 hover:bg-neutral-600 text-white disabled:opacity-50 disabled:cursor-not-allowed" onClick={() => onOpenChange(false)} disabled={submitting}>取消</button>
+              <button className={`px-4 py-2 rounded text-white ${submitting ? 'bg-neutral-700 cursor-not-allowed' : 'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700'} flex items-center gap-2`} disabled={submitting || (selectedItem.key === 'invite_code' && !/^\S+@\S+\.\S+$/.test(email)) || (balance !== null && Number(selectedItem.pricePoints) * quantity > (balance ?? 0))} onClick={onSubmit}>
+                {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                {submitting ? '购买中…' : '确认购买'}
+              </button>
             </DialogFooter>
           </div>
         ) : (
