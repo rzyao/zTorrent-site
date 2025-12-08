@@ -1,5 +1,5 @@
 import { ChevronRight } from 'lucide-react';
-import type { TabType } from '../../control/types';
+import type { TabType } from '../types';
 
 interface SidebarNavProps {
   tabs: Array<{ id: TabType; label: string; icon: React.ComponentType<{ className?: string }> }>;

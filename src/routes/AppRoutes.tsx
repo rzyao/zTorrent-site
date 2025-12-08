@@ -8,34 +8,36 @@ import { ForgotPasswordPage } from '../pages/ForgotPasswordPage';
 import { ApiTest } from '../pages/ApiTest';
 import HomePage from '../pages/HomePage';
 import TorrentsPage from '../pages/TorrentsPage';
-import { ForumPage } from '../pages/forum/ForumPage'; // 修复：ForumPage.tsx 为具名导出，使用具名导入以避免默认导出错误
-import SubtitlesPage from '../pages/SubtitlesPage';
+import { ForumPage } from '../pages/Forum/ForumPage'; // 修复：ForumPage.tsx 为具名导出，使用具名导入以避免默认导出错误
+import { SubtitlesPage } from '../pages/SubtitlesPage';
 import RankingPage from '../pages/RankingPage';
-import { EditPage } from '../pages/edit/EditPage';
+import { EditPage } from '../pages/Edit/EditPage';
 import AppLayout from '../layouts/AppLayout';
 import HomeLayout from '../layouts/HomeLayout';
 import MoviePage from '../pages/MoviePage';
 import { UploadTorrentPage } from '../pages/UploadTorrentPage';
-import { MessagesPage } from '../pages/MessagesPage'; // 新增：引入消息中心页面（具名导出）
-import { ControlPage } from '../pages/ControlPage'; // 新增：控制台页面（具名导出）
-import { RequestsPage } from '../pages/RequestsPage'; // 新增：求种专区页面（具名导出）
-import { RulesPage } from '../pages/RulesPage'; // 新增：站点规则页面（具名导出）
-import { StaffPage } from '../pages/StaffPage';
-import { TicketsPage } from '../pages/TicketsPage';
-import { ReviewPage } from '../pages/ReviewPage';
+import { MessagesPage } from '@/pages/Messages/index'; // 新增：引入消息中心页面（具名导出）
+import { ControlPage } from '@/pages/Control/index'; // 新增：控制台页面（具名导出）
+import { RequestsPage } from '@/pages/Requests'; // 新增：求种专区页面（具名导出）
+import { RulesPage } from '@/pages/RulesPage'; // 新增：站点规则页面（具名导出）
+import { StaffPage } from '@/pages/StaffPage';
+import { TicketsPage } from '@/pages/TicketsPage';
+import { ReviewPage } from '@/pages/ReviewPage';
 // 系统设置页已移除（管理端页面不在用户端呈现）
 // 新增：魔力值中心页面（具名导出）
-import { BonusPage } from '../pages/BonusPage';
-import { InvitePage } from '../pages/InvitePage';
+import { BonusPage } from '@/pages/BonusPage';
+import { InvitePage } from '@/pages/InvitePage/InvitePage';
 // 新增：影片浏览与片单页面（具名导出）
-import { FilmsPage } from '../pages/FilmsPage';
-import { PlaylistsPage } from '../pages/PlaylistsPage';
-import { PlaylistDetailPage } from '../pages/PlaylistDetailPage';
+import { FilmsPage } from '@/pages/FilmsPage';
+import { PlaylistsPage } from '@/pages/PlaylistsPage';
+import { PlaylistDetailPage } from '@/pages/PlaylistDetailPage';
 // 说明：通过 React.lazy 懒加载重量级详情页，降低首屏主包体积
 const LazyTorrentDetailPage = lazy(() => import('../pages/TorrentDetailPage/index'));
-const LazyFilmDetailPage = lazy(() => import('../pages/FilmDetail'));
+const LazyFilmDetailPage = lazy(() => import('../pages/FilmDetail/index'));
 import { TorrentRecordPage } from '../pages/TorrentRecord';
 import { RSSPage } from '../pages/RSSPage';
+import { GroupsPage } from '../pages/GroupsPage';
+import { CandidatesPage } from '../pages/CandidatesPage';
 
 
 
@@ -303,6 +305,8 @@ export default function AppRoutes() {
         } />
 
         {/* 规则、管理组、工单 */}
+        <Route path="/groups" element={<GroupsPage />} />
+        <Route path="/candidates" element={<CandidatesPage />} />
         <Route path="/rules" element={
           <PermissionRoute requiredPermissions={['page:rules']}>
             <RulesPage />

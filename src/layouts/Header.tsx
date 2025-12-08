@@ -112,6 +112,8 @@ export function Header() {
                 <NavLink to="/edit" className="text-white hover:text-gray-300 transition-colors">编辑</NavLink>
               )}
               <NavLink to="/forum" className="text-white hover:text-gray-300 transition-colors">论坛</NavLink>
+              <NavLink to="/candidates" className="text-white hover:text-gray-300 transition-colors">候选人</NavLink>
+              <NavLink to="/groups" className="text-white hover:text-gray-300 transition-colors">制作组</NavLink>
               <NavLink to="/tickets" className="text-white hover:text-gray-300 transition-colors">工单</NavLink>
               <NavLink to="/rules" className="text-white hover:text-gray-300 transition-colors">规则</NavLink>
               <NavLink to="/rss" className="text-white hover:text-gray-300 transition-colors">RSS订阅</NavLink>
@@ -314,6 +316,20 @@ export function Header() {
             onClick={() => setShowMobileMenu(false)}
           >
             论坛
+          </NavLink>
+          <NavLink
+            to="/candidates"
+            className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
+            onClick={() => setShowMobileMenu(false)}
+          >
+            候选人
+          </NavLink>
+          <NavLink
+            to="/groups"
+            className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
+            onClick={() => setShowMobileMenu(false)}
+          >
+            制作组
           </NavLink>
           <NavLink
             to="/films"
