@@ -1,2 +1,0 @@
-import{j as i}from"./react-vendor-D5B-3R5z.js";import{J as n}from"./radix-BeAqWZpJ.js";import{c as e}from"./index-C2oOdmjT.js";function m({className:t,orientation:o="horizontal",decorative:a=!0,...r}){return i.jsx(n,{"data-slot":"separator-root",decorative:a,orientation:o,className:e("bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",t),...r})}export{m as S};
-//# sourceMappingURL=separator-CSooHC3V.js.map

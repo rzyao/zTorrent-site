@@ -5,3 +5,4 @@ node_modules
 openapi-ts-error-*.log
 auto_seed.js
 auto_seed_dev.js
+dist/

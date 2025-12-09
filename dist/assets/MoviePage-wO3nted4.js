@@ -1,2 +1,0 @@
-import{j as t}from"./react-vendor-D5B-3R5z.js";import{u as r}from"./index-C2oOdmjT.js";import{x as o}from"./vendor-ZcL4sZeM.js";import"./radix-BeAqWZpJ.js";import"./icons-2ZwnUDO4.js";import"./react-query-Dz5GtYMG.js";function c(){r("电影");const{category:e}=o();return t.jsx(t.Fragment,{children:t.jsx("div",{children:t.jsxs("h1",{className:"text-3xl font-bold text-white",children:["Movies ",e?`- ${e}`:""]})})})}export{c as default};
-//# sourceMappingURL=MoviePage-wO3nted4.js.map
