@@ -18,7 +18,7 @@ const EditPlaylistPage = lazy(() => import('@/pages/Edit/playlists/index.tsx').t
 const MoviePage = lazy(() => import('@/pages/MoviePage.tsx'));
 const UploadTorrentPage = lazy(() => import('@/pages/UploadTorrent/index.tsx').then(m => ({ default: m.UploadTorrentPage })));
 const MessagesPage = lazy(() => import('@/pages/Messages/index.tsx').then(m => ({ default: m.MessagesPage })));
-const ControlPage = lazy(() => import('@/pages/Control/index.tsx').then(m => ({ default: m.ControlPage })));
+const ControlPage = lazy(() => import('@/pages/UserControl/index.tsx').then(m => ({ default: m.ControlPage })));
 const RequestsPage = lazy(() => import('@/pages/Requests/index.tsx').then(m => ({ default: m.RequestsPage })));
 const RulesPage = lazy(() => import('@/pages/Rules/index.tsx').then(m => ({ default: m.RulesPage })));
 const StaffPage = lazy(() => import('@/pages/Staff/index.tsx').then(m => ({ default: m.StaffPage })));
