@@ -10,7 +10,7 @@ const Fallback = <div style={{ padding: 24, color: '#ccc' }}>加载中…</div>;
 
 const HomePage = lazy(() => import('@/pages/HomePage.tsx'));
 const TorrentsPage = lazy(() => import('@/pages/TorrentsList/index.tsx'));
-const ForumPage = lazy(() => import('@/pages/Forum/ForumPage.tsx').then(m => ({ default: m.ForumPage })));
+const ForumPage = lazy(() => import('@/pages/Forum').then(m => ({ default: m.ForumPage })));
 const SubtitlesPage = lazy(() => import('@/pages/Subtitles/index.tsx').then(m => ({ default: m.SubtitlesPage })));
 const RankingPage = lazy(() => import('@/pages/RankingPage.tsx'));
 const EditMoviePage = lazy(() => import('@/pages/Edit/movies/index.tsx').then(m => ({ default: m.EditMoviePage })));
