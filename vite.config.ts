@@ -34,25 +34,11 @@ export default defineConfig(({ mode }) => {
       }
     },
     build: {
-      // 开启 source map 便于线上问题快速定位
       sourcemap: true,
-      // 将压缩器切换回 Vite 默认的 esbuild，规避部分库与 terser 的已知兼容问题
-      // 尤其是在 React 19 与某些三方依赖的组合下，terser 可能产生
-      // “Cannot access 'X' before initialization” 的 TDZ 错误
       minify: 'esbuild',
       chunkSizeWarningLimit: 1024,
       rollupOptions: {
         output: {
-          manualChunks(id) {
-            if (!id.includes('node_modules')) return undefined
-            if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('react-router-dom')) return 'react-vendor'
-            if (id.includes('recharts')) return 'charts'
-            if (id.includes('framer-motion')) return 'motion'
-            if (id.includes('@tanstack/react-query')) return 'react-query'
-            if (id.includes('lucide-react')) return 'icons'
-            if (id.includes('@radix-ui')) return 'radix'
-            return 'vendor'
-          }
         }
       }
     },
