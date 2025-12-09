@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { OpenAPI, MessagesService } from '@/api';
+import { OpenAPI } from '@/api/core/OpenAPI';
+import { MessagesService } from '@/api/services/MessagesService';
 import { request as __request } from '@/api/core/request';
 import { unwrapResponse } from '../utils/utils';
 
@@ -13,7 +14,7 @@ export function usePollingUnread(onThreadsUpdated?: () => Promise<void> | void) 
       const data = unwrapResponse<{ count: number }>(resp);
       const count = Number((data as any)?.count || 0);
       setUnreadTotalCount(count);
-    } catch (_) {}
+    } catch (_) { }
   };
 
   useEffect(() => {
@@ -31,7 +32,7 @@ export function usePollingUnread(onThreadsUpdated?: () => Promise<void> | void) 
             if (onThreadsUpdated) await onThreadsUpdated();
           }
           await refreshUnreadCount();
-        } catch (_) {}
+        } catch (_) { }
       }, 3 * 60 * 1000);
     })();
     return () => { if (timer) clearInterval(timer); };

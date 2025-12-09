@@ -151,7 +151,7 @@ export function RSSPage() {
   const currentRSSUrl = generateRSSUrl();
 
   return (
-    <div className="min-h-screen bg-[#0F171E] pt-16">
+    <div className="min-h-screen bg-[#0F171E]">
       {/* Header */}
       <div className="bg-gradient-to-br from-amber-600/20 via-orange-600/20 to-amber-700/20 border-b border-amber-500/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -226,8 +226,8 @@ export function RSSPage() {
                   key={category.id}
                   onClick={() => toggleCategory(category.id)}
                   className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${selectedCategories.includes(category.id)
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
-                      : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                    : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                     }`}
                 >
                   <span>{category.icon}</span>
@@ -249,8 +249,8 @@ export function RSSPage() {
                   key={tag.id}
                   onClick={() => toggleTag(tag.id)}
                   className={`px-4 py-2 rounded-lg transition-all ${selectedTags.includes(tag.id)
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
-                      : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                    : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                     }`}
                 >
                   {tag.label}
@@ -271,8 +271,8 @@ export function RSSPage() {
                   key={quality.id}
                   onClick={() => toggleQuality(quality.id)}
                   className={`px-4 py-2 rounded-lg transition-all ${selectedQuality.includes(quality.id)
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
-                      : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                    : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                     }`}
                 >
                   {quality.label}

@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { useDictionaryLabels } from '@/hooks/useDictionary';
-import { UsersService } from '@/api/services/UsersService';
-import { OpenAPI } from '@/api/core/OpenAPI';
 import { getProfile } from '@/api/custom/auth';
-import { FilmsService } from '@/api/services/FilmsService';
+import { getUsersService, getOpenAPI, getRequest } from '@/api/lazy';
 import type { UpdateUserPreferencesDto } from '@/api/models/UpdateUserPreferencesDto';
 import type { UpdateUserPrivacyDto } from '@/api/models/UpdateUserPrivacyDto';
 import type {
@@ -111,6 +109,7 @@ export function useControlState() {
     if (activeTab !== 'privacy') return;
     (async () => {
       try {
+        const UsersService = await getUsersService();
         const resp = await UsersService.usersPrivacyControllerGet();
         const data = resp?.data as any;
         if (data) {
@@ -135,6 +134,7 @@ export function useControlState() {
     if (activeTab !== 'preferences') return;
     const loadCategories = async () => {
       try {
+        const UsersService = await getUsersService();
         const resp = await UsersService.usersPreferencesControllerListGeneralTorrentRootCategories();
         const items = Array.isArray(resp?.data) ? resp.data : [];
         const mapped = items
@@ -163,9 +163,9 @@ export function useControlState() {
     };
     const loadGenres = async () => {
       try {
-        const { request } = await import('@/api/core/request');
-        const { OpenAPI } = await import('@/api/core/OpenAPI');
-        const resp: any = await request<any>(OpenAPI, {
+        const request = await getRequest();
+        const OpenAPI = await getOpenAPI();
+        const resp: any = await (request as any)(OpenAPI, {
           method: 'POST',
           url: '/users/preferences/list-general-film-root-categories',
         });
@@ -192,6 +192,7 @@ export function useControlState() {
     if (activeTab !== 'notifications') return;
     (async () => {
       try {
+        const UsersService = await getUsersService();
         const resp = await UsersService.usersNotificationsControllerGet();
         const data = resp?.data as any;
         if (data) {
@@ -225,6 +226,7 @@ export function useControlState() {
     if (activeTab !== 'preferences' || !currentUserId) return;
     (async () => {
       try {
+        const UsersService = await getUsersService();
         const resp = await UsersService.usersPreferencesControllerGetDefaultTorrentCategoryKeys({ id: currentUserId });
         const keys = Array.isArray(resp?.data) ? resp.data : [];
         setSelectedTorrentCategories(keys);
@@ -237,9 +239,11 @@ export function useControlState() {
     if (activeTab !== 'preferences' || !currentUserId) return;
     (async () => {
       try {
-        const { request } = await import('@/api/core/request');
-        const { OpenAPI } = await import('@/api/core/OpenAPI');
-        const resp: any = await request<any>(OpenAPI, {
+        // 说明：避免页面内直接动态导入 core 模块，
+        // 使用统一的 getRequest/getOpenAPI 包装，消除构建时动态导入警告
+        const request = await getRequest();
+        const OpenAPI = await getOpenAPI();
+        const resp: any = await (request as any)(OpenAPI, {
           method: 'POST',
           url: '/users/preferences/get-default-film-category-ids',
           body: { id: currentUserId },
@@ -262,16 +266,17 @@ export function useControlState() {
         const prof = await getProfile();
         const user = (prof as any)?.user ?? {};
         const rawAvatar = String((prof as any)?.avatar ?? profileData.avatar ?? '');
-        const absoluteAvatar = (() => {
+        const absoluteAvatar = (async () => {
           if (/^https?:\/\//i.test(rawAvatar)) return rawAvatar;
           if (/^data:/i.test(rawAvatar)) return rawAvatar;
-          const base = String(OpenAPI.BASE || (typeof window !== 'undefined' ? window.location.origin : '') || '').replace(/\/$/, '');
+          const OpenAPIObj = await getOpenAPI();
+          const base = String((OpenAPIObj as any).BASE || (typeof window !== 'undefined' ? window.location.origin : '') || '').replace(/\/$/, '');
           const path = rawAvatar ? (rawAvatar.startsWith('/') ? rawAvatar : `/${rawAvatar}`) : '';
           return path ? `${base}${path}` : rawAvatar;
         })();
         const next: ProfileData = {
           username: String(user?.username ?? profileData.username ?? ''),
-          avatar: absoluteAvatar,
+          avatar: await absoluteAvatar,
           signature: String((prof as any)?.signature ?? profileData.signature ?? ''),
           location: String((prof as any)?.location ?? profileData.location ?? ''),
           bio: String((prof as any)?.bio ?? profileData.bio ?? ''),
@@ -285,6 +290,7 @@ export function useControlState() {
     if (activeTab !== 'preferences') return;
     const loadPreferences = async () => {
       try {
+        const UsersService = await getUsersService();
         const resp = await UsersService.usersPreferencesControllerGet();
         const data = resp?.data;
         if (data) {
@@ -325,6 +331,7 @@ export function useControlState() {
           setTimeout(() => setSaveSuccess(false), 3000);
           return;
         }
+        const UsersService = await getUsersService();
         const resp = await UsersService.usersNotificationsControllerSave(body);
         const data = resp?.data as any;
         if (data) {
@@ -355,6 +362,7 @@ export function useControlState() {
           setTimeout(() => setSaveSuccess(false), 3000);
           return;
         }
+        const UsersService = await getUsersService();
         const resp = await UsersService.usersPrivacyControllerSave(body as UpdateUserPrivacyDto);
         const data = resp?.data as any;
         if (data) {
@@ -381,6 +389,7 @@ export function useControlState() {
         theme: preferences.theme as UpdateUserPreferencesDto.theme,
         defaultView: preferences.defaultView as UpdateUserPreferencesDto.defaultView,
       };
+      const UsersService = await getUsersService();
       const resp = await UsersService.usersPreferencesControllerSave(body);
       const data = resp?.data;
       if (data) {

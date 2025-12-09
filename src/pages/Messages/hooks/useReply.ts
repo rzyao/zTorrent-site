@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { OpenAPI } from '@/api';
+import { OpenAPI } from '@/api/core/OpenAPI';
 import { request as __request } from '@/api/core/request';
 import { unwrapResponse, extractErrorMessage } from '../utils/utils';
 

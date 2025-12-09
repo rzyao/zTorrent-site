@@ -1,0 +1,2 @@
+import{j as e}from"./react-vendor-D5B-3R5z.js";import{u as s,H as t}from"./index-C2oOdmjT.js";import"./vendor-ZcL4sZeM.js";import"./radix-BeAqWZpJ.js";import"./icons-2ZwnUDO4.js";import"./react-query-Dz5GtYMG.js";function o(){return s("排行榜"),e.jsxs("div",{className:"min-h-screen bg-[#0F171E]",children:[e.jsx(t,{}),e.jsx("div",{className:"pt-20 px-4 md:px-8",children:e.jsx("h1",{className:"text-white text-2xl",children:"排行榜"})})]})}export{o as default};
+//# sourceMappingURL=RankingPage-CtUAGRTC.js.map

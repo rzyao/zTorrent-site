@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { SettingsService } from '@/api';
+import { SettingsService } from '@/api/services/SettingsService';
 
 type SiteConfig = {
   title: string;

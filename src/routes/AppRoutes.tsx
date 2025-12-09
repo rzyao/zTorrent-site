@@ -1,43 +1,47 @@
 import { Routes, Route, Navigate, useNavigate, useParams, Outlet } from 'react-router-dom';
-import { useEffect, useState, Suspense, lazy } from 'react';
-import { AuthService } from '../api';
+import { Suspense, lazy } from 'react';
 import { useAccess } from '@/context/AccessContext';
 import { LoginPage } from '../pages/LoginPage';
 import { Register } from '../pages/Register';
 import { ForgotPasswordPage } from '../pages/ForgotPasswordPage';
-import { ApiTest } from '../pages/ApiTest';
-import HomePage from '../pages/HomePage';
-import TorrentsPage from '../pages/TorrentsPage';
-import { ForumPage } from '../pages/Forum/ForumPage'; // 修复：ForumPage.tsx 为具名导出，使用具名导入以避免默认导出错误
-import { SubtitlesPage } from '../pages/SubtitlesPage';
-import RankingPage from '../pages/RankingPage';
-import { EditPage } from '../pages/Edit/EditPage';
 import AppLayout from '../layouts/AppLayout';
 import HomeLayout from '../layouts/HomeLayout';
-import MoviePage from '../pages/MoviePage';
-import { UploadTorrentPage } from '../pages/UploadTorrentPage';
-import { MessagesPage } from '@/pages/Messages/index'; // 新增：引入消息中心页面（具名导出）
-import { ControlPage } from '@/pages/Control/index'; // 新增：控制台页面（具名导出）
-import { RequestsPage } from '@/pages/Requests'; // 新增：求种专区页面（具名导出）
-import { RulesPage } from '@/pages/RulesPage'; // 新增：站点规则页面（具名导出）
-import { StaffPage } from '@/pages/StaffPage';
-import { TicketsPage } from '@/pages/TicketsPage';
-import { ReviewPage } from '@/pages/ReviewPage';
-// 系统设置页已移除（管理端页面不在用户端呈现）
-// 新增：魔力值中心页面（具名导出）
-import { BonusPage } from '@/pages/BonusPage';
-import { InvitePage } from '@/pages/InvitePage/InvitePage';
-// 新增：影片浏览与片单页面（具名导出）
-import { FilmsPage } from '@/pages/FilmsPage';
-import { PlaylistsPage } from '@/pages/PlaylistsPage';
-import { PlaylistDetailPage } from '@/pages/PlaylistDetailPage';
-// 说明：通过 React.lazy 懒加载重量级详情页，降低首屏主包体积
-const LazyTorrentDetailPage = lazy(() => import('../pages/TorrentDetailPage/index'));
-const LazyFilmDetailPage = lazy(() => import('../pages/FilmDetail/index'));
-import { TorrentRecordPage } from '../pages/TorrentRecord';
-import { RSSPage } from '../pages/RSSPage';
-import { GroupsPage } from '../pages/GroupsPage';
-import { CandidatesPage } from '../pages/CandidatesPage';
+const Fallback = <div style={{ padding: 24, color: '#ccc' }}>加载中…</div>;
+
+const HomePage = lazy(() => import('../pages/HomePage'));
+const TorrentsPage = lazy(() => import('../pages/TorrentsList'));
+const ForumPage = lazy(() => import('../pages/Forum/ForumPage').then(m => ({ default: m.ForumPage })));
+const SubtitlesPage = lazy(() => import('../pages/Subtitles').then(m => ({ default: m.SubtitlesPage })));
+const RankingPage = lazy(() => import('../pages/RankingPage'));
+const EditMoviePage = lazy(() => import('../pages/Edit/movies').then(m => ({ default: m.EditMoviePage })));
+const EditPlaylistPage = lazy(() => import('../pages/Edit/playlists').then(m => ({ default: m.EditPlaylistPage })));
+const MoviePage = lazy(() => import('../pages/MoviePage'));
+const UploadTorrentPage = lazy(() => import('../pages/UploadTorrent').then(m => ({ default: m.UploadTorrentPage })));
+const MessagesPage = lazy(() => import('@/pages/Messages/index').then(m => ({ default: m.MessagesPage })));
+const ControlPage = lazy(() => import('@/pages/Control/index').then(m => ({ default: m.ControlPage })));
+const RequestsPage = lazy(() => import('@/pages/Requests').then(m => ({ default: m.RequestsPage })));
+const RulesPage = lazy(() => import('@/pages/Rules/index').then(m => ({ default: m.RulesPage })));
+const StaffPage = lazy(() => import('@/pages/Staff').then(m => ({ default: m.StaffPage })));
+const TicketsPage = lazy(() => import('@/pages/Tickets/TicketsPage').then(m => ({ default: m.TicketsPage })));
+const ReviewPage = lazy(() => import('@/pages/Review').then(m => ({ default: m.ReviewPage })));
+const BonusPage = lazy(() => import('@/pages/Bonus').then(m => ({ default: m.BonusPage })));
+const InvitePage = lazy(() => import('@/pages/Invite/InvitePage').then(m => ({ default: m.InvitePage })));
+const FilmsPage = lazy(() => import('@/pages/FilmsPage').then(m => ({ default: m.FilmsPage })));
+const PlaylistsPage = lazy(() => import('@/pages/PlaylistsPage').then(m => ({ default: m.PlaylistsPage })));
+const PlaylistDetailPage = lazy(() => import('@/pages/PlaylistDetail/PlaylistDetailPage').then(m => ({ default: m.PlaylistDetailPage })));
+const TorrentDetailPage = lazy(() => import('../pages/TorrentDetail/index'));
+const FilmDetailPage = lazy(() => import('../pages/FilmDetail/index'));
+const TorrentRecordPage = lazy(() => import('../pages/TorrentRecord').then(m => ({ default: m.TorrentRecordPage })));
+const RSSPage = lazy(() => import('../pages/RSSPage').then(m => ({ default: m.RSSPage })));
+const GroupsPage = lazy(() => import('../pages/Groups/index').then(m => ({ default: m.GroupsPage })));
+const CandidatesPage = lazy(() => import('../pages/Candidates').then(m => ({ default: m.CandidatesPage })));
+const TutorialsPage = lazy(() => import('../pages/Tutorials').then(m => ({ default: m.TutorialsPage })));
+const SeedingPage = lazy(() => import('../pages/SeedingPage').then(m => ({ default: m.SeedingPage })));
+const DownloaderPage = lazy(() => import('../pages/Downloader/index').then(m => ({ default: m.DownloaderPage })));
+const DeadTorrentsPage = lazy(() => import('../pages/DeadTorrents').then(m => ({ default: m.DeadTorrentsPage })));
+const GamesPage = lazy(() => import('../pages/Games/index').then(m => ({ default: m.GamesPage })));
+const MagicFarmPage = lazy(() => import('../pages/MagicFarm/index').then(m => ({ default: m.MagicFarmPage })));
+const AnnouncementsPage = lazy(() => import('@/pages/Announcements/index').then(m => ({ default: m.AnnouncementsPage })));
 
 
 
@@ -157,13 +161,13 @@ function PermissionRoute({
 }
 
 export default function AppRoutes() {
+  const navigate = useNavigate();
   return (
     <Routes>
       {/* 公开路由 登录、注册、忘记密码页面 */}
       <Route path="/login" element={<LoginPageWrapper />} />
       <Route path="/register" element={<RegisterPageWrapper />} />
       <Route path="/forgot-password" element={<ForgotPasswordPageWrapper />} />
-      <Route path="/api-test" element={<ApiTest />} />
       <Route path="/" element={<Navigate to="/home" replace />} />
       {/* 受保护路由统一持久布局：AuthRoute + AppLayout 持久化，内部通过 Outlet 渲染子页面 */}
       <Route
@@ -185,51 +189,63 @@ export default function AppRoutes() {
         >
           <Route index element={
             <PermissionRoute requiredPermissions={['page:home']}>
-              <HomePage />
+              <Suspense fallback={Fallback}>
+                <HomePage />
+              </Suspense>
             </PermissionRoute>
           } />
           <Route path=":category" element={
             <PermissionRoute requiredPermissions={['page:home']}>
-              <HomePage />
+              <Suspense fallback={Fallback}>
+                <HomePage />
+              </Suspense>
             </PermissionRoute>
           } />
           <Route path="movie" element={
             <PermissionRoute requiredPermissions={['page:movie']}>
-              <MoviePage />
+              <Suspense fallback={Fallback}>
+                <MoviePage />
+              </Suspense>
             </PermissionRoute>
           } />
           <Route path="movie/:category" element={
             <PermissionRoute requiredPermissions={['page:movie']}>
-              <MoviePage />
+              <Suspense fallback={Fallback}>
+                <MoviePage />
+              </Suspense>
             </PermissionRoute>
           } />
         </Route>
 
         <Route path="/torrents" element={
           <PermissionRoute requiredPermissions={['page:torrents']}>
-            <TorrentsPage />
+            <Suspense fallback={Fallback}>
+              <TorrentsPage />
+            </Suspense>
           </PermissionRoute>
         } />
         <Route path="/forum" element={
           <PermissionRoute requiredPermissions={['page:forum']}>
-            <ForumPage />
+            <Suspense fallback={Fallback}>
+              <ForumPage />
+            </Suspense>
           </PermissionRoute>
         } />
-        <Route path="/subtitles" element={
-          <PermissionRoute requiredPermissions={['page:subtitles']}>
-            <SubtitlesPage />
-          </PermissionRoute>
-        } />
+        <Route path="/subtitles" element={<Suspense fallback={Fallback}><SubtitlesPage /></Suspense>} />
         <Route path="/ranking" element={
           <PermissionRoute requiredPermissions={['page:ranking']}>
-            <RankingPage />
+            <Suspense fallback={Fallback}>
+              <RankingPage />
+            </Suspense>
           </PermissionRoute>
         } />
 
         {/* 影片与片单 */}
         <Route path="/films" element={
           <PermissionRoute requiredPermissions={['page:films']}>
-            <FilmsPage />
+            <Suspense fallback={Fallback}>
+              <FilmsPage />
+            </Suspense>
           </PermissionRoute>
         } />
         <Route path="/film/:id" element={
@@ -239,7 +255,9 @@ export default function AppRoutes() {
         } />
         <Route path="/playlists" element={
           <PermissionRoute requiredPermissions={['page:playlists']}>
-            <PlaylistsPage />
+            <Suspense fallback={Fallback}>
+              <PlaylistsPage />
+            </Suspense>
           </PermissionRoute>
         } />
         <Route path="/playlist/:id" element={
@@ -251,33 +269,52 @@ export default function AppRoutes() {
         {/* 魔力值与邀请、历史 */}
         <Route path="/invite" element={
           <PermissionRoute requiredPermissions={['page:invite']}>
-            <InvitePage />
+            <Suspense fallback={Fallback}>
+              <InvitePage />
+            </Suspense>
           </PermissionRoute>
         } />
         <Route path="/bonus" element={
           <PermissionRoute requiredPermissions={['page:bonus']}>
-            <BonusPage />
+            <Suspense fallback={Fallback}>
+              <BonusPage />
+            </Suspense>
           </PermissionRoute>
         } />
         <Route path="/torrent-history" element={
           <PermissionRoute requiredPermissions={['page:torrent-history']}>
-            <TorrentRecordPage />
+            <Suspense fallback={Fallback}>
+              <TorrentRecordPage />
+            </Suspense>
           </PermissionRoute>
         } />
 
         {/* 求种与上传、编辑 */}
         <Route path="/requests" element={
           <PermissionRoute requiredPermissions={['page:requests']}>
-            <RequestsPage />
+            <Suspense fallback={Fallback}>
+              <RequestsPage />
+            </Suspense>
           </PermissionRoute>
         } />
         <Route path="/upload" element={
-          <UploadTorrentPage />
+          <Suspense fallback={Fallback}>
+            <UploadTorrentPage />
+          </Suspense>
         } />
-
-        <Route path="/edit" element={
+        {/* 新增：编辑页面拆分为两个独立路由（不做旧兼容，移除 /edit） */}
+        <Route path="/edit/movie" element={
           <PermissionRoute requiredPermissions={['page:edit']}>
-            <EditPage />
+            <Suspense fallback={Fallback}>
+              <EditMoviePage />
+            </Suspense>
+          </PermissionRoute>
+        } />
+        <Route path="/edit/playlist" element={
+          <PermissionRoute requiredPermissions={['page:edit']}>
+            <Suspense fallback={Fallback}>
+              <EditPlaylistPage />
+            </Suspense>
           </PermissionRoute>
         } />
 
@@ -286,51 +323,84 @@ export default function AppRoutes() {
           path="/review"
           element={
             <PermissionRoute requiredPermissions={["review:write"]} requiredRoles={["admin"]} combine="OR">
-              <ReviewPage />
+              <Suspense fallback={Fallback}>
+                <ReviewPage />
+              </Suspense>
             </PermissionRoute>
           }
         />
 
         <Route path="/messages" element={
           <PermissionRoute requiredPermissions={['page:messages']}>
-            <MessagesPage />
+            <Suspense fallback={Fallback}>
+              <MessagesPage />
+            </Suspense>
           </PermissionRoute>
         } />
 
         {/* 控制面板 */}
         <Route path="/control" element={
           <PermissionRoute requiredPermissions={['page:control']}>
-            <ControlPage />
+            <Suspense fallback={Fallback}>
+              <ControlPage />
+            </Suspense>
           </PermissionRoute>
         } />
 
         {/* 规则、管理组、工单 */}
-        <Route path="/groups" element={<GroupsPage />} />
-        <Route path="/candidates" element={<CandidatesPage />} />
+        <Route path="/groups" element={<Suspense fallback={Fallback}><GroupsPage /></Suspense>} />
+        <Route path="/candidates" element={<Suspense fallback={Fallback}><CandidatesPage /></Suspense>} />
         <Route path="/rules" element={
           <PermissionRoute requiredPermissions={['page:rules']}>
-            <RulesPage />
+            <Suspense fallback={Fallback}>
+              <RulesPage />
+            </Suspense>
           </PermissionRoute>
         } />
         <Route path="/staff" element={
           <PermissionRoute requiredPermissions={['page:staff']}>
-            <StaffPage />
+            <Suspense fallback={Fallback}>
+              <StaffPage />
+            </Suspense>
           </PermissionRoute>
         } />
         <Route path="/tickets" element={
           <PermissionRoute requiredPermissions={['page:tickets']}>
-            <TicketsPage />
+            <Suspense fallback={Fallback}>
+              <TicketsPage />
+            </Suspense>
           </PermissionRoute>
         } />
 
-        <Route path="/rss" element={<RSSPage />} />
+        {/* 教程 */}
+        <Route path="/tutorials" element={<Suspense fallback={Fallback}><TutorialsPage /></Suspense>} />
+
+        {/* 保种列表 */}
+        <Route path="/seeding" element={<Suspense fallback={Fallback}><SeedingPage /></Suspense>} />
+
+        {/* 下载器 */}
+        <Route path="/downloader" element={<Suspense fallback={Fallback}><DownloaderPage /></Suspense>} />
+
+        {/* 断种大厅 */}
+        <Route path="/dead-torrents" element={<Suspense fallback={Fallback}><DeadTorrentsPage /></Suspense>} />
+
+        <Route path="/rss" element={<Suspense fallback={Fallback}><RSSPage /></Suspense>} />
+
+        {/* 站点公告 */}
+        <Route path="/announcements" element={<Suspense fallback={Fallback}><AnnouncementsPage /></Suspense>} />
+
+        {/* 小游戏 */}
+        <Route path="/games" element={<Suspense fallback={Fallback}><GamesPage onNavigateMagicFarm={() => navigate('/magicfarm')} /></Suspense>} />
+
+        {/* 魔力农场 */}
+        <Route path="/magicfarm" element={<Suspense fallback={Fallback}><MagicFarmPage /></Suspense>} />
 
         {/* 详情与重定向 */}
         <Route path="/torrent/:id" element={
           <PermissionRoute requiredPermissions={['page:torrent']}>
             {/* 使用 Suspense 包裹懒加载组件，fallback 为加载占位 */}
-            <Suspense fallback={<div style={{ padding: 24, color: '#ccc' }}>加载中…</div>}>
-              <LazyTorrentDetailPage />
+            <Suspense fallback={Fallback}>
+              <TorrentDetailPage />
             </Suspense>
           </PermissionRoute>
         } />
@@ -362,7 +432,7 @@ function FilmDetailRoute() {
   return (
     // 使用 Suspense 以在懒加载期间展示占位，提高用户体验
     <Suspense fallback={<div style={{ padding: 24, color: '#ccc' }}>加载中…</div>}>
-      <LazyFilmDetailPage filmId={String(id)} />
+      <FilmDetailPage filmId={String(id)} />
     </Suspense>
   );
 }

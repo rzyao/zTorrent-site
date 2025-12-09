@@ -6,7 +6,7 @@
 //
 // 使用方式：在应用入口或布局模块顶部调用一次 `initOpenAPI()` 即可。
 // 注意：按你的要求，此改动不保留对旧变量名 `VITE_API_BASE_URL` 的兼容。
-import { OpenAPI } from './core/OpenAPI';
+//
 
 /**
  * 初始化 OpenAPI 运行时配置：BASE 与 TOKEN 读取
@@ -14,29 +14,16 @@ import { OpenAPI } from './core/OpenAPI';
  * - TOKEN：统一从 localStorage 读取 `accessToken`（如你不需要可删除该段）
  */
 // 通过全局标记确保仅初始化一次，避免在 HMR 或重复导入下污染配置
-export function initOpenAPI(): void {
+export async function initOpenAPI(): Promise<void> {
   if (typeof window !== 'undefined') {
-    // @ts-expect-error 自定义全局标记，避免多次初始化
-    if ((window as any).__openapi_inited) {
-      console.warn('initOpenAPI() should be called only once');
-      return;
-    }
-    // @ts-expect-error 自定义全局标记，避免多次初始化
-    (window as any).__openapi_inited = true;
+    const w = window as any;
+    if (w.__openapi_inited) return;
+    w.__openapi_inited = true;
   }
-  // 读取 Vite 环境变量（Vite 在不同 mode 下会自动加载对应的 .env.* 文件）
   const base = import.meta.env.VITE_BASE_URL || '';
-
-  // 规整基础地址，移除尾部单个斜杠，减少 URL 拼接错误概率
   const normalized = String(base).trim().replace(/\/$/, '');
-
-  // 设置 OpenAPI 基础地址（生成的服务会使用该值拼接请求路径）
+  const { OpenAPI } = await import('./core/OpenAPI');
   OpenAPI.BASE = normalized;
-
-  // 可选：统一令牌读取策略；如项目无需可移除
   OpenAPI.TOKEN = async () => localStorage.getItem('accessToken') || '';
-
-  // 诊断输出：便于在浏览器控制台确认当前 BASE 值
-  // 若为空，请检查 .env.development 是否包含 VITE_BASE_URL
   console.debug('[OpenAPI] BASE =', OpenAPI.BASE);
 }

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { AuthService, PermissionsService } from '../api';
+import { getAuthService, getPermissionsService } from '../api/lazy';
 
 export type UserAccess = {
   roles: string[];
@@ -28,7 +28,7 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(() => !!localStorage.getItem('accessToken'));
   const [error, setError] = useState<string | null>(null);
 
-  const load = () => {
+  const load = async () => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
       setAccess({ roles: [], permissions: [], username: '', avatar: null });
@@ -37,6 +37,12 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
     }
     setLoading(true);
     setError(null);
+
+    const [AuthService, PermissionsService] = await Promise.all([
+      getAuthService(),
+      getPermissionsService(),
+    ]);
+
     Promise.allSettled([
       AuthService.authControllerProfile() as Promise<any>,
       PermissionsService.permissionsControllerAggregateOfUser() as Promise<any>,

@@ -1,0 +1,2 @@
+const o=t=>{const r=typeof t=="number"?t:parseInt(String(t),10);if(!Number.isFinite(r)||r<=0)return String(t);const n=1024**4,i=1024**3,e=1024**2;return r>=n?`${(r/n).toFixed(2)} T`:r>=i?`${(r/i).toFixed(2)} G`:`${(r/e).toFixed(2)} M`},s=t=>{try{if(t==null||t==="")return"";const r=t instanceof Date?t:new Date(t);return Number.isNaN(r.getTime())?String(t??""):r.toLocaleString()}catch{return String(t??"")}};export{s as a,o as f};
+//# sourceMappingURL=format-C-T0fxJm.js.map

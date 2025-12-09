@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Film, Star, Calendar, Users, Eye, Play, Search, Filter, BookmarkPlus, TrendingUp, Clock, Award, Loader2 } from 'lucide-react';
-import { FilmsService } from '@/api/services/FilmsService';
+import { getFilmsService, getOpenAPI, getRequest } from '@/api/lazy';
 import { CollectFilmDto } from '@/api/models/CollectFilmDto';
 import { PublicFilmDetailDto as PublicFilmDto } from '@/api/models/PublicFilmDetailDto';
 import { ListFilmsDto } from '@/api/models/ListFilmsDto';
@@ -27,9 +27,9 @@ export function FilmsPage() {
       const prof = await getProfile();
       const id = String(prof?.user?.id ?? prof?.user?._id ?? prof?.sub ?? '');
       if (!id) return [{ key: 'all', label: '全部' }];
-      const { OpenAPI } = await import('@/api/core/OpenAPI');
-      const { request: __request } = await import('@/api/core/request');
-      const resp: any = await __request(OpenAPI, {
+      const OpenAPI = await getOpenAPI();
+      const __request = await getRequest();
+      const resp: any = await ( __request as any )(OpenAPI, {
         method: 'POST',
         url: '/users/preferences/get-default-film-category-ids',
         body: { id },
@@ -61,6 +61,7 @@ export function FilmsPage() {
         sortBy: sortBy as ListFilmsDto.sortBy,
         year: undefined
       };
+      const FilmsService = await getFilmsService();
       const response = await FilmsService.filmsControllerListFilms(requestBody);
       return {
         items: (response.data?.items || []) as PublicFilmDto[],
@@ -77,6 +78,7 @@ export function FilmsPage() {
   // 收藏操作 Mutation
   const collectMutation = useMutation({
     mutationFn: async ({ movieId, newIsCollected }: { movieId: string, newIsCollected: boolean }) => {
+      const FilmsService = await getFilmsService();
       await FilmsService.filmsControllerCollectMovie({
         filmId: movieId,
         action: newIsCollected ? CollectFilmDto.action.COLLECT : CollectFilmDto.action.UNCOLLECT
@@ -131,6 +133,7 @@ export function FilmsPage() {
   const handleMovieClick = async (movie: PublicFilmDto) => {
     // 增加浏览次数
     try {
+      const FilmsService = await getFilmsService();
       await FilmsService.filmsControllerViewMovie({ id: movie.id });
     } catch (err) {
       console.error('增加浏览次数失败:', err);

@@ -3,7 +3,7 @@ import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { Mail, Archive, Send, Star, Trash2, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MessagesService } from '@/api';
+import { MessagesService } from '@/api/services/MessagesService';
 import { toast } from 'sonner';
 import { TabBar } from './components/TabBar';
 import { SearchBar } from './components/SearchBar';

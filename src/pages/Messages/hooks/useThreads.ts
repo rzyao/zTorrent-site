@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { MessagesService } from '@/api';
+import { MessagesService } from '@/api/services/MessagesService';
 import { unwrapResponse, extractErrorMessage } from '../utils/utils';
 import type { IThreadSummary, IMessage } from '../types/types';
 

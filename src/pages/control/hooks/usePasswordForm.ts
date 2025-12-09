@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { isValidPassword, passwordErrorMessage } from '@/utils/validation';
-import { AuthService, ApiError } from '@/api';
+import { getAuthService } from '@/api/lazy';
+import { ApiError } from '@/api/core/ApiError';
 import { customToast } from '@/hooks/useToast';
 
 // 密码表单状态与校验逻辑 Hook
@@ -31,6 +32,7 @@ export function usePasswordForm() {
     if (updating) return;
     setUpdating(true);
     try {
+      const AuthService = await getAuthService();
       const res = await AuthService.authControllerChangePassword({
         currentPassword,
         newPassword,

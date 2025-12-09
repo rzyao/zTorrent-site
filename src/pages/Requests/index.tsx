@@ -15,9 +15,7 @@ export function RequestsPage() {
   const { activeTab, setActiveTab, visibleTabs } = useRequestsTabs();
 
   return (
-    <div className="min-h-screen bg-[#0F171E] pt-16">
-      {/* 头部：纯展示组件，承载标题与说明文案 */}
-      <RequestsHeader />
+    <div className="min-h-screen bg-[#0F171E]">
 
       {/* 标签导航：纯展示组件，接收 activeTab/tabs 与 onChange 回调 */}
       <RequestsTabs

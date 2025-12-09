@@ -9,7 +9,7 @@ import { formatSize } from '@/utils/format';
 import { log } from 'console';
 
 // Lazy load TorrentDetailPage to avoid circular dependency
-const TorrentDetailPage = lazy(() => import('@/pages/TorrentDetailPage/index'));
+const TorrentDetailPage = lazy(() => import('@/pages/TorrentDetail/index'));
 const FilmDetailPage = lazy(() => import('@/pages/FilmDetail'));
 
 interface TorrentCardProps {

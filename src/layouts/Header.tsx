@@ -2,7 +2,7 @@
 import { Bell, Mail, User, TrendingUp, Upload, Download, ChartSpline, ChevronDown, Settings, LogOut, UserCircle, Sparkles, UserPlus, History, Menu, X } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAccess } from '@/context/AccessContext';
 import { canAccess } from '@/utils/access';
 import { UserAvatar } from '@/components/UserAvatar';
@@ -19,8 +19,24 @@ function formatBytes(bytes: number): string {
   return (bytes / Math.pow(k, i)).toFixed(2) + sizes[i];
 }
 
+// 将魔力值格式化为：去掉小数，并按每4位一组以撇号分隔
+// 变更原因：根据需求，顶部右侧魔力值显示使用撇号 (' ) 代替点号 (.)
+// 示例：12345678.90 -> "1234'5678"
+function formatBonusPoints(value?: number): string {
+  const n = Math.max(0, Math.floor(Number(value ?? 0)));
+  const s = String(n);
+  const groups: string[] = [];
+  for (let i = s.length; i > 0; i -= 4) {
+    const start = Math.max(0, i - 4);
+    groups.unshift(s.slice(start, i));
+  }
+  // 使用撇号作为分隔符，满足“用'代替.号”的展示需求
+  return groups.join("'");
+}
+
 export function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { access, loading } = useAccess();
   const { logoSvg, logoUrl, title } = useSiteConfig();
   const { data: userSummary } = useUserSummary();
@@ -28,6 +44,15 @@ export function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   // 控制移动端导航菜单显示状态
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  // 发布下拉菜单展开状态：true 显示菜单，false 隐藏；用于配合箭头旋转
+  const [showPublishMenu, setShowPublishMenu] = useState(false);
+  // 发布下拉菜单延时隐藏的定时器引用：在鼠标/键盘离开时延迟 200ms 再隐藏，避免移动到子菜单过程闪断
+  const publishMenuTimeoutRef = useRef<number | null>(null);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const moreMenuTimeoutRef = useRef<number | null>(null);
+  // 新增：编辑下拉菜单显示状态与延迟隐藏定时器，交互与“发布/其他”保持一致
+  const [showEditMenu, setShowEditMenu] = useState(false);
+  const editMenuTimeoutRef = useRef<number | null>(null);
   // 下拉菜单容器引用，用于检测外部点击
   const userMenuRef = useRef<HTMLDivElement>(null);
   // 点击外部或按 Esc 关闭菜单，并在卸载时解绑事件
@@ -61,6 +86,7 @@ export function Header() {
   const canEdit = !loading && canAccess(access, { requiredPermissions: ['page:edit'] });
   const canInvite = !loading && canAccess(access, { requiredPermissions: ['page:invite'] });
   const canBonus = !loading && canAccess(access, { requiredPermissions: ['page:bonus'] });
+  const canSubtitles = !loading && canAccess(access, { requiredPermissions: ['page:subtitles'] });
   const canControl = !loading && canAccess(access, {
     requiredRoles: ['admin'],
     requiredPermissions: ['page:control'],
@@ -97,29 +123,166 @@ export function Header() {
               <span className="text-white text-xl md:text-2xl">{title || ''}</span>
             </NavLink>
             <nav className="hidden md:flex items-center gap-6">
-              <NavLink to="/home" className="text-white hover:text-gray-300 transition-colors">首页</NavLink>
-              <NavLink to="/torrents" className="text-white hover:text-gray-300 transition-colors">种子</NavLink>
+              {/* 选中高亮：激活路由使用 text-amber-400 */}
+              <NavLink
+                to="/home"
+                className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
+              >首页</NavLink>
+              <NavLink
+                to="/torrents"
+                className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
+              >种子</NavLink>
               {/* <NavLink to="/subtitles" className="text-white hover:text-gray-300 transition-colors">字幕</NavLink>
             <NavLink to="/ranking" className="text-white hover:text-gray-300 transition-colors">排行榜</NavLink> */}
               {/* 新增：影片与片单导航入口，保持与现有样式一致 */}
-              <NavLink to="/films" className="text-white hover:text-gray-300 transition-colors">影片</NavLink>
-              <NavLink to="/playlists" className="text-white hover:text-gray-300 transition-colors">片单</NavLink>
-              {canUpload && (
-                <NavLink to="/upload" className="text-white hover:text-gray-300 transition-colors">上传</NavLink>
-              )}
-              <NavLink to="/requests" className="text-white hover:text-gray-300 transition-colors">求种</NavLink>
+              <NavLink
+                to="/films"
+                className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
+              >影片</NavLink>
+              <NavLink
+                to="/playlists"
+                className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
+              >片单</NavLink>
+              <div
+                className="relative group"
+                onMouseEnter={() => {
+                  // 进入触发区域：清除可能存在的隐藏定时器，立即显示菜单，避免抖动
+                  if (publishMenuTimeoutRef.current) { clearTimeout(publishMenuTimeoutRef.current); publishMenuTimeoutRef.current = null; }
+                  setShowPublishMenu(true);
+                }}
+                onMouseLeave={() => {
+                  // 离开触发区域：开启 200ms 隐藏定时器，给用户移动到下拉菜单的缓冲时间
+                  if (publishMenuTimeoutRef.current) { clearTimeout(publishMenuTimeoutRef.current); }
+                  publishMenuTimeoutRef.current = window.setTimeout(() => { setShowPublishMenu(false); }, 200);
+                }}
+                onFocus={() => {
+                  // 键盘聚焦到触发元素：清除隐藏定时器并显示菜单，保证键盘可达性
+                  if (publishMenuTimeoutRef.current) { clearTimeout(publishMenuTimeoutRef.current); publishMenuTimeoutRef.current = null; }
+                  setShowPublishMenu(true);
+                }}
+                onBlur={() => {
+                  // 键盘焦点离开触发元素：延迟 200ms 隐藏，下拉菜单在短暂过渡期间保持可见
+                  if (publishMenuTimeoutRef.current) { clearTimeout(publishMenuTimeoutRef.current); }
+                  publishMenuTimeoutRef.current = window.setTimeout(() => { setShowPublishMenu(false); }, 200);
+                }}
+              >
+                <NavLink
+                  to="/upload"
+                  className={({ isActive }) => ((isActive || showPublishMenu) ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors') + ' flex items-center gap-1'}
+                >
+                  发布
+                  {/* 箭头根据 showPublishMenu 动态旋转，指示展开/收起状态 */}
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showPublishMenu ? 'rotate-180' : ''}`} />
+                </NavLink>
+                <div
+                  className={`absolute left-1/2 -translate-x-1/2 top-full w-24 py-2 bg-[#0F171E] rounded-xl shadow-lg border border-gray-800 z-50 transform-gpu transition-[opacity,transform] ease-out duration-150 ${showPublishMenu ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-1'}`}
+                  style={{ willChange: 'opacity, transform', contain: 'content' }}
+                >
+                  <NavLink to="/upload" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">发资源</NavLink>
+                  <NavLink to="/subtitles" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">发字幕</NavLink>
+                </div>
+              </div>
+              <NavLink
+                to="/requests"
+                className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
+              >求种</NavLink>
               {canEdit && (
-                <NavLink to="/edit" className="text-white hover:text-gray-300 transition-colors">编辑</NavLink>
+                <div
+                  className="relative group"
+                  onMouseEnter={() => {
+                    // 进入触发区域：清除隐藏定时器并显示菜单
+                    if (editMenuTimeoutRef.current) { clearTimeout(editMenuTimeoutRef.current); editMenuTimeoutRef.current = null; }
+                    setShowEditMenu(true);
+                  }}
+                  onMouseLeave={() => {
+                    // 离开触发区域：延迟 200ms 隐藏，避免抖动
+                    if (editMenuTimeoutRef.current) { clearTimeout(editMenuTimeoutRef.current); }
+                    editMenuTimeoutRef.current = window.setTimeout(() => { setShowEditMenu(false); }, 200);
+                  }}
+                  onFocus={() => {
+                    // 键盘聚焦可展开菜单，保证可达性
+                    if (editMenuTimeoutRef.current) { clearTimeout(editMenuTimeoutRef.current); editMenuTimeoutRef.current = null; }
+                    setShowEditMenu(true);
+                  }}
+                  onBlur={() => {
+                    // 键盘失焦后延迟隐藏
+                    if (editMenuTimeoutRef.current) { clearTimeout(editMenuTimeoutRef.current); }
+                    editMenuTimeoutRef.current = window.setTimeout(() => { setShowEditMenu(false); }, 200);
+                  }}
+                >
+                  <button type="button" className={`${(['/edit/movie', '/edit/playlist'].includes(location.pathname) || showEditMenu) ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'} flex items-center gap-1`}>
+                    编辑
+                    {/* 箭头根据 showEditMenu 动态旋转，指示展开/收起状态 */}
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showEditMenu ? 'rotate-180' : ''}`} />
+                  </button>
+                  <div
+                    className={`absolute left-1/2 -translate-x-1/2 top-full w-28 py-2 bg-[#0F171E] rounded-xl shadow-lg border border-gray-800 z-50 transform-gpu transition-[opacity,transform] ease-out duration-150 ${showEditMenu ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-1'}`}
+                    style={{ willChange: 'opacity, transform', contain: 'content' }}
+                  >
+                    <NavLink to="/edit/movie" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">影片编辑</NavLink>
+                    <NavLink to="/edit/playlist" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">片单编辑</NavLink>
+                  </div>
+                </div>
               )}
-              <NavLink to="/forum" className="text-white hover:text-gray-300 transition-colors">论坛</NavLink>
-              <NavLink to="/candidates" className="text-white hover:text-gray-300 transition-colors">候选人</NavLink>
-              <NavLink to="/groups" className="text-white hover:text-gray-300 transition-colors">制作组</NavLink>
-              <NavLink to="/tickets" className="text-white hover:text-gray-300 transition-colors">工单</NavLink>
-              <NavLink to="/rules" className="text-white hover:text-gray-300 transition-colors">规则</NavLink>
-              <NavLink to="/rss" className="text-white hover:text-gray-300 transition-colors">RSS订阅</NavLink>
-              <NavLink to="/staff" className="text-white hover:text-gray-300 transition-colors">管理组</NavLink>
+              <NavLink
+                to="/forum"
+                className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
+              >论坛</NavLink>
+              <NavLink
+                to="/candidates"
+                className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
+              >候选</NavLink>
+              <div
+                className="relative group"
+                onMouseEnter={() => {
+                  if (moreMenuTimeoutRef.current) { clearTimeout(moreMenuTimeoutRef.current); moreMenuTimeoutRef.current = null; }
+                  setShowMoreMenu(true);
+                }}
+                onMouseLeave={() => {
+                  if (moreMenuTimeoutRef.current) { clearTimeout(moreMenuTimeoutRef.current); }
+                  moreMenuTimeoutRef.current = window.setTimeout(() => { setShowMoreMenu(false); }, 200);
+                }}
+                onFocus={() => {
+                  if (moreMenuTimeoutRef.current) { clearTimeout(moreMenuTimeoutRef.current); moreMenuTimeoutRef.current = null; }
+                  setShowMoreMenu(true);
+                }}
+                onBlur={() => {
+                  if (moreMenuTimeoutRef.current) { clearTimeout(moreMenuTimeoutRef.current); }
+                  moreMenuTimeoutRef.current = window.setTimeout(() => { setShowMoreMenu(false); }, 200);
+                }}
+              >
+                <button type="button" className={`${(['/groups', '/rss', '/staff', '/tutorials', '/seeding', '/downloader', '/dead-torrents', '/games', '/announcements'].includes(location.pathname) || showMoreMenu) ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'} flex items-center gap-1`}>
+                  其他
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showMoreMenu ? 'rotate-180' : ''}`} />
+                </button>
+                <div
+                  className={`absolute left-1/2 -translate-x-1/2 top-full w-32 py-2 bg-[#0F171E] rounded-xl shadow-lg border border-gray-800 z-50 transform-gpu transition-[opacity,transform] ease-out duration-150 ${showMoreMenu ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-1'}`}
+                  style={{ willChange: 'opacity, transform', contain: 'content' }}
+                >
+                  <NavLink to="/groups" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">制作组</NavLink>
+                  <NavLink to="/rss" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">RSS订阅</NavLink>
+                  <NavLink to="/staff" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">管理组</NavLink>
+                  <NavLink to="/tutorials" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">使用教程</NavLink>
+                  <NavLink to="/seeding" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">保种列表</NavLink>
+                  <NavLink to="/downloader" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">下载器</NavLink>
+                  <NavLink to="/dead-torrents" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">断种大厅</NavLink>
+                  <NavLink to="/games" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">小游戏</NavLink>
+                  <NavLink to="/announcements" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">站点公告</NavLink>
+                </div>
+              </div>
+              <NavLink
+                to="/tickets"
+                className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
+              >工单</NavLink>
+              <NavLink
+                to="/rules"
+                className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
+              >规则</NavLink>
               {canReview && (
-                <NavLink to="/review" className="text-white hover:text-gray-300 transition-colors">审核</NavLink>
+                <NavLink
+                  to="/review"
+                  className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
+                >审核</NavLink>
               )}
             </nav>
           </div>
@@ -146,7 +309,8 @@ export function Header() {
                 onClick={() => navigate('/bonus')}
               >
                 <Sparkles className="w-4 h-4" />
-                <span>{userSummary ? userSummary.bonusPoints.toFixed(2) : '0.00'}</span>
+                {/* 显示为每4位加点的整数分组，无小数 */}
+                <span>{formatBonusPoints(userSummary?.bonusPoints)}</span>
               </div>
             </div>
 
@@ -322,7 +486,7 @@ export function Header() {
             className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
             onClick={() => setShowMobileMenu(false)}
           >
-            候选人
+            候选
           </NavLink>
           <NavLink
             to="/groups"
@@ -356,11 +520,20 @@ export function Header() {
           )}
           {canEdit && (
             <NavLink
-              to="/edit"
+              to="/edit/movie"
               className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
               onClick={() => setShowMobileMenu(false)}
             >
-              编辑
+              影片编辑
+            </NavLink>
+          )}
+          {canEdit && (
+            <NavLink
+              to="/edit/playlist"
+              className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
+              onClick={() => setShowMobileMenu(false)}
+            >
+              片单编辑
             </NavLink>
           )}
           {canReview && (
@@ -406,6 +579,13 @@ export function Header() {
             onClick={() => setShowMobileMenu(false)}
           >
             管理组
+          </NavLink>
+          <NavLink
+            to="/announcements"
+            className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
+            onClick={() => setShowMobileMenu(false)}
+          >
+            站点公告
           </NavLink>
         </nav>
       </div>

@@ -1,9 +1,7 @@
 import { Header } from '@/layouts/Header';
-import { initOpenAPI } from '@/api/setup';
 import { SiteConfigProvider } from '@/context/SiteConfigContext';
 import { useDynamicFavicon } from '@/hooks/useDynamicFavicon';
 
-initOpenAPI();
 
 function FaviconInjector() {
   useDynamicFavicon();

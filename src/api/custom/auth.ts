@@ -1,8 +1,9 @@
-import { OpenAPI } from '../core/OpenAPI'
-import { request as __request } from '../core/request'
+import { getOpenAPI, getRequest } from '../lazy'
 
 export async function getProfile(): Promise<any> {
-  const resp = await __request(OpenAPI, {
+  const OpenAPI = await getOpenAPI();
+  const request = await getRequest();
+  const resp = await (request as any)(OpenAPI, {
     method: 'POST',
     url: '/auth/profile',
     body: {},

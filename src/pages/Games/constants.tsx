@@ -1,0 +1,56 @@
+import { Star, Target, Dice5, Zap, Sprout } from 'lucide-react';
+import type { Game } from './types';
+
+export const games: Game[] = [
+  {
+    id: 1,
+    name: '每日签到',
+    description: '每天签到领取魔力值奖励',
+    icon: <Star className="w-8 h-8" />,
+    reward: 10,
+    difficulty: 'easy',
+    plays: 156234,
+    highScore: 0,
+  },
+  {
+    id: 2,
+    name: '幸运转盘',
+    description: '转动转盘，赢取魔力值大奖',
+    icon: <Target className="w-8 h-8" />,
+    reward: 50,
+    difficulty: 'medium',
+    plays: 89234,
+    highScore: 500,
+  },
+  {
+    id: 3,
+    name: '猜数字',
+    description: '猜中隐藏的数字赢取奖励',
+    icon: <Dice5 className="w-8 h-8" />,
+    reward: 30,
+    difficulty: 'medium',
+    plays: 67123,
+    highScore: 100,
+  },
+  {
+    id: 4,
+    name: '答题闯关',
+    description: '回答PT知识问题赚取魔力值',
+    icon: <Zap className="w-8 h-8" />,
+    reward: 100,
+    difficulty: 'hard',
+    plays: 45678,
+    highScore: 850,
+  },
+  {
+    id: 5,
+    name: '魔力农场',
+    description: '种植作物，收获魔力值，经营你的农场',
+    icon: <Sprout className="w-8 h-8" />,
+    reward: 200,
+    difficulty: 'medium',
+    plays: 125890,
+    highScore: 5680,
+    route: 'magicfarm',
+  },
+];

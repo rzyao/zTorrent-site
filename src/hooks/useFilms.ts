@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
-import { FilmsService } from '@/api/services/FilmsService';
-import { OpenAPI } from '@/api/core/OpenAPI';
+import { getFilmsService } from '@/api/lazy';
 
 type FilmFilters = {
   category?: string;
@@ -32,6 +31,7 @@ export function useFilms() {
     setError(null);
     try {
       const { page = 1, limit = 20, keyword = '', filters = {} } = params || {};
+      const FilmsService = await getFilmsService();
       const res = await FilmsService.filmsControllerListFilms({ page, limit, keyword, ...filters } as any);
       const data = unwrap(res);
       setItems(data?.items ?? []);
@@ -50,6 +50,7 @@ export function useFilms() {
     setIsLoading(true);
     setError(null);
     try {
+      const FilmsService = await getFilmsService();
       const res = await FilmsService.filmsControllerGetMovieDetail({ id } as any);
       const data = unwrap(res);
       return data;
@@ -66,6 +67,7 @@ export function useFilms() {
     setIsLoading(true);
     setError(null);
     try {
+      const FilmsService = await getFilmsService();
       const res = await FilmsService.filmsControllerCreate(payload);
       const data = unwrap(res);
       return data;
@@ -82,6 +84,7 @@ export function useFilms() {
     setIsLoading(true);
     setError(null);
     try {
+      const FilmsService = await getFilmsService();
       const res = await FilmsService.filmsControllerUpdate({ id, data: payload });
       const data = unwrap(res);
       return data;
@@ -98,6 +101,7 @@ export function useFilms() {
     setIsLoading(true);
     setError(null);
     try {
+      const FilmsService = await getFilmsService();
       const res = await FilmsService.filmsControllerDelete({ id } as any);
       const data = unwrap(res);
       return data;
@@ -114,6 +118,7 @@ export function useFilms() {
     setIsLoading(true);
     setError(null);
     try {
+      const FilmsService = await getFilmsService();
       const res = await FilmsService.filmsControllerAddTorrent({ filmId, torrentId, sort });
       const data = unwrap(res);
       return data;
@@ -130,6 +135,7 @@ export function useFilms() {
     setIsLoading(true);
     setError(null);
     try {
+      const FilmsService = await getFilmsService();
       const res = await FilmsService.filmsControllerRemoveTorrent({ filmId, torrentId } as any);
       const data = unwrap(res);
       return data;

@@ -3,6 +3,7 @@
 /* Scale Transition Animations - Pure Scale Effect */
 .scale-transition-enter {
   transform: scale(0);
+  color: #17150f;
 }
 
 .scale-transition-enter-active {

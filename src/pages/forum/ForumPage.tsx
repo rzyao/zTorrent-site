@@ -21,12 +21,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { ForumCategoriesService } from '@/api/services/ForumCategoriesService';
-import { ForumThreadsService } from '@/api/services/ForumThreadsService';
-import { ForumPostsService } from '@/api/services/ForumPostsService';
+import { getOpenAPI, getRequest } from '@/api/lazy';
 import { RichTextEditor } from './RichTextEditor';
-import { OpenAPI } from '@/api/core/OpenAPI';
-import { request as __request } from '@/api/core/request';
+//
 
 /**
  * 统一响应解包辅助函数
@@ -239,6 +236,7 @@ export function ForumPage() {
   useEffect(() => {
     (async () => {
       try {
+        const { ForumCategoriesService } = await import('@/api/services/ForumCategoriesService');
         const resp = await ForumCategoriesService.forumCategoriesControllerListCategories({ page: 1, limit: 100, enabled: true });
         const data = unwrapResponse<{ items?: IForumCategory[]; total?: number; page?: number; limit?: number }>(resp);
         const list = Array.isArray(data?.items) ? data.items! : [];
@@ -256,6 +254,7 @@ export function ForumPage() {
       setLoading(true);
       setError(null);
       try {
+        const { ForumThreadsService } = await import('@/api/services/ForumThreadsService');
         const resp = await ForumThreadsService.forumThreadsControllerListThreads({
           page,
           limit,
@@ -279,6 +278,7 @@ export function ForumPage() {
     (async () => {
       if (!selectedThread) { setThreadDetail(null); return; }
       try {
+        const { ForumThreadsService } = await import('@/api/services/ForumThreadsService');
         const detailResp = await ForumThreadsService.forumThreadsControllerGetThread({ id: selectedThread.id });
         const detail = unwrapResponse<IForumThread>(detailResp);
         if (!cancelled) {
@@ -303,7 +303,9 @@ export function ForumPage() {
                  * - 方法：POST
                  * - Body：{ id }
                  */
-                const incResp = await __request(OpenAPI, {
+                const request = await getRequest();
+                const OpenAPI = await getOpenAPI();
+                const incResp = await (request as any)(OpenAPI, {
                   method: 'POST',
                   url: '/forum/threads/inc-views',
                   body: { id: selectedThread.id },
@@ -318,7 +320,8 @@ export function ForumPage() {
                 markViewed(selectedThread.id);
               } catch (err: any) {
                 // 如果未配置后端 BASE，视为本地开发打桩环境：保留乐观值以便验证 UI 逻辑
-                if (OpenAPI.BASE) {
+                const OpenAPI2 = await getOpenAPI();
+                if ((OpenAPI2 as any).BASE) {
                   // 回滚乐观更新（真实后端错误场景）
                   setSelectedThread(prev => prev && prev.id === selectedThread.id ? { ...prev, viewsCount: old } : prev);
                   setThreads(prev => prev.map(t => t.id === selectedThread.id ? { ...t, viewsCount: old } : t));
@@ -342,6 +345,7 @@ export function ForumPage() {
     (async () => {
       if (!selectedThread) return;
       try {
+        const { ForumPostsService } = await import('@/api/services/ForumPostsService');
         const postsResp = await ForumPostsService.forumPostsControllerListPosts({ threadId: selectedThread.id, page: postsPage, limit: postsLimit });
         const postsData = unwrapResponse<{ items?: IForumPost[]; total?: number; page?: number; limit?: number }>(postsResp);
         if (!cancelled) {
@@ -359,10 +363,11 @@ export function ForumPage() {
    * 页面可见性变化后备统计：当 BASE 配置存在且当前主题尚未计数时，使用 sendBeacon 发送统计
    */
   useEffect(() => {
-    const handler = () => {
+    const handler = async () => {
       try {
-        if (document.visibilityState === 'hidden' && selectedThread && shouldCountView(selectedThread.id) && OpenAPI.BASE) {
-          const url = `${OpenAPI.BASE.replace(/\/$/, '')}/forum/threads/inc-views`;
+        const OpenAPI = await getOpenAPI();
+        if (document.visibilityState === 'hidden' && selectedThread && shouldCountView(selectedThread.id) && (OpenAPI as any).BASE) {
+          const url = `${String((OpenAPI as any).BASE).replace(/\/$/, '')}/forum/threads/inc-views`;
           const payload = JSON.stringify({ id: selectedThread.id });
           navigator.sendBeacon(url, new Blob([payload], { type: 'application/json' }));
           markViewed(selectedThread.id);
@@ -601,6 +606,7 @@ export function ForumPage() {
                         const catId = newThreadCategoryId?.trim();
                         if (!catId) { setError('请先选择板块'); return; }
                         if (!title || !content) { setError('标题与内容不能为空'); return; }
+                        const { ForumThreadsService } = await import('@/api/services/ForumThreadsService');
                         const resp = await ForumThreadsService.forumThreadsControllerCreate({ categoryId: catId, title, content });
                         unwrapResponse<IForumThread>(resp);
                         setShowNewPost(false);
@@ -815,6 +821,7 @@ export function ForumPage() {
                         try {
                           const content = replyContent.trim();
                           if (!content) { setError('回复内容不能为空'); return; }
+                          const { ForumPostsService } = await import('@/api/services/ForumPostsService');
                           const resp = await ForumPostsService.forumPostsControllerCreate({ threadId: selectedThread.id, content, parentId: replyParentId || undefined });
                           unwrapResponse<IForumPost>(resp);
                           const postsResp = await ForumPostsService.forumPostsControllerListPosts({ threadId: selectedThread.id, page: postsPage, limit: postsLimit });

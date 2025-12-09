@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { AuthService, TorrentsService, OpenAPI, UsersService, ImagesService } from '../api';
-import type { UpdateUserProfileDto } from '../api';
+import { getAuthService, getTorrentsService, getUsersService, getImagesService } from '@/api/lazy';
+import type { UpdateUserProfileDto } from '@/api/models/UpdateUserProfileDto';
 import { extractErrorMessage } from '../utils/errorMessage';
 
 // OpenAPI.BASE 的设置已在全局布局 AppLayout 中统一处理，避免重复配置导致环境切换不一致
@@ -16,6 +16,7 @@ export function useAuth() {
     setError(null);
 
     try {
+      const AuthService = await getAuthService();
       const response = await AuthService.authControllerLogin({ username, password, idleLogout30m: autoLogout });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data ?? response as any;
       const token = body?.data?.accessToken ?? body?.accessToken ?? body?.data?.access_token ?? body?.access_token;
@@ -46,6 +47,7 @@ export function useAuth() {
       const params = new URLSearchParams(window.location.search);
       const inviteCodeParam = params.get('inviteCode') || '';
       const type = inviteCodeParam ? 'invite' : 'open';
+      const AuthService = await getAuthService();
       const response = await AuthService.authControllerRegister({ email, username, password, type, inviteCode: inviteCodeParam });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data ?? response as any;
       const token = body?.data?.accessToken ?? body?.accessToken ?? body?.data?.access_token ?? body?.access_token;
@@ -69,6 +71,7 @@ export function useAuth() {
     setError(null);
 
     try {
+      const AuthService = await getAuthService();
       const response = await AuthService.authControllerRequestEmailCode({ email });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data;
       return body?.data ?? body;
@@ -110,6 +113,7 @@ export function useTorrents() {
       // 接口重命名适配：旧方法名 torrentsControllerList → 新方法名 torrentsControllerListTorrentsForUser
       // 原因：后端 OpenAPI operationId 统一为“用户可展示的种子列表”
       // 同时参数名 pageSize → limit（参考 UserListTorrentsDto），其余参数保持一致
+      const TorrentsService = await getTorrentsService();
       const response = await TorrentsService.torrentsControllerListTorrentsForUser({ category, page, limit });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data;
       setTorrents(body?.data ?? body);
@@ -127,6 +131,7 @@ export function useTorrents() {
     setError(null);
 
     try {
+      const TorrentsService = await getTorrentsService();
       const response = await TorrentsService.torrentsControllerGet({ id: String(id) });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data;
       return body?.data ?? body;
@@ -153,7 +158,7 @@ export function useUserProfile() {
   const toAbsoluteUrl = useCallback((u: string) => {
     if (/^https?:\/\//i.test(u)) return u;
     if (/^data:/i.test(u)) return u;
-    const base = String(OpenAPI.BASE || (typeof window !== 'undefined' ? window.location.origin : '') || '').replace(/\/$/, '');
+    const base = String((typeof window !== 'undefined' ? window.location.origin : '') || '').replace(/\/$/, '');
     const path = u.startsWith('/') ? u : `/${u}`;
     return `${base}${path}`;
   }, []);
@@ -162,6 +167,7 @@ export function useUserProfile() {
     setIsLoading(true);
     setError(null);
     try {
+      const UsersService = await getUsersService();
       const response = await UsersService.usersProfileControllerUpdate(payload as any);
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data ?? (response as any);
       return body?.data ?? body;
@@ -178,6 +184,7 @@ export function useUserProfile() {
     setIsLoading(true);
     setError(null);
     try {
+      const UsersService = await getUsersService();
       const response = await UsersService.usersProfileControllerSetAvatar({ url: toAbsoluteUrl(url) });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data ?? (response as any);
       return body?.data ?? body;
@@ -208,6 +215,7 @@ export function useUserProfile() {
         reader.onerror = () => reject(new Error('读取文件失败'));
         reader.readAsDataURL(file);
       });
+      const ImagesService = await getImagesService();
       const response = await ImagesService.imagesControllerUpload({ content: dataUrl, filename: file.name, mimeType: type });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data ?? (response as any);
       const url = body?.data?.url ?? body?.url ?? undefined;

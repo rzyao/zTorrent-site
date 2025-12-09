@@ -1,462 +1,318 @@
 import { useState } from 'react';
-import { Seedling, AlertTriangle, TrendingDown, Clock, HardDrive, Users, Download as DownloadIcon, ArrowUpDown, Filter, Info } from 'lucide-react';
+import {
+  HardDrive,
+  TrendingUp,
+  Download,
+  Upload,
+  Clock,
+  DollarSign,
+  Star,
+  AlertCircle,
+  CheckCircle,
+  Filter,
+  Search,
+} from 'lucide-react';
 
-interface SeedingTorrent {
+interface Torrent {
   id: string;
   title: string;
-  thumbnail: string;
-  category: string;
   size: string;
+  uploaded: string;
+  downloaded: string;
+  ratio: number;
+  seedTime: string;
+  bonus: number; // 额外奖励金币
   seeders: number;
   leechers: number;
-  uploadDate: string;
-  health: number; // 健康度 0-100
-  priority: 'critical' | 'high' | 'medium' | 'low';
-  userSeeding: boolean; // 用户是否在做种
-  userSeedingTime: string; // 用户做种时间
-  uploadedSize: string; // 用户已上传大小
+  status: 'normal' | 'warning' | 'good';
+  poster: string;
+  category: string;
 }
 
-type SortOption = 'health' | 'seeders' | 'date' | 'size';
-type FilterOption = 'all' | 'mySeeding' | 'notSeeding' | 'critical';
-
 export function SeedingPage() {
-  const [sortBy, setSortBy] = useState<SortOption>('health');
-  const [filterBy, setFilterBy] = useState<FilterOption>('all');
+  const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'bonus' | 'ratio' | 'time'>('bonus');
 
-  const mockTorrents: SeedingTorrent[] = [
+  // 模拟数据
+  const mockTorrents: Torrent[] = [
     {
       id: '1',
-      title: '经典老片合集 1980-1990 4K修复版',
-      thumbnail: 'https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=400',
+      title: '沙丘2 Dune: Part Two (2024) 4K UHD BluRay HEVC',
+      size: '85.6 GB',
+      uploaded: '156.8 GB',
+      downloaded: '23.5 GB',
+      ratio: 6.67,
+      seedTime: '32天15小时',
+      bonus: 156.8, // 每天5金币
+      seeders: 45,
+      leechers: 12,
+      status: 'good',
+      poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=300&h=450&fit=crop',
       category: '电影',
-      size: '245.8 GB',
-      seeders: 2,
-      leechers: 15,
-      uploadDate: '2023-08-15',
-      health: 15,
-      priority: 'critical',
-      userSeeding: false,
-      userSeedingTime: '-',
-      uploadedSize: '0 GB',
     },
     {
       id: '2',
-      title: '冷门纪录片系列 The Lost Stories 1080p',
-      thumbnail: 'https://images.unsplash.com/photo-1613399421098-f943ea81f1c4?w=400',
-      category: '纪录片',
-      size: '89.3 GB',
-      seeders: 5,
-      leechers: 8,
-      uploadDate: '2024-01-20',
-      health: 35,
-      priority: 'high',
-      userSeeding: true,
-      userSeedingTime: '45天',
-      uploadedSize: '156.3 GB',
+      title: '奥本海默 Oppenheimer (2023) 4K UHD BluRay REMUX',
+      size: '92.3 GB',
+      uploaded: '423.6 GB',
+      downloaded: '128.4 GB',
+      ratio: 3.30,
+      seedTime: '65天8小时',
+      bonus: 325.5,
+      seeders: 89,
+      leechers: 34,
+      status: 'good',
+      poster: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=300&h=450&fit=crop',
+      category: '电影',
     },
     {
       id: '3',
-      title: '小众独立音乐合集 FLAC',
-      thumbnail: 'https://images.unsplash.com/photo-1587731556938-38755b4803a6?w=400',
-      category: '音乐',
-      size: '12.7 GB',
-      seeders: 8,
-      leechers: 12,
-      uploadDate: '2024-03-10',
-      health: 42,
-      priority: 'high',
-      userSeeding: false,
-      userSeedingTime: '-',
-      uploadedSize: '0 GB',
+      title: '瞬息全宇宙 Everything Everywhere All at Once (2022) 4K HDR',
+      size: '78.9 GB',
+      uploaded: '78.9 GB',
+      downloaded: '15.6 GB',
+      ratio: 5.06,
+      seedTime: '18天3小时',
+      bonus: 90.0,
+      seeders: 67,
+      leechers: 18,
+      status: 'normal',
+      poster: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=300&h=450&fit=crop',
+      category: '电影',
     },
     {
       id: '4',
-      title: '经典动画电影 宫崎骏作品集 4K',
-      thumbnail: 'https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=400',
-      category: '动漫',
-      size: '178.5 GB',
-      seeders: 12,
-      leechers: 23,
-      uploadDate: '2024-05-05',
-      health: 58,
-      priority: 'medium',
-      userSeeding: true,
-      userSeedingTime: '12天',
-      uploadedSize: '89.2 GB',
+      title: '银翼杀手2049 Blade Runner 2049 (2017) 4K HEVC',
+      size: '88.4 GB',
+      uploaded: '44.2 GB',
+      downloaded: '88.4 GB',
+      ratio: 0.50,
+      seedTime: '6天12小时',
+      bonus: 32.5,
+      seeders: 38,
+      leechers: 5,
+      status: 'warning',
+      poster: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=300&h=450&fit=crop',
+      category: '电影',
     },
     {
       id: '5',
-      title: '黑白经典电影合集 1920-1960',
-      thumbnail: 'https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=400',
+      title: '蝙蝠侠：黑暗骑士 The Dark Knight (2008) 4K REMUX',
+      size: '76.2 GB',
+      uploaded: '228.6 GB',
+      downloaded: '45.8 GB',
+      ratio: 4.99,
+      seedTime: '42天6小时',
+      bonus: 211.0,
+      seeders: 123,
+      leechers: 28,
+      status: 'good',
+      poster: 'https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=300&h=450&fit=crop',
       category: '电影',
-      size: '156.9 GB',
-      seeders: 3,
-      leechers: 6,
-      uploadDate: '2023-11-30',
-      health: 28,
-      priority: 'high',
-      userSeeding: false,
-      userSeedingTime: '-',
-      uploadedSize: '0 GB',
-    },
-    {
-      id: '6',
-      title: '罕见演唱会录像 1970s Rock Legends',
-      thumbnail: 'https://images.unsplash.com/photo-1587731556938-38755b4803a6?w=400',
-      category: '音乐',
-      size: '67.4 GB',
-      seeders: 15,
-      leechers: 18,
-      uploadDate: '2024-06-18',
-      health: 65,
-      priority: 'medium',
-      userSeeding: true,
-      userSeedingTime: '8天',
-      uploadedSize: '45.1 GB',
-    },
-    {
-      id: '7',
-      title: '地理探索纪录片 Planet Earth Extended',
-      thumbnail: 'https://images.unsplash.com/photo-1613399421098-f943ea81f1c4?w=400',
-      category: '纪录片',
-      size: '198.2 GB',
-      seeders: 1,
-      leechers: 9,
-      uploadDate: '2023-09-22',
-      health: 10,
-      priority: 'critical',
-      userSeeding: false,
-      userSeedingTime: '-',
-      uploadedSize: '0 GB',
-    },
-    {
-      id: '8',
-      title: '科幻经典剧集 Twilight Zone 全集',
-      thumbnail: 'https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=400',
-      category: '剧集',
-      size: '134.6 GB',
-      seeders: 18,
-      leechers: 11,
-      uploadDate: '2024-07-12',
-      health: 72,
-      priority: 'low',
-      userSeeding: false,
-      userSeedingTime: '-',
-      uploadedSize: '0 GB',
     },
   ];
 
-  const getHealthColor = (health: number) => {
-    if (health < 20) return 'text-red-400';
-    if (health < 40) return 'text-orange-400';
-    if (health < 60) return 'text-amber-400';
-    return 'text-green-400';
-  };
-
-  const getHealthBg = (health: number) => {
-    if (health < 20) return 'bg-red-500';
-    if (health < 40) return 'bg-orange-500';
-    if (health < 60) return 'bg-amber-500';
-    return 'bg-green-500';
-  };
-
-  const getPriorityLabel = (priority: string) => {
-    const labels = {
-      critical: '紧急',
-      high: '高',
-      medium: '中',
-      low: '低',
-    };
-    return labels[priority as keyof typeof labels];
-  };
-
-  const getPriorityColor = (priority: string) => {
-    const colors = {
-      critical: 'from-red-500/20 to-red-600/20 border-red-400/40 text-red-300',
-      high: 'from-orange-500/20 to-orange-600/20 border-orange-400/40 text-orange-300',
-      medium: 'from-amber-500/20 to-amber-600/20 border-amber-400/40 text-amber-300',
-      low: 'from-green-500/20 to-green-600/20 border-green-400/40 text-green-300',
-    };
-    return colors[priority as keyof typeof colors];
-  };
-
-  const sortTorrents = (torrents: SeedingTorrent[]) => {
-    return [...torrents].sort((a, b) => {
-      switch (sortBy) {
-        case 'health':
-          return a.health - b.health;
-        case 'seeders':
-          return a.seeders - b.seeders;
-        case 'date':
-          return new Date(a.uploadDate).getTime() - new Date(b.uploadDate).getTime();
-        case 'size':
-          return parseFloat(a.size) - parseFloat(b.size);
-        default:
-          return 0;
-      }
-    });
-  };
-
-  const filterTorrents = (torrents: SeedingTorrent[]) => {
-    switch (filterBy) {
-      case 'mySeeding':
-        return torrents.filter(t => t.userSeeding);
-      case 'notSeeding':
-        return torrents.filter(t => !t.userSeeding);
-      case 'critical':
-        return torrents.filter(t => t.priority === 'critical' || t.priority === 'high');
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'good':
+        return (
+          <div className="flex items-center gap-1 text-green-400 text-xs">
+            <CheckCircle className="w-3 h-3" />
+            健康
+          </div>
+        );
+      case 'warning':
+        return (
+          <div className="flex items-center gap-1 text-amber-400 text-xs">
+            <AlertCircle className="w-3 h-3" />
+            注意
+          </div>
+        );
       default:
-        return torrents;
+        return (
+          <div className="flex items-center gap-1 text-neutral-400 text-xs">
+            <CheckCircle className="w-3 h-3" />
+            正常
+          </div>
+        );
     }
   };
 
-  const filteredAndSortedTorrents = sortTorrents(filterTorrents(mockTorrents));
-
-  const stats = {
-    total: mockTorrents.length,
-    critical: mockTorrents.filter(t => t.priority === 'critical').length,
-    mySeeding: mockTorrents.filter(t => t.userSeeding).length,
-    needHelp: mockTorrents.filter(t => !t.userSeeding && (t.priority === 'critical' || t.priority === 'high')).length,
-  };
-
   return (
-    <div className="min-h-screen bg-[#0F171E] pt-16">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-amber-600/20 via-orange-600/20 to-amber-700/20 border-b border-amber-500/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950">
+      <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8">
+        {/* 页面标题 */}
+        <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <Seedling className="w-8 h-8 text-amber-400" />
-            <h1 className="text-amber-50">保种中心</h1>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/30">
+              <HardDrive className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-white text-3xl">保种列表</h1>
+              <p className="text-neutral-400 text-sm mt-1">
+                正在做种的资源，持续做种可获得额外奖励
+              </p>
+            </div>
           </div>
-          <p className="text-amber-200/70">帮助保持珍贵资源的健康传播，共建优质分享环境</p>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* 统计卡片 */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-500/20 rounded-lg">
-                <HardDrive className="w-5 h-5 text-amber-400" />
-              </div>
-              <div>
-                <div className="text-amber-300/60 text-sm">总种子数</div>
-                <div className="text-amber-50">{stats.total}</div>
-              </div>
+          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-5">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-neutral-400 text-sm">总做种数</span>
+              <HardDrive className="w-4 h-4 text-green-400" />
             </div>
+            <p className="text-white text-2xl">{mockTorrents.length}</p>
           </div>
-
-          <div className="bg-gradient-to-br from-red-600/10 to-red-700/10 border border-red-500/20 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-red-500/20 rounded-lg">
-                <AlertTriangle className="w-5 h-5 text-red-400" />
-              </div>
-              <div>
-                <div className="text-red-300/60 text-sm">紧急保种</div>
-                <div className="text-red-50">{stats.critical}</div>
-              </div>
+          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-5">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-neutral-400 text-sm">累计奖励</span>
+              <DollarSign className="w-4 h-4 text-amber-400" />
             </div>
+            <p className="text-white text-2xl">
+              {mockTorrents.reduce((sum, t) => sum + t.bonus, 0).toFixed(1)}
+            </p>
           </div>
-
-          <div className="bg-gradient-to-br from-green-600/10 to-green-700/10 border border-green-500/20 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-500/20 rounded-lg">
-                <Seedling className="w-5 h-5 text-green-400" />
-              </div>
-              <div>
-                <div className="text-green-300/60 text-sm">我的保种</div>
-                <div className="text-green-50">{stats.mySeeding}</div>
-              </div>
+          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-5">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-neutral-400 text-sm">平均分享率</span>
+              <TrendingUp className="w-4 h-4 text-blue-400" />
             </div>
+            <p className="text-white text-2xl">
+              {(mockTorrents.reduce((sum, t) => sum + t.ratio, 0) / mockTorrents.length).toFixed(2)}
+            </p>
           </div>
-
-          <div className="bg-gradient-to-br from-orange-600/10 to-orange-700/10 border border-orange-500/20 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-500/20 rounded-lg">
-                <TrendingDown className="w-5 h-5 text-orange-400" />
-              </div>
-              <div>
-                <div className="text-orange-300/60 text-sm">需要帮助</div>
-                <div className="text-orange-50">{stats.needHelp}</div>
-              </div>
+          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-5">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-neutral-400 text-sm">总上传量</span>
+              <Upload className="w-4 h-4 text-green-400" />
             </div>
-          </div>
-        </div>
-
-        {/* 提示信息 */}
-        <div className="bg-gradient-to-r from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4 mb-6">
-          <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
-            <div className="text-amber-200/80 text-sm">
-              <p className="mb-2">保种是维护站点资源健康的重要方式。当种子做种人数较少时，资源可能面临失传风险。</p>
-              <p>下载并长期保种这些资源，您将获得：<span className="text-amber-300">双倍上传量</span>、<span className="text-amber-300">魔力值奖励</span>以及<span className="text-amber-300">保种徽章</span>。</p>
-            </div>
+            <p className="text-white text-2xl">1.01 TB</p>
           </div>
         </div>
 
         {/* 筛选和排序 */}
-        <div className="flex flex-wrap gap-3 mb-6">
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-amber-400" />
-            <span className="text-amber-300 text-sm">筛选：</span>
-            <button
-              onClick={() => setFilterBy('all')}
-              className={`px-3 py-1 rounded text-sm transition-all ${
-                filterBy === 'all'
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
-                  : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
-              }`}
-            >
-              全部
-            </button>
-            <button
-              onClick={() => setFilterBy('critical')}
-              className={`px-3 py-1 rounded text-sm transition-all ${
-                filterBy === 'critical'
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
-                  : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
-              }`}
-            >
-              紧急保种
-            </button>
-            <button
-              onClick={() => setFilterBy('mySeeding')}
-              className={`px-3 py-1 rounded text-sm transition-all ${
-                filterBy === 'mySeeding'
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
-                  : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
-              }`}
-            >
-              我的保种
-            </button>
-            <button
-              onClick={() => setFilterBy('notSeeding')}
-              className={`px-3 py-1 rounded text-sm transition-all ${
-                filterBy === 'notSeeding'
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
-                  : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
-              }`}
-            >
-              未保种
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2 ml-auto">
-            <ArrowUpDown className="w-4 h-4 text-amber-400" />
-            <span className="text-amber-300 text-sm">排序：</span>
+        <div className="mb-6 flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <Filter className="w-5 h-5 text-neutral-400" />
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="px-3 py-1 bg-[#0F171E] border border-amber-500/30 text-amber-300 rounded text-sm focus:outline-none focus:border-amber-400"
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="bg-neutral-800/40 border border-neutral-700/50 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-amber-500"
             >
-              <option value="health">健康度</option>
-              <option value="seeders">做种人数</option>
-              <option value="date">发布时间</option>
-              <option value="size">文件大小</option>
+              <option value="bonus">奖励排序</option>
+              <option value="ratio">分享率排序</option>
+              <option value="time">做种时间排序</option>
             </select>
+          </div>
+          <div className="flex items-center gap-2 bg-neutral-800/40 border border-neutral-700/50 rounded-lg px-4 py-2">
+            <Search className="w-4 h-4 text-neutral-400" />
+            <input
+              type="text"
+              placeholder="搜索种子..."
+              className="bg-transparent border-none outline-none text-white text-sm"
+            />
           </div>
         </div>
 
         {/* 种子列表 */}
-        <div className="space-y-3">
-          {filteredAndSortedTorrents.map((torrent) => (
+        <div className="space-y-4">
+          {mockTorrents.map((torrent) => (
             <div
               key={torrent.id}
-              className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-4 hover:border-amber-400/40 transition-all"
+              className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden hover:border-green-500/30 transition-all group"
             >
-              <div className="flex gap-4">
-                {/* 缩略图 */}
-                <img
-                  src={torrent.thumbnail}
-                  alt={torrent.title}
-                  className="w-32 h-20 object-cover rounded flex-shrink-0"
-                />
+              <div className="flex flex-col md:flex-row gap-4 p-4">
+                {/* 海报 */}
+                <div className="relative w-full md:w-24 flex-shrink-0">
+                  <div className="aspect-[2/3] rounded-lg overflow-hidden">
+                    <img
+                      src={torrent.poster}
+                      alt={torrent.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                </div>
 
-                {/* 信息 */}
+                {/* 信息区域 */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-start gap-2 mb-2">
-                    <h3 className="text-amber-50 flex-1">{torrent.title}</h3>
-                    <div className={`px-2 py-1 rounded text-xs bg-gradient-to-r ${getPriorityColor(torrent.priority)} border`}>
-                      优先级：{getPriorityLabel(torrent.priority)}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 text-sm text-amber-400/60 mb-3">
-                    <span>{torrent.category}</span>
-                    <span>{torrent.size}</span>
-                    <span>{torrent.uploadDate}</span>
-                  </div>
-
-                  {/* 健康度条 */}
-                  <div className="mb-3">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-amber-300">健康度</span>
-                      <span className={`text-xs font-medium ${getHealthColor(torrent.health)}`}>
-                        {torrent.health}%
-                      </span>
-                    </div>
-                    <div className="h-2 bg-[#0F171E]/50 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full ${getHealthBg(torrent.health)} transition-all`}
-                        style={{ width: `${torrent.health}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* 统计和状态 */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4 text-sm">
-                      <div className="flex items-center gap-1">
-                        <Users className="w-4 h-4 text-green-400" />
-                        <span className="text-amber-300">{torrent.seeders}</span>
-                        <span className="text-amber-400/60">做种</span>
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-white line-clamp-1 mb-1">{torrent.title}</h3>
+                      <div className="flex items-center gap-3 text-xs text-neutral-500">
+                        <span>{torrent.category}</span>
+                        <span>•</span>
+                        <span>{torrent.size}</span>
+                        <span>•</span>
+                        {getStatusBadge(torrent.status)}
                       </div>
-                      <div className="flex items-center gap-1">
-                        <DownloadIcon className="w-4 h-4 text-blue-400" />
-                        <span className="text-amber-300">{torrent.leechers}</span>
-                        <span className="text-amber-400/60">下载</span>
-                      </div>
-                      {torrent.userSeeding && (
-                        <>
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-4 h-4 text-amber-400" />
-                            <span className="text-amber-300">{torrent.userSeedingTime}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <TrendingDown className="w-4 h-4 text-amber-400 rotate-180" />
-                            <span className="text-amber-300">{torrent.uploadedSize}</span>
-                          </div>
-                        </>
-                      )}
                     </div>
-
-                    {torrent.userSeeding ? (
-                      <div className="flex items-center gap-2">
-                        <span className="px-3 py-1 bg-green-500/20 border border-green-400/30 text-green-300 rounded text-sm">
-                          保种中
-                        </span>
-                        <button className="px-4 py-1 bg-gradient-to-r from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded text-sm transition-all">
-                          查看详情
-                        </button>
-                      </div>
-                    ) : (
-                      <button className="px-4 py-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded text-sm transition-all">
-                        立即保种
-                      </button>
-                    )}
                   </div>
+
+                  {/* 统计数据 */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                    <div className="flex items-center gap-2 text-xs">
+                      <Upload className="w-3.5 h-3.5 text-green-400" />
+                      <div>
+                        <p className="text-neutral-500">上传</p>
+                        <p className="text-white">{torrent.uploaded}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <Download className="w-3.5 h-3.5 text-red-400" />
+                      <div>
+                        <p className="text-neutral-500">下载</p>
+                        <p className="text-white">{torrent.downloaded}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <TrendingUp className="w-3.5 h-3.5 text-blue-400" />
+                      <div>
+                        <p className="text-neutral-500">分享率</p>
+                        <p className={`${torrent.ratio >= 1 ? 'text-green-400' : 'text-amber-400'}`}>
+                          {torrent.ratio.toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <Clock className="w-3.5 h-3.5 text-neutral-500" />
+                      <div>
+                        <p className="text-neutral-500">做种时长</p>
+                        <p className="text-white">{torrent.seedTime}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 做种人数 */}
+                  <div className="flex items-center gap-4 text-xs">
+                    <span className="text-neutral-400">
+                      做种: <span className="text-green-400">{torrent.seeders}</span>
+                    </span>
+                    <span className="text-neutral-400">
+                      下载: <span className="text-amber-400">{torrent.leechers}</span>
+                    </span>
+                  </div>
+                </div>
+
+                {/* 奖励显示 */}
+                <div className="flex flex-col items-center justify-center md:w-32 flex-shrink-0 p-4 bg-gradient-to-br from-amber-500/10 to-orange-600/10 rounded-xl border border-amber-500/30">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Star className="w-5 h-5 text-amber-400" />
+                    <span className="text-2xl text-amber-400">{torrent.bonus.toFixed(1)}</span>
+                  </div>
+                  <p className="text-xs text-neutral-400 text-center">额外奖励</p>
+                  <p className="text-xs text-amber-400/70 mt-1">+5.0/天</p>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {filteredAndSortedTorrents.length === 0 && (
-          <div className="text-center py-12">
-            <Seedling className="w-16 h-16 text-amber-400/30 mx-auto mb-4" />
-            <p className="text-amber-300/50">暂无符合条件的种子</p>
+        {mockTorrents.length === 0 && (
+          <div className="text-center py-16">
+            <HardDrive className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
+            <p className="text-neutral-400">暂无做种记录</p>
           </div>
         )}
       </div>

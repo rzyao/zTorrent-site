@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Badge } from './ui/badge';
 import { Button } from '@/components/ui/button';
-import { useTorrentDownload } from '@/features/download/useTorrentDownload';
+import { useTorrentDownload } from '@/utils/useTorrentDownload';
 import { formatSize, formatDateTime } from '@/utils/format';
 
 // 种子数据模型：与列表视图对齐，支持副标题与两个时间字段兼容

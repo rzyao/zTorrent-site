@@ -7,7 +7,7 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { useAuth } from '../hooks/useApi';
 import { isValidPassword, passwordErrorMessage } from '../utils/validation';
 import { toast } from 'sonner';
-import { AuthService } from '../api';
+import { getAuthService } from '../api/lazy';
 
 interface RegisterProps {
   onBack: () => void;
@@ -100,6 +100,7 @@ export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProp
     }
     (async () => {
       try {
+        const AuthService = await getAuthService();
         if (code) {
           const res: any = await AuthService.authControllerVerifyInviteCode({
             inviteCode: code!,
@@ -153,6 +154,9 @@ export function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProp
     if (!validateStep1()) return;
     setIsVerifyingCode(true);
     try {
+      // 修复：此处此前直接调用未定义的 AuthService，导致 TS 报错
+      // 通过统一的懒加载入口获取服务实例，避免未定义并保持与上文一致的调用方式
+      const AuthService = await getAuthService();
       const res: any = await AuthService.authControllerVerifyRegisterEmailCode({
         email: formData.email,
         code: formData.emailCode

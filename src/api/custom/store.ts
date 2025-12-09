@@ -1,5 +1,4 @@
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import { getOpenAPI, getRequest } from '../lazy';
 
 /**
  * 积分商城相关类型定义
@@ -58,7 +57,9 @@ export type StoreItemListRequest = {
 };
 
 export async function getStoreItems(body: StoreItemListRequest = {}): Promise<StoreItem[]> {
-  const resp = await __request(OpenAPI, {
+  const OpenAPI = await getOpenAPI();
+  const request = await getRequest();
+  const resp = await (request as any)(OpenAPI, {
     method: 'POST',
     url: '/store/items/list',
     body,
@@ -74,7 +75,9 @@ export async function getStoreItems(body: StoreItemListRequest = {}): Promise<St
  * POST /store/purchase
  */
 export async function purchaseItem(requestBody: PurchaseRequest, idempotencyKey?: string): Promise<PurchaseResult> {
-  const resp = await __request(OpenAPI, {
+  const OpenAPI = await getOpenAPI();
+  const request = await getRequest();
+  const resp = await (request as any)(OpenAPI, {
     method: 'POST',
     url: '/store/purchase',
     body: requestBody,
@@ -102,7 +105,9 @@ export type OrderDetail = {
 };
 
 export async function getOrderDetail(body: { id: string }): Promise<OrderDetail> {
-  const resp = await __request(OpenAPI, {
+  const OpenAPI = await getOpenAPI();
+  const request = await getRequest();
+  const resp = await (request as any)(OpenAPI, {
     method: 'POST',
     url: '/store/orders/detail',
     body,
@@ -127,7 +132,9 @@ export type OrdersListResponse = {
 };
 
 export async function getOrdersList(body: OrdersListRequest): Promise<OrdersListResponse> {
-  const resp = await __request(OpenAPI, {
+  const OpenAPI = await getOpenAPI();
+  const request = await getRequest();
+  const resp = await (request as any)(OpenAPI, {
     method: 'POST',
     url: '/store/orders/list',
     body,

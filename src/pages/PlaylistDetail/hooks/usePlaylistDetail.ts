@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlaylistsService } from '@/api';
+import { PlaylistsService } from '@/api/services/PlaylistsService';
 import type { PlaylistDetail, PlaylistFilm } from '../types';
 
 // 片单详情数据获取与行为封装
