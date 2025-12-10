@@ -54,9 +54,17 @@ export function SecurityTab(props: SecurityTabProps) {
           <div className="flex-1">
             <h3 className="text-white text-sm mb-1">修改密码</h3>
             <p className="text-neutral-400 text-xs mb-3">定期更改密码可以提高账户安全性</p>
-            <div className="space-y-3">
+            <form
+              className="space-y-3"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleUpdatePassword();
+              }}
+            >
               <input
                 type="password"
+                name="current-password"
+                autoComplete="current-password"
                 placeholder="当前密码"
                 className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
                 value={currentPassword}
@@ -65,6 +73,8 @@ export function SecurityTab(props: SecurityTabProps) {
               {passwordErrors.current && (<p className="text-xs text-red-400">{passwordErrors.current}</p>)}
               <input
                 type="password"
+                name="new-password"
+                autoComplete="new-password"
                 placeholder="新密码"
                 className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
                 value={newPassword}
@@ -73,14 +83,16 @@ export function SecurityTab(props: SecurityTabProps) {
               {passwordErrors.new && (<p className="text-xs text-red-400">{passwordErrors.new}</p>)}
               <input
                 type="password"
+                name="confirm-password"
+                autoComplete="new-password"
                 placeholder="确认新密码"
                 className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
                 value={confirmNewPassword}
                 onChange={(e) => setConfirmNewPassword(e.target.value)}
               />
               {passwordErrors.confirm && (<p className="text-xs text-red-400">{passwordErrors.confirm}</p>)}
-              <Button size="sm" className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white" onClick={handleUpdatePassword} disabled={!canUpdatePassword()}>更新密码</Button>
-            </div>
+              <Button type="submit" size="sm" className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white" disabled={!canUpdatePassword()}>更新密码</Button>
+            </form>
           </div>
         </div>
       </div>
