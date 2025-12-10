@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useMyRequestsQuery } from '@/pages/Requests/hooks/useMyRequestsQuery';
+import { useRequestActions } from '@/pages/Requests/hooks/useRequestActions';
 import { Plus, Clock, CheckCircle2, XCircle, AlertCircle, Award, TrendingUp, Trash2, RefreshCw } from 'lucide-react';
 
-interface MyRequest {
+interface UiMyRequest {
   id: string;
   title: string;
   category: string;
@@ -15,80 +17,31 @@ interface MyRequest {
   commentsCount: number;
 }
 
-const mockMyRequests: MyRequest[] = [
-  {
-    id: '1',
-    title: '求《星际穿越》4K HDR REMUX版本',
-    category: '电影',
-    bounty: 5000,
-    additionalBounty: 2000,
-    status: 'active',
-    createdAt: '2025-12-06',
-    deadline: '2025-12-13',
-    claimedBy: 'ResourceHunter',
-    pendingSubmissions: 1,
-    commentsCount: 12,
-  },
-  {
-    id: '2',
-    title: '求《沙丘2》IMAX版本',
-    category: '电影',
-    bounty: 10000,
-    additionalBounty: 0,
-    status: 'active',
-    createdAt: '2025-12-07',
-    deadline: '2025-12-14',
-    pendingSubmissions: 0,
-    commentsCount: 20,
-  },
-  {
-    id: '3',
-    title: '求BBC地球脉动III 4K完整版',
-    category: '纪录片',
-    bounty: 3000,
-    additionalBounty: 1000,
-    status: 'completed',
-    createdAt: '2025-12-01',
-    deadline: '2025-12-08',
-    claimedBy: 'DocumentaryKing',
-    pendingSubmissions: 0,
-    commentsCount: 5,
-  },
-  {
-    id: '4',
-    title: '求某部经典老电影蓝光',
-    category: '电影',
-    bounty: 2000,
-    additionalBounty: 0,
-    status: 'draft',
-    createdAt: '2025-12-07',
-    deadline: '2025-12-14',
-    pendingSubmissions: 0,
-    commentsCount: 0,
-  },
-  {
-    id: '5',
-    title: '求Taylor Swift最新演唱会蓝光版',
-    category: '音乐',
-    bounty: 2000,
-    additionalBounty: 500,
-    status: 'expired',
-    createdAt: '2025-11-20',
-    deadline: '2025-11-27',
-    pendingSubmissions: 0,
-    commentsCount: 3,
-  },
-];
-
 type StatusGroup = 'ongoing' | 'history';
 
 export function MyRequests() {
   const [statusGroup, setStatusGroup] = useState<StatusGroup>('ongoing');
+  const { items, stats, isLoading, error } = useMyRequestsQuery();
+  const actions = useRequestActions();
 
   const ongoingStatuses = ['draft', 'active'];
   const historyStatuses = ['completed', 'cancelled', 'expired'];
 
-  const filteredRequests = mockMyRequests.filter(req => 
+  const mappedRequests: UiMyRequest[] = (items as any[]).map((r) => ({
+    id: String(r?.id ?? ''),
+    title: String(r?.title ?? ''),
+    category: String(r?.category ?? '其他'),
+    bounty: Number(r?.bounty ?? 0),
+    additionalBounty: Number(r?.additionalBounty ?? 0),
+    status: (['draft', 'active', 'completed', 'cancelled', 'expired'].includes(String(r?.status)) ? String(r?.status) : 'active') as UiMyRequest['status'],
+    createdAt: String(r?.createdAt ?? ''),
+    deadline: String(r?.deadlineAt ?? r?.deadline ?? ''),
+    claimedBy: r?.claimedBy?.name ?? r?.claimedBy ?? undefined,
+    pendingSubmissions: Number(r?.pendingSubmissions ?? 0),
+    commentsCount: Number(r?.counts?.comments ?? r?.commentsCount ?? 0),
+  }));
+
+  const filteredRequests = mappedRequests.filter(req => 
     statusGroup === 'ongoing' 
       ? ongoingStatuses.includes(req.status)
       : historyStatuses.includes(req.status)
@@ -139,11 +92,16 @@ export function MyRequests() {
     }
   };
 
-  const ongoingRequests = mockMyRequests.filter(r => ongoingStatuses.includes(r.status));
-  const historyRequests = mockMyRequests.filter(r => historyStatuses.includes(r.status));
+  const ongoingRequests = mappedRequests.filter(r => ongoingStatuses.includes(r.status));
+  const historyRequests = mappedRequests.filter(r => historyStatuses.includes(r.status));
 
   return (
     <div className="space-y-6">
+      {/* 错误与加载处理 */}
+      {error && (
+        <div className="bg-red-500/10 border border-red-400/30 rounded-lg p-4 text-red-300">{error.message}</div>
+      )}
+
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
@@ -167,9 +125,7 @@ export function MyRequests() {
           },
           { 
             label: '总支出', 
-            value: mockMyRequests
-              .filter(r => r.status === 'completed')
-              .reduce((sum, r) => sum + r.bounty + r.additionalBounty, 0)
+            value: stats.totalSpent
               .toLocaleString(), 
             color: 'amber',
             description: '积分'
@@ -318,7 +274,11 @@ export function MyRequests() {
                         <button className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all text-sm">
                           继续编辑
                         </button>
-                        <button className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all text-sm">
+                        <button
+                          onClick={() => actions.publish.mutate({ id: request.id })}
+                          disabled={actions.publish.isLoading}
+                          className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all text-sm disabled:opacity-60"
+                        >
                           发布
                         </button>
                       </>
@@ -332,11 +292,23 @@ export function MyRequests() {
                             去验收
                           </button>
                         )}
-                        <button className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            const amount = Number(prompt('请输入追加悬赏金额')); 
+                            if (!Number.isFinite(amount) || amount <= 0) return; 
+                            actions.addBounty.mutate({ id: request.id, amount });
+                          }}
+                          disabled={actions.addBounty.isLoading}
+                          className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
+                        >
                           <TrendingUp className="w-4 h-4" />
                           追加悬赏
                         </button>
-                        <button className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2">
+                        <button
+                          onClick={() => actions.cancel.mutate({ id: request.id })}
+                          disabled={actions.cancel.isLoading}
+                          className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
+                        >
                           <XCircle className="w-4 h-4" />
                           取消求种
                         </button>
@@ -344,14 +316,18 @@ export function MyRequests() {
                     )}
 
                     {(request.status === 'expired' || request.status === 'cancelled') && (
-                      <button className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2">
+                      <button
+                        onClick={() => actions.republish.mutate({ id: request.id })}
+                        disabled={actions.republish.isLoading}
+                        className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
+                      >
                         <RefreshCw className="w-4 h-4" />
                         重新发布
                       </button>
                     )}
 
                     {request.status === 'draft' && (
-                      <button className="px-4 py-2 bg-red-500/20 border border-red-400/30 hover:bg-red-500/30 text-red-300 rounded-lg transition-all text-sm flex items-center gap-2">
+                      <button className="px-4 py-2 bg-red-500/20 border border-red-400/30 hover:bg-red-500/30 text-red-300 rounded-lg transition-all text-sm flex items-center gap-2" disabled>
                         <Trash2 className="w-4 h-4" />
                         删除草稿
                       </button>
@@ -368,7 +344,7 @@ export function MyRequests() {
         })}
       </div>
 
-      {filteredRequests.length === 0 && (
+      {!isLoading && filteredRequests.length === 0 && (
         <div className="text-center py-12 text-amber-300/60">
           <Plus className="w-12 h-12 mx-auto mb-4 opacity-40" />
           <p className="mb-4">

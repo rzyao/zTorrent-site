@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Music,
   Play,
@@ -16,6 +16,10 @@ import {
   Star,
   Headphones,
   Sparkles,
+  Plus,
+  X,
+  Check,
+  Bookmark,
 } from 'lucide-react';
 
 type TabType = 'hall' | 'songs' | 'artists' | 'albums' | 'playlists';
@@ -56,147 +60,37 @@ interface Playlist {
   creator: string;
 }
 
+interface MyPlaylist {
+  id: string;
+  title: string;
+  description: string;
+  cover: string;
+  songs: Song[];
+  isOwn: boolean;
+  creator: string;
+}
+
 export function MusicPage() {
   const [activeTab, setActiveTab] = useState<TabType>('hall');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // 交互状态
+  const [likedSongs, setLikedSongs] = useState<string[]>(['1', '3']); // 默认喜欢一些歌曲
+  const [favoriteAlbums, setFavoriteAlbums] = useState<string[]>(['1']); // 收藏的专辑
+  const [favoritePlaylists, setFavoritePlaylists] = useState<string[]>(['1']); // 收藏的歌单
+  const [showAddToPlaylist, setShowAddToPlaylist] = useState(false);
+  const [selectedSongForAdd, setSelectedSongForAdd] = useState<Song | null>(null);
+  
+  const [myPlaylists, setMyPlaylists] = useState<MyPlaylist[]>([]);
 
-  // 示例数据
-  const featuredSongs: Song[] = [
-    {
-      id: '1',
-      title: '夏日回忆',
-      artist: '风声乐队',
-      album: '青春纪念册',
-      duration: '4:05',
-      cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400',
-      plays: 15420,
-    },
-    {
-      id: '2',
-      title: '星空物语',
-      artist: '月光组合',
-      album: '梦想的声音',
-      duration: '3:18',
-      cover: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400',
-      plays: 8732,
-    },
-    {
-      id: '3',
-      title: '城市之光',
-      artist: 'Urban Sound',
-      album: 'Metropolitan',
-      duration: '3:43',
-      cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
-      plays: 23145,
-    },
-    {
-      id: '4',
-      title: '远方的梦',
-      artist: '流浪诗人',
-      album: '旅途',
-      duration: '4:27',
-      cover: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=400',
-      plays: 12098,
-    },
-  ];
+  const [featuredSongs, setFeaturedSongs] = useState<Song[]>([]);
 
-  const artists: Artist[] = [
-    {
-      id: '1',
-      name: '风声乐队',
-      avatar: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300',
-      followers: 128000,
-      songs: 42,
-    },
-    {
-      id: '2',
-      name: '月光组合',
-      avatar: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300',
-      followers: 95000,
-      songs: 38,
-    },
-    {
-      id: '3',
-      name: 'Urban Sound',
-      avatar: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300',
-      followers: 210000,
-      songs: 56,
-    },
-    {
-      id: '4',
-      name: '流浪诗人',
-      avatar: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=300',
-      followers: 76000,
-      songs: 29,
-    },
-  ];
+  const [artists, setArtists] = useState<Artist[]>([]);
 
-  const albums: Album[] = [
-    {
-      id: '1',
-      title: '青春纪念册',
-      artist: '风声乐队',
-      cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400',
-      year: 2024,
-      tracks: 12,
-    },
-    {
-      id: '2',
-      title: '梦想的声音',
-      artist: '月光组合',
-      cover: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400',
-      year: 2023,
-      tracks: 10,
-    },
-    {
-      id: '3',
-      title: 'Metropolitan',
-      artist: 'Urban Sound',
-      cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
-      year: 2024,
-      tracks: 14,
-    },
-    {
-      id: '4',
-      title: '旅途',
-      artist: '流浪诗人',
-      cover: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=400',
-      year: 2023,
-      tracks: 11,
-    },
-  ];
+  const [albums, setAlbums] = useState<Album[]>([]);
 
-  const playlists: Playlist[] = [
-    {
-      id: '1',
-      title: '热门新歌',
-      cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400',
-      tracks: 50,
-      creator: '官方推荐',
-    },
-    {
-      id: '2',
-      title: '经典回忆',
-      cover: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400',
-      tracks: 100,
-      creator: '时光机',
-    },
-    {
-      id: '3',
-      title: '电子律动',
-      cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400',
-      tracks: 75,
-      creator: 'DJ Mix',
-    },
-    {
-      id: '4',
-      title: '民谣情怀',
-      cover: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=400',
-      tracks: 60,
-      creator: '音乐达人',
-    },
-  ];
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
   const tabs = [
     { id: 'hall', label: '音乐大厅', icon: Sparkles },
@@ -205,6 +99,66 @@ export function MusicPage() {
     { id: 'albums', label: '专辑', icon: Disc },
     { id: 'playlists', label: '歌单', icon: ListMusic },
   ];
+
+  useEffect(() => {
+    (async () => {
+      const { getOpenAPI } = await import('@/api/lazy');
+      await getOpenAPI();
+      const { MusicSongsService, MusicArtistsService, MusicAlbumsService, MusicPlaylistsService } = await import('@/api');
+      try {
+        const [songsRes, artistsRes, albumsRes, pubPlaylistsRes, myPlaylistsRes] = await Promise.all([
+          MusicSongsService.songsControllerList(),
+          MusicArtistsService.artistsControllerList(),
+          MusicAlbumsService.albumsControllerList(),
+          MusicPlaylistsService.playlistsControllerListPublic(),
+          MusicPlaylistsService.playlistsControllerMy(),
+        ]);
+        const songs = (songsRes as any)?.data?.items ?? (songsRes as any)?.data ?? [];
+        const artistsData = (artistsRes as any)?.data?.items ?? (artistsRes as any)?.data ?? [];
+        const albumsData = (albumsRes as any)?.data?.items ?? (albumsRes as any)?.data ?? [];
+        const pubPlaylists = (pubPlaylistsRes as any)?.data?.items ?? (pubPlaylistsRes as any)?.data ?? [];
+        const minePlaylists = (myPlaylistsRes as any)?.data?.items ?? (myPlaylistsRes as any)?.data ?? [];
+        setFeaturedSongs(songs);
+        setArtists(artistsData);
+        setAlbums(albumsData);
+        setPlaylists(pubPlaylists);
+        setMyPlaylists(minePlaylists);
+      } catch (e) {
+        // ignore
+      }
+    })();
+  }, []);
+
+  // 交互函数
+  const toggleLike = (songId: string) => {
+    setLikedSongs((prev) =>
+      prev.includes(songId) ? prev.filter((id) => id !== songId) : [...prev, songId]
+    );
+  };
+
+  const toggleFavoriteAlbum = (albumId: string) => {
+    setFavoriteAlbums((prev) =>
+      prev.includes(albumId) ? prev.filter((id) => id !== albumId) : [...prev, albumId]
+    );
+  };
+
+  const toggleFavoritePlaylist = (playlistId: string) => {
+    setFavoritePlaylists((prev) =>
+      prev.includes(playlistId) ? prev.filter((id) => id !== playlistId) : [...prev, playlistId]
+    );
+  };
+
+  const openAddToPlaylist = (song: Song) => {
+    setSelectedSongForAdd(song);
+    setShowAddToPlaylist(true);
+  };
+
+  const handleAddToPlaylist = (playlistId: string) => {
+    // 这里应该与播放器页面的状态同步，实际应用中使用全局状态管理
+    console.log(`添加歌曲 ${selectedSongForAdd?.title} 到歌单 ${playlistId}`);
+    setShowAddToPlaylist(false);
+    setSelectedSongForAdd(null);
+  };
 
   const renderHall = () => (
     <div className="space-y-8">
@@ -226,9 +180,36 @@ export function MusicPage() {
                   alt={song.title}
                   className="w-full aspect-square object-cover rounded-lg"
                 />
-                <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-2">
                   <button className="w-12 h-12 rounded-full bg-amber-500 hover:bg-amber-600 flex items-center justify-center transition-all">
                     <Play className="w-6 h-6 text-white ml-0.5" />
+                  </button>
+                </div>
+                {/* 操作按钮 */}
+                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleLike(song.id);
+                    }}
+                    className={`p-2 rounded-lg backdrop-blur-sm transition-all ${
+                      likedSongs.includes(song.id)
+                        ? 'bg-red-500/80 text-white'
+                        : 'bg-black/50 text-white hover:bg-red-500/80'
+                    }`}
+                  >
+                    <Heart
+                      className={`w-4 h-4 ${likedSongs.includes(song.id) ? 'fill-current' : ''}`}
+                    />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openAddToPlaylist(song);
+                    }}
+                    className="p-2 rounded-lg bg-black/50 text-white hover:bg-amber-500/80 backdrop-blur-sm transition-all"
+                  >
+                    <Plus className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -266,12 +247,38 @@ export function MusicPage() {
                     <Play className="w-6 h-6 text-white ml-0.5" />
                   </button>
                 </div>
+                {/* 收藏按钮 */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavoritePlaylist(playlist.id);
+                  }}
+                  className={`absolute top-2 right-2 p-2 rounded-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all ${
+                    favoritePlaylists.includes(playlist.id)
+                      ? 'bg-purple-500/80 text-white'
+                      : 'bg-black/50 text-white hover:bg-purple-500/80'
+                  }`}
+                >
+                  <Bookmark
+                    className={`w-4 h-4 ${
+                      favoritePlaylists.includes(playlist.id) ? 'fill-current' : ''
+                    }`}
+                  />
+                </button>
               </div>
               <h3 className="text-white truncate">{playlist.title}</h3>
               <p className="text-neutral-400 text-sm truncate">{playlist.creator}</p>
-              <div className="flex items-center gap-2 mt-2 text-neutral-500 text-xs">
-                <Music className="w-3 h-3" />
-                <span>{playlist.tracks} 首歌曲</span>
+              <div className="flex items-center justify-between mt-2">
+                <div className="flex items-center gap-2 text-neutral-500 text-xs">
+                  <Music className="w-3 h-3" />
+                  <span>{playlist.tracks} 首歌曲</span>
+                </div>
+                {favoritePlaylists.includes(playlist.id) && (
+                  <span className="text-purple-400 text-xs flex items-center gap-1">
+                    <Check className="w-3 h-3" />
+                    已收藏
+                  </span>
+                )}
               </div>
             </div>
           ))}
@@ -327,12 +334,35 @@ export function MusicPage() {
                     <Play className="w-6 h-6 text-white ml-0.5" />
                   </button>
                 </div>
+                {/* 收藏按钮 */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavoriteAlbum(album.id);
+                  }}
+                  className={`absolute top-2 right-2 p-2 rounded-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all ${
+                    favoriteAlbums.includes(album.id)
+                      ? 'bg-blue-500/80 text-white'
+                      : 'bg-black/50 text-white hover:bg-blue-500/80'
+                  }`}
+                >
+                  <Bookmark
+                    className={`w-4 h-4 ${favoriteAlbums.includes(album.id) ? 'fill-current' : ''}`}
+                  />
+                </button>
               </div>
               <h3 className="text-white truncate">{album.title}</h3>
               <p className="text-neutral-400 text-sm truncate">{album.artist}</p>
               <div className="flex items-center justify-between mt-2 text-neutral-500 text-xs">
                 <span>{album.year}</span>
-                <span>{album.tracks} 首</span>
+                <div className="flex items-center gap-2">
+                  <span>{album.tracks} 首</span>
+                  {favoriteAlbums.includes(album.id) && (
+                    <span className="text-blue-400 flex items-center gap-1">
+                      <Check className="w-3 h-3" />
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -366,9 +396,32 @@ export function MusicPage() {
               <p className="text-neutral-400 text-sm truncate">{song.artist}</p>
               <div className="flex items-center justify-between mt-2">
                 <span className="text-neutral-500 text-xs">{song.duration}</span>
-                <button className="p-1.5 rounded-lg text-neutral-400 hover:text-red-400 transition-all">
-                  <Heart className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleLike(song.id);
+                    }}
+                    className={`p-1.5 rounded-lg transition-all ${
+                      likedSongs.includes(song.id)
+                        ? 'text-red-400 bg-red-500/20'
+                        : 'text-neutral-400 hover:text-red-400 hover:bg-red-500/20'
+                    }`}
+                  >
+                    <Heart
+                      className={`w-4 h-4 ${likedSongs.includes(song.id) ? 'fill-current' : ''}`}
+                    />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openAddToPlaylist(song);
+                    }}
+                    className="p-1.5 rounded-lg text-neutral-400 hover:text-amber-400 hover:bg-amber-500/20 transition-all"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -396,11 +449,29 @@ export function MusicPage() {
                 <button className="p-2 rounded-lg text-neutral-400 hover:text-amber-400 transition-all">
                   <Play className="w-4 h-4" />
                 </button>
-                <button className="p-2 rounded-lg text-neutral-400 hover:text-red-400 transition-all">
-                  <Heart className="w-4 h-4" />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleLike(song.id);
+                  }}
+                  className={`p-2 rounded-lg transition-all ${
+                    likedSongs.includes(song.id)
+                      ? 'text-red-400 bg-red-500/20'
+                      : 'text-neutral-400 hover:text-red-400'
+                  }`}
+                >
+                  <Heart
+                    className={`w-4 h-4 ${likedSongs.includes(song.id) ? 'fill-current' : ''}`}
+                  />
                 </button>
-                <button className="p-2 rounded-lg text-neutral-400 hover:text-white transition-all">
-                  <MoreVertical className="w-4 h-4" />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openAddToPlaylist(song);
+                  }}
+                  className="p-2 rounded-lg text-neutral-400 hover:text-white transition-all"
+                >
+                  <Plus className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -480,12 +551,33 @@ export function MusicPage() {
                     <Play className="w-6 h-6 text-white ml-0.5" />
                   </button>
                 </div>
+                {/* 收藏按钮 */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavoriteAlbum(album.id);
+                  }}
+                  className={`absolute top-2 right-2 p-2 rounded-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all ${
+                    favoriteAlbums.includes(album.id)
+                      ? 'bg-blue-500/80 text-white'
+                      : 'bg-black/50 text-white hover:bg-blue-500/80'
+                  }`}
+                >
+                  <Bookmark
+                    className={`w-4 h-4 ${favoriteAlbums.includes(album.id) ? 'fill-current' : ''}`}
+                  />
+                </button>
               </div>
               <h3 className="text-white truncate">{album.title}</h3>
               <p className="text-neutral-400 text-sm truncate">{album.artist}</p>
               <div className="flex items-center justify-between mt-2 text-neutral-500 text-xs">
                 <span>{album.year}</span>
-                <span>{album.tracks} 首</span>
+                <div className="flex items-center gap-2">
+                  <span>{album.tracks} 首</span>
+                  {favoriteAlbums.includes(album.id) && (
+                    <Check className="w-3 h-3 text-blue-400" />
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -511,6 +603,21 @@ export function MusicPage() {
                 <span>{album.year}</span>
                 <span>{album.tracks} 首</span>
               </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavoriteAlbum(album.id);
+                }}
+                className={`p-2 rounded-lg transition-all ${
+                  favoriteAlbums.includes(album.id)
+                    ? 'text-blue-400 bg-blue-500/20'
+                    : 'text-neutral-400 hover:text-blue-400'
+                }`}
+              >
+                <Bookmark
+                  className={`w-4 h-4 ${favoriteAlbums.includes(album.id) ? 'fill-current' : ''}`}
+                />
+              </button>
             </div>
           ))}
         </div>
@@ -538,10 +645,35 @@ export function MusicPage() {
                     <Play className="w-6 h-6 text-white ml-0.5" />
                   </button>
                 </div>
+                {/* 收藏按钮 */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavoritePlaylist(playlist.id);
+                  }}
+                  className={`absolute top-2 right-2 p-2 rounded-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all ${
+                    favoritePlaylists.includes(playlist.id)
+                      ? 'bg-purple-500/80 text-white'
+                      : 'bg-black/50 text-white hover:bg-purple-500/80'
+                  }`}
+                >
+                  <Bookmark
+                    className={`w-4 h-4 ${
+                      favoritePlaylists.includes(playlist.id) ? 'fill-current' : ''
+                    }`}
+                  />
+                </button>
               </div>
               <h3 className="text-white truncate">{playlist.title}</h3>
               <p className="text-neutral-400 text-sm truncate">{playlist.creator}</p>
-              <p className="text-neutral-500 text-xs mt-2">{playlist.tracks} 首歌曲</p>
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-neutral-500 text-xs">{playlist.tracks} 首歌曲</p>
+                {favoritePlaylists.includes(playlist.id) && (
+                  <span className="text-purple-400 text-xs flex items-center gap-1">
+                    <Check className="w-3 h-3" />
+                  </span>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -563,6 +695,23 @@ export function MusicPage() {
                 <p className="text-neutral-400 text-sm">{playlist.creator}</p>
               </div>
               <span className="text-neutral-400 text-sm">{playlist.tracks} 首歌曲</span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavoritePlaylist(playlist.id);
+                }}
+                className={`p-2 rounded-lg transition-all ${
+                  favoritePlaylists.includes(playlist.id)
+                    ? 'text-purple-400 bg-purple-500/20'
+                    : 'text-neutral-400 hover:text-purple-400'
+                }`}
+              >
+                <Bookmark
+                  className={`w-4 h-4 ${
+                    favoritePlaylists.includes(playlist.id) ? 'fill-current' : ''
+                  }`}
+                />
+              </button>
             </div>
           ))}
         </div>
@@ -673,6 +822,67 @@ export function MusicPage() {
         {/* 内容区域 */}
         {renderContent()}
       </div>
+
+      {/* 添加到歌单对话框 */}
+      {showAddToPlaylist && selectedSongForAdd && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-neutral-800 to-stone-900 rounded-2xl border border-neutral-700 p-6 max-w-md w-full shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-white text-xl">添加到歌单</h3>
+              <button
+                onClick={() => {
+                  setShowAddToPlaylist(false);
+                  setSelectedSongForAdd(null);
+                }}
+                className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="mb-4 p-3 bg-neutral-900/50 rounded-lg flex items-center gap-3">
+              <img
+                src={selectedSongForAdd.cover}
+                alt={selectedSongForAdd.title}
+                className="w-12 h-12 rounded-lg object-cover"
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-white truncate">{selectedSongForAdd.title}</p>
+                <p className="text-neutral-400 text-sm truncate">{selectedSongForAdd.artist}</p>
+              </div>
+            </div>
+
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {myPlaylists.length === 0 ? (
+                <div className="p-8 text-center text-neutral-500">
+                  <ListMusic className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                  <p>还没有创建歌单</p>
+                  <p className="text-sm mt-1">请前往播放器页面创建歌单</p>
+                </div>
+              ) : (
+                myPlaylists.map((playlist) => (
+                  <button
+                    key={playlist.id}
+                    onClick={() => handleAddToPlaylist(playlist.id)}
+                    className="w-full p-3 rounded-lg flex items-center gap-3 transition-all bg-neutral-900/50 hover:bg-neutral-800"
+                  >
+                    <img
+                      src={playlist.cover}
+                      alt={playlist.title}
+                      className="w-12 h-12 rounded-lg object-cover"
+                    />
+                    <div className="flex-1 text-left min-w-0">
+                      <p className="text-white truncate">{playlist.title}</p>
+                      <p className="text-neutral-400 text-sm">{playlist.songs.length} 首歌曲</p>
+                    </div>
+                    <Plus className="w-5 h-5 text-neutral-400" />
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

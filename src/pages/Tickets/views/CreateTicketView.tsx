@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useTickets } from '@/pages/Tickets/hooks/useTickets';
 
 interface CreateTicketViewProps {
   onBack: () => void;
@@ -30,6 +31,7 @@ export function CreateTicketView({ onBack, onCreate }: CreateTicketViewProps) {
   const [newTicketCategory, setNewTicketCategory] = useState('technical');
   const [newTicketPriority, setNewTicketPriority] = useState('normal');
   const [newTicketContent, setNewTicketContent] = useState('');
+  const { createTicket } = useTickets();
 
   const categoryConfig = {
     technical: {
@@ -71,13 +73,13 @@ export function CreateTicketView({ onBack, onCreate }: CreateTicketViewProps) {
     urgent: { label: '紧急', color: 'text-red-400', bgColor: 'bg-red-500/20' },
   };
 
-  const handleCreateTicket = () => {
-    console.log('创建工单:', {
+  const handleCreateTicket = async () => {
+    await createTicket({
       title: newTicketTitle,
       category: newTicketCategory,
       priority: newTicketPriority,
       content: newTicketContent,
-    });
+    } as any);
     onCreate();
   };
 
@@ -155,4 +157,3 @@ export function CreateTicketView({ onBack, onCreate }: CreateTicketViewProps) {
     </div>
   );
 }
-

@@ -3,9 +3,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export type MarkReadDto = {
-    /**
-     * 会话对端用户ID
-     */
-    peerUserId: string;
 };
 

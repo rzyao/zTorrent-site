@@ -1,7 +1,6 @@
 // 下载器页面（容器组件）
 // 说明：组合拆分后的 UI 组件与业务 Hook，负责页面布局与数据流的串联。
 
-import { DEFAULT_DOWNLOADERS } from './constants';
 import { useDownloaderManager } from './hooks/useDownloaderManager';
 import { Downloader } from './types';
 import { Header } from './components/Header';
@@ -44,7 +43,7 @@ export function DownloaderPage() {
     handleDeleteCategory,
     resetForm,
     openEditModal,
-  } = useDownloaderManager(DEFAULT_DOWNLOADERS as Downloader[]);
+  } = useDownloaderManager();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">

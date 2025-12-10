@@ -9,40 +9,37 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useEffect, useState } from 'react';
+import { useTickets } from '@/pages/Tickets/hooks/useTickets';
 
 export function TicketStatsView() {
-  const stats = {
-    overview: {
-      total: 156,
-      trend: '+12%',
-      trendUp: true,
-      resolved: 98,
-      resolvedRate: '62.8%',
-      avgResponseTime: '2.3小时',
-      avgResolutionTime: '8.5小时',
-    },
-    byCategory: [
-      { name: '技术问题', count: 58, percentage: 37.2, color: 'text-blue-400', bgColor: 'bg-blue-500/20' },
-      { name: '账号问题', count: 42, percentage: 26.9, color: 'text-purple-400', bgColor: 'bg-purple-500/20' },
-      { name: '资源问题', count: 28, percentage: 17.9, color: 'text-green-400', bgColor: 'bg-green-500/20' },
-      { name: '投诉举报', count: 18, percentage: 11.5, color: 'text-red-400', bgColor: 'bg-red-500/20' },
-      { name: '其他问题', count: 10, percentage: 6.4, color: 'text-neutral-400', bgColor: 'bg-neutral-500/20' },
-    ],
-    byStaff: [
-      { name: 'TechSupport', assigned: 45, resolved: 38, avgTime: '6.2小时' },
-      { name: 'AdminTeam', assigned: 38, resolved: 32, avgTime: '7.8小时' },
-      { name: 'SupportTeam', assigned: 29, resolved: 28, avgTime: '5.5小时' },
-    ],
-    recentTrend: [
-      { date: '11-20', created: 18, resolved: 12 },
-      { date: '11-21', created: 22, resolved: 15 },
-      { date: '11-22', created: 15, resolved: 19 },
-      { date: '11-23', created: 20, resolved: 17 },
-      { date: '11-24', created: 25, resolved: 20 },
-      { date: '11-25', created: 19, resolved: 22 },
-      { date: '11-26', created: 23, resolved: 16 },
-    ],
-  };
+  const { getStats, stats: statsData } = useTickets();
+  const [stats, setStats] = useState<any>({ overview: {}, byCategory: [], byStaff: [], recentTrend: [] });
+  useEffect(() => { getStats(); }, []);
+  useEffect(() => {
+    if (!statsData) return;
+    const ov = statsData.overview || {};
+    const toHour = (s: number) => `${(s / 3600).toFixed(1)}小时`;
+    const overview = {
+      total: ov.total ?? 0,
+      trend: `${Math.round((ov.trend?.value ?? 0) * 100)}%`,
+      trendUp: (ov.trend?.value ?? 0) >= 0,
+      resolved: ov.resolved ?? 0,
+      resolvedRate: `${Math.round((ov.resolvedRate ?? 0) * 1000) / 10}%`,
+      avgResponseTime: toHour(ov.avgResponseTimeSec ?? 0),
+      avgResolutionTime: toHour(ov.avgResolutionTimeSec ?? 0),
+    };
+    const byCategory = (statsData.byCategory ?? []).map((c: any) => ({
+      name: c.category,
+      count: c.count,
+      percentage: Math.round((c.percentage ?? 0) * 1000) / 10,
+      color: 'text-blue-400',
+      bgColor: 'bg-blue-500/20',
+    }));
+    const byStaff = (statsData.byStaff ?? []).map((s: any) => ({ name: s.name, assigned: s.assigned, resolved: s.resolved, avgTime: toHour(s.avgResolutionTimeSec ?? 0) }));
+    const recentTrend = statsData.recentTrend ?? [];
+    setStats({ overview, byCategory, byStaff, recentTrend });
+  }, [statsData]);
 
   return (
     <div>
@@ -195,4 +192,3 @@ export function TicketStatsView() {
     </div>
   );
 }
-

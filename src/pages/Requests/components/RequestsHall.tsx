@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { useHallQuery } from '@/pages/Requests/hooks/useHallQuery';
+import { useRequestActions } from '@/pages/Requests/hooks/useRequestActions';
 import { Search, SlidersHorizontal, TrendingUp, Clock, MessageSquare, ThumbsUp, Award, CheckCircle2, XCircle, AlertCircle, Bell } from 'lucide-react';
 
-interface Request {
+// 后端返回的 Request 结构可能比 UI 更丰富，这里定义最小展示模型并提供映射函数
+interface UiRequest {
   id: string;
   title: string;
   description: string;
@@ -17,81 +20,6 @@ interface Request {
   claimedBy?: string;
 }
 
-const mockRequests: Request[] = [
-  {
-    id: '1',
-    title: '求《星际穿越》4K HDR REMUX版本',
-    description: '需要完整版本，带中英双语字幕，音轨要求DTS-HD MA 5.1以上',
-    category: '电影',
-    bounty: 5000,
-    additionalBounty: 2000,
-    status: 'active',
-    createdAt: '2025-12-06',
-    deadline: '2025-12-13',
-    author: 'MovieLover',
-    commentsCount: 12,
-    votesCount: 28,
-  },
-  {
-    id: '2',
-    title: '求权力的游戏第八季蓝光原盘',
-    description: '要求蓝光原盘，完整花絮，多音轨多字幕',
-    category: '剧集',
-    bounty: 8000,
-    additionalBounty: 0,
-    status: 'active',
-    createdAt: '2025-12-05',
-    deadline: '2025-12-12',
-    author: 'SeriesFan',
-    commentsCount: 8,
-    votesCount: 45,
-    claimedBy: 'ResourceHunter',
-  },
-  {
-    id: '3',
-    title: '求BBC地球脉动III 4K完整版',
-    description: '需要4K HDR版本，英语原声+中文字幕',
-    category: '纪录片',
-    bounty: 3000,
-    additionalBounty: 1000,
-    status: 'completed',
-    createdAt: '2025-12-01',
-    deadline: '2025-12-08',
-    author: 'NatureLover',
-    commentsCount: 5,
-    votesCount: 15,
-    claimedBy: 'DocumentaryKing',
-  },
-  {
-    id: '4',
-    title: '求Taylor Swift最新演唱会蓝光版',
-    description: '需要完整演唱会录像，最好有多机位',
-    category: '音乐',
-    bounty: 2000,
-    additionalBounty: 500,
-    status: 'expired',
-    createdAt: '2025-11-20',
-    deadline: '2025-11-27',
-    author: 'MusicFan',
-    commentsCount: 3,
-    votesCount: 8,
-  },
-  {
-    id: '5',
-    title: '求《沙丘2》IMAX版本',
-    description: 'IMAX Enhanced版本，要求完整IMAX画幅',
-    category: '电影',
-    bounty: 10000,
-    additionalBounty: 3000,
-    status: 'active',
-    createdAt: '2025-12-07',
-    deadline: '2025-12-14',
-    author: 'IMAXCollector',
-    commentsCount: 20,
-    votesCount: 62,
-  },
-];
-
 type SortOption = 'latest' | 'bounty' | 'comments' | 'votes';
 type StatusFilter = 'all' | 'active' | 'completed' | 'expired';
 
@@ -101,10 +29,32 @@ export function RequestsHall() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
+  const { items, isLoading, error } = useHallQuery({
+    keyword: searchQuery,
+    sortBy,
+    status: statusFilter,
+    category: categoryFilter,
+  });
+  const actions = useRequestActions();
 
   const categories = ['全部', '电影', '剧集', '纪录片', '音乐', '动漫', '其他'];
 
-  const filteredRequests = mockRequests
+  const filteredRequests = (items as any[])
+    .map((r) => ({
+      id: String(r?.id ?? r?._id ?? ''),
+      title: String(r?.title ?? ''),
+      description: String(r?.description ?? ''),
+      category: String(r?.category ?? '其他'),
+      bounty: Number(r?.bounty ?? 0),
+      additionalBounty: Number(r?.additionalBounty ?? 0),
+      status: (['active', 'completed', 'expired'].includes(String(r?.status)) ? String(r?.status) : 'active') as UiRequest['status'],
+      createdAt: String(r?.createdAt ?? r?.created_at ?? ''),
+      deadline: String(r?.deadlineAt ?? r?.deadline ?? ''),
+      author: String(r?.author?.name ?? r?.author ?? ''),
+      commentsCount: Number(r?.counts?.comments ?? r?.commentsCount ?? 0),
+      votesCount: Number(r?.counts?.votes ?? r?.votesCount ?? 0),
+      claimedBy: r?.claimedBy?.name ?? r?.claimedBy ?? undefined,
+    }))
     .filter(req => {
       if (statusFilter !== 'all' && req.status !== statusFilter) return false;
       if (categoryFilter !== 'all' && req.category !== categoryFilter) return false;
@@ -127,6 +77,7 @@ export function RequestsHall() {
     });
 
   const getStatusConfig = (status: Request['status']) => {
+    // 兼容后端更多状态，未覆盖的状态一律视为进行中
     switch (status) {
       case 'active':
         return {
@@ -151,6 +102,14 @@ export function RequestsHall() {
           color: 'text-red-400',
           bg: 'bg-red-500/20',
           border: 'border-red-500/30'
+        };
+      default:
+        return {
+          icon: AlertCircle,
+          text: '进行中',
+          color: 'text-amber-400',
+          bg: 'bg-amber-500/20',
+          border: 'border-amber-500/30'
         };
     }
   };
@@ -242,12 +201,19 @@ export function RequestsHall() {
         )}
       </div>
 
+      {/* 错误与加载处理 */}
+      {error && (
+        <div className="bg-red-500/10 border border-red-400/30 rounded-lg p-4 text-red-300">
+          {error.message}
+        </div>
+      )}
+      
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: '进行中', value: mockRequests.filter(r => r.status === 'active').length, color: 'amber' },
-          { label: '已完成', value: mockRequests.filter(r => r.status === 'completed').length, color: 'green' },
-          { label: '总悬赏', value: mockRequests.reduce((sum, r) => sum + r.bounty + r.additionalBounty, 0).toLocaleString(), color: 'orange' },
+          { label: '进行中', value: filteredRequests.filter(r => r.status === 'active').length, color: 'amber' },
+          { label: '已完成', value: filteredRequests.filter(r => r.status === 'completed').length, color: 'green' },
+          { label: '总悬赏', value: filteredRequests.reduce((sum, r) => sum + r.bounty + r.additionalBounty, 0).toLocaleString(), color: 'orange' },
           { label: '参与用户', value: '127', color: 'amber' },
         ].map((stat, index) => (
           <div
@@ -267,7 +233,9 @@ export function RequestsHall() {
 
       {/* Requests List */}
       <div className="space-y-4">
-        {filteredRequests.map((request) => {
+        {isLoading ? (
+          <div className="text-amber-300/60">加载中...</div>
+        ) : filteredRequests.map((request) => {
           const statusConfig = getStatusConfig(request.status);
           const StatusIcon = statusConfig.icon;
           const totalBounty = request.bounty + request.additionalBounty;
@@ -345,9 +313,13 @@ export function RequestsHall() {
                   </div>
 
                   {request.status === 'active' && !request.claimedBy && (
-                    <button className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => actions.claim.mutate({ id: request.id })}
+                      disabled={actions.claim.isLoading}
+                      className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+                    >
                       <TrendingUp className="w-4 h-4" />
-                      立即认领
+                      {actions.claim.isLoading ? '认领中...' : '立即认领'}
                     </button>
                   )}
                 </div>
@@ -357,7 +329,7 @@ export function RequestsHall() {
         })}
       </div>
 
-      {filteredRequests.length === 0 && (
+      {!isLoading && filteredRequests.length === 0 && (
         <div className="text-center py-12 text-amber-300/60">
           <Bell className="w-12 h-12 mx-auto mb-4 opacity-40" />
           <p>暂无符合条件的求种信息</p>

@@ -160,11 +160,11 @@ export const getHeaders = async (config: OpenAPIConfig, options: ApiRequestOptio
         ...options.headers,
         ...formHeaders,
     })
-        .filter(([_, value]) => isDefined(value))
-        .reduce((headers, [key, value]) => ({
-            ...headers,
-            [key]: String(value),
-        }), {} as Record<string, string>);
+    .filter(([_, value]) => isDefined(value))
+    .reduce((headers, [key, value]) => ({
+        ...headers,
+        [key]: String(value),
+    }), {} as Record<string, string>);
 
     if (isStringWithValue(token)) {
         headers['Authorization'] = `Bearer ${token}`;
@@ -278,7 +278,7 @@ export const catchErrorCodes = (options: ApiRequestOptions, result: ApiResult): 
         })();
 
         throw new ApiError(options, result,
-            `Generic Error: url: ${result.url}; status: ${errorStatus}; status text: ${errorStatusText}; body: ${errorBody}`
+            `Generic Error: status: ${errorStatus}; status text: ${errorStatusText}; body: ${errorBody}`
         );
     }
 };

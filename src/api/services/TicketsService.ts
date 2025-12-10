@@ -2,10 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AdminListTicketsDto } from '../models/AdminListTicketsDto';
+import type { AssignTicketDto } from '../models/AssignTicketDto';
 import type { CloseTicketDto } from '../models/CloseTicketDto';
 import type { ConfirmResolvedDto } from '../models/ConfirmResolvedDto';
 import type { CreateTicketDto } from '../models/CreateTicketDto';
 import type { ListTicketsDto } from '../models/ListTicketsDto';
+import type { MarkResolvedDto } from '../models/MarkResolvedDto';
+import type { MyTodosDto } from '../models/MyTodosDto';
 import type { ReplyDto } from '../models/ReplyDto';
 import type { TicketDetailDto } from '../models/TicketDetailDto';
 import type { UploadAttachmentDto } from '../models/UploadAttachmentDto';
@@ -124,6 +128,66 @@ export class TicketsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/tickets/confirm-resolved',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * @param requestBody
+     * @returns any
+     * @throws ApiError
+     */
+    public static ticketsControllerAssign(
+        requestBody: AssignTicketDto,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/tickets/assign',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * @param requestBody
+     * @returns any
+     * @throws ApiError
+     */
+    public static ticketsControllerMarkResolved(
+        requestBody: MarkResolvedDto,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/tickets/mark-resolved',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * @param requestBody
+     * @returns any
+     * @throws ApiError
+     */
+    public static ticketsControllerAdminList(
+        requestBody: AdminListTicketsDto,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/tickets/admin/list',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * @param requestBody
+     * @returns any
+     * @throws ApiError
+     */
+    public static ticketsControllerTodos(
+        requestBody: MyTodosDto,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/tickets/todos',
             body: requestBody,
             mediaType: 'application/json',
         });

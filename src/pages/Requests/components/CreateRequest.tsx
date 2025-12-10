@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { Upload, X, Award, AlertCircle, CheckCircle2, Image as ImageIcon } from 'lucide-react';
+import { useRequestActions } from '@/pages/Requests/hooks/useRequestActions';
+import { ImagesService } from '@/api/services/ImagesService';
+import { extractErrorMessage } from '@/utils/errorMessage';
 
 export function CreateRequest() {
   const [formData, setFormData] = useState({
@@ -23,17 +26,63 @@ export function CreateRequest() {
     { value: 30, label: '30天' },
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const actions = useRequestActions();
+
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('发布求种', formData);
+    setError(null);
+    try {
+      const created = await actions.create.mutateAsync({
+        title: formData.title,
+        category: formData.category,
+        description: formData.description,
+        bounty: Number(formData.bounty || 0),
+        deadlineDays: Number(formData.deadline || 7),
+        attachments,
+      } as any);
+      const newId = (created as any)?.id ?? (created as any)?.data?.id;
+      if (newId) await actions.publish.mutateAsync({ id: String(newId) });
+    } catch (err: any) {
+      setError(extractErrorMessage(err, '发布求种失败'));
+    }
   };
 
-  const handleSaveDraft = () => {
-    console.log('保存草稿', formData);
+  const handleSaveDraft = async () => {
+    setError(null);
+    try {
+      await actions.saveDraft.mutateAsync({
+        title: formData.title,
+        category: formData.category,
+        description: formData.description,
+        bounty: Number(formData.bounty || 0),
+        deadlineDays: Number(formData.deadline || 7),
+        attachments,
+      } as any);
+    } catch (err: any) {
+      setError(extractErrorMessage(err, '保存草稿失败'));
+    }
   };
 
-  const addAttachment = () => {
-    setAttachments([...attachments, `attachment-${attachments.length + 1}.jpg`]);
+  const addAttachment = async () => {
+    try {
+      setIsUploading(true);
+      setError(null);
+      // 简化演示：真实项目中这里应打开文件选择并读取文件内容为 base64
+      const demoContent = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB...';
+      const filename = `attachment-${attachments.length + 1}.png`;
+      const resp = await ImagesService.imagesControllerUpload({ content: demoContent, filename } as any);
+      const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data ?? resp;
+      const url = body?.data?.url ?? body?.url;
+      if (!url) throw new Error('上传失败：未返回 URL');
+      setAttachments([...attachments, url]);
+    } catch (err: any) {
+      setError(extractErrorMessage(err, '上传图片失败'));
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const removeAttachment = (index: number) => {
@@ -43,6 +92,8 @@ export function CreateRequest() {
   const isFormValid = formData.title && formData.category && formData.description &&
     formData.bounty && parseInt(formData.bounty) > 0 &&
     parseInt(formData.bounty) <= userBalance && agreedToRules;
+
+  // 发布流程：create → publish；已在 handleSubmit 中实现
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -64,6 +115,12 @@ export function CreateRequest() {
           <div className="text-amber-50">{userBalance.toLocaleString()} 积分</div>
         </div>
       </div>
+
+      {error && (
+        <div className="bg-red-500/10 border border-red-400/30 rounded-lg p-4 text-red-300">
+          {error}
+        </div>
+      )}
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -101,8 +158,8 @@ export function CreateRequest() {
                     type="button"
                     onClick={() => setFormData({ ...formData, category: cat })}
                     className={`px-4 py-2 rounded-lg transition-all ${formData.category === cat
-                        ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
-                        : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
+                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                      : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                       }`}
                   >
                     {cat}
@@ -161,7 +218,7 @@ export function CreateRequest() {
                 className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all flex items-center gap-2"
               >
                 <Upload className="w-4 h-4" />
-                上传图片
+                {isUploading ? '上传中...' : '上传图片'}
               </button>
               <p className="text-amber-400/50 text-sm">
                 可上传封面图、截图等参考资料，帮助应答者更好地理解需求
@@ -235,8 +292,8 @@ export function CreateRequest() {
                     type="button"
                     onClick={() => setFormData({ ...formData, deadline: option.value })}
                     className={`px-4 py-2 rounded-lg transition-all ${formData.deadline === option.value
-                        ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
-                        : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
+                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                      : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                       }`}
                   >
                     {option.label}
@@ -300,8 +357,8 @@ export function CreateRequest() {
             type="submit"
             disabled={!isFormValid}
             className={`flex-1 py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${isFormValid
-                ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white'
-                : 'bg-gray-500/20 text-gray-400 cursor-not-allowed'
+              ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white'
+              : 'bg-gray-500/20 text-gray-400 cursor-not-allowed'
               }`}
           >
             <CheckCircle2 className="w-5 h-5" />
@@ -327,3 +384,4 @@ export function CreateRequest() {
     </div>
   );
 }
+

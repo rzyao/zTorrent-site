@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useMyResponsesQuery } from '@/pages/Requests/hooks/useMyResponsesQuery';
+import { useRequestActions } from '@/pages/Requests/hooks/useRequestActions';
 import { Clock, CheckCircle2, XCircle, AlertTriangle, Upload, MessageSquare, Award } from 'lucide-react';
 
 interface MyResponse {
@@ -16,81 +18,31 @@ interface MyResponse {
   timeRemaining: string;
 }
 
-const mockMyResponses: MyResponse[] = [
-  {
-    id: '1',
-    requestId: 'req-1',
-    requestTitle: '求权力的游戏第八季蓝光原盘',
-    category: '剧集',
-    bounty: 8000,
-    claimedAt: '2025-12-05 10:30',
-    deadline: '2025-12-12',
-    status: 'claimed',
-    requester: 'SeriesFan',
-    timeRemaining: '4天23小时',
-  },
-  {
-    id: '2',
-    requestId: 'req-2',
-    requestTitle: '求《沙丘》导演剪辑版4K',
-    category: '电影',
-    bounty: 6000,
-    claimedAt: '2025-12-06 14:20',
-    deadline: '2025-12-13',
-    status: 'submitted',
-    requester: 'MovieCollector',
-    submittedAt: '2025-12-07 09:15',
-    timeRemaining: '5天9小时',
-  },
-  {
-    id: '3',
-    requestId: 'req-3',
-    requestTitle: '求BBC地球脉动III 4K完整版',
-    category: '纪录片',
-    bounty: 4000,
-    claimedAt: '2025-12-01 08:00',
-    deadline: '2025-12-08',
-    status: 'approved',
-    requester: 'NatureLover',
-    submittedAt: '2025-12-05 16:30',
-    timeRemaining: '已完成',
-  },
-  {
-    id: '4',
-    requestId: 'req-4',
-    requestTitle: '求某部冷门电影蓝光',
-    category: '电影',
-    bounty: 3000,
-    claimedAt: '2025-11-28 12:00',
-    deadline: '2025-12-05',
-    status: 'rejected',
-    requester: 'FilmBuff',
-    submittedAt: '2025-12-04 10:00',
-    rejectionReason: '提供的资源不是蓝光原盘，而是压制版本，不符合要求',
-    timeRemaining: '已结束',
-  },
-  {
-    id: '5',
-    requestId: 'req-5',
-    requestTitle: '求某演唱会完整版',
-    category: '音乐',
-    bounty: 2500,
-    claimedAt: '2025-11-25 15:30',
-    deadline: '2025-12-02',
-    status: 'disputed',
-    requester: 'MusicLover',
-    submittedAt: '2025-12-01 20:00',
-    rejectionReason: '发布者认为音质不达标',
-    timeRemaining: '仲裁中',
-  },
-];
+// 将后端应答记录映射为 UI 需要的最小字段集
 
 type StatusFilter = 'all' | 'claimed' | 'submitted' | 'approved' | 'rejected' | 'disputed';
 
 export function MyResponses() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const { items, isLoading, error } = useMyResponsesQuery();
+  const actions = useRequestActions();
 
-  const filteredResponses = mockMyResponses.filter(
+  const mappedResponses: MyResponse[] = (items as any[]).map((r) => ({
+    id: String(r?.id ?? ''),
+    requestId: String(r?.requestId ?? ''),
+    requestTitle: String(r?.requestTitle ?? r?.request?.title ?? ''),
+    category: String(r?.category ?? r?.request?.category ?? '其他'),
+    bounty: Number(r?.bounty ?? r?.request?.bounty ?? 0),
+    claimedAt: String(r?.claimedAt ?? ''),
+    deadline: String(r?.deadlineAt ?? r?.deadline ?? ''),
+    status: (['claimed','submitted','approved','rejected','disputed'].includes(String(r?.status)) ? String(r?.status) : 'claimed') as MyResponse['status'],
+    requester: String(r?.requester?.name ?? r?.requester ?? ''),
+    submittedAt: r?.submittedAt ?? undefined,
+    rejectionReason: r?.rejectionReason ?? undefined,
+    timeRemaining: String(r?.timeRemaining ?? ''),
+  }));
+
+  const filteredResponses = mappedResponses.filter(
     response => statusFilter === 'all' || response.status === statusFilter
   );
 
@@ -139,8 +91,8 @@ export function MyResponses() {
     }
   };
 
-  const activeTasks = mockMyResponses.filter(r => ['claimed', 'submitted', 'disputed'].includes(r.status));
-  const completedTasks = mockMyResponses.filter(r => r.status === 'approved');
+  const activeTasks = mappedResponses.filter(r => ['claimed', 'submitted', 'disputed'].includes(r.status));
+  const completedTasks = mappedResponses.filter(r => r.status === 'approved');
   const totalEarned = completedTasks.reduce((sum, r) => sum + r.bounty, 0);
 
   return (
@@ -183,6 +135,11 @@ export function MyResponses() {
           </div>
         ))}
       </div>
+
+      {/* 错误与加载处理 */}
+      {error && (
+        <div className="bg-red-500/10 border border-red-400/30 rounded-lg p-4 text-red-300">{error.message}</div>
+      )}
 
       {/* Status Filter */}
       <div className="bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4">
@@ -313,16 +270,27 @@ export function MyResponses() {
                 <div className="flex flex-wrap gap-2 pt-2">
                   {response.status === 'claimed' && (
                     <>
-                      <button className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all text-sm flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          const link = prompt('请输入资源链接');
+                          actions.submit.mutate({ claimId: response.id, resource: { link } });
+                        }}
+                        disabled={actions.submit.isLoading}
+                        className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
+                      >
                         <Upload className="w-4 h-4" />
-                        提交资源
+                        {actions.submit.isLoading ? '提交中...' : '提交资源'}
                       </button>
                       <button className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
                         联系需求方
                       </button>
-                      <button className="px-4 py-2 bg-red-500/20 border border-red-400/30 hover:bg-red-500/30 text-red-300 rounded-lg transition-all text-sm flex items-center gap-2">
+                      <button
+                        onClick={() => actions.abandon.mutate({ claimId: response.id })}
+                        disabled={actions.abandon.isLoading}
+                        className="px-4 py-2 bg-red-500/20 border border-red-400/30 hover:bg-red-500/30 text-red-300 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
+                      >
                         <XCircle className="w-4 h-4" />
-                        放弃任务
+                        {actions.abandon.isLoading ? '放弃中...' : '放弃任务'}
                       </button>
                     </>
                   )}
@@ -340,8 +308,15 @@ export function MyResponses() {
 
                   {response.status === 'rejected' && (
                     <>
-                      <button className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all text-sm">
-                        重新提交
+                      <button
+                        onClick={() => {
+                          const link = prompt('请输入新的资源链接');
+                          actions.resubmit.mutate({ submissionId: response.id, resource: { link } });
+                        }}
+                        disabled={actions.resubmit.isLoading}
+                        className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all text-sm disabled:opacity-60"
+                      >
+                        {actions.resubmit.isLoading ? '提交中...' : '重新提交'}
                       </button>
                       <button className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg transition-all text-sm flex items-center gap-2">
                         <MessageSquare className="w-4 h-4" />
@@ -373,7 +348,7 @@ export function MyResponses() {
         })}
       </div>
 
-      {filteredResponses.length === 0 && (
+      {!isLoading && filteredResponses.length === 0 && (
         <div className="text-center py-12 text-amber-300/60">
           <CheckCircle2 className="w-12 h-12 mx-auto mb-4 opacity-40" />
           <p>暂无符合条件的应答记录</p>

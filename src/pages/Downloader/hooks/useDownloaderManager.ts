@@ -1,12 +1,16 @@
 // 下载器页面 - 业务逻辑自定义 Hook
 // 说明：集中管理状态与事件处理，UI 组件仅负责渲染。这样做到关注点分离、易于测试与维护。
 
-import { useState } from 'react';
-import { Downloader, DownloaderForm, DownloadPath } from '../types';
+import { useState, useEffect, useCallback } from 'react';
+import { Downloader, DownloaderForm, DownloadPath, DownloaderType } from '../types';
+import { DownloadersService } from '../../../api/services/DownloadersService';
+import { CreateDownloaderDto } from '../../../api/models/CreateDownloaderDto';
+import { UpdateDownloaderDto } from '../../../api/models/UpdateDownloaderDto';
 
-export function useDownloaderManager(initialDownloaders: Downloader[]) {
+export function useDownloaderManager() {
   // 下载器列表数据源
-  const [downloaders, setDownloaders] = useState<Downloader[]>(initialDownloaders);
+  const [downloaders, setDownloaders] = useState<Downloader[]>([]);
+  const [loading, setLoading] = useState(false);
 
   // 弹窗相关状态
   const [showAddModal, setShowAddModal] = useState(false);
@@ -34,90 +38,181 @@ export function useDownloaderManager(initialDownloaders: Downloader[]) {
   const [fetchingCategories, setFetchingCategories] = useState(false);
   const [fetchingPaths, setFetchingPaths] = useState(false);
 
+  // 加载下载器列表
+  const fetchDownloaders = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await DownloadersService.downloadersControllerList();
+      if (res.data) {
+        // 类型适配：API 返回的 status 是 string，前端是联合类型，这里直接断言
+        setDownloaders(res.data as unknown as Downloader[]);
+      }
+    } catch (error) {
+      console.error('Failed to fetch downloaders:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // 初始加载
+  useEffect(() => {
+    fetchDownloaders();
+  }, [fetchDownloaders]);
+
   // 添加下载器
-  const handleAddDownloader = () => {
-    const newDownloader: Downloader = {
-      id: Date.now().toString(),
-      ...formData,
-      status: 'disconnected',
-    };
-    setDownloaders(prev => [...prev, newDownloader]);
-    setShowAddModal(false);
-    resetForm();
+  const handleAddDownloader = async () => {
+    try {
+      const dto: CreateDownloaderDto = {
+        ...formData,
+        ssl: Boolean(formData.ssl),
+        // @ts-ignore: Enum compatibility
+        type: formData.type,
+      };
+      await DownloadersService.downloadersControllerCreate(dto);
+      await fetchDownloaders();
+      setShowAddModal(false);
+      resetForm();
+    } catch (error) {
+      console.error('Failed to create downloader:', error);
+      alert('添加失败，请检查输入或重试');
+    }
   };
 
   // 编辑下载器
-  const handleEditDownloader = () => {
+  const handleEditDownloader = async () => {
     if (!selectedDownloader) return;
-    setDownloaders(prev => prev.map(d => (d.id === selectedDownloader.id ? { ...d, ...formData } : d)));
-    setShowEditModal(false);
-    setSelectedDownloader(null);
-    resetForm();
+    try {
+      const dto: UpdateDownloaderDto = {
+        id: selectedDownloader.id,
+        ...formData,
+        ssl: Boolean(formData.ssl),
+        // @ts-ignore: Enum compatibility
+        type: formData.type,
+      };
+      await DownloadersService.downloadersControllerUpdate(dto);
+      await fetchDownloaders();
+      setShowEditModal(false);
+      setSelectedDownloader(null);
+      resetForm();
+    } catch (error) {
+      console.error('Failed to update downloader:', error);
+      alert('更新失败，请重试');
+    }
   };
 
   // 删除下载器
-  const handleDeleteDownloader = (id: string) => {
-    // 注意：UI 中可增加确认对话框；Hook 不做 UI 逻辑，仅提供删除方法
-    setDownloaders(prev => prev.filter(d => d.id !== id));
+  const handleDeleteDownloader = async (id: string) => {
+    try {
+      await DownloadersService.downloadersControllerDelete({ id });
+      // 乐观更新或重新拉取
+      setDownloaders(prev => prev.filter(d => d.id !== id));
+    } catch (error) {
+      console.error('Failed to delete downloader:', error);
+      alert('删除失败，请重试');
+      // 如果失败，最好重新拉取一次以保持同步
+      fetchDownloaders();
+    }
   };
 
-  // 测试连接（模拟：同时写入 categories 与 downloadPaths，真实项目请替换为 API 请求）
-  const handleTestConnection = (id: string) => {
-    const mockCategories = ['电影', '剧集', '纪录片', '动漫', '音乐', '软件'];
-    const mockPaths: DownloadPath[] = [
-      { name: '默认路径', path: '/downloads/torrents', freeSpace: 2.4 * 1024 * 1024 * 1024 * 1024 },
-      { name: '电影专用', path: '/media/movies', freeSpace: 1.8 * 1024 * 1024 * 1024 * 1024 },
-      { name: '剧集专用', path: '/media/tv-shows', freeSpace: 3.2 * 1024 * 1024 * 1024 * 1024 },
-    ];
-    setDownloaders(prev => prev.map(d => (
-      d.id === id
-        ? { ...d, status: 'connected', version: 'v4.6.2', categories: mockCategories, downloadPaths: mockPaths }
-        : d
-    )));
+  // 测试连接
+  const handleTestConnection = async (id: string) => {
+    try {
+      const res = await DownloadersService.downloadersControllerTest({ id });
+      if (res.data) {
+        const updated = res.data as unknown as Downloader;
+        setDownloaders(prev => prev.map(d => (d.id === id ? updated : d)));
+        // 如果当前正好选中了这个下载器（例如在详情页），也更新选中状态
+        if (selectedDownloader?.id === id) {
+          setSelectedDownloader(updated);
+        }
+      }
+    } catch (error) {
+      console.error('Connection test failed:', error);
+      // 可以更新状态为 error
+      setDownloaders(prev => prev.map(d => (d.id === id ? { ...d, status: 'error' } : d)));
+    }
   };
 
   // 打开详情弹窗（按需获取信息）
   const handleFetchInfo = (downloader: Downloader) => {
     setSelectedDownloader(downloader);
     setShowDetailModal(true);
+    // 打开时可以重置展开状态
+    setExpandedCategories(false);
+    setExpandedPaths(false);
   };
 
-  // 获取分类（模拟异步）
-  const handleFetchCategories = () => {
+  // 获取分类
+  const handleFetchCategories = async () => {
     if (!selectedDownloader) return;
-    setFetchingCategories(true);
-    setTimeout(() => {
-      const mockCategories = ['电影', '剧集', '纪录片', '动漫', '音乐', '软件'];
-      setDownloaders(prev => prev.map(d => (d.id === selectedDownloader.id ? { ...d, categories: mockCategories } : d)));
-      setSelectedDownloader({ ...selectedDownloader, categories: mockCategories });
+    try {
+      setFetchingCategories(true);
+      const res = await DownloadersService.downloadersControllerCategories({ id: selectedDownloader.id });
+      if (res.data) {
+        const categories = res.data;
+        const updatedDownloader = { ...selectedDownloader, categories };
+
+        setDownloaders(prev => prev.map(d => (d.id === selectedDownloader.id ? updatedDownloader : d)));
+        setSelectedDownloader(updatedDownloader);
+        setExpandedCategories(true);
+      }
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+    } finally {
       setFetchingCategories(false);
-      setExpandedCategories(true);
-    }, 800);
+    }
   };
 
-  // 获取下载路径（模拟异步）
-  const handleFetchPaths = () => {
+  // 获取下载路径
+  const handleFetchPaths = async () => {
     if (!selectedDownloader) return;
-    setFetchingPaths(true);
-    setTimeout(() => {
-      const mockPaths: DownloadPath[] = [
-        { name: '默认路径', path: '/downloads/torrents', freeSpace: 2.4 * 1024 * 1024 * 1024 * 1024 },
-        { name: '电影专用', path: '/media/movies', freeSpace: 1.8 * 1024 * 1024 * 1024 * 1024 },
-        { name: '剧集专用', path: '/media/tv-shows', freeSpace: 3.2 * 1024 * 1024 * 1024 * 1024 },
-      ];
-      setDownloaders(prev => prev.map(d => (d.id === selectedDownloader.id ? { ...d, downloadPaths: mockPaths } : d)));
-      setSelectedDownloader({ ...selectedDownloader, downloadPaths: mockPaths });
+    try {
+      setFetchingPaths(true);
+      const res = await DownloadersService.downloadersControllerPaths({ id: selectedDownloader.id });
+      if (res.data) {
+        const paths = res.data as DownloadPath[];
+        const updatedDownloader = { ...selectedDownloader, downloadPaths: paths };
+
+        setDownloaders(prev => prev.map(d => (d.id === selectedDownloader.id ? updatedDownloader : d)));
+        setSelectedDownloader(updatedDownloader);
+        setExpandedPaths(true);
+      }
+    } catch (error) {
+      console.error('Failed to fetch paths:', error);
+    } finally {
       setFetchingPaths(false);
-      setExpandedPaths(true);
-    }, 800);
+    }
   };
 
   // 删除分类（基于索引）
-  const handleDeleteCategory = (categoryIndex: number) => {
+  const handleDeleteCategory = async (categoryIndex: number) => {
     if (!selectedDownloader || !selectedDownloader.categories) return;
-    const updatedCategories = selectedDownloader.categories.filter((_, i) => i !== categoryIndex);
-    setDownloaders(prev => prev.map(d => (d.id === selectedDownloader.id ? { ...d, categories: updatedCategories } : d)));
-    setSelectedDownloader({ ...selectedDownloader, categories: updatedCategories });
+
+    // 注意：当前 API 仅支持按索引删除，需确保后端实现与此一致
+    // 或者后端需要具体的分类名称？查看服务定义：downloadersControllerDeleteCategory 接收 DeleteCategoryDto
+    // 让我们查看 DeleteCategoryDto 的定义
+    try {
+      // 假设 DeleteCategoryDto 需要 id 和 categoryName 或 index
+      // 检查 DeleteCategoryDto:
+      // export type DeleteCategoryDto = { id: string; index?: number; name?: string; };
+
+      // 这里我们先传递 index
+      await DownloadersService.downloadersControllerDeleteCategory({
+        id: selectedDownloader.id,
+        index: categoryIndex
+      });
+
+      // 成功后手动更新本地状态，或者重新获取分类
+      const updatedCategories = selectedDownloader.categories.filter((_, i) => i !== categoryIndex);
+      const updatedDownloader = { ...selectedDownloader, categories: updatedCategories };
+
+      setDownloaders(prev => prev.map(d => (d.id === selectedDownloader.id ? updatedDownloader : d)));
+      setSelectedDownloader(updatedDownloader);
+
+    } catch (error) {
+      console.error('Failed to delete category:', error);
+      alert('删除分类失败');
+    }
   };
 
   // 重置表单数据（用于关闭弹窗后清理状态）
@@ -136,7 +231,7 @@ export function useDownloaderManager(initialDownloaders: Downloader[]) {
       port: downloader.port,
       username: downloader.username,
       password: downloader.password,
-      ssl: downloader.ssl,
+      ssl: downloader.ssl ?? false,
     });
     setShowEditModal(true);
   };
@@ -146,6 +241,7 @@ export function useDownloaderManager(initialDownloaders: Downloader[]) {
     downloaders,
     selectedDownloader,
     setSelectedDownloader,
+    loading,
 
     // 弹窗控制
     showAddModal,
@@ -182,6 +278,6 @@ export function useDownloaderManager(initialDownloaders: Downloader[]) {
     handleDeleteCategory,
     resetForm,
     openEditModal,
+    fetchDownloaders,
   } as const;
 }
-

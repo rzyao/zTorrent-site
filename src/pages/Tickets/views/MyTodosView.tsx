@@ -12,32 +12,17 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useEffect, useMemo, useState } from 'react';
+import { useTickets } from '@/pages/Tickets/hooks/useTickets';
 
 export function MyTodosView() {
-  const myTodos = [
-    {
-      id: 'TK-2024-001',
-      title: '下载速度异常缓慢',
-      user: 'UserName',
-      category: 'technical',
-      priority: 'high',
-      assignedAt: '2024-11-26 12:00',
-      messagesCount: 4,
-      lastReplyAt: '2024-11-26 14:15',
-      waitingTime: '2小时',
-    },
-    {
-      id: 'TK-2024-007',
-      title: '积分计算错误',
-      user: 'PowerUser',
-      category: 'account',
-      priority: 'normal',
-      assignedAt: '2024-11-26 13:30',
-      messagesCount: 3,
-      lastReplyAt: '2024-11-26 15:20',
-      waitingTime: '45分钟',
-    },
-  ];
+  const { listTodos, todos } = useTickets();
+  const [items, setItems] = useState<any[]>([]);
+  useEffect(() => { listTodos({ page: 1, pageSize: 20 }); }, []);
+  useEffect(() => {
+    const arr = (todos?.items ?? todos) || [];
+    setItems(Array.isArray(arr) ? arr : []);
+  }, [todos]);
 
   const categoryConfig = {
     technical: {
@@ -87,7 +72,7 @@ export function MyTodosView() {
             <span className="text-amber-400">待处理</span>
             <ListTodo className="w-4 h-4 text-amber-400" />
           </div>
-          <div className="text-white text-3xl">{myTodos.length}</div>
+          <div className="text-white text-3xl">{items.length}</div>
           <p className="text-neutral-500 text-sm mt-2">分配给我的工单</p>
         </div>
         <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
@@ -96,7 +81,7 @@ export function MyTodosView() {
             <AlertCircle className="w-4 h-4 text-orange-400" />
           </div>
           <div className="text-white text-3xl">
-            {myTodos.filter((t) => t.priority === 'high' || t.priority === 'urgent').length}
+            {items.filter((t: any) => t.priority === 'high' || t.priority === 'urgent').length}
           </div>
           <p className="text-neutral-500 text-sm mt-2">需要优先处理</p>
         </div>
@@ -117,13 +102,13 @@ export function MyTodosView() {
         </h3>
 
         <div className="space-y-4">
-          {myTodos.length === 0 ? (
+          {items.length === 0 ? (
             <div className="text-center py-12">
               <CheckCircle2 className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
               <p className="text-neutral-400">太棒了!暂无待处理工单</p>
             </div>
           ) : (
-            myTodos.map((todo) => {
+            items.map((todo: any) => {
               const categoryInfo = categoryConfig[todo.category as keyof typeof categoryConfig];
               const priorityInfo = priorityConfig[todo.priority as keyof typeof priorityConfig];
 
@@ -183,7 +168,7 @@ export function MyTodosView() {
                     </div>
                     <div className="flex items-center gap-2 text-orange-400">
                       <Clock className="w-4 h-4" />
-                      <span>等待 {todo.waitingTime}</span>
+                      <span>等待 {Math.round((todo.waitingTimeSec ?? 0) / 60)} 分钟</span>
                     </div>
                   </div>
                 </div>
@@ -235,4 +220,3 @@ export function MyTodosView() {
     </div>
   );
 }
-

@@ -495,4 +495,15 @@ export class TorrentsService {
             },
         });
     }
+    /**
+     * 获取可选种子列表（id/name）
+     * @returns any
+     * @throws ApiError
+     */
+    public static torrentsOptionsControllerOptions(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/torrents/options',
+        });
+    }
 }

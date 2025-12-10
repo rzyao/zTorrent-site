@@ -6,6 +6,7 @@ import { request as __request } from './core/request';
 import { TorrentsService } from './services/TorrentsService';
 import { ImagesService } from './services/ImagesService';
 import { FilmsService } from './services/FilmsService';
+import { TicketsService } from './services/TicketsService';
 
 export async function getOpenAPI() {
   // 初始化一次全局 OpenAPI 配置（仅在浏览器环境）
@@ -55,4 +56,8 @@ export async function getImagesService() {
 export async function getPermissionsService() {
   const mod = await import('./services/PermissionsService');
   return (mod as any).PermissionsService;
+}
+
+export async function getTicketsService() {
+  return TicketsService as any;
 }

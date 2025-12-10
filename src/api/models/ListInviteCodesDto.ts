@@ -5,7 +5,7 @@
 export type ListInviteCodesDto = {
     page: number;
     limit: number;
-    status?: ListInviteCodesDto.status;
+    status: ListInviteCodesDto.status;
 };
 export namespace ListInviteCodesDto {
     export enum status {

@@ -6,10 +6,16 @@ export function SubtitleDetailModal({
   open,
   subtitle,
   onClose,
+  onDownload,
+  onLike,
+  onReport,
 }: {
   open: boolean;
   subtitle: Subtitle | null;
   onClose: () => void;
+  onDownload: (subtitle: Subtitle) => void;
+  onLike: (subtitle: Subtitle) => void;
+  onReport: (subtitle: Subtitle) => void;
 }) {
   if (!open || !subtitle) return null;
   return (
@@ -103,15 +109,15 @@ export function SubtitleDetailModal({
           </div>
 
           <div className="flex gap-3">
-            <button className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-xl text-white transition-all shadow-lg shadow-amber-500/30">
+            <button onClick={() => onDownload(subtitle)} className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-xl text-white transition-all shadow-lg shadow-amber-500/30">
               <Download className="w-5 h-5" />
               下载字幕
             </button>
-            <button className="flex items-center gap-2 px-6 py-3 bg-neutral-800 hover:bg-neutral-700 rounded-xl text-white transition-all">
+            <button onClick={() => onLike(subtitle)} className="flex items-center gap-2 px-6 py-3 bg-neutral-800 hover:bg-neutral-700 rounded-xl text-white transition-all">
               <ThumbsUp className="w-5 h-5" />
               点赞
             </button>
-            <button className="flex items-center gap-2 px-6 py-3 bg-neutral-800 hover:bg-neutral-700 rounded-xl text-white transition-all">
+            <button onClick={() => onReport(subtitle)} className="flex items-center gap-2 px-6 py-3 bg-neutral-800 hover:bg-neutral-700 rounded-xl text-white transition-all">
               <Flag className="w-5 h-5" />
               举报
             </button>
@@ -121,4 +127,3 @@ export function SubtitleDetailModal({
     </div>
   );
 }
-

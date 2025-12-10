@@ -61,123 +61,11 @@ type LibraryView = 'liked' | 'albums' | 'playlists' | 'playlist-detail';
 type DetailTab = 'lyrics' | 'comments' | 'similar';
 
 export function PlayerPage() {
-  const [songs] = useState<Song[]>([
-    {
-      id: '1',
-      title: '夏日回忆',
-      artist: '风声乐队',
-      album: '青春纪念册',
-      duration: 245,
-      cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400',
-      audioUrl: '',
-      liked: true,
-      plays: 15420,
-    },
-    {
-      id: '2',
-      title: '星空物语',
-      artist: '月光组合',
-      album: '梦想的声音',
-      duration: 198,
-      cover: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400',
-      audioUrl: '',
-      liked: false,
-      plays: 8732,
-    },
-    {
-      id: '3',
-      title: '城市之光',
-      artist: 'Urban Sound',
-      album: 'Metropolitan',
-      duration: 223,
-      cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
-      audioUrl: '',
-      liked: true,
-      plays: 23145,
-    },
-    {
-      id: '4',
-      title: '远方的梦',
-      artist: '流浪诗人',
-      album: '旅途',
-      duration: 267,
-      cover: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=400',
-      audioUrl: '',
-      liked: false,
-      plays: 12098,
-    },
-    {
-      id: '5',
-      title: '午夜电台',
-      artist: 'Radio Band',
-      album: 'Night Sessions',
-      duration: 189,
-      cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400',
-      audioUrl: '',
-      liked: true,
-      plays: 19654,
-    },
-    {
-      id: '6',
-      title: '海边漫步',
-      artist: '海风',
-      album: '蓝色时光',
-      duration: 234,
-      cover: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400',
-      audioUrl: '',
-      liked: false,
-      plays: 7821,
-    },
-  ]);
+  const [songs, setSongs] = useState<Song[]>([]);
 
-  const [myAlbums] = useState<Album[]>([
-    {
-      id: '1',
-      title: '青春纪念册',
-      artist: '风声乐队',
-      cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400',
-      year: 2024,
-      tracks: [songs[0]],
-    },
-    {
-      id: '2',
-      title: '梦想的声音',
-      artist: '月光组合',
-      cover: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400',
-      year: 2023,
-      tracks: [songs[1]],
-    },
-  ]);
+  const [myAlbums, setMyAlbums] = useState<Album[]>([]);
 
-  const [myPlaylists, setMyPlaylists] = useState<Playlist[]>([
-    {
-      id: '1',
-      title: '夏日精选',
-      description: '适合夏天听的歌曲',
-      cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400',
-      songs: [songs[0], songs[2]],
-      isOwn: true,
-      creator: '我',
-    },
-    {
-      id: '2',
-      title: '夜深人静',
-      description: '深夜放松音乐',
-      cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400',
-      songs: [songs[4]],
-      isOwn: true,
-      creator: '我',
-    },
-    {
-      id: '3',
-      title: '流行热歌',
-      description: '收藏的热门歌单',
-      cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
-      songs: [songs[2], songs[3]],
-      isOwn: false,
-      creator: '官方推荐',
-    },
-  ]);
+  const [myPlaylists, setMyPlaylists] = useState<Playlist[]>([]);
 
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -185,7 +73,7 @@ export function PlayerPage() {
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
   const [playMode, setPlayMode] = useState<PlayMode>('sequence');
-  const [likedSongs, setLikedSongs] = useState(songs.filter((s) => s.liked).map((s) => s.id));
+  const [likedSongs, setLikedSongs] = useState<string[]>([]);
   const [libraryView, setLibraryView] = useState<LibraryView>('liked');
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null);
   const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
@@ -195,6 +83,9 @@ export function PlayerPage() {
   const [newPlaylistDesc, setNewPlaylistDesc] = useState('');
   const [showPlayerDetail, setShowPlayerDetail] = useState(false);
   const [detailTab, setDetailTab] = useState<DetailTab>('lyrics');
+  const [lyrics, setLyrics] = useState<any>(null);
+  const [comments, setComments] = useState<any[]>([]);
+  const [similar, setSimilar] = useState<Song[]>([]);
 
   const progressRef = useRef<HTMLDivElement>(null);
 
@@ -202,11 +93,28 @@ export function PlayerPage() {
 
   // 模拟音频播放进度
   useEffect(() => {
+    (async () => {
+      const { listSongs, listAlbums, listMyPlaylists } = await import('@/api/adapters/music');
+      try {
+        const [songsRes, albumsRes, myPlaylistsRes] = await Promise.all([
+          listSongs({ page: 1, pageSize: 50 }),
+          listAlbums({ page: 1, pageSize: 50 }),
+          listMyPlaylists({ page: 1, pageSize: 50 }),
+        ]);
+        const songsData = (songsRes as any)?.data?.items ?? (songsRes as any)?.data ?? [];
+        const albumsData = (albumsRes as any)?.data?.items ?? (albumsRes as any)?.data ?? [];
+        const minePlaylists = (myPlaylistsRes as any)?.data?.items ?? (myPlaylistsRes as any)?.data ?? [];
+        setSongs(songsData);
+        setMyAlbums(albumsData);
+        setMyPlaylists(minePlaylists);
+        setLikedSongs((songsData || []).filter((s: any) => s?.liked).map((s: any) => s?.id));
+      } catch { }
+    })();
     let interval: NodeJS.Timeout;
-    if (isPlaying) {
+    if (isPlaying && currentSong) {
       interval = setInterval(() => {
         setCurrentTime((prev) => {
-          if (prev >= currentSong.duration) {
+          if (prev >= (currentSong?.duration || 0)) {
             handleNext();
             return 0;
           }
@@ -215,7 +123,30 @@ export function PlayerPage() {
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [isPlaying, currentSong.duration]);
+  }, [isPlaying, currentSong?.duration]);
+
+  useEffect(() => {
+    (async () => {
+      const { getLyrics, listComments, getSimilarSongs } = await import('@/api/adapters/music');
+      try {
+        if (detailTab === 'lyrics' && currentSong?.id) {
+          const res = await getLyrics({ songId: currentSong.id, lang: 'zh-CN' });
+          const data = (res as any)?.data ?? null;
+          setLyrics(data);
+        }
+        if (detailTab === 'comments' && currentSong?.id) {
+          const res = await listComments({ songId: currentSong.id, page: 1, pageSize: 20 });
+          const items = (res as any)?.data?.items ?? (res as any)?.data ?? [];
+          setComments(items);
+        }
+        if (detailTab === 'similar' && currentSong?.id) {
+          const res = await getSimilarSongs({ songId: currentSong.id, limit: 20 });
+          const items = (res as any)?.data?.items ?? (res as any)?.data ?? [];
+          setSimilar(items);
+        }
+      } catch { }
+    })();
+  }, [detailTab, currentSong?.id]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -249,11 +180,12 @@ export function PlayerPage() {
   };
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!currentSong) return;
     if (progressRef.current) {
       const rect = progressRef.current.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
       const percentage = clickX / rect.width;
-      setCurrentTime(percentage * currentSong.duration);
+      setCurrentTime(percentage * (currentSong?.duration || 0));
     }
   };
 
@@ -305,6 +237,16 @@ export function PlayerPage() {
     setLikedSongs((prev) =>
       prev.includes(songId) ? prev.filter((id) => id !== songId) : [...prev, songId]
     );
+    (async () => {
+      const { likeSong, unlikeSong } = await import('@/api/adapters/music');
+      try {
+        if (likedSongs.includes(songId)) {
+          await unlikeSong({ songId });
+        } else {
+          await likeSong({ songId });
+        }
+      } catch { }
+    })();
   };
 
   const handleCreatePlaylist = () => {
@@ -320,7 +262,17 @@ export function PlayerPage() {
       creator: '我',
     };
 
-    setMyPlaylists((prev) => [...prev, newPlaylist]);
+    (async () => {
+      const { createPlaylist, listMyPlaylists } = await import('@/api/adapters/music');
+      try {
+        await createPlaylist({ title: newPlaylistName, description: newPlaylistDesc });
+        const res = await listMyPlaylists({ page: 1, pageSize: 50 });
+        const mine = (res as any)?.data?.items ?? (res as any)?.data ?? [];
+        setMyPlaylists(mine);
+      } catch {
+        setMyPlaylists((prev) => [...prev, newPlaylist]);
+      }
+    })();
     setNewPlaylistName('');
     setNewPlaylistDesc('');
     setShowCreatePlaylist(false);
@@ -329,40 +281,70 @@ export function PlayerPage() {
   const handleAddToPlaylist = (playlistId: string) => {
     if (!selectedSongForAdd) return;
 
-    setMyPlaylists((prev) =>
-      prev.map((playlist) => {
-        if (playlist.id === playlistId && playlist.isOwn) {
-          if (!playlist.songs.find((s) => s.id === selectedSongForAdd.id)) {
-            return {
-              ...playlist,
-              songs: [...playlist.songs, selectedSongForAdd],
-            };
-          }
-        }
-        return playlist;
-      })
-    );
+    (async () => {
+      const { addSongToPlaylist, listMyPlaylists } = await import('@/api/adapters/music');
+      try {
+        await addSongToPlaylist({ playlistId, songId: selectedSongForAdd.id });
+        const res = await listMyPlaylists({ page: 1, pageSize: 50 });
+        const mine = (res as any)?.data?.items ?? (res as any)?.data ?? [];
+        setMyPlaylists(mine);
+      } catch {
+        setMyPlaylists((prev) =>
+          prev.map((playlist) => {
+            if (playlist.id === playlistId && playlist.isOwn) {
+              if (!playlist.songs.find((s) => s.id === selectedSongForAdd.id)) {
+                return {
+                  ...playlist,
+                  songs: [...playlist.songs, selectedSongForAdd],
+                };
+              }
+            }
+            return playlist;
+          })
+        );
+      }
+    })();
 
     setShowAddToPlaylist(false);
     setSelectedSongForAdd(null);
   };
 
   const handleRemoveFromPlaylist = (playlistId: string, songId: string) => {
-    setMyPlaylists((prev) =>
-      prev.map((playlist) => {
-        if (playlist.id === playlistId && playlist.isOwn) {
-          return {
-            ...playlist,
-            songs: playlist.songs.filter((s) => s.id !== songId),
-          };
-        }
-        return playlist;
-      })
-    );
+    (async () => {
+      const { removeSongFromPlaylist, listMyPlaylists } = await import('@/api/adapters/music');
+      try {
+        await removeSongFromPlaylist({ playlistId, songId });
+        const res = await listMyPlaylists({ page: 1, pageSize: 50 });
+        const mine = (res as any)?.data?.items ?? (res as any)?.data ?? [];
+        setMyPlaylists(mine);
+      } catch {
+        setMyPlaylists((prev) =>
+          prev.map((playlist) => {
+            if (playlist.id === playlistId && playlist.isOwn) {
+              return {
+                ...playlist,
+                songs: playlist.songs.filter((s) => s.id !== songId),
+              };
+            }
+            return playlist;
+          })
+        );
+      }
+    })();
   };
 
   const handleDeletePlaylist = (playlistId: string) => {
-    setMyPlaylists((prev) => prev.filter((p) => p.id !== playlistId));
+    (async () => {
+      const { deletePlaylist, listMyPlaylists } = await import('@/api/adapters/music');
+      try {
+        await deletePlaylist({ playlistId });
+        const res = await listMyPlaylists({ page: 1, pageSize: 50 });
+        const mine = (res as any)?.data?.items ?? (res as any)?.data ?? [];
+        setMyPlaylists(mine);
+      } catch {
+        setMyPlaylists((prev) => prev.filter((p) => p.id !== playlistId));
+      }
+    })();
     if (selectedPlaylistId === playlistId) {
       setLibraryView('playlists');
       setSelectedPlaylistId(null);
@@ -375,6 +357,7 @@ export function PlayerPage() {
   };
 
   const likedSongsList = songs.filter((s) => likedSongs.includes(s.id));
+  const similarList = similar.length > 0 ? similar : songs.filter((s) => s.id !== (currentSong?.id || ''));
 
   const renderLibraryContent = () => {
     if (libraryView === 'liked') {
@@ -650,8 +633,8 @@ export function PlayerPage() {
                 <button
                   onClick={() => setLibraryView('liked')}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${libraryView === 'liked'
-                      ? 'bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-400 border border-red-500/30'
-                      : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
+                    ? 'bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-400 border border-red-500/30'
+                    : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
                     }`}
                 >
                   <Heart className={`w-4 h-4 ${libraryView === 'liked' ? 'fill-current' : ''}`} />
@@ -661,8 +644,8 @@ export function PlayerPage() {
                 <button
                   onClick={() => setLibraryView('albums')}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${libraryView === 'albums'
-                      ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400 border border-blue-500/30'
-                      : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
+                    ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400 border border-blue-500/30'
+                    : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
                     }`}
                 >
                   <FolderHeart className="w-4 h-4" />
@@ -675,8 +658,8 @@ export function PlayerPage() {
                     setSelectedPlaylistId(null);
                   }}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${libraryView === 'playlists' || libraryView === 'playlist-detail'
-                      ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-400 border border-purple-500/30'
-                      : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
+                    ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-400 border border-purple-500/30'
+                    : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
                     }`}
                 >
                   <Library className="w-4 h-4" />
@@ -702,7 +685,7 @@ export function PlayerPage() {
         >
           <div
             className="h-full bg-gradient-to-r from-amber-500 to-orange-600 relative transition-all"
-            style={{ width: `${(currentTime / currentSong.duration) * 100}%` }}
+            style={{ width: `${(currentTime / ((currentSong?.duration || 1))) * 100}%` }}
           >
             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg" />
           </div>
@@ -717,26 +700,26 @@ export function PlayerPage() {
               onClick={() => setShowPlayerDetail(true)}
             >
               <img
-                src={currentSong.cover}
-                alt={currentSong.title}
+                src={currentSong?.cover || ''}
+                alt={currentSong?.title || ''}
                 className="w-14 h-14 rounded-lg object-cover shadow-lg"
               />
               <div className="flex-1 min-w-0">
-                <p className="text-white truncate">{currentSong.title}</p>
-                <p className="text-neutral-400 text-sm truncate">{currentSong.artist}</p>
+                <p className="text-white truncate">{currentSong?.title || '未选择歌曲'}</p>
+                <p className="text-neutral-400 text-sm truncate">{currentSong?.artist || ''}</p>
               </div>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  toggleLike(currentSong.id);
+                  currentSong && toggleLike(currentSong.id);
                 }}
-                className={`p-2 rounded-lg transition-all ${likedSongs.includes(currentSong.id)
-                    ? 'text-red-400 hover:bg-red-500/20'
-                    : 'text-neutral-400 hover:text-red-400 hover:bg-neutral-800'
+                className={`p-2 rounded-lg transition-all ${likedSongs.includes(currentSong?.id || '')
+                  ? 'text-red-400 hover:bg-red-500/20'
+                  : 'text-neutral-400 hover:text-red-400 hover:bg-neutral-800'
                   }`}
               >
                 <Heart
-                  className={`w-5 h-5 ${likedSongs.includes(currentSong.id) ? 'fill-current' : ''}`}
+                  className={`w-5 h-5 ${likedSongs.includes(currentSong?.id || '') ? 'fill-current' : ''}`}
                 />
               </button>
             </div>
@@ -780,7 +763,7 @@ export function PlayerPage() {
               <div className="flex items-center gap-2 text-xs text-neutral-400">
                 <span>{formatTime(currentTime)}</span>
                 <span>/</span>
-                <span>{formatTime(currentSong.duration)}</span>
+                <span>{formatTime(currentSong?.duration || 0)}</span>
               </div>
             </div>
 
@@ -837,19 +820,19 @@ export function PlayerPage() {
                 </button>
                 <div>
                   <h2 className="text-white">正在播放</h2>
-                  <p className="text-neutral-500 text-sm">{currentSong.album}</p>
+                  <p className="text-neutral-500 text-sm">{currentSong?.album || ''}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => toggleLike(currentSong.id)}
-                  className={`p-2 rounded-lg transition-all ${likedSongs.includes(currentSong.id)
-                      ? 'text-red-400 bg-red-500/20'
-                      : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
+                  onClick={() => currentSong && toggleLike(currentSong.id)}
+                  className={`p-2 rounded-lg transition-all ${likedSongs.includes(currentSong?.id || '')
+                    ? 'text-red-400 bg-red-500/20'
+                    : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
                     }`}
                 >
                   <Heart
-                    className={`w-5 h-5 ${likedSongs.includes(currentSong.id) ? 'fill-current' : ''}`}
+                    className={`w-5 h-5 ${likedSongs.includes(currentSong?.id || '') ? 'fill-current' : ''}`}
                   />
                 </button>
                 <button className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-all">
@@ -909,8 +892,8 @@ export function PlayerPage() {
                       {/* 封面区域 */}
                       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[55%] aspect-square rounded-full overflow-hidden shadow-2xl border-4 border-neutral-800">
                         <img
-                          src={currentSong.cover}
-                          alt={currentSong.title}
+                          src={currentSong?.cover || ''}
+                          alt={currentSong?.title || ''}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -922,8 +905,8 @@ export function PlayerPage() {
 
                   {/* 歌曲信息 */}
                   <div className="text-center mb-8">
-                    <h1 className="text-white text-3xl mb-2">{currentSong.title}</h1>
-                    <p className="text-neutral-400 text-lg">{currentSong.artist}</p>
+                    <h1 className="text-white text-3xl mb-2">{currentSong?.title || ''}</h1>
+                    <p className="text-neutral-400 text-lg">{currentSong?.artist || ''}</p>
                   </div>
 
                   {/* 进度条 */}
@@ -934,14 +917,14 @@ export function PlayerPage() {
                     >
                       <div
                         className="h-full bg-gradient-to-r from-amber-500 to-orange-600 rounded-full relative transition-all"
-                        style={{ width: `${(currentTime / currentSong.duration) * 100}%` }}
+                        style={{ width: `${(currentTime / ((currentSong?.duration || 1))) * 100}%` }}
                       >
                         <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg" />
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-sm text-neutral-400">
                       <span>{formatTime(currentTime)}</span>
-                      <span>{formatTime(currentSong.duration)}</span>
+                      <span>{formatTime(currentSong?.duration || 0)}</span>
                     </div>
                   </div>
 
@@ -1012,8 +995,8 @@ export function PlayerPage() {
                     <button
                       onClick={() => setDetailTab('lyrics')}
                       className={`pb-3 transition-all relative ${detailTab === 'lyrics'
-                          ? 'text-white'
-                          : 'text-neutral-400 hover:text-neutral-300'
+                        ? 'text-white'
+                        : 'text-neutral-400 hover:text-neutral-300'
                         }`}
                     >
                       歌词
@@ -1027,8 +1010,8 @@ export function PlayerPage() {
                     <button
                       onClick={() => setDetailTab('comments')}
                       className={`pb-3 transition-all relative ${detailTab === 'comments'
-                          ? 'text-white'
-                          : 'text-neutral-400 hover:text-neutral-300'
+                        ? 'text-white'
+                        : 'text-neutral-400 hover:text-neutral-300'
                         }`}
                     >
                       评论
@@ -1042,8 +1025,8 @@ export function PlayerPage() {
                     <button
                       onClick={() => setDetailTab('similar')}
                       className={`pb-3 transition-all relative ${detailTab === 'similar'
-                          ? 'text-white'
-                          : 'text-neutral-400 hover:text-neutral-300'
+                        ? 'text-white'
+                        : 'text-neutral-400 hover:text-neutral-300'
                         }`}
                     >
                       相似推荐
@@ -1068,10 +1051,18 @@ export function PlayerPage() {
                           transition={{ duration: 0.2 }}
                           className="space-y-6 pr-4"
                         >
-                          <div className="text-center py-20">
-                            <Disc className="w-16 h-16 mx-auto mb-4 text-neutral-600" />
-                            <p className="text-neutral-500">暂无歌词</p>
-                          </div>
+                          {lyrics && Array.isArray(lyrics?.lines) && lyrics.lines.length > 0 ? (
+                            <div className="space-y-2 text-center py-8">
+                              {lyrics.lines.map((l: any, idx: number) => (
+                                <p key={idx} className="text-neutral-200">{l.text}</p>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-center py-20">
+                              <Disc className="w-16 h-16 mx-auto mb-4 text-neutral-600" />
+                              <p className="text-neutral-500">暂无歌词</p>
+                            </div>
+                          )}
                         </motion.div>
                       )}
 
@@ -1084,61 +1075,31 @@ export function PlayerPage() {
                           transition={{ duration: 0.2 }}
                           className="space-y-4 pr-4"
                         >
-                          {/* 精彩评论 */}
                           <div>
-                            <h3 className="text-neutral-400 text-sm mb-4">精彩评论</h3>
+                            <h3 className="text-neutral-400 text-sm mb-4">评论</h3>
                             <div className="space-y-4">
-                              {[1, 2, 3].map((i) => (
-                                <div
-                                  key={i}
-                                  className="bg-neutral-800/30 rounded-lg p-4 hover:bg-neutral-800/50 transition-all"
-                                >
-                                  <div className="flex items-start gap-3 mb-2">
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600" />
-                                    <div className="flex-1">
-                                      <p className="text-neutral-300 text-sm mb-1">用户{i}</p>
-                                      <p className="text-white text-sm">
-                                        这首歌真的太好听了，每次听都有不同的感受！
-                                      </p>
-                                      <div className="flex items-center gap-4 mt-2 text-neutral-500 text-xs">
-                                        <span>2024-12-09</span>
-                                        <button className="hover:text-white transition-all">
-                                          <Heart className="w-3 h-3 inline mr-1" />
-                                          {123 + i * 10}
-                                        </button>
+                              {comments.length === 0 ? (
+                                <div className="text-neutral-500">暂无评论</div>
+                              ) : (
+                                comments.map((c: any) => (
+                                  <div key={c.id} className="bg-neutral-800/30 rounded-lg p-4 hover:bg-neutral-800/50 transition-all">
+                                    <div className="flex items-start gap-3 mb-2">
+                                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600" />
+                                      <div className="flex-1">
+                                        <p className="text-neutral-300 text-sm mb-1">{c.userName}</p>
+                                        <p className="text-white text-sm">{c.content}</p>
+                                        <div className="flex items-center gap-4 mt-2 text-neutral-500 text-xs">
+                                          <span>{c.createdAt}</span>
+                                          <button className="hover:text-white transition-all">
+                                            <Heart className="w-3 h-3 inline mr-1" />
+                                            {c.likedCount}
+                                          </button>
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* 最新评论 */}
-                          <div className="mt-6">
-                            <h3 className="text-neutral-400 text-sm mb-4">最新评论</h3>
-                            <div className="space-y-4">
-                              {[4, 5, 6].map((i) => (
-                                <div
-                                  key={i}
-                                  className="bg-neutral-800/30 rounded-lg p-4 hover:bg-neutral-800/50 transition-all"
-                                >
-                                  <div className="flex items-center gap-3 mb-2">
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600" />
-                                    <div className="flex-1">
-                                      <p className="text-neutral-300 text-sm mb-1">听众{i}</p>
-                                      <p className="text-white text-sm">单曲循环中...</p>
-                                      <div className="flex items-center gap-4 mt-2 text-neutral-500 text-xs">
-                                        <span>刚刚</span>
-                                        <button className="hover:text-white transition-all">
-                                          <Heart className="w-3 h-3 inline mr-1" />
-                                          {10 + i}
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
+                                ))
+                              )}
                             </div>
                           </div>
                         </motion.div>
@@ -1154,33 +1115,31 @@ export function PlayerPage() {
                           className="space-y-3 pr-4"
                         >
                           <h3 className="text-neutral-400 text-sm mb-4">与此歌曲相似</h3>
-                          {songs
-                            .filter((s) => s.id !== currentSong.id)
-                            .map((song) => (
-                              <div
-                                key={song.id}
-                                onClick={() => handleSongSelect(songs.findIndex((s) => s.id === song.id))}
-                                className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-800/50 cursor-pointer transition-all group"
-                              >
-                                <div className="relative flex-shrink-0">
-                                  <img
-                                    src={song.cover}
-                                    alt={song.title}
-                                    className="w-14 h-14 rounded-lg object-cover"
-                                  />
-                                  <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
-                                    <Play className="w-5 h-5 text-white" />
-                                  </div>
+                          {similarList.map((song) => (
+                            <div
+                              key={song.id}
+                              onClick={() => handleSongSelect(songs.findIndex((s) => s.id === song.id))}
+                              className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-800/50 cursor-pointer transition-all group"
+                            >
+                              <div className="relative flex-shrink-0">
+                                <img
+                                  src={song.cover}
+                                  alt={song.title}
+                                  className="w-14 h-14 rounded-lg object-cover"
+                                />
+                                <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
+                                  <Play className="w-5 h-5 text-white" />
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-white truncate">{song.title}</p>
-                                  <p className="text-neutral-400 text-sm truncate">{song.artist}</p>
-                                </div>
-                                <span className="text-neutral-500 text-sm">
-                                  {formatTime(song.duration)}
-                                </span>
                               </div>
-                            ))}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-white truncate">{song.title}</p>
+                                <p className="text-neutral-400 text-sm truncate">{song.artist}</p>
+                              </div>
+                              <span className="text-neutral-500 text-sm">
+                                {formatTime(song.duration)}
+                              </span>
+                            </div>
+                          ))}
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -1312,8 +1271,8 @@ export function PlayerPage() {
                         onClick={() => !alreadyAdded && handleAddToPlaylist(playlist.id)}
                         disabled={!!alreadyAdded}
                         className={`w-full p-3 rounded-lg flex items-center gap-3 transition-all ${alreadyAdded
-                            ? 'bg-neutral-800/50 cursor-not-allowed opacity-50'
-                            : 'bg-neutral-900/50 hover:bg-neutral-800'
+                          ? 'bg-neutral-800/50 cursor-not-allowed opacity-50'
+                          : 'bg-neutral-900/50 hover:bg-neutral-800'
                           }`}
                       >
                         <img

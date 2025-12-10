@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Settings,
   Search,
@@ -31,86 +31,17 @@ export function TicketManagementView() {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterAssigned, setFilterAssigned] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const { adminListTickets, adminList, isLoading, assignTicket } = useTickets();
 
-  const allTickets = [
-    {
-      id: 'TK-2024-001',
-      title: '下载速度异常缓慢',
-      user: 'UserName',
-      category: 'technical',
-      status: 'processing',
-      priority: 'high',
-      assignedTo: 'TechSupport',
-      createdAt: '2024-11-26 10:30',
-      messagesCount: 4,
-    },
-    {
-      id: 'TK-2024-002',
-      title: '账号无法登录',
-      user: 'UserName2',
-      category: 'account',
-      status: 'resolved',
-      priority: 'urgent',
-      assignedTo: 'AdminTeam',
-      createdAt: '2024-11-25 15:20',
-      messagesCount: 4,
-    },
-    {
-      id: 'TK-2024-003',
-      title: '种子信息错误',
-      user: 'UserName3',
-      category: 'resource',
-      status: 'pending',
-      priority: 'normal',
-      assignedTo: null,
-      createdAt: '2024-11-26 09:15',
-      messagesCount: 1,
-    },
-    {
-      id: 'TK-2024-004',
-      title: '举报恶意用户',
-      user: 'UserName4',
-      category: 'report',
-      status: 'pending',
-      priority: 'high',
-      assignedTo: null,
-      createdAt: '2024-11-26 08:30',
-      messagesCount: 1,
-    },
-    {
-      id: 'TK-2024-005',
-      title: '魔力值兑换问题',
-      user: 'UserName5',
-      category: 'other',
-      status: 'closed',
-      priority: 'low',
-      assignedTo: 'SupportTeam',
-      createdAt: '2024-11-24 14:00',
-      messagesCount: 4,
-    },
-    {
-      id: 'TK-2024-006',
-      title: '无法上传种子文件',
-      user: 'TesterUser',
-      category: 'technical',
-      status: 'pending',
-      priority: 'normal',
-      assignedTo: null,
-      createdAt: '2024-11-26 16:20',
-      messagesCount: 1,
-    },
-    {
-      id: 'TK-2024-007',
-      title: '积分计算错误',
-      user: 'PowerUser',
-      category: 'account',
-      status: 'processing',
-      priority: 'normal',
-      assignedTo: 'AdminTeam',
-      createdAt: '2024-11-26 11:45',
-      messagesCount: 3,
-    },
-  ];
+  useEffect(() => {
+    const status = filterStatus === 'all' ? null : filterStatus;
+    const assignedTo = filterAssigned === 'all' ? null : (filterAssigned === 'unassigned' ? { value: 'unassigned' } : filterAssigned);
+    adminListTickets({ page: 1, pageSize: 20, status, category: undefined, keyword: searchQuery, assignedTo });
+  }, [filterStatus, filterAssigned, searchQuery]);
+  const allTickets = useMemo(() => {
+    const items = (adminList?.items ?? adminList) || [];
+    return Array.isArray(items) ? items : [];
+  }, [adminList]);
 
   const categoryConfig = {
     technical: {
@@ -199,9 +130,9 @@ export function TicketManagementView() {
 
   const stats = {
     total: allTickets.length,
-    unassigned: allTickets.filter((t) => !t.assignedTo).length,
-    pending: allTickets.filter((t) => t.status === 'pending').length,
-    urgent: allTickets.filter((t) => t.priority === 'urgent').length,
+    unassigned: allTickets.filter((t: any) => !t.assignedTo).length,
+    pending: allTickets.filter((t: any) => t.status === 'pending').length,
+    urgent: allTickets.filter((t: any) => t.priority === 'urgent').length,
   };
 
   return (
@@ -279,7 +210,12 @@ export function TicketManagementView() {
       </div>
 
       <div className="space-y-4">
-        {filteredTickets.length === 0 ? (
+        {isLoading ? (
+          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-12 text-center">
+            <MessageCircle className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
+            <p className="text-neutral-400">加载中...</p>
+          </div>
+        ) : filteredTickets.length === 0 ? (
           <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-12 text-center">
             <MessageCircle className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
             <p className="text-neutral-400">暂无工单</p>
@@ -352,7 +288,7 @@ export function TicketManagementView() {
                       <Button
                         onClick={(e) => {
                           e.stopPropagation();
-                          console.log('分配工单:', ticket.id);
+                          assignTicket({ ticketId: (ticket as any).id, assignee: 'TechSupport' });
                         }}
                         size="sm"
                         className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
@@ -372,4 +308,4 @@ export function TicketManagementView() {
     </div>
   );
 }
-
+import { useTickets } from '@/pages/Tickets/hooks/useTickets';
