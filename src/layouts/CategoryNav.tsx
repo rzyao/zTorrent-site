@@ -23,7 +23,7 @@ export function CategoryNav({ active = '全部', onSelect, inline = false, items
   });
   if (inline) {
     return (
-      <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
+      <div className="flex items-center gap-4 overflow-x-auto scrollbar-hide">
         {sortedList.map((c) => (
           <Button
             key={c.label}

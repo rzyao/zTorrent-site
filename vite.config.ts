@@ -31,6 +31,14 @@ export default defineConfig(({ mode }) => {
         usePolling: true,
         interval: 300,
         ignored: ['**/node_modules/**']
+      },
+      proxy: {
+        '/api': {
+          target: 'http://localhost:8890',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/api/, '')
+        }
       }
     },
     build: {

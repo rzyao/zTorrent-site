@@ -1,19 +1,18 @@
-import { X, Clock, FileText, ThumbsUp, ThumbsDown, Upload, Info } from 'lucide-react';
-import { StatusBadge } from './StatusBadge';
+import { X, Clock, FileText, ThumbsUp, ThumbsDown, CheckCheck, Ban, ArrowRight, Info } from 'lucide-react';
 import type { Candidate } from '../types';
+import { StatusBadge } from './StatusBadge';
+import { getTimeRemaining, getVotePercentage } from '../utils';
 
-export function DetailModal({
+export function CandidateDetailModal({
   candidate,
   onClose,
-  userVote,
   onVote,
-  getTimeRemaining,
+  userVote,
 }: {
   candidate: Candidate;
   onClose: () => void;
+  onVote: (id: string, vote: 'up' | 'down') => void;
   userVote?: 'up' | 'down';
-  onVote: (id: string, type: 'up' | 'down') => void;
-  getTimeRemaining: (deadline: string) => string;
 }) {
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -21,9 +20,7 @@ export function DetailModal({
         <div className="sticky top-0 bg-gradient-to-br from-neutral-800 to-stone-900 border-b border-neutral-700 p-6 flex items-center justify-between z-10">
           <div>
             <h2 className="text-white text-2xl mb-1">{candidate.title}</h2>
-            <p className="text-neutral-400 text-sm">
-              {candidate.type} ({candidate.year})
-            </p>
+            <p className="text-neutral-400 text-sm">{candidate.type} ({candidate.year})</p>
           </div>
           <button onClick={onClose} className="p-2 rounded-lg bg-neutral-700 hover:bg-neutral-600 text-white transition-colors">
             <X className="w-5 h-5" />
@@ -91,9 +88,7 @@ export function DetailModal({
                     <div className="w-32 h-2 bg-neutral-700 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-green-500 to-emerald-600"
-                        style={{
-                          width: `${(candidate.votesUp / (candidate.votesUp + candidate.votesDown)) * 100}%`,
-                        }}
+                        style={{ width: `${(candidate.votesUp / (candidate.votesUp + candidate.votesDown)) * 100}%` }}
                       />
                     </div>
                   </div>
@@ -106,9 +101,7 @@ export function DetailModal({
                     <div className="w-32 h-2 bg-neutral-700 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-red-500 to-rose-600"
-                        style={{
-                          width: `${(candidate.votesDown / (candidate.votesUp + candidate.votesDown)) * 100}%`,
-                        }}
+                        style={{ width: `${(candidate.votesDown / (candidate.votesUp + candidate.votesDown)) * 100}%` }}
                       />
                     </div>
                   </div>
@@ -131,20 +124,22 @@ export function DetailModal({
             <div className="flex items-center gap-4">
               <button
                 onClick={() => onVote(candidate.id, 'up')}
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-all ${userVote === 'up'
-                  ? 'bg-green-500 text-white shadow-lg shadow-green-500/30'
-                  : 'bg-neutral-700/50 text-neutral-300 hover:bg-green-500/20 hover:text-green-400 border border-neutral-600'
-                  }`}
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-all ${
+                  userVote === 'up'
+                    ? 'bg-green-500 text-white shadow-lg shadow-green-500/30'
+                    : 'bg-neutral-700/50 text-neutral-300 hover:bg-green-500/20 hover:text-green-400 border border-neutral-600'
+                }`}
               >
                 <ThumbsUp className="w-5 h-5" />
                 支持上传
               </button>
               <button
                 onClick={() => onVote(candidate.id, 'down')}
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-all ${userVote === 'down'
-                  ? 'bg-red-500 text-white shadow-lg shadow-red-500/30'
-                  : 'bg-neutral-700/50 text-neutral-300 hover:bg-red-500/20 hover:text-red-400 border border-neutral-600'
-                  }`}
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-all ${
+                  userVote === 'down'
+                    ? 'bg-red-500 text-white shadow-lg shadow-red-500/30'
+                    : 'bg-neutral-700/50 text-neutral-300 hover:bg-red-500/20 hover:text-red-400 border border-neutral-600'
+                }`}
               >
                 <ThumbsDown className="w-5 h-5" />
                 反对上传
@@ -153,10 +148,62 @@ export function DetailModal({
           )}
 
           {candidate.status === 'approved' && (
-            <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-lg text-white transition-all shadow-lg shadow-green-500/30">
-              <Upload className="w-5 h-5" />
-              获取上传链接
-            </button>
+            <div className="space-y-3">
+              <div className="p-4 rounded-xl bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                    <CheckCheck className="w-5 h-5 text-green-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-green-400 mb-2">系统通知：候选已通过审核并自动发布</h4>
+                    <p className="text-green-300 text-sm leading-relaxed mb-3">
+                      恭喜！您的候选资源已获得社区支持（支持率 {getVotePercentage(candidate)}%），系统已自动将其发布为正式种子，现在所有用户都可以搜索和下载该资源。
+                    </p>
+                    <div className="pt-3 border-t border-green-500/20">
+                      <div className="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                          <p className="text-green-400 mb-1">发布时间</p>
+                          <p className="text-green-200">{candidate.deadline}</p>
+                        </div>
+                        <div>
+                          <p className="text-green-400 mb-1">种子ID</p>
+                          <p className="text-green-200 font-mono">#{candidate.publishedTorrentId || 'N/A'}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-lg text-white transition-all shadow-lg shadow-green-500/30">
+                <ArrowRight className="w-5 h-5" />
+                查看种子详情页
+              </button>
+            </div>
+          )}
+
+          {candidate.status === 'rejected' && (
+            <div className="space-y-3">
+              <div className="p-4 rounded-xl bg-gradient-to-r from-red-500/20 to-rose-600/20 border border-red-500/30">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                    <Ban className="w-5 h-5 text-red-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-red-400 mb-1">系统通知：候选已被驳回</h4>
+                    <p className="text-red-300 text-sm leading-relaxed mb-2">您的候选资源未通过社区审核（支持率 {getVotePercentage(candidate)}%），请查看驳回原因后重新提交。</p>
+                    {candidate.reason && (
+                      <div className="mt-2 pt-2 border-t border-red-500/30">
+                        <p className="text-red-400 text-xs mb-1">驳回原因：</p>
+                        <p className="text-red-200 text-sm">{candidate.reason}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white transition-all shadow-lg shadow-amber-500/30">
+                重新提交候选
+              </button>
+            </div>
           )}
         </div>
       </div>

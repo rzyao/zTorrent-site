@@ -64,7 +64,7 @@ export function Toolbar(props: ToolbarProps) {
 
   return (
     <div className="sticky top-0 bg-[#0F171E] border-b border-gray-800 z-30">
-      <div className="w-full px-4 md:px-8 pt-2 pb-3">
+      <div className="w-full px-4 md:px-8 pt-4 pb-3">
         <div className="flex flex-col flex-wrap md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
           {/* 分类导航 */}
           <div className="w-full md:flex-auto md:w-auto md:min-w-0 md:pr-2 overflow-x-auto">

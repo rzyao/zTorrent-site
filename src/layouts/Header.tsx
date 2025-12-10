@@ -127,7 +127,7 @@ export function Header() {
               <NavLink
                 to="/home"
                 className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
-              >首页</NavLink>
+              >推荐</NavLink>
               <NavLink
                 to="/torrents"
                 className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
@@ -143,7 +143,7 @@ export function Header() {
                 to="/playlists"
                 className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
               >片单</NavLink>
-              <div
+              {/* <div
                 className="relative group"
                 onMouseEnter={() => {
                   // 进入触发区域：清除可能存在的隐藏定时器，立即显示菜单，避免抖动
@@ -172,20 +172,25 @@ export function Header() {
                 >
                   发布
                   {/* 箭头根据 showPublishMenu 动态旋转，指示展开/收起状态 */}
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showPublishMenu ? 'rotate-180' : ''}`} />
-                </NavLink>
-                <div
-                  className={`absolute left-1/2 -translate-x-1/2 top-full w-24 py-2 bg-[#0F171E] rounded-xl shadow-lg border border-gray-800 z-50 transform-gpu transition-[opacity,transform] ease-out duration-150 ${showPublishMenu ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-1'}`}
-                  style={{ willChange: 'opacity, transform', contain: 'content' }}
-                >
-                  <NavLink to="/upload" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">发资源</NavLink>
-                  <NavLink to="/subtitles" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">发字幕</NavLink>
-                </div>
-              </div>
+              {/* <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showPublishMenu ? 'rotate-180' : ''}`} />
+            </NavLink>
+            <div
+              className={`absolute left-1/2 -translate-x-1/2 top-full w-24 py-2 bg-[#0F171E] rounded-xl shadow-lg border border-gray-800 z-50 transform-gpu transition-[opacity,transform] ease-out duration-150 ${showPublishMenu ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-1'}`}
+              style={{ willChange: 'opacity, transform', contain: 'content' }}
+            >
+              <NavLink to="/upload" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">发资源</NavLink>
+              <NavLink to="/subtitles" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">发字幕</NavLink>
+            </div>
+          </div>  */}
               <NavLink
-                to="/requests"
+                to="/upload"
+                className={({ isActive }) => ((isActive || showPublishMenu) ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors') + ' flex items-center gap-1'}
+              >发布</NavLink>
+              <NavLink
+                to="/candidates"
                 className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
-              >求种</NavLink>
+              >候选</NavLink>
+
               {canEdit && (
                 <div
                   className="relative group"
@@ -228,10 +233,13 @@ export function Header() {
                 to="/forum"
                 className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
               >论坛</NavLink>
-              <NavLink
-                to="/candidates"
-                className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
-              >候选</NavLink>
+
+              {canReview && (
+                <NavLink
+                  to="/review"
+                  className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
+                >审核</NavLink>
+              )}
               <div
                 className="relative group"
                 onMouseEnter={() => {
@@ -251,7 +259,8 @@ export function Header() {
                   moreMenuTimeoutRef.current = window.setTimeout(() => { setShowMoreMenu(false); }, 200);
                 }}
               >
-                <button type="button" className={`${(['/groups', '/rss', '/staff', '/tutorials', '/seeding', '/downloader', '/dead-torrents', '/games', '/announcements'].includes(location.pathname) || showMoreMenu) ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'} flex items-center gap-1`}>
+                {/* 新增路径纳入高亮集合：/music 与 /player */}
+                <button type="button" className={`${(['/groups', '/rss', '/staff', '/tutorials', '/seeding', '/downloader', '/dead-torrents', '/games', '/announcements', '/music', '/player'].includes(location.pathname) || showMoreMenu) ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'} flex items-center gap-1`}>
                   其他
                   <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showMoreMenu ? 'rotate-180' : ''}`} />
                 </button>
@@ -259,6 +268,10 @@ export function Header() {
                   className={`absolute left-1/2 -translate-x-1/2 top-full w-32 py-2 bg-[#0F171E] rounded-xl shadow-lg border border-gray-800 z-50 transform-gpu transition-[opacity,transform] ease-out duration-150 ${showMoreMenu ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-1'}`}
                   style={{ willChange: 'opacity, transform', contain: 'content' }}
                 >
+                  <NavLink to="/tickets" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">工单</NavLink>
+                  <NavLink to="/rules" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">规则</NavLink>
+                  <NavLink to="/requests" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">求种</NavLink>
+                  <NavLink to="/subtitles" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">字幕</NavLink>
                   <NavLink to="/groups" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">制作组</NavLink>
                   <NavLink to="/rss" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">RSS订阅</NavLink>
                   <NavLink to="/staff" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">管理组</NavLink>
@@ -268,22 +281,11 @@ export function Header() {
                   <NavLink to="/dead-torrents" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">断种大厅</NavLink>
                   <NavLink to="/games" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">小游戏</NavLink>
                   <NavLink to="/announcements" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">站点公告</NavLink>
+                  {/* 新增：音乐与播放器入口 */}
+                  <NavLink to="/music" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">音乐</NavLink>
+                  <NavLink to="/player" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">播放器</NavLink>
                 </div>
               </div>
-              <NavLink
-                to="/tickets"
-                className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
-              >工单</NavLink>
-              <NavLink
-                to="/rules"
-                className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
-              >规则</NavLink>
-              {canReview && (
-                <NavLink
-                  to="/review"
-                  className={({ isActive }) => isActive ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'}
-                >审核</NavLink>
-              )}
             </nav>
           </div>
 
@@ -450,13 +452,14 @@ export function Header() {
               )}
             </div>
           </div>
-        </div>
-      </header>
+        </div >
+      </header >
 
       {/* 移动端展开导航菜单 */}
-      <div
+      < div
         className={`md:hidden fixed left-0 right-0 bg-[#0F171E] border-b border-gray-800 z-[60] overflow-hidden transition-all duration-300 ease-in-out ${showMobileMenu ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0'
-          }`}
+          }`
+        }
         style={{ top: '64px' }}
       >
         <nav className="flex flex-col py-4 px-4 space-y-1 max-h-[calc(80vh-32px)] overflow-y-auto">
@@ -508,6 +511,22 @@ export function Header() {
             onClick={() => setShowMobileMenu(false)}
           >
             片单
+          </NavLink>
+          {/* 新增移动端入口：音乐 */}
+          <NavLink
+            to="/music"
+            className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
+            onClick={() => setShowMobileMenu(false)}
+          >
+            音乐
+          </NavLink>
+          {/* 新增移动端入口：播放器 */}
+          <NavLink
+            to="/player"
+            className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
+            onClick={() => setShowMobileMenu(false)}
+          >
+            播放器
           </NavLink>
           {canUpload && (
             <NavLink
@@ -588,7 +607,7 @@ export function Header() {
             站点公告
           </NavLink>
         </nav>
-      </div>
+      </div >
 
       {/* 移动端菜单打开时的遮罩层 */}
       {

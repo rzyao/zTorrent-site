@@ -17,6 +17,19 @@ export interface Candidate {
   comments: number;
   deadline: string;
   reason?: string;
+  requiredVotePercentage?: number;
+  fileSize: string;
+  fileCount: number;
+  seeders: number;
+  leechers: number;
+  uploaderStats?: {
+    uploads: number;
+    ratio: number;
+    reputation: number;
+  };
+  screenshots?: string[];
+  resolution: string;
+  videoCodec: string;
+  audioCodec: string;
+  publishedTorrentId?: string;
 }
-
-export type Tab = 'all' | 'voting' | 'approved' | 'rejected';

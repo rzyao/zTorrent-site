@@ -40,6 +40,8 @@ import { DeadTorrentsPage } from '@/pages/DeadTorrents/index.tsx';
 import { GamesPage } from '@/pages/Games/index.tsx';
 import { MagicFarmPage } from '@/pages/MagicFarm/index.tsx';
 import { AnnouncementsPage } from '@/pages/Announcements/index.tsx';
+import { MusicPage } from '@/pages/MusicPage.tsx';
+import { PlayerPage } from '@/pages/PlayerPage.tsx';
 
 
 function LoginPageWrapper() {
@@ -347,6 +349,10 @@ export default function AppRoutes() {
 
         {/* 魔力农场 */}
         <Route path="/magicfarm" element={<MagicFarmPage />} />
+
+        {/* 音乐与播放器（归类“其他”，默认登录即可访问） */}
+        <Route path="/music" element={<MusicPage />} />
+        <Route path="/player" element={<PlayerPage />} />
 
         {/* 详情与重定向 */}
         <Route path="/torrent/:id" element={
