@@ -27,20 +27,21 @@ export function DownloaderPage() {
     setFormData,
     showPassword,
     setShowPassword,
-    expandedCategories,
-    setExpandedCategories,
+    expandedTags,
+    setExpandedTags,
     expandedPaths,
     setExpandedPaths,
-    fetchingCategories,
+    fetchingTags,
     fetchingPaths,
     handleAddDownloader,
     handleEditDownloader,
     handleDeleteDownloader,
     handleTestConnection,
     handleFetchInfo,
-    handleFetchCategories,
+    handleFetchTags,
     handleFetchPaths,
-    handleDeleteCategory,
+    handleDeleteTag,
+    handleDeletePath,
     resetForm,
     openEditModal,
   } = useDownloaderManager();
@@ -104,16 +105,17 @@ export function DownloaderPage() {
         <DownloaderDetailModal
           open={!!showDetailModal}
           downloader={selectedDownloader}
-          expandedCategories={expandedCategories}
+          expandedTags={expandedTags}
           expandedPaths={expandedPaths}
-          fetchingCategories={fetchingCategories}
+          fetchingTags={fetchingTags}
           fetchingPaths={fetchingPaths}
-          onClose={() => { setShowDetailModal(false); setSelectedDownloader(null); setExpandedCategories(false); setExpandedPaths(false); }}
-          onToggleCategories={() => setExpandedCategories(!expandedCategories)}
-          onFetchCategories={handleFetchCategories}
-          onDeleteCategory={handleDeleteCategory}
+          onClose={() => { setShowDetailModal(false); setSelectedDownloader(null); setExpandedTags(false); setExpandedPaths(false); }}
+          onToggleTags={() => setExpandedTags(!expandedTags)}
+          onFetchTags={handleFetchTags}
+          onDeleteTag={handleDeleteTag}
           onTogglePaths={() => setExpandedPaths(!expandedPaths)}
           onFetchPaths={handleFetchPaths}
+          onDeletePath={handleDeletePath}
         />
       )}
     </div>

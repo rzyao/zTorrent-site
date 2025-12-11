@@ -28,7 +28,7 @@ export interface Downloader {
   activeTorrents?: number; // 活跃种子数
   totalTorrents?: number; // 总种子数
   freeSpace?: number; // 可用空间（字节）
-  categories?: string[]; // 远程下载器返回的分类列表（详情弹窗）
+  tags?: string[]; // 远程下载器返回的标签列表（详情弹窗）
   downloadPaths?: DownloadPath[]; // 远程下载器返回的下载路径列表（详情弹窗）
 }
 

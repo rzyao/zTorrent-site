@@ -25,7 +25,7 @@ import { ReviewPage } from '@/pages/Review/index.tsx';
 import { BonusPage } from '@/pages/Bonus/index.tsx';
 import { InvitePage } from '@/pages/Invite/InvitePage.tsx';
 import { FilmsPage } from '@/pages/FilmsPage.tsx';
-import { PlaylistsPage } from '@/pages/PlaylistsPage.tsx';
+import { PlaylistsPage } from '@/pages/Playlists/index.tsx';
 import { PlaylistDetailPage } from '@/pages/PlaylistDetail/PlaylistDetailPage.tsx';
 import TorrentDetailPage from '@/pages/TorrentDetail/index.tsx';
 import FilmDetailPage from '@/pages/FilmDetail/FilmDetailPage.tsx';
@@ -35,7 +35,7 @@ import { GroupsPage } from '@/pages/Groups/GroupsPage.tsx';
 import { CandidatesPage } from '@/pages/Candidates/index.tsx';
 import { TutorialsPage } from '@/pages/Tutorials/index.tsx';
 import { SeedingPage } from '@/pages/SeedingPage.tsx';
-import { DownloaderPage } from '@/pages/Downloader/index.tsx';
+
 import { DeadTorrentsPage } from '@/pages/DeadTorrents/index.tsx';
 import { GamesPage } from '@/pages/Games/index.tsx';
 import { MagicFarmPage } from '@/pages/MagicFarm/index.tsx';
@@ -333,8 +333,7 @@ export default function AppRoutes() {
         {/* 保种列表 */}
         <Route path="/seeding" element={<SeedingPage />} />
 
-        {/* 下载器 */}
-        <Route path="/downloader" element={<DownloaderPage />} />
+
 
         {/* 断种大厅 */}
         <Route path="/dead-torrents" element={<DeadTorrentsPage />} />

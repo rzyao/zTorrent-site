@@ -2,7 +2,7 @@
 // 说明：集中管理各板块的数据结构与枚举，便于跨组件复用与维护
 
 // Tab 类型枚举（与左侧菜单对应）
-export type TabType = 'profile' | 'preferences' | 'security' | 'notifications' | 'privacy';
+export type TabType = 'profile' | 'preferences' | 'security' | 'notifications' | 'privacy' | 'downloader';
 
 // 个人信息类型
 export interface ProfileData {

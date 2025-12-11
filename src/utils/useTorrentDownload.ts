@@ -118,7 +118,6 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
       // 成功的判定：已成功获取 .torrent Blob 并触发保存文件动作。
       saveBlobAsFile(blob, filename);
       customToast.success('下载成功');
-      navigate(`/torrent/${torrentId}`);
 
       // 成功后记录下载（可选，不影响用户体验）
       try {

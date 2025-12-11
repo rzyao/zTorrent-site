@@ -33,9 +33,9 @@ export function useDownloaderManager() {
   const [showPassword, setShowPassword] = useState(false);
 
   // 详情面板展开与拉取状态
-  const [expandedCategories, setExpandedCategories] = useState(false);
+  const [expandedTags, setExpandedTags] = useState(false);
   const [expandedPaths, setExpandedPaths] = useState(false);
-  const [fetchingCategories, setFetchingCategories] = useState(false);
+  const [fetchingTags, setFetchingTags] = useState(false);
   const [fetchingPaths, setFetchingPaths] = useState(false);
 
   // 加载下载器列表
@@ -138,28 +138,28 @@ export function useDownloaderManager() {
     setSelectedDownloader(downloader);
     setShowDetailModal(true);
     // 打开时可以重置展开状态
-    setExpandedCategories(false);
+    setExpandedTags(false);
     setExpandedPaths(false);
   };
 
-  // 获取分类
-  const handleFetchCategories = async () => {
+  // 获取标签（Tag）
+  const handleFetchTags = async () => {
     if (!selectedDownloader) return;
     try {
-      setFetchingCategories(true);
-      const res = await DownloadersService.downloadersControllerCategories({ id: selectedDownloader.id });
+      setFetchingTags(true);
+      const res = await DownloadersService.downloadersControllerTags({ id: selectedDownloader.id });
       if (res.data) {
-        const categories = res.data;
-        const updatedDownloader = { ...selectedDownloader, categories };
+        const tags = res.data;
+        const updatedDownloader = { ...selectedDownloader, tags };
 
         setDownloaders(prev => prev.map(d => (d.id === selectedDownloader.id ? updatedDownloader : d)));
         setSelectedDownloader(updatedDownloader);
-        setExpandedCategories(true);
+        setExpandedTags(true);
       }
     } catch (error) {
-      console.error('Failed to fetch categories:', error);
+      console.error('Failed to fetch tags:', error);
     } finally {
-      setFetchingCategories(false);
+      setFetchingTags(false);
     }
   };
 
@@ -184,34 +184,49 @@ export function useDownloaderManager() {
     }
   };
 
-  // 删除分类（基于索引）
-  const handleDeleteCategory = async (categoryIndex: number) => {
-    if (!selectedDownloader || !selectedDownloader.categories) return;
+  // 删除标签（基于索引）
+  const handleDeleteTag = async (tagIndex: number) => {
+    if (!selectedDownloader || !selectedDownloader.tags) return;
 
-    // 注意：当前 API 仅支持按索引删除，需确保后端实现与此一致
-    // 或者后端需要具体的分类名称？查看服务定义：downloadersControllerDeleteCategory 接收 DeleteCategoryDto
-    // 让我们查看 DeleteCategoryDto 的定义
     try {
-      // 假设 DeleteCategoryDto 需要 id 和 categoryName 或 index
-      // 检查 DeleteCategoryDto:
-      // export type DeleteCategoryDto = { id: string; index?: number; name?: string; };
-
-      // 这里我们先传递 index
-      await DownloadersService.downloadersControllerDeleteCategory({
+      // 通过索引删除标签
+      await DownloadersService.downloadersControllerDeleteTag({
         id: selectedDownloader.id,
-        index: categoryIndex
+        index: tagIndex
       });
 
-      // 成功后手动更新本地状态，或者重新获取分类
-      const updatedCategories = selectedDownloader.categories.filter((_, i) => i !== categoryIndex);
-      const updatedDownloader = { ...selectedDownloader, categories: updatedCategories };
+      // 成功后手动更新本地状态
+      const updatedTags = selectedDownloader.tags.filter((_, i) => i !== tagIndex);
+      const updatedDownloader = { ...selectedDownloader, tags: updatedTags };
 
       setDownloaders(prev => prev.map(d => (d.id === selectedDownloader.id ? updatedDownloader : d)));
       setSelectedDownloader(updatedDownloader);
 
     } catch (error) {
-      console.error('Failed to delete category:', error);
-      alert('删除分类失败');
+      console.error('Failed to delete tag:', error);
+      alert('删除标签失败');
+    }
+  };
+
+  // 删除下载路径（基于索引）
+  const handleDeletePath = async (pathIndex: number) => {
+    if (!selectedDownloader || !selectedDownloader.downloadPaths) return;
+
+    try {
+      await DownloadersService.downloadersControllerDeletePath({
+        id: selectedDownloader.id,
+        index: pathIndex
+      });
+
+      const updatedPaths = selectedDownloader.downloadPaths.filter((_, i) => i !== pathIndex);
+      const updatedDownloader = { ...selectedDownloader, downloadPaths: updatedPaths };
+
+      setDownloaders(prev => prev.map(d => (d.id === selectedDownloader.id ? updatedDownloader : d)));
+      setSelectedDownloader(updatedDownloader);
+
+    } catch (error) {
+      console.error('Failed to delete path:', error);
+      alert('删除路径失败');
     }
   };
 
@@ -258,12 +273,12 @@ export function useDownloaderManager() {
     setShowPassword,
 
     // 详情展开与加载状态
-    expandedCategories,
-    setExpandedCategories,
+    expandedTags,
+    setExpandedTags,
     expandedPaths,
     setExpandedPaths,
-    fetchingCategories,
-    setFetchingCategories,
+    fetchingTags,
+    setFetchingTags,
     fetchingPaths,
     setFetchingPaths,
 
@@ -273,9 +288,10 @@ export function useDownloaderManager() {
     handleDeleteDownloader,
     handleTestConnection,
     handleFetchInfo,
-    handleFetchCategories,
+    handleFetchTags,
     handleFetchPaths,
-    handleDeleteCategory,
+    handleDeleteTag,
+    handleDeletePath,
     resetForm,
     openEditModal,
     fetchDownloaders,

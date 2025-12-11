@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { PlaylistsService } from '@/api/services/PlaylistsService';
-import type { Playlist } from '../../playlists/types';
+import type { Playlist } from '../types';
 
 export function usePlaylists() {
   const [activeTab, setActiveTab] = useState<'all' | 'mine' | 'following'>('all');

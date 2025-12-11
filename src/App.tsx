@@ -4,6 +4,7 @@ import { AppToaster } from './components/ui/sonner';
 import AppRoutes from './routes/AppRoutes';
 import { AccessProvider } from '@/context/AccessContext';
 import { UserSummaryProvider } from '@/context/UserSummaryContext';
+import { DownloadersProvider } from '@/context/DownloadersContext';
 import { useDictionaryStore } from './stores/dictionaryStore';
 
 // 全局认证事件
@@ -26,8 +27,10 @@ export default function App() {
     <BrowserRouter>
       <AccessProvider>
         <UserSummaryProvider>
-          <AppToaster />
-          <AppRoutes />
+          <DownloadersProvider>
+            <AppToaster />
+            <AppRoutes />
+          </DownloadersProvider>
         </UserSummaryProvider>
       </AccessProvider>
     </BrowserRouter>

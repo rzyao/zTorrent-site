@@ -40,7 +40,15 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
 } from '@/components/ui/context-menu';
+
+import { useDownloaders } from '@/context/DownloadersContext';
+import { DownloadersService } from '@/api/services/DownloadersService';
+import { customToast } from '@/hooks/useToast';
+import { useSourceTracker } from '@/hooks/useSourceTracker';
 
 import { DescriptionData, TorrentDetailPageProps, TorrentData, FileItem, Comment, RelatedTorrent, EnglishMovieInfo } from './types';
 import { processDescription } from './utils/processDescription';
@@ -48,6 +56,8 @@ import { FileListItem } from './components/FileListItem';
 
 export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps) {
   const { downloadByTorrentId } = useTorrentDownload();
+  const { downloaders } = useDownloaders();
+  const { sourcePayload } = useSourceTracker();
   const { id } = useParams();
   const effectiveId = torrentId ?? id;
   const [isDescExpanded, setIsDescExpanded] = useState(true);
@@ -228,6 +238,38 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
     }
     preloadRefs.current = arr;
   }, [stills]);
+
+  /**
+   * 发送到下载器
+   */
+  const handleSendToDownloader = async (downloaderId: string, path?: string) => {
+    if (!effectiveId) return;
+    try {
+      // 1. 获取一次性下载链接
+      const source = sourcePayload ?? { filmId: '', playListId: '' };
+      const resp = await TorrentsService.torrentsControllerCreateDownloadUrl({ torrentId: String(effectiveId), source });
+      const body: any = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
+      const data = body?.data ?? body;
+      const downloadTokenUrl = String(data?.url ?? '');
+
+      if (!downloadTokenUrl) {
+        customToast.error('无法生成下载链接');
+        return;
+      }
+
+      // 2. 发送到下载器
+      await DownloadersService.downloadersControllerDownload({
+        id: downloaderId,
+        url: downloadTokenUrl,
+        path: path // Optional
+      });
+
+      customToast.success('已发送至下载器');
+    } catch (e: any) {
+      const msg = e?.message || '发送失败';
+      customToast.error(msg);
+    }
+  };
 
 
 
@@ -718,6 +760,88 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
         >
           <Download className="w-4 h-4 mr-2" /> 下载种子
         </ContextMenuItem>
+
+        <ContextMenuSeparator />
+
+        {/* 发送到下载器逻辑 */}
+        {downloaders.length === 0 ? (
+          <ContextMenuItem disabled>
+            <Upload className="w-4 h-4 mr-2" /> 无可用下载器
+          </ContextMenuItem>
+        ) : downloaders.length === 1 ? (
+          // 只有一个下载器：直接展示路径列表（若有路径），否则直接点击发送
+          (() => {
+            const downloader = downloaders[0];
+            const paths = downloader.downloadPaths || [];
+
+            if (paths.length > 0) {
+              return (
+                <ContextMenuSub>
+                  <ContextMenuSubTrigger>
+                    <Upload className="w-4 h-4 mr-2" /> 发送到下载器
+                  </ContextMenuSubTrigger>
+                  <ContextMenuSubContent className="w-48">
+                    {paths.map((p, idx) => (
+                      <ContextMenuItem
+                        key={idx}
+                        onSelect={() => handleSendToDownloader(String(downloader.id), p.path)}
+                      >
+                        {p.name || p.path}
+                      </ContextMenuItem>
+                    ))}
+                  </ContextMenuSubContent>
+                </ContextMenuSub>
+              );
+            } else {
+              // 无路径配置，直接发送
+              return (
+                <ContextMenuItem
+                  onSelect={() => handleSendToDownloader(String(downloader.id))}
+                >
+                  <Upload className="w-4 h-4 mr-2" /> 发送到 {downloader.name}
+                </ContextMenuItem>
+              );
+            }
+          })()
+        ) : (
+          // 多个下载器：先选下载器，再选路径
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>
+              <Upload className="w-4 h-4 mr-2" /> 发送到下载器
+            </ContextMenuSubTrigger>
+            <ContextMenuSubContent className="w-48">
+              {downloaders.map((d) => {
+                const paths = d.downloadPaths || [];
+                if (paths.length > 0) {
+                  return (
+                    <ContextMenuSub key={d.id}>
+                      <ContextMenuSubTrigger>{d.name}</ContextMenuSubTrigger>
+                      <ContextMenuSubContent className="w-48">
+                        {paths.map((p, idx) => (
+                          <ContextMenuItem
+                            key={idx}
+                            onSelect={() => handleSendToDownloader(String(d.id), p.path)}
+                          >
+                            {p.name || p.path}
+                          </ContextMenuItem>
+                        ))}
+                      </ContextMenuSubContent>
+                    </ContextMenuSub>
+                  );
+                } else {
+                  return (
+                    <ContextMenuItem
+                      key={d.id}
+                      onSelect={() => handleSendToDownloader(String(d.id))}
+                    >
+                      {d.name}
+                    </ContextMenuItem>
+                  );
+                }
+              })}
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+        )}
       </ContextMenuContent>
     </ContextMenu>
   );

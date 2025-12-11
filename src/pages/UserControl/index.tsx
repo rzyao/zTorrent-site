@@ -1,4 +1,4 @@
-import { Settings, User, Shield, Bell, Eye, Save } from 'lucide-react';
+import { Settings, User, Shield, Bell, Eye, Save, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
@@ -9,6 +9,7 @@ import { PreferencesTab } from './components/tabs/PreferencesTab';
 import { SecurityTab } from './components/tabs/SecurityTab';
 import { NotificationsTab } from './components/tabs/NotificationsTab';
 import { PrivacyTab } from './components/tabs/PrivacyTab';
+import { DownloaderTab } from './components/tabs/DownloaderTab';
 import { useControlState } from './hooks/useControlState';
 import { usePasswordForm } from './hooks/usePasswordForm';
 import type { TabType } from './types';
@@ -25,6 +26,7 @@ export function ControlPage() {
     { id: 'security' as TabType, label: '安全设置', icon: Shield },
     { id: 'notifications' as TabType, label: '通知设置', icon: Bell },
     { id: 'privacy' as TabType, label: '隐私设置', icon: Eye },
+    { id: 'downloader' as TabType, label: '下载器', icon: Download },
   ];
 
   return (
@@ -105,7 +107,12 @@ export function ControlPage() {
                 <PrivacyTab privacy={state.privacy} setPrivacy={state.setPrivacy} />
               )}
 
-              {state.activeTab !== 'profile' && (
+              {/* 下载器设置 */}
+              {state.activeTab === 'downloader' && (
+                <DownloaderTab />
+              )}
+
+              {state.activeTab !== 'profile' && state.activeTab !== 'downloader' && (
                 <div className="flex items-center justify-between mt-8 pt-6 border-t border-neutral-700/50">
                   <div className="flex items-center gap-2">
                     {state.saveSuccess && (<span className="inline-flex items-center gap-2 text-green-400 text-sm"><span className="w-2 h-2 rounded-full bg-green-400" /> 设置已保存</span>)}

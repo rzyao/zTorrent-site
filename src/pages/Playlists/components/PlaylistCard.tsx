@@ -1,5 +1,5 @@
 import { Film, Play, Star, Users, Eye, TrendingUp, Heart } from 'lucide-react';
-import type { Playlist } from '../../playlists/types';
+import type { Playlist } from '../types';
 
 interface Props {
   playlist: Playlist;

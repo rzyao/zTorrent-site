@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { Clock } from 'lucide-react';
-import { Playlist } from '@/features/playlists/types';
-import { usePlaylists } from '@/features/playlists/hooks/usePlaylists';
-import { PlaylistCard } from '@/features/playlists/components/PlaylistCard';
-import { PlaylistsControls } from '@/features/playlists/components/PlaylistsControls';
-import { EmptyState } from '@/features/playlists/components/EmptyState';
+import { Playlist } from '@/pages/Playlists/types';
+import { usePlaylists } from '@/pages/Playlists/hooks/usePlaylists';
+import { PlaylistCard } from '@/pages/Playlists/components/PlaylistCard';
+import { PlaylistsControls } from '@/pages/Playlists/components/PlaylistsControls';
+import { EmptyState } from '@/pages/Playlists/components/EmptyState';
 
 export function PlaylistsPage() {
   const navigate = useNavigate();
