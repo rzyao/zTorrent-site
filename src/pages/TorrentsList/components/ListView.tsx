@@ -40,7 +40,7 @@ export function ListView({ items, getCategoryLabel, onDownload, getCoverSrc }: L
           <div className="flex gap-4">
             {/* 缩略图 */}
             <div className="relative w-25 h-25 flex-shrink-0 rounded overflow-hidden">
-              <ImageWithFallback src={getCoverSrc(torrent)} alt={torrent.title} className="w-full h-full object-cover" />
+              <ImageWithFallback src={getCoverSrc(torrent)} alt={torrent.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
             </div>
 
             {/* 信息区 */}

@@ -10,7 +10,7 @@ import {
 import { AlertDialog } from "./ui/alert-dialog";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
-import { useState, lazy, Suspense, useEffect } from "react";
+import { useState, lazy, Suspense, useEffect, memo } from "react";
 import AnimatedAlertDialogContent from "./AnimatedAlertDialogContent";
 import { formatSize } from "@/utils/format";
 import { log } from "console";
@@ -35,9 +35,10 @@ interface TorrentCardProps {
   comments?: number;
   doubanUrl?: string;
   onDownload?: () => void;
+  onDownloadByIdTitle?: (id: string, title: string) => void;
 }
 
-export function TorrentCard({
+function TorrentCardInner({
   id,
   thumbnail,
   title,
@@ -53,6 +54,7 @@ export function TorrentCard({
   comments,
   doubanUrl,
   onDownload,
+  onDownloadByIdTitle,
 }: TorrentCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -75,6 +77,8 @@ export function TorrentCard({
           src={thumbnail}
           alt={title}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+          decoding="async"
         />
         <div className="absolute top-2 left-2 flex flex-col gap-1">
           <Badge color="gray" size="sm">
@@ -135,9 +139,9 @@ export function TorrentCard({
             </div>
             <Button
               className="bg-white hover:bg-gray-200 text-black px-6 py-2 rounded-md transition-colors"
-              onClick={onDownload}
-              disabled={!onDownload}
-              title={!onDownload ? "无下载权限" : undefined}
+              onClick={onDownloadByIdTitle ? () => onDownloadByIdTitle(String(id), title) : onDownload}
+              // disabled={!onDownload && !onDownloadByIdTitle}
+              title={(!onDownload && !onDownloadByIdTitle) ? "无下载权限" : undefined}
             >
               下载
             </Button>
@@ -185,3 +189,5 @@ export function TorrentCard({
     </div>
   );
 }
+
+export const TorrentCard = memo(TorrentCardInner);

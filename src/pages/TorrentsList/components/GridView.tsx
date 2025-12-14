@@ -49,12 +49,7 @@ export function GridView({
             rating={torrent.rating}
             comments={torrent.comments}
             doubanUrl={torrent.doubanUrl}
-            onDownload={() =>
-              onDownload(
-                String(torrent.id),
-                String(torrent.title || "download")
-              )
-            }
+            onDownloadByIdTitle={onDownload}
           />
         </div>
       ))}

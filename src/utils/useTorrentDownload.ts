@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getTorrentsService, getOpenAPI } from '@/api/lazy';
 import { ApiError } from '@/api/core/ApiError';
@@ -23,15 +23,15 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
   const { sourcePayload } = useSourceTracker();
   const navigate = useNavigate();
 
-  const info = (m: string) => (opts?.onInfo ? opts.onInfo(m) : customToast.info(m));
-  const error = (m: string) => (opts?.onError ? opts.onError(m) : customToast.error(m));
+  const info = useCallback((m: string) => (opts?.onInfo ? opts.onInfo(m) : customToast.info(m)), [opts]);
+  const error = useCallback((m: string) => (opts?.onError ? opts.onError(m) : customToast.error(m)), [opts]);
 
   /**
    * 根据种子 ID 生成一次性链接并下载保存。
    * @param torrentId 种子 ID
    * @param name 期望文件名（回退使用）
    */
-  const downloadByTorrentId = async (
+  const downloadByTorrentId = useCallback(async (
     torrentId: string,
     name?: string,
     sourceOverride?: { filmId: string; playListId: string }
@@ -136,7 +136,7 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
       if (status === 429) return error?.('触发限流，请稍后再试');
       return error?.(e?.message || '下载失败，请稍后重试');
     }
-  };
+  }, [sourcePayload, info, error]);
 
   return { downloadByTorrentId };
 }
