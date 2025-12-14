@@ -20,7 +20,6 @@ function Select({
     onValueChange?.(newValue);
   };
 
-  // 滚动锁定通过全局 CSS 覆盖 [data-scroll-locked] 属性禁用
   return (
     <SelectPrimitive.Root
       data-slot="select"

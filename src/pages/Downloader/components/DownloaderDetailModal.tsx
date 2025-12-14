@@ -54,8 +54,8 @@ export function DownloaderDetailModal({
 }: Props) {
   if (!open) return null;
   return createPortal(
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-neutral-900 rounded-2xl border border-neutral-700 max-w-3xl w-full max-h-[85vh] flex flex-col">
+    <div className="modal-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+      <div className="bg-neutral-900 rounded-2xl border border-neutral-700 max-w-3xl w-full max-h-[85vh] flex flex-col m-4">
         {/* 头部：标题与关闭 */}
         <div className="sticky top-0 bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-5 flex items-center justify-between rounded-t-2xl">
           <h2 className="text-white text-xl flex items-center gap-2">
