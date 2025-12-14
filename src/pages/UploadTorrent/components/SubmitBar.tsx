@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Info, Upload } from 'lucide-react';
 
@@ -13,7 +13,7 @@ export interface SubmitBarProps {
   onCancel: () => void;
 }
 
-export function SubmitBar(props: SubmitBarProps) {
+export const SubmitBar = memo(function SubmitBar(props: SubmitBarProps) {
   const { submitting, onCancel } = props;
   return (
     <div className="flex items-center justify-between pt-2">
@@ -32,5 +32,5 @@ export function SubmitBar(props: SubmitBarProps) {
       </div>
     </div>
   );
-}
+});
 

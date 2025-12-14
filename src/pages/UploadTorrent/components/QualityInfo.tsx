@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Film, Info } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -32,7 +32,7 @@ export interface QualityInfoProps {
   mediaInfo: MediaInfoResult;
 }
 
-export function QualityInfo(props: QualityInfoProps) {
+export const QualityInfo = memo(function QualityInfo(props: QualityInfoProps) {
   const {
     resolutionOptions,
     videoStandard,
@@ -183,5 +183,5 @@ export function QualityInfo(props: QualityInfoProps) {
       </div>
     </div>
   );
-}
+});
 

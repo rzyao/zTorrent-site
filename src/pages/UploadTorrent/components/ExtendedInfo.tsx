@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Link2, Download } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -44,7 +44,7 @@ export interface ExtendedInfoProps {
   onToggleSubtitle: (sub: string) => void;
 }
 
-export function ExtendedInfo(props: ExtendedInfoProps) {
+export const ExtendedInfo = memo(function ExtendedInfo(props: ExtendedInfoProps) {
   const {
     countryOptions,
     region,
@@ -197,5 +197,5 @@ export function ExtendedInfo(props: ExtendedInfoProps) {
       </div>
     </div>
   );
-}
+});
 

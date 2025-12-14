@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ImagesService } from '@/api/services/ImagesService';
 import { PtGenService } from '@/api/services/PtGenService';
 import { TorrentsService } from '@/api/services/TorrentsService';
 import { customToast } from '@/hooks/useToast';
-import { categoryTree, parseMediaInfo, MediaInfoResult } from '@/types/UploadTorrentPage';
+import { categoryTree, parseMediaInfo } from '@/types/UploadTorrentPage';
 import { useUploadStore } from '@/stores/uploadStore';
 import { extractDataFromHash, mapDataToForm } from '@/utils/hashParser';
 import { extractErrorMessage } from '@/utils/errorMessage';
@@ -19,62 +19,84 @@ export function useUploadTorrent() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 分类状态（来自全局 store）
+  // 从 Store 获取所有状态和 Action
+  const store = useUploadStore();
   const {
+    // 状态
     selectedCategory,
-    setSelectedCategory,
     selectedSubCategories,
-    setSelectedSubCategories,
-    toggleSubCategory,
-  } = useUploadStore();
+    selectedLanguages,
+    selectedSubtitles,
+    uploadedPoster,
+    screenshots,
+    isAnonymous,
+    ptGenUrl,
+    ptGenLoading,
+    ptGenError,
+    description,
+    title,
+    subTitle,
+    productionTeam,
+    region,
+    imdbUrl,
+    doubanUrl,
+    torrentFile,
+    submitting,
+    videoResolution,
+    videoStandard,
+    audioFormat,
+    videoFormat,
+    mediaInfoText,
+    mediaInfo,
 
-  // 基础信息与扩展信息状态
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
-  const [selectedSubtitles, setSelectedSubtitles] = useState<string[]>([]);
-  const [uploadedPoster, setUploadedPoster] = useState('');
-  const [screenshots, setScreenshots] = useState<string[]>([]);
-  const [isAnonymous, setIsAnonymous] = useState(false);
+    // Actions
+    setSelectedCategory,
+    setSelectedSubCategories,
+    setSelectedLanguages,
+    setSelectedSubtitles,
+    toggleSubCategory,
+    toggleLanguage,
+    toggleSubtitle,
+    setUploadedPoster,
+    // clearUploadedPoster,
+    addScreenshots,
+    removeScreenshot,
+    setIsAnonymous,
+    setTitle,
+    setSubTitle,
+    setDescription,
+    setProductionTeam,
+    setRegion,
+    setImdbUrl,
+    setDoubanUrl,
+    setPtGenUrl,
+    setPtGenLoading,
+    setPtGenError,
+    setTorrentFile,
+    setSubmitting,
+    setVideoResolution,
+    setVideoStandard,
+    setAudioFormat,
+    setVideoFormat,
+    setMediaInfoText,
+    setMediaInfo,
+    setForm,
+    reset,
+  } = store;
+
+  // 本地 UI 状态（非业务数据，不需要存 Store）
   const [posterUploading, setPosterUploading] = useState(false);
   const [shotsUploading, setShotsUploading] = useState(false);
   const posterInputRef = useRef<HTMLInputElement>(null);
   const shotsInputRef = useRef<HTMLInputElement>(null);
-  const [ptGenUrl, setPtGenUrl] = useState('');
-  const [ptGenLoading, setPtGenLoading] = useState(false);
-  const [ptGenError, setPtGenError] = useState<string | null>(null);
-  const [description, setDescription] = useState('');
-  const [title, setTitle] = useState('');
-  const [subTitle, setSubTitle] = useState('');
-  const [productionTeam, setProductionTeam] = useState('');
-  const [region, setRegion] = useState('');
-  const [imdbUrl, setImdbUrl] = useState('');
-  const [doubanUrl, setDoubanUrl] = useState('');
-  const [torrentFile, setTorrentFile] = useState<File | null>(null);
-  const [submitting, setSubmitting] = useState(false);
 
-  // 质量相关状态
-  const [videoResolution, setVideoResolution] = useState('');
-  const [videoStandard, setVideoStandard] = useState('');
-  const [audioFormat, setAudioFormat] = useState('');
-  const [videoFormat, setVideoFormat] = useState('');
-
-  // MediaInfo
-  const [mediaInfo, setMediaInfo] = useState<MediaInfoResult>({});
-  const [mediaInfoText, setMediaInfoText] = useState('');
-
-  // 选项常量（用 useMemo 保持稳定引用，减少不必要渲染）
+  // 选项常量（用 useMemo 保持稳定引用）
   const mainCategories = useMemo(() => categoryTree, []);
   const resolutionOptions = useMemo(
     () => [
-      'SD 480p',
-      'HD 720',
-      'HD 720i',
-      'HD 720p',
-      'Full HD 1080',
-      'Full HD 1080i',
-      'Full HD 1080p',
-      'QHD 1440p',
-      '2K/DCI (2048)',
-      '4K UHD',
+      'SD 480p', 'HD 720', 'HD 720i', 'HD 720p',
+      'Full HD 1080', 'Full HD 1080i', 'Full HD 1080p',
+      'QHD 1440p', '2K/DCI (2048)', '4K UHD',
     ],
     []
   );
@@ -87,51 +109,15 @@ export function useUploadTorrent() {
     []
   );
   const countryOptions = useMemo(
-    () => [
-      '中国大陆',
-      '中国香港',
-      '中国台湾',
-      '美国',
-      '日本',
-      '韩国',
-      '英国',
-      '法国',
-      '德国',
-      '意大利',
-      '西班牙',
-      '其他',
-    ],
+    () => ['中国大陆', '中国香港', '中国台湾', '美国', '日本', '韩国', '英国', '法国', '德国', '意大利', '西班牙', '其他'],
     []
   );
   const languageOptions = useMemo(
-    () => [
-      '汉语普通话',
-      '粤语',
-      '英语',
-      '日语',
-      '韩语',
-      '法语',
-      '德语',
-      '西班牙语',
-      '意大利语',
-      '俄语',
-      '其他',
-    ],
+    () => ['汉语普通话', '粤语', '英语', '日语', '韩语', '法语', '德语', '西班牙语', '意大利语', '俄语', '其他'],
     []
   );
   const subtitleOptions = useMemo(
-    () => [
-      '简体中文',
-      '繁体中文',
-      '英文',
-      '日文',
-      '韩文',
-      '法文',
-      '德文',
-      '西班牙文',
-      '双语',
-      '无字幕',
-    ],
+    () => ['简体中文', '繁体中文', '英文', '日文', '韩文', '法文', '德文', '西班牙文', '双语', '无字幕'],
     []
   );
 
@@ -141,54 +127,40 @@ export function useUploadTorrent() {
     [selectedCategory]
   );
 
-  // 从 URL hash 回填表单（无需兼容旧代码，直接按现有逻辑解析并覆盖对应字段）
+  // 初始化：解析 Hash 或重置表单
   useEffect(() => {
     if (location.hash && location.hash.includes('#separator#')) {
+      reset(); // 先清除可能残留的数据
       const rawData = extractDataFromHash(location.hash);
       const mappedData = mapDataToForm(rawData);
 
-      if (mappedData.title) setTitle(mappedData.title);
-      if (mappedData.subTitle) setSubTitle(mappedData.subTitle);
-      if (mappedData.imdbUrl) setImdbUrl(mappedData.imdbUrl);
-      if (mappedData.doubanUrl) setDoubanUrl(mappedData.doubanUrl);
-      if (mappedData.description) setDescription(mappedData.description);
-      if (mappedData.uploadedPoster && !uploadedPoster) setUploadedPoster(mappedData.uploadedPoster);
-      if (mappedData.selectedCategory) setSelectedCategory(mappedData.selectedCategory);
-      if (mappedData.selectedSubCategories !== undefined)
-        setSelectedSubCategories(mappedData.selectedSubCategories);
-      if (mappedData.region) setRegion(mappedData.region);
-      if (mappedData.videoStandard) setVideoStandard(mappedData.videoStandard);
-      if (mappedData.videoFormat) setVideoFormat(mappedData.videoFormat);
-      if (mappedData.audioFormat) setAudioFormat(mappedData.audioFormat);
-      if (mappedData.videoResolution) setVideoResolution(mappedData.videoResolution);
+      setForm({
+        ...mappedData,
+        mediaInfo: mappedData.mediaInfoText ? parseMediaInfo(mappedData.mediaInfoText) : {},
+      });
+
       if (mappedData.mediaInfoText) {
-        setMediaInfoText(mappedData.mediaInfoText);
         try {
           const parsed = parseMediaInfo(mappedData.mediaInfoText);
-          setMediaInfo(parsed);
-          if (!videoResolution && parsed.Video?.resolution) setVideoResolution(parsed.Video.resolution);
-          if (!videoStandard && (parsed.Video as any)?.standard) setVideoStandard((parsed.Video as any).standard);
-          if (!audioFormat && parsed.Audio?.format) setAudioFormat(parsed.Audio.format);
+          const updates: any = {};
+          if (!mappedData.videoResolution && parsed.Video?.resolution) updates.videoResolution = parsed.Video.resolution;
+          if (!mappedData.videoStandard && (parsed.Video as any)?.standard) updates.videoStandard = (parsed.Video as any).standard;
+          if (!mappedData.audioFormat && parsed.Audio?.format) updates.audioFormat = parsed.Audio.format;
+
+          if (Object.keys(updates).length > 0) {
+            setForm(updates);
+          }
         } catch (e) {
           console.error('Re-parsing MediaInfo for state failed', e);
         }
       }
+    } else {
+      reset();
     }
-  }, [location.hash]);
-
-  /**
-   * 在多选集合中切换某个值的选中状态。
-   * 说明：
-   * - 若存在则移除；若不存在则添加。
-   * - 保持不可变数据更新以触发渲染。
-   */
-  const toggleSelection = (value: string, selected: string[], setter: (val: string[]) => void) => {
-    if (selected.includes(value)) setter(selected.filter((v) => v !== value));
-    else setter([...selected, value]);
-  };
+  }, [location.hash, reset, setForm]);
 
   /** 将文件转为 base64（移除 data: 前缀，仅保留主体） */
-  const fileToBase64 = (file: File): Promise<string> => {
+  const fileToBase64 = useCallback((file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -199,10 +171,10 @@ export function useUploadTorrent() {
       };
       reader.onerror = (error) => reject(error);
     });
-  };
+  }, []);
 
   /** 海报文件选择与上传 */
-  const onPosterInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onPosterInputChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
@@ -221,10 +193,10 @@ export function useUploadTorrent() {
       setPosterUploading(false);
       e.target.value = '';
     }
-  };
+  }, [fileToBase64, setUploadedPoster]);
 
   /** 剧照文件选择与上传（支持多选） */
-  const onShotsInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onShotsInputChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
     if (!files.length) return;
     try {
@@ -235,17 +207,17 @@ export function useUploadTorrent() {
       });
       const results = await Promise.all(uploads);
       const urls = results.map((r) => r.data?.url).filter((u): u is string => !!u);
-      if (urls.length) setScreenshots((prev) => [...prev, ...urls]);
+      if (urls.length) addScreenshots(urls);
     } catch (err: any) {
       customToast.error(err?.message || '上传截图失败');
     } finally {
       setShotsUploading(false);
       e.target.value = '';
     }
-  };
+  }, [fileToBase64, addScreenshots]);
 
   /** 选择种子文件并进行去重校验（根据 infoHash 查询是否已存在） */
-  const onTorrentInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onTorrentInputChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
@@ -261,27 +233,50 @@ export function useUploadTorrent() {
     } catch (err: any) {
       customToast.error(err?.message || '校验失败');
     }
-  };
+  }, [setTorrentFile]);
 
-  /** MediaInfo 文本变更解析并回填质量相关字段 */
-  const handleMediaInfoChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const text = e.target.value;
-    setMediaInfoText(text);
-    try {
-      const info = parseMediaInfo(text);
-      setMediaInfo(info);
-      if (info.Video?.resolution) setVideoResolution(info.Video.resolution);
-      if ((info.Video as any)?.standard) setVideoStandard((info.Video as any).standard);
-      if (info.Audio?.format) setAudioFormat(info.Audio.format);
-      // 如需未来支持：若解析到视频编码可直接回填
-      // if (info.Video?.format) setVideoFormat(info.Video.format);
-    } catch (err: any) {
-      customToast.error(err?.message || '解析 MediaInfo 失败');
+  /** MediaInfo 文本变更 - 仅更新文本状态，解析逻辑防抖处理 */
+  const handleMediaInfoChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMediaInfoText(e.target.value);
+  }, [setMediaInfoText]);
+
+  /**
+   * 监听 mediaInfoText 变化，防抖解析并回填表单
+   */
+  useEffect(() => {
+    // 如果为空，清空解析结果
+    if (!mediaInfoText.trim()) {
+      // 避免不必要的更新
+      if (Object.keys(mediaInfo).length > 0) {
+        setMediaInfo({});
+      }
+      return;
     }
-  };
+
+    const timer = setTimeout(() => {
+      try {
+        const info = parseMediaInfo(mediaInfoText);
+        setMediaInfo(info);
+
+        // 自动回填解析出的字段
+        const updates: any = {};
+        if (info.Video?.resolution) updates.videoResolution = info.Video.resolution;
+        if ((info.Video as any)?.standard) updates.videoStandard = (info.Video as any).standard;
+        if (info.Audio?.format) updates.audioFormat = info.Audio.format;
+
+        if (Object.keys(updates).length > 0) {
+          setForm(updates);
+        }
+      } catch (err: any) {
+        console.error('解析 MediaInfo 失败', err);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [mediaInfoText, setMediaInfo, setForm]);
 
   /** 表单提交：进行必要校验并调用上传服务 */
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (submitting) return;
     const errors: string[] = [];
@@ -326,6 +321,8 @@ export function useUploadTorrent() {
       const data: any = body?.data ?? body;
       const msg = data?.message ?? '发布成功';
       customToast.success(msg);
+      // 成功后重置表单并跳转
+      reset();
       navigate('/torrents');
     } catch (err: any) {
       const msg = extractErrorMessage(err, '发布失败');
@@ -333,10 +330,15 @@ export function useUploadTorrent() {
     } finally {
       setSubmitting(false);
     }
-  };
+  }, [
+    submitting, torrentFile, selectedCategory, title, subTitle, description, uploadedPoster,
+    selectedSubCategories, videoStandard, videoFormat, audioFormat, productionTeam, region,
+    selectedLanguages, selectedSubtitles, imdbUrl, doubanUrl, mediaInfoText, isAnonymous, screenshots,
+    setSubmitting, reset, navigate
+  ]);
 
   /** 通过 PT-GEN 获取简介并填充到描述文本 */
-  const fetchPtGen = async () => {
+  const fetchPtGen = useCallback(async () => {
     const url = ptGenUrl.trim();
     if (!url) {
       setPtGenError('请输入 PT-GEN 链接');
@@ -359,9 +361,18 @@ export function useUploadTorrent() {
     } finally {
       setPtGenLoading(false);
     }
-  };
+  }, [ptGenUrl, setPtGenError, setPtGenLoading, setDescription]);
 
-  return {
+  // Stable handlers for child components
+  const handleClearSubCategories = useCallback(() => setSelectedSubCategories([]), [setSelectedSubCategories]);
+  const handleDescriptionChange = useCallback((v: string) => setDescription(v), [setDescription]);
+  const handlePosterRemove = useCallback(() => setUploadedPoster(''), [setUploadedPoster]);
+  const handleRemoveScreenshot = useCallback((index: number) => removeScreenshot(index), [removeScreenshot]);
+  const handleAddScreenshotUrl = useCallback((url: string) => addScreenshots([url]), [addScreenshots]);
+  const handlePosterUrlChange = useCallback((url: string) => setUploadedPoster(url), [setUploadedPoster]);
+  const handleCancel = useCallback(() => navigate('/torrents'), [navigate]);
+
+  return useMemo(() => ({
     // 分类与选项
     mainCategories,
     resolutionOptions,
@@ -376,6 +387,7 @@ export function useUploadTorrent() {
     setSelectedSubCategories,
     toggleSubCategory,
     subCategories,
+    handleClearSubCategories,
 
     // 基本信息
     title,
@@ -416,7 +428,8 @@ export function useUploadTorrent() {
     setSelectedLanguages,
     selectedSubtitles,
     setSelectedSubtitles,
-    toggleSelection,
+    toggleLanguage,
+    toggleSubtitle,
 
     // 图片
     uploadedPoster,
@@ -428,15 +441,29 @@ export function useUploadTorrent() {
     onPosterInputChange,
     onShotsInputChange,
     screenshots,
-    setScreenshots,
+    handleRemoveScreenshot,
+    handleAddScreenshotUrl,
+    handlePosterRemove,
+    handlePosterUrlChange,
 
     // 发布与提交
     isAnonymous,
     setIsAnonymous,
     description,
     setDescription,
+    handleDescriptionChange,
     submitting,
     handleSubmit,
-  };
+    handleCancel,
+  }), [
+    mainCategories, resolutionOptions, videoCodecOptions, audioCodecOptions, countryOptions, languageOptions, subtitleOptions,
+    selectedCategory, setSelectedCategory, selectedSubCategories, setSelectedSubCategories, toggleSubCategory, subCategories, handleClearSubCategories,
+    title, setTitle, subTitle, setSubTitle, torrentFile, onTorrentInputChange,
+    videoResolution, setVideoResolution, videoStandard, setVideoStandard, audioFormat, setAudioFormat, videoFormat, setVideoFormat, productionTeam, setProductionTeam, mediaInfo, mediaInfoText, handleMediaInfoChange,
+    region, setRegion, imdbUrl, setImdbUrl, doubanUrl, setDoubanUrl, ptGenUrl, setPtGenUrl, ptGenLoading, ptGenError, fetchPtGen,
+    selectedLanguages, setSelectedLanguages, selectedSubtitles, setSelectedSubtitles, toggleLanguage, toggleSubtitle,
+    uploadedPoster, setUploadedPoster, posterUploading, shotsUploading, posterInputRef, shotsInputRef, onPosterInputChange, onShotsInputChange, screenshots,
+    handleRemoveScreenshot, handleAddScreenshotUrl, handlePosterRemove, handlePosterUrlChange,
+    isAnonymous, setIsAnonymous, description, setDescription, handleDescriptionChange, submitting, handleSubmit, handleCancel
+  ]);
 }
-

@@ -30,6 +30,8 @@ interface UploadState {
 
   setSelectedCategory: (id: string) => void
   setSelectedSubCategories: (ids: string[]) => void
+  setSelectedLanguages: (langs: string[]) => void
+  setSelectedSubtitles: (subs: string[]) => void
   toggleSubCategory: (id: string) => void
   toggleLanguage: (lang: string) => void
   toggleSubtitle: (sub: string) => void
@@ -56,9 +58,11 @@ interface UploadState {
   setVideoFormat: (v: string) => void
   setMediaInfoText: (v: string) => void
   setMediaInfo: (v: MediaInfoResult) => void
+  setForm: (v: Partial<UploadState>) => void
+  reset: () => void
 }
 
-export const useUploadStore = create<UploadState>((set, get) => ({
+const initialState = {
   selectedCategory: '',
   selectedSubCategories: [],
   selectedLanguages: [],
@@ -84,9 +88,15 @@ export const useUploadStore = create<UploadState>((set, get) => ({
   videoFormat: '',
   mediaInfoText: '',
   mediaInfo: {},
+}
+
+export const useUploadStore = create<UploadState>((set, get) => ({
+  ...initialState,
 
   setSelectedCategory: (id) => set({ selectedCategory: id, selectedSubCategories: [] }),
   setSelectedSubCategories: (ids) => set({ selectedSubCategories: ids }),
+  setSelectedLanguages: (langs) => set({ selectedLanguages: langs }),
+  setSelectedSubtitles: (subs) => set({ selectedSubtitles: subs }),
   toggleSubCategory: (id) => {
     const cur = get().selectedSubCategories
     set({
@@ -124,4 +134,6 @@ export const useUploadStore = create<UploadState>((set, get) => ({
   setVideoFormat: (v) => set({ videoFormat: v }),
   setMediaInfoText: (v) => set({ mediaInfoText: v }),
   setMediaInfo: (v) => set({ mediaInfo: v }),
+  setForm: (v) => set((state) => ({ ...state, ...v })),
+  reset: () => set(initialState),
 }))

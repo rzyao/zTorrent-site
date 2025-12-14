@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { FileText } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -34,7 +34,7 @@ export interface BasicInfoProps {
   onSubTitleChange: (val: string) => void;
 }
 
-export function BasicInfo(props: BasicInfoProps) {
+export const BasicInfo = memo(function BasicInfo(props: BasicInfoProps) {
   const {
     mainCategories,
     selectedCategory,
@@ -166,5 +166,5 @@ export function BasicInfo(props: BasicInfoProps) {
       </div>
     </div>
   );
-}
+});
 

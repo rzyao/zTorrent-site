@@ -13,7 +13,6 @@ import { Badge } from "./ui/badge";
 import { useState, lazy, Suspense, useEffect, memo } from "react";
 import AnimatedAlertDialogContent from "./AnimatedAlertDialogContent";
 import { formatSize } from "@/utils/format";
-import { log } from "console";
 
 // Lazy load TorrentDetailPage to avoid circular dependency
 const TorrentDetailPage = lazy(() => import("@/pages/TorrentDetail/index"));

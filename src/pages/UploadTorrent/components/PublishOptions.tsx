@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 
@@ -11,7 +11,7 @@ export interface PublishOptionsProps {
   onAnonymousChange: (checked: boolean) => void;
 }
 
-export function PublishOptions(props: PublishOptionsProps) {
+export const PublishOptions = memo(function PublishOptions(props: PublishOptionsProps) {
   const { isAnonymous, onAnonymousChange } = props;
   return (
     <div className="bg-neutral-800/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 shadow-2xl overflow-hidden">
@@ -23,5 +23,5 @@ export function PublishOptions(props: PublishOptionsProps) {
       </div>
     </div>
   );
-}
+});
 

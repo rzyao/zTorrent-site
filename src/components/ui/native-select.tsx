@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, ReactNode } from "react";
+import { useState, useRef, useEffect, ReactNode, memo } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "./utils";
 
@@ -29,8 +29,9 @@ interface NativeSelectProps {
  * - 完全可控的下拉列表样式（圆角、间距等）
  * - 箭头动画：展开时旋转 180°
  * - 支持 iconOnly 模式，移动端紧凑显示
+ * - 使用 CSS 显隐控制代替条件渲染，减少 DOM 变动导致的重排
  */
-export function NativeSelect({
+export const NativeSelect = memo(function NativeSelect({
   value,
   onChange,
   options,
@@ -47,6 +48,8 @@ export function NativeSelect({
 
   // 点击外部关闭
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleClickOutside = (e: MouseEvent) => {
       if (
         containerRef.current &&
@@ -55,20 +58,18 @@ export function NativeSelect({
         setIsOpen(false);
       }
     };
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
+    document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
   // ESC 关闭
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") setIsOpen(false);
     };
-    if (isOpen) {
-      document.addEventListener("keydown", handleEsc);
-    }
+    document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
   }, [isOpen]);
 
@@ -117,7 +118,7 @@ export function NativeSelect({
           icon || <ChevronDown className="size-4 text-gray-400" />
         ) : (
           <>
-            <span className={cn(!selectedOption && "text-gray-500")}>
+            <span className={cn(!selectedOption && "text-gray-500", "truncate")}>
               {selectedOption?.label || placeholder}
             </span>
             <ChevronDown
@@ -130,33 +131,34 @@ export function NativeSelect({
         )}
       </button>
 
-      {/* Dropdown */}
-      {isOpen && (
-        <div
-          className={cn(
-            "absolute z-50 mt-2 rounded-lg border border-gray-700 bg-gray-900 shadow-xl overflow-hidden",
-            iconOnly ? "right-0 min-w-[120px]" : "w-full"
-          )}
-        >
-          <div className="p-1.5 max-h-[200px] overflow-y-auto scrollbar-themed">
-            {options.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => handleSelect(option.value)}
-                className={cn(
-                  "flex w-full items-center px-3 py-2 rounded-md text-sm text-left transition-colors",
-                  option.value === value
-                    ? theme.itemActive
-                    : "text-white hover:bg-gray-800"
-                )}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+      {/* Dropdown - 始终渲染 DOM，通过 CSS 控制显示以减少 Reflow */}
+      <div
+        className={cn(
+          "absolute z-50 mt-2 rounded-lg border border-gray-700 bg-gray-900 shadow-xl overflow-hidden transition-all duration-200 origin-top",
+          iconOnly ? "right-0 min-w-[120px]" : "w-full",
+          isOpen
+            ? "opacity-100 scale-100 pointer-events-auto"
+            : "opacity-0 scale-95 pointer-events-none invisible"
+        )}
+      >
+        <div className="p-1.5 max-h-[200px] overflow-y-auto scrollbar-themed">
+          {options.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => handleSelect(option.value)}
+              className={cn(
+                "flex w-full items-center px-3 py-2 rounded-md text-sm text-left transition-colors",
+                option.value === value
+                  ? theme.itemActive
+                  : "text-white hover:bg-gray-800"
+              )}
+            >
+              {option.label}
+            </button>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
-}
+});

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Image as ImageIcon, Plus, X } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,7 @@ export interface ImagesProps {
   onAddScreenshotUrl: (url: string) => void;
 }
 
-export function Images(props: ImagesProps) {
+export const Images = memo(function Images(props: ImagesProps) {
   const {
     uploadedPoster,
     onPosterRemove,
@@ -185,5 +185,5 @@ export function Images(props: ImagesProps) {
       </div>
     </div>
   );
-}
+});
 

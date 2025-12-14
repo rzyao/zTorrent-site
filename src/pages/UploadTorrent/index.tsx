@@ -49,7 +49,7 @@ export function UploadTorrentPage() {
             selectedSubCategories={U.selectedSubCategories}
             subCategories={U.subCategories}
             onChangeCategory={U.setSelectedCategory}
-            onClearSubCategories={() => U.setSelectedSubCategories([])}
+            onClearSubCategories={U.handleClearSubCategories}
             onToggleSubCategory={U.toggleSubCategory}
             onTorrentInputChange={U.onTorrentInputChange}
             title={U.title}
@@ -92,10 +92,10 @@ export function UploadTorrentPage() {
             ptGenError={U.ptGenError}
             languageOptions={U.languageOptions}
             selectedLanguages={U.selectedLanguages}
-            onToggleLanguage={(lang) => U.toggleSelection(lang, U.selectedLanguages, U.setSelectedLanguages)}
+            onToggleLanguage={U.toggleLanguage}
             subtitleOptions={U.subtitleOptions}
             selectedSubtitles={U.selectedSubtitles}
-            onToggleSubtitle={(sub) => U.toggleSelection(sub, U.selectedSubtitles, U.setSelectedSubtitles)}
+            onToggleSubtitle={U.toggleSubtitle}
           />
 
           {/* 简介 */}
@@ -111,7 +111,7 @@ export function UploadTorrentPage() {
                 placeholder="请输入资源简介，支持BBCode格式...&#10;&#10;例如：&#10;[b]粗体文字[/b]&#10;[i]斜体文字[/i]&#10;[img]图片链接[/img]&#10;[url]链接地址[/url]"
                 className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-3 text-white text-sm placeholder:text-neutral-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/30 outline-none resize-none transition-all scrollbar-themed"
                 value={U.description}
-                onChange={(e) => U.setDescription(e.target.value)}
+                onChange={(e) => U.handleDescriptionChange(e.target.value)}
               />
               <p className="text-neutral-500 text-xs mt-3">支持BBCode格式，如 [b]粗体[/b] [i]斜体[/i] [img]图片链接[/img]</p>
             </div>
@@ -120,24 +120,24 @@ export function UploadTorrentPage() {
           {/* 图片上传 */}
           <Images
             uploadedPoster={U.uploadedPoster}
-            onPosterRemove={() => U.setUploadedPoster('')}
+            onPosterRemove={U.handlePosterRemove}
             posterUploading={U.posterUploading}
             posterInputRef={U.posterInputRef}
             onPosterInputChange={U.onPosterInputChange}
-            onSetPosterUrl={(url) => U.setUploadedPoster(url)}
+            onSetPosterUrl={U.handlePosterUrlChange}
             screenshots={U.screenshots}
-            onRemoveScreenshot={(index) => U.setScreenshots(U.screenshots.filter((_, i) => i !== index))}
+            onRemoveScreenshot={U.handleRemoveScreenshot}
             shotsUploading={U.shotsUploading}
             shotsInputRef={U.shotsInputRef}
             onShotsInputChange={U.onShotsInputChange}
-            onAddScreenshotUrl={(url) => U.setScreenshots([...U.screenshots, url])}
+            onAddScreenshotUrl={U.handleAddScreenshotUrl}
           />
 
           {/* 发布选项 */}
           <PublishOptions isAnonymous={U.isAnonymous} onAnonymousChange={U.setIsAnonymous} />
 
           {/* 提交按钮 */}
-          <SubmitBar submitting={U.submitting} onCancel={() => navigate('/torrents')} />
+          <SubmitBar submitting={U.submitting} onCancel={U.handleCancel} />
         </form>
 
         {/* 发布须知 */}
