@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* 禁用 Radix Select 打开时的滚动锁定 */
+body[data-scroll-locked] {
+  overflow: auto !important;
+  margin-right: 0 !important;
+}
+
 /* Scale Transition Animations - Pure Scale Effect */
 .scale-transition-enter {
   transform: scale(0);
@@ -32,7 +38,6 @@
   display: none;
   /* Chrome, Safari and Opera */
 }
-
 
 @media (width >=64rem) {
   .lg\:grid-cols-auto {

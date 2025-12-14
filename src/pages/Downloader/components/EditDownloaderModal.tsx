@@ -1,8 +1,17 @@
 // 编辑下载器弹窗
 // 说明：与添加弹窗结构一致，但标题与提交按钮不同；通过 props 接收数据与事件。
+// 使用 Portal 渲染到 body，使遮罩层全屏且弹窗在屏幕中央。
 
-import { Edit, Lock, MonitorDown, Server, X, Eye, EyeOff } from 'lucide-react';
-import { DownloaderForm, DownloaderType } from '../types';
+import { createPortal } from "react-dom";
+import { Edit, Lock, MonitorDown, Server, X, Eye, EyeOff } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { DownloaderForm, DownloaderType } from "../types";
 
 interface Props {
   open: boolean;
@@ -14,9 +23,17 @@ interface Props {
   onClose: () => void;
 }
 
-export function EditDownloaderModal({ open, formData, showPassword, onTogglePassword, onChangeForm, onSubmit, onClose }: Props) {
+export function EditDownloaderModal({
+  open,
+  formData,
+  showPassword,
+  onTogglePassword,
+  onChangeForm,
+  onSubmit,
+  onClose,
+}: Props) {
   if (!open) return null;
-  return (
+  return createPortal(
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-neutral-900 rounded-2xl border border-neutral-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* 头部：标题与关闭 */}
@@ -25,7 +42,10 @@ export function EditDownloaderModal({ open, formData, showPassword, onTogglePass
             <Edit className="w-6 h-6" />
             编辑下载器
           </h2>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all">
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-lg bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -53,16 +73,22 @@ export function EditDownloaderModal({ open, formData, showPassword, onTogglePass
               <MonitorDown className="w-4 h-4 inline mr-2" />
               下载器类型 *
             </label>
-            <select
+            <Select
               value={formData.type}
-              onChange={(e) => onChangeForm({ type: e.target.value as DownloaderType })}
-              className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white focus:outline-none focus:border-amber-500"
+              onValueChange={(value) =>
+                onChangeForm({ type: value as DownloaderType })
+              }
             >
-              <option value="qBittorrent">qBittorrent</option>
-              <option value="Transmission">Transmission</option>
-              <option value="Deluge">Deluge</option>
-              <option value="rTorrent">rTorrent</option>
-            </select>
+              <SelectTrigger className="w-full h-12 px-4 bg-neutral-800 border border-neutral-700 rounded-xl text-white focus:border-amber-500">
+                <SelectValue placeholder="选择下载器类型" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="qBittorrent">qBittorrent</SelectItem>
+                <SelectItem value="Transmission">Transmission</SelectItem>
+                <SelectItem value="Deluge">Deluge</SelectItem>
+                <SelectItem value="rTorrent">rTorrent</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* 主机与端口 */}
@@ -81,11 +107,15 @@ export function EditDownloaderModal({ open, formData, showPassword, onTogglePass
               />
             </div>
             <div>
-              <label className="block text-neutral-300 mb-2 text-sm">端口 *</label>
+              <label className="block text-neutral-300 mb-2 text-sm">
+                端口 *
+              </label>
               <input
                 type="number"
                 value={formData.port}
-                onChange={(e) => onChangeForm({ port: parseInt(e.target.value) || 0 })}
+                onChange={(e) =>
+                  onChangeForm({ port: parseInt(e.target.value) || 0 })
+                }
                 placeholder="8080"
                 className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500"
               />
@@ -95,7 +125,9 @@ export function EditDownloaderModal({ open, formData, showPassword, onTogglePass
           {/* 用户名与密码 */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-neutral-300 mb-2 text-sm">用户名</label>
+              <label className="block text-neutral-300 mb-2 text-sm">
+                用户名
+              </label>
               <input
                 type="text"
                 value={formData.username}
@@ -105,17 +137,26 @@ export function EditDownloaderModal({ open, formData, showPassword, onTogglePass
               />
             </div>
             <div>
-              <label className="block text-neutral-300 mb-2 text-sm">密码</label>
+              <label className="block text-neutral-300 mb-2 text-sm">
+                密码
+              </label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={(e) => onChangeForm({ password: e.target.value })}
                   placeholder="••••••••"
                   className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500"
                 />
-                <button onClick={onTogglePassword} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300">
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                <button
+                  onClick={onTogglePassword}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
                 </button>
               </div>
             </div>
@@ -130,7 +171,10 @@ export function EditDownloaderModal({ open, formData, showPassword, onTogglePass
               onChange={(e) => onChangeForm({ ssl: e.target.checked })}
               className="w-5 h-5 rounded bg-neutral-800 border-neutral-700 text-amber-500 focus:ring-amber-500"
             />
-            <label htmlFor="ssl-edit" className="text-neutral-300 text-sm flex items-center gap-2">
+            <label
+              htmlFor="ssl-edit"
+              className="text-neutral-300 text-sm flex items-center gap-2"
+            >
               <Lock className="w-4 h-4 text-green-400" />
               使用 SSL/TLS 加密连接
             </label>
@@ -146,13 +190,16 @@ export function EditDownloaderModal({ open, formData, showPassword, onTogglePass
               <Edit className="w-5 h-5" />
               保存修改
             </button>
-            <button onClick={onClose} className="px-6 py-3 bg-neutral-800 hover:bg-neutral-700 rounded-xl text-white transition-all">
+            <button
+              onClick={onClose}
+              className="px-6 py-3 bg-neutral-800 hover:bg-neutral-700 rounded-xl text-white transition-all"
+            >
               取消
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
-

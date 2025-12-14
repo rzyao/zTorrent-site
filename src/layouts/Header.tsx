@@ -131,10 +131,10 @@ export function Header() {
                     ensureNamespace(logoSvg)
                   )}`}
                   alt="Logo"
-                  className="h-10 md:h-12"
+                  className="h-7 md:h-9"
                 />
               ) : logoUrl && logoUrl.trim().length > 0 ? (
-                <img src={logoUrl} alt="Logo" className="h-10 md:h-12" />
+                <img src={logoUrl} alt="Logo" className="h-7 md:h-9" />
               ) : (
                 <>
                   <span className="text-white text-2xl">PT</span>
