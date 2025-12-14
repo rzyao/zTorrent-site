@@ -1,12 +1,12 @@
-import { List, Heart, Film, Plus, Search, Filter } from 'lucide-react';
+import { List, Heart, Film, Plus, Search, Filter } from "lucide-react";
 
 interface Props {
-  activeTab: 'all' | 'mine' | 'following';
-  onTabChange: (tab: 'all' | 'mine' | 'following') => void;
+  activeTab: "all" | "mine" | "following";
+  onTabChange: (tab: "all" | "mine" | "following") => void;
   searchQuery: string;
   onSearchChange: (v: string) => void;
-  sortBy: 'latest' | 'popular' | 'rating';
-  onSortChange: (v: 'latest' | 'popular' | 'rating') => void;
+  sortBy: "latest" | "popular" | "rating";
+  onSortChange: (v: "latest" | "popular" | "rating") => void;
   onCreate: () => void;
 }
 
@@ -21,7 +21,7 @@ export function PlaylistsControls({
 }: Props) {
   return (
     <>
-      <div className="mb-8">
+      {/* <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
             <List className="w-6 h-6 text-white" />
@@ -29,16 +29,17 @@ export function PlaylistsControls({
           <h1 className="text-white text-3xl">影片片单</h1>
         </div>
         <p className="text-neutral-400 ml-13">浏览和创建精选影片合集</p>
-      </div>
+      </div> */}
 
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <button
-            onClick={() => onTabChange('all')}
-            className={`px-6 py-2.5 rounded-xl transition-all ${activeTab === 'all'
-              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
-              : 'bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800'
-              }`}
+            onClick={() => onTabChange("all")}
+            className={`px-6 py-2.5 rounded-xl transition-all ${
+              activeTab === "all"
+                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30"
+                : "bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800"
+            }`}
           >
             <div className="flex items-center gap-2">
               <List className="w-4 h-4" />
@@ -46,11 +47,12 @@ export function PlaylistsControls({
             </div>
           </button>
           <button
-            onClick={() => onTabChange('mine')}
-            className={`px-6 py-2.5 rounded-xl transition-all ${activeTab === 'mine'
-              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
-              : 'bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800'
-              }`}
+            onClick={() => onTabChange("mine")}
+            className={`px-6 py-2.5 rounded-xl transition-all ${
+              activeTab === "mine"
+                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30"
+                : "bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800"
+            }`}
           >
             <div className="flex items-center gap-2">
               <Film className="w-4 h-4" />
@@ -58,11 +60,12 @@ export function PlaylistsControls({
             </div>
           </button>
           <button
-            onClick={() => onTabChange('following')}
-            className={`px-6 py-2.5 rounded-xl transition-all ${activeTab === 'following'
-              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
-              : 'bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800'
-              }`}
+            onClick={() => onTabChange("following")}
+            className={`px-6 py-2.5 rounded-xl transition-all ${
+              activeTab === "following"
+                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30"
+                : "bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800"
+            }`}
           >
             <div className="flex items-center gap-2">
               <Heart className="w-4 h-4" />
@@ -70,10 +73,6 @@ export function PlaylistsControls({
             </div>
           </button>
         </div>
-        <button onClick={onCreate} className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:shadow-lg hover:shadow-amber-500/30 transition-all flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          <span>创建片单</span>
-        </button>
       </div>
 
       <div className="flex items-center gap-4 mb-8">
@@ -103,4 +102,3 @@ export function PlaylistsControls({
     </>
   );
 }
-
