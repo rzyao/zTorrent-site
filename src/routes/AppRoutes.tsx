@@ -23,7 +23,7 @@ import { EditPlaylistPage } from "@/pages/Edit/playlists/index.tsx";
 import MoviePage from "@/pages/MoviePage.tsx";
 import { UploadTorrentPage } from "@/pages/UploadTorrent/index.tsx";
 import { MessagesPage } from "@/pages/Messages/index.tsx";
-import { ControlPage } from "@/pages/UserControl/index.tsx";
+import { ControlPage } from "@/pages/Control/index.tsx";
 import { RequestsPage } from "@/pages/Requests/index.tsx";
 import { RulesPage } from "@/pages/Rules/index.tsx";
 import { StaffPage } from "@/pages/Staff/index.tsx";
