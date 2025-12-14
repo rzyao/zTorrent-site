@@ -1,11 +1,5 @@
 @import "tailwindcss";
 
-/* 禁用 Radix Select 打开时的滚动锁定 */
-body[data-scroll-locked] {
-  overflow: auto !important;
-  margin-right: 0 !important;
-}
-
 /* Scale Transition Animations - Pure Scale Effect */
 .scale-transition-enter {
   transform: scale(0);
@@ -38,6 +32,7 @@ body[data-scroll-locked] {
   display: none;
   /* Chrome, Safari and Opera */
 }
+
 
 @media (width >=64rem) {
   .lg\:grid-cols-auto {
@@ -72,4 +67,15 @@ body[data-scroll-locked] {
 
 .scrollbar-themed::-webkit-scrollbar-thumb:hover {
   background: #fb923c;
+}
+
+/* 针对所有当 body 被锁定滚动时（Radix 加上 overflow: hidden 时），
+   具有 fixed 类的元素（但排除弹窗遮罩层 .modal-overlay）
+*/
+body[style*="overflow: hidden"] .fixed.modal-overlay{
+  padding-right: var(--removed-body-scroll-bar-size);
+}
+
+body[data-scroll-locked] .fixed.modal-overlay {
+  padding-right: var(--removed-body-scroll-bar-size);
 }
