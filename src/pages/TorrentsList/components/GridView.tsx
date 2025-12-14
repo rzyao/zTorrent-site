@@ -1,5 +1,5 @@
-import { TorrentCard } from '@/components/TorrentCard';
-import type { Torrent } from '../types';
+import { TorrentCard } from "@/components/TorrentCard";
+import type { Torrent } from "../types";
 
 interface GridViewProps {
   /** 展示列表数据（已做前端筛选/排序派生） */
@@ -17,9 +17,21 @@ interface GridViewProps {
  * 职责：网格卡片列表（复用 `TorrentCard`）
  * 说明：纯UI组件，所有数据和事件通过 props 输入。
  */
-export function GridView({ items, getCategoryLabel, onDownload, getCoverSrc }: GridViewProps) {
+export function GridView({
+  items,
+  getCategoryLabel,
+  onDownload,
+  getCoverSrc,
+}: GridViewProps) {
   return (
-    <div className="mb-8" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+    <div
+      className="mb-8"
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: "1rem",
+      }}
+    >
       {items.map((torrent) => (
         <div key={torrent.id}>
           <TorrentCard
@@ -37,7 +49,12 @@ export function GridView({ items, getCategoryLabel, onDownload, getCoverSrc }: G
             rating={torrent.rating}
             comments={torrent.comments}
             doubanUrl={torrent.doubanUrl}
-            onDownload={() => onDownload(String(torrent.id), String(torrent.title || 'download'))}
+            onDownload={() =>
+              onDownload(
+                String(torrent.id),
+                String(torrent.title || "download")
+              )
+            }
           />
         </div>
       ))}

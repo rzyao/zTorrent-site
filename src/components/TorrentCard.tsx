@@ -1,16 +1,23 @@
-import { ImageWithFallback } from './figma/ImageWithFallback';
-import { Download, Upload, Star, MessageSquare, HardDrive, X } from 'lucide-react';
-import { AlertDialog, AlertDialogTrigger, AlertDialogCancel, AlertDialogTitle } from './ui/alert-dialog';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { useState, lazy, Suspense, useEffect } from 'react';
-import AnimatedAlertDialogContent from './AnimatedAlertDialogContent';
-import { formatSize } from '@/utils/format';
-import { log } from 'console';
+import { ImageWithFallback } from "./figma/ImageWithFallback";
+import {
+  Download,
+  Upload,
+  Star,
+  MessageSquare,
+  HardDrive,
+  X,
+} from "lucide-react";
+import { AlertDialog } from "./ui/alert-dialog";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { useState, lazy, Suspense, useEffect } from "react";
+import AnimatedAlertDialogContent from "./AnimatedAlertDialogContent";
+import { formatSize } from "@/utils/format";
+import { log } from "console";
 
 // Lazy load TorrentDetailPage to avoid circular dependency
-const TorrentDetailPage = lazy(() => import('@/pages/TorrentDetail/index'));
-const FilmDetailPage = lazy(() => import('@/pages/FilmDetail'));
+const TorrentDetailPage = lazy(() => import("@/pages/TorrentDetail/index"));
+const FilmDetailPage = lazy(() => import("@/pages/FilmDetail"));
 
 interface TorrentCardProps {
   id: string | number;
@@ -29,8 +36,6 @@ interface TorrentCardProps {
   doubanUrl?: string;
   onDownload?: () => void;
 }
-
-
 
 export function TorrentCard({
   id,
@@ -57,7 +62,7 @@ export function TorrentCard({
     if (!showTorrentDetail) return;
     /* 打开时，隐藏原页面滚动条 */
     const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prev;
     };
@@ -72,7 +77,9 @@ export function TorrentCard({
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
         <div className="absolute top-2 left-2 flex flex-col gap-1">
-          <Badge color="gray" size="sm">{category}</Badge>
+          <Badge color="gray" size="sm">
+            {category}
+          </Badge>
           {isFree && (
             <div className="bg-green-500 px-2 py-1 text-white text-xs rounded">
               FREE
@@ -91,31 +98,31 @@ export function TorrentCard({
         </div>
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
           <div className="text-center space-y-2">
-            <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-              <AlertDialogTrigger asChild>
-                <Button className="bg-white hover:bg-gray-200 text-black px-6 py-2 rounded-md transition-colors">
-                  详情
-                </Button>
-              </AlertDialogTrigger>
-              {isOpen && (
+            <Button
+              className="bg-white hover:bg-gray-200 text-black px-6 py-2 rounded-md transition-colors"
+              onClick={() => setIsOpen(true)}
+            >
+              详情
+            </Button>
+            {isOpen && (
+              <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                 <AnimatedAlertDialogContent
                   className="bg-[#0F171E] border-gray-800 p-0 overflow-auto rounded-lg"
                   onClose={() => setIsOpen(false)}
                   hideScrollbar={false}
                 >
-                  <Suspense fallback={<div className="p-8 text-center text-white">加载中...</div>}>
-                    {/* {(category === '电影' && doubanUrl)
-
-                      ? (
-                        <FilmDetailPage torrentId={id as any} />
-                      ) : (
-                        <TorrentDetailPage torrentId={id as any} />
-                      )} */}
+                  <Suspense
+                    fallback={
+                      <div className="p-8 text-center text-white">
+                        加载中...
+                      </div>
+                    }
+                  >
                     <TorrentDetailPage torrentId={id as any} />
                   </Suspense>
                 </AnimatedAlertDialogContent>
-              )}
-            </AlertDialog>
+              </AlertDialog>
+            )}
             <div className="flex items-center justify-center gap-4 text-white">
               <div className="flex items-center gap-1">
                 <Upload className="w-4 h-4 text-green-400" />
@@ -130,7 +137,7 @@ export function TorrentCard({
               className="bg-white hover:bg-gray-200 text-black px-6 py-2 rounded-md transition-colors"
               onClick={onDownload}
               disabled={!onDownload}
-              title={!onDownload ? '无下载权限' : undefined}
+              title={!onDownload ? "无下载权限" : undefined}
             >
               下载
             </Button>

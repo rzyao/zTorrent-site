@@ -1,11 +1,20 @@
 // 组件依赖：图标库（状态/指标）、路由跳转、图片占位、徽标、按钮、下载 Hook、格式化工具
-import { Download, Upload, MessageSquare, Star, HardDrive, Calendar, Award } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
-import { ImageWithFallback } from './figma/ImageWithFallback';
-import { Badge } from './ui/badge';
-import { Button } from '@/components/ui/button';
-import { useTorrentDownload } from '@/utils/useTorrentDownload';
-import { formatSize, formatDateTime } from '@/utils/format';
+import {
+  Download,
+  Upload,
+  MessageSquare,
+  Star,
+  HardDrive,
+  Calendar,
+  Award,
+} from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { Badge } from "./ui/badge";
+import { Button } from "@/components/ui/button";
+import { formatSize, formatDateTime } from "@/utils/format";
+import { DownloadToDownloaderModal } from "./DownloadToDownloaderModal";
 
 // 种子数据模型：与列表视图对齐，支持副标题与两个时间字段兼容
 interface Torrent {
@@ -36,14 +45,22 @@ interface TorrentTableProps {
 
 // 统一列表视图样式的种子表格组件
 export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
-  // 下载能力：生成一次性链接并保存 .torrent 文件
-  const { downloadByTorrentId } = useTorrentDownload();
+  const [downloadModal, setDownloadModal] = useState<{
+    open: boolean;
+    torrentId: string;
+    torrentTitle: string;
+  }>({
+    open: false,
+    torrentId: "",
+    torrentTitle: "",
+  });
+
   const location = useLocation();
   const mergedSearch = (() => {
     const p = new URLSearchParams(location.search);
-    if (filmId) p.set('source_film_id', filmId);
+    if (filmId) p.set("source_film_id", filmId);
     const s = p.toString();
-    return s ? `?${s}` : '';
+    return s ? `?${s}` : "";
   })();
   const mergedHash = location.hash;
   return (
@@ -72,20 +89,35 @@ export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
                 <div className="flex flex-col flex-1 min-w-0">
                   {/* 标题：保持可点击跳转详情，悬停高亮 */}
                   <h3 className="text-white flex-1 hover:text-[#00A8E1] transition-colors">
-                    <Link to={{ pathname: `/torrent/${torrent.id}`, search: mergedSearch, hash: mergedHash }}>
+                    <Link
+                      to={{
+                        pathname: `/torrent/${torrent.id}`,
+                        search: mergedSearch,
+                        hash: mergedHash,
+                      }}
+                    >
                       {torrent.title}
                     </Link>
                   </h3>
                   {torrent.subTitle && (
                     // 副标题：存在时显示并与标题同样交互样式
-                    <h3 className="text-white flex-1 hover:text-[#00A8E1] transition-colors">{torrent.subTitle}</h3>
+                    <h3 className="text-white flex-1 hover:text-[#00A8E1] transition-colors">
+                      {torrent.subTitle}
+                    </h3>
                   )}
                 </div>
-                {/* 下载按钮：调用统一下载流程 Hook */}
+                {/* 下载按钮：弹出下载选项弹窗 */}
                 <Button
                   size="sm"
                   className="bg-[#00A8E1] hover:bg-[#00A8E1]/90 text-white flex-shrink-0"
-                  onClick={() => downloadByTorrentId(String(torrent.id), String(torrent.title || 'download'))}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setDownloadModal({
+                      open: true,
+                      torrentId: String(torrent.id),
+                      torrentTitle: String(torrent.title || "download"),
+                    });
+                  }}
                 >
                   <Download className="w-4 h-4 mr-1" />
                   下载
@@ -93,14 +125,35 @@ export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
               </div>
               {/* 徽标区：类别/FREE/VIP/HOT/评分 */}
               <div className="flex items-center gap-2 flex-wrap mb-1">
-                <Badge color="blue" border="white" size="sm" className="text-xs">{torrent.category}</Badge>
-                {torrent.isFree && <Badge color="green" size="sm">FREE</Badge>}
-                {torrent.isVip && <Badge color="yellow" size="sm">VIP</Badge>}
-                {torrent.isHot && <Badge color="red" size="sm">HOT</Badge>}
-                {typeof torrent.rating === 'number' && (
+                <Badge
+                  color="blue"
+                  border="white"
+                  size="sm"
+                  className="text-xs"
+                >
+                  {torrent.category}
+                </Badge>
+                {torrent.isFree && (
+                  <Badge color="green" size="sm">
+                    FREE
+                  </Badge>
+                )}
+                {torrent.isVip && (
+                  <Badge color="yellow" size="sm">
+                    VIP
+                  </Badge>
+                )}
+                {torrent.isHot && (
+                  <Badge color="red" size="sm">
+                    HOT
+                  </Badge>
+                )}
+                {typeof torrent.rating === "number" && (
                   <div className="flex items-center gap-1">
                     <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                    <span className="text-yellow-400 text-xs">{torrent.rating}</span>
+                    <span className="text-yellow-400 text-xs">
+                      {torrent.rating}
+                    </span>
                   </div>
                 )}
               </div>
@@ -128,7 +181,9 @@ export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  <span>{formatDateTime(torrent.uploadDate || torrent.uploadTime)}</span>
+                  <span>
+                    {formatDateTime(torrent.uploadDate || torrent.uploadTime)}
+                  </span>
                 </div>
                 <div>
                   <span className="text-[#00A8E1]">{torrent.uploader}</span>
@@ -138,6 +193,14 @@ export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
           </div>
         </div>
       ))}
+
+      <DownloadToDownloaderModal
+        open={downloadModal.open}
+        torrentId={downloadModal.torrentId}
+        torrentTitle={downloadModal.torrentTitle}
+        onClose={() => setDownloadModal((prev) => ({ ...prev, open: false }))}
+        source={filmId ? { filmId } : undefined}
+      />
     </div>
   );
 }

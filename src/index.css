@@ -79,3 +79,58 @@ body[style*="overflow: hidden"] .fixed.modal-overlay{
 body[data-scroll-locked] .fixed.modal-overlay {
   padding-right: var(--removed-body-scroll-bar-size);
 }
+
+/* 自定义原生 Select 样式 - 与 Radix UI SelectTrigger 一致 */
+.native-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(64, 64, 64, 0.5);
+  background-color: rgba(23, 23, 23, 0.5);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: white;
+  white-space: nowrap;
+  transition: color 0.15s, box-shadow 0.15s, border-color 0.15s;
+  outline: none;
+  cursor: pointer;
+  /* 自定义下拉箭头 - 与 Radix chevron 一致，默认状态 */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23737373' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='transition:transform 0.2s'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.native-select:hover {
+  border-color: rgba(82, 82, 82, 0.7);
+}
+
+/* Focus 状态：高亮边框 + 箭头旋转180度 */
+.native-select:focus {
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+  /* 箭头旋转 180 度 */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' transform='rotate(180)'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+.native-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* 下拉列表选项样式（部分浏览器支持） */
+.native-select option {
+  background-color: #171717;
+  color: white;
+  padding: 12px 16px;
+  margin: 4px 0;
+  border-radius: 8px;
+}
