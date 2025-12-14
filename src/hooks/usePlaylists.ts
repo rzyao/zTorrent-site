@@ -103,7 +103,7 @@ export function usePlaylists() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerAddFilm({ playlistId, filmId, sort });
+      const res = await PlaylistsService.playlistsControllerAddFilm({ playlistId, filmId });
       const data = unwrap(res);
       return data;
     } catch (e: any) {

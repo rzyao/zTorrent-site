@@ -37,8 +37,8 @@ export function useSubtitlesRemote(params: {
 
   const listParams: ListSubtitlesDto = useMemo(() => ({
     search: searchQuery || undefined,
-    language: filterLanguage,
-    sortBy,
+    language: filterLanguage as ListSubtitlesDto.language,
+    sortBy: sortBy as ListSubtitlesDto.sortBy,
     page,
     limit,
   }), [searchQuery, filterLanguage, sortBy, page, limit]);
@@ -135,7 +135,10 @@ export function useSubtitlesRemote(params: {
 
   const download = useCallback(async (id: string, filename?: string) => {
     const base = (await import('../../../api/core/OpenAPI')).OpenAPI.BASE;
-    const token = await ((await import('../../../api/core/OpenAPI')).OpenAPI.TOKEN?.({ method: 'POST', url: '' } as any) as Promise<string>);
+    const tokenValue = (await import('../../../api/core/OpenAPI')).OpenAPI.TOKEN;
+    const token = typeof tokenValue === 'function' 
+      ? await tokenValue({ method: 'POST', url: '' } as any) 
+      : tokenValue;
     const resp = await fetch(`${base}/api/subtitles/download`, {
       method: 'POST',
       headers: {

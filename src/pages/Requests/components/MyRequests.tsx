@@ -47,7 +47,7 @@ export function MyRequests() {
       : historyStatuses.includes(req.status)
   );
 
-  const getStatusConfig = (status: MyRequest['status']) => {
+  const getStatusConfig = (status: UiMyRequest['status']) => {
     switch (status) {
       case 'draft':
         return { 
@@ -276,7 +276,7 @@ export function MyRequests() {
                         </button>
                         <button
                           onClick={() => actions.publish.mutate({ id: request.id })}
-                          disabled={actions.publish.isLoading}
+                          disabled={actions.publish.isPending}
                           className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all text-sm disabled:opacity-60"
                         >
                           发布
@@ -298,7 +298,7 @@ export function MyRequests() {
                             if (!Number.isFinite(amount) || amount <= 0) return; 
                             actions.addBounty.mutate({ id: request.id, amount });
                           }}
-                          disabled={actions.addBounty.isLoading}
+                          disabled={actions.addBounty.isPending}
                           className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
                         >
                           <TrendingUp className="w-4 h-4" />
@@ -306,7 +306,7 @@ export function MyRequests() {
                         </button>
                         <button
                           onClick={() => actions.cancel.mutate({ id: request.id })}
-                          disabled={actions.cancel.isLoading}
+                          disabled={actions.cancel.isPending}
                           className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
                         >
                           <XCircle className="w-4 h-4" />
@@ -318,7 +318,7 @@ export function MyRequests() {
                     {(request.status === 'expired' || request.status === 'cancelled') && (
                       <button
                         onClick={() => actions.republish.mutate({ id: request.id })}
-                        disabled={actions.republish.isLoading}
+                        disabled={actions.republish.isPending}
                         className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
                       >
                         <RefreshCw className="w-4 h-4" />

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useModerationQuery } from '@/pages/Requests/hooks/useModerationQuery';
 import { useRequestActions } from '@/pages/Requests/hooks/useRequestActions';
+import { RequestsService } from '@/api/services/RequestsService';
 import { Shield, AlertTriangle, CheckCircle2, XCircle, MessageSquare, FileText, Image, Clock } from 'lucide-react';
 
 interface DisputeCase {
@@ -138,7 +139,7 @@ export function ModerationCenter() {
                   await selectCase(dispute.id);
                 }}
                 className={`bg-gradient-to-br from-amber-600/5 to-orange-600/5 border rounded-lg p-4 cursor-pointer transition-all ${
-                  selectedCase?.id === dispute.id
+                  selectedCaseId === dispute.id
                     ? 'border-amber-400 bg-amber-500/10'
                     : 'border-amber-500/20 hover:border-amber-400/40'
                 }`}
@@ -263,7 +264,7 @@ export function ModerationCenter() {
                 <div className="space-y-3 pt-4">
                   <button
                     onClick={() => actions.approveSubmission.mutate({ submissionId: String((getSelectedCase(selectedCaseId) as any)?.submissionId ?? '') })}
-                    disabled={actions.approveSubmission.isLoading}
+                    disabled={actions.approveSubmission.isPending}
                     className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                   >
                     <CheckCircle2 className="w-4 h-4" />
@@ -275,7 +276,7 @@ export function ModerationCenter() {
                       const reason = prompt('请输入拒绝原因');
                       actions.rejectSubmission.mutate({ submissionId: String((getSelectedCase(selectedCaseId) as any)?.submissionId ?? ''), reason: String(reason || '') });
                     }}
-                    disabled={actions.rejectSubmission.isLoading}
+                    disabled={actions.rejectSubmission.isPending}
                     className="w-full py-3 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                   >
                     <XCircle className="w-4 h-4" />

@@ -260,7 +260,7 @@ export function Header() {
                 }}
               >
                 {/* 新增路径纳入高亮集合：/music 与 /player */}
-                <button type="button" className={`${(['/groups', '/rss', '/staff', '/tutorials', '/seeding', '/downloader', '/dead-torrents', '/games', '/announcements', '/music', '/player'].includes(location.pathname) || showMoreMenu) ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'} flex items-center gap-1`}>
+                <button type="button" className={`${(['/groups', '/rss', '/staff', '/tutorials', '/seeding', '/dead-torrents', '/games', '/announcements', '/music', '/player'].includes(location.pathname) || showMoreMenu) ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors'} flex items-center gap-1`}>
                   其他
                   <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showMoreMenu ? 'rotate-180' : ''}`} />
                 </button>
@@ -277,7 +277,6 @@ export function Header() {
                   <NavLink to="/staff" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">管理组</NavLink>
                   <NavLink to="/tutorials" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">使用教程</NavLink>
                   <NavLink to="/seeding" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">保种列表</NavLink>
-                  <NavLink to="/downloader" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">下载器</NavLink>
                   <NavLink to="/dead-torrents" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">断种大厅</NavLink>
                   <NavLink to="/games" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">小游戏</NavLink>
                   <NavLink to="/announcements" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">站点公告</NavLink>

@@ -8,7 +8,7 @@ import HomeLayout from '../layouts/HomeLayout.tsx';
 
 import HomePage from '@/pages/HomePage.tsx';
 import TorrentsPage from '@/pages/TorrentsList/index.tsx';
-import { ForumPage } from '@/pages/Forum';
+import { ForumPage } from '@/pages/Forum/index.tsx';
 import { SubtitlesPage } from '@/pages/Subtitles/index.tsx';
 import RankingPage from '@/pages/RankingPage.tsx';
 import { EditMoviePage } from '@/pages/Edit/movies/index.tsx';

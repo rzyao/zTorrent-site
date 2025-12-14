@@ -120,7 +120,7 @@ export function MyResponses() {
           },
           { 
             label: '被拒绝', 
-            value: mockMyResponses.filter(r => r.status === 'rejected').length, 
+            value: mappedResponses.filter(r => r.status === 'rejected').length, 
             color: 'red',
             description: '需改进'
           },
@@ -164,7 +164,7 @@ export function MyResponses() {
               {filter.label}
               {filter.value !== 'all' && (
                 <span className="ml-2 text-xs opacity-70">
-                  ({mockMyResponses.filter(r => r.status === filter.value).length})
+                  ({mappedResponses.filter(r => r.status === filter.value).length})
                 </span>
               )}
             </button>
@@ -275,22 +275,22 @@ export function MyResponses() {
                           const link = prompt('请输入资源链接');
                           actions.submit.mutate({ claimId: response.id, resource: { link } });
                         }}
-                        disabled={actions.submit.isLoading}
+                        disabled={actions.submit.isPending}
                         className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
                       >
                         <Upload className="w-4 h-4" />
-                        {actions.submit.isLoading ? '提交中...' : '提交资源'}
+                        {actions.submit.isPending ? '提交中...' : '提交资源'}
                       </button>
                       <button className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
                         联系需求方
                       </button>
                       <button
                         onClick={() => actions.abandon.mutate({ claimId: response.id })}
-                        disabled={actions.abandon.isLoading}
+                        disabled={actions.abandon.isPending}
                         className="px-4 py-2 bg-red-500/20 border border-red-400/30 hover:bg-red-500/30 text-red-300 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
                       >
                         <XCircle className="w-4 h-4" />
-                        {actions.abandon.isLoading ? '放弃中...' : '放弃任务'}
+                        {actions.abandon.isPending ? '放弃中...' : '放弃任务'}
                       </button>
                     </>
                   )}
@@ -313,10 +313,10 @@ export function MyResponses() {
                           const link = prompt('请输入新的资源链接');
                           actions.resubmit.mutate({ submissionId: response.id, resource: { link } });
                         }}
-                        disabled={actions.resubmit.isLoading}
+                        disabled={actions.resubmit.isPending}
                         className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all text-sm disabled:opacity-60"
                       >
-                        {actions.resubmit.isLoading ? '提交中...' : '重新提交'}
+                        {actions.resubmit.isPending ? '提交中...' : '重新提交'}
                       </button>
                       <button className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg transition-all text-sm flex items-center gap-2">
                         <MessageSquare className="w-4 h-4" />

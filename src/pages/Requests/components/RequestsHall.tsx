@@ -76,7 +76,7 @@ export function RequestsHall() {
       }
     });
 
-  const getStatusConfig = (status: Request['status']) => {
+  const getStatusConfig = (status: UiRequest['status']) => {
     // 兼容后端更多状态，未覆盖的状态一律视为进行中
     switch (status) {
       case 'active':
@@ -315,11 +315,11 @@ export function RequestsHall() {
                   {request.status === 'active' && !request.claimedBy && (
                     <button
                       onClick={() => actions.claim.mutate({ id: request.id })}
-                      disabled={actions.claim.isLoading}
+                      disabled={actions.claim.isPending}
                       className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                     >
                       <TrendingUp className="w-4 h-4" />
-                      {actions.claim.isLoading ? '认领中...' : '立即认领'}
+                      {actions.claim.isPending ? '认领中...' : '立即认领'}
                     </button>
                   )}
                 </div>

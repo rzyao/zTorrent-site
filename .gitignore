@@ -1,6 +1,8 @@
 .vscode
 .trae
 .vercel
+.git
+.gitignore
 node_modules
 openapi-ts-error-*.log
 auto_seed.js
