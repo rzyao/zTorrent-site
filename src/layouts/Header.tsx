@@ -240,7 +240,7 @@ export function Header() {
               >
                 发布
               </NavLink>
-              <NavLink
+              {/* <NavLink
                 to="/candidates"
                 className={({ isActive }) =>
                   isActive
@@ -249,7 +249,7 @@ export function Header() {
                 }
               >
                 候选
-              </NavLink>
+              </NavLink> */}
 
               {
                 <div
@@ -440,7 +440,7 @@ export function Header() {
                   >
                     工单
                   </NavLink>
-                  <NavLink
+                  {/* <NavLink
                     to="/requests"
                     className="block px-4 py-2 text-white hover:bg-white/10 transition-colors"
                   >
@@ -500,7 +500,6 @@ export function Header() {
                   >
                     站点公告
                   </NavLink>
-                  {/* 新增：音乐与播放器入口 */}
                   <NavLink
                     to="/music"
                     className="block px-4 py-2 text-white hover:bg-white/10 transition-colors"
@@ -512,7 +511,7 @@ export function Header() {
                     className="block px-4 py-2 text-white hover:bg-white/10 transition-colors"
                   >
                     播放器
-                  </NavLink>
+                  </NavLink> */}
                 </div>
               </div>
             </nav>
@@ -739,7 +738,7 @@ export function Header() {
           >
             论坛
           </NavLink>
-          <NavLink
+          {/* <NavLink
             to="/candidates"
             className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
             onClick={() => setShowMobileMenu(false)}
@@ -752,7 +751,7 @@ export function Header() {
             onClick={() => setShowMobileMenu(false)}
           >
             制作组
-          </NavLink>
+          </NavLink> */}
           <NavLink
             to="/films"
             className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
@@ -767,15 +766,13 @@ export function Header() {
           >
             片单
           </NavLink>
-          {/* 新增移动端入口：音乐 */}
-          <NavLink
+          {/* <NavLink
             to="/music"
             className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
             onClick={() => setShowMobileMenu(false)}
           >
             音乐
           </NavLink>
-          {/* 新增移动端入口：播放器 */}
           <NavLink
             to="/player"
             className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
@@ -791,8 +788,8 @@ export function Header() {
             >
               上传
             </NavLink>
-          }
-          {
+          } */}
+          {/* {
             <NavLink
               to="/edit/movie"
               className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
@@ -809,7 +806,7 @@ export function Header() {
             >
               片单编辑
             </NavLink>
-          }
+          } */}
           {canReview && (
             <NavLink
               to="/review"
@@ -819,7 +816,7 @@ export function Header() {
               审核
             </NavLink>
           )}
-          <NavLink
+          {/* <NavLink
             to="/tickets"
             className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
             onClick={() => setShowMobileMenu(false)}
@@ -832,7 +829,7 @@ export function Header() {
             onClick={() => setShowMobileMenu(false)}
           >
             求种
-          </NavLink>
+          </NavLink> */}
           <NavLink
             to="/rules"
             className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
@@ -840,7 +837,7 @@ export function Header() {
           >
             规则
           </NavLink>
-          <NavLink
+          {/* <NavLink
             to="/rss"
             className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
             onClick={() => setShowMobileMenu(false)}
@@ -860,7 +857,7 @@ export function Header() {
             onClick={() => setShowMobileMenu(false)}
           >
             站点公告
-          </NavLink>
+          </NavLink> */}
         </nav>
       </div>
 
