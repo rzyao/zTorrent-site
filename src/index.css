@@ -267,7 +267,7 @@ body[data-scroll-locked] .fixed.modal-overlay {
   color: #FBBF24; 
 }
 
-.gradient-tag {
+.general-button {
   /* ====================== 1. 布局与尺寸 ====================== */
   display: flex;                /* flex */
   align-items: center;          /* items-center */
@@ -297,7 +297,7 @@ body[data-scroll-locked] .fixed.modal-overlay {
 }
 
 /* ====================== 3. 交互状态 (Hover) ====================== */
-.gradient-tag:hover {
+.general-button:hover {
   /* 悬停背景渐变变化：hover:from-amber-500/30 hover:to-orange-500/30 */
   background: linear-gradient(
     to right, 

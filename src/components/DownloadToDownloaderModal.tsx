@@ -96,7 +96,7 @@ export function DownloadToDownloaderModal({
           {/* 本地下载选项 */}
           <div className="flex items-center justify-between bg-neutral-800/50 p-3 rounded-xl border border-neutral-700/50">
             <span className="text-sm text-neutral-400 pl-1">
-              仅下载种子文件？
+              不推送到下载器
             </span>
             <Button
               variant="ghost"
@@ -171,7 +171,7 @@ export function DownloadToDownloaderModal({
               取消
             </Button>
             <Button
-              className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white h-11 rounded-xl"
+              className="flex-1 general-button h-11 rounded-xl"
               onClick={handleSubmit}
               disabled={sending || !selectedDownloaderId}
             >

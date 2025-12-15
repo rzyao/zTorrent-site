@@ -1,4 +1,4 @@
-import { TorrentCard } from "@/components/TorrentCard";
+import { TorrentCard } from "@/pages/TorrentsList/components/TorrentCard";
 import type { Torrent } from "../types";
 
 interface GridViewProps {

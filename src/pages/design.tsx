@@ -41,6 +41,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { HomeActionBar } from "./HomeActionBar";
 
 interface HotTorrent {
   id: number;
@@ -115,19 +116,235 @@ export function PTHomePage() {
   };
 
   // 公告数据
-  const announcements: Announcement[] = [];
+  const announcements: Announcement[] = [
+    {
+      id: 1,
+      title: "【重要】关于加强版权保护的公告",
+      type: "system",
+      time: "2024-12-14 10:30",
+      isTop: true,
+    },
+    {
+      id: 2,
+      title: "【活动】圣诞节双倍上传活动开启",
+      type: "event",
+      time: "2024-12-13 15:20",
+      isTop: true,
+    },
+    {
+      id: 3,
+      title: "【通知】服务器维护 - 12月20日凌晨2点",
+      type: "notice",
+      time: "2024-12-12 18:45",
+    },
+    {
+      id: 4,
+      title: "【公告】新增4K专区，欢迎上传优质资源",
+      type: "notice",
+      time: "2024-12-10 09:15",
+    },
+    {
+      id: 5,
+      title: "【活动】邀请好友送魔力值活动",
+      type: "event",
+      time: "2024-12-08 14:20",
+    },
+  ];
 
   // 最热种子轮播数据
-  const hotTorrents: HotTorrent[] = [];
+  const hotTorrents: HotTorrent[] = [
+    {
+      id: 1,
+      title: "星际穿越 Interstellar (2014)",
+      subtitle: "4K HDR REMUX 国英双语 杜比全景声",
+      image:
+        "https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=800",
+      category: "电影",
+      size: "68.5 GB",
+      seeders: 2847,
+      leechers: 156,
+      rating: 9.8,
+      isFree: true,
+    },
+    {
+      id: 2,
+      title: "沙丘2 Dune: Part Two (2024)",
+      subtitle: "IMAX 4K UHD HDR 杜比视界 国英双语",
+      image:
+        "https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=800",
+      category: "电影",
+      size: "92.3 GB",
+      seeders: 1876,
+      leechers: 543,
+      rating: 9.1,
+      isVip: true,
+    },
+    {
+      id: 3,
+      title: "奥本海默 Oppenheimer (2023)",
+      subtitle: "4K UHD IMAX版本 HDR 杜比全景声",
+      image:
+        "https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=800",
+      category: "电影",
+      size: "98.7 GB",
+      seeders: 2145,
+      leechers: 687,
+      rating: 9.4,
+      isFree: true,
+    },
+    {
+      id: 4,
+      title: "权力的游戏 Game of Thrones",
+      subtitle: "S01-S08 Complete 1080p BluRay x265 HEVC",
+      image: "https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=800",
+      category: "电视剧",
+      size: "124.8 GB",
+      seeders: 2156,
+      leechers: 89,
+      rating: 9.5,
+    },
+  ];
 
   // 求种信息
-  const requests: Request[] = [];
+  const requests: Request[] = [
+    {
+      id: 1,
+      title: "求 诺兰电影合集 4K UHD 原盘",
+      category: "电影",
+      requester: "MovieFan",
+      reward: 5000,
+      replies: 12,
+      status: "open",
+      time: "2小时前",
+    },
+    {
+      id: 2,
+      title: "求 宫崎骏动画全集 日语原盘 高码率",
+      category: "动漫",
+      requester: "AnimeLover",
+      reward: 3000,
+      replies: 8,
+      status: "open",
+      time: "5小时前",
+    },
+    {
+      id: 3,
+      title: "求 Pink Floyd 无损专辑合集",
+      category: "音乐",
+      requester: "MusicGeek",
+      reward: 2000,
+      replies: 15,
+      status: "filled",
+      time: "1天前",
+    },
+    {
+      id: 4,
+      title: "求 BBC Earth 纪录片系列 4K HDR",
+      category: "纪录片",
+      requester: "DocuFan",
+      reward: 4000,
+      replies: 6,
+      status: "open",
+      time: "1天前",
+    },
+  ];
 
   // 精华推荐
-  const recommendations: Recommendation[] = [];
+  const recommendations: Recommendation[] = [
+    {
+      id: 1,
+      title: "【强烈推荐】沙丘2 IMAX版本观影体验分享",
+      category: "电影推荐",
+      description:
+        "刚看完沙丘2的IMAX版本，视听效果震撼！特别是杜比全景声的音效设计，配合IMAX画幅...",
+      poster:
+        "https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=400",
+      recommender: "CinemaExpert",
+      rating: 9.5,
+      likes: 234,
+      comments: 67,
+      time: "3小时前",
+    },
+    {
+      id: 2,
+      title: "【精品】2024年度最佳纪录片TOP10",
+      category: "纪录片推荐",
+      description:
+        "整理了今年最值得看的十部纪录片，从自然到人文，从历史到科技，每一部都是精品...",
+      poster:
+        "https://images.unsplash.com/photo-1613399421098-f943ea81f1c4?w=400",
+      recommender: "DocsCollector",
+      rating: 9.8,
+      likes: 456,
+      comments: 89,
+      time: "1天前",
+    },
+    {
+      id: 3,
+      title: "【音乐】黑胶唱片入坑指南及设备推荐",
+      category: "音乐推荐",
+      description:
+        "作为一个玩黑胶五年的老烧友，今天给大家分享一下入门到进阶的设备选择心得...",
+      poster:
+        "https://images.unsplash.com/photo-1587731556938-38755b4803a6?w=400",
+      recommender: "VinylMaster",
+      rating: 9.2,
+      likes: 189,
+      comments: 45,
+      time: "2天前",
+    },
+  ];
 
   // 论坛热帖
-  const forumPosts: ForumPost[] = [];
+  const forumPosts: ForumPost[] = [
+    {
+      id: 1,
+      title: "【公告】圣诞节双倍上传活动细则及注意事项",
+      forum: "站点公告",
+      author: "Admin",
+      authorAvatar:
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100",
+      replies: 234,
+      views: 5678,
+      lastReply: "10分钟前",
+      isPinned: true,
+    },
+    {
+      id: 2,
+      title: "4K HDR电影的正确播放姿势 - 从硬件到软件全面解析",
+      forum: "技术交流",
+      author: "TechGuru",
+      authorAvatar:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100",
+      replies: 456,
+      views: 12345,
+      lastReply: "30分钟前",
+      isHot: true,
+    },
+    {
+      id: 3,
+      title: "分享率低怎么办？提升分享率的十个实用技巧",
+      forum: "新手指南",
+      author: "HelpfulUser",
+      authorAvatar:
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100",
+      replies: 789,
+      views: 23456,
+      lastReply: "1小时前",
+      isHot: true,
+    },
+    {
+      id: 4,
+      title: "【资源】蓝光原盘 vs REMUX vs Web-DL 画质对比详解",
+      forum: "资源讨论",
+      author: "QualityExpert",
+      authorAvatar:
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100",
+      replies: 234,
+      views: 8901,
+      lastReply: "2小时前",
+    },
+  ];
 
   // 自动轮播
   useEffect(() => {
@@ -187,64 +404,55 @@ export function PTHomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F171E] pt-16">
-      <div className="max-w-[1920px] mx-auto px-4 md:px-8 py-6">
-        {/* 导航栏和按钮栏 */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-6">
-          {/* 导航栏 */}
-          <div className="lg:col-span-8">
-            <div className="bg-neutral-800/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 hover:border-amber-500/50 transition-colors p-4">
-              <div className="flex items-center gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-900">
-                <button className="px-4 py-2 rounded-lg bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300 whitespace-nowrap flex items-center gap-2 hover:from-amber-500/30 hover:to-orange-500/30 transition-all">
-                  <Flame className="w-4 h-4" />
-                  最新种子
-                </button>
-                <button className="px-4 py-2 rounded-lg bg-neutral-900/30 border border-neutral-700/50 text-neutral-300 whitespace-nowrap flex items-center gap-2 hover:border-amber-500/50 hover:text-amber-300 transition-all">
-                  <TrendingUp className="w-4 h-4" />
-                  热门推荐
-                </button>
-                <button className="px-4 py-2 rounded-lg bg-neutral-900/30 border border-neutral-700/50 text-neutral-300 whitespace-nowrap flex items-center gap-2 hover:border-amber-500/50 hover:text-amber-300 transition-all">
-                  <Gift className="w-4 h-4" />
-                  求种大厅
-                </button>
-                <button className="px-4 py-2 rounded-lg bg-neutral-900/30 border border-neutral-700/50 text-neutral-300 whitespace-nowrap flex items-center gap-2 hover:border-amber-500/50 hover:text-amber-300 transition-all">
-                  <MessageSquare className="w-4 h-4" />
-                  社区论坛
-                </button>
-                <button className="px-4 py-2 rounded-lg bg-neutral-900/30 border border-neutral-700/50 text-neutral-300 whitespace-nowrap flex items-center gap-2 hover:border-amber-500/50 hover:text-amber-300 transition-all">
-                  <Sparkles className="w-4 h-4" />
-                  限时活动
-                </button>
-                <button className="px-4 py-2 rounded-lg bg-neutral-900/30 border border-neutral-700/50 text-neutral-300 whitespace-nowrap flex items-center gap-2 hover:border-amber-500/50 hover:text-amber-300 transition-all">
-                  <Award className="w-4 h-4" />
-                  排行榜
-                </button>
-              </div>
+    <div className="min-h-screen bg-[#0F171E] pt-16 flex flex-col">
+      <div className="flex-1 max-w-[1920px] mx-auto px-4 md:px-8 py-6 w-full">
+        {/* 顶部搜索栏 */}
+        <div className="mb-6 bg-gradient-to-r from-neutral-800/40 via-neutral-800/60 to-neutral-800/40 backdrop-blur-sm rounded-xl border border-amber-500/30 shadow-lg shadow-amber-500/10 transition-all hover:border-amber-500/50 hover:shadow-amber-500/20 p-4">
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <Input
+                type="text"
+                placeholder="搜索种子标题、副标题、发布者..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-neutral-900/50 border-neutral-700/50 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all h-12 text-lg"
+              />
             </div>
+            <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 h-12 transition-all shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 border-0">
+              <Search className="w-5 h-5 mr-2" />
+              搜索
+            </Button>
           </div>
+        </div>
 
-          {/* 按钮栏 */}
-          <div className="lg:col-span-4">
-            <div className="bg-neutral-800/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 hover:border-amber-500/50 transition-colors p-4">
-              <div className="flex items-center gap-2 justify-end overflow-x-auto scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-900">
-                <button className="px-4 py-2 rounded-lg bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/50 text-green-300 whitespace-nowrap flex items-center gap-2 hover:from-green-500/30 hover:to-emerald-500/30 transition-all">
-                  <Upload className="w-4 h-4" />
-                  上传种子
-                </button>
-                <button className="px-4 py-2 rounded-lg bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300 whitespace-nowrap flex items-center gap-2 hover:from-amber-500/30 hover:to-orange-500/30 transition-all">
-                  <Gift className="w-4 h-4" />
-                  发布求种
-                </button>
-                <button className="px-3 py-2 rounded-lg bg-neutral-900/30 border border-neutral-700/50 text-neutral-300 hover:border-red-500/50 hover:text-red-300 transition-all">
-                  <Heart className="w-4 h-4" />
-                </button>
-                <button className="px-3 py-2 rounded-lg bg-neutral-900/30 border border-neutral-700/50 text-neutral-300 hover:border-blue-500/50 hover:text-blue-300 transition-all relative">
-                  <Bell className="w-4 h-4" />
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">
-                    3
-                  </span>
-                </button>
-              </div>
+        {/* 快速导航 */}
+        <div className="mb-6">
+          <div className="bg-neutral-800/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 hover:border-amber-500/50 transition-colors p-4">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-900">
+              <button className="px-4 py-2 rounded-lg bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300 whitespace-nowrap flex items-center gap-2 hover:from-amber-500/30 hover:to-orange-500/30 transition-all">
+                <Flame className="w-4 h-4" />
+                最新种子
+              </button>
+              <button className="px-4 py-2 rounded-lg bg-neutral-900/30 border border-neutral-700/50 text-neutral-300 whitespace-nowrap flex items-center gap-2 hover:border-amber-500/50 hover:text-amber-300 transition-all">
+                <TrendingUp className="w-4 h-4" />
+                热门推荐
+              </button>
+              <button className="px-4 py-2 rounded-lg bg-neutral-900/30 border border-neutral-700/50 text-neutral-300 whitespace-nowrap flex items-center gap-2 hover:border-amber-500/50 hover:text-amber-300 transition-all">
+                <Gift className="w-4 h-4" />
+                求种大厅
+              </button>
+              <button className="px-4 py-2 rounded-lg bg-neutral-900/30 border border-neutral-700/50 text-neutral-300 whitespace-nowrap flex items-center gap-2 hover:border-amber-500/50 hover:text-amber-300 transition-all">
+                <MessageSquare className="w-4 h-4" />
+                社区论坛
+              </button>
+              <button className="px-4 py-2 rounded-lg bg-neutral-900/30 border border-neutral-700/50 text-neutral-300 whitespace-nowrap flex items-center gap-2 hover:border-amber-500/50 hover:text-amber-300 transition-all">
+                <Sparkles className="w-4 h-4" />
+                限时活动
+              </button>
+              <button className="px-4 py-2 rounded-lg bg-neutral-900/30 border border-neutral-700/50 text-neutral-300 whitespace-nowrap flex items-center gap-2 hover:border-amber-500/50 hover:text-amber-300 transition-all">
+                <Award className="w-4 h-4" />
+                排行榜
+              </button>
             </div>
           </div>
         </div>
@@ -472,25 +680,6 @@ export function PTHomePage() {
           </div>
         </div>
 
-        {/* 搜索栏 */}
-        <div className="mb-6 bg-neutral-800/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 hover:border-amber-500/50 transition-colors p-4">
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <Input
-                type="text"
-                placeholder="搜索种子标题、副标题、发布者..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-neutral-900/50 border-neutral-700/50 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
-              />
-            </div>
-            <Button className="bg-neutral-800/60 backdrop-blur-sm border border-neutral-700/50 hover:border-amber-500 hover:bg-amber-500/10 text-white px-6 transition-all">
-              <Search className="w-4 h-4 mr-2" />
-              搜索
-            </Button>
-          </div>
-        </div>
-
         {/* 底部三列布局 */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* 求种信息 */}
@@ -665,8 +854,8 @@ export function PTHomePage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4">
             {/* 电影 1 */}
-            <div className="group cursor-pointer">
-              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500/50 transition-all duration-300">
+            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-110 hover:z-10">
+              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500 transition-all duration-300 shadow-lg hover:shadow-amber-500/50 hover:shadow-2xl">
                 <div className="aspect-[2/3] relative">
                   <img
                     src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600"
@@ -725,8 +914,8 @@ export function PTHomePage() {
             </div>
 
             {/* 电影 2 */}
-            <div className="group cursor-pointer">
-              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500/50 transition-all duration-300">
+            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-110 hover:z-10">
+              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500 transition-all duration-300 shadow-lg hover:shadow-amber-500/50 hover:shadow-2xl">
                 <div className="aspect-[2/3] relative">
                   <img
                     src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=600"
@@ -778,8 +967,8 @@ export function PTHomePage() {
             </div>
 
             {/* 电影 3 */}
-            <div className="group cursor-pointer">
-              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500/50 transition-all duration-300">
+            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-110 hover:z-10">
+              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500 transition-all duration-300 shadow-lg hover:shadow-amber-500/50 hover:shadow-2xl">
                 <div className="aspect-[2/3] relative">
                   <img
                     src="https://images.unsplash.com/photo-1594908900066-3f47337549d8?w=600"
@@ -831,8 +1020,8 @@ export function PTHomePage() {
             </div>
 
             {/* 电影 4 */}
-            <div className="group cursor-pointer">
-              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500/50 transition-all duration-300">
+            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-110 hover:z-10">
+              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500 transition-all duration-300 shadow-lg hover:shadow-amber-500/50 hover:shadow-2xl">
                 <div className="aspect-[2/3] relative">
                   <img
                     src="https://images.unsplash.com/photo-1585951237318-9ea5e175b891?w=600"
@@ -884,8 +1073,8 @@ export function PTHomePage() {
             </div>
 
             {/* 电影 5 */}
-            <div className="group cursor-pointer">
-              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500/50 transition-all duration-300">
+            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-110 hover:z-10">
+              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500 transition-all duration-300 shadow-lg hover:shadow-amber-500/50 hover:shadow-2xl">
                 <div className="aspect-[2/3] relative">
                   <img
                     src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600"
@@ -941,8 +1130,8 @@ export function PTHomePage() {
             </div>
 
             {/* 电影 6 */}
-            <div className="group cursor-pointer">
-              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500/50 transition-all duration-300">
+            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-110 hover:z-10">
+              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500 transition-all duration-300 shadow-lg hover:shadow-amber-500/50 hover:shadow-2xl">
                 <div className="aspect-[2/3] relative">
                   <img
                     src="https://images.unsplash.com/photo-1616530940355-351fabd9524b?w=600"
@@ -994,8 +1183,8 @@ export function PTHomePage() {
             </div>
 
             {/* 电影 7 */}
-            <div className="group cursor-pointer">
-              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500/50 transition-all duration-300">
+            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-110 hover:z-10">
+              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500 transition-all duration-300 shadow-lg hover:shadow-amber-500/50 hover:shadow-2xl">
                 <div className="aspect-[2/3] relative">
                   <img
                     src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600"
@@ -1051,8 +1240,8 @@ export function PTHomePage() {
             </div>
 
             {/* 电影 8 */}
-            <div className="group cursor-pointer">
-              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500/50 transition-all duration-300">
+            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-110 hover:z-10">
+              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500 transition-all duration-300 shadow-lg hover:shadow-amber-500/50 hover:shadow-2xl">
                 <div className="aspect-[2/3] relative">
                   <img
                     src="https://images.unsplash.com/photo-1574267432644-f74f8cc3709f?w=600"
@@ -1104,8 +1293,8 @@ export function PTHomePage() {
             </div>
 
             {/* 电影 9 */}
-            <div className="group cursor-pointer">
-              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500/50 transition-all duration-300">
+            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-110 hover:z-10">
+              <div className="relative overflow-hidden rounded-lg bg-neutral-900/50 border border-neutral-700/50 hover:border-amber-500 transition-all duration-300 shadow-lg hover:shadow-amber-500/50 hover:shadow-2xl">
                 <div className="aspect-[2/3] relative">
                   <img
                     src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=600"
@@ -1162,6 +1351,9 @@ export function PTHomePage() {
           </div>
         </section>
       </div>
+
+      {/* 底部操作栏 */}
+      <HomeActionBar />
     </div>
   );
 }

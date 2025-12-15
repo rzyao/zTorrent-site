@@ -125,6 +125,7 @@ export function Toolbar(props: ToolbarProps) {
                 placeholder="选择排序方式"
                 className="w-[140px]"
                 variant="cyan"
+                triggerClassName="rounded-full text-neutral-300"
               />
             </div>
 
@@ -132,7 +133,7 @@ export function Toolbar(props: ToolbarProps) {
             <Button
               variant="outline"
               onClick={onToggleFilters}
-              className="bg-gray-900 border-gray-700 text-white hover:bg-gray-800 px-4 h-9"
+              className="bg-gray-900 border-gray-700 text-white border border-gray-700 hover:text-amber-300 hover:border-amber-500/50 px-4 h-9"
               aria-pressed={showFilters}
             >
               <SlidersHorizontal className="w-5 h-5" />
@@ -144,8 +145,8 @@ export function Toolbar(props: ToolbarProps) {
                 onClick={() => onChangeViewMode("grid")}
                 className={`h-9 px-3 transition-colors ${
                   viewMode === "grid"
-                    ? "bg-[#00A8E1] text-white"
-                    : "bg-gray-900 text-gray-400 hover:bg-gray-800"
+                    ? "bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300 whitespace-nowrap"
+                    : "bg-gray-900 text-gray-400 border border-gray-900 hover:text-amber-300 hover:border-amber-500/50"
                 }`}
               >
                 <Grid3x3 className="w-5 h-5" />
@@ -154,8 +155,8 @@ export function Toolbar(props: ToolbarProps) {
                 onClick={() => onChangeViewMode("list")}
                 className={`h-9 px-3 transition-colors ${
                   viewMode === "list"
-                    ? "bg-[#00A8E1] text-white"
-                    : "bg-gray-900 text-gray-400 hover:bg-gray-800"
+                    ? "bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300 whitespace-nowrap"
+                    : "bg-gray-900 text-gray-400 border border-gray-900 hover:text-amber-300 hover:border-amber-500/50"
                 }`}
               >
                 <List className="w-5 h-5" />

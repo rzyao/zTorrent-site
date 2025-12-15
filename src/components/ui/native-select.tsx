@@ -89,10 +89,10 @@ export const NativeSelect = memo(function NativeSelect({
       itemActive: "bg-amber-500/20 text-amber-400",
     },
     cyan: {
-      focusBorder: "border-[#00A8E1]/50",
-      focusRing: "ring-[#00A8E1]/20",
-      chevronActive: "text-[#00A8E1]",
-      itemActive: "bg-[#00A8E1]/20 text-[#00A8E1]",
+      focusBorder: "focus:border-amber-500",
+      focusRing: "ring-amber-500/20",
+      chevronActive: "text-amber-500",
+      itemActive: "bg-amber-500/20 text-amber-400",
     },
   };
 
@@ -106,8 +106,8 @@ export const NativeSelect = memo(function NativeSelect({
         disabled={disabled}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         className={cn(
-          "flex items-center justify-between gap-2 rounded-md border border-gray-700 bg-gray-900 text-sm text-white transition-all duration-200 outline-none cursor-pointer",
-          "hover:border-gray-600",
+          "flex items-center justify-between gap-2 rounded-md border border-gray-700 bg-neutral-900/50 text-sm text-white transition-all duration-200 outline-none cursor-pointer",
+          "hover:border-amber-500/50",
           isOpen && `${theme.focusBorder} ring-2 ${theme.focusRing}`,
           disabled && "cursor-not-allowed opacity-50",
           iconOnly ? "h-9 w-9 p-0 justify-center" : "w-full h-9 px-4",
@@ -118,7 +118,9 @@ export const NativeSelect = memo(function NativeSelect({
           icon || <ChevronDown className="size-4 text-gray-400" />
         ) : (
           <>
-            <span className={cn(!selectedOption && "text-gray-500", "truncate")}>
+            <span
+              className={cn(!selectedOption && "text-gray-500", "truncate")}
+            >
               {selectedOption?.label || placeholder}
             </span>
             <ChevronDown

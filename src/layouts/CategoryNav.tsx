@@ -40,10 +40,10 @@ export function CategoryNav({
         {sortedList.map((c) => (
           <Button
             key={c.label}
-            className={`px-4 py-1.5 rounded-full transition-colors ${
+            className={`px-4 py-1.5 rounded-full transition-colors hover:from-amber-500/30 hover:to-orange-500/30 transition-all ${
               c.label === active
-                ? "bg-white text-black"
-                : "bg-gray-800 text-white hover:bg-gray-700"
+                ? "bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300 whitespace-nowrap"
+                : "bg-gray-800/80 text-neutral-300 hover:bg-gray-700 hover:text-amber-300"
             }`}
             onClick={() => {
               if (onSelect) onSelect(c.label);

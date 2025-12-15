@@ -433,7 +433,17 @@ export default function TorrentDetailPage({
                 <div className="flex flex-wrap items-center gap-2">
                   <Button
                     className="bg-amber-600 hover:bg-amber-700 text-white h-9"
-                    onClick={() => setDownloadModalOpen(true)}
+                    onClick={() => {
+                      // 如果有下载器则打开弹窗，否则直接下载种子文件
+                      if (downloaders.length > 0) {
+                        setDownloadModalOpen(true);
+                      } else {
+                        downloadByTorrentId(
+                          String(torrentData.id),
+                          String(torrentData.title || "download")
+                        );
+                      }
+                    }}
                   >
                     <Download className="w-4 h-4 mr-1" />
                     下载种子

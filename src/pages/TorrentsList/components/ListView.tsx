@@ -65,7 +65,7 @@ export function ListView({
             </div>
 
             {/* 信息区 */}
-            <div className="flex-1 min-w-0">
+            <div className="flex flex-col justify-between flex-1 min-w-0">
               <div className="flex items-start gap-3  mb-1">
                 <div className="flex flex-col flex-1">
                   <h3 className="text-white flex-1 text">{torrent.title}</h3>
@@ -73,7 +73,7 @@ export function ListView({
                 </div>
                 <Button
                   size="sm"
-                  className="gradient-tag"
+                  className="general-button"
                   onClick={() =>
                     onDownload(
                       String(torrent.id),
@@ -88,10 +88,8 @@ export function ListView({
 
               <div className="flex flex-wrap items-center gap-2 mb-1">
                 <Badge
-                  color="blue"
-                  border="white"
                   size="sm"
-                  className="text-xs"
+                  className="bg-amber-500/20 text-amber-400 border-amber-500/30"
                 >
                   {getCategoryLabel(torrent.category) || torrent.category}
                 </Badge>

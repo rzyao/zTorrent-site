@@ -1,7 +1,7 @@
-import { ImageWithFallback } from './figma/ImageWithFallback';
-import { Play, Plus, ThumbsUp, ChevronDown } from 'lucide-react';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+import { Play, Plus, ThumbsUp, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface VideoCardProps {
   thumbnail: string;
@@ -11,7 +11,13 @@ interface VideoCardProps {
   duration?: string;
 }
 
-export function VideoCard({ thumbnail, title, year, rating, duration }: VideoCardProps) {
+export function VideoCard({
+  thumbnail,
+  title,
+  year,
+  rating,
+  duration,
+}: VideoCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -48,7 +54,9 @@ export function VideoCard({ thumbnail, title, year, rating, duration }: VideoCar
             <p className="text-white text-sm">{title}</p>
             <div className="flex items-center gap-2 text-xs text-gray-400">
               {year && <span className="text-green-500">{year}</span>}
-              {rating && <span className="border border-gray-500 px-1">{rating}</span>}
+              {rating && (
+                <span className="border border-gray-500 px-1">{rating}</span>
+              )}
               {duration && <span>{duration}</span>}
             </div>
           </div>

@@ -5,6 +5,8 @@ import { GridView } from "@/pages/TorrentsList/components/GridView";
 import { ListView } from "@/pages/TorrentsList/components/ListView";
 import { PaginationBar } from "@/pages/TorrentsList/components/PaginationBar";
 import { useTorrentsList } from "@/pages/TorrentsList/hooks/useTorrentsList";
+import { useDownloaders } from "@/context/DownloadersContext";
+import { DownloadToDownloaderModal } from "@/components/DownloadToDownloaderModal";
 import type { Torrent, ViewMode } from "@/pages/TorrentsList/types";
 
 /**
@@ -38,6 +40,30 @@ export default function TorrentsPage() {
     onInfo: (m) => console.info(m),
     onError: (m) => alert(m),
   });
+
+  // 下载器全局状态
+  const { downloaders } = useDownloaders();
+
+  // 下载弹窗状态
+  const [downloadModalOpen, setDownloadModalOpen] = useState(false);
+  const [selectedTorrent, setSelectedTorrent] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
+
+  /**
+   * 处理下载按钮点击
+   * - 有下载器：打开弹窗选择
+   * - 无下载器：直接下载种子文件
+   */
+  const handleDownload = (id: string, title: string) => {
+    if (downloaders.length > 0) {
+      setSelectedTorrent({ id, title });
+      setDownloadModalOpen(true);
+    } else {
+      downloadByTorrentId(id, title);
+    }
+  };
 
   /**
    * 保留原页面的封面选择逻辑：根据视图模式选择不同尺寸
@@ -76,7 +102,7 @@ export default function TorrentsPage() {
           <GridView
             items={displayTorrents}
             getCategoryLabel={getCategoryLabel}
-            onDownload={downloadByTorrentId}
+            onDownload={handleDownload}
             getCoverSrc={getCoverSrc}
           />
         )}
@@ -84,7 +110,7 @@ export default function TorrentsPage() {
           <ListView
             items={displayTorrents}
             getCategoryLabel={getCategoryLabel}
-            onDownload={downloadByTorrentId}
+            onDownload={handleDownload}
             getCoverSrc={getCoverSrc}
           />
         )}
@@ -96,6 +122,19 @@ export default function TorrentsPage() {
           onChangePage={setCurrentPage}
         />
       </div>
+
+      {/* 下载弹窗 */}
+      {selectedTorrent && (
+        <DownloadToDownloaderModal
+          open={downloadModalOpen}
+          onClose={() => {
+            setDownloadModalOpen(false);
+            setSelectedTorrent(null);
+          }}
+          torrentId={selectedTorrent.id}
+          torrentTitle={selectedTorrent.title}
+        />
+      )}
     </div>
   );
 }

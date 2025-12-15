@@ -402,7 +402,7 @@ export function HomePage() {
   /* 卡片背景色从bg-gradient-to-br from-neutral-800/60 to-stone-900/60修改为bg-neutral-800/40 */
   return (
     <div className="min-h-screen bg-[#0F171E]">
-      <div className="max-w-[1920px] mx-auto px-4 md:px-8 py-6">
+      <div className="max-w-[1920px] mx-auto px-4 md:px-14 py-6">
         {/* 顶部三列布局 */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
           {/* 左侧：站点公告 */}

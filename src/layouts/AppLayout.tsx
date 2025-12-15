@@ -1,10 +1,32 @@
-import { Header } from '@/layouts/Header';
-import { SiteConfigProvider } from '@/context/SiteConfigContext';
-import { useDynamicFavicon } from '@/hooks/useDynamicFavicon';
-
+import { useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
+import { Header } from "@/layouts/Header";
+import { SiteConfigProvider } from "@/context/SiteConfigContext";
+import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
+import { useNavigationState } from "@/hooks/useNavigationState";
+import GoBack from "@/components/GoBack";
+import GoForward from "@/components/GoForward";
 
 function FaviconInjector() {
   useDynamicFavicon();
+  return null;
+}
+
+// 监听路由变化，记录项目内导航
+function NavigationStateReset() {
+  const location = useLocation();
+  const { recordNavigation } = useNavigationState();
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    // 跳过首次渲染，只记录后续导航
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    recordNavigation();
+  }, [location.pathname, recordNavigation]);
+
   return null;
 }
 
@@ -12,9 +34,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <SiteConfigProvider>
       <FaviconInjector />
+      <NavigationStateReset />
       <div className="min-h-screen bg-[#0F171E]">
         <Header />
         <div>{children}</div>
+        <GoBack />
+        <GoForward />
       </div>
     </SiteConfigProvider>
   );

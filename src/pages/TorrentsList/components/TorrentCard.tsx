@@ -1,4 +1,4 @@
-import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
 import {
   Download,
   Upload,
@@ -7,11 +7,11 @@ import {
   HardDrive,
   X,
 } from "lucide-react";
-import { AlertDialog } from "./ui/alert-dialog";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
+import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useState, lazy, Suspense, useEffect, memo } from "react";
-import AnimatedAlertDialogContent from "./AnimatedAlertDialogContent";
+import AnimatedAlertDialogContent from "@/components/AnimatedAlertDialogContent";
 import { formatSize } from "@/utils/format";
 
 import TorrentDetailPage from "@/pages/TorrentDetail/index";
