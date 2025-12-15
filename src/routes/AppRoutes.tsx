@@ -20,7 +20,7 @@ import { SubtitlesPage } from "@/pages/Subtitles/index.tsx";
 import RankingPage from "@/pages/RankingPage.tsx";
 import { EditMoviePage } from "@/pages/Edit/movies/index.tsx";
 import { EditPlaylistPage } from "@/pages/Edit/playlists/index.tsx";
-import MoviePage from "@/pages/MoviePage.tsx";
+
 import { UploadTorrentPage } from "@/pages/UploadTorrent/index.tsx";
 import { MessagesPage } from "@/pages/Messages/index.tsx";
 import { ControlPage } from "@/pages/Control/index.tsx";
@@ -220,22 +220,6 @@ export default function AppRoutes() {
             element={
               <PermissionRoute requiredPermissions={["page:home"]}>
                 <HomePage />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="movie"
-            element={
-              <PermissionRoute requiredPermissions={["page:movie"]}>
-                <MoviePage />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="movie/:category"
-            element={
-              <PermissionRoute requiredPermissions={["page:movie"]}>
-                <MoviePage />
               </PermissionRoute>
             }
           />
