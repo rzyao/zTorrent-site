@@ -94,7 +94,7 @@ export function Toolbar(props: ToolbarProps) {
                 placeholder="搜索种子、标题..."
                 value={searchQuery}
                 onChange={(e) => onChangeSearch(e.target.value)}
-                className="w-full bg-gray-900 border-gray-700 text-white pl-4 pr-11 py-2 md:py-4 rounded-full focus:border-[#00A8E1] focus:ring-[#00A8E1] placeholder:text-gray-500"
+                className="w-full input  text-white pl-4 pr-11 py-2 md:py-4 rounded-full focus:border-[#00A8E1] focus:ring-[#00A8E1] placeholder:text-gray-500"
               />
             </div>
 

@@ -143,7 +143,7 @@ export function Header() {
                     : "text-white hover:text-gray-300 transition-colors"
                 }
               >
-                推荐
+                首页
               </NavLink>
               <NavLink
                 to="/torrents"

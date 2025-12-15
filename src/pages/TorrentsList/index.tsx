@@ -72,7 +72,7 @@ export default function TorrentsPage() {
 
       {/* 列表区 */}
       <div className="relative z-0 max-w-[1600px] mx-auto px-4 md:px-8 py-6">
-        {(
+        {viewMode === "grid" && (
           <GridView
             items={displayTorrents}
             getCategoryLabel={getCategoryLabel}

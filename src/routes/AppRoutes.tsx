@@ -11,16 +11,15 @@ import { LoginPage } from "@/pages/LoginPage.tsx";
 import { Register } from "@/pages/Register.tsx";
 import { ForgotPasswordPage } from "@/pages/ForgotPasswordPage.tsx";
 import AppLayout from "../layouts/AppLayout.tsx";
-import HomeLayout from "../layouts/HomeLayout.tsx";
 
-import HomePage from "@/pages/HomePage.tsx";
+import { HomePage } from "@/pages/HomePage.tsx";
+import AdultPage from "@/pages/Adult/index.tsx";
 import TorrentsPage from "@/pages/TorrentsList/index.tsx";
 import { ForumPage } from "@/pages/Forum/index.tsx";
 import { SubtitlesPage } from "@/pages/Subtitles/index.tsx";
 import RankingPage from "@/pages/RankingPage.tsx";
 import { EditMoviePage } from "@/pages/Edit/movies/index.tsx";
 import { EditPlaylistPage } from "@/pages/Edit/playlists/index.tsx";
-
 import { UploadTorrentPage } from "@/pages/UploadTorrent/index.tsx";
 import { MessagesPage } from "@/pages/Messages/index.tsx";
 import { ControlPage } from "@/pages/Control/index.tsx";
@@ -202,29 +201,27 @@ export default function AppRoutes() {
         <Route
           path="/home"
           element={
-            <PermissionRoute>
-              <HomeLayout />
+            <PermissionRoute requiredPermissions={["page:home"]}>
+              <HomePage />
             </PermissionRoute>
           }
-        >
-          <Route
-            index
-            element={
-              <PermissionRoute requiredPermissions={["page:home"]}>
-                <HomePage />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path=":category"
-            element={
-              <PermissionRoute requiredPermissions={["page:home"]}>
-                <HomePage />
-              </PermissionRoute>
-            }
-          />
-        </Route>
-
+        />
+        <Route
+          path="/adult"
+          element={
+            <PermissionRoute requiredPermissions={["page:adult"]}>
+              <AdultPage />
+            </PermissionRoute>
+          }
+        />
+        <Route
+          path="/adult/:category"
+          element={
+            <PermissionRoute requiredPermissions={["page:adult"]}>
+              <AdultPage />
+            </PermissionRoute>
+          }
+        />
         <Route
           path="/torrents"
           element={

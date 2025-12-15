@@ -22,12 +22,41 @@ export function useTorrentsList() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 50; // 保持与旧页面一致
 
-  // 加载态与原始数据
-  // const [apiItems, setApiItems] = useState<any[]>([]);
-  // const [total, setTotal] = useState<number>(0);
+  /**
+   * React Query 缓存分类列表
+   */
+  const { data: categoriesData } = useQuery<CategoryItem[], Error>({
+    queryKey: ['torrentCategories'],
+    queryFn: async (): Promise<CategoryItem[]> => {
+      const resp = await CategoriesService.categoriesControllerListUserCategories();
+      const body: any = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
+      const raw: any = body?.data ?? body;
+      const arr = Array.isArray(raw) ? raw : [];
+      let mapped: CategoryItem[] = arr.map((dto: any) => ({
+        key: String(dto.key),
+        label: getCategoryLabel(dto.key) || String(dto.label ?? dto.key),
+        sort: typeof dto.sort === 'number' ? dto.sort : undefined,
+      }));
+      if (mapped.some((m) => !m.label || m.label === m.key)) {
+        await refreshDictionaries();
+        mapped = arr.map((dto: any) => ({
+          key: String(dto.key),
+          label: getCategoryLabel(dto.key) || String(dto.label ?? dto.key),
+          sort: typeof dto.sort === 'number' ? dto.sort : undefined,
+        }));
+      }
+      const sorted = [...mapped].sort((a, b) => Number(a.sort ?? Number.POSITIVE_INFINITY) - Number(b.sort ?? Number.POSITIVE_INFINITY));
+      return [{ label: '全部' }, ...sorted] as CategoryItem[];
+    },
+    staleTime: 1000 * 60 * 60,
+    gcTime: 1000 * 60 * 60 * 6,
+    placeholderData: (prev) => prev,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+  });
 
-  // 分类项
-  // const [categories, setCategories] = useState<CategoryItem[]>([]);
+  const categories = categoriesData || [];
 
   /**
    * 将展示标签映射为用于请求的分类键
@@ -109,47 +138,7 @@ export function useTorrentsList() {
   //   setTotal(t);
   // }, [torrentsData]);
 
-  /**
-   * React Query 缓存分类列表
-   */
-  const { data: categoriesData } = useQuery<CategoryItem[], Error>({
-    queryKey: ['torrentCategories'],
-    queryFn: async (): Promise<CategoryItem[]> => {
-      const resp = await CategoriesService.categoriesControllerListUserCategories();
-      const body: any = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
-      const raw: any = body?.data ?? body;
-      const arr = Array.isArray(raw) ? raw : [];
-      let mapped: CategoryItem[] = arr.map((dto: any) => ({
-        key: String(dto.key),
-        label: getCategoryLabel(dto.key) || String(dto.label ?? dto.key),
-        sort: typeof dto.sort === 'number' ? dto.sort : undefined,
-      }));
-      if (mapped.some((m) => !m.label || m.label === m.key)) {
-        await refreshDictionaries();
-        mapped = arr.map((dto: any) => ({
-          key: String(dto.key),
-          label: getCategoryLabel(dto.key) || String(dto.label ?? dto.key),
-          sort: typeof dto.sort === 'number' ? dto.sort : undefined,
-        }));
-      }
-      const sorted = [...mapped].sort((a, b) => Number(a.sort ?? Number.POSITIVE_INFINITY) - Number(b.sort ?? Number.POSITIVE_INFINITY));
-      return [{ label: '全部' }, ...sorted] as CategoryItem[];
-    },
-    staleTime: 1000 * 60 * 60,
-    gcTime: 1000 * 60 * 60 * 6,
-    placeholderData: (prev) => prev,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    refetchOnMount: false,
-  });
 
-  const categories = categoriesData || [];
-
-  // useEffect(() => {
-  //   if (Array.isArray(categoriesData) && categoriesData.length) {
-  //     setCategories(categoriesData);
-  //   }
-  // }, [categoriesData]);
 
   /**
    * 前端筛选与排序派生
