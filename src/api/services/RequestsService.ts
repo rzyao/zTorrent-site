@@ -16,6 +16,8 @@ import type { DisputesDetailDto } from '../models/DisputesDetailDto';
 import type { DisputesListDto } from '../models/DisputesListDto';
 import type { DisputesRequestEvidenceDto } from '../models/DisputesRequestEvidenceDto';
 import type { ListRequestsDto } from '../models/ListRequestsDto';
+import type { MyRequestsListDto } from '../models/MyRequestsListDto';
+import type { MyResponsesListDto } from '../models/MyResponsesListDto';
 import type { PendingSubmissionsDto } from '../models/PendingSubmissionsDto';
 import type { PublishDto } from '../models/PublishDto';
 import type { RejectSubmissionDto } from '../models/RejectSubmissionDto';
@@ -270,23 +272,33 @@ export class RequestsService {
         });
     }
     /**
+     * @param requestBody
      * @returns any
      * @throws ApiError
      */
-    public static requestsControllerMyList(): CancelablePromise<any> {
+    public static requestsControllerMyList(
+        requestBody: MyRequestsListDto,
+    ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/requests/my/list',
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
     /**
+     * @param requestBody
      * @returns any
      * @throws ApiError
      */
-    public static requestsControllerMyResponses(): CancelablePromise<any> {
+    public static requestsControllerMyResponses(
+        requestBody: MyResponsesListDto,
+    ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/requests/my-responses/list',
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
     /**

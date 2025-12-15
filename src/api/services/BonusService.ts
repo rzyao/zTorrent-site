@@ -9,6 +9,9 @@ import type { AdminListBalancesDto } from '../models/AdminListBalancesDto';
 import type { AdminListLedgerDto } from '../models/AdminListLedgerDto';
 import type { AdminReverseDto } from '../models/AdminReverseDto';
 import type { AdminUnfreezeDto } from '../models/AdminUnfreezeDto';
+import type { BonusConfigDto } from '../models/BonusConfigDto';
+import type { SimulationRequestDto } from '../models/SimulationRequestDto';
+import type { SimulationResultDto } from '../models/SimulationResultDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -255,6 +258,88 @@ export class BonusService {
             url: '/bonus/admin/unfreeze-account',
             body: requestBody,
             mediaType: 'application/json',
+        });
+    }
+    /**
+     * 读取平台 Bonus 配置（POST）
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static bonusConfigControllerRead(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: BonusConfigDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/bonus/config/read',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 更新并激活平台 Bonus 配置（POST）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static bonusConfigControllerUpdate(
+        requestBody: BonusConfigDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: BonusConfigDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/bonus/config/update',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 场景模拟计算（POST）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static bonusSimulatorControllerSimulate(
+        requestBody: SimulationRequestDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: SimulationResultDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/bonus/simulate',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
         });
     }
 }

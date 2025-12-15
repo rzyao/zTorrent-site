@@ -80,14 +80,14 @@ export default function TorrentsPage() {
             getCoverSrc={getCoverSrc}
           />
         )}
-        {/* {viewMode === "list" && (
+        {viewMode === "list" && (
           <ListView
             items={displayTorrents}
             getCategoryLabel={getCategoryLabel}
             onDownload={downloadByTorrentId}
             getCoverSrc={getCoverSrc}
           />
-        )} */}
+        )}
 
         {/* 分页 */}
         <PaginationBar

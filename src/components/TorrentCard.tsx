@@ -14,9 +14,8 @@ import { useState, lazy, Suspense, useEffect, memo } from "react";
 import AnimatedAlertDialogContent from "./AnimatedAlertDialogContent";
 import { formatSize } from "@/utils/format";
 
-// Lazy load TorrentDetailPage to avoid circular dependency
-const TorrentDetailPage = lazy(() => import("@/pages/TorrentDetail/index"));
-const FilmDetailPage = lazy(() => import("@/pages/FilmDetail"));
+import TorrentDetailPage from "@/pages/TorrentDetail/index";
+// const FilmDetailPage = lazy(() => import("@/pages/FilmDetail")); // Unused
 
 interface TorrentCardProps {
   id: string | number;
@@ -138,9 +137,15 @@ function TorrentCardInner({
             </div>
             <Button
               className="bg-white hover:bg-gray-200 text-black px-6 py-2 rounded-md transition-colors"
-              onClick={onDownloadByIdTitle ? () => onDownloadByIdTitle(String(id), title) : onDownload}
+              onClick={
+                onDownloadByIdTitle
+                  ? () => onDownloadByIdTitle(String(id), title)
+                  : onDownload
+              }
               // disabled={!onDownload && !onDownloadByIdTitle}
-              title={(!onDownload && !onDownloadByIdTitle) ? "无下载权限" : undefined}
+              title={
+                !onDownload && !onDownloadByIdTitle ? "无下载权限" : undefined
+              }
             >
               下载
             </Button>

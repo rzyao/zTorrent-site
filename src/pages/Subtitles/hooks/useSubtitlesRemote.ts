@@ -5,6 +5,7 @@ import type { FilterLanguage, SortBy, Subtitle, TorrentOption, UploadForm } from
 import type { ListSubtitlesDto } from '../../../api/models/ListSubtitlesDto';
 import type { UploadSubtitleDto } from '../../../api/models/UploadSubtitleDto';
 import type { GetSubtitleDto } from '../../../api/models/GetSubtitleDto';
+import { OpenAPI } from '../../../api/core/OpenAPI';
 
 export interface SubtitlesStats {
   totalSubtitles: number;
@@ -134,8 +135,8 @@ export function useSubtitlesRemote(params: {
   }, []);
 
   const download = useCallback(async (id: string, filename?: string) => {
-    const base = (await import('../../../api/core/OpenAPI')).OpenAPI.BASE;
-    const tokenValue = (await import('../../../api/core/OpenAPI')).OpenAPI.TOKEN;
+    const base = OpenAPI.BASE;
+    const tokenValue = OpenAPI.TOKEN;
     const token = typeof tokenValue === 'function' 
       ? await tokenValue({ method: 'POST', url: '' } as any) 
       : tokenValue;

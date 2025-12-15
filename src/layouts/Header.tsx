@@ -17,6 +17,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import Logo from "@/assets/logo.svg";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
@@ -125,22 +126,9 @@ export function Header() {
               )}
             </button>
             <NavLink to="/home" className="flex items-center gap-2">
-              {logoSvg && logoSvg.trim().length > 0 ? (
-                <img
-                  src={`data:image/svg+xml;utf8,${encodeURIComponent(
-                    ensureNamespace(logoSvg)
-                  )}`}
-                  alt="Logo"
-                  className="h-7 md:h-9"
-                />
-              ) : logoUrl && logoUrl.trim().length > 0 ? (
-                <img src={logoUrl} alt="Logo" className="h-7 md:h-9" />
-              ) : (
-                <>
-                  <span className="text-white text-2xl">PT</span>
-                  <span className="text-[#00A8E1] text-2xl">Tracker</span>
-                </>
-              )}
+              <img src={Logo} alt="Logo" className="h-7 md:h-9" />
+              <span className="text-white text-2xl">PT</span>
+              <span className="text-[#00A8E1] text-2xl">Tracker</span>
               <span className="text-white text-xl md:text-2xl">
                 {title || ""}
               </span>

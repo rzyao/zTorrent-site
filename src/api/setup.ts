@@ -1,3 +1,4 @@
+import { OpenAPI } from './core/OpenAPI';
 // OpenAPI 运行时配置集中初始化
 // 目的：
 // 1) 统一读取 Vite 环境变量 `VITE_BASE_URL` 作为后端请求基础地址（Base URL）
@@ -15,15 +16,19 @@
  */
 // 通过全局标记确保仅初始化一次，避免在 HMR 或重复导入下污染配置
 export async function initOpenAPI(): Promise<void> {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     const w = window as any;
     if (w.__openapi_inited) return;
     w.__openapi_inited = true;
   }
-  const base = import.meta.env.VITE_BASE_URL || '';
-  const normalized = String(base).trim().replace(/\/$/, '');
-  const { OpenAPI } = await import('./core/OpenAPI');
+  const base = import.meta.env.VITE_BASE_URL || "";
+  const normalized = String(base).trim().replace(/\/$/, "");
+  /*
+   * [Fix] Vite reporter warning: OpenAPI is statically imported elsewhere.
+   */
+  // const { OpenAPI } = await import('./core/OpenAPI');
+
   OpenAPI.BASE = normalized;
-  OpenAPI.TOKEN = async () => localStorage.getItem('accessToken') || '';
-  console.debug('[OpenAPI] BASE =', OpenAPI.BASE);
+  OpenAPI.TOKEN = async () => localStorage.getItem("accessToken") || "";
+  console.debug("[OpenAPI] BASE =", OpenAPI.BASE);
 }
