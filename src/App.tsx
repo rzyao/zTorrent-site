@@ -16,18 +16,20 @@ declare global {
 }
 
 export default function App() {
-  const { fetchDictionaries } = useDictionaryStore();
-  const { fetchCategories } = usePreferenceCategoriesStore();
-
+  /**
+   * 应用初始化：加载字典和分类数据
+   * 使用 store.getState() 直接调用 action，避免因函数引用不稳定
+   * 导致 useEffect 重复执行或在手机端出现竞态条件
+   */
   useEffect(() => {
     document.documentElement.classList.add("dark");
     // 应用初始化时：先加载字典数据，再获取分类数据（确保 label 能正确填充）
     const init = async () => {
-      await fetchDictionaries();
-      await fetchCategories();
+      await useDictionaryStore.getState().fetchDictionaries();
+      await usePreferenceCategoriesStore.getState().fetchCategories();
     };
     init();
-  }, [fetchDictionaries, fetchCategories]);
+  }, []); // 空依赖数组，仅在挂载时执行一次
 
   return (
     <BrowserRouter>
