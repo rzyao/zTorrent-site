@@ -39,6 +39,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { PageContainer } from "@/layouts/PageContainer";
 
 interface HotTorrent {
   id: number;
@@ -401,368 +402,363 @@ export function HomePage() {
   };
   /* 卡片背景色从bg-gradient-to-br from-neutral-800/60 to-stone-900/60修改为bg-neutral-800/40 */
   return (
-    <div className="min-h-screen bg-[#0F171E]">
-      <div className="max-w-[1920px] mx-auto px-4 md:px-14 py-6">
-        {/* 顶部三列布局 */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
-          {/* 左侧：站点公告 */}
-          <div className="lg:col-span-3">
-            <div className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5 h-full">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-white text-lg flex items-center gap-2">
-                  <Bell className="w-5 h-5 text-amber-400" />
-                  站点公告
-                </h2>
-              </div>
+    <PageContainer className="max-w-[1920px] px-4 md:px-14 py-6">
+      {/* 顶部三列布局 */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+        {/* 左侧：站点公告 */}
+        <div className="lg:col-span-3">
+          <div className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5 h-full">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-white text-lg flex items-center gap-2">
+                <Bell className="w-5 h-5 text-amber-400" />
+                站点公告
+              </h2>
+            </div>
 
-              <div className="space-y-2 max-h-[310px] overflow-y-auto scrollbar-themed-dark">
-                {announcements.map((announcement) => (
-                  <div
-                    key={announcement.id}
-                    className="p-3 rounded-lg bg-neutral-900/30 hover:bg-neutral-800/50 transition-colors cursor-pointer group"
-                  >
-                    <div className="flex items-start gap-2 mb-2">
-                      <Badge
-                        className={`${getAnnouncementTypeColor(
-                          announcement.type
-                        )} text-xs whitespace-nowrap`}
-                      >
-                        {announcement.type === "system" && "系统"}
-                        {announcement.type === "event" && "活动"}
-                        {announcement.type === "notice" && "通知"}
+            <div className="space-y-2 max-h-[310px] overflow-y-auto scrollbar-themed-dark">
+              {announcements.map((announcement) => (
+                <div
+                  key={announcement.id}
+                  className="p-3 rounded-lg bg-neutral-900/30 hover:bg-neutral-800/50 transition-colors cursor-pointer group"
+                >
+                  <div className="flex items-start gap-2 mb-2">
+                    <Badge
+                      className={`${getAnnouncementTypeColor(
+                        announcement.type
+                      )} text-xs whitespace-nowrap`}
+                    >
+                      {announcement.type === "system" && "系统"}
+                      {announcement.type === "event" && "活动"}
+                      {announcement.type === "notice" && "通知"}
+                    </Badge>
+                    {announcement.isTop && (
+                      <Badge className="bg-red-500 text-white text-xs border-0">
+                        置顶
                       </Badge>
-                      {announcement.isTop && (
-                        <Badge className="bg-red-500 text-white text-xs border-0">
-                          置顶
+                    )}
+                  </div>
+                  <h4 className="text-white text-sm group-hover:text-amber-400 transition-colors mb-2">
+                    {announcement.title}
+                  </h4>
+                  <p className="text-neutral-500 text-xs flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {announcement.time}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* 中间：最热种子轮播 */}
+        <div className="lg:col-span-6">
+          <div className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 overflow-hidden h-full relative group">
+            {/* 轮播内容 */}
+            <div className="relative h-[400px]">
+              {hotTorrents.map((torrent, index) => (
+                <div
+                  key={torrent.id}
+                  className={`absolute inset-0 transition-opacity duration-700 ${
+                    index === currentSlide ? "opacity-100" : "opacity-0"
+                  }`}
+                >
+                  <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{
+                      backgroundImage: `url(${torrent.image})`,
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/70 to-neutral-900/30" />
+                  </div>
+
+                  <div className="relative h-full flex flex-col justify-end p-8">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Badge className="bg-blue-500/30 text-blue-300 border-blue-500/50">
+                        {torrent.category}
+                      </Badge>
+                      {torrent.isFree && (
+                        <Badge className="bg-green-500/30 text-green-300 border-green-500/50">
+                          <Gift className="w-3 h-3 mr-1" />
+                          FREE
                         </Badge>
                       )}
+                      {torrent.isVip && (
+                        <Badge className="bg-amber-500/30 text-amber-300 border-amber-500/50">
+                          <Crown className="w-3 h-3 mr-1" />
+                          VIP
+                        </Badge>
+                      )}
+                      <Badge className="bg-red-500/30 text-red-300 border-red-500/50">
+                        <Flame className="w-3 h-3 mr-1" />
+                        HOT
+                      </Badge>
                     </div>
-                    <h4 className="text-white text-sm group-hover:text-amber-400 transition-colors mb-2">
-                      {announcement.title}
-                    </h4>
-                    <p className="text-neutral-500 text-xs flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {announcement.time}
+
+                    <h2 className="text-white text-3xl mb-2">
+                      {torrent.title}
+                    </h2>
+                    <p className="text-neutral-300 text-lg mb-4">
+                      {torrent.subtitle}
                     </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
 
-          {/* 中间：最热种子轮播 */}
-          <div className="lg:col-span-6">
-            <div className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 overflow-hidden h-full relative group">
-              {/* 轮播内容 */}
-              <div className="relative h-[400px]">
-                {hotTorrents.map((torrent, index) => (
-                  <div
-                    key={torrent.id}
-                    className={`absolute inset-0 transition-opacity duration-700 ${
-                      index === currentSlide ? "opacity-100" : "opacity-0"
+                    <div className="flex items-center gap-6 text-sm">
+                      <span className="text-neutral-400">
+                        大小: <span className="text-white">{torrent.size}</span>
+                      </span>
+                      <span className="text-neutral-400">
+                        做种:{" "}
+                        <span className="text-green-400">
+                          {torrent.seeders}
+                        </span>
+                      </span>
+                      <span className="text-neutral-400">
+                        下载:{" "}
+                        <span className="text-red-400">{torrent.leechers}</span>
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                        <span className="text-white">{torrent.rating}</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* 轮播控制按钮 */}
+              <button
+                onClick={prevSlide}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center text-white transition-all opacity-0 group-hover:opacity-100"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center text-white transition-all opacity-0 group-hover:opacity-100"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+
+              {/* 轮播指示器 */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                {hotTorrents.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      index === currentSlide
+                        ? "bg-amber-400 w-8"
+                        : "bg-white/50 hover:bg-white/70"
                     }`}
-                  >
-                    <div
-                      className="absolute inset-0 bg-cover bg-center"
-                      style={{
-                        backgroundImage: `url(${torrent.image})`,
-                      }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/70 to-neutral-900/30" />
-                    </div>
-
-                    <div className="relative h-full flex flex-col justify-end p-8">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Badge className="bg-blue-500/30 text-blue-300 border-blue-500/50">
-                          {torrent.category}
-                        </Badge>
-                        {torrent.isFree && (
-                          <Badge className="bg-green-500/30 text-green-300 border-green-500/50">
-                            <Gift className="w-3 h-3 mr-1" />
-                            FREE
-                          </Badge>
-                        )}
-                        {torrent.isVip && (
-                          <Badge className="bg-amber-500/30 text-amber-300 border-amber-500/50">
-                            <Crown className="w-3 h-3 mr-1" />
-                            VIP
-                          </Badge>
-                        )}
-                        <Badge className="bg-red-500/30 text-red-300 border-red-500/50">
-                          <Flame className="w-3 h-3 mr-1" />
-                          HOT
-                        </Badge>
-                      </div>
-
-                      <h2 className="text-white text-3xl mb-2">
-                        {torrent.title}
-                      </h2>
-                      <p className="text-neutral-300 text-lg mb-4">
-                        {torrent.subtitle}
-                      </p>
-
-                      <div className="flex items-center gap-6 text-sm">
-                        <span className="text-neutral-400">
-                          大小:{" "}
-                          <span className="text-white">{torrent.size}</span>
-                        </span>
-                        <span className="text-neutral-400">
-                          做种:{" "}
-                          <span className="text-green-400">
-                            {torrent.seeders}
-                          </span>
-                        </span>
-                        <span className="text-neutral-400">
-                          下载:{" "}
-                          <span className="text-red-400">
-                            {torrent.leechers}
-                          </span>
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                          <span className="text-white">{torrent.rating}</span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                  />
                 ))}
-
-                {/* 轮播控制按钮 */}
-                <button
-                  onClick={prevSlide}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center text-white transition-all opacity-0 group-hover:opacity-100"
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={nextSlide}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center text-white transition-all opacity-0 group-hover:opacity-100"
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button>
-
-                {/* 轮播指示器 */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                  {hotTorrents.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentSlide(index)}
-                      className={`w-2 h-2 rounded-full transition-all ${
-                        index === currentSlide
-                          ? "bg-amber-400 w-8"
-                          : "bg-white/50 hover:bg-white/70"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 右侧：站点统计 */}
-          <div className="lg:col-span-3">
-            <div className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5 h-full">
-              <h2 className="text-white text-lg mb-4 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-amber-400" />
-                站点统计
-              </h2>
-
-              <div className="space-y-4">
-                <div className="text-center p-4 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-600/20 border border-blue-500/30">
-                  <div className="text-blue-400 text-3xl mb-1">
-                    {siteStats.totalUsers.toLocaleString()}
-                  </div>
-                  <div className="text-neutral-400 text-sm">注册用户</div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="text-center p-3 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
-                    <div className="text-green-400 text-xl mb-1">
-                      {siteStats.torrents.toLocaleString()}
-                    </div>
-                    <div className="text-neutral-500 text-xs">种子数</div>
-                  </div>
-                  <div className="text-center p-3 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
-                    <div className="text-purple-400 text-xl mb-1">
-                      {siteStats.seeders.toLocaleString()}
-                    </div>
-                    <div className="text-neutral-500 text-xs">做种者</div>
-                  </div>
-                  <div className="text-center p-3 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
-                    <div className="text-red-400 text-xl mb-1">
-                      {siteStats.peers.toLocaleString()}
-                    </div>
-                    <div className="text-neutral-500 text-xs">下载者</div>
-                  </div>
-                  <div className="text-center p-3 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
-                    <div className="text-amber-400 text-xl mb-1">
-                      {siteStats.onlineUsers.toLocaleString()}
-                    </div>
-                    <div className="text-neutral-500 text-xs">在线用户</div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 底部三列布局 */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* 求种信息 */}
-          <section className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-white text-lg flex items-center gap-2">
-                <Gift className="w-5 h-5 text-amber-400" />
-                求种信息
-                <Badge className="bg-amber-500/20 text-amber-400 text-xs border-amber-500/30">
-                  {requests.filter((r) => r.status === "open").length} 个待完成
-                </Badge>
-              </h2>
-            </div>
+        {/* 右侧：站点统计 */}
+        <div className="lg:col-span-3">
+          <div className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5 h-full">
+            <h2 className="text-white text-lg mb-4 flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-amber-400" />
+              站点统计
+            </h2>
 
-            <div className="space-y-3">
-              {requests.map((request) => (
-                <div
-                  key={request.id}
-                  className="p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50 hover:border-amber-500/30 transition-all cursor-pointer group"
-                >
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <h3 className="text-white text-sm flex-1 group-hover:text-amber-400 transition-colors line-clamp-2">
-                      {request.title}
-                    </h3>
-                    <Badge className={getStatusColor(request.status)}>
-                      {getStatusText(request.status)}
-                    </Badge>
+            <div className="space-y-4">
+              <div className="text-center p-4 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-600/20 border border-blue-500/30">
+                <div className="text-blue-400 text-3xl mb-1">
+                  {siteStats.totalUsers.toLocaleString()}
+                </div>
+                <div className="text-neutral-400 text-sm">注册用户</div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="text-center p-3 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
+                  <div className="text-green-400 text-xl mb-1">
+                    {siteStats.torrents.toLocaleString()}
                   </div>
+                  <div className="text-neutral-500 text-xs">种子数</div>
+                </div>
+                <div className="text-center p-3 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
+                  <div className="text-purple-400 text-xl mb-1">
+                    {siteStats.seeders.toLocaleString()}
+                  </div>
+                  <div className="text-neutral-500 text-xs">做种者</div>
+                </div>
+                <div className="text-center p-3 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
+                  <div className="text-red-400 text-xl mb-1">
+                    {siteStats.peers.toLocaleString()}
+                  </div>
+                  <div className="text-neutral-500 text-xs">下载者</div>
+                </div>
+                <div className="text-center p-3 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
+                  <div className="text-amber-400 text-xl mb-1">
+                    {siteStats.onlineUsers.toLocaleString()}
+                  </div>
+                  <div className="text-neutral-500 text-xs">在线用户</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 底部三列布局 */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* 求种信息 */}
+        <section className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-white text-lg flex items-center gap-2">
+              <Gift className="w-5 h-5 text-amber-400" />
+              求种信息
+              <Badge className="bg-amber-500/20 text-amber-400 text-xs border-amber-500/30">
+                {requests.filter((r) => r.status === "open").length} 个待完成
+              </Badge>
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {requests.map((request) => (
+              <div
+                key={request.id}
+                className="p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50 hover:border-amber-500/30 transition-all cursor-pointer group"
+              >
+                <div className="flex items-start justify-between gap-3 mb-2">
+                  <h3 className="text-white text-sm flex-1 group-hover:text-amber-400 transition-colors line-clamp-2">
+                    {request.title}
+                  </h3>
+                  <Badge className={getStatusColor(request.status)}>
+                    {getStatusText(request.status)}
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-3 text-xs text-neutral-500">
+                  <span className="flex items-center gap-1">
+                    <User className="w-3 h-3" />
+                    {request.requester}
+                  </span>
+                  <span className="flex items-center gap-1 text-amber-400">
+                    <Award className="w-3 h-3" />
+                    {request.reward}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <MessageSquare className="w-3 h-3" />
+                    {request.replies}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {request.time}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 精华推荐 */}
+        <section className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-white text-lg flex items-center gap-2">
+              <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
+              精华推荐
+            </h2>
+          </div>
+
+          <div className="space-y-4">
+            {recommendations.map((rec) => (
+              <div
+                key={rec.id}
+                className="flex gap-3 p-3 rounded-lg bg-neutral-900/30 border border-neutral-700/50 hover:border-amber-500/30 transition-all cursor-pointer group"
+              >
+                <img
+                  src={rec.poster}
+                  alt={rec.title}
+                  className="w-20 h-28 object-cover rounded-lg flex-shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 text-xs mb-2">
+                    {rec.category}
+                  </Badge>
+                  <h3 className="text-white text-sm mb-2 group-hover:text-amber-400 transition-colors line-clamp-2">
+                    {rec.title}
+                  </h3>
+                  <p className="text-neutral-400 text-xs mb-2 line-clamp-2">
+                    {rec.description}
+                  </p>
                   <div className="flex items-center gap-3 text-xs text-neutral-500">
-                    <span className="flex items-center gap-1">
-                      <User className="w-3 h-3" />
-                      {request.requester}
+                    <span className="flex items-center gap-1 text-yellow-400">
+                      <Star className="w-3 h-3 fill-current" />
+                      {rec.rating}
                     </span>
-                    <span className="flex items-center gap-1 text-amber-400">
-                      <Award className="w-3 h-3" />
-                      {request.reward}
+                    <span className="flex items-center gap-1 text-red-400">
+                      <Heart className="w-3 h-3" />
+                      {rec.likes}
                     </span>
                     <span className="flex items-center gap-1">
                       <MessageSquare className="w-3 h-3" />
-                      {request.replies}
+                      {rec.comments}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 论坛热帖 */}
+        <section className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-white text-lg flex items-center gap-2">
+              <Flame className="w-5 h-5 text-red-400" />
+              论坛热帖
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {forumPosts.map((post) => (
+              <div
+                key={post.id}
+                className="p-3 rounded-lg bg-neutral-900/30 hover:bg-neutral-800/50 transition-all cursor-pointer group"
+              >
+                <div className="flex items-start gap-2 mb-2">
+                  {post.isPinned && (
+                    <Pin className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                  )}
+                  {post.isHot && (
+                    <Flame className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                  )}
+                  <h3 className="text-white text-sm flex-1 line-clamp-2 group-hover:text-amber-400 transition-colors">
+                    {post.title}
+                  </h3>
+                </div>
+
+                <Badge className="bg-blue-500/20 text-blue-400 text-xs border-blue-500/30 mb-2">
+                  {post.forum}
+                </Badge>
+
+                <div className="flex items-center justify-between text-xs text-neutral-500">
+                  <div className="flex items-center gap-2">
+                    <Avatar className="w-5 h-5">
+                      <AvatarImage src={post.authorAvatar} />
+                      <AvatarFallback>{post.author.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <span>{post.author}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="flex items-center gap-1">
+                      <MessageSquare className="w-3 h-3" />
+                      {post.replies}
                     </span>
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {request.time}
+                      <Eye className="w-3 h-3" />
+                      {post.views}
                     </span>
                   </div>
                 </div>
-              ))}
-            </div>
-          </section>
-
-          {/* 精华推荐 */}
-          <section className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-white text-lg flex items-center gap-2">
-                <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
-                精华推荐
-              </h2>
-            </div>
-
-            <div className="space-y-4">
-              {recommendations.map((rec) => (
-                <div
-                  key={rec.id}
-                  className="flex gap-3 p-3 rounded-lg bg-neutral-900/30 border border-neutral-700/50 hover:border-amber-500/30 transition-all cursor-pointer group"
-                >
-                  <img
-                    src={rec.poster}
-                    alt={rec.title}
-                    className="w-20 h-28 object-cover rounded-lg flex-shrink-0"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 text-xs mb-2">
-                      {rec.category}
-                    </Badge>
-                    <h3 className="text-white text-sm mb-2 group-hover:text-amber-400 transition-colors line-clamp-2">
-                      {rec.title}
-                    </h3>
-                    <p className="text-neutral-400 text-xs mb-2 line-clamp-2">
-                      {rec.description}
-                    </p>
-                    <div className="flex items-center gap-3 text-xs text-neutral-500">
-                      <span className="flex items-center gap-1 text-yellow-400">
-                        <Star className="w-3 h-3 fill-current" />
-                        {rec.rating}
-                      </span>
-                      <span className="flex items-center gap-1 text-red-400">
-                        <Heart className="w-3 h-3" />
-                        {rec.likes}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <MessageSquare className="w-3 h-3" />
-                        {rec.comments}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* 论坛热帖 */}
-          <section className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-white text-lg flex items-center gap-2">
-                <Flame className="w-5 h-5 text-red-400" />
-                论坛热帖
-              </h2>
-            </div>
-
-            <div className="space-y-3">
-              {forumPosts.map((post) => (
-                <div
-                  key={post.id}
-                  className="p-3 rounded-lg bg-neutral-900/30 hover:bg-neutral-800/50 transition-all cursor-pointer group"
-                >
-                  <div className="flex items-start gap-2 mb-2">
-                    {post.isPinned && (
-                      <Pin className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-                    )}
-                    {post.isHot && (
-                      <Flame className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                    )}
-                    <h3 className="text-white text-sm flex-1 line-clamp-2 group-hover:text-amber-400 transition-colors">
-                      {post.title}
-                    </h3>
-                  </div>
-
-                  <Badge className="bg-blue-500/20 text-blue-400 text-xs border-blue-500/30 mb-2">
-                    {post.forum}
-                  </Badge>
-
-                  <div className="flex items-center justify-between text-xs text-neutral-500">
-                    <div className="flex items-center gap-2">
-                      <Avatar className="w-5 h-5">
-                        <AvatarImage src={post.authorAvatar} />
-                        <AvatarFallback>{post.author.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <span>{post.author}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="flex items-center gap-1">
-                        <MessageSquare className="w-3 h-3" />
-                        {post.replies}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Eye className="w-3 h-3" />
-                        {post.views}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        </div>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
-    </div>
+    </PageContainer>
   );
 }
