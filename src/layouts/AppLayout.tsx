@@ -38,8 +38,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen bg-[#0F171E]">
         <Header />
         <div>{children}</div>
-        <GoBack />
-        <GoForward />
+        {/* 前进/后退按钮：手机模式隐藏 */}
+        <div className="hidden md:block">
+          <GoBack />
+          <GoForward />
+        </div>
       </div>
     </SiteConfigProvider>
   );

@@ -1,9 +1,11 @@
 import { useCallback, useSyncExternalStore } from "react";
 
+// 导航深度状态键
+const NAV_DEPTH_KEY = "__nav_depth__";
+
 // 模块级状态
-let forwardStackCount = 0;
-let internalNavigationCount = 0;
-let isNavigatingByButton = false;
+let currentDepth = 0; // 当前导航深度
+let maxDepth = 0; // 历史最大深度（用于判断 canGoForward）
 let listeners: Set<() => void> = new Set();
 
 function emitChange() {
@@ -15,75 +17,111 @@ function subscribe(listener: () => void) {
   return () => listeners.delete(listener);
 }
 
-function getForwardStackCount() {
-  return forwardStackCount;
+function getCurrentDepth() {
+  return currentDepth;
 }
 
-function getInternalNavigationCount() {
-  return internalNavigationCount;
+function getMaxDepth() {
+  return maxDepth;
 }
 
-// 首次加载时创建边界，阻止用户通过浏览器后退按钮退出项目
+// 标记是否正在通过我们的按钮导航（用于 popstate 中判断是否拦截）
+let isNavigatingByOurButton = false;
+// 标记是否是 popstate 导航（后退/前进），用于告诉 recordNavigation 跳过
+let isPopstateNavigation = false;
+// 标记是否已初始化
+let initialized = false;
+
+// 初始化边界监听
 (function initBoundary() {
-  const BOUNDARY_KEY = "__app_boundary__";
+  if (initialized) return;
+  initialized = true;
 
-  // 检查当前状态是否已经是边界
-  if (history.state?.[BOUNDARY_KEY]) return;
+  // 页面加载/刷新时，始终将深度重置为 0
+  currentDepth = 0;
+  maxDepth = 0;
 
-  // 1. 先 pushState 创建一个边界状态
-  history.pushState({ [BOUNDARY_KEY]: true }, "");
+  // 设置当前历史条目的深度标记
+  history.replaceState({ ...history.state, [NAV_DEPTH_KEY]: 0 }, "");
 
-  // 2. 监听 popstate，当退到边界时阻止继续后退
+  // 添加 beforeunload 事件监听
+  // 当用户尝试离开页面（关闭标签、后退到外部等）时触发浏览器原生确认框
+  window.addEventListener("beforeunload", (e) => {
+    // 阻止默认行为并设置返回值，触发浏览器确认框
+    e.preventDefault();
+    // 兼容性：某些浏览器需要设置 returnValue
+    e.returnValue = "";
+    return "";
+  });
+
+  // 监听 popstate 事件（用于应用内导航状态管理）
   window.addEventListener("popstate", (e) => {
-    // 如果当前 state 是边界状态，说明用户试图退出项目
-    if (e.state?.[BOUNDARY_KEY]) {
-      // 再次 pushState 把用户"弹"回来
-      history.pushState({ [BOUNDARY_KEY]: true }, "");
+    // 标记这是一个 popstate 导航，recordNavigation 应该跳过
+    isPopstateNavigation = true;
+
+    // 如果是通过我们的按钮触发的，更新状态
+    if (isNavigatingByOurButton) {
+      isNavigatingByOurButton = false;
+      // 从 state 中读取新的深度
+      const newDepth = e.state?.[NAV_DEPTH_KEY] ?? 0;
+      currentDepth = newDepth;
+      emitChange();
+      return;
+    }
+
+    // 获取目标深度
+    const targetDepth = e.state?.[NAV_DEPTH_KEY];
+
+    // 正常的浏览器后退/前进，更新深度
+    if (typeof targetDepth === "number" && targetDepth >= 0) {
+      currentDepth = targetDepth;
+      emitChange();
     }
   });
 })();
 
 /**
  * 导航状态 Hook
+ * 管理应用内的导航状态，支持前进/后退按钮
  */
 export function useNavigationState() {
-  const currentForwardCount = useSyncExternalStore(
-    subscribe,
-    getForwardStackCount
-  );
-  const currentInternalCount = useSyncExternalStore(
-    subscribe,
-    getInternalNavigationCount
-  );
+  const depth = useSyncExternalStore(subscribe, getCurrentDepth);
+  const max = useSyncExternalStore(subscribe, getMaxDepth);
 
-  const canGoBack = currentInternalCount - currentForwardCount > 0;
-  const canGoForward = currentForwardCount > 0;
+  // 可以后退：当前深度 > 0
+  const canGoBack = depth > 0;
+  // 可以前进：当前深度 < 最大深度
+  const canGoForward = depth < max;
 
   const goBack = useCallback(() => {
-    if (internalNavigationCount - forwardStackCount > 0) {
-      isNavigatingByButton = true;
-      forwardStackCount++;
-      emitChange();
+    if (currentDepth > 0) {
+      isNavigatingByOurButton = true;
       window.history.back();
     }
   }, []);
 
   const goForward = useCallback(() => {
-    if (forwardStackCount > 0) {
-      isNavigatingByButton = true;
-      forwardStackCount--;
-      emitChange();
+    if (currentDepth < maxDepth) {
+      isNavigatingByOurButton = true;
       window.history.forward();
     }
   }, []);
 
+  // 记录新的导航（由 AppLayout 中的 NavigationStateReset 调用）
   const recordNavigation = useCallback(() => {
-    if (isNavigatingByButton) {
-      isNavigatingByButton = false;
+    // 如果是 popstate 导航（后退/前进），跳过记录
+    if (isPopstateNavigation) {
+      isPopstateNavigation = false;
       return;
     }
-    internalNavigationCount++;
-    forwardStackCount = 0;
+
+    // 新导航：深度 +1，重置前进栈
+    currentDepth++;
+    maxDepth = currentDepth;
+
+    // 将深度存入 history.state
+    history.replaceState({ ...history.state, [NAV_DEPTH_KEY]: currentDepth }, "");
+
     emitChange();
   }, []);
 
@@ -95,3 +133,5 @@ export function useNavigationState() {
     recordNavigation,
   };
 }
+
+
