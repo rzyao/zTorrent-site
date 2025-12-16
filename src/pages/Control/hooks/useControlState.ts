@@ -395,6 +395,10 @@ export function useControlState() {
         setBaselineAdultMode(Boolean(data.showAdult));
         setBaselineTorrentCategories(Array.isArray(data.defaultTorrentCategories) ? data.defaultTorrentCategories : []);
         setBaselineFilmGenres(Array.isArray((data as any)?.defaultFilmCategories) ? (data as any).defaultFilmCategories : validGenres);
+        
+        // 保存成功后重新获取分类，更新全局状态
+        await usePreferenceCategoriesStore.getState().fetchCategories();
+        
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 3000);
       }
