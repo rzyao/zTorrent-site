@@ -5,6 +5,7 @@
 import type { AddFilmToPlaylistDto } from '../models/AddFilmToPlaylistDto';
 import type { AdminListPlaylistsDto } from '../models/AdminListPlaylistsDto';
 import type { AdminListPlaylistsResponseDto } from '../models/AdminListPlaylistsResponseDto';
+import type { CategoriesListResponseDto } from '../models/CategoriesListResponseDto';
 import type { CreatePlaylistDto } from '../models/CreatePlaylistDto';
 import type { DeletePlaylistDto } from '../models/DeletePlaylistDto';
 import type { DeletePlaylistResponseDto } from '../models/DeletePlaylistResponseDto';
@@ -365,6 +366,30 @@ export class PlaylistsService {
             url: '/playlists/admin/list-playlists',
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 获取片单分类列表
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static playlistsControllerListCategories(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: CategoriesListResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/playlists/list-categories',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

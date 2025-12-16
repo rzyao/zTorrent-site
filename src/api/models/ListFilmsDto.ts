@@ -11,7 +11,10 @@ export type ListFilmsDto = {
     search?: string;
     keyword?: string;
     enabled?: boolean;
-    category?: ListFilmsDto.category;
+    /**
+     * 分类筛选
+     */
+    categories?: Array<string>;
     /**
      * 支持 YYYY 或 YYYY-YYYY
      */
@@ -19,9 +22,9 @@ export type ListFilmsDto = {
     ratingMin?: number;
     ratingMax?: number;
     /**
-     * 流派ID集合（长度≤20）
+     * 流派名称集合（长度≤20）
      */
-    genreIds?: Array<string>;
+    genres?: Array<string>;
     /**
      * 标签筛选：all(全部)、trending(热门)、latest(最新)、classic(经典)
      */
@@ -36,12 +39,6 @@ export type ListFilmsDto = {
     sortBy?: ListFilmsDto.sortBy;
 };
 export namespace ListFilmsDto {
-    export enum category {
-        FILM = 'film',
-        SERIES = 'series',
-        DOCUMENTARY = 'documentary',
-        ANIME = 'anime',
-    }
     /**
      * 标签筛选：all(全部)、trending(热门)、latest(最新)、classic(经典)
      */

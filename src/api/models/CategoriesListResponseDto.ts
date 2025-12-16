@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type GenresDto = {
+export type CategoriesListResponseDto = {
     /**
-     * 类型列表
+     * 分类列表
      */
-    genres: Array<string>;
+    categories: Array<string>;
 };
 

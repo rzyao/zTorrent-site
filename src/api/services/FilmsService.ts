@@ -7,12 +7,12 @@ import type { AddFilmTorrentDto } from '../models/AddFilmTorrentDto';
 import type { AdminListFilmsDto } from '../models/AdminListFilmsDto';
 import type { AdminListFilmsResponseDto } from '../models/AdminListFilmsResponseDto';
 import type { AdminListPendingFilmsDto } from '../models/AdminListPendingFilmsDto';
+import type { CategoriesListResponseDto } from '../models/CategoriesListResponseDto';
 import type { CollectFilmDto } from '../models/CollectFilmDto';
 import type { CreateFilmDto } from '../models/CreateFilmDto';
 import type { EmptyObjectDto } from '../models/EmptyObjectDto';
 import type { FilmIdDto } from '../models/FilmIdDto';
 import type { FilmTorrentIdDto } from '../models/FilmTorrentIdDto';
-import type { GenresDto } from '../models/GenresDto';
 import type { ListFilmsDto } from '../models/ListFilmsDto';
 import type { ListFilmsResponseDto } from '../models/ListFilmsResponseDto';
 import type { ListFilmTorrentsDto } from '../models/ListFilmTorrentsDto';
@@ -465,20 +465,20 @@ export class FilmsService {
         });
     }
     /**
-     * 获取所有类型列表
+     * 获取所有分类列表
      * @returns any 成功
      * @throws ApiError
      */
-    public static filmsControllerListGenres(): CancelablePromise<{
+    public static filmsControllerListCategories(): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: GenresDto;
+        data?: CategoriesListResponseDto;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/films/list-genres',
+            url: '/films/list-categories',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

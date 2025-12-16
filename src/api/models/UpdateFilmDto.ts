@@ -12,7 +12,10 @@ export type UpdateFilmDto = {
      * 支持 YYYY 或 YYYY-YYYY
      */
     year?: string;
-    category?: UpdateFilmDto.category;
+    /**
+     * 分类列表
+     */
+    categories?: Array<string>;
     /**
      * 0–10，保留一位小数
      */
@@ -58,12 +61,4 @@ export type UpdateFilmDto = {
      */
     imdbRatingAverage?: number;
 };
-export namespace UpdateFilmDto {
-    export enum category {
-        FILM = 'film',
-        SERIES = 'series',
-        DOCUMENTARY = 'documentary',
-        ANIME = 'anime',
-    }
-}
 

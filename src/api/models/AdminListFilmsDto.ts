@@ -7,21 +7,19 @@ export type AdminListFilmsDto = {
     limit?: number;
     keyword?: string;
     approvalStatus?: string;
-    category?: AdminListFilmsDto.category;
+    /**
+     * 分类筛选
+     */
+    categories?: Array<string>;
     year?: string;
     ratingMin?: number;
     ratingMax?: number;
-    genreIds?: Array<string>;
+    /**
+     * 流派名称集合
+     */
+    genres?: Array<string>;
     enabled?: boolean;
     sortBy?: string;
     order?: string;
 };
-export namespace AdminListFilmsDto {
-    export enum category {
-        FILM = 'film',
-        SERIES = 'series',
-        DOCUMENTARY = 'documentary',
-        ANIME = 'anime',
-    }
-}
 

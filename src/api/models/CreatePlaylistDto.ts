@@ -4,14 +4,14 @@
 /* eslint-disable */
 export type CreatePlaylistDto = {
     name: string;
-    description?: string;
-    coverUrl?: string;
+    description: string;
+    coverUrl: string;
     visibility: CreatePlaylistDto.visibility;
     tags?: Array<string>;
     /**
      * 分类唯一键（categories.key，kind=playlist）
      */
-    category?: string;
+    category: string;
 };
 export namespace CreatePlaylistDto {
     export enum visibility {
