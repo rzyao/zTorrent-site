@@ -1,13 +1,33 @@
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Edit, X, Image as ImageIcon, Globe, Users, Lock, Save } from 'lucide-react';
-import type { Visibility } from '@/pages/Edit/playlists/types';
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Edit,
+  X,
+  Image as ImageIcon,
+  Globe,
+  Users,
+  Lock,
+  Save,
+  Plus,
+} from "lucide-react";
+import type { Visibility } from "@/pages/Edit/playlists/types";
+import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useState } from "react";
 
 interface EditFormState {
   title: string;
   description: string;
   cover: string;
   visibility: Visibility;
+  category: string;
+  tags: string[];
 }
 
 interface PlaylistFormProps {
@@ -34,8 +54,46 @@ interface PlaylistFormProps {
 /**
  * 片单创建/编辑表单组件：纯展示与交互，逻辑委托给父层。
  */
-export function PlaylistForm({ isCreating, isEditing, editForm, onChange, onSave, onCancel, fileInputRef, onUploadClick, onUploadFile }: PlaylistFormProps) {
+export function PlaylistForm({
+  isCreating,
+  isEditing,
+  editForm,
+  onChange,
+  onSave,
+  onCancel,
+  fileInputRef,
+  onUploadClick,
+  onUploadFile,
+}: PlaylistFormProps) {
   if (!isCreating && !isEditing) return null;
+
+  const { playlist, fetchCategories, isLoaded } =
+    usePreferenceCategoriesStore();
+  const [tagInput, setTagInput] = useState("");
+
+  // 确保分类数据加载
+  if (!isLoaded) {
+    fetchCategories();
+  }
+
+  const handleAddTag = () => {
+    const val = tagInput.trim();
+    if (val && !editForm.tags.includes(val)) {
+      onChange({ ...editForm, tags: [...editForm.tags, val] });
+      setTagInput("");
+    }
+  };
+
+  const handleRemoveTag = (tag: string) => {
+    onChange({ ...editForm, tags: editForm.tags.filter((t) => t !== tag) });
+  };
+
+  const handlKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTag();
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -44,16 +102,25 @@ export function PlaylistForm({ isCreating, isEditing, editForm, onChange, onSave
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
             <Edit className="w-4 h-4 text-white" />
           </div>
-          <h2 className="text-white text-xl">{isCreating ? '创建片单' : '编辑片单'}</h2>
+          <h2 className="text-white text-xl">
+            {isCreating ? "创建片单" : "编辑片单"}
+          </h2>
         </div>
-        <Button variant="ghost" size="icon" onClick={onCancel} className="text-neutral-400 hover:text-white">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onCancel}
+          className="text-neutral-400 hover:text-white"
+        >
           <X className="w-5 h-5" />
         </Button>
       </div>
 
       {/* 片单标题 */}
       <div className="space-y-2">
-        <label className="text-neutral-300 text-sm">片单标题</label>
+        <label className="text-neutral-300 text-sm">
+          片单标题 <span className="text-red-500">*</span>
+        </label>
         <input
           type="text"
           value={editForm.title}
@@ -63,12 +130,74 @@ export function PlaylistForm({ isCreating, isEditing, editForm, onChange, onSave
         />
       </div>
 
+      {/* 分类 */}
+      <div className="space-y-2">
+        <label className="text-neutral-300 text-sm">
+          分类 <span className="text-red-500">*</span>
+        </label>
+        <Select
+          value={editForm.category}
+          onValueChange={(val) => onChange({ ...editForm, category: val })}
+        >
+          <SelectTrigger className="w-full bg-neutral-900/50 border-neutral-700 text-white h-[42px]">
+            <SelectValue placeholder="选择片单分类" />
+          </SelectTrigger>
+          <SelectContent>
+            {playlist.map((cat) => (
+              <SelectItem key={cat.key} value={cat.key}>
+                {cat.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* 标签 */}
+      <div className="space-y-2">
+        <label className="text-neutral-300 text-sm">标签</label>
+        <div className="flex flex-wrap gap-2 mb-2">
+          {editForm.tags.map((tag) => (
+            <Badge
+              key={tag}
+              className="bg-neutral-800 text-neutral-300 hover:bg-neutral-700 px-2 py-1 flex items-center gap-1"
+            >
+              {tag}
+              <X
+                className="w-3 h-3 cursor-pointer hover:text-white"
+                onClick={() => handleRemoveTag(tag)}
+              />
+            </Badge>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={handlKeyDown}
+            placeholder="输入标签按回车添加..."
+            className="flex-1 bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+          />
+          <Button
+            onClick={handleAddTag}
+            variant="secondary"
+            className="bg-neutral-800 hover:bg-neutral-700 text-neutral-300"
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+
       {/* 片单描述 */}
       <div className="space-y-2">
-        <label className="text-neutral-300 text-sm">片单描述</label>
+        <label className="text-neutral-300 text-sm">
+          片单描述 <span className="text-red-500">*</span>
+        </label>
         <textarea
           value={editForm.description}
-          onChange={(e) => onChange({ ...editForm, description: e.target.value })}
+          onChange={(e) =>
+            onChange({ ...editForm, description: e.target.value })
+          }
           rows={4}
           placeholder="描述一下这个片单..."
           className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 resize-none"
@@ -77,7 +206,9 @@ export function PlaylistForm({ isCreating, isEditing, editForm, onChange, onSave
 
       {/* 封面图片 */}
       <div className="space-y-2">
-        <label className="text-neutral-300 text-sm">封面图片</label>
+        <label className="text-neutral-300 text-sm">
+          封面图片 <span className="text-red-500">*</span>
+        </label>
         <div className="flex gap-3">
           <input
             type="text"
@@ -86,14 +217,28 @@ export function PlaylistForm({ isCreating, isEditing, editForm, onChange, onSave
             placeholder="输入图片URL..."
             className="flex-1 bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
           />
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={onUploadFile} />
-          <Button variant="outline" onClick={onUploadClick} className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={onUploadFile}
+          />
+          <Button
+            variant="outline"
+            onClick={onUploadClick}
+            className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+          >
             <ImageIcon className="w-4 h-4 mr-2" />
             上传
           </Button>
         </div>
         {editForm.cover && (
-          <img src={editForm.cover} alt="预览" className="w-full h-48 object-cover rounded-lg mt-2" />
+          <img
+            src={editForm.cover}
+            alt="预览"
+            className="w-full h-48 object-cover rounded-lg mt-2"
+          />
         )}
       </div>
 
@@ -102,31 +247,34 @@ export function PlaylistForm({ isCreating, isEditing, editForm, onChange, onSave
         <label className="text-neutral-300 text-sm">可见性</label>
         <div className="grid grid-cols-3 gap-3">
           <button
-            onClick={() => onChange({ ...editForm, visibility: 'public' })}
-            className={`p-4 rounded-xl border transition-all ${editForm.visibility === 'public'
-              ? 'bg-green-500/20 border-green-500/50 text-green-400'
-              : 'bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600'
-              }`}
+            onClick={() => onChange({ ...editForm, visibility: "public" })}
+            className={`p-4 rounded-xl border transition-all ${
+              editForm.visibility === "public"
+                ? "bg-green-500/20 border-green-500/50 text-green-400"
+                : "bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600"
+            }`}
           >
             <Globe className="w-5 h-5 mx-auto mb-2" />
             <p className="text-sm">公开</p>
           </button>
           <button
-            onClick={() => onChange({ ...editForm, visibility: 'friends' })}
-            className={`p-4 rounded-xl border transition-all ${editForm.visibility === 'friends'
-              ? 'bg-blue-500/20 border-blue-500/50 text-blue-400'
-              : 'bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600'
-              }`}
+            onClick={() => onChange({ ...editForm, visibility: "friends" })}
+            className={`p-4 rounded-xl border transition-all ${
+              editForm.visibility === "friends"
+                ? "bg-blue-500/20 border-blue-500/50 text-blue-400"
+                : "bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600"
+            }`}
           >
             <Users className="w-5 h-5 mx-auto mb-2" />
             <p className="text-sm">好友可见</p>
           </button>
           <button
-            onClick={() => onChange({ ...editForm, visibility: 'private' })}
-            className={`p-4 rounded-xl border transition-all ${editForm.visibility === 'private'
-              ? 'bg-red-500/20 border-red-500/50 text-red-400'
-              : 'bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600'
-              }`}
+            onClick={() => onChange({ ...editForm, visibility: "private" })}
+            className={`p-4 rounded-xl border transition-all ${
+              editForm.visibility === "private"
+                ? "bg-red-500/20 border-red-500/50 text-red-400"
+                : "bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600"
+            }`}
           >
             <Lock className="w-5 h-5 mx-auto mb-2" />
             <p className="text-sm">私密</p>
@@ -136,13 +284,27 @@ export function PlaylistForm({ isCreating, isEditing, editForm, onChange, onSave
 
       {/* 操作按钮 */}
       <div className="flex gap-3 pt-4">
-        <Button onClick={onSave} disabled={!editForm.title} className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25">
+        <Button
+          onClick={onSave}
+          disabled={
+            !editForm.title ||
+            !editForm.category ||
+            !editForm.description ||
+            !editForm.cover
+          }
+          className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+        >
           <Save className="w-4 h-4 mr-2" />
           保存片单
         </Button>
-        <Button onClick={onCancel} variant="outline" className="border-neutral-700 text-neutral-400 hover:text-white hover:bg-neutral-700/30">取消</Button>
+        <Button
+          onClick={onCancel}
+          variant="outline"
+          className="border-neutral-700 text-neutral-400 hover:text-white hover:bg-neutral-700/30"
+        >
+          取消
+        </Button>
       </div>
     </div>
   );
 }
-

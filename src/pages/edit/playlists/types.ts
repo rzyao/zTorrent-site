@@ -44,6 +44,10 @@ export interface Playlist {
   cover: string;
   /** 可见性 */
   visibility: Visibility;
+  /** 标签列表 */
+  tags: string[];
+  /** 分类唯一键（categories.key，kind=playlist） */
+  category: string;
   /** 影片列表 */
   movies: Movie[];
   /** 创建时间（字符串以便直接展示） */

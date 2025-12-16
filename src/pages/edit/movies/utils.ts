@@ -33,7 +33,7 @@ export function validateFilmForm(form: any) {
   const errs: Record<string, string> = {};
   if (!form.title?.trim()) errs.title = '标题为必填项';
   if (!isValidYear(String(form.year || ''))) errs.year = '年份格式必须为YYYY或YYYY-YYYY';
-  if (!['电影', '剧集', '纪录片', '动漫'].includes(form.category)) errs.category = '类别必须为有效枚举';
+  if (!Array.isArray(form.categories) || form.categories.length === 0) errs.categories = '请至少选择一个类别';
   if (!isValidRating(Number(form.rating ?? 0))) errs.rating = '评分需在0到10之间';
   if (!isValidUrl(String(form.poster || ''))) errs.poster = '海报URL必须以http/https开头';
   if (!isValidUrl(String(form.backdrop || ''))) errs.backdrop = '背景URL必须以http/https开头';
@@ -76,7 +76,7 @@ export function mapBackendFilmToLocal(detail: any) {
     year: String(detail?.year ?? ''),
     poster: detail?.poster ?? detail?.posterUrl ?? detail?.coverUrl ?? '',
     backdrop: detail?.backdrop ?? detail?.backdropUrl ?? '',
-    category: detail?.category === 'series' ? '剧集' : detail?.category === 'documentary' ? '纪录片' : detail?.category === 'anime' ? '动漫' : '电影',
+    categories: Array.isArray(detail?.categories) ? detail.categories : [],
     genres,
     rating: Number(detail?.rating ?? 0),
     duration: typeof detail?.duration === 'number' ? `${detail.duration}分钟` : (detail?.duration ?? ''),
