@@ -24,6 +24,8 @@ export function mapBackendPlaylistToLocal(detail: any): Playlist {
     description: detail?.description ?? '',
     cover: detail?.coverUrl ?? '',
     visibility: (detail?.visibility ?? 'public') as Visibility,
+    tags: Array.isArray(detail?.tags) ? detail.tags : [],
+    category: detail?.category ?? '',
     movies,
     createdAt: String(detail?.meta?.createdAt ?? detail?.createdAt ?? ''),
     updatedAt: String(detail?.meta?.updatedAt ?? detail?.updatedAt ?? ''),
@@ -44,6 +46,8 @@ export function mapBackendPlaylistSummaryToLocal(summary: any): Playlist {
     description: '',
     cover: summary?.coverUrl ?? '',
     visibility: (summary?.visibility ?? 'public') as Visibility,
+    tags: Array.isArray(summary?.tags) ? summary.tags : [],
+    category: summary?.category ?? '',
     movies: new Array(Number(summary?.filmCount ?? 0)).fill(0).map((_, i) => ({
       id: String(i + 1),
       title: '',
