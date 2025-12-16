@@ -45,11 +45,11 @@ export function PlaylistsControls({
         items={navItems}
         active={activeTab}
         onSelect={(val) => onTabChange(val as any)}
-        className="mb-6 -ml-1" // 微调左对齐
-        triggerClassName="rounded-xl px-4 md:px-6 py-2.5" // 覆盖默认样式以匹配原设计
+        className="mb-4" // 微调左对齐
+        triggerClassName="rounded-xl px-4 md:px-4 py-4.5" // 覆盖默认样式以匹配原设计
+        inactiveClassName="border border-neutral-700/50 text-neutral-300 whitespace-nowrap flex items-center gap-2 hover:border-amber-500/50 hover:text-amber-300 hover:bg-neutral-900/30 transition-all"
       />
-
-      <div className="flex items-center gap-3 md:gap-4 mb-8">
+      <div className="flex items-center gap-3 md:gap-4 mb-4">
         <SearchInput
           value={searchQuery}
           onChange={onSearchChange}

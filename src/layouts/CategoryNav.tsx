@@ -27,6 +27,8 @@ interface CategoryNavProps {
   className?: string;
   /** 自定义按钮类名 */
   triggerClassName?: string;
+  activeClassName?: string;
+  inactiveClassName?: string;
 }
 
 /**
@@ -43,6 +45,8 @@ export function CategoryNav({
   inline = false,
   className,
   triggerClassName,
+  activeClassName,
+  inactiveClassName,
 }: CategoryNavProps) {
   const navigate = useNavigate();
 
@@ -66,12 +70,20 @@ export function CategoryNav({
 
   const commonButtonClass = (isActive: boolean) =>
     cn(
-      "rounded-full whitespace-nowrap transition-all flex items-center gap-2",
-      isActive
-        ? "bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300"
-        : "bg-gray-800/80 text-neutral-300 hover:bg-gray-700 hover:text-amber-300 border border-transparent",
       inline ? "px-4 py-1.5" : "px-4 py-2",
-      triggerClassName
+      cn(
+        "rounded-full whitespace-nowrap transition-all flex items-center gap-2",
+        triggerClassName
+      ),
+      isActive
+        ? cn(
+            "bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300",
+            activeClassName
+          )
+        : cn(
+            "bg-gray-800/80 text-neutral-300 hover:bg-gray-700 hover:text-amber-300 border border-transparent",
+            inactiveClassName
+          )
     );
 
   const renderContent = (

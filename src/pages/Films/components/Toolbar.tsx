@@ -57,6 +57,9 @@ export function Toolbar({
         active={selectedGenre}
         onSelect={(value) => onChangeGenre(value)}
         className="mb-4"
+        triggerClassName="px-4 py-2 rounded-lg transition-all whitespace-nowrap snap-start "
+        activeClassName="bg-amber-500/20 text-amber-400 border border-amber-500/30"
+        inactiveClassName="bg-neutral-900/30 border border-neutral-700/50 text-neutral-300 whitespace-nowrap flex items-center gap-2 hover:border-amber-500/50 hover:text-amber-300 hover:bg-neutral-900/30 transition-all"
       />
     </div>
   );
