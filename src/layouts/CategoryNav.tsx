@@ -1,83 +1,119 @@
+import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/components/ui/utils";
 
-const categories = [
-  { label: "全部", slug: "home", api: "" },
-  { label: "电影", slug: "movie", api: "movie" },
-  { label: "电视剧", slug: "tv", api: "tv" },
-  { label: "纪录片", slug: "documentary", api: "documentary" },
-  { label: "动漫", slug: "anime", api: "anime" },
-  { label: "音乐", slug: "music", api: "music" },
-  { label: "游戏", slug: "game", api: "game" },
-  { label: "软件", slug: "software", api: "software" },
-  { label: "电子书", slug: "ebook", api: "ebook" },
-];
+export interface CategoryNavItem {
+  label: string;
+  value: string;
+  /** 可选：用于排序的权重 */
+  sort?: number;
+  /** 可选：跳转路由路径，未提供时默认使用 onSelect */
+  path?: string;
+  /** 可选：显示图标 */
+  icon?: ReactNode;
+}
 
+interface CategoryNavProps {
+  /** 导航项列表 (必须提供) */
+  items: CategoryNavItem[];
+  /** 当前选中的值（对应 item.value） */
+  active?: string;
+  /** 选中回调 */
+  onSelect?: (value: string, item: CategoryNavItem) => void;
+  /** 是否为内联模式（无背景条） */
+  inline?: boolean;
+  /** 自定义容器类名 */
+  className?: string;
+  /** 自定义按钮类名 */
+  triggerClassName?: string;
+}
+
+/**
+ * 通用分类导航组件
+ * - 支持自定义数据源 (items)
+ * - 支持受控模式 (active + onSelect)
+ * - 支持内联 (inline) 或吸顶条模式
+ * - 支持图标显示
+ */
 export function CategoryNav({
-  active = "全部",
+  items,
+  active,
   onSelect,
   inline = false,
-  items,
-}: {
-  active?: string;
-  onSelect?: (category: string) => void;
-  inline?: boolean;
-  items?: Array<{ label: string; sort?: number }>;
-}) {
+  className,
+  triggerClassName,
+}: CategoryNavProps) {
   const navigate = useNavigate();
-  const list = Array.isArray(items) && items.length ? items : categories;
-  const sortedList = [...list].sort((a: any, b: any) => {
-    if (a?.label === "全部") return -1;
-    if (b?.label === "全部") return 1;
+
+  // 默认排序逻辑：如果有 '全部' 标签，尽量放前面；否则按 sort 字段排序
+  const sortedList = [...items].sort((a, b) => {
+    if (a.label === "全部") return -1;
+    if (b.label === "全部") return 1;
     return (
-      Number(a?.sort ?? Number.POSITIVE_INFINITY) -
-      Number(b?.sort ?? Number.POSITIVE_INFINITY)
+      (a.sort ?? Number.POSITIVE_INFINITY) -
+      (b.sort ?? Number.POSITIVE_INFINITY)
     );
   });
+
+  const handleItemClick = (item: CategoryNavItem) => {
+    if (onSelect) {
+      onSelect(item.value, item);
+    } else if (item.path) {
+      navigate(item.path);
+    }
+  };
+
+  const commonButtonClass = (isActive: boolean) =>
+    cn(
+      "rounded-full whitespace-nowrap transition-all flex items-center gap-2",
+      isActive
+        ? "bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300"
+        : "bg-gray-800/80 text-neutral-300 hover:bg-gray-700 hover:text-amber-300 border border-transparent",
+      inline ? "px-4 py-1.5" : "px-4 py-2",
+      triggerClassName
+    );
+
+  const renderContent = (
+    <div className="flex gap-4 overflow-x-auto scrollbar-hide">
+      {sortedList.map((c) => (
+        <Button
+          key={c.value}
+          className={commonButtonClass(
+            c.label === active || c.value === active
+          )}
+          onClick={() => handleItemClick(c)}
+        >
+          {c.icon && (
+            <span className="w-4 h-4 flex items-center">{c.icon}</span>
+          )}
+          {c.label}
+        </Button>
+      ))}
+    </div>
+  );
+
   if (inline) {
     return (
-      <div className="flex items-center gap-4 overflow-x-auto scrollbar-hide">
-        {sortedList.map((c) => (
-          <Button
-            key={c.label}
-            className={`px-4 py-1.5 rounded-full transition-colors hover:from-amber-500/30 hover:to-orange-500/30 transition-all ${
-              c.label === active
-                ? "bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300 whitespace-nowrap"
-                : "bg-gray-800/80 text-neutral-300 hover:bg-gray-700 hover:text-amber-300"
-            }`}
-            onClick={() => {
-              if (onSelect) onSelect(c.label);
-            }}
-          >
-            {c.label}
-          </Button>
-        ))}
+      <div
+        className={cn(
+          "flex items-center gap-4 overflow-x-auto scrollbar-hide",
+          className
+        )}
+      >
+        {renderContent.props.children}
       </div>
     );
   }
+
   return (
-    <div className="sticky top-0 bg-[#0F171E] py-4 px-4 md:px-8 z-40 border-b border-gray-800">
-      <div className="flex gap-4 overflow-x-auto scrollbar-hide">
-        {sortedList.map((c) => (
-          <Button
-            key={c.label}
-            className={`px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
-              c.label === active
-                ? "bg-white text-black"
-                : "bg-gray-800 text-white hover:bg-gray-700"
-            }`}
-            onClick={() => {
-              if (onSelect) onSelect(c.label);
-              else {
-                if (c.label === "全部") navigate("/home");
-                else navigate(`/home/${(c as any).slug}`);
-              }
-            }}
-          >
-            {c.label}
-          </Button>
-        ))}
-      </div>
+    <div
+      className={cn(
+        "sticky top-0 bg-[#0F171E] py-4 px-4 md:px-8 z-40 border-b border-gray-800",
+        className
+      )}
+    >
+      {renderContent}
     </div>
   );
 }

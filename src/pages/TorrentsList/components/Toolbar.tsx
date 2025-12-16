@@ -1,12 +1,6 @@
-import {
-  Search,
-  ArrowUpDown,
-  Grid3x3,
-  List,
-  SlidersHorizontal,
-} from "lucide-react";
+import { ArrowUpDown, Grid3x3, List, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/SearchInput";
 import { CategoryNav } from "@/layouts/CategoryNav";
 import { NativeSelect } from "@/components/ui/native-select";
 import type { CategoryItem, SortOption, ViewMode } from "../types";
@@ -79,9 +73,10 @@ export function Toolbar(props: ToolbarProps) {
             <CategoryNav
               inline
               active={selectedCategory}
-              onSelect={onSelectCategory}
+              onSelect={(value) => onSelectCategory(value)}
               items={categories.map((c) => ({
                 label: c.label,
+                value: c.label, // 保持 value 与 label 一致，因为上层逻辑使用 label 作为 key
                 sort: (c as any).sort,
               }))}
             />
@@ -89,33 +84,13 @@ export function Toolbar(props: ToolbarProps) {
 
           {/* 搜索 / 排序 / 视图切换 / 筛选 */}
           <div className="flex items-center md:justify-end gap-2 md:gap-3 flex-wrap  max-w-full">
-            {/* 搜索框（响应式：移动端占满，桌面端固定宽度） */}
-            <div className="relative flex-1 min-w-0 md:min-w-[320px] md:max-w-[900px] lg:max-w-[1020px]">
-              {/* 搜索图标（可点击触发搜索） */}
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={onSearch}
-                className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 text-gray-400 hover:text-amber-300 hover:bg-transparent"
-                aria-label="搜索"
-              >
-                <Search className="w-5 h-5" />
-              </Button>
-              <Input
-                type="text"
-                placeholder="搜索种子、标题..."
-                value={searchQuery}
-                onChange={(e) => onChangeSearch(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    onSearch();
-                  }
-                }}
-                className="w-full input  text-white pl-4 pr-11 py-2 md:py-4 rounded-full focus:border-[#00A8E1] focus:ring-[#00A8E1] placeholder:text-gray-500"
-              />
-            </div>
+            {/* 搜索框组件 */}
+            <SearchInput
+              value={searchQuery}
+              onChange={onChangeSearch}
+              onSearch={onSearch}
+              placeholder="搜索种子、标题..."
+            />
 
             {/* 排序选择（移动端图标触发） */}
             <div className="md:hidden relative">
