@@ -48,8 +48,16 @@ function TorrentCardInner({
     navigate(`/torrent/${id}`);
   };
 
+  // 手机模式：点击卡片任意区域进入详情页
+  const handleCardClick = (e: React.MouseEvent) => {
+    // 仅在窗口宽度小于 768px (md 断点) 时触发
+    if (window.innerWidth < 768) {
+      navigate(`/torrent/${id}`);
+    }
+  };
+
   return (
-    <div className="group cursor-pointer">
+    <div className="group cursor-pointer" onClick={handleCardClick}>
       <div className="relative aspect-[2/3] rounded-md overflow-hidden mb-3">
         <ImageWithFallback
           src={thumbnail}
@@ -78,7 +86,8 @@ function TorrentCardInner({
             </div>
           )}
         </div>
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+        {/* 悬浮按钮层：手机模式隐藏，桌面端显示 */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-300 hidden md:flex items-center justify-center opacity-0 group-hover:opacity-100">
           <div className="text-center space-y-2">
             <Button
               className="bg-white hover:bg-gray-200 text-black px-6 py-2 rounded-md transition-colors"
