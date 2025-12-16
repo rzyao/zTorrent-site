@@ -9,8 +9,12 @@ import { cn } from "./utils";
 function Select({
   value,
   onValueChange,
+  className,
+  children,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Root>) {
+}: React.ComponentProps<typeof SelectPrimitive.Root> & {
+  className?: string;
+}) {
   // 包装 onValueChange，过滤 Radix Select BubbleInput 触发的空值重置
   const handleValueChange = (newValue: string) => {
     // 如果新值为空，但当前已有值，忽略这次调用
@@ -26,7 +30,9 @@ function Select({
       value={value}
       onValueChange={handleValueChange}
       {...props}
-    />
+    >
+      <div className={cn("inline-flex", className)}>{children}</div>
+    </SelectPrimitive.Root>
   );
 }
 

@@ -1,21 +1,10 @@
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
-import {
-  Download,
-  Upload,
-  Star,
-  MessageSquare,
-  HardDrive,
-  X,
-} from "lucide-react";
-import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Download, Upload, Star, MessageSquare, HardDrive } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useState, lazy, Suspense, useEffect, memo } from "react";
-import AnimatedAlertDialogContent from "@/components/AnimatedAlertDialogContent";
+import { memo } from "react";
+import { useNavigate } from "react-router-dom";
 import { formatSize } from "@/utils/format";
-
-import TorrentDetailPage from "@/pages/TorrentDetail/index";
-// const FilmDetailPage = lazy(() => import("@/pages/FilmDetail")); // Unused
 
 interface TorrentCardProps {
   id: string | number;
@@ -50,23 +39,14 @@ function TorrentCardInner({
   isHot = false,
   rating,
   comments,
-  doubanUrl,
   onDownload,
   onDownloadByIdTitle,
 }: TorrentCardProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
-  /* 点击 TorrentCard 时，根据 category 是否为电影来判断是否打开 TorrentDetailPage 或 FilmDetailPage */
-  useEffect(() => {
-    const showTorrentDetail = isOpen;
-    if (!showTorrentDetail) return;
-    /* 打开时，隐藏原页面滚动条 */
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [isOpen, category, doubanUrl]);
+  const handleDetailClick = () => {
+    navigate(`/torrent/${id}`);
+  };
 
   return (
     <div className="group cursor-pointer">
@@ -102,29 +82,10 @@ function TorrentCardInner({
           <div className="text-center space-y-2">
             <Button
               className="bg-white hover:bg-gray-200 text-black px-6 py-2 rounded-md transition-colors"
-              onClick={() => setIsOpen(true)}
+              onClick={handleDetailClick}
             >
               详情
             </Button>
-            {isOpen && (
-              <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-                <AnimatedAlertDialogContent
-                  className="bg-[#0F171E] border-gray-800 p-0 overflow-auto rounded-lg"
-                  onClose={() => setIsOpen(false)}
-                  hideScrollbar={false}
-                >
-                  <Suspense
-                    fallback={
-                      <div className="p-8 text-center text-white">
-                        加载中...
-                      </div>
-                    }
-                  >
-                    <TorrentDetailPage torrentId={id as any} />
-                  </Suspense>
-                </AnimatedAlertDialogContent>
-              </AlertDialog>
-            )}
             <div className="flex items-center justify-center gap-4 text-white">
               <div className="flex items-center gap-1">
                 <Upload className="w-4 h-4 text-green-400" />
@@ -142,7 +103,6 @@ function TorrentCardInner({
                   ? () => onDownloadByIdTitle(String(id), title)
                   : onDownload
               }
-              // disabled={!onDownload && !onDownloadByIdTitle}
               title={
                 !onDownload && !onDownloadByIdTitle ? "无下载权限" : undefined
               }
@@ -153,11 +113,11 @@ function TorrentCardInner({
         </div>
       </div>
 
-      <h3 className="text-white text-sm mb-1 line-clamp-1 group-hover:text-[#00A8E1] transition-colors min-h-[1rem]">
+      <h3 className="text-white text-sm mb-1 line-clamp-1 group-hover:text-[#FBBF24] transition-colors min-h-[1rem]">
         {title}
       </h3>
       {subTitle && (
-        <p className="text-white text-sm mb-1 line-clamp-2 group-hover:text-[#00A8E1] text-gray-400 min-h-[2.5rem]">
+        <p className="text-white text-sm mb-1 line-clamp-2 group-hover:text-[#FBBF24] text-gray-400 min-h-[2.5rem]">
           {subTitle}
         </p>
       )}

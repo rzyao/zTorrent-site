@@ -20,7 +20,7 @@ export function usePlaylists() {
         page,
         limit: pageSize,
         keyword: searchQuery || undefined,
-        ...(activeTab === 'mine' ? { ownerUserId: 'me' } : {}),
+        // TODO: activeTab === 'mine' 需要后端支持 onlyMine 或其他筛选 API
       });
 
       const list = (res.data?.items || []).map((item: any) => ({

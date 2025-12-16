@@ -2,10 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type GetDefaultFilmCategoryIdsDto = {
+export type CategoryShowItemDto = {
     /**
-     * JWT sub 用户ID
+     * 分类键
      */
-    id: string;
+    key: string;
+    /**
+     * 是否显示
+     */
+    show: boolean;
 };
 

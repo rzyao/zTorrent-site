@@ -407,7 +407,7 @@ export function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
           {/* 左侧：站点公告 */}
           <div className="lg:col-span-3">
-            <div className="bg-neutral-800/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-5">
+            <div className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5 h-full">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-white text-lg flex items-center gap-2">
                   <Bell className="w-5 h-5 text-amber-400" />
@@ -415,7 +415,7 @@ export function HomePage() {
                 </h2>
               </div>
 
-              <div className="space-y-2 max-h-[400px] overflow-y-auto scrollbar-themed-dark">
+              <div className="space-y-2 max-h-[310px] overflow-y-auto scrollbar-themed-dark">
                 {announcements.map((announcement) => (
                   <div
                     key={announcement.id}
@@ -452,7 +452,7 @@ export function HomePage() {
 
           {/* 中间：最热种子轮播 */}
           <div className="lg:col-span-6">
-            <div className="bg-neutral-800/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 overflow-hidden h-full relative group">
+            <div className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 overflow-hidden h-full relative group">
               {/* 轮播内容 */}
               <div className="relative h-[400px]">
                 {hotTorrents.map((torrent, index) => (
@@ -561,7 +561,7 @@ export function HomePage() {
 
           {/* 右侧：站点统计 */}
           <div className="lg:col-span-3">
-            <div className="bg-neutral-800/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-5 h-full">
+            <div className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5 h-full">
               <h2 className="text-white text-lg mb-4 flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-amber-400" />
                 站点统计
@@ -609,7 +609,7 @@ export function HomePage() {
         {/* 底部三列布局 */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* 求种信息 */}
-          <section className="bg-neutral-800/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-5">
+          <section className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-white text-lg flex items-center gap-2">
                 <Gift className="w-5 h-5 text-amber-400" />
@@ -658,7 +658,7 @@ export function HomePage() {
           </section>
 
           {/* 精华推荐 */}
-          <section className="bg-neutral-800/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-5">
+          <section className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-white text-lg flex items-center gap-2">
                 <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
@@ -708,7 +708,7 @@ export function HomePage() {
           </section>
 
           {/* 论坛热帖 */}
-          <section className="bg-neutral-800/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-5">
+          <section className="bg-neutral-800/40  rounded-xl border border-neutral-700/50 p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-white text-lg flex items-center gap-2">
                 <Flame className="w-5 h-5 text-red-400" />

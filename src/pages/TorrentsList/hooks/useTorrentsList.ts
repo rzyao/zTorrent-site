@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { TorrentsService } from '@/api/services/TorrentsService';
-import { CategoriesService } from '@/api/services/CategoriesService';
 import { useDictionaryLabels } from '@/hooks/useDictionary';
+import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
 import type { CategoryItem, SortOption } from '../types';
 
 /**
@@ -13,50 +13,47 @@ import type { CategoryItem, SortOption } from '../types';
  */
 export function useTorrentsList() {
   // 词典：分类标签映射（仅在此处处理数据层逻辑）
-  const { getCategoryLabel, refreshDictionaries } = useDictionaryLabels();
+  const { getCategoryLabel, refreshDictionaries, getAllCategories } = useDictionaryLabels();
 
   // 基本列表状态
   const [selectedCategory, setSelectedCategory] = useState<string>('全部');
   const [sortBy, setSortBy] = useState<SortOption['value']>('latest');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>(''); // 输入框受控值
+  const [committedSearch, setCommittedSearch] = useState<string>(''); // 实际触发请求的搜索词
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 50; // 保持与旧页面一致
 
-  /**
-   * React Query 缓存分类列表
-   */
-  const { data: categoriesData } = useQuery<CategoryItem[], Error>({
-    queryKey: ['torrentCategories'],
-    queryFn: async (): Promise<CategoryItem[]> => {
-      const resp = await CategoriesService.categoriesControllerListUserCategories();
-      const body: any = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
-      const raw: any = body?.data ?? body;
-      const arr = Array.isArray(raw) ? raw : [];
-      let mapped: CategoryItem[] = arr.map((dto: any) => ({
-        key: String(dto.key),
-        label: getCategoryLabel(dto.key) || String(dto.label ?? dto.key),
-        sort: typeof dto.sort === 'number' ? dto.sort : undefined,
-      }));
-      if (mapped.some((m) => !m.label || m.label === m.key)) {
-        await refreshDictionaries();
-        mapped = arr.map((dto: any) => ({
-          key: String(dto.key),
-          label: getCategoryLabel(dto.key) || String(dto.label ?? dto.key),
-          sort: typeof dto.sort === 'number' ? dto.sort : undefined,
-        }));
-      }
-      const sorted = [...mapped].sort((a, b) => Number(a.sort ?? Number.POSITIVE_INFINITY) - Number(b.sort ?? Number.POSITIVE_INFINITY));
-      return [{ label: '全部' }, ...sorted] as CategoryItem[];
-    },
-    staleTime: 1000 * 60 * 60,
-    gcTime: 1000 * 60 * 60 * 6,
-    placeholderData: (prev) => prev,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    refetchOnMount: false,
-  });
+  // 提交搜索（点击图标或按 Enter）
+  const handleSearch = () => {
+    setCommittedSearch(searchQuery.trim());
+    setCurrentPage(1); // 搜索时重置页码
+  };
 
-  const categories = categoriesData || [];
+  // 从全局 store 获取种子分类数据
+  const { torrent: torrentCategories, isLoaded, fetchCategories } = usePreferenceCategoriesStore();
+
+  // 首次加载时获取分类数据
+  useEffect(() => {
+    if (!isLoaded) {
+      const dictCats = getAllCategories();
+      const dictMap = new Map<string, string>();
+      if (Array.isArray(dictCats)) {
+        dictCats.forEach((c) => dictMap.set(c.key, c.label));
+      }
+      fetchCategories(dictMap);
+    }
+  }, [isLoaded, fetchCategories, getAllCategories]);
+
+  // 根据 store 中的分类数据生成分类选项（仅展示 show=true 的分类）
+  const categories: CategoryItem[] = useMemo(() => {
+    const visibleCategories = torrentCategories
+      .filter((c) => c.show)
+      .map((c) => ({
+        key: c.key,
+        label: c.label || getCategoryLabel(c.key) || c.key,
+      }));
+    return [{ label: '全部' }, ...visibleCategories];
+  }, [torrentCategories, getCategoryLabel]);
 
   /**
    * 将展示标签映射为用于请求的分类键
@@ -101,7 +98,10 @@ export function useTorrentsList() {
       {
         page: currentPage,
         limit: itemsPerPage,
-        category: mapCategoryToKey(selectedCategory),
+        // 使用原始 selectedCategory 确保切换"全部"时也能触发刷新
+        selectedCategory,
+        // 使用已提交的搜索词（而非实时输入值）
+        search: committedSearch || undefined,
         orderBy: mapOrderBy(sortBy),
         order: mapOrder(sortBy),
       },
@@ -111,6 +111,8 @@ export function useTorrentsList() {
         page: currentPage,
         limit: itemsPerPage,
         category: mapCategoryToKey(selectedCategory),
+        // 将已提交的搜索关键字传给后端
+        keyword: committedSearch || undefined,
         orderBy: mapOrderBy(sortBy) as any,
         order: mapOrder(sortBy) as any,
       });
@@ -138,31 +140,20 @@ export function useTorrentsList() {
   //   setTotal(t);
   // }, [torrentsData]);
 
-
-
   /**
-   * 前端筛选与排序派生
-   * - 搜索：标题包含（不区分大小写）
-   * - 排序：当选择 rating 时按评分降序，其余排序交由接口处理，前端不再次排序
+   * 排序派生
+   * - 当选择 rating 时按评分降序，其余排序交由接口处理
    */
-  const filteredTorrents: any[] = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    return apiItems.filter((t) => {
-      if (q && !String(t.title ?? '').toLowerCase().includes(q)) return false;
-      return true;
-    });
-  }, [apiItems, searchQuery]);
-
   const displayTorrents: any[] = useMemo(() => {
     if (sortBy === 'rating') {
-      return [...filteredTorrents].sort((a, b) => Number(b?.rating ?? 0) - Number(a?.rating ?? 0));
+      return [...apiItems].sort((a, b) => Number(b?.rating ?? 0) - Number(a?.rating ?? 0));
     }
-    return filteredTorrents;
-  }, [filteredTorrents, sortBy]);
+    return apiItems;
+  }, [apiItems, sortBy]);
 
   const totalPages = useMemo(() => {
-    return Math.ceil((total || filteredTorrents.length) / itemsPerPage);
-  }, [total, filteredTorrents.length, itemsPerPage]);
+    return Math.ceil(total / itemsPerPage);
+  }, [total, itemsPerPage]);
 
   return {
     // 数据与派生
@@ -182,6 +173,7 @@ export function useTorrentsList() {
     setSortBy,
     searchQuery,
     setSearchQuery,
+    handleSearch, // 提交搜索
     currentPage,
     setCurrentPage,
     itemsPerPage,

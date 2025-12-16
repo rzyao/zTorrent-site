@@ -127,8 +127,6 @@ export function Header() {
             </button>
             <NavLink to="/home" className="flex items-center gap-2">
               <img src={Logo} alt="Logo" className="h-7 md:h-9" />
-              <span className="text-white text-2xl">PT</span>
-              <span className="text-[#00A8E1] text-2xl">Tracker</span>
               <span className="text-white text-xl md:text-2xl">
                 {title || ""}
               </span>
@@ -140,7 +138,7 @@ export function Header() {
                 className={({ isActive }) =>
                   isActive
                     ? "text-amber-400 transition-colors"
-                    : "text-white hover:text-gray-300 transition-colors"
+                    : "text-white hover:text-amber-400 transition-colors"
                 }
               >
                 首页
@@ -150,20 +148,20 @@ export function Header() {
                 className={({ isActive }) =>
                   isActive
                     ? "text-amber-400 transition-colors"
-                    : "text-white hover:text-gray-300 transition-colors"
+                    : "text-white hover:text-amber-400 transition-colors"
                 }
               >
                 种子
               </NavLink>
-              {/* <NavLink to="/subtitles" className="text-white hover:text-gray-300 transition-colors">字幕</NavLink>
-            <NavLink to="/ranking" className="text-white hover:text-gray-300 transition-colors">排行榜</NavLink> */}
+              {/* <NavLink to="/subtitles" className="text-white hover:text-amber-400 transition-colors">字幕</NavLink>
+            <NavLink to="/ranking" className="text-white hover:text-amber-400 transition-colors">排行榜</NavLink> */}
               {/* 新增：影片与片单导航入口，保持与现有样式一致 */}
               <NavLink
                 to="/films"
                 className={({ isActive }) =>
                   isActive
                     ? "text-amber-400 transition-colors"
-                    : "text-white hover:text-gray-300 transition-colors"
+                    : "text-white hover:text-amber-400 transition-colors"
                 }
               >
                 影片
@@ -173,7 +171,7 @@ export function Header() {
                 className={({ isActive }) =>
                   isActive
                     ? "text-amber-400 transition-colors"
-                    : "text-white hover:text-gray-300 transition-colors"
+                    : "text-white hover:text-amber-400 transition-colors"
                 }
               >
                 片单
@@ -203,7 +201,7 @@ export function Header() {
               >
                 <NavLink
                   to="/upload"
-                  className={({ isActive }) => ((isActive || showPublishMenu) ? 'text-amber-400 transition-colors' : 'text-white hover:text-gray-300 transition-colors') + ' flex items-center gap-1'}
+                  className={({ isActive }) => ((isActive || showPublishMenu) ? 'text-amber-400 transition-colors' : 'text-white hover:text-amber-400 transition-colors') + ' flex items-center gap-1'}
                 >
                   发布
                   {/* 箭头根据 showPublishMenu 动态旋转，指示展开/收起状态 */}
@@ -222,7 +220,7 @@ export function Header() {
                 className={({ isActive }) =>
                   (isActive || showPublishMenu
                     ? "text-amber-400 transition-colors"
-                    : "text-white hover:text-gray-300 transition-colors") +
+                    : "text-white hover:text-amber-400 transition-colors") +
                   " flex items-center gap-1"
                 }
               >
@@ -233,7 +231,7 @@ export function Header() {
                 className={({ isActive }) =>
                   isActive
                     ? "text-amber-400 transition-colors"
-                    : "text-white hover:text-gray-300 transition-colors"
+                    : "text-white hover:text-amber-400 transition-colors"
                 }
               >
                 候选
@@ -284,7 +282,7 @@ export function Header() {
                         location.pathname
                       ) || showEditMenu
                         ? "text-amber-400 transition-colors"
-                        : "text-white hover:text-gray-300 transition-colors"
+                        : "text-white hover:text-amber-400 transition-colors"
                     } flex items-center gap-1`}
                   >
                     编辑
@@ -326,7 +324,7 @@ export function Header() {
                 className={({ isActive }) =>
                   isActive
                     ? "text-amber-400 transition-colors"
-                    : "text-white hover:text-gray-300 transition-colors"
+                    : "text-white hover:text-amber-400 transition-colors"
                 }
               >
                 论坛
@@ -334,7 +332,7 @@ export function Header() {
 
               <NavLink
                 to="/rules"
-                className="block px-4 py-2 text-white hover:text-gray-300 transition-colors"
+                className="block px-4 py-2 text-white hover:text-amber-400 transition-colors"
               >
                 规则
               </NavLink>
@@ -345,7 +343,7 @@ export function Header() {
                   className={({ isActive }) =>
                     isActive
                       ? "text-amber-400 transition-colors"
-                      : "text-white hover:text-gray-300 transition-colors"
+                      : "text-white hover:text-amber-400 transition-colors"
                   }
                 >
                   审核
@@ -401,7 +399,7 @@ export function Header() {
                       "/player",
                     ].includes(location.pathname) || showMoreMenu
                       ? "text-amber-400 transition-colors"
-                      : "text-white hover:text-gray-300 transition-colors"
+                      : "text-white hover:text-amber-400 transition-colors"
                   } flex items-center gap-1`}
                 >
                   其他

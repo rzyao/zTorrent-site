@@ -17,6 +17,10 @@ export type UserListTorrentsDto = {
      * 排序方向
      */
     order?: UserListTorrentsDto.order;
+    /**
+     * 搜索关键词（模糊匹配标题和副标题）
+     */
+    keyword?: string;
 };
 export namespace UserListTorrentsDto {
     /**

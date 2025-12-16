@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { useDictionaryLabels } from '@/hooks/useDictionary';
 import { getProfile } from '@/api/custom/auth';
-import { getUsersService, getOpenAPI, getRequest } from '@/api/lazy';
+import { getUsersService, getOpenAPI } from '@/api/lazy';
+import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
 import type { UpdateUserPreferencesDto } from '@/api/models/UpdateUserPreferencesDto';
 import type { UpdateUserPrivacyDto } from '@/api/models/UpdateUserPrivacyDto';
 import type {
@@ -128,64 +129,83 @@ export function useControlState() {
     })();
   }, [activeTab]);
 
-  // 选项数据加载与回退（字典优先、接口回退、静态占位）
+  // 选项数据加载与回退（使用聚合接口一次获取所有分类列表及已选状态）
   const { getAllCategories, refreshDictionaries } = useDictionaryLabels();
   useEffect(() => {
     if (activeTab !== 'preferences') return;
-    const loadCategories = async () => {
+
+    const loadAllCategories = async () => {
       try {
-        const UsersService = await getUsersService();
-        const resp = await UsersService.usersPreferencesControllerListGeneralTorrentRootCategories();
-        const items = Array.isArray(resp?.data) ? resp.data : [];
-        const mapped = items
-          .map((c: any) => ({ key: String(c?.key ?? ''), label: String(c?.label ?? '') }))
-          .filter((c) => c.key && c.label);
-        if (mapped.length > 0) {
-          setTorrentCategoryOptions(mapped);
-        } else {
-          const dictCats = getAllCategories();
-          if (Array.isArray(dictCats) && dictCats.length > 0) {
-            setTorrentCategoryOptions(dictCats.map((c) => ({ key: c.key, label: c.label })));
-          } else {
-            await refreshDictionaries();
-            const nextCats = getAllCategories();
-            if (Array.isArray(nextCats) && nextCats.length > 0) {
-              setTorrentCategoryOptions(nextCats.map((c) => ({ key: c.key, label: c.label })));
-            }
-          }
+        // 获取字典数据用于填充 label
+        let dictCats = getAllCategories();
+        if (!Array.isArray(dictCats) || dictCats.length === 0) {
+          await refreshDictionaries();
+          dictCats = getAllCategories();
         }
+        const dictMap = new Map<string, string>();
+        if (Array.isArray(dictCats)) {
+          dictCats.forEach((c) => dictMap.set(c.key, c.label));
+        }
+
+        const UsersService = await getUsersService();
+        // 一次请求获取所有分类数据，无需传递 type 参数
+        const resp = await UsersService.usersPreferencesControllerListCategories({});
+        const data = resp?.data as any;
+
+        // 处理种子分类 (torrent)
+        const torrentItems = Array.isArray(data?.torrent) ? data.torrent : [];
+        const torrentMapped = torrentItems
+          .map((c: any) => ({
+            key: String(c?.key ?? ''),
+            label: String(c?.label ?? dictMap.get(c?.key) ?? c?.key ?? ''),
+            show: Boolean(c?.show),
+          }))
+          .filter((c: any) => c.key && c.label);
+        if (torrentMapped.length > 0) {
+          setTorrentCategoryOptions(torrentMapped.map((c: any) => ({ key: c.key, label: c.label })));
+          const selectedKeys = torrentMapped.filter((c: any) => c.show).map((c: any) => c.key);
+          setSelectedTorrentCategories(selectedKeys);
+          setBaselineTorrentCategories(selectedKeys);
+        } else if (Array.isArray(dictCats) && dictCats.length > 0) {
+          setTorrentCategoryOptions(dictCats.map((c) => ({ key: c.key, label: c.label })));
+        }
+
+        // 处理影片分类 (film)
+        const filmItems = Array.isArray(data?.film) ? data.film : [];
+        const filmMapped = filmItems
+          .map((c: any) => ({
+            key: String(c?.key ?? c?.id ?? ''),
+            label: String(c?.label ?? c?.name ?? dictMap.get(c?.key) ?? c?.key ?? ''),
+            show: Boolean(c?.show),
+          }))
+          .filter((c: any) => c.key && c.label);
+        if (filmMapped.length > 0) {
+          setFilmGenreOptions(filmMapped.map((c: any) => ({ key: c.key, label: c.label })));
+          const selectedKeys = filmMapped.filter((c: any) => c.show).map((c: any) => c.key);
+          setSelectedFilmGenres(selectedKeys);
+          setBaselineFilmGenres(selectedKeys);
+        } else {
+          setFilmGenreOptions([]);
+        }
+
+        // 如需处理 playlist 分类，可在此扩展
+
+        // 同步更新全局 store，让其他页面可以获取最新数据
+        usePreferenceCategoriesStore.getState().setCategories({
+          torrent: torrentMapped,
+          film: filmMapped,
+        });
       } catch {
+        // 出错时回退到字典数据
         const dictCats = getAllCategories();
         if (Array.isArray(dictCats) && dictCats.length > 0) {
           setTorrentCategoryOptions(dictCats.map((c) => ({ key: c.key, label: c.label })));
         }
-      }
-    };
-    const loadGenres = async () => {
-      try {
-        const request = await getRequest();
-        const OpenAPI = await getOpenAPI();
-        const resp: any = await (request as any)(OpenAPI, {
-          method: 'POST',
-          url: '/users/preferences/list-general-film-root-categories',
-        });
-        const body: any = (resp && typeof resp === 'object' && 'code' in resp) ? resp : (resp as any)?.data;
-        const data = body?.data ?? body;
-        const items: any[] = Array.isArray(data) ? data : [];
-        const mapped: KeyLabelOption[] = items
-          .map((c: any) => ({ key: String(c?.id ?? c?.key ?? ''), label: String(c?.label ?? c?.name ?? '') }))
-          .filter((c) => c.key && c.label);
-        if (mapped.length > 0) {
-          setFilmGenreOptions(mapped);
-        } else {
-          setFilmGenreOptions([]);
-        }
-      } catch {
         setFilmGenreOptions([]);
       }
     };
-    loadCategories();
-    loadGenres();
+
+    loadAllCategories();
   }, [activeTab]);
 
   useEffect(() => {
@@ -222,41 +242,7 @@ export function useControlState() {
     })();
   }, [activeTab, currentUserId]);
 
-  useEffect(() => {
-    if (activeTab !== 'preferences' || !currentUserId) return;
-    (async () => {
-      try {
-        const UsersService = await getUsersService();
-        const resp = await UsersService.usersPreferencesControllerGetDefaultTorrentCategoryKeys({ id: currentUserId });
-        const keys = Array.isArray(resp?.data) ? resp.data : [];
-        setSelectedTorrentCategories(keys);
-        setBaselineTorrentCategories(keys);
-      } catch { }
-    })();
-  }, [activeTab, currentUserId]);
-
-  useEffect(() => {
-    if (activeTab !== 'preferences' || !currentUserId) return;
-    (async () => {
-      try {
-        // 说明：避免页面内直接动态导入 core 模块，
-        // 使用统一的 getRequest/getOpenAPI 包装，消除构建时动态导入警告
-        const request = await getRequest();
-        const OpenAPI = await getOpenAPI();
-        const resp: any = await (request as any)(OpenAPI, {
-          method: 'POST',
-          url: '/users/preferences/get-default-film-category-ids',
-          body: { id: currentUserId },
-          mediaType: 'application/json',
-        });
-        const body: any = (resp && typeof resp === 'object' && 'code' in resp) ? resp : (resp as any)?.data;
-        const data = body?.data ?? body;
-        const ids: string[] = Array.isArray(data) ? data.map((x: any) => String(x)) : [];
-        setSelectedFilmGenres(ids);
-        setBaselineFilmGenres(ids);
-      } catch { }
-    })();
-  }, [activeTab, currentUserId]);
+  // 已选分类状态现在从 list-categories 接口的 show 字段获取，无需单独请求
 
   // 初始化服务端偏好
   useEffect(() => {

@@ -25,6 +25,7 @@ export default function TorrentsPage() {
     setSortBy,
     searchQuery,
     setSearchQuery,
+    handleSearch,
     currentPage,
     setCurrentPage,
     totalPages,
@@ -90,6 +91,7 @@ export default function TorrentsPage() {
         onChangeSortBy={setSortBy}
         searchQuery={searchQuery}
         onChangeSearch={setSearchQuery}
+        onSearch={handleSearch}
         viewMode={viewMode}
         onChangeViewMode={setViewMode}
         showFilters={showFilters}

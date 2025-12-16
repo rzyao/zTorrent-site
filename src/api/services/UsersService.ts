@@ -3,10 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { BanRecordDto } from '../models/BanRecordDto';
-import type { CategoryDto } from '../models/CategoryDto';
 import type { DeleteUserResponseDto } from '../models/DeleteUserResponseDto';
-import type { GetDefaultFilmCategoryIdsDto } from '../models/GetDefaultFilmCategoryIdsDto';
-import type { GetDefaultTorrentCategoryKeysDto } from '../models/GetDefaultTorrentCategoryKeysDto';
 import type { ListBanRecordsDto } from '../models/ListBanRecordsDto';
 import type { ListUsersDto } from '../models/ListUsersDto';
 import type { ListUsersResponseDto } from '../models/ListUsersResponseDto';
@@ -16,6 +13,7 @@ import type { UpdateUserNotificationsDto } from '../models/UpdateUserNotificatio
 import type { UpdateUserPreferencesDto } from '../models/UpdateUserPreferencesDto';
 import type { UpdateUserPrivacyDto } from '../models/UpdateUserPrivacyDto';
 import type { UpdateUserProfileDto } from '../models/UpdateUserProfileDto';
+import type { UserCategoriesGroupedDto } from '../models/UserCategoriesGroupedDto';
 import type { UserDto } from '../models/UserDto';
 import type { UserIdDto } from '../models/UserIdDto';
 import type { UserNotificationsDto } from '../models/UserNotificationsDto';
@@ -277,98 +275,19 @@ export class UsersService {
         });
     }
     /**
-     * @returns any 获取根级 General/torrent 分类集合
+     * @returns any 获取用户分类显示状态（按类型分组）
      * @throws ApiError
      */
-    public static usersPreferencesControllerListGeneralTorrentRootCategories(): CancelablePromise<{
+    public static usersPreferencesControllerListCategories(): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Array<CategoryDto>;
+        data?: UserCategoriesGroupedDto;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/users/preferences/list-general-torrent-root-categories',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * @returns any 获取根级 General/film 分类集合
-     * @throws ApiError
-     */
-    public static usersPreferencesControllerListGeneralFilmRootCategories(): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: Array<CategoryDto>;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/users/preferences/list-general-film-root-categories',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * @param requestBody
-     * @returns any 获取用户默认分类键集合
-     * @throws ApiError
-     */
-    public static usersPreferencesControllerGetDefaultTorrentCategoryKeys(
-        requestBody: GetDefaultTorrentCategoryKeysDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: Array<string>;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/users/preferences/get-default-torrent-category-keys',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * @param requestBody
-     * @returns any 获取用户默认影片类型ID集合
-     * @throws ApiError
-     */
-    public static usersPreferencesControllerGetDefaultFilmCategoryIds(
-        requestBody: GetDefaultFilmCategoryIdsDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: Array<string>;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/users/preferences/get-default-film-category-ids',
-            body: requestBody,
-            mediaType: 'application/json',
+            url: '/users/preferences/list-categories',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

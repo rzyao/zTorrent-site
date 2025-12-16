@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { getFilmsService, getOpenAPI, getRequest } from '@/api/lazy';
+import { getFilmsService } from '@/api/lazy';
 import { CollectFilmDto } from '@/api/models/CollectFilmDto';
 import { PublicFilmDetailDto as PublicFilmDto } from '@/api/models/PublicFilmDetailDto';
 import { ListFilmsDto } from '@/api/models/ListFilmsDto';
 import { useDictionaryLabels } from '@/hooks/useDictionary';
-import { getProfile } from '@/api/custom/auth';
+import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
 import type { GenreOption, SortKey, TabKey } from '../types';
 
 /**
@@ -24,35 +24,31 @@ export function useFilmsPage() {
   const [sortBy, setSortBy] = useState<SortKey>('rating');
   const [selectedGenre, setSelectedGenre] = useState<string>('all');
 
-  const { getCategoryLabel, refreshDictionaries } = useDictionaryLabels();
+  const { getCategoryLabel, refreshDictionaries, getAllCategories } = useDictionaryLabels();
 
-  // 读取用户默认分类字典（用于类型筛选 Chips）
-  const { data: genres = [{ key: 'all', label: '全部' }] as GenreOption[] } = useQuery({
-    queryKey: ['filmGenresDefault'],
-    queryFn: async () => {
-      const prof = await getProfile();
-      const id = String(prof?.user?.id ?? prof?.user?._id ?? prof?.sub ?? '');
-      if (!id) return [{ key: 'all', label: '全部' }];
-      const OpenAPI = await getOpenAPI();
-      const __request = await getRequest();
-      const resp: any = await (__request as any)(OpenAPI, {
-        method: 'POST',
-        url: '/users/preferences/get-default-film-category-ids',
-        body: { id },
-        mediaType: 'application/json',
-      });
-      const body = resp?.code !== undefined ? resp : resp?.data;
-      const data = body?.data ?? body;
-      const keys: string[] = Array.isArray(data) ? data.map((x: any) => String(x)) : [];
-      let mapped = keys.map((key) => ({ key, label: getCategoryLabel(key) || key }));
-      if (mapped.some((m) => !m.label || m.label === m.key)) {
-        await refreshDictionaries();
-        mapped = keys.map((key) => ({ key, label: getCategoryLabel(key) || key }));
+  // 从全局 store 获取影片分类数据
+  const { film: filmCategories, isLoaded, fetchCategories } = usePreferenceCategoriesStore();
+
+  // 首次加载时获取分类数据
+  useEffect(() => {
+    if (!isLoaded) {
+      // 准备字典映射
+      const dictCats = getAllCategories();
+      const dictMap = new Map<string, string>();
+      if (Array.isArray(dictCats)) {
+        dictCats.forEach((c) => dictMap.set(c.key, c.label));
       }
-      return [{ key: 'all', label: '全部' }, ...mapped];
-    },
-    staleTime: 1000 * 60 * 60,
-  });
+      fetchCategories(dictMap);
+    }
+  }, [isLoaded, fetchCategories, getAllCategories]);
+
+  // 根据 store 中的分类数据生成筛选选项（仅展示 show=true 的分类）
+  const genres: GenreOption[] = useMemo(() => {
+    const visibleCategories = filmCategories
+      .filter((c) => c.show)
+      .map((c) => ({ key: c.key, label: c.label || getCategoryLabel(c.key) || c.key }));
+    return [{ key: 'all', label: '全部' }, ...visibleCategories];
+  }, [filmCategories, getCategoryLabel]);
 
   // 影片列表查询
   const {

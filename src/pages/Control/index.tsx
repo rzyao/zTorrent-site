@@ -1,18 +1,32 @@
-import { Settings, User, Shield, Bell, Eye, Save, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { SidebarNav } from './components/SidebarNav';
-import { UserStatsCard } from './components/UserStatsCard';
-import { ProfileTab } from './components/tabs/ProfileTab';
-import { PreferencesTab } from './components/tabs/PreferencesTab';
-import { SecurityTab } from './components/tabs/SecurityTab';
-import { NotificationsTab } from './components/tabs/NotificationsTab';
-import { PrivacyTab } from './components/tabs/PrivacyTab';
-import { DownloaderTab } from './components/tabs/DownloaderTab';
-import { useControlState } from './hooks/useControlState';
-import { usePasswordForm } from './hooks/usePasswordForm';
-import type { TabType } from './types';
+import {
+  Settings,
+  User,
+  Shield,
+  Bell,
+  Eye,
+  Save,
+  Download,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { SidebarNav } from "./components/SidebarNav";
+import { UserStatsCard } from "./components/UserStatsCard";
+import { ProfileTab } from "./components/tabs/ProfileTab";
+import { PreferencesTab } from "./components/tabs/PreferencesTab";
+import { SecurityTab } from "./components/tabs/SecurityTab";
+import { NotificationsTab } from "./components/tabs/NotificationsTab";
+import { PrivacyTab } from "./components/tabs/PrivacyTab";
+import { DownloaderTab } from "./components/tabs/DownloaderTab";
+import { useControlState } from "./hooks/useControlState";
+import { usePasswordForm } from "./hooks/usePasswordForm";
+import type { TabType } from "./types";
 
 // 控制台页面入口
 // 职责：拼装左右布局、Tab 切换与保存区，承载公共状态 Hook 并向各 Tab 下发
@@ -21,12 +35,12 @@ export function ControlPage() {
   const passwordForm = usePasswordForm();
 
   const tabs = [
-    { id: 'profile' as TabType, label: '个人信息', icon: User },
-    { id: 'preferences' as TabType, label: '网站偏好', icon: Settings },
-    { id: 'security' as TabType, label: '安全设置', icon: Shield },
-    { id: 'notifications' as TabType, label: '通知设置', icon: Bell },
-    { id: 'privacy' as TabType, label: '隐私设置', icon: Eye },
-    { id: 'downloader' as TabType, label: '下载器', icon: Download },
+    { id: "profile" as TabType, label: "个人信息", icon: User },
+    { id: "preferences" as TabType, label: "网站偏好", icon: Settings },
+    { id: "security" as TabType, label: "安全设置", icon: Shield },
+    { id: "notifications" as TabType, label: "通知设置", icon: Bell },
+    { id: "privacy" as TabType, label: "隐私设置", icon: Eye },
+    { id: "downloader" as TabType, label: "下载器", icon: Download },
   ];
 
   return (
@@ -40,7 +54,9 @@ export function ControlPage() {
             </div>
             <div>
               <h1 className="text-white text-3xl">控制面板</h1>
-              <p className="text-neutral-400 text-sm mt-1">管理您的账户设置和个人偏好</p>
+              <p className="text-neutral-400 text-sm mt-1">
+                管理您的账户设置和个人偏好
+              </p>
             </div>
           </div>
         </div>
@@ -48,24 +64,31 @@ export function ControlPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* 左侧导航 */}
           <div className="lg:col-span-1">
-            <SidebarNav tabs={tabs} activeTab={state.activeTab} onChange={state.setActiveTab} />
-            <div className="mt-6">
+            <SidebarNav
+              tabs={tabs}
+              activeTab={state.activeTab}
+              onChange={state.setActiveTab}
+            />
+            {/* <div className="mt-6">
               <UserStatsCard avatar={state.profileData.avatar} username={state.profileData.username} />
-            </div>
+            </div> */}
           </div>
 
           {/* 右侧内容区 */}
           <div className="lg:col-span-3">
             <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 md:p-8">
               {/* 个人信息 */}
-              {state.activeTab === 'profile' && (
+              {state.activeTab === "profile" && (
                 <div className="space-y-6">
-                  <ProfileTab profileData={state.profileData} setProfileData={state.setProfileData} />
+                  <ProfileTab
+                    profileData={state.profileData}
+                    setProfileData={state.setProfileData}
+                  />
                 </div>
               )}
 
               {/* 网站偏好 */}
-              {state.activeTab === 'preferences' && (
+              {state.activeTab === "preferences" && (
                 <PreferencesTab
                   adultMode={state.adultMode}
                   setAdultMode={state.setAdultMode}
@@ -73,7 +96,9 @@ export function ControlPage() {
                   setPreferences={state.setPreferences}
                   torrentCategoryOptions={state.torrentCategoryOptions}
                   selectedTorrentCategories={state.selectedTorrentCategories}
-                  setSelectedTorrentCategories={state.setSelectedTorrentCategories}
+                  setSelectedTorrentCategories={
+                    state.setSelectedTorrentCategories
+                  }
                   filmGenreOptions={state.filmGenreOptions}
                   selectedFilmGenres={state.selectedFilmGenres}
                   setSelectedFilmGenres={state.setSelectedFilmGenres}
@@ -81,7 +106,7 @@ export function ControlPage() {
               )}
 
               {/* 安全设置 */}
-              {state.activeTab === 'security' && (
+              {state.activeTab === "security" && (
                 <SecurityTab
                   security={state.security}
                   setSecurity={state.setSecurity}
@@ -98,37 +123,49 @@ export function ControlPage() {
               )}
 
               {/* 通知设置 */}
-              {state.activeTab === 'notifications' && (
-                <NotificationsTab notifications={state.notifications} setNotifications={state.setNotifications} />
+              {state.activeTab === "notifications" && (
+                <NotificationsTab
+                  notifications={state.notifications}
+                  setNotifications={state.setNotifications}
+                />
               )}
 
               {/* 隐私设置 */}
-              {state.activeTab === 'privacy' && (
-                <PrivacyTab privacy={state.privacy} setPrivacy={state.setPrivacy} />
+              {state.activeTab === "privacy" && (
+                <PrivacyTab
+                  privacy={state.privacy}
+                  setPrivacy={state.setPrivacy}
+                />
               )}
 
               {/* 下载器设置 */}
-              {state.activeTab === 'downloader' && (
-                <DownloaderTab />
-              )}
+              {state.activeTab === "downloader" && <DownloaderTab />}
 
-              {state.activeTab !== 'profile' && state.activeTab !== 'downloader' && (
-                <div className="flex items-center justify-between mt-8 pt-6 border-t border-neutral-700/50">
-                  <div className="flex items-center gap-2">
-                    {state.saveSuccess && (<span className="inline-flex items-center gap-2 text-green-400 text-sm"><span className="w-2 h-2 rounded-full bg-green-400" /> 设置已保存</span>)}
+              {state.activeTab !== "profile" &&
+                state.activeTab !== "downloader" && (
+                  <div className="flex items-center justify-between mt-8 pt-6 border-t border-neutral-700/50">
+                    <div className="flex items-center gap-2">
+                      {state.saveSuccess && (
+                        <span className="inline-flex items-center gap-2 text-green-400 text-sm">
+                          <span className="w-2 h-2 rounded-full bg-green-400" />{" "}
+                          设置已保存
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={state.handleSave}
+                        className={
+                          state.hasUnsavedChanges
+                            ? "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+                            : "bg-neutral-700 text-neutral-300 hover:bg-neutral-600"
+                        }
+                      >
+                        <Save className="w-4 h-4 mr-2" /> 保存设置
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex gap-3">
-                    <Button
-                      onClick={state.handleSave}
-                      className={state.hasUnsavedChanges
-                        ? 'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25'
-                        : 'bg-neutral-700 text-neutral-300 hover:bg-neutral-600'}
-                    >
-                      <Save className="w-4 h-4 mr-2" /> 保存设置
-                    </Button>
-                  </div>
-                </div>
-              )}
+                )}
             </div>
           </div>
         </div>

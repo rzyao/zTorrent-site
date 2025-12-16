@@ -28,6 +28,8 @@ interface ToolbarProps {
   searchQuery: string;
   /** 更改搜索关键字回调 */
   onChangeSearch: (v: string) => void;
+  /** 提交搜索回调（点击图标或按 Enter） */
+  onSearch: () => void;
 
   /** 视图模式 */
   viewMode: ViewMode;
@@ -61,6 +63,7 @@ export function Toolbar(props: ToolbarProps) {
     onChangeSortBy,
     searchQuery,
     onChangeSearch,
+    onSearch,
     viewMode,
     onChangeViewMode,
     showFilters,
@@ -88,12 +91,28 @@ export function Toolbar(props: ToolbarProps) {
           <div className="flex items-center md:justify-end gap-2 md:gap-3 flex-wrap  max-w-full">
             {/* 搜索框（响应式：移动端占满，桌面端固定宽度） */}
             <div className="relative flex-1 min-w-0 md:min-w-[320px] md:max-w-[900px] lg:max-w-[1020px]">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              {/* 搜索图标（可点击触发搜索） */}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={onSearch}
+                className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 text-gray-400 hover:text-amber-300 hover:bg-transparent"
+                aria-label="搜索"
+              >
+                <Search className="w-5 h-5" />
+              </Button>
               <Input
                 type="text"
                 placeholder="搜索种子、标题..."
                 value={searchQuery}
                 onChange={(e) => onChangeSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    onSearch();
+                  }
+                }}
                 className="w-full input  text-white pl-4 pr-11 py-2 md:py-4 rounded-full focus:border-[#00A8E1] focus:ring-[#00A8E1] placeholder:text-gray-500"
               />
             </div>

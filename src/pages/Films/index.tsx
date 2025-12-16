@@ -27,7 +27,7 @@ export function FilmsPage() {
 
   return (
     <div className="min-h-screen bg-[#0F171E]">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-2 md:py-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-2 md:py-3">
         {/* 页面标题 */}
         {/* Mobile Adaption: Adjusted layout for mobile (flex-col) and spacing */}
         {/* <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-0 hidden md:block">
@@ -46,8 +46,6 @@ export function FilmsPage() {
           </div>
         </div> */}
         <Toolbar
-          activeTab={activeTab}
-          onChangeTab={setActiveTab}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           sortBy={sortBy as any}
