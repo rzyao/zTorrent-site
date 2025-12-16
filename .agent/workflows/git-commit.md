@@ -76,6 +76,8 @@ git add -A
 
 ### 7. 执行提交
 
+**Priority**: CRITICAL. always use chinese to git commit .
+
 ```bash
 git commit -m "<type>(<scope>): <description>"
 ```

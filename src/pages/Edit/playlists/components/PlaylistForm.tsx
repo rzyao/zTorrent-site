@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+
 import {
   Edit,
   X,
@@ -8,7 +8,6 @@ import {
   Users,
   Lock,
   Save,
-  Plus,
 } from "lucide-react";
 import type { Visibility } from "@/pages/Edit/playlists/types";
 import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
@@ -69,31 +68,10 @@ export function PlaylistForm({
 
   const { playlist, fetchCategories, isLoaded } =
     usePreferenceCategoriesStore();
-  const [tagInput, setTagInput] = useState("");
-
   // 确保分类数据加载
   if (!isLoaded) {
     fetchCategories();
   }
-
-  const handleAddTag = () => {
-    const val = tagInput.trim();
-    if (val && !editForm.tags.includes(val)) {
-      onChange({ ...editForm, tags: [...editForm.tags, val] });
-      setTagInput("");
-    }
-  };
-
-  const handleRemoveTag = (tag: string) => {
-    onChange({ ...editForm, tags: editForm.tags.filter((t) => t !== tag) });
-  };
-
-  const handlKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleAddTag();
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -150,42 +128,6 @@ export function PlaylistForm({
             ))}
           </SelectContent>
         </Select>
-      </div>
-
-      {/* 标签 */}
-      <div className="space-y-2">
-        <label className="text-neutral-300 text-sm">标签</label>
-        <div className="flex flex-wrap gap-2 mb-2">
-          {editForm.tags.map((tag) => (
-            <Badge
-              key={tag}
-              className="bg-neutral-800 text-neutral-300 hover:bg-neutral-700 px-2 py-1 flex items-center gap-1"
-            >
-              {tag}
-              <X
-                className="w-3 h-3 cursor-pointer hover:text-white"
-                onClick={() => handleRemoveTag(tag)}
-              />
-            </Badge>
-          ))}
-        </div>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={handlKeyDown}
-            placeholder="输入标签按回车添加..."
-            className="flex-1 bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
-          />
-          <Button
-            onClick={handleAddTag}
-            variant="secondary"
-            className="bg-neutral-800 hover:bg-neutral-700 text-neutral-300"
-          >
-            <Plus className="w-4 h-4" />
-          </Button>
-        </div>
       </div>
 
       {/* 片单描述 */}

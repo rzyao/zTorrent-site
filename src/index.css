@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+body {
+    /* 阻止页面溢出时的回弹效果，在一定程度上能减少误触系统侧滑感 */
+    overscroll-behavior-x: none; 
+}
 /* Scale Transition Animations - Pure Scale Effect */
 .scale-transition-enter {
   transform: scale(0);
@@ -346,4 +350,36 @@ body[data-scroll-locked] .fixed.modal-overlay {
   );
   
   /* 注意：这里没有 hover:border-xxx 或 hover:text-xxx 的类，因此边框和文本颜色保持不变。 */
+}
+
+.page-container {
+  /* 基础尺寸与居中 */
+  width: 100%;                  /* w-full */
+  max-width: 1600px;            /* max-w-[1600px] */
+  margin-left: auto;            /* mx-auto (left) */
+  margin-right: auto;           /* mx-auto (right) */
+
+  /* 垂直内边距 (所有尺寸生效) */
+  padding-top: 1rem;            /* py-4 (16px) */
+  padding-bottom: 1rem;         /* py-4 (16px) */
+
+  /* 水平内边距 - 移动端优先 (Mobile First) */
+  padding-left: 0.5rem;         /* px-2 (8px) */
+  padding-right: 0.5rem;        /* px-2 (8px) */
+}
+
+/* 响应式断点：小型屏幕 (Small / 640px) */
+@media (min-width: 640px) {
+  .page-container {
+    padding-left: 1rem;         /* sm:px-4 (16px) */
+    padding-right: 1rem;        /* sm:px-4 (16px) */
+  }
+}
+
+/* 响应式断点：中型屏幕 (Medium / 768px) */
+@media (min-width: 768px) {
+  .page-container {
+    padding-left: 1.5rem;       /* md:px-6 (24px) */
+    padding-right: 1.5rem;      /* md:px-6 (24px) */
+  }
 }
