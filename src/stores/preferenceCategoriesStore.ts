@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { getUsersService } from '@/api/lazy';
-import { useDictionaryLabels } from '@/hooks/useDictionary';
+import { useDictionaryStore } from '@/stores/dictionaryStore';
 
 /**
  * 分类项数据结构
@@ -26,7 +26,7 @@ interface PreferenceCategoriesState {
   isLoading: boolean;
 
   // Actions
-  fetchCategories: (dictMap?: Map<string, string>) => Promise<void>;
+  fetchCategories: () => Promise<void>;
   setCategories: (data: {
     torrent?: CategoryItem[];
     film?: CategoryItem[];
@@ -45,15 +45,21 @@ export const usePreferenceCategoriesStore = create<PreferenceCategoriesState>((s
 
   /**
    * 从接口获取分类数据
-   * @param dictMap 可选，用于填充 label 的字典映射
+   * 自动从 dictionaryStore 获取字典映射用于填充 label
    */
-  fetchCategories: async (dictMap?: Map<string, string>) => {
+  fetchCategories: async () => {
     const state = get();
     if (state.isLoading) return;
 
     set({ isLoading: true });
 
     try {
+      // 从 dictionaryStore 获取字典数据构建映射
+      const dictStore = useDictionaryStore.getState();
+      const dictCategories = dictStore.dictionaries?.categories || [];
+      const dictMap = new Map<string, string>();
+      dictCategories.forEach((c) => dictMap.set(c.key, c.label));
+
       const UsersService = await getUsersService();
       const resp = await UsersService.usersPreferencesControllerListCategories({});
       const data = resp?.data as any;
@@ -63,7 +69,7 @@ export const usePreferenceCategoriesStore = create<PreferenceCategoriesState>((s
       const torrent: CategoryItem[] = torrentItems
         .map((c: any) => ({
           key: String(c?.key ?? ''),
-          label: String(c?.label ?? dictMap?.get(c?.key) ?? c?.key ?? ''),
+          label: String(c?.label ?? dictMap.get(c?.key) ?? c?.key ?? ''),
           show: Boolean(c?.show),
         }))
         .filter((c: CategoryItem) => c.key && c.label);
@@ -73,7 +79,7 @@ export const usePreferenceCategoriesStore = create<PreferenceCategoriesState>((s
       const film: CategoryItem[] = filmItems
         .map((c: any) => ({
           key: String(c?.key ?? c?.id ?? ''),
-          label: String(c?.label ?? c?.name ?? dictMap?.get(c?.key) ?? c?.key ?? ''),
+          label: String(c?.label ?? c?.name ?? dictMap.get(c?.key) ?? c?.key ?? ''),
           show: Boolean(c?.show),
         }))
         .filter((c: CategoryItem) => c.key && c.label);
@@ -83,7 +89,7 @@ export const usePreferenceCategoriesStore = create<PreferenceCategoriesState>((s
       const playlist: CategoryItem[] = playlistItems
         .map((c: any) => ({
           key: String(c?.key ?? ''),
-          label: String(c?.label ?? dictMap?.get(c?.key) ?? c?.key ?? ''),
+          label: String(c?.label ?? dictMap.get(c?.key) ?? c?.key ?? ''),
           show: Boolean(c?.show),
         }))
         .filter((c: CategoryItem) => c.key && c.label);

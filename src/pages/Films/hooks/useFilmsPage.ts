@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { getFilmsService } from '@/api/lazy';
@@ -24,23 +24,10 @@ export function useFilmsPage() {
   const [sortBy, setSortBy] = useState<SortKey>('rating');
   const [selectedGenre, setSelectedGenre] = useState<string>('all');
 
-  const { getCategoryLabel, refreshDictionaries, getAllCategories } = useDictionaryLabels();
+  const { getCategoryLabel } = useDictionaryLabels();
 
-  // 从全局 store 获取影片分类数据
-  const { film: filmCategories, isLoaded, fetchCategories } = usePreferenceCategoriesStore();
-
-  // 首次加载时获取分类数据
-  useEffect(() => {
-    if (!isLoaded) {
-      // 准备字典映射
-      const dictCats = getAllCategories();
-      const dictMap = new Map<string, string>();
-      if (Array.isArray(dictCats)) {
-        dictCats.forEach((c) => dictMap.set(c.key, c.label));
-      }
-      fetchCategories(dictMap);
-    }
-  }, [isLoaded, fetchCategories, getAllCategories]);
+  // 直接从全局 store 获取影片分类数据（App 启动时已加载）
+  const filmCategories = usePreferenceCategoriesStore((state) => state.film);
 
   // 根据 store 中的分类数据生成筛选选项（仅展示 show=true 的分类）
   const genres: GenreOption[] = useMemo(() => {

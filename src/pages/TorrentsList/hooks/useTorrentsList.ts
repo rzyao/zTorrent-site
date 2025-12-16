@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { TorrentsService } from '@/api/services/TorrentsService';
 import { useDictionaryLabels } from '@/hooks/useDictionary';
@@ -13,7 +13,7 @@ import type { CategoryItem, SortOption } from '../types';
  */
 export function useTorrentsList() {
   // 词典：分类标签映射（仅在此处处理数据层逻辑）
-  const { getCategoryLabel, refreshDictionaries, getAllCategories } = useDictionaryLabels();
+  const { getCategoryLabel } = useDictionaryLabels();
 
   // 基本列表状态
   const [selectedCategory, setSelectedCategory] = useState<string>('全部');
@@ -29,20 +29,8 @@ export function useTorrentsList() {
     setCurrentPage(1); // 搜索时重置页码
   };
 
-  // 从全局 store 获取种子分类数据
-  const { torrent: torrentCategories, isLoaded, fetchCategories } = usePreferenceCategoriesStore();
-
-  // 首次加载时获取分类数据
-  useEffect(() => {
-    if (!isLoaded) {
-      const dictCats = getAllCategories();
-      const dictMap = new Map<string, string>();
-      if (Array.isArray(dictCats)) {
-        dictCats.forEach((c) => dictMap.set(c.key, c.label));
-      }
-      fetchCategories(dictMap);
-    }
-  }, [isLoaded, fetchCategories, getAllCategories]);
+  // 直接从全局 store 获取种子分类数据（App 启动时已加载）
+  const torrentCategories = usePreferenceCategoriesStore((state) => state.torrent);
 
   // 根据 store 中的分类数据生成分类选项（仅展示 show=true 的分类）
   const categories: CategoryItem[] = useMemo(() => {
