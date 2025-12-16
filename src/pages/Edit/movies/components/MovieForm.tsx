@@ -1,13 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Edit, X, Image as ImageIcon, Save } from "lucide-react";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import type { MovieFormState } from "@/pages/Edit/movies/types";
 import { isValidUrl } from "@/pages/Edit/movies/utils";
 import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
@@ -124,48 +117,54 @@ export function MovieForm({
         </div>
 
         <div className="space-y-2">
-          <label className="text-neutral-300 text-sm">
-            年份 <span className="text-red-500">*</span>
-          </label>
+          <label className="text-neutral-300 text-sm">年份</label>
           <input
             type="text"
             value={form.year}
             onChange={(e) => onChange({ ...form, year: e.target.value })}
-            placeholder="例如: 2014"
-            aria-invalid={Boolean(errors.year)}
-            className={`w-full bg-neutral-900/50 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 border ${
-              errors.year ? "border-red-500" : "border-neutral-700"
-            }`}
+            placeholder="例如: 2014 或 2014-2020"
+            className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
           />
-          {errors.year && <p className="text-red-500 text-xs">{errors.year}</p>}
         </div>
 
         <div className="space-y-2">
           <label className="text-neutral-300 text-sm">
             类别 <span className="text-red-500">*</span>
           </label>
-          <div>
-            <Select
-              value={form.category}
-              onValueChange={(v) => onChange({ ...form, category: v })}
-            >
-              <SelectTrigger
-                aria-invalid={Boolean(errors.category)}
-                className="py-5 text-neutral-100 text-sm"
-              >
-                <SelectValue placeholder="选择类别" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.key} value={cat.label}>
-                    {cat.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex flex-wrap gap-3 p-3 bg-neutral-900/50 border border-neutral-700 rounded-lg">
+            {categories.map((cat) => {
+              const isChecked = form.categories.includes(cat.label);
+              return (
+                <label
+                  key={cat.key}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <Checkbox
+                    checked={isChecked}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        onChange({
+                          ...form,
+                          categories: [...form.categories, cat.label],
+                        });
+                      } else {
+                        onChange({
+                          ...form,
+                          categories: form.categories.filter(
+                            (c) => c !== cat.label
+                          ),
+                        });
+                      }
+                    }}
+                    className="border-neutral-600 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500"
+                  />
+                  <span className="text-neutral-300 text-sm">{cat.label}</span>
+                </label>
+              );
+            })}
           </div>
-          {errors.category && (
-            <p className="text-red-500 text-xs">{errors.category}</p>
+          {errors.categories && (
+            <p className="text-red-500 text-xs">{errors.categories}</p>
           )}
         </div>
 
@@ -398,14 +397,19 @@ export function MovieForm({
       </div>
 
       <div className="space-y-2">
-        <label className="text-neutral-300 text-sm">海报图片</label>
+        <label className="text-neutral-300 text-sm">
+          海报图片 <span className="text-red-500">*</span>
+        </label>
         <div className="flex gap-3">
           <input
             type="text"
             value={form.poster}
             onChange={(e) => onChange({ ...form, poster: e.target.value })}
             placeholder="输入图片URL..."
-            className="flex-1 bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+            aria-invalid={Boolean(errors.poster)}
+            className={`flex-1 bg-neutral-900/50 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 border ${
+              errors.poster ? "border-red-500" : "border-neutral-700"
+            }`}
           />
           <Button
             variant="outline"
@@ -415,6 +419,9 @@ export function MovieForm({
             上传
           </Button>
         </div>
+        {errors.poster && (
+          <p className="text-red-500 text-xs">{errors.poster}</p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -431,7 +438,12 @@ export function MovieForm({
       <div className="flex gap-3 pt-4">
         <Button
           onClick={onSave}
-          disabled={!form.title || Object.keys(errors).length > 0}
+          disabled={
+            !form.title ||
+            form.categories.length === 0 ||
+            !form.poster ||
+            Object.keys(errors).length > 0
+          }
           className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
         >
           <Save className="w-4 h-4 mr-2" />

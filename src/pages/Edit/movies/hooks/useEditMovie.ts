@@ -5,6 +5,7 @@ import { FilmsService } from '@/api/services/FilmsService';
 import { PtGenService } from '@/api/services/PtGenService';
 import { stripBackticksAndTrim, parseDurationToMinutes, validateFilmForm, mapBackendFilmToLocal, isValidRating } from '@/pages/Edit/movies/utils';
 import type { Movie, MovieFormState } from '@/pages/Edit/movies/types';
+import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
 
 export function useEditMovie() {
   const { listFilms, getFilm, createFilm, updateFilm, deleteFilm, addTorrent, removeTorrent } = useFilms();
@@ -29,7 +30,7 @@ export function useEditMovie() {
     year: '',
     poster: '',
     backdrop: '',
-    category: '电影',
+    categories: [],
     genres: [],
     rating: 0,
     duration: '',
@@ -125,6 +126,29 @@ export function useEditMovie() {
     return () => clearTimeout(timer);
   }, [torrentSearchQuery, showTorrentSearch, selectedMovie]);
 
+  // 获取全局分类数据，用于模糊匹配
+  const filmCategories = usePreferenceCategoriesStore((state) => state.film);
+
+  /**
+   * 根据 genres 模糊匹配 categories
+   * 匹配规则：如果 genre 中包含 category label 或反之，则匹配
+   */
+  function matchCategoriesByGenres(genres: string[]): string[] {
+    if (!genres.length || !filmCategories.length) return [];
+    const matched = new Set<string>();
+    for (const genre of genres) {
+      const genreLower = genre.toLowerCase();
+      for (const cat of filmCategories) {
+        const labelLower = cat.label.toLowerCase();
+        // 模糊匹配：任一方包含另一方即匹配
+        if (genreLower.includes(labelLower) || labelLower.includes(genreLower)) {
+          matched.add(cat.label);
+        }
+      }
+    }
+    return Array.from(matched);
+  }
+
   function applyPtGenToForm(data: any) {
     const cleanedPoster = stripBackticksAndTrim(data?.poster);
     const cleanedDouban = stripBackticksAndTrim(data?.doubanLink);
@@ -138,6 +162,9 @@ export function useEditMovie() {
     const casts = Array.isArray(data?.cast) ? data.cast.map((c: any) => c?.name).filter(Boolean) : [];
     const awards = Array.isArray(data?.awards) ? data.awards.filter(Boolean) : [];
 
+    // 根据 genres 自动匹配 categories
+    const matchedCategories = matchCategoriesByGenres(genres);
+
     setMovieForm((prev) => ({
       ...prev,
       title: data?.chineseTitle ?? prev.title,
@@ -145,6 +172,8 @@ export function useEditMovie() {
       year: String(data?.year ?? prev.year ?? ''),
       poster: cleanedPoster || prev.poster,
       genres: genres.length ? genres : prev.genres,
+      // 如果匹配到了分类则使用，否则保留原值
+      categories: matchedCategories.length ? matchedCategories : prev.categories,
       duration: parseDurationToMinutes(data?.duration ?? prev.duration ?? ''),
       director: directors || prev.director,
       cast: casts.length ? casts : prev.cast,
@@ -187,7 +216,7 @@ export function useEditMovie() {
       year: '',
       poster: '',
       backdrop: '',
-      category: '电影',
+      categories: [],
       genres: [],
       rating: 0,
       duration: '',
@@ -214,7 +243,7 @@ export function useEditMovie() {
       year: movie.year,
       poster: movie.poster,
       backdrop: movie.backdrop,
-      category: movie.category,
+      categories: movie.categories,
       genres: movie.genres,
       rating: movie.rating,
       duration: movie.duration,
@@ -240,7 +269,7 @@ export function useEditMovie() {
       description: movieForm.description,
       originalTitle: movieForm.originalTitle,
       year: movieForm.year,
-      category: movieForm.category === '电影' ? 'film' : movieForm.category === '剧集' ? 'series' : movieForm.category === '纪录片' ? 'documentary' : 'anime',
+      categories: movieForm.categories,
       rating: movieForm.rating,
       duration: movieForm.duration,
       director: movieForm.director,
