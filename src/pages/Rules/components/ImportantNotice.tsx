@@ -2,18 +2,18 @@ import React from "react";
 import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Edit3, Save, X } from "lucide-react";
+import { AccessControl } from "@/components/AccessControl";
 /**
  * 顶部重要提示模块
  *
  * 说明：保持原有视觉样式与文案，作为可复用的纯展示组件。
  */
 export const ImportantNotice: React.FC<{
-  isAdmin: boolean;
   isEditMode: boolean;
   onSave: () => void;
   onCancel: () => void;
   onToggleEdit: () => void;
-}> = ({ isAdmin, isEditMode, onSave, onCancel, onToggleEdit }) => {
+}> = ({ isEditMode, onSave, onCancel, onToggleEdit }) => {
   return (
     <div className="mb-8 p-6 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-600/10 border border-amber-500/30 flex items-center justify-between">
       <div className="flex items-start gap-4">
@@ -46,7 +46,7 @@ export const ImportantNotice: React.FC<{
         </div>
       </div>
 
-      {isAdmin && (
+      <AccessControl requiredRoles={["admin"]}>
         <div className="flex items-center gap-2">
           {isEditMode ? (
             <>
@@ -75,7 +75,7 @@ export const ImportantNotice: React.FC<{
             </button>
           )}
         </div>
-      )}
+      </AccessControl>
     </div>
   );
 };

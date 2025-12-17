@@ -74,7 +74,6 @@ export function RulesPage() {
       )}
 
       <ImportantNotice
-        isAdmin={isAdmin}
         isEditMode={isEditMode}
         onSave={handleSave}
         onCancel={handleCancel}
