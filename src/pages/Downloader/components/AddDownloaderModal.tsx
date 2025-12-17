@@ -111,7 +111,7 @@ export function AddDownloaderModal({
                 type="text"
                 value={formData.host}
                 onChange={(e) => onChangeForm({ host: e.target.value })}
-                placeholder="192.168.1.100 或 example.com"
+                placeholder="只支持公网地址，暂不支持局域网"
                 className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500"
               />
             </div>
@@ -141,7 +141,7 @@ export function AddDownloaderModal({
                 type="text"
                 value={formData.username}
                 onChange={(e) => onChangeForm({ username: e.target.value })}
-                placeholder="admin"
+                placeholder="输入用户名"
                 className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500"
               />
             </div>
@@ -154,7 +154,7 @@ export function AddDownloaderModal({
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={(e) => onChangeForm({ password: e.target.value })}
-                  placeholder="••••••••"
+                  placeholder="输入密码"
                   className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500"
                 />
                 <button
@@ -196,10 +196,16 @@ export function AddDownloaderModal({
               <div className="text-sm text-blue-300">
                 <p className="mb-1">配置提示：</p>
                 <ul className="space-y-1 text-blue-400/80">
-                  <li>• qBittorrent 默认端口：8080，需在 Web UI 设置中启用</li>
-                  <li>• Transmission 默认端口：9091</li>
+                  {/* <li>• qBittorrent 默认端口：8080，需在 Web UI 设置中启用</li>
+                  <li>• Transmission 默认端口：9091</li> */}
                   <li>• 确保下载器的 Web UI 已启用并允许远程访问</li>
-                  <li>• 如果使用内网地址，请确保网络连通性</li>
+                  <li>• 如果使用内网地址，需要安装浏览器插件</li>
+                  <li>
+                    • Transmission不能同时支持IPv4+IPv6双栈协议:
+                    <a href="" className="text-green-400 hover:underline">
+                      详情
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>

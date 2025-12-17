@@ -46,13 +46,13 @@ let initialized = false;
 
   // 添加 beforeunload 事件监听
   // 当用户尝试离开页面（关闭标签、后退到外部等）时触发浏览器原生确认框
-  window.addEventListener("beforeunload", (e) => {
-    // 阻止默认行为并设置返回值，触发浏览器确认框
-    e.preventDefault();
-    // 兼容性：某些浏览器需要设置 returnValue
-    e.returnValue = "";
-    return "";
-  });
+  // window.addEventListener("beforeunload", (e) => {
+  //   // 阻止默认行为并设置返回值，触发浏览器确认框
+  //   e.preventDefault();
+  //   // 兼容性：某些浏览器需要设置 returnValue
+  //   e.returnValue = "";
+  //   return "";
+  // });
 
   // 监听 popstate 事件（用于应用内导航状态管理）
   window.addEventListener("popstate", (e) => {

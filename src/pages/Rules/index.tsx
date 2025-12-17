@@ -35,13 +35,13 @@ export function RulesPage() {
 
   return (
     <PageContainer>
-      <RulesHeader
+      {/* <RulesHeader
         isAdmin={isAdmin}
         isEditMode={isEditMode}
         onToggleEdit={handleEditModeToggle}
         onSave={handleSave}
         onCancel={handleCancel}
-      />
+      /> */}
 
       {isEditMode && (
         <div className="mb-6 p-4 rounded-xl bg-gradient-to-r from-amber-500/10 to-orange-600/10 border border-amber-500/30">
@@ -73,7 +73,13 @@ export function RulesPage() {
         </div>
       )}
 
-      <ImportantNotice />
+      <ImportantNotice
+        isAdmin={isAdmin}
+        isEditMode={isEditMode}
+        onSave={handleSave}
+        onCancel={handleCancel}
+        onToggleEdit={handleEditModeToggle}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-1">
