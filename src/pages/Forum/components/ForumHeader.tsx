@@ -1,11 +1,6 @@
-import { MessageSquare, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { MessageSquare, Plus } from "lucide-react";
 
-interface ForumHeaderProps {
-  onNewPost: () => void;
-}
-
-export function ForumHeader({ onNewPost }: ForumHeaderProps) {
+export function ForumHeader() {
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between">
@@ -20,13 +15,6 @@ export function ForumHeader({ onNewPost }: ForumHeaderProps) {
             </p>
           </div>
         </div>
-        <Button
-          onClick={onNewPost}
-          className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          发布帖子
-        </Button>
       </div>
     </div>
   );

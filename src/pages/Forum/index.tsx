@@ -158,11 +158,7 @@ export function ForumPage() {
   return (
     <PageContainer>
       {/* 页面头部：标题与“发布帖子”按钮 */}
-      <ForumHeader
-        onNewPost={() => {
-          setShowNewPost(true);
-        }}
-      />
+      {/* <ForumHeader /> */}
 
       {/* 板块导航与搜索：切换板块时重置选中主题与分页 */}
       <CategoryNav
@@ -178,6 +174,9 @@ export function ForumPage() {
         onSearchChange={(q) => {
           setSearchQuery(q);
           setPage(1);
+        }}
+        onNewPost={() => {
+          setShowNewPost(true);
         }}
       />
 
