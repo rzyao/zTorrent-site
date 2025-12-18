@@ -14,7 +14,7 @@ export type UserPreferencesDto = {
     /**
      * 默认展示的影片类型 ID 列表
      */
-    defaultFilmCategories: Array<string>;
+    defaultMovieCategories: Array<string>;
 };
 export namespace UserPreferencesDto {
     export enum language {

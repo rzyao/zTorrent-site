@@ -3,10 +3,29 @@
 /* tslint:disable */
 /* eslint-disable */
 export type CreatePlaylistDto = {
+    /**
+     * 片单标题
+     */
     name: string;
+    /**
+     * 片单描述
+     */
     description: string;
+    /**
+     * 封面图片URL
+     */
     coverUrl: string;
+    /**
+     * 片单类型
+     */
+    type: CreatePlaylistDto.type;
+    /**
+     * 可见性
+     */
     visibility: CreatePlaylistDto.visibility;
+    /**
+     * 标签
+     */
     tags?: Array<string>;
     /**
      * 分类唯一键（categories.key，kind=playlist）
@@ -14,10 +33,23 @@ export type CreatePlaylistDto = {
     category: string;
 };
 export namespace CreatePlaylistDto {
+    /**
+     * 片单类型
+     */
+    export enum type {
+        GENERAL = 'general',
+        TOPIC = 'topic',
+        SERIES = 'series',
+        DIRECTOR = 'director',
+        CURATION = 'curation',
+        ACTOR = 'actor',
+    }
+    /**
+     * 可见性
+     */
     export enum visibility {
         PUBLIC = 'public',
         PRIVATE = 'private',
-        FRIENDS = 'friends',
     }
 }
 

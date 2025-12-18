@@ -99,9 +99,12 @@ export function ControlPage() {
                   setSelectedTorrentCategories={
                     state.setSelectedTorrentCategories
                   }
-                  filmGenreOptions={state.filmGenreOptions}
-                  selectedFilmGenres={state.selectedFilmGenres}
-                  setSelectedFilmGenres={state.setSelectedFilmGenres}
+                  movieGenreOptions={state.movieGenreOptions}
+                  selectedMovieGenres={state.selectedMovieGenres}
+                  setSelectedMovieGenres={state.setSelectedMovieGenres}
+                  seriesGenreOptions={state.seriesGenreOptions}
+                  selectedSeriesGenres={state.selectedSeriesGenres}
+                  setSelectedSeriesGenres={state.setSelectedSeriesGenres}
                 />
               )}
 
@@ -143,15 +146,7 @@ export function ControlPage() {
 
               {state.activeTab !== "profile" &&
                 state.activeTab !== "downloader" && (
-                  <div className="flex items-center justify-between mt-8 pt-6 border-t border-neutral-700/50">
-                    <div className="flex items-center gap-2">
-                      {state.saveSuccess && (
-                        <span className="inline-flex items-center gap-2 text-green-400 text-sm">
-                          <span className="w-2 h-2 rounded-full bg-green-400" />{" "}
-                          设置已保存
-                        </span>
-                      )}
-                    </div>
+                  <div className="flex items-center justify-end mt-8 pt-6 border-t border-neutral-700/50">
                     <div className="flex gap-3">
                       <Button
                         onClick={state.handleSave}

@@ -55,7 +55,12 @@ export function PlaylistsPage() {
       </div>
 
       {!loading && items.length === 0 && (
-        <EmptyState activeTab={activeTab} onCreate={() => {}} />
+        <EmptyState
+          activeTab={activeTab}
+          onCreate={() => {
+            navigate("/edit/playlist");
+          }}
+        />
       )}
       {loading && (
         <div className="text-center py-16">

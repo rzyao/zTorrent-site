@@ -1,16 +1,16 @@
-import { useDynamicTitle } from '@/hooks/useDynamicTitle';
-import { Film, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useEditMovie } from '@/pages/Edit/movies/hooks/useEditMovie';
-import { MovieList } from '@/pages/Edit/movies/components/MovieList';
-import { StatsPanel } from '@/pages/Edit/movies/components/StatsPanel';
-import { MovieForm } from '@/pages/Edit/movies/components/MovieForm';
-import { MovieDetails } from '@/pages/Edit/movies/components/MovieDetails';
-import { TorrentSearchPanel } from '@/pages/Edit/movies/components/TorrentSearchPanel';
-import { TorrentList } from '@/pages/Edit/movies/components/TorrentList';
+import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { Film, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useEditMovie } from "@/pages/Edit/movies/hooks/useEditMovie";
+import { MovieList } from "@/pages/Edit/movies/components/MovieList";
+import { StatsPanel } from "@/pages/Edit/movies/components/StatsPanel";
+import { MovieForm } from "@/pages/Edit/movies/components/MovieForm";
+import { MovieDetails } from "@/pages/Edit/movies/components/MovieDetails";
+import { TorrentSearchPanel } from "@/pages/Edit/movies/components/TorrentSearchPanel";
+import { TorrentList } from "@/pages/Edit/movies/components/TorrentList";
 
 export function EditMoviePage() {
-  useDynamicTitle('影片编辑');
+  useDynamicTitle("影片编辑");
   const {
     movies,
     filteredMovies,
@@ -62,10 +62,15 @@ export function EditMoviePage() {
             </div>
             <div className="flex items-end gap-1">
               <h1 className="text-white text-3xl">影片编辑</h1>
-              <p className="text-neutral-400 text-sm mt-1">管理影片信息和关联的种子版本</p>
+              <p className="text-neutral-400 text-sm mt-1">
+                管理影片信息和关联的种子版本
+              </p>
             </div>
           </div>
-          <Button onClick={handleCreateNew} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25">
+          <Button
+            onClick={handleCreateNew}
+            className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+          >
             <Plus className="w-4 h-4 mr-2" />
             添加影片
           </Button>
@@ -85,9 +90,16 @@ export function EditMoviePage() {
           />
           <StatsPanel
             total={movies.length}
-            filmsCount={movies.filter((m) => m.category === '电影').length}
-            seriesCount={movies.filter((m) => m.category === '剧集').length}
-            totalTorrents={movies.reduce((sum, m) => sum + m.torrents.length, 0)}
+            filmsCount={
+              movies.filter((m) => m.categories?.[0] === "电影").length
+            }
+            seriesCount={
+              movies.filter((m) => m.categories?.[0] === "剧集").length
+            }
+            totalTorrents={movies.reduce(
+              (sum, m) => sum + m.torrents.length,
+              0
+            )}
           />
         </div>
 
@@ -101,7 +113,10 @@ export function EditMoviePage() {
                 errors={errors}
                 onChange={setMovieForm}
                 onSave={handleSaveMovie}
-                onCancel={() => { setIsCreating(false); setIsEditing(false); }}
+                onCancel={() => {
+                  setIsCreating(false);
+                  setIsEditing(false);
+                }}
                 ptGenUrl={ptGenUrl}
                 onPtGenUrlChange={setPtGenUrl}
                 ptGenLoading={ptGenLoading}
@@ -126,9 +141,15 @@ export function EditMoviePage() {
                   searchError={searchError}
                   results={searchResults}
                   onBind={(id) => handleBindExistingTorrent(id)}
-                  onClose={() => { setShowTorrentSearch(false); setTorrentSearchQuery(''); }}
+                  onClose={() => {
+                    setShowTorrentSearch(false);
+                    setTorrentSearchQuery("");
+                  }}
                 />
-                <TorrentList torrents={selectedMovie.torrents} onRemove={(id) => handleRemoveTorrent(id)} />
+                <TorrentList
+                  torrents={selectedMovie.torrents}
+                  onRemove={(id) => handleRemoveTorrent(id)}
+                />
               </>
             )}
 
@@ -136,8 +157,13 @@ export function EditMoviePage() {
               <div className="text-center py-20">
                 <Film className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
                 <h3 className="text-white text-lg mb-2">选择一部影片</h3>
-                <p className="text-neutral-400 text-sm mb-6">从左侧列表选择影片进行编辑，或添加新影片</p>
-                <Button onClick={handleCreateNew} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25">
+                <p className="text-neutral-400 text-sm mb-6">
+                  从左侧列表选择影片进行编辑，或添加新影片
+                </p>
+                <Button
+                  onClick={handleCreateNew}
+                  className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   添加新影片
                 </Button>

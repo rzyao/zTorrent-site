@@ -10,9 +10,15 @@ import type { CreatePlaylistDto } from '../models/CreatePlaylistDto';
 import type { DeletePlaylistDto } from '../models/DeletePlaylistDto';
 import type { DeletePlaylistResponseDto } from '../models/DeletePlaylistResponseDto';
 import type { EmptyObjectDto } from '../models/EmptyObjectDto';
+import type { FollowDto } from '../models/FollowDto';
+import type { FollowResponseDto } from '../models/FollowResponseDto';
 import type { GetPlaylistDto } from '../models/GetPlaylistDto';
 import type { IncrementViewsDto } from '../models/IncrementViewsDto';
 import type { IncrementViewsResponseDto } from '../models/IncrementViewsResponseDto';
+import type { IsFollowingDto } from '../models/IsFollowingDto';
+import type { IsFollowingResponseDto } from '../models/IsFollowingResponseDto';
+import type { IsSubscribedDto } from '../models/IsSubscribedDto';
+import type { IsSubscribedResponseDto } from '../models/IsSubscribedResponseDto';
 import type { LikePlaylistDto } from '../models/LikePlaylistDto';
 import type { LikePlaylistResponseDto } from '../models/LikePlaylistResponseDto';
 import type { ListPlaylistsDto } from '../models/ListPlaylistsDto';
@@ -22,7 +28,11 @@ import type { RemoveFilmFromPlaylistDto } from '../models/RemoveFilmFromPlaylist
 import type { ReorderFilmsInPlaylistDto } from '../models/ReorderFilmsInPlaylistDto';
 import type { ReorderFilmsInPlaylistResponseDto } from '../models/ReorderFilmsInPlaylistResponseDto';
 import type { ReviewDto } from '../models/ReviewDto';
+import type { SubscribeDto } from '../models/SubscribeDto';
+import type { SubscribeResponseDto } from '../models/SubscribeResponseDto';
 import type { UpdatePlaylistDto } from '../models/UpdatePlaylistDto';
+import type { UpdateSubscriptionNotifyDto } from '../models/UpdateSubscriptionNotifyDto';
+import type { UpdateSubscriptionNotifyResponseDto } from '../models/UpdateSubscriptionNotifyResponseDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -115,7 +125,7 @@ export class PlaylistsService {
         });
     }
     /**
-     * 列出片单列表
+     * 列出片单列表（按类型: 公开/我的/关注）
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
@@ -390,6 +400,151 @@ export class PlaylistsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/playlists/list-categories',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 关注/取消关注片单
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static playlistsControllerFollow(
+        requestBody: FollowDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: FollowResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/playlists/follow',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 检查是否已关注片单
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static playlistsControllerIsFollowing(
+        requestBody: IsFollowingDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: IsFollowingResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/playlists/is-following',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 订阅/取消订阅片单
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static playlistsControllerSubscribe(
+        requestBody: SubscribeDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: SubscribeResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/playlists/subscribe',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 检查是否已订阅片单
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static playlistsControllerIsSubscribed(
+        requestBody: IsSubscribedDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: IsSubscribedResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/playlists/is-subscribed',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 更新订阅通知设置
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static playlistsControllerUpdateSubscriptionNotify(
+        requestBody: UpdateSubscriptionNotifyDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: UpdateSubscriptionNotifyResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/playlists/update-subscription-notify',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

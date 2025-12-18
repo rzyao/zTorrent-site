@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDynamicTitle } from '@/hooks/useDynamicTitle';
-import { FilmsService } from '@/api/services/FilmsService';
+import { MoviesService } from '@/api/services/MoviesService';
 import { PlaylistsService } from '@/api/services/PlaylistsService';
 import { TorrentsService } from '@/api/services/TorrentsService';
 import { SettingsService } from '@/api/services/SettingsService';
@@ -87,16 +87,16 @@ export function useReviewData() {
     }
   };
 
-  const fetchFilms = async () => {
+  const fetchMovies = async () => {
     setLoading(true);
     try {
-      const resp = await FilmsService.filmsControllerAdminList({
+      // TODO: 待后端实现 moviesControllerAdminList API
+      // 目前使用普通列表 API
+      const resp = await MoviesService.moviesControllerList({
         page,
         limit,
         keyword: searchQuery || undefined,
-        approvalStatus: statusFilter === 'all' ? undefined : statusFilter,
-        sortBy: 'approvedAt',
-        order: 'DESC',
+        // approvalStatus 字段待后端支持
       } as any);
       const data = unwrapResponse(resp);
       const list: any[] = Array.isArray(data?.items) ? data.items : [];
@@ -165,10 +165,10 @@ export function useReviewData() {
 
   useEffect(() => {
     if (typeFilter === 'torrent') fetchTorrents();
-    else if (typeFilter === 'movie') fetchFilms();
+    else if (typeFilter === 'movie') fetchMovies();
     else if (typeFilter === 'playlist') fetchPlaylists();
     else {
-      Promise.all([fetchTorrents(), fetchFilms()]).then(() => { });
+      Promise.all([fetchTorrents(), fetchMovies()]).then(() => { });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [typeFilter, statusFilter, searchQuery, page, limit]);
@@ -203,7 +203,7 @@ export function useReviewData() {
     page, setPage, limit, setLimit, total, setTotal,
     reviewSwitches,
     // fetchers
-    fetchTorrents, fetchFilms, fetchPlaylists,
+    fetchTorrents, fetchMovies, fetchPlaylists,
   };
 }
 

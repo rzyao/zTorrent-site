@@ -5,7 +5,7 @@ import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 import { TorrentsService } from './services/TorrentsService';
 import { ImagesService } from './services/ImagesService';
-import { FilmsService } from './services/FilmsService';
+import { MoviesService } from './services/MoviesService';
 import { TicketsService } from './services/TicketsService';
 
 export async function getOpenAPI() {
@@ -33,9 +33,16 @@ export async function getUsersService() {
   return (mod as any).UsersService;
 }
 
+export async function getMoviesService() {
+  // MoviesService 在多个页面中被静态导入，这里改为静态返回，避免构建警告
+  return MoviesService as any;
+}
+
+/**
+ * @deprecated 使用 getMoviesService 替代
+ */
 export async function getFilmsService() {
-  // FilmsService 在多个页面中被静态导入，这里改为静态返回，避免构建警告
-  return FilmsService as any;
+  return MoviesService as any;
 }
 
 export async function getAuthService() {

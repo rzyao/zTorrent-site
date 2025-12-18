@@ -30,7 +30,18 @@ export default function HomePage() {
 
   return (
     <>
-      <CategoryNav active={active} onSelect={handleSelect} />
+      <CategoryNav
+        items={[
+          { label: "全部", value: "全部" },
+          { label: "电影", value: "电影" },
+          { label: "动漫", value: "动漫" },
+          { label: "剧集", value: "剧集" },
+        ]}
+        active={active}
+        onSelect={handleSelect}
+        activeClassName="text-amber-500 font-medium"
+        inactiveClassName="text-neutral-400 hover:text-neutral-200"
+      />
       <FeaturedTorrent {...featuredTorrent} />
       <div className="relative -mt-24 space-y-8 pb-16">
         <TorrentRow title="免费下载" torrents={freeTorrents} />
@@ -380,4 +391,3 @@ const movieTorrents = [
     comments: 456,
   },
 ];
-

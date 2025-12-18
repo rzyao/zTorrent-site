@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useFilms } from '@/hooks/useFilms';
 import { TorrentsService } from '@/api/services/TorrentsService';
-import { FilmsService } from '@/api/services/FilmsService';
+import { MoviesService } from '@/api/services/MoviesService';
 import { PtGenService } from '@/api/services/PtGenService';
 import { stripBackticksAndTrim, parseDurationToMinutes, validateFilmForm, mapBackendFilmToLocal, isValidRating } from '@/pages/Edit/movies/utils';
 import type { Movie, MovieFormState } from '@/pages/Edit/movies/types';
@@ -71,7 +71,9 @@ export function useEditMovie() {
     (async () => {
       if (!selectedMovie) return;
       try {
-        const resp: any = await FilmsService.filmsControllerListTorrents({ filmId: selectedMovie.id, page: 1, limit: 100 });
+        // TODO: moviesControllerListTorrents API 待实现
+        // const resp: any = await MoviesService.moviesControllerListTorrents({ filmId: selectedMovie.id, page: 1, limit: 100 });
+        const resp: any = { data: { items: [], total: 0 } };
         const body = resp?.code !== undefined ? resp : resp?.data ?? resp;
         const items = body?.data?.items ?? body?.items ?? [];
         const mappedTorrents = Array.isArray(items)
@@ -334,7 +336,9 @@ export function useEditMovie() {
     if (!selectedMovie) return;
     try {
       await addTorrent(selectedMovie.id, String(torrentId));
-      const resp: any = await FilmsService.filmsControllerListTorrents({ filmId: selectedMovie.id, page: 1, limit: 100 });
+      // TODO: moviesControllerListTorrents API 待实现
+      // const resp: any = await MoviesService.moviesControllerListTorrents({ filmId: selectedMovie.id, page: 1, limit: 100 });
+      const resp: any = { data: { items: [], total: 0 } };
       const body = resp?.code !== undefined ? resp : resp?.data ?? resp;
       const items = body?.data?.items ?? body?.items ?? [];
       const mappedTorrents = Array.isArray(items)
@@ -371,7 +375,9 @@ export function useEditMovie() {
     if (selectedMovie) {
       try {
         await removeTorrent(selectedMovie.id, torrentId);
-        const resp: any = await FilmsService.filmsControllerListTorrents({ filmId: selectedMovie.id, page: 1, limit: 100 });
+        // TODO: moviesControllerListTorrents API 待实现
+        // const resp: any = await MoviesService.moviesControllerListTorrents({ filmId: selectedMovie.id, page: 1, limit: 100 });
+        const resp: any = { data: { items: [], total: 0 } };
         const body = resp?.code !== undefined ? resp : resp?.data ?? resp;
         const items = body?.data?.items ?? body?.items ?? [];
         const mappedTorrents = Array.isArray(items)

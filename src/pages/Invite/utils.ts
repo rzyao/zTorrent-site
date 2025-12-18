@@ -16,11 +16,11 @@ export const formatDate = (iso?: string | null) => {
   if (!iso) return '';
   const d = new Date(iso);
   const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const da = String(d.getDate()).padStart(2, '0');
-  const hh = String(d.getHours()).padStart(2, '0');
+  const m = d.getMonth() + 1;
+  const da = d.getDate();
+  const hh = d.getHours();
   const mm = String(d.getMinutes()).padStart(2, '0');
-  return `${y}-${m}-${da} ${hh}:${mm}`;
+  return `${y}-${m}-${da}  ${hh}:${mm}`;
 };
 
 export const getStatusColor = (status: string) => {

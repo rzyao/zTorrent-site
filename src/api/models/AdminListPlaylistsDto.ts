@@ -6,7 +6,10 @@ export type AdminListPlaylistsDto = {
     page?: number;
     limit?: number;
     keyword?: string;
-    ownerUserId?: string;
+    /**
+     * 拥有者ID筛选
+     */
+    ownerId?: string;
     type?: AdminListPlaylistsDto.type;
     visibility?: AdminListPlaylistsDto.visibility;
     approvalStatus?: string;
@@ -20,11 +23,11 @@ export namespace AdminListPlaylistsDto {
         SERIES = 'series',
         DIRECTOR = 'director',
         CURATION = 'curation',
+        ACTOR = 'actor',
     }
     export enum visibility {
         PUBLIC = 'public',
         PRIVATE = 'private',
-        FRIENDS = 'friends',
     }
 }
 

@@ -2,6 +2,10 @@
 trigger: always_on
 ---
 
+---
+
+## trigger: always_on
+
 # zTorrent Site 前端项目规范
 
 ## 1. 技术栈概览 (Tech Stack Overview)
@@ -49,23 +53,86 @@ trigger: always_on
 ### 3.2 样式与 UI (Styling & UI)
 
 - **Tailwind 优先**: 严禁编写传统的 CSS/SCSS 文件（index.css 除外）。所有样式应通过 Tailwind Utility Class 实现。
-- **类名合并**: 所有的条件样式必须使用 cn(...) (即 clsx + ailwind-merge) 工具函数，以确保类名优先级正确且无冲突。
+- **类名合并**: 所有的条件样式必须使用 cn(...) (即 clsx + tailwind-merge) 工具函数，以确保类名优先级正确且无冲突。
 - **响应式**: 遵循 **Mobile-First** 原则，先写移动端样式，再通过 md:, lg: 等断点适配桌面端。
 
 ### 3.3 状态管理 (State Management)
 
 - **服务端数据**: 必须使用 **TanStack Query** (useQuery, useMutation)。
-  - 禁止在组件中手动使用 useEffect + xios 请求数据。
+  - 禁止在组件中手动使用 useEffect + axios 请求数据。
   - 使用 Query Key 管理缓存失效。
 - **全局 UI 状态**: 使用 **Zustand**。适用于 Sidebar 开关、多语言切换、主题切换等。
 - **复杂本地状态**: 优先使用 useReducer 或提取为自定义 Hook。
 
-### 3.4 类型安全 (Type Safety)
+### 3.4 异步操作与用户反馈 (Async Actions & User Feedback)
 
-- **Strict Mode**: 项目已开启严格模式，**禁止使用 ny** 类型。
+#### 数据查询 - 使用 TanStack Query
+
+对于数据获取、列表、详情页等场景，使用 **TanStack Query**：
+
+```tsx
+const { data, isLoading, error } = useQuery({
+  queryKey: ["movies"],
+  queryFn: () => MoviesService.list(),
+});
+```
+
+#### 数据变更 - 使用 useAsyncAction
+
+对于表单提交、删除、更新等一次性操作，使用 **`useAsyncAction` Hook**：
+
+```tsx
+import { useAsyncAction } from "@/hooks/useAsyncAction";
+
+// 基础用法
+const { execute, loading } = useAsyncAction({
+  successMessage: "保存成功",
+  loadingMessage: "正在保存...",
+});
+
+const handleSave = async () => {
+  await execute(async () => {
+    await UsersService.save(data);
+  });
+};
+
+// 高级用法 - 自定义回调
+const { execute } = useAsyncAction({
+  successMessage: "删除成功",
+  onSuccess: () => queryClient.invalidateQueries(["items"]),
+  onError: (error) => console.error(error),
+});
+```
+
+**useAsyncAction 特性**：
+
+- ✅ 自动管理 loading 状态
+- ✅ 显示 loading toast（可选）
+- ✅ 成功/失败提示
+- ✅ 自定义回调函数
+- ✅ 错误处理（优先使用响应中的 `message` 字段）
+
+**错误消息优先级**：
+
+1. 响应数据中的 `message` (`err.response?.data?.message` 或 `err.data?.message`)
+2. 错误对象的 `message` (`err.message`)
+3. 用户自定义的 `errorMessage`
+4. 默认值 `'操作失败'`
+
+**适用场景**：
+
+- 表单提交
+- 删除操作
+- 更新操作
+- 需要自定义提示的场景
+- 不需要缓存的一次性操作
+
+### 3.5 类型安全 (Type Safety)
+
+- **Strict Mode**: 项目已开启严格模式，**禁止使用 any** 类型。
 - **类型定义**: 优先利用自动生成的 API 类型（位于 src/api），避免手动重复定义接口返回与请求参数类型。
 
-### 3.5 性能优化 (Performance)
+### 3.6 性能优化 (Performance)
 
 - **按需加载**: 路由组件必须使用 React.lazy 或 React Router 的 lazy 属性进行代码分割。
 - **重渲染控制**: 合理使用 useMemo 和 useCallback，特别是作为 Props 传递给子组件的对象和函数。
@@ -81,4 +148,4 @@ trigger: always_on
 - docs: 文档变更
 - chore: 构建过程或辅助工具的变动
 
-**示例**: feat: 增加用户登录页面
+**示例**: feat: 增加用户登录页面

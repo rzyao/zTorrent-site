@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTorrentDownload } from "@/utils/useTorrentDownload";
 import { Toolbar } from "@/pages/TorrentsList/components/Toolbar";
 import { GridView } from "@/pages/TorrentsList/components/GridView";
@@ -8,6 +8,7 @@ import { useTorrentsList } from "@/pages/TorrentsList/hooks/useTorrentsList";
 import { useDownloaders } from "@/context/DownloadersContext";
 import { DownloadToDownloaderModal } from "@/components/DownloadToDownloaderModal";
 import type { Torrent, ViewMode } from "@/pages/TorrentsList/types";
+import { usePreferenceStore } from "@/stores/preferenceStore";
 
 /**
  * TorrentsPage（容器组件）
@@ -33,8 +34,21 @@ export default function TorrentsPage() {
   } = useTorrentsList();
 
   // 视图模式与筛选开关为纯UI状态（不进入业务hook）
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const { viewMode, setViewMode } = usePreferenceStore();
+  // 本地状态用于立即响应 UI 切换，避免 store 更新带来的微小延迟
+  const [localViewMode, setLocalViewMode] = useState<ViewMode>(viewMode);
+
   const [showFilters, setShowFilters] = useState<boolean>(false);
+
+  // 同步 store 状态到本地（处理初始化或外部变更）
+  useEffect(() => {
+    setLocalViewMode(viewMode);
+  }, [viewMode]);
+
+  const handleViewModeChange = (mode: ViewMode) => {
+    setLocalViewMode(mode);
+    setViewMode(mode);
+  };
 
   // 下载能力（保持与旧页面一致的回调签名）
   const { downloadByTorrentId } = useTorrentDownload({
@@ -73,7 +87,7 @@ export default function TorrentsPage() {
    * - 回退：`cover` 或空字符串
    */
   const getCoverSrc = (item: Torrent) => {
-    if (viewMode === "list") {
+    if (localViewMode === "list") {
       return item?.ThumbCoverPath ?? item?.cover ?? "";
     } else {
       return item?.MediumCoverPath ?? item?.cover ?? "";
@@ -92,15 +106,15 @@ export default function TorrentsPage() {
         searchQuery={searchQuery}
         onChangeSearch={setSearchQuery}
         onSearch={handleSearch}
-        viewMode={viewMode}
-        onChangeViewMode={setViewMode}
+        viewMode={localViewMode}
+        onChangeViewMode={handleViewModeChange}
         showFilters={showFilters}
         onToggleFilters={() => setShowFilters((v) => !v)}
       />
 
       {/* 列表区 */}
       <div className="relative z-0 max-w-[1600px] mx-auto px-4 md:px-16 py-6">
-        {viewMode === "grid" && (
+        {localViewMode === "grid" && (
           <GridView
             items={displayTorrents}
             getCategoryLabel={getCategoryLabel}
@@ -108,7 +122,7 @@ export default function TorrentsPage() {
             getCoverSrc={getCoverSrc}
           />
         )}
-        {viewMode === "list" && (
+        {localViewMode === "list" && (
           <ListView
             items={displayTorrents}
             getCategoryLabel={getCategoryLabel}

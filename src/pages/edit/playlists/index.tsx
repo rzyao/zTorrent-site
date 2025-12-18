@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
-import { useDynamicTitle } from '@/hooks/useDynamicTitle';
+import { useEffect, useState, useRef } from "react";
+import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import {
   ListVideo,
   Plus,
@@ -17,20 +17,19 @@ import {
   Calendar,
   Eye,
   Film,
-} from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { useEditPlaylist } from '@/pages/Edit/playlists/hooks/useEditPlaylist';
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useEditPlaylist } from "@/pages/Edit/playlists/hooks/useEditPlaylist";
 
 // 新增：拆分后的无状态子组件与自定义 Hook（本次页面仅先接入组件，Hook 后续步骤可接入）
-import { PlaylistList } from '@/pages/Edit/playlists/components/PlaylistList';
-import { StatsPanel } from '@/pages/Edit/playlists/components/StatsPanel';
-import { PlaylistForm } from '@/pages/Edit/playlists/components/PlaylistForm';
-import { PlaylistDetails } from '@/pages/Edit/playlists/components/PlaylistDetails';
-
+import { PlaylistList } from "@/pages/Edit/playlists/components/PlaylistList";
+import { StatsPanel } from "@/pages/Edit/playlists/components/StatsPanel";
+import { PlaylistForm } from "@/pages/Edit/playlists/components/PlaylistForm";
+import { PlaylistDetails } from "@/pages/Edit/playlists/components/PlaylistDetails";
 
 export function EditPlaylistPage() {
-  useDynamicTitle('片单编辑');
+  useDynamicTitle("片单编辑");
   // 接入拆分后的业务逻辑 Hook
   const {
     playlists,
@@ -77,10 +76,10 @@ export function EditPlaylistPage() {
       <div className="mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-700 flex items-center justify-center shadow-lg shadow-amber-500/30">
               <ListVideo className="w-5 h-5 text-white" />
             </div>
-            <div className='flex items-end gap-1'>
+            <div className="flex items-end gap-1">
               <h1 className="text-white text-3xl">片单编辑</h1>
               <p className="text-neutral-400 text-sm mt-1">
                 创建和管理您的影片收藏片单
@@ -144,7 +143,7 @@ export function EditPlaylistPage() {
                       <Edit className="w-4 h-4 text-white" />
                     </div>
                     <h2 className="text-white text-xl">
-                      {isCreating ? '创建片单' : '编辑片单'}
+                      {isCreating ? "创建片单" : "编辑片单"}
                     </h2>
                   </div>
                   <Button
@@ -201,7 +200,13 @@ export function EditPlaylistPage() {
                       placeholder="输入图片URL..."
                       className="flex-1 bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
                     />
-                    <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleUploadCoverFile} />
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleUploadCoverFile}
+                    />
                     <Button
                       variant="outline"
                       onClick={handleUploadCoverClick}
@@ -226,36 +231,39 @@ export function EditPlaylistPage() {
                   <div className="grid grid-cols-3 gap-3">
                     <button
                       onClick={() =>
-                        setEditForm({ ...editForm, visibility: 'public' })
+                        setEditForm({ ...editForm, visibility: "public" })
                       }
-                      className={`p-4 rounded-xl border transition-all ${editForm.visibility === 'public'
-                        ? 'bg-green-500/20 border-green-500/50 text-green-400'
-                        : 'bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600'
-                        }`}
+                      className={`p-4 rounded-xl border transition-all ${
+                        editForm.visibility === "public"
+                          ? "bg-green-500/20 border-green-500/50 text-green-400"
+                          : "bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600"
+                      }`}
                     >
                       <Globe className="w-5 h-5 mx-auto mb-2" />
                       <p className="text-sm">公开</p>
                     </button>
                     <button
                       onClick={() =>
-                        setEditForm({ ...editForm, visibility: 'friends' })
+                        setEditForm({ ...editForm, visibility: "friends" })
                       }
-                      className={`p-4 rounded-xl border transition-all ${editForm.visibility === 'friends'
-                        ? 'bg-blue-500/20 border-blue-500/50 text-blue-400'
-                        : 'bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600'
-                        }`}
+                      className={`p-4 rounded-xl border transition-all ${
+                        editForm.visibility === "friends"
+                          ? "bg-blue-500/20 border-blue-500/50 text-blue-400"
+                          : "bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600"
+                      }`}
                     >
                       <Users className="w-5 h-5 mx-auto mb-2" />
                       <p className="text-sm">好友可见</p>
                     </button>
                     <button
                       onClick={() =>
-                        setEditForm({ ...editForm, visibility: 'private' })
+                        setEditForm({ ...editForm, visibility: "private" })
                       }
-                      className={`p-4 rounded-xl border transition-all ${editForm.visibility === 'private'
-                        ? 'bg-red-500/20 border-red-500/50 text-red-400'
-                        : 'bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600'
-                        }`}
+                      className={`p-4 rounded-xl border transition-all ${
+                        editForm.visibility === "private"
+                          ? "bg-red-500/20 border-red-500/50 text-red-400"
+                          : "bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600"
+                      }`}
                     >
                       <Lock className="w-5 h-5 mx-auto mb-2" />
                       <p className="text-sm">私密</p>
@@ -411,48 +419,56 @@ export function EditPlaylistPage() {
                         />
                       </div>
                       {isSearching && (
-                        <p className="text-neutral-500 text-sm mb-3">正在搜索...</p>
+                        <p className="text-neutral-500 text-sm mb-3">
+                          正在搜索...
+                        </p>
                       )}
-                      {addQuery.trim() && !isSearching && searchResults.length === 0 && (
-                        <p className="text-neutral-500 text-sm mb-3">暂无匹配影片</p>
-                      )}
+                      {addQuery.trim() &&
+                        !isSearching &&
+                        searchResults.length === 0 && (
+                          <p className="text-neutral-500 text-sm mb-3">
+                            暂无匹配影片
+                          </p>
+                        )}
                       <div className="grid grid-cols-1 gap-3 max-h-64 overflow-y-auto scrollbar-themed">
-                        {(addQuery.trim() ? searchResults : available).map((movie) => (
-                          <div
-                            key={movie.id}
-                            className="flex items-center gap-3 p-3 rounded-lg bg-neutral-800/50 border border-neutral-700/50 hover:border-amber-500/30 transition-all"
-                          >
-                            <img
-                              src={movie.poster}
-                              alt={movie.title}
-                              className="w-12 h-16 rounded object-cover"
-                            />
-                            <div className="flex-1 min-w-0">
-                              <h5 className="text-white text-sm truncate">
-                                {movie.title}
-                              </h5>
-                              <p className="text-neutral-400 text-xs truncate">
-                                {movie.originalTitle} ({movie.year})
-                              </p>
-                              <div className="flex items-center gap-2 mt-1">
-                                <span className="text-amber-400 text-xs flex items-center gap-1">
-                                  <Star className="w-3 h-3 fill-amber-400" />
-                                  {movie.rating}
-                                </span>
-                                <span className="text-neutral-500 text-xs">
-                                  {movie.torrentCount} 个版本
-                                </span>
-                              </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              onClick={() => handleAddMovie(movie)}
-                              className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                        {(addQuery.trim() ? searchResults : available).map(
+                          (movie) => (
+                            <div
+                              key={movie.id}
+                              className="flex items-center gap-3 p-3 rounded-lg bg-neutral-800/50 border border-neutral-700/50 hover:border-amber-500/30 transition-all"
                             >
-                              添加
-                            </Button>
-                          </div>
-                        ))}
+                              <img
+                                src={movie.poster}
+                                alt={movie.title}
+                                className="w-12 h-16 rounded object-cover"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <h5 className="text-white text-sm truncate">
+                                  {movie.title}
+                                </h5>
+                                <p className="text-neutral-400 text-xs truncate">
+                                  {movie.originalTitle} ({movie.year})
+                                </p>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <span className="text-amber-400 text-xs flex items-center gap-1">
+                                    <Star className="w-3 h-3 fill-amber-400" />
+                                    {movie.rating}
+                                  </span>
+                                  <span className="text-neutral-500 text-xs">
+                                    {movie.torrentCount} 个版本
+                                  </span>
+                                </div>
+                              </div>
+                              <Button
+                                size="sm"
+                                onClick={() => handleAddMovie(movie)}
+                                className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                              >
+                                添加
+                              </Button>
+                            </div>
+                          )
+                        )}
                       </div>
                     </div>
                   )}
@@ -511,8 +527,22 @@ export function EditPlaylistPage() {
                           </div>
                           {/* 排序操作：上移/下移 */}
                           <div className="flex items-center gap-2">
-                            <Button size="sm" variant="ghost" className="text-neutral-400 hover:text-white" onClick={() => handleMoveMovie(index, 'up')}>上移</Button>
-                            <Button size="sm" variant="ghost" className="text-neutral-400 hover:text-white" onClick={() => handleMoveMovie(index, 'down')}>下移</Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="text-neutral-400 hover:text-white"
+                              onClick={() => handleMoveMovie(index, "up")}
+                            >
+                              上移
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="text-neutral-400 hover:text-white"
+                              onClick={() => handleMoveMovie(index, "down")}
+                            >
+                              下移
+                            </Button>
                           </div>
                           <Button
                             size="sm"

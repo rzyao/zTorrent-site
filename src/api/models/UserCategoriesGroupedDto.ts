@@ -9,9 +9,13 @@ export type UserCategoriesGroupedDto = {
      */
     torrent: Array<CategoryShowItemDto>;
     /**
-     * Film 分类列表
+     * Movie 分类列表
      */
-    film: Array<CategoryShowItemDto>;
+    movie: Array<CategoryShowItemDto>;
+    /**
+     * Series 分类列表
+     */
+    series: Array<CategoryShowItemDto>;
     /**
      * Playlist 分类列表
      */

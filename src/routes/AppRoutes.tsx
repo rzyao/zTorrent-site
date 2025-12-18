@@ -19,6 +19,7 @@ import { ForumPage } from "@/pages/Forum/index.tsx";
 import { SubtitlesPage } from "@/pages/Subtitles/index.tsx";
 import RankingPage from "@/pages/RankingPage.tsx";
 import { EditMoviePage } from "@/pages/Edit/movies/index.tsx";
+import { EditSeriesPage } from "@/pages/Edit/series/index.tsx";
 import { EditPlaylistPage } from "@/pages/Edit/playlists/index.tsx";
 import { UploadTorrentPage } from "@/pages/UploadTorrent/index.tsx";
 import { MessagesPage } from "@/pages/Messages/index.tsx";
@@ -31,10 +32,13 @@ import { ReviewPage } from "@/pages/Review/index.tsx";
 import { BonusPage } from "@/pages/Bonus/index.tsx";
 import { InvitePage } from "@/pages/Invite/InvitePage.tsx";
 import { FilmsPage } from "@/pages/Films/index.tsx";
+import { MoviesPage } from "@/pages/Movies/index.tsx";
+import { SeriesPage } from "@/pages/Series/index.tsx";
 import { PlaylistsPage } from "@/pages/Playlists/index.tsx";
 import { PlaylistDetailPage } from "@/pages/PlaylistDetail/PlaylistDetailPage.tsx";
 import TorrentDetailPage from "@/pages/TorrentDetail/index.tsx";
 import FilmDetailPage from "@/pages/FilmDetail/FilmDetailPage.tsx";
+import { EpisodeDetailPage } from "@/pages/EpisodeDetail/EpisodeDetailPage.tsx";
 import { TorrentRecordPage } from "@/pages/TorrentRecord/index.tsx";
 import { RSSPage } from "@/pages/RSSPage.tsx";
 import { GroupsPage } from "@/pages/Groups/GroupsPage.tsx";
@@ -248,39 +252,17 @@ export default function AppRoutes() {
           }
         />
 
-        {/* 影片与片单 */}
+        {/* 电影与剧集 */}
+        <Route path="/movies" element={<MoviesPage />} />
+        <Route path="/movie/:id" element={<MovieDetailRoute />} />
+        <Route path="/series" element={<SeriesPage />} />
+        <Route path="/series/:id" element={<SeriesDetailRoute />} />
         <Route
-          path="/films"
-          element={
-            <PermissionRoute requiredPermissions={["page:films"]}>
-              <FilmsPage />
-            </PermissionRoute>
-          }
+          path="/series/:seriesId/episodes/:episodeId"
+          element={<EpisodeDetailPage />}
         />
-        <Route
-          path="/film/:id"
-          element={
-            <PermissionRoute requiredPermissions={["page:films"]}>
-              <FilmDetailRoute />
-            </PermissionRoute>
-          }
-        />
-        <Route
-          path="/playlists"
-          element={
-            <PermissionRoute requiredPermissions={["page:playlists"]}>
-              <PlaylistsPage />
-            </PermissionRoute>
-          }
-        />
-        <Route
-          path="/playlist/:id"
-          element={
-            <PermissionRoute requiredPermissions={["page:playlists"]}>
-              <PlaylistDetailPageWrapper />
-            </PermissionRoute>
-          }
-        />
+        <Route path="/playlists" element={<PlaylistsPage />} />
+        <Route path="/playlist/:id" element={<PlaylistDetailPageWrapper />} />
 
         {/* 魔力值与邀请、历史 */}
         <Route
@@ -324,6 +306,14 @@ export default function AppRoutes() {
           element={
             <PermissionRoute requiredPermissions={["page:edit"]}>
               <EditMoviePage />
+            </PermissionRoute>
+          }
+        />
+        <Route
+          path="/edit/series"
+          element={
+            <PermissionRoute requiredPermissions={["page:edit"]}>
+              <EditSeriesPage />
             </PermissionRoute>
           }
         />
@@ -456,12 +446,33 @@ function PlaylistDetailPageWrapper() {
     />
   );
 }
-function FilmDetailRoute() {
+
+// 电影详情页路由组件
+function MovieDetailRoute() {
   const params = useParams();
   const id = params.id ?? "";
-  if (!id) return <Navigate to="/films" replace />;
+  if (!id) return <Navigate to="/movies" replace />;
+  // 暂时复用 FilmDetailPage，后续可替换为 MovieDetailPage
   return <FilmDetailPage filmId={String(id)} />;
 }
+
+// 剧集详情页路由组件 - 待实现
+function SeriesDetailRoute() {
+  const params = useParams();
+  const id = params.id ?? "";
+  if (!id) return <Navigate to="/series" replace />;
+  // TODO: 替换为 SeriesDetailPage
+  return (
+    <div className="flex items-center justify-center min-h-[50vh]">
+      <div className="text-center">
+        <h2 className="text-white text-xl mb-2">剧集详情</h2>
+        <p className="text-neutral-400">ID: {id}</p>
+        <p className="text-neutral-500 text-sm mt-4">详情页开发中...</p>
+      </div>
+    </div>
+  );
+}
+
 function NotFoundRedirect() {
   const isLoggedIn = !!localStorage.getItem("accessToken");
   return <Navigate to={isLoggedIn ? "/home" : "/login"} replace />;

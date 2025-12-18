@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { getFilmsService } from '@/api/lazy';
+import { getMoviesService } from '@/api/lazy';
 
 type FilmFilters = {
   category?: string;
@@ -31,8 +31,8 @@ export function useFilms() {
     setError(null);
     try {
       const { page = 1, limit = 20, keyword = '', filters = {} } = params || {};
-      const FilmsService = await getFilmsService();
-      const res = await FilmsService.filmsControllerListFilms({ page, limit, keyword, ...filters } as any);
+      const MoviesService = await getMoviesService();
+      const res = await MoviesService.moviesControllerList({ page, limit, keyword, ...filters } as any);
       const data = unwrap(res);
       setItems(data?.items ?? []);
       setTotal(data?.total ?? 0);
@@ -50,8 +50,8 @@ export function useFilms() {
     setIsLoading(true);
     setError(null);
     try {
-      const FilmsService = await getFilmsService();
-      const res = await FilmsService.filmsControllerGetMovieDetail({ id } as any);
+      const MoviesService = await getMoviesService();
+      const res = await MoviesService.moviesControllerGetDetail({ id } as any);
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -67,8 +67,8 @@ export function useFilms() {
     setIsLoading(true);
     setError(null);
     try {
-      const FilmsService = await getFilmsService();
-      const res = await FilmsService.filmsControllerCreate(payload);
+      const MoviesService = await getMoviesService();
+      const res = await MoviesService.moviesControllerCreate(payload);
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -84,8 +84,8 @@ export function useFilms() {
     setIsLoading(true);
     setError(null);
     try {
-      const FilmsService = await getFilmsService();
-      const res = await FilmsService.filmsControllerUpdate({ id, data: payload });
+      const MoviesService = await getMoviesService();
+      const res = await MoviesService.moviesControllerUpdate({ id, data: payload } as any);
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -101,8 +101,8 @@ export function useFilms() {
     setIsLoading(true);
     setError(null);
     try {
-      const FilmsService = await getFilmsService();
-      const res = await FilmsService.filmsControllerDelete({ id } as any);
+      const MoviesService = await getMoviesService();
+      const res = await MoviesService.moviesControllerDelete({ id } as any);
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -118,10 +118,12 @@ export function useFilms() {
     setIsLoading(true);
     setError(null);
     try {
-      const FilmsService = await getFilmsService();
-      const res = await FilmsService.filmsControllerAddTorrent({ filmId, torrentId, sort });
-      const data = unwrap(res);
-      return data;
+      // TODO: 待后端实现 moviesControllerAddTorrent
+      // const MoviesService = await getMoviesService();
+      // const res = await MoviesService.moviesControllerAddTorrent({ filmId, torrentId, sort });
+      throw new Error("API not implemented: moviesControllerAddTorrent");
+      // const data = unwrap(res);
+      // return data;
     } catch (e: any) {
       const msg = e?.body?.data?.message || e?.body?.message || e?.message || '绑定影片种子失败';
       setError(msg);
@@ -135,10 +137,12 @@ export function useFilms() {
     setIsLoading(true);
     setError(null);
     try {
-      const FilmsService = await getFilmsService();
-      const res = await FilmsService.filmsControllerRemoveTorrent({ filmId, torrentId } as any);
-      const data = unwrap(res);
-      return data;
+      // TODO: 待后端实现 moviesControllerRemoveTorrent
+      // const MoviesService = await getMoviesService();
+      // const res = await MoviesService.moviesControllerRemoveTorrent({ filmId, torrentId } as any);
+      throw new Error("API not implemented: moviesControllerRemoveTorrent");
+      // const data = unwrap(res);
+      // return data;
     } catch (e: any) {
       const msg = e?.body?.data?.message || e?.body?.message || e?.message || '移除影片种子失败';
       setError(msg);

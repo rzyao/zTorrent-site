@@ -8,7 +8,15 @@ export type UpdateUserPreferencesDto = {
     defaultView?: UpdateUserPreferencesDto.defaultView;
     showAdult?: boolean;
     defaultTorrentCategories?: Array<string>;
-    defaultFilmCategories?: Array<string>;
+    defaultMovieCategories?: Array<string>;
+    /**
+     * 默认剧集分类
+     */
+    defaultSeriesCategories?: Array<string>;
+    /**
+     * 默认播放列表分类
+     */
+    defaultPlaylistCategories?: Array<string>;
 };
 export namespace UpdateUserPreferencesDto {
     export enum language {

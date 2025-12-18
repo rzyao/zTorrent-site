@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { PlaylistsService } from '@/api/services/PlaylistsService';
+import { ListPlaylistsDto } from '@/api/models/ListPlaylistsDto';
 import type { Playlist } from '../types';
 
 export function usePlaylists() {
@@ -12,15 +13,24 @@ export function usePlaylists() {
   const [page, setPage] = useState(1);
   const pageSize = 20;
 
+  // Helper to map tab to listType
+  const getListType = (tab: typeof activeTab): ListPlaylistsDto.listType => {
+    switch (tab) {
+      case 'mine': return ListPlaylistsDto.listType.MINE;
+      case 'following': return ListPlaylistsDto.listType.FOLLOWING;
+      case 'all': default: return ListPlaylistsDto.listType.PUBLIC;
+    }
+  };
+
   const loadPlaylists = async () => {
     try {
       setLoading(true);
       setError(null);
       const res = await PlaylistsService.playlistsControllerList({
+        listType: getListType(activeTab),
         page,
         limit: pageSize,
         keyword: searchQuery || undefined,
-        // TODO: activeTab === 'mine' 需要后端支持 onlyMine 或其他筛选 API
       });
 
       const list = (res.data?.items || []).map((item: any) => ({

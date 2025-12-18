@@ -24,7 +24,7 @@ export interface Torrent {
   /** 上传者 */
   uploader?: string;
   /** 上传日期字符串 */
-  uploadDate?: string;
+  uploadedAt?: string;
   /** 标签集合（可能是字符串数组或字符串） */
   tags?: string[] | string;
   /** 是否免费 */

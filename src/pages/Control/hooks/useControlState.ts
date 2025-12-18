@@ -4,6 +4,7 @@ import { useDictionaryLabels } from '@/hooks/useDictionary';
 import { getProfile } from '@/api/custom/auth';
 import { getUsersService, getOpenAPI } from '@/api/lazy';
 import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
+import { useAsyncAction } from '@/hooks/useAsyncAction';
 import type { UpdateUserPreferencesDto } from '@/api/models/UpdateUserPreferencesDto';
 import type { UpdateUserPrivacyDto } from '@/api/models/UpdateUserPrivacyDto';
 import type {
@@ -30,7 +31,6 @@ export function useControlState() {
 
   // 顶层页面状态
   const [activeTab, setActiveTab] = useState<TabType>('profile');
-  const [saveSuccess, setSaveSuccess] = useState(false);
 
   // 个人信息
   const [profileData, setProfileData] = useState<ProfileData>({
@@ -55,15 +55,21 @@ export function useControlState() {
   const [torrentCategoryOptions, setTorrentCategoryOptions] = useState<KeyLabelOption[]>([]);
   const [selectedTorrentCategories, setSelectedTorrentCategories] = useState<string[]>([]);
 
-  // 影片分类（Genre，多选）
-  const [filmGenreOptions, setFilmGenreOptions] = useState<KeyLabelOption[]>([]);
-  const [selectedFilmGenres, setSelectedFilmGenres] = useState<string[]>([]);
+  // 电影分类（多选）
+  const [movieGenreOptions, setMovieGenreOptions] = useState<KeyLabelOption[]>([]);
+  const [selectedMovieGenres, setSelectedMovieGenres] = useState<string[]>([]);
+  
+  // 剧集分类（多选）
+  const [seriesGenreOptions, setSeriesGenreOptions] = useState<KeyLabelOption[]>([]);
+  const [selectedSeriesGenres, setSelectedSeriesGenres] = useState<string[]>([]);
+  
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const [baselineAdultMode, setBaselineAdultMode] = useState<boolean>(false);
   const [baselinePreferences, setBaselinePreferences] = useState<PreferencesData>({ language: 'zh-CN', theme: 'dark', defaultView: 'grid' });
   const [baselineTorrentCategories, setBaselineTorrentCategories] = useState<string[]>([]);
-  const [baselineFilmGenres, setBaselineFilmGenres] = useState<string[]>([]);
+  const [baselineMovieGenres, setBaselineMovieGenres] = useState<string[]>([]);
+  const [baselineSeriesGenres, setBaselineSeriesGenres] = useState<string[]>([]);
 
   // 安全设置
   const [security, setSecurity] = useState<SecurityData>({
@@ -170,30 +176,47 @@ export function useControlState() {
           setTorrentCategoryOptions(dictCats.map((c) => ({ key: c.key, label: c.label })));
         }
 
-        // 处理影片分类 (film)
-        const filmItems = Array.isArray(data?.film) ? data.film : [];
-        const filmMapped = filmItems
+        // 处理电影分类 (movie)
+        const movieItems = Array.isArray(data?.movie) ? data.movie : [];
+        const movieMapped = movieItems
           .map((c: any) => ({
-            key: String(c?.key ?? c?.id ?? ''),
-            label: String(c?.label ?? c?.name ?? dictMap.get(c?.key) ?? c?.key ?? ''),
+            key: String(c?.key ?? ''),
+            label: String(c?.label ?? dictMap.get(c?.key) ?? c?.key ?? ''),
             show: Boolean(c?.show),
           }))
           .filter((c: any) => c.key && c.label);
-        if (filmMapped.length > 0) {
-          setFilmGenreOptions(filmMapped.map((c: any) => ({ key: c.key, label: c.label })));
-          const selectedKeys = filmMapped.filter((c: any) => c.show).map((c: any) => c.key);
-          setSelectedFilmGenres(selectedKeys);
-          setBaselineFilmGenres(selectedKeys);
+        if (movieMapped.length > 0) {
+          setMovieGenreOptions(movieMapped.map((c: any) => ({ key: c.key, label: c.label })));
+          const selectedKeys = movieMapped.filter((c: any) => c.show).map((c: any) => c.key);
+          setSelectedMovieGenres(selectedKeys);
+          setBaselineMovieGenres(selectedKeys);
         } else {
-          setFilmGenreOptions([]);
+          setMovieGenreOptions([]);
         }
 
-        // 如需处理 playlist 分类，可在此扩展
+        // 处理剧集分类 (series)
+        const seriesItems = Array.isArray(data?.series) ? data.series : [];
+        const seriesMapped = seriesItems
+          .map((c: any) => ({
+            key: String(c?.key ?? ''),
+            label: String(c?.label ?? dictMap.get(c?.key) ?? c?.key ?? ''),
+            show: Boolean(c?.show),
+          }))
+          .filter((c: any) => c.key && c.label);
+        if (seriesMapped.length > 0) {
+          setSeriesGenreOptions(seriesMapped.map((c: any) => ({ key: c.key, label: c.label })));
+          const selectedKeys = seriesMapped.filter((c: any) => c.show).map((c: any) => c.key);
+          setSelectedSeriesGenres(selectedKeys);
+          setBaselineSeriesGenres(selectedKeys);
+        } else {
+          setSeriesGenreOptions([]);
+        }
 
         // 同步更新全局 store，让其他页面可以获取最新数据
         usePreferenceCategoriesStore.getState().setCategories({
           torrent: torrentMapped,
-          film: filmMapped,
+          movie: movieMapped,
+          series: seriesMapped,
         });
       } catch {
         // 出错时回退到字典数据
@@ -201,7 +224,8 @@ export function useControlState() {
         if (Array.isArray(dictCats) && dictCats.length > 0) {
           setTorrentCategoryOptions(dictCats.map((c) => ({ key: c.key, label: c.label })));
         }
-        setFilmGenreOptions([]);
+        setMovieGenreOptions([]);
+        setSeriesGenreOptions([]);
       }
     };
 
@@ -300,10 +324,30 @@ export function useControlState() {
     loadPreferences();
   }, [activeTab]);
 
+  // 使用 useAsyncAction 处理保存操作
+  const savePreferencesAction = useAsyncAction({
+    successMessage: '偏好设置已保存',
+    loadingMessage: '正在保存偏好设置...',
+    onSuccess: async () => {
+      // 保存成功后重新获取分类，更新全局状态
+      await usePreferenceCategoriesStore.getState().fetchCategories();
+    },
+  });
+
+  const saveNotificationsAction = useAsyncAction({
+    successMessage: '通知设置已保存',
+    loadingMessage: '正在保存通知设置...',
+  });
+
+  const savePrivacyAction = useAsyncAction({
+    successMessage: '隐私设置已保存',
+    loadingMessage: '正在保存隐私设置...',
+  });
+
   // 保存偏好
   const handleSave = async () => {
-    try {
-      if (activeTab === 'notifications') {
+    if (activeTab === 'notifications') {
+      await saveNotificationsAction.execute(async () => {
         const body: any = {};
         if (notifications.emailNotifications !== baselineNotifications.emailNotifications) body.emailNotifications = notifications.emailNotifications;
         if (notifications.torrentComments !== baselineNotifications.torrentComments) body.torrentComments = notifications.torrentComments;
@@ -311,15 +355,16 @@ export function useControlState() {
         if (notifications.systemAnnouncements !== baselineNotifications.systemAnnouncements) body.systemAnnouncements = notifications.systemAnnouncements;
         if (notifications.downloadComplete !== baselineNotifications.downloadComplete) body.downloadComplete = notifications.downloadComplete;
         if (notifications.ratioWarnings !== baselineNotifications.ratioWarnings) body.ratioWarnings = notifications.ratioWarnings;
+        
         const hasChanges = Object.keys(body).length > 0;
         if (!hasChanges) {
-          setSaveSuccess(true);
-          setTimeout(() => setSaveSuccess(false), 3000);
-          return;
+          throw new Error('没有需要保存的更改');
         }
+        
         const UsersService = await getUsersService();
         const resp = await UsersService.usersNotificationsControllerSave(body);
         const data = resp?.data as any;
+        
         if (data) {
           const next: NotificationsData = {
             emailNotifications: Boolean(data.emailNotifications),
@@ -331,26 +376,28 @@ export function useControlState() {
           };
           setNotifications(next);
           setBaselineNotifications(next);
-          setSaveSuccess(true);
-          setTimeout(() => setSaveSuccess(false), 3000);
         }
-        return;
-      }
-      if (activeTab === 'privacy') {
+      });
+      return;
+    }
+    
+    if (activeTab === 'privacy') {
+      await savePrivacyAction.execute(async () => {
         const body: Partial<UpdateUserPrivacyDto> = {};
         if (privacy.showProfile !== baselinePrivacy.showProfile) body.showProfile = privacy.showProfile;
         if (privacy.showStats !== baselinePrivacy.showStats) body.showStats = privacy.showStats;
         if (privacy.allowMessages !== baselinePrivacy.allowMessages) body.allowMessages = privacy.allowMessages;
         if (privacy.showOnlineStatus !== baselinePrivacy.showOnlineStatus) body.showOnlineStatus = privacy.showOnlineStatus;
+        
         const hasChanges = Object.keys(body).length > 0;
         if (!hasChanges) {
-          setSaveSuccess(true);
-          setTimeout(() => setSaveSuccess(false), 3000);
-          return;
+          throw new Error('没有需要保存的更改');
         }
+        
         const UsersService = await getUsersService();
         const resp = await UsersService.usersPrivacyControllerSave(body as UpdateUserPrivacyDto);
         const data = resp?.data as any;
+        
         if (data) {
           const next: PrivacyData = {
             showProfile: Boolean(data.showProfile),
@@ -360,24 +407,31 @@ export function useControlState() {
           };
           setPrivacy(next);
           setBaselinePrivacy(next);
-          setSaveSuccess(true);
-          setTimeout(() => setSaveSuccess(false), 3000);
         }
-        return;
-      }
+      });
+      return;
+    }
+    
+    // 保存偏好设置
+    await savePreferencesAction.execute(async () => {
       const validCategories = selectedTorrentCategories.filter((k) => torrentCategoryOptions.some((c) => c.key === k));
-      const validGenres = selectedFilmGenres.filter((g) => filmGenreOptions.some((opt) => opt.key === g));
-      const body: UpdateUserPreferencesDto = {
+      const validMovieGenres = selectedMovieGenres.filter((g) => movieGenreOptions.some((opt) => opt.key === g));
+      const validSeriesGenres = selectedSeriesGenres.filter((g) => seriesGenreOptions.some((opt) => opt.key === g));
+      
+      const body: any = {
         showAdult: adultMode,
         defaultTorrentCategories: validCategories,
-        defaultFilmCategories: validGenres,
+        defaultMovieCategories: validMovieGenres,
+        defaultSeriesCategories: validSeriesGenres,
         language: preferences.language as UpdateUserPreferencesDto.language,
         theme: preferences.theme as UpdateUserPreferencesDto.theme,
         defaultView: preferences.defaultView as UpdateUserPreferencesDto.defaultView,
       };
+      
       const UsersService = await getUsersService();
       const resp = await UsersService.usersPreferencesControllerSave(body);
       const data = resp?.data;
+      
       if (data) {
         setPreferences({
           language: (data.language as PreferencesData['language']) ?? preferences.language,
@@ -386,7 +440,8 @@ export function useControlState() {
         });
         setAdultMode(Boolean(data.showAdult));
         setSelectedTorrentCategories(Array.isArray(data.defaultTorrentCategories) ? data.defaultTorrentCategories : []);
-        setSelectedFilmGenres(Array.isArray((data as any)?.defaultFilmCategories) ? (data as any).defaultFilmCategories : validGenres);
+        setSelectedMovieGenres(Array.isArray((data as any)?.defaultMovieCategories) ? (data as any).defaultMovieCategories : validMovieGenres);
+        setSelectedSeriesGenres(Array.isArray((data as any)?.defaultSeriesCategories) ? (data as any).defaultSeriesCategories : validSeriesGenres);
         setBaselinePreferences({
           language: (data.language as PreferencesData['language']) ?? preferences.language,
           theme: (data.theme as PreferencesData['theme']) ?? preferences.theme,
@@ -394,17 +449,10 @@ export function useControlState() {
         });
         setBaselineAdultMode(Boolean(data.showAdult));
         setBaselineTorrentCategories(Array.isArray(data.defaultTorrentCategories) ? data.defaultTorrentCategories : []);
-        setBaselineFilmGenres(Array.isArray((data as any)?.defaultFilmCategories) ? (data as any).defaultFilmCategories : validGenres);
-        
-        // 保存成功后重新获取分类，更新全局状态
-        await usePreferenceCategoriesStore.getState().fetchCategories();
-        
-        setSaveSuccess(true);
-        setTimeout(() => setSaveSuccess(false), 3000);
+        setBaselineMovieGenres(Array.isArray((data as any)?.defaultMovieCategories) ? (data as any).defaultMovieCategories : validMovieGenres);
+        setBaselineSeriesGenres(Array.isArray((data as any)?.defaultSeriesCategories) ? (data as any).defaultSeriesCategories : validSeriesGenres);
       }
-    } catch {
-      setSaveSuccess(false);
-    }
+    });
   };
 
   const hasUnsavedChanges = (() => {
@@ -419,7 +467,8 @@ export function useControlState() {
     if (preferences.theme !== baselinePreferences.theme) return true;
     if (preferences.defaultView !== baselinePreferences.defaultView) return true;
     if (!eqSet(selectedTorrentCategories, baselineTorrentCategories)) return true;
-    if (!eqSet(selectedFilmGenres, baselineFilmGenres)) return true;
+    if (!eqSet(selectedMovieGenres, baselineMovieGenres)) return true;
+    if (!eqSet(selectedSeriesGenres, baselineSeriesGenres)) return true;
     if (notifications.emailNotifications !== baselineNotifications.emailNotifications) return true;
     if (notifications.torrentComments !== baselineNotifications.torrentComments) return true;
     if (notifications.privateMessages !== baselineNotifications.privateMessages) return true;
@@ -437,7 +486,6 @@ export function useControlState() {
     // 顶层
     activeTab,
     setActiveTab,
-    saveSuccess,
     // 个人信息
     profileData,
     setProfileData,
@@ -450,9 +498,12 @@ export function useControlState() {
     torrentCategoryOptions,
     selectedTorrentCategories,
     setSelectedTorrentCategories,
-    filmGenreOptions,
-    selectedFilmGenres,
-    setSelectedFilmGenres,
+    movieGenreOptions,
+    selectedMovieGenres,
+    setSelectedMovieGenres,
+    seriesGenreOptions,
+    selectedSeriesGenres,
+    setSelectedSeriesGenres,
     // 安全、通知、隐私
     security,
     setSecurity,

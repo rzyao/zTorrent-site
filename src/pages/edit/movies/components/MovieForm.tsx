@@ -20,6 +20,29 @@ interface MovieFormProps {
   onFetchPtGen: () => void;
 }
 
+const GENRE_OPTIONS = [
+  "剧情",
+  "喜剧",
+  "动作",
+  "爱情",
+  "科幻",
+  "动画",
+  "悬疑",
+  "惊悚",
+  "恐怖",
+  "犯罪",
+  "战争",
+  "奇幻",
+  "冒险",
+  "传记",
+  "历史",
+  "音乐",
+  "纪录片",
+  "古装",
+  "武侠",
+  "情色",
+];
+
 export function MovieForm({
   isCreating,
   isEditing,
@@ -129,7 +152,7 @@ export function MovieForm({
 
         <div className="space-y-2">
           <label className="text-neutral-300 text-sm">
-            类别 <span className="text-red-500">*</span>
+            分类 (单选) <span className="text-red-500">*</span>
           </label>
           <div className="flex flex-wrap gap-3 p-3 bg-neutral-900/50 border border-neutral-700 rounded-lg">
             {categories.map((cat) => {
@@ -137,26 +160,30 @@ export function MovieForm({
               return (
                 <label
                   key={cat.key}
-                  className="flex items-center gap-2 cursor-pointer"
+                  className="flex items-center gap-2 cursor-pointer group"
                 >
-                  <Checkbox
+                  <div
+                    className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
+                      isChecked
+                        ? "border-amber-500 bg-amber-500"
+                        : "border-neutral-600 group-hover:border-neutral-500"
+                    }`}
+                  >
+                    {isChecked && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-black" />
+                    )}
+                  </div>
+                  <input
+                    type="radio"
+                    name="category"
+                    className="hidden"
                     checked={isChecked}
-                    onCheckedChange={(checked) => {
-                      if (checked) {
-                        onChange({
-                          ...form,
-                          categories: [...form.categories, cat.label],
-                        });
-                      } else {
-                        onChange({
-                          ...form,
-                          categories: form.categories.filter(
-                            (c) => c !== cat.label
-                          ),
-                        });
-                      }
+                    onChange={() => {
+                      onChange({
+                        ...form,
+                        categories: [cat.label],
+                      });
                     }}
-                    className="border-neutral-600 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500"
                   />
                   <span className="text-neutral-300 text-sm">{cat.label}</span>
                 </label>
@@ -166,6 +193,42 @@ export function MovieForm({
           {errors.categories && (
             <p className="text-red-500 text-xs">{errors.categories}</p>
           )}
+        </div>
+
+        <div className="space-y-2 md:col-span-2">
+          <label className="text-neutral-300 text-sm">类型 (多选)</label>
+          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-10 gap-x-2 gap-y-3 p-3 bg-neutral-900/50 border border-neutral-700 rounded-lg">
+            {GENRE_OPTIONS.map((genre) => {
+              const isChecked = form.genres.includes(genre);
+              return (
+                <label
+                  key={genre}
+                  className="flex items-center gap-2 cursor-pointer group"
+                >
+                  <Checkbox
+                    checked={isChecked}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        onChange({
+                          ...form,
+                          genres: [...form.genres, genre],
+                        });
+                      } else {
+                        onChange({
+                          ...form,
+                          genres: form.genres.filter((g) => g !== genre),
+                        });
+                      }
+                    }}
+                    className="border-neutral-600 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500"
+                  />
+                  <span className="text-neutral-300 text-xs whitespace-nowrap">
+                    {genre}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
         </div>
 
         <div className="space-y-2">
@@ -225,24 +288,6 @@ export function MovieForm({
             })
           }
           placeholder="例如: 马修·麦康纳, 安妮·海瑟薇"
-          className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-neutral-300 text-sm">
-          类型标签（用逗号分隔）
-        </label>
-        <input
-          type="text"
-          value={form.genres.join(", ")}
-          onChange={(e) =>
-            onChange({
-              ...form,
-              genres: e.target.value.split(",").map((s) => s.trim()),
-            })
-          }
-          placeholder="例如: 科幻, 剧情, 冒险"
           className="w-full bg-neutral-900/50 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
         />
       </div>

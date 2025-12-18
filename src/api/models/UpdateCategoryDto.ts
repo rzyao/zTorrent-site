@@ -61,7 +61,8 @@ export namespace UpdateCategoryDto {
      */
     export enum kind {
         TORRENT = 'torrent',
-        FILM = 'film',
+        MOVIE = 'movie',
+        SERIES = 'series',
         PLAYLIST = 'playlist',
     }
 }

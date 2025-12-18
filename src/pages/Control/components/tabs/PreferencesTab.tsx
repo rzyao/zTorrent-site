@@ -1,8 +1,14 @@
-import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { Palette, Globe, Monitor } from 'lucide-react';
-import type { PreferencesData, KeyLabelOption } from '../../types';
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { Palette, Globe, Monitor } from "lucide-react";
+import type { PreferencesData, KeyLabelOption } from "../../types";
 
 interface PreferencesTabProps {
   adultMode: boolean;
@@ -12,9 +18,12 @@ interface PreferencesTabProps {
   torrentCategoryOptions: KeyLabelOption[];
   selectedTorrentCategories: string[];
   setSelectedTorrentCategories: (fn: (prev: string[]) => string[]) => void;
-  filmGenreOptions: KeyLabelOption[];
-  selectedFilmGenres: string[];
-  setSelectedFilmGenres: (fn: (prev: string[]) => string[]) => void;
+  movieGenreOptions: KeyLabelOption[];
+  selectedMovieGenres: string[];
+  setSelectedMovieGenres: (fn: (prev: string[]) => string[]) => void;
+  seriesGenreOptions: KeyLabelOption[];
+  selectedSeriesGenres: string[];
+  setSelectedSeriesGenres: (fn: (prev: string[]) => string[]) => void;
 }
 
 // 网站偏好 Tab
@@ -28,9 +37,12 @@ export function PreferencesTab(props: PreferencesTabProps) {
     torrentCategoryOptions,
     selectedTorrentCategories,
     setSelectedTorrentCategories,
-    filmGenreOptions,
-    selectedFilmGenres,
-    setSelectedFilmGenres,
+    movieGenreOptions,
+    selectedMovieGenres,
+    setSelectedMovieGenres,
+    seriesGenreOptions,
+    selectedSeriesGenres,
+    setSelectedSeriesGenres,
   } = props;
 
   return (
@@ -49,7 +61,9 @@ export function PreferencesTab(props: PreferencesTabProps) {
       <div className="flex items-center justify-between p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
         <div className="flex-1">
           <div className="text-neutral-300 text-sm mb-1">显示成人模式</div>
-          <p className="text-neutral-500 text-xs">开启后允许展示成人分级的分类与内容（保存后生效）</p>
+          <p className="text-neutral-500 text-xs">
+            开启后允许展示成人分级的分类与内容（保存后生效）
+          </p>
         </div>
         <Switch checked={adultMode} onCheckedChange={setAdultMode} />
       </div>
@@ -61,7 +75,10 @@ export function PreferencesTab(props: PreferencesTabProps) {
         <label className="text-neutral-300 text-sm flex items-center gap-2">
           <Globe className="w-4 h-4" /> 语言
         </label>
-        <Select value={preferences.language} onValueChange={(v) => setPreferences({ ...preferences, language: v })}>
+        <Select
+          value={preferences.language}
+          onValueChange={(v) => setPreferences({ ...preferences, language: v })}
+        >
           <SelectTrigger>
             <SelectValue placeholder="选择语言" />
           </SelectTrigger>
@@ -81,7 +98,10 @@ export function PreferencesTab(props: PreferencesTabProps) {
         <label className="text-neutral-300 text-sm flex items-center gap-2">
           <Monitor className="w-4 h-4" /> 主题
         </label>
-        <Select value={preferences.theme} onValueChange={(v) => setPreferences({ ...preferences, theme: v })}>
+        <Select
+          value={preferences.theme}
+          onValueChange={(v) => setPreferences({ ...preferences, theme: v })}
+        >
           <SelectTrigger>
             <SelectValue placeholder="选择主题" />
           </SelectTrigger>
@@ -98,7 +118,15 @@ export function PreferencesTab(props: PreferencesTabProps) {
       {/* 默认视图 */}
       <div className="space-y-2">
         <label className="text-neutral-300 text-sm">默认视图</label>
-        <Select value={preferences.defaultView} onValueChange={(v) => setPreferences({ ...preferences, defaultView: v as 'grid' | 'list' })}>
+        <Select
+          value={preferences.defaultView}
+          onValueChange={(v) =>
+            setPreferences({
+              ...preferences,
+              defaultView: v as "grid" | "list",
+            })
+          }
+        >
           <SelectTrigger>
             <SelectValue placeholder="选择默认视图" />
           </SelectTrigger>
@@ -113,20 +141,25 @@ export function PreferencesTab(props: PreferencesTabProps) {
 
       {/* 种子分类多选 */}
       <div className="space-y-2">
-        <label className="text-neutral-300 text-sm">种子分类默认展示（多选）</label>
+        <label className="text-neutral-300 text-sm">
+          种子分类默认展示（多选）
+        </label>
         <div className="flex items-center justify-between p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
           <div className="flex-1">
-            <div className="text-neutral-400 text-xs mb-2">共 {torrentCategoryOptions.length} 项，可点击选择</div>
+            <div className="text-neutral-400 text-xs mb-2">
+              共 {torrentCategoryOptions.length} 项，可点击选择
+            </div>
             <div className="flex flex-wrap gap-2">
               {torrentCategoryOptions.map((opt) => {
                 const checked = selectedTorrentCategories.includes(opt.key);
                 return (
                   <button
                     key={opt.key}
-                    className={`px-2 py-1 rounded-md border text-xs transition-colors ${checked
-                      ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
-                      : 'bg-neutral-800/50 text-neutral-300 border-neutral-700 hover:bg-neutral-700/60'
-                      }`}
+                    className={`px-2 py-1 rounded-md border text-xs transition-colors ${
+                      checked
+                        ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
+                        : "bg-neutral-800/50 text-neutral-300 border-neutral-700 hover:bg-neutral-700/60"
+                    }`}
                     onClick={() => {
                       setSelectedTorrentCategories((prev) => {
                         if (checked) return prev.filter((k) => k !== opt.key);
@@ -139,31 +172,38 @@ export function PreferencesTab(props: PreferencesTabProps) {
                   </button>
                 );
               })}
-              {torrentCategoryOptions.length === 0 && <span className="text-neutral-500 text-xs">暂无可选分类</span>}
+              {torrentCategoryOptions.length === 0 && (
+                <span className="text-neutral-500 text-xs">暂无可选分类</span>
+              )}
             </div>
           </div>
           <div className="hidden" />
         </div>
       </div>
 
-      {/* 影片分类多选 */}
+      {/* 电影分类多选 */}
       <div className="space-y-2">
-        <label className="text-neutral-300 text-sm">影片分类默认展示（多选）</label>
+        <label className="text-neutral-300 text-sm">
+          电影分类默认展示（多选）
+        </label>
         <div className="flex items-center justify-between p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
           <div className="flex-1">
-            <div className="text-neutral-400 text-xs mb-2">共 {filmGenreOptions.length} 项，可点击选择</div>
+            <div className="text-neutral-400 text-xs mb-2">
+              共 {movieGenreOptions.length} 项，可点击选择
+            </div>
             <div className="flex flex-wrap gap-2">
-              {filmGenreOptions.map((opt) => {
-                const checked = selectedFilmGenres.includes(opt.key);
+              {movieGenreOptions.map((opt) => {
+                const checked = selectedMovieGenres.includes(opt.key);
                 return (
                   <button
                     key={opt.key}
-                    className={`px-2 py-1 rounded-md border text-xs transition-colors ${checked
-                      ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
-                      : 'bg-neutral-800/50 text-neutral-300 border-neutral-700 hover:bg-neutral-700/60'
-                      }`}
+                    className={`px-2 py-1 rounded-md border text-xs transition-colors ${
+                      checked
+                        ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
+                        : "bg-neutral-800/50 text-neutral-300 border-neutral-700 hover:bg-neutral-700/60"
+                    }`}
                     onClick={() => {
-                      setSelectedFilmGenres((prev) => {
+                      setSelectedMovieGenres((prev) => {
                         if (checked) return prev.filter((k) => k !== opt.key);
                         if (!prev.includes(opt.key)) return [...prev, opt.key];
                         return prev;
@@ -174,7 +214,51 @@ export function PreferencesTab(props: PreferencesTabProps) {
                   </button>
                 );
               })}
-              {filmGenreOptions.length === 0 && <span className="text-neutral-500 text-xs">暂无可选分类</span>}
+              {movieGenreOptions.length === 0 && (
+                <span className="text-neutral-500 text-xs">暂无可选分类</span>
+              )}
+            </div>
+          </div>
+          <div className="hidden" />
+        </div>
+      </div>
+
+      {/* 剧集分类多选 */}
+      <div className="space-y-2">
+        <label className="text-neutral-300 text-sm">
+          剧集分类默认展示（多选）
+        </label>
+        <div className="flex items-center justify-between p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
+          <div className="flex-1">
+            <div className="text-neutral-400 text-xs mb-2">
+              共 {seriesGenreOptions.length} 项，可点击选择
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {seriesGenreOptions.map((opt) => {
+                const checked = selectedSeriesGenres.includes(opt.key);
+                return (
+                  <button
+                    key={opt.key}
+                    className={`px-2 py-1 rounded-md border text-xs transition-colors ${
+                      checked
+                        ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
+                        : "bg-neutral-800/50 text-neutral-300 border-neutral-700 hover:bg-neutral-700/60"
+                    }`}
+                    onClick={() => {
+                      setSelectedSeriesGenres((prev) => {
+                        if (checked) return prev.filter((k) => k !== opt.key);
+                        if (!prev.includes(opt.key)) return [...prev, opt.key];
+                        return prev;
+                      });
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+              {seriesGenreOptions.length === 0 && (
+                <span className="text-neutral-500 text-xs">暂无可选分类</span>
+              )}
             </div>
           </div>
           <div className="hidden" />

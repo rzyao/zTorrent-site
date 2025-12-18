@@ -5,11 +5,12 @@ import {
   X,
   Image as ImageIcon,
   Globe,
-  Users,
   Lock,
   Save,
+  Layers,
 } from "lucide-react";
-import type { Visibility } from "@/pages/Edit/playlists/types";
+import type { Visibility, PlaylistType } from "@/pages/Edit/playlists/types";
+import { PLAYLIST_TYPE_OPTIONS } from "@/pages/Edit/playlists/types";
 import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
 import {
   Select,
@@ -25,6 +26,7 @@ interface EditFormState {
   description: string;
   cover: string;
   visibility: Visibility;
+  type: PlaylistType;
   category: string;
   tags: string[];
 }
@@ -130,6 +132,34 @@ export function PlaylistForm({
         </Select>
       </div>
 
+      {/* 片单类型 */}
+      <div className="space-y-2">
+        <label className="text-neutral-300 text-sm flex items-center gap-2">
+          <Layers className="w-4 h-4 text-amber-400" />
+          片单类型 <span className="text-red-500">*</span>
+        </label>
+        <Select
+          value={editForm.type}
+          onValueChange={(val) =>
+            onChange({ ...editForm, type: val as PlaylistType })
+          }
+        >
+          <SelectTrigger className="w-full bg-neutral-900/50 border-neutral-700 text-white h-[42px]">
+            <SelectValue placeholder="选择片单类型" />
+          </SelectTrigger>
+          <SelectContent>
+            {PLAYLIST_TYPE_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <p className="text-neutral-500 text-xs">
+          综合适合混合内容，主题适合特定话题，系列适合电影系列，导演/演员适合即人作品集
+        </p>
+      </div>
+
       {/* 片单描述 */}
       <div className="space-y-2">
         <label className="text-neutral-300 text-sm">
@@ -187,7 +217,7 @@ export function PlaylistForm({
       {/* 可见性 */}
       <div className="space-y-2">
         <label className="text-neutral-300 text-sm">可见性</label>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => onChange({ ...editForm, visibility: "public" })}
             className={`p-4 rounded-xl border transition-all ${
@@ -198,17 +228,6 @@ export function PlaylistForm({
           >
             <Globe className="w-5 h-5 mx-auto mb-2" />
             <p className="text-sm">公开</p>
-          </button>
-          <button
-            onClick={() => onChange({ ...editForm, visibility: "friends" })}
-            className={`p-4 rounded-xl border transition-all ${
-              editForm.visibility === "friends"
-                ? "bg-blue-500/20 border-blue-500/50 text-blue-400"
-                : "bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600"
-            }`}
-          >
-            <Users className="w-5 h-5 mx-auto mb-2" />
-            <p className="text-sm">好友可见</p>
           </button>
           <button
             onClick={() => onChange({ ...editForm, visibility: "private" })}

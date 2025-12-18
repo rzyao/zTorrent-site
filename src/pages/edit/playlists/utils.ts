@@ -1,4 +1,4 @@
-import type { Playlist, Movie, Visibility } from '@/pages/Edit/playlists/types';
+import type { Playlist, Movie, Visibility, PlaylistType } from '@/pages/Edit/playlists/types';
 
 /**
  * 将后端 Playlist 详情 DTO 映射为页面本地 Playlist 模型
@@ -24,6 +24,7 @@ export function mapBackendPlaylistToLocal(detail: any): Playlist {
     description: detail?.description ?? '',
     cover: detail?.coverUrl ?? '',
     visibility: (detail?.visibility ?? 'public') as Visibility,
+    type: (detail?.type ?? 'general') as PlaylistType,
     tags: Array.isArray(detail?.tags) ? detail.tags : [],
     category: detail?.category ?? '',
     movies,
@@ -46,6 +47,7 @@ export function mapBackendPlaylistSummaryToLocal(summary: any): Playlist {
     description: '',
     cover: summary?.coverUrl ?? '',
     visibility: (summary?.visibility ?? 'public') as Visibility,
+    type: (summary?.type ?? 'general') as PlaylistType,
     tags: Array.isArray(summary?.tags) ? summary.tags : [],
     category: summary?.category ?? '',
     movies: new Array(Number(summary?.filmCount ?? 0)).fill(0).map((_, i) => ({

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FilmsService } from '@/api/services/FilmsService';
+import { MoviesService } from '@/api/services/MoviesService';
 import { PlaylistsService } from '@/api/services/PlaylistsService';
 import { TorrentsService } from '@/api/services/TorrentsService';
 import { extractErrorMessage } from '../utils';
@@ -24,7 +24,9 @@ export function useReviewActions(onItemsUpdate: (updater: (prev: ReviewItem[]) =
       if (selectedItem.type === 'torrent') {
         await TorrentsService.torrentsControllerReview(payload);
       } else if (selectedItem.type === 'movie') {
-        await FilmsService.filmsControllerReview(payload);
+        // TODO: 待后端实现 moviesControllerReview API
+        console.warn('电影审核 API 待实现');
+        throw new Error('电影审核功能待实现');
       } else if (selectedItem.type === 'playlist') {
         await PlaylistsService.playlistsControllerReview(payload);
       }

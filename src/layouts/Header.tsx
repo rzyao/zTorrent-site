@@ -157,14 +157,24 @@ export function Header() {
             <NavLink to="/ranking" className="text-white hover:text-amber-400 transition-colors">排行榜</NavLink> */}
               {/* 新增：影片与片单导航入口，保持与现有样式一致 */}
               <NavLink
-                to="/films"
+                to="/movies"
                 className={({ isActive }) =>
                   isActive
                     ? "text-amber-400 transition-colors"
                     : "text-white hover:text-amber-400 transition-colors"
                 }
               >
-                影片
+                电影
+              </NavLink>
+              <NavLink
+                to="/series"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-amber-400 transition-colors"
+                    : "text-white hover:text-amber-400 transition-colors"
+                }
+              >
+                剧集
               </NavLink>
               <NavLink
                 to="/playlists"
@@ -294,7 +304,7 @@ export function Header() {
                     />
                   </button>
                   <div
-                    className={`absolute left-1/2 -translate-x-1/2 top-full w-28 py-2 bg-[#0F171E] rounded-xl shadow-lg border border-gray-800 z-50 transform-gpu transition-[opacity,transform] ease-out duration-150 ${
+                    className={`absolute left-1/2 -translate-x-1/2 top-full w-24 py-2 bg-[#0F171E] rounded-xl shadow-lg border border-gray-800 z-50 transform-gpu transition-[opacity,transform] ease-out duration-150 ${
                       showEditMenu
                         ? "opacity-100 pointer-events-auto translate-y-0"
                         : "opacity-0 pointer-events-none translate-y-1"
@@ -306,15 +316,21 @@ export function Header() {
                   >
                     <NavLink
                       to="/edit/movie"
-                      className="block px-4 py-2 text-white hover:bg-white/10 transition-colors"
+                      className="block px-4 py-2 text-white hover:bg-white/10 hover:text-amber-400 transition-colors border-b border-gray-800"
                     >
-                      影片编辑
+                      电影
+                    </NavLink>
+                    <NavLink
+                      to="/edit/series"
+                      className="block px-4 py-2 text-white hover:bg-white/10 hover:text-amber-400 transition-colors border-b border-gray-800"
+                    >
+                      剧集
                     </NavLink>
                     <NavLink
                       to="/edit/playlist"
-                      className="block px-4 py-2 text-white hover:bg-white/10 transition-colors"
+                      className="block px-4 py-2 text-white hover:bg-white/10 hover:text-amber-400 transition-colors border-b border-gray-800"
                     >
-                      片单编辑
+                      片单
                     </NavLink>
                   </div>
                 </div>
@@ -739,11 +755,18 @@ export function Header() {
             制作组
           </NavLink> */}
           <NavLink
-            to="/films"
+            to="/movies"
             className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
             onClick={() => setShowMobileMenu(false)}
           >
-            影片
+            电影
+          </NavLink>
+          <NavLink
+            to="/series"
+            className="text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-colors"
+            onClick={() => setShowMobileMenu(false)}
+          >
+            剧集
           </NavLink>
           <NavLink
             to="/playlists"

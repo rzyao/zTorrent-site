@@ -18,8 +18,11 @@ export interface CategoryItem {
 interface PreferenceCategoriesState {
   // 分类数据
   torrent: CategoryItem[];
-  film: CategoryItem[];
+  movie: CategoryItem[];     // 电影分类（替换原 film）
+  series: CategoryItem[];    // 剧集分类（新增）
   playlist: CategoryItem[];
+  // 向后兼容：别名属性
+  film: CategoryItem[];      // @deprecated 使用 movie 替代
 
   // 加载状态
   isLoaded: boolean;
@@ -29,17 +32,22 @@ interface PreferenceCategoriesState {
   fetchCategories: () => Promise<void>;
   setCategories: (data: {
     torrent?: CategoryItem[];
-    film?: CategoryItem[];
+    movie?: CategoryItem[];
+    series?: CategoryItem[];
     playlist?: CategoryItem[];
   }) => void;
   getVisibleTorrentKeys: () => string[];
-  getVisibleFilmKeys: () => string[];
+  getVisibleMovieKeys: () => string[];
+  getVisibleSeriesKeys: () => string[];
 }
 
 export const usePreferenceCategoriesStore = create<PreferenceCategoriesState>((set, get) => ({
   torrent: [],
-  film: [],
+  movie: [],
+  series: [],
   playlist: [],
+  // 向后兼容别名
+  get film() { return this.movie; },
   isLoaded: false,
   isLoading: false,
 
@@ -62,39 +70,50 @@ export const usePreferenceCategoriesStore = create<PreferenceCategoriesState>((s
 
       const UsersService = await getUsersService();
       const resp = await UsersService.usersPreferencesControllerListCategories({});
-      const data = resp?.data as any;
+      const data = resp?.data || {};
 
       // 处理种子分类
-      const torrentItems = Array.isArray(data?.torrent) ? data.torrent : [];
+      const torrentItems = (data.torrent || []);
       const torrent: CategoryItem[] = torrentItems
-        .map((c: any) => ({
+        .map((c) => ({
           key: String(c?.key ?? ''),
           label: String(c?.label ?? dictMap.get(c?.key) ?? c?.key ?? ''),
           show: Boolean(c?.show),
         }))
         .filter((c: CategoryItem) => c.key && c.label);
 
-      // 处理影片分类
-      const filmItems = Array.isArray(data?.film) ? data.film : [];
-      const film: CategoryItem[] = filmItems
-        .map((c: any) => ({
-          key: String(c?.key ?? c?.id ?? ''),
-          label: String(c?.label ?? c?.name ?? dictMap.get(c?.key) ?? c?.key ?? ''),
+      // 处理电影分类（movie，兼容旧的 film 字段）
+      // 优先使用 movie，如果不存在则回退到 film (兼容旧接口)
+      const movieItems = (data.movie || data.film || []);
+      const movie: CategoryItem[] = movieItems
+        .map((c) => ({
+          key: String(c?.key ?? ''),
+          label: String(c?.label ?? dictMap.get(c?.key) ?? c?.key ?? ''),
+          show: Boolean(c?.show),
+        }))
+        .filter((c: CategoryItem) => c.key && c.label);
+
+      // 处理剧集分类（series）
+      const seriesItems = (data.series || []);
+      const series: CategoryItem[] = seriesItems
+        .map((c) => ({
+          key: String(c?.key ?? ''),
+          label: String(c?.label ?? dictMap.get(c?.key) ?? c?.key ?? ''),
           show: Boolean(c?.show),
         }))
         .filter((c: CategoryItem) => c.key && c.label);
 
       // 处理播放列表分类
-      const playlistItems = Array.isArray(data?.playlist) ? data.playlist : [];
+      const playlistItems = (data.playlist || []);
       const playlist: CategoryItem[] = playlistItems
-        .map((c: any) => ({
+        .map((c) => ({
           key: String(c?.key ?? ''),
           label: String(c?.label ?? dictMap.get(c?.key) ?? c?.key ?? ''),
           show: Boolean(c?.show),
         }))
         .filter((c: CategoryItem) => c.key && c.label);
 
-      set({ torrent, film, playlist, isLoaded: true, isLoading: false });
+      set({ torrent, movie, series, playlist, isLoaded: true, isLoading: false });
     } catch (error) {
       console.error('获取分类数据失败:', error);
       set({ isLoading: false });
@@ -107,7 +126,8 @@ export const usePreferenceCategoriesStore = create<PreferenceCategoriesState>((s
   setCategories: (data) => {
     set((state) => ({
       torrent: data.torrent ?? state.torrent,
-      film: data.film ?? state.film,
+      movie: data.movie ?? state.movie,
+      series: data.series ?? state.series,
       playlist: data.playlist ?? state.playlist,
     }));
   },
@@ -120,9 +140,23 @@ export const usePreferenceCategoriesStore = create<PreferenceCategoriesState>((s
   },
 
   /**
-   * 获取可展示的影片分类 keys（show=true）
+   * 获取可展示的电影分类 keys（show=true）
+   */
+  getVisibleMovieKeys: () => {
+    return get().movie.filter((c) => c.show).map((c) => c.key);
+  },
+
+  /**
+   * 获取可展示的剧集分类 keys（show=true）
+   */
+  getVisibleSeriesKeys: () => {
+    return get().series.filter((c) => c.show).map((c) => c.key);
+  },
+
+  /**
+   * @deprecated 使用 getVisibleMovieKeys 替代
    */
   getVisibleFilmKeys: () => {
-    return get().film.filter((c) => c.show).map((c) => c.key);
+    return get().movie.filter((c) => c.show).map((c) => c.key);
   },
 }));

@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { usePlaylists } from '@/hooks/usePlaylists';
 import { useFilms } from '@/hooks/useFilms';
 import { ImagesService } from '@/api/services/ImagesService';
-import { FilmsService } from '@/api/services/FilmsService';
+import { MoviesService } from '@/api/services/MoviesService';
 import { customToast } from '@/hooks/useToast';
-import type { Playlist, Movie, Visibility } from '@/pages/Edit/playlists/types';
+import type { Playlist, Movie, Visibility, PlaylistType } from '@/pages/Edit/playlists/types';
 import {
   mapBackendPlaylistToLocal,
   mapBackendPlaylistSummaryToLocal,
@@ -46,6 +46,7 @@ export function useEditPlaylist() {
     description: string;
     cover: string;
     visibility: Visibility;
+    type: PlaylistType;
     tags: string[];
     category: string;
   }>({
@@ -53,6 +54,7 @@ export function useEditPlaylist() {
     description: '',
     cover: '',
     visibility: 'public',
+    type: 'general',
     tags: [],
     category: '',
   });
@@ -116,7 +118,9 @@ export function useEditPlaylist() {
         setSelectedPlaylist(mapped);
       } catch { /* 保持静默 */ }
       try {
-        const res = await FilmsService.filmsControllerSearchFilmsForPlaylist({ search: '', playlistId: selectedPlaylist.id, limit: 100 });
+        // TODO: moviesControllerSearchFilmsForPlaylist API 待实现
+        // const res = await MoviesService.moviesControllerSearchFilmsForPlaylist({ search: '', playlistId: selectedPlaylist.id, limit: 100 });
+        const res = { data: { items: [] } } as any;
         const items = (res?.data?.items ?? []) as any[];
         if (Array.isArray(items) && items.length > 0) {
           const movies = items.map(mapFilmListItemToMovie);
@@ -128,7 +132,7 @@ export function useEditPlaylist() {
 
   /** 开始创建新片单 */
   const handleCreateNew = () => {
-    setEditForm({ title: '', description: '', cover: '', visibility: 'public', tags: [], category: '' });
+    setEditForm({ title: '', description: '', cover: '', visibility: 'public', type: 'general', tags: [], category: '' });
     setIsCreating(true);
     setIsEditing(false);
     setSelectedPlaylist(null);
@@ -141,6 +145,7 @@ export function useEditPlaylist() {
       description: playlist.description,
       cover: playlist.cover,
       visibility: playlist.visibility,
+      type: playlist.type ?? 'general',
       tags: playlist.tags ?? [],
       category: playlist.category ?? '',
     });
@@ -156,6 +161,7 @@ export function useEditPlaylist() {
       description: editForm.description,
       coverUrl: editForm.cover,
       visibility: editForm.visibility,
+      type: editForm.type,
       tags: editForm.tags,
       category: editForm.category,
     };

@@ -1,5 +1,20 @@
-import { Film, Play, Star, Users, Eye, TrendingUp, Heart } from 'lucide-react';
-import type { Playlist } from '../types';
+import {
+  Film,
+  Play,
+  Star,
+  Users,
+  Eye,
+  TrendingUp,
+  HeartPlus,
+  Clapperboard,
+  UserRoundPlus,
+  UserPlus,
+  HeartPulse,
+  HeartCrack,
+  HeartHandshake,
+} from "lucide-react";
+import type { Playlist } from "../types";
+import { formatDate } from "@/pages/Invite/utils";
 
 interface Props {
   playlist: Playlist;
@@ -59,38 +74,45 @@ export function PlaylistCard({ playlist, onClick, onFollowToggle }: Props) {
           ))}
         </div>
         <div className="flex items-center gap-3 mb-4 pb-4 border-b border-neutral-800">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-sm shadow-lg shadow-amber-500/30">
-            {playlist.creatorAvatar}
-          </div>
+          {playlist.creatorAvatar ? (
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-sm shadow-lg shadow-amber-500/30">
+              {playlist.creatorAvatar}
+            </div>
+          ) : null}
           <div className="flex-1 min-w-0">
-            <div className="text-white text-sm truncate">{playlist.creator}</div>
-            <div className="text-neutral-500 text-xs">创建者</div>
+            <span className="text-sm">{playlist.creator}</span>
+          </div>
+          <div className="text-neutral-500 text-xs">
+            <span>{formatDate(playlist.createdAt)}</span>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="flex items-center gap-6">
           <div className="text-center">
             <div className="flex items-center justify-center gap-1 text-amber-400 mb-1">
-              <Users className="w-3.5 h-3.5" />
+              <UserRoundPlus className="w-4 h-4" />
               <span className="text-sm">{playlist.followersCount}</span>
             </div>
-            <div className="text-neutral-500 text-xs">关注</div>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 text-amber-400 mb-1">
+              <HeartPlus className="w-4 h-4" />
+              <span className="text-sm">{playlist.followersCount}</span>
+            </div>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1 text-blue-400 mb-1">
               <Eye className="w-3.5 h-3.5" />
               <span className="text-sm">{playlist.viewsCount}</span>
             </div>
-            <div className="text-neutral-500 text-xs">浏览</div>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1 text-green-400 mb-1">
-              <TrendingUp className="w-3.5 h-3.5" />
+              <Clapperboard className="w-3.5 h-3.5" />
               <span className="text-sm">{playlist.moviesCount}</span>
             </div>
-            <div className="text-neutral-500 text-xs">影片</div>
           </div>
         </div>
-        <button
+        {/* <button
           onClick={(e) => {
             e.stopPropagation();
             onFollowToggle(playlist.id);
@@ -102,9 +124,8 @@ export function PlaylistCard({ playlist, onClick, onFollowToggle }: Props) {
         >
           <Heart className={`w-4 h-4 ${playlist.isFollowing ? 'fill-current' : ''}`} />
           <span>{playlist.isFollowing ? '已关注' : '关注'}</span>
-        </button>
+        </button> */}
       </div>
     </div>
   );
 }
-
