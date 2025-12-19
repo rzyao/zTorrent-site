@@ -175,6 +175,9 @@ export function EditSeriesPage() {
                     onEdit={onEditEpisode}
                     onDelete={handleDeleteEpisode}
                     onBindTorrent={handleOpenBindDialog}
+                    onUnbindTorrent={(tid, epNum) =>
+                      handleUnbindTorrent(tid, selectedSeries.id, epNum)
+                    }
                   />
                 </div>
 

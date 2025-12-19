@@ -84,12 +84,13 @@ export function ListView({
                 <Button
                   size="sm"
                   className="general-button hidden-in-mobile"
-                  onClick={() =>
+                  onClick={(e) => {
+                    e.stopPropagation();
                     onDownload(
                       String(torrent.id),
                       String(torrent.title || "download")
-                    )
-                  }
+                    );
+                  }}
                 >
                   <Download className="w-4 h-4" />
                   下载

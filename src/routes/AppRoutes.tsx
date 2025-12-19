@@ -31,14 +31,14 @@ import { TicketsPage } from "@/pages/Tickets/TicketsPage.tsx";
 import { ReviewPage } from "@/pages/Review/index.tsx";
 import { BonusPage } from "@/pages/Bonus/index.tsx";
 import { InvitePage } from "@/pages/Invite/InvitePage.tsx";
-import { FilmsPage } from "@/pages/Films/index.tsx";
 import { MoviesPage } from "@/pages/Movies/index.tsx";
 import { SeriesPage } from "@/pages/Series/index.tsx";
 import { PlaylistsPage } from "@/pages/Playlists/index.tsx";
 import { PlaylistDetailPage } from "@/pages/PlaylistDetail/PlaylistDetailPage.tsx";
 import TorrentDetailPage from "@/pages/TorrentDetail/index.tsx";
-import FilmDetailPage from "@/pages/FilmDetail/FilmDetailPage.tsx";
+import FilmDetailPage from "@/pages/FilmDetail/index.tsx";
 import { EpisodeDetailPage } from "@/pages/EpisodeDetail/EpisodeDetailPage.tsx";
+import { SeriesDetailPage } from "@/pages/SeriesDetail/SeriesDetailPage.tsx";
 import { TorrentRecordPage } from "@/pages/TorrentRecord/index.tsx";
 import { RSSPage } from "@/pages/RSSPage.tsx";
 import { GroupsPage } from "@/pages/Groups/GroupsPage.tsx";
@@ -257,10 +257,7 @@ export default function AppRoutes() {
         <Route path="/movie/:id" element={<MovieDetailRoute />} />
         <Route path="/series" element={<SeriesPage />} />
         <Route path="/series/:id" element={<SeriesDetailRoute />} />
-        <Route
-          path="/series/:seriesId/episodes/:episodeId"
-          element={<EpisodeDetailPage />}
-        />
+        <Route path="/episodes/:episodeId" element={<EpisodeDetailPage />} />
         <Route path="/playlists" element={<PlaylistsPage />} />
         <Route path="/playlist/:id" element={<PlaylistDetailPageWrapper />} />
 
@@ -456,21 +453,12 @@ function MovieDetailRoute() {
   return <FilmDetailPage filmId={String(id)} />;
 }
 
-// 剧集详情页路由组件 - 待实现
+// 剧集详情页路由组件
 function SeriesDetailRoute() {
   const params = useParams();
   const id = params.id ?? "";
   if (!id) return <Navigate to="/series" replace />;
-  // TODO: 替换为 SeriesDetailPage
-  return (
-    <div className="flex items-center justify-center min-h-[50vh]">
-      <div className="text-center">
-        <h2 className="text-white text-xl mb-2">剧集详情</h2>
-        <p className="text-neutral-400">ID: {id}</p>
-        <p className="text-neutral-500 text-sm mt-4">详情页开发中...</p>
-      </div>
-    </div>
-  );
+  return <SeriesDetailPage />;
 }
 
 function NotFoundRedirect() {

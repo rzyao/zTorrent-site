@@ -350,10 +350,10 @@ export function useEditSeries() {
         }
     }
 
-    const handleUnbindTorrent = async (torrentId: string, seriesId: string) => {
+    const handleUnbindTorrent = async (torrentId: string, seriesId: string, episodeNumber?: number) => {
          if (!confirm('确认解绑?')) return;
          try {
-             await SeriesService.seriesTorrentsControllerUnbind({ torrentId }); 
+             await SeriesService.seriesTorrentsControllerUnbind({ seriesId, torrentId, episodeNumber }); 
              fetchSeriesTorrents(seriesId);
          } catch (e: any) {
              alert(e.message || '解绑失败');

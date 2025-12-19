@@ -9,6 +9,7 @@ import {
   Clock,
   Link as LinkIcon,
   HardDrive,
+  X,
 } from "lucide-react";
 import type { Episode, SeriesTorrent } from "../types";
 import { formatSize } from "@/utils/format";
@@ -21,6 +22,7 @@ interface EpisodeListProps {
   onEdit: (ep: Episode) => void;
   onDelete: (id: string) => void;
   onBindTorrent: (ep: Episode) => void;
+  onUnbindTorrent: (torrentId: string, episodeNumber: number) => void;
 }
 
 export const EpisodeList: React.FC<EpisodeListProps> = ({
@@ -31,6 +33,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
   onEdit,
   onDelete,
   onBindTorrent,
+  onUnbindTorrent,
 }) => {
   const sortedEpisodes = [...episodes].sort(
     (a, b) => a.episodeNumber - b.episodeNumber
@@ -75,7 +78,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
                     E{String(ep.episodeNumber).padStart(2, "0")}
                   </span>
                   <Link
-                    to={`/series/${seriesId}/episodes/${ep.id}`}
+                    to={`/episodes/${ep.id}`}
                     className="text-sm font-medium text-white hover:text-amber-500 hover:underline transition-colors block truncate"
                     title={ep.title}
                   >
@@ -143,21 +146,37 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
                     {boundTorrents.map((torrent) => (
                       <div
                         key={torrent.id}
-                        className="flex items-center justify-between text-xs px-2 py-1.5 bg-gray-900/50 rounded"
+                        className="flex items-center justify-between text-xs px-2 py-1.5 bg-gray-900/50 rounded group/torrent"
                       >
-                        <span
-                          className="text-gray-300 truncate max-w-[60%]"
-                          title={torrent.title}
-                        >
-                          {torrent.title || torrent.subTitle || "未命名种子"}
-                        </span>
-                        <div className="flex items-center gap-2 text-gray-500">
-                          <span>{formatSize(parseInt(torrent.size) || 0)}</span>
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          <span
+                            className="text-gray-300 truncate"
+                            title={torrent.title}
+                          >
+                            {torrent.title || torrent.subTitle || "未命名种子"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className="text-gray-500">
+                            {formatSize(parseInt(torrent.size) || 0)}
+                          </span>
                           {torrent.quality && (
                             <span className="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 text-[10px]">
                               {torrent.quality}
                             </span>
                           )}
+                          <button
+                            onClick={() =>
+                              onUnbindTorrent(
+                                torrent.torrentId,
+                                torrent.episodeNumber || ep.episodeNumber
+                              )
+                            }
+                            className="opacity-0 group-hover/torrent:opacity-100 p-1 hover:bg-red-500/20 text-gray-500 hover:text-red-400 rounded transition-all"
+                            title="解绑种子"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
                         </div>
                       </div>
                     ))}
