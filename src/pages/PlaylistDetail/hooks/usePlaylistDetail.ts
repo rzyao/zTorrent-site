@@ -113,7 +113,7 @@ export function usePlaylistDetail(playlistId: string) {
   function openFilm(id: string) {
     const qs = new URLSearchParams();
     qs.set('source_playlist_id', String(playlistId));
-    navigate(`/film/${id}?${qs.toString()}`, { replace: false });
+    navigate(`/movie/${id}?${qs.toString()}`, { replace: false });
   }
 
   return {
