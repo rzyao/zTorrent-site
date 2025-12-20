@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { AccessControl } from "@/components/AccessControl";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Edit, X, Image as ImageIcon, Save } from "lucide-react";
 import type { SeriesFormState } from "@/pages/Edit/series/types";
@@ -388,19 +389,34 @@ export function SeriesForm({
             accept="image/*"
             onChange={handleUpload}
           />
-          <Button
-            variant="outline"
-            disabled={uploading}
-            onClick={() => fileInputRef.current?.click()}
-            className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+          {/* 上传海报按钮：需要剧集编辑权限 */}
+          <AccessControl
+            requiredPermissions={["series:update"]}
+            fallback={
+              <Button
+                variant="outline"
+                className="border-neutral-700 text-neutral-500"
+                disabled
+              >
+                <ImageIcon className="w-4 h-4 mr-2" />
+                上传
+              </Button>
+            }
           >
-            {uploading ? (
-              <span className="animate-spin mr-2">⏳</span>
-            ) : (
-              <ImageIcon className="w-4 h-4 mr-2" />
-            )}
-            {uploading ? "上传中" : "上传"}
-          </Button>
+            <Button
+              variant="outline"
+              disabled={uploading}
+              onClick={() => fileInputRef.current?.click()}
+              className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+            >
+              {uploading ? (
+                <span className="animate-spin mr-2">⏳</span>
+              ) : (
+                <ImageIcon className="w-4 h-4 mr-2" />
+              )}
+              {uploading ? "上传中" : "上传"}
+            </Button>
+          </AccessControl>
         </div>
         {errors.poster && (
           <p className="text-red-500 text-xs">{errors.poster}</p>
@@ -419,14 +435,25 @@ export function SeriesForm({
       </div>
 
       <div className="flex gap-3 pt-4">
-        <Button
-          onClick={onSave}
-          disabled={!form.title || form.categories.length === 0 || !form.poster}
-          className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+        {/* 保存剧集按钮：需要剧集更新权限 */}
+        <AccessControl
+          requiredPermissions={["series:update"]}
+          fallback={
+            <Button disabled className="flex-1 bg-neutral-700 text-neutral-400">
+              <Save className="w-4 h-4 mr-2" />
+              保存剧集
+            </Button>
+          }
         >
-          <Save className="w-4 h-4 mr-2" />
-          保存剧集
-        </Button>
+          <Button
+            onClick={onSave}
+            disabled={!form.title || form.categories.length === 0 || !form.poster}
+            className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+          >
+            <Save className="w-4 h-4 mr-2" />
+            保存剧集
+          </Button>
+        </AccessControl>
         <Button
           onClick={onCancel}
           variant="outline"

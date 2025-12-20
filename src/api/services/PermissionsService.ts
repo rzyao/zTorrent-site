@@ -5,6 +5,7 @@
 import type { AggregatePermissionsResponseDto } from '../models/AggregatePermissionsResponseDto';
 import type { AssignPermissionsDto } from '../models/AssignPermissionsDto';
 import type { AssignPermissionsResponseDto } from '../models/AssignPermissionsResponseDto';
+import type { BatchCreatePermissionsDto } from '../models/BatchCreatePermissionsDto';
 import type { CheckPermissionsRequestDto } from '../models/CheckPermissionsRequestDto';
 import type { CheckPermissionsResponseDto } from '../models/CheckPermissionsResponseDto';
 import type { CreatePermissionDto } from '../models/CreatePermissionDto';
@@ -20,6 +21,23 @@ import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class PermissionsService {
+    /**
+     * 获取所有 API 权限列表（公开接口）
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static permissionsControllerAll(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Array<PermissionDto>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/permissions/all',
+        });
+    }
     /**
      * 创建权限
      * @param requestBody
@@ -38,6 +56,35 @@ export class PermissionsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/permissions/create',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 批量创建/更新权限
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static permissionsControllerBatchCreate(
+        requestBody: BatchCreatePermissionsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Array<PermissionDto>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/permissions/batch-create',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

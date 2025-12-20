@@ -46,6 +46,7 @@ export type { AutoUploadTorrentDto } from './models/AutoUploadTorrentDto';
 export type { BanDaysIdDto } from './models/BanDaysIdDto';
 export type { BanReasonIdDto } from './models/BanReasonIdDto';
 export type { BanRecordDto } from './models/BanRecordDto';
+export type { BatchCreatePermissionsDto } from './models/BatchCreatePermissionsDto';
 export type { BindTorrentDto } from './models/BindTorrentDto';
 export type { BindTorrentsDto } from './models/BindTorrentsDto';
 export type { BonusConfigDto } from './models/BonusConfigDto';

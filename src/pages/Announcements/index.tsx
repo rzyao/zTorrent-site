@@ -1,13 +1,20 @@
-import { Bell } from 'lucide-react';
-import { Announcement } from './types';
-import { AnnouncementsPageProps } from './types';
-import { useAnnouncements } from './hooks/useAnnouncements';
-import { FilterBar } from './components/FilterBar';
-import { AnnouncementCard } from './components/AnnouncementCard';
-import { AnnouncementDetail } from './components/AnnouncementDetail';
-import { StatsSidebar } from './components/StatsSidebar';
+import { Bell } from "lucide-react";
+import { Announcement } from "./types";
+import { AnnouncementsPageProps } from "./types";
+import { useAnnouncements } from "./hooks/useAnnouncements";
+import { FilterBar } from "./components/FilterBar";
+import { AnnouncementCard } from "./components/AnnouncementCard";
+import { AnnouncementDetail } from "./components/AnnouncementDetail";
+import { StatsSidebar } from "./components/StatsSidebar";
 
-export function AnnouncementsPage({ onAnnouncementClick }: AnnouncementsPageProps) {
+/**
+ * 公告页面
+ * @param onAnnouncementClick - 点击公告时的回调函数
+ * **/
+
+export function AnnouncementsPage({
+  onAnnouncementClick,
+}: AnnouncementsPageProps) {
   const {
     filter,
     setFilter,
@@ -16,7 +23,7 @@ export function AnnouncementsPage({ onAnnouncementClick }: AnnouncementsPageProp
     filteredAnnouncements,
     pinnedAnnouncements,
     normalAnnouncements,
-  } = useAnnouncements('all');
+  } = useAnnouncements("all");
 
   const handleCardClick = (a: Announcement) => {
     select(a);
@@ -31,7 +38,9 @@ export function AnnouncementsPage({ onAnnouncementClick }: AnnouncementsPageProp
             <Bell className="w-8 h-8 text-amber-400" />
             <h1 className="text-amber-50">站点公告</h1>
           </div>
-          <p className="text-amber-200/70">及时了解站点最新动态、活动和规则变更</p>
+          <p className="text-amber-200/70">
+            及时了解站点最新动态、活动和规则变更
+          </p>
         </div>
       </div>
 
@@ -43,21 +52,34 @@ export function AnnouncementsPage({ onAnnouncementClick }: AnnouncementsPageProp
             {pinnedAnnouncements.length > 0 && (
               <div className="space-y-3">
                 {pinnedAnnouncements.map((a) => (
-                  <AnnouncementCard key={a.id} data={a} variant="pinned" onClick={handleCardClick} />
+                  <AnnouncementCard
+                    key={a.id}
+                    data={a}
+                    variant="pinned"
+                    onClick={handleCardClick}
+                  />
                 ))}
               </div>
             )}
 
             <div className="space-y-3">
               {normalAnnouncements.map((a) => (
-                <AnnouncementCard key={a.id} data={a} variant="normal" onClick={handleCardClick} />
+                <AnnouncementCard
+                  key={a.id}
+                  data={a}
+                  variant="normal"
+                  onClick={handleCardClick}
+                />
               ))}
             </div>
           </div>
 
           <div className="lg:col-span-1">
             {selectedAnnouncement ? (
-              <AnnouncementDetail data={selectedAnnouncement} onClose={() => select(null)} />
+              <AnnouncementDetail
+                data={selectedAnnouncement}
+                onClose={() => select(null)}
+              />
             ) : (
               <StatsSidebar announcements={filteredAnnouncements} />
             )}
@@ -67,4 +89,3 @@ export function AnnouncementsPage({ onAnnouncementClick }: AnnouncementsPageProp
     </div>
   );
 }
-

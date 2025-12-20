@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { AccessControl } from '@/components/AccessControl';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { RichTextEditor } from '../RichTextEditor';
 
@@ -109,14 +110,25 @@ export function CreateThreadForm({ categories, initialCategoryId, onCancel, onSu
           >
             取消
           </Button>
-          <Button
-            className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
-            onClick={handleSubmit}
-            disabled={submitting}
+          {/* 发布新帖按钮：需要论坛发帖权限 */}
+          <AccessControl
+            requiredPermissions={['forum:thread.create']}
+            fallback={
+              <Button disabled className="bg-neutral-700 text-neutral-400">
+                <Send className="w-4 h-4 mr-2" />
+                {submitting ? '发布中...' : '发布'}
+              </Button>
+            }
           >
-            <Send className="w-4 h-4 mr-2" />
-            {submitting ? '发布中...' : '发布'}
-          </Button>
+            <Button
+              className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+              onClick={handleSubmit}
+              disabled={submitting}
+            >
+              <Send className="w-4 h-4 mr-2" />
+              {submitting ? '发布中...' : '发布'}
+            </Button>
+          </AccessControl>
         </div>
       </div>
     </div>

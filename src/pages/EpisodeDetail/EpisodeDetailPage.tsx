@@ -24,12 +24,12 @@ import { DownloadToDownloaderModal } from "@/components/DownloadToDownloaderModa
 import { useState } from "react";
 
 export function EpisodeDetailPage() {
-  const { episodeId } = useParams<{
-    episodeId: string;
+  const { id } = useParams<{
+    id: string;
   }>();
   const navigate = useNavigate();
   const { series, episode, torrents, allEpisodes, loading, error } =
-    useEpisodeDetail(undefined, episodeId);
+    useEpisodeDetail(undefined, id);
 
   // 下载能力
   const { downloadByTorrentId } = useTorrentDownload({
@@ -548,11 +548,9 @@ export function EpisodeDetailPage() {
                           .map((ep) => (
                             <button
                               key={ep.id}
-                              onClick={() =>
-                                navigate(`/series/${seriesId}/episode/${ep.id}`)
-                              }
+                              onClick={() => navigate(`/episodes/${ep.id}`)}
                               className={`w-10 h-10 flex items-center justify-center rounded-md border text-sm transition-all hover:scale-105 shrink-0 ${
-                                ep.id === episodeId
+                                ep.id === id
                                   ? "bg-amber-500/80 border-amber-500 text-black font-bold shadow-lg shadow-amber-500/20"
                                   : "bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 hover:border-white/30"
                               }`}

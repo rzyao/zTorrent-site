@@ -16,11 +16,11 @@ interface FilmDetailPageProps {
 }
 
 /**
- * FilmDetailPage 容器组件
+ * MovieDetailPage 容器组件
  * - 负责拼装 UI 子组件与管理本地 UI 状态（如标签页、收藏/感谢、Lightbox 开关）
  * - 数据获取通过自定义 Hook `useFilmDetail` 完成，保证展示层与业务逻辑分离
  */
-export default function FilmDetailPage({ filmId }: FilmDetailPageProps) {
+export default function MovieDetailPage({ filmId }: FilmDetailPageProps) {
   useDynamicTitle("影片详情");
   const params = useParams();
   const effectiveFilmId =

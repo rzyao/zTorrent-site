@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { AccessControl } from '@/components/AccessControl';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Edit, Trash2, Calendar, Eye, Star, Film, Plus, GripVertical, Globe, Lock, Users } from 'lucide-react';
@@ -75,13 +76,34 @@ export function PlaylistDetails(props: PlaylistDetailsProps) {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button size="sm" onClick={() => onEdit(playlist)} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">
-                <Edit className="w-4 h-4 mr-2" />
-                编辑
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => onDelete(playlist.id)} className="border-red-500/30 text-red-400 hover:bg-red-500/10">
-                <Trash2 className="w-4 h-4" />
-              </Button>
+              {/* 编辑片单按钮：需要更新权限 */}
+              <AccessControl
+                requiredPermissions={['playlist:update']}
+                fallback={
+                  <Button size="sm" disabled className="bg-neutral-700 text-neutral-400">
+                    <Edit className="w-4 h-4 mr-2" />
+                    编辑
+                  </Button>
+                }
+              >
+                <Button size="sm" onClick={() => onEdit(playlist)} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">
+                  <Edit className="w-4 h-4 mr-2" />
+                  编辑
+                </Button>
+              </AccessControl>
+              {/* 删除片单按钮：需要删除权限 */}
+              <AccessControl
+                requiredPermissions={['playlist:delete']}
+                fallback={
+                  <Button size="sm" variant="outline" disabled className="border-neutral-700 text-neutral-500">
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                }
+              >
+                <Button size="sm" variant="outline" onClick={() => onDelete(playlist.id)} className="border-red-500/30 text-red-400 hover:bg-red-500/10">
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </AccessControl>
             </div>
           </div>
           <p className="text-neutral-400 text-sm mb-3">{playlist.description}</p>
@@ -108,10 +130,21 @@ export function PlaylistDetails(props: PlaylistDetailsProps) {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-white">片单影片</h3>
-          <Button size="sm" onClick={onToggleAddMovie} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">
-            <Plus className="w-4 h-4 mr-2" />
-            添加影片
-          </Button>
+          {/* 添加影片入口：需要条目添加权限 */}
+          <AccessControl
+            requiredPermissions={['playlist:item.add']}
+            fallback={
+              <Button size="sm" disabled className="bg-neutral-700 text-neutral-400">
+                <Plus className="w-4 h-4 mr-2" />
+                添加影片
+              </Button>
+            }
+          >
+            <Button size="sm" onClick={onToggleAddMovie} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">
+              <Plus className="w-4 h-4 mr-2" />
+              添加影片
+            </Button>
+          </AccessControl>
         </div>
 
         {showAddMovie && (
@@ -129,10 +162,20 @@ export function PlaylistDetails(props: PlaylistDetailsProps) {
           <div className="text-center py-12 border border-dashed border-neutral-700 rounded-xl">
             <Film className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
             <p className="text-neutral-500 text-sm mb-3">片单中还没有影片</p>
-            <Button size="sm" onClick={onToggleAddMovie} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">
-              <Plus className="w-4 h-4 mr-2" />
-              添加第一部影片
-            </Button>
+            <AccessControl
+              requiredPermissions={['playlist:item.add']}
+              fallback={
+                <Button size="sm" disabled className="bg-neutral-700 text-neutral-400">
+                  <Plus className="w-4 h-4 mr-2" />
+                  添加第一部影片
+                </Button>
+              }
+            >
+              <Button size="sm" onClick={onToggleAddMovie} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">
+                <Plus className="w-4 h-4 mr-2" />
+                添加第一部影片
+              </Button>
+            </AccessControl>
           </div>
         ) : (
           <MoviesList movies={playlist.movies} onMove={onMoveMovie} onRemove={onRemoveMovie} />
@@ -189,7 +232,12 @@ function AddMoviePanel({ available, addQuery, onAddQueryChange, isSearching, sea
                 <span className="text-neutral-500 text-xs">{movie.torrentCount} 个版本</span>
               </div>
             </div>
-            <Button size="sm" onClick={() => onAddMovie(movie)} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">添加</Button>
+            <AccessControl
+              requiredPermissions={['playlist:item.add']}
+              fallback={<Button size="sm" disabled className="bg-neutral-700 text-neutral-400">添加</Button>}
+            >
+              <Button size="sm" onClick={() => onAddMovie(movie)} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">添加</Button>
+            </AccessControl>
           </div>
         ))}
       </div>
@@ -230,12 +278,22 @@ function MoviesList({ movies, onMove, onRemove }: MoviesListProps) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="ghost" className="text-neutral-400 hover:text-white" onClick={() => onMove(index, 'up')}>上移</Button>
-            <Button size="sm" variant="ghost" className="text-neutral-400 hover:text-white" onClick={() => onMove(index, 'down')}>下移</Button>
+            <AccessControl requiredPermissions={['playlist:order.update']} fallback={<Button size="sm" variant="ghost" disabled className="text-neutral-400">上移</Button>}>
+              <Button size="sm" variant="ghost" className="text-neutral-400 hover:text-white" onClick={() => onMove(index, 'up')}>上移</Button>
+            </AccessControl>
+            <AccessControl requiredPermissions={['playlist:order.update']} fallback={<Button size="sm" variant="ghost" disabled className="text-neutral-400">下移</Button>}>
+              <Button size="sm" variant="ghost" className="text-neutral-400 hover:text-white" onClick={() => onMove(index, 'down')}>下移</Button>
+            </AccessControl>
           </div>
-          <Button size="sm" variant="ghost" onClick={() => onRemove(movie.id)} className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 hover:bg-red-500/10">
-            <Trash2 className="w-4 h-4" />
-          </Button>
+          <AccessControl requiredPermissions={['playlist:item.remove']} fallback={
+            <Button size="sm" variant="ghost" disabled className="opacity-0 group-hover:opacity-100 text-neutral-500">
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          }>
+            <Button size="sm" variant="ghost" onClick={() => onRemove(movie.id)} className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 hover:bg-red-500/10">
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </AccessControl>
         </div>
       ))}
     </div>

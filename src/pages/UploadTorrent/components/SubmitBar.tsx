@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import { Button } from '@/components/ui/button';
+import { AccessControl } from '@/components/AccessControl';
 import { Info, Upload } from 'lucide-react';
 
 /**
@@ -25,10 +26,21 @@ export const SubmitBar = memo(function SubmitBar(props: SubmitBarProps) {
         <Button type="button" variant="outline" className="border-neutral-700 text-neutral-300 hover:bg-neutral-800 hover:text-white" onClick={onCancel}>
           取消
         </Button>
-        <Button type="submit" className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-8 shadow-lg shadow-amber-500/25" disabled={submitting}>
-          <Upload className="w-4 h-4 mr-2" />
-          {submitting ? '发布中...' : '发布种子'}
-        </Button>
+        {/* 发布种子按钮：需要上传权限 */}
+        <AccessControl
+          requiredPermissions={['torrent:create']}
+          fallback={
+            <Button type="button" disabled className="bg-neutral-700 text-neutral-400 px-8">
+              <Upload className="w-4 h-4 mr-2" />
+              {submitting ? '发布中...' : '发布种子'}
+            </Button>
+          }
+        >
+          <Button type="submit" className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-8 shadow-lg shadow-amber-500/25" disabled={submitting}>
+            <Upload className="w-4 h-4 mr-2" />
+            {submitting ? '发布中...' : '发布种子'}
+          </Button>
+        </AccessControl>
       </div>
     </div>
   );

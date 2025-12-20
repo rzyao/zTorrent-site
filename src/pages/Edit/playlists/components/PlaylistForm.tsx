@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { AccessControl } from "@/components/AccessControl";
 
 import {
   Edit,
@@ -196,14 +197,29 @@ export function PlaylistForm({
             className="hidden"
             onChange={onUploadFile}
           />
-          <Button
-            variant="outline"
-            onClick={onUploadClick}
-            className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+          {/* 上传封面按钮：需要片单封面上传权限 */}
+          <AccessControl
+            requiredPermissions={["playlist:cover.upload"]}
+            fallback={
+              <Button
+                variant="outline"
+                className="border-neutral-700 text-neutral-500"
+                disabled
+              >
+                <ImageIcon className="w-4 h-4 mr-2" />
+                上传
+              </Button>
+            }
           >
-            <ImageIcon className="w-4 h-4 mr-2" />
-            上传
-          </Button>
+            <Button
+              variant="outline"
+              onClick={onUploadClick}
+              className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+            >
+              <ImageIcon className="w-4 h-4 mr-2" />
+              上传
+            </Button>
+          </AccessControl>
         </div>
         {editForm.cover && (
           <img
@@ -245,19 +261,30 @@ export function PlaylistForm({
 
       {/* 操作按钮 */}
       <div className="flex gap-3 pt-4">
-        <Button
-          onClick={onSave}
-          disabled={
-            !editForm.title ||
-            !editForm.category ||
-            !editForm.description ||
-            !editForm.cover
+        {/* 保存片单按钮：需要片单更新权限 */}
+        <AccessControl
+          requiredPermissions={["playlist:update"]}
+          fallback={
+            <Button disabled className="flex-1 bg-neutral-700 text-neutral-400">
+              <Save className="w-4 h-4 mr-2" />
+              保存片单
+            </Button>
           }
-          className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
         >
-          <Save className="w-4 h-4 mr-2" />
-          保存片单
-        </Button>
+          <Button
+            onClick={onSave}
+            disabled={
+              !editForm.title ||
+              !editForm.category ||
+              !editForm.description ||
+              !editForm.cover
+            }
+            className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+          >
+            <Save className="w-4 h-4 mr-2" />
+            保存片单
+          </Button>
+        </AccessControl>
         <Button
           onClick={onCancel}
           variant="outline"

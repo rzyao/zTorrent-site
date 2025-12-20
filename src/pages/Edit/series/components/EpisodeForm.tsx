@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { AccessControl } from "@/components/AccessControl";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -204,13 +205,23 @@ export function EpisodeForm({
             >
               取消
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-amber-500 text-black hover:bg-amber-400"
+            {/* 保存分集按钮：根据模式区分创建与更新权限 */}
+            <AccessControl
+              requiredPermissions={[initialData ? "episode:update" : "episode:create"]}
+              fallback={
+                <Button disabled className="bg-neutral-700 text-neutral-400">
+                  {isSubmitting ? "保存中..." : "保存分集"}
+                </Button>
+              }
             >
-              {isSubmitting ? "保存中..." : "保存分集"}
-            </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-amber-500 text-black hover:bg-amber-400"
+              >
+                {isSubmitting ? "保存中..." : "保存分集"}
+              </Button>
+            </AccessControl>
           </DialogFooter>
         </form>
       </DialogContent>
