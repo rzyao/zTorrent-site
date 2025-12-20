@@ -160,9 +160,8 @@ export function SeriesForm({
             value={form.title}
             onChange={(e) => onChange({ ...form, title: e.target.value })}
             placeholder="例如: 权力的游戏"
-            className={`w-full bg-neutral-900/50 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 border ${
-              errors.title ? "border-red-500" : "border-neutral-700"
-            }`}
+            className={`w-full bg-neutral-900/50 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 border ${errors.title ? "border-red-500" : "border-neutral-700"
+              }`}
           />
           {errors.title && (
             <p className="text-red-500 text-xs">{errors.title}</p>
@@ -195,11 +194,10 @@ export function SeriesForm({
                   className="flex items-center gap-2 cursor-pointer group"
                 >
                   <div
-                    className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                      isChecked
+                    className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${isChecked
                         ? "border-amber-500 bg-amber-500"
                         : "border-neutral-600 group-hover:border-neutral-500"
-                    }`}
+                      }`}
                   >
                     {isChecked && (
                       <div className="w-1.5 h-1.5 rounded-full bg-black" />
@@ -378,9 +376,8 @@ export function SeriesForm({
             onChange={(e) => onChange({ ...form, poster: e.target.value })}
             placeholder="输入图片URL..."
             aria-invalid={Boolean(errors.poster)}
-            className={`flex-1 bg-neutral-900/50 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 border ${
-              errors.poster ? "border-red-500" : "border-neutral-700"
-            }`}
+            className={`flex-1 bg-neutral-900/50 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 border ${errors.poster ? "border-red-500" : "border-neutral-700"
+              }`}
           />
           <input
             type="file"
@@ -389,34 +386,20 @@ export function SeriesForm({
             accept="image/*"
             onChange={handleUpload}
           />
-          {/* 上传海报按钮：需要剧集编辑权限 */}
-          <AccessControl
-            requiredPermissions={["series:update"]}
-            fallback={
-              <Button
-                variant="outline"
-                className="border-neutral-700 text-neutral-500"
-                disabled
-              >
-                <ImageIcon className="w-4 h-4 mr-2" />
-                上传
-              </Button>
-            }
+          {/* 上传海报按钮：默认权限，不做权限控制 */}
+          <Button
+            variant="outline"
+            disabled={uploading}
+            onClick={() => fileInputRef.current?.click()}
+            className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
           >
-            <Button
-              variant="outline"
-              disabled={uploading}
-              onClick={() => fileInputRef.current?.click()}
-              className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
-            >
-              {uploading ? (
-                <span className="animate-spin mr-2">⏳</span>
-              ) : (
-                <ImageIcon className="w-4 h-4 mr-2" />
-              )}
-              {uploading ? "上传中" : "上传"}
-            </Button>
-          </AccessControl>
+            {uploading ? (
+              <span className="animate-spin mr-2">⏳</span>
+            ) : (
+              <ImageIcon className="w-4 h-4 mr-2" />
+            )}
+            {uploading ? "上传中" : "上传"}
+          </Button>
         </div>
         {errors.poster && (
           <p className="text-red-500 text-xs">{errors.poster}</p>
@@ -438,6 +421,7 @@ export function SeriesForm({
         {/* 保存剧集按钮：需要剧集更新权限 */}
         <AccessControl
           requiredPermissions={["series:update"]}
+          name="保存剧集"
           fallback={
             <Button disabled className="flex-1 bg-neutral-700 text-neutral-400">
               <Save className="w-4 h-4 mr-2" />

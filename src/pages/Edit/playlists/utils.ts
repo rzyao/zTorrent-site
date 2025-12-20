@@ -1,6 +1,19 @@
 import type { Playlist, Movie, Visibility, PlaylistType } from '@/pages/Edit/playlists/types';
 
 /**
+ * 从可能为对象或字符串的字段中提取分类 Key
+ */
+function safeExtractCategory(val: any): string {
+  if (!val) return '';
+  if (typeof val === 'string') return val;
+  // 如果是对象，优先取 key，其次取 label/name/value
+  if (typeof val === 'object') {
+    return val.key || val.value || val.name || val.label || '';
+  }
+  return String(val);
+}
+
+/**
  * 将后端 Playlist 详情 DTO 映射为页面本地 Playlist 模型
  * 说明：后端字段名与前端展示所需字段不完全一致，统一在此做转换，
  * 保证 UI 层只依赖稳定的本地类型，降低耦合与后端变更的影响。
@@ -26,7 +39,7 @@ export function mapBackendPlaylistToLocal(detail: any): Playlist {
     visibility: (detail?.visibility ?? 'public') as Visibility,
     type: (detail?.type ?? 'general') as PlaylistType,
     tags: Array.isArray(detail?.tags) ? detail.tags : [],
-    category: detail?.category ?? '',
+    category: safeExtractCategory(detail?.category),
     movies,
     createdAt: String(detail?.meta?.createdAt ?? detail?.createdAt ?? ''),
     updatedAt: String(detail?.meta?.updatedAt ?? detail?.updatedAt ?? ''),
@@ -49,7 +62,7 @@ export function mapBackendPlaylistSummaryToLocal(summary: any): Playlist {
     visibility: (summary?.visibility ?? 'public') as Visibility,
     type: (summary?.type ?? 'general') as PlaylistType,
     tags: Array.isArray(summary?.tags) ? summary.tags : [],
-    category: summary?.category ?? '',
+    category: safeExtractCategory(summary?.category),
     movies: new Array(Number(summary?.filmCount ?? 0)).fill(0).map((_, i) => ({
       id: String(i + 1),
       title: '',

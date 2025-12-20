@@ -73,7 +73,7 @@ export function useEditPlaylist() {
   useEffect(() => {
     (async () => {
       try {
-        const list = await listPlaylists({ page: 1, limit: 50, keyword: searchQuery });
+        const list = await listPlaylists({ listType: 'mine', page: 1, limit: 50, keyword: searchQuery });
         const mapped = (list?.items ?? []).map(mapBackendPlaylistSummaryToLocal);
         setPlaylists(mapped);
       } catch { /* 保持静默，列表失败不阻塞页面 */ }
@@ -115,6 +115,11 @@ export function useEditPlaylist() {
       try {
         const detail = await getPlaylist(selectedPlaylist.id);
         const mapped = mapBackendPlaylistToLocal(detail);
+        // 临时修复：后端 GET 响应缺失 category，从 playlists 数组或当前 selectedPlaylist 中回填
+        if (!mapped.category) {
+          const existing = playlists.find((p) => p.id === mapped.id);
+          mapped.category = existing?.category || selectedPlaylist.category || '';
+        }
         setSelectedPlaylist(mapped);
       } catch { /* 保持静默 */ }
       try {
@@ -171,6 +176,8 @@ export function useEditPlaylist() {
         const newId = (res as any)?.id ?? res; // 兼容不同返回结构
         const detail = await getPlaylist(String(newId));
         const mapped = mapBackendPlaylistToLocal(detail);
+        // 临时修复：后端 GET 响应缺失 category，手动回填
+        if (!mapped.category && payload.category) mapped.category = payload.category;
         setPlaylists([mapped, ...playlists]);
         setSelectedPlaylist(mapped);
         setIsCreating(false);
@@ -178,6 +185,8 @@ export function useEditPlaylist() {
         await updatePlaylist(selectedPlaylist.id, { ...payload, id: selectedPlaylist.id });
         const detail = await getPlaylist(selectedPlaylist.id);
         const mapped = mapBackendPlaylistToLocal(detail);
+        // 临时修复：后端 GET 响应缺失 category，手动回填
+        if (!mapped.category && payload.category) mapped.category = payload.category;
         setPlaylists(playlists.map((p) => (p.id === mapped.id ? mapped : p)));
         setSelectedPlaylist(mapped);
         setIsEditing(false);

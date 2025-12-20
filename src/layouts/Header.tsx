@@ -105,6 +105,37 @@ export function Header() {
       requiredRoles: ["admin", "superadmin"],
       combine: "OR",
     });
+
+  // 导航显示权限控制
+  const canUpload =
+    !loading && canAccess(access, { requiredPermissions: ["page:upload"] });
+
+  // 编辑菜单权限
+  const canEditMovie =
+    !loading && canAccess(access, { requiredPermissions: ["page:edit:movie"] });
+  const canEditSeries =
+    !loading &&
+    canAccess(access, { requiredPermissions: ["page:edit:series"] });
+  const canEditPlaylist =
+    !loading &&
+    canAccess(access, { requiredPermissions: ["page:edit:playlist"] });
+  const isEditMenuEnabled = canEditMovie || canEditSeries || canEditPlaylist;
+
+  // “其他”菜单权限（目前仅包含工单）
+  const canTickets =
+    !loading && canAccess(access, { requiredPermissions: ["page:tickets"] });
+  const isOtherMenuEnabled = canTickets;
+
+  // 用户菜单权限
+  const canHistory =
+    !loading &&
+    canAccess(access, { requiredPermissions: ["page:torrent-history"] });
+  const canInvite =
+    !loading && canAccess(access, { requiredPermissions: ["page:invite"] });
+  const canBonus =
+    !loading && canAccess(access, { requiredPermissions: ["page:bonus"] });
+  const canControl =
+    !loading && canAccess(access, { requiredPermissions: ["page:control"] });
   return (
     <>
       <header
@@ -131,6 +162,7 @@ export function Header() {
                 {title || ""}
               </span>
             </NavLink>
+            {/* 桌面端导航菜单 */}
             <nav className="hidden md:flex items-center gap-6">
               {/* 选中高亮：激活路由使用 text-amber-400 */}
               <NavLink
@@ -225,17 +257,19 @@ export function Header() {
               <NavLink to="/subtitles" className="block px-4 py-2 text-white hover:bg-white/10 transition-colors">发字幕</NavLink>
             </div>
           </div>  */}
-              <NavLink
-                to="/upload"
-                className={({ isActive }) =>
-                  (isActive || showPublishMenu
-                    ? "text-amber-400 transition-colors"
-                    : "text-white hover:text-amber-400 transition-colors") +
-                  " flex items-center gap-1"
-                }
-              >
-                发布
-              </NavLink>
+              {canUpload && (
+                <NavLink
+                  to="/upload"
+                  className={({ isActive }) =>
+                    (isActive || showPublishMenu
+                      ? "text-amber-400 transition-colors"
+                      : "text-white hover:text-amber-400 transition-colors") +
+                    " flex items-center gap-1"
+                  }
+                >
+                  发布
+                </NavLink>
+              )}
               {/* <NavLink
                 to="/candidates"
                 className={({ isActive }) =>
@@ -247,7 +281,7 @@ export function Header() {
                 候选
               </NavLink> */}
 
-              {
+              {isEditMenuEnabled && (
                 <div
                   className="relative group"
                   onMouseEnter={() => {
@@ -314,27 +348,33 @@ export function Header() {
                       contain: "content",
                     }}
                   >
-                    <NavLink
-                      to="/edit/movie"
-                      className="block px-4 py-2 text-white hover:bg-white/10 hover:text-amber-400 transition-colors border-b border-gray-800"
-                    >
-                      电影
-                    </NavLink>
-                    <NavLink
-                      to="/edit/series"
-                      className="block px-4 py-2 text-white hover:bg-white/10 hover:text-amber-400 transition-colors border-b border-gray-800"
-                    >
-                      剧集
-                    </NavLink>
-                    <NavLink
-                      to="/edit/playlist"
-                      className="block px-4 py-2 text-white hover:bg-white/10 hover:text-amber-400 transition-colors border-b border-gray-800"
-                    >
-                      片单
-                    </NavLink>
+                    {canEditMovie && (
+                      <NavLink
+                        to="/edit/movie"
+                        className="block px-4 py-2 text-white hover:bg-white/10 hover:text-amber-400 transition-colors border-b border-gray-800"
+                      >
+                        电影
+                      </NavLink>
+                    )}
+                    {canEditSeries && (
+                      <NavLink
+                        to="/edit/series"
+                        className="block px-4 py-2 text-white hover:bg-white/10 hover:text-amber-400 transition-colors border-b border-gray-800"
+                      >
+                        剧集
+                      </NavLink>
+                    )}
+                    {canEditPlaylist && (
+                      <NavLink
+                        to="/edit/playlist"
+                        className="block px-4 py-2 text-white hover:bg-white/10 hover:text-amber-400 transition-colors border-b border-gray-800"
+                      >
+                        片单
+                      </NavLink>
+                    )}
                   </div>
                 </div>
-              }
+              )}
               <NavLink
                 to="/forum"
                 className={({ isActive }) =>
@@ -365,84 +405,91 @@ export function Header() {
                   审核
                 </NavLink>
               )}
-              <div
-                className="relative group"
-                onMouseEnter={() => {
-                  if (moreMenuTimeoutRef.current) {
-                    clearTimeout(moreMenuTimeoutRef.current);
-                    moreMenuTimeoutRef.current = null;
-                  }
-                  setShowMoreMenu(true);
-                }}
-                onMouseLeave={() => {
-                  if (moreMenuTimeoutRef.current) {
-                    clearTimeout(moreMenuTimeoutRef.current);
-                  }
-                  moreMenuTimeoutRef.current = window.setTimeout(() => {
-                    setShowMoreMenu(false);
-                  }, 200);
-                }}
-                onFocus={() => {
-                  if (moreMenuTimeoutRef.current) {
-                    clearTimeout(moreMenuTimeoutRef.current);
-                    moreMenuTimeoutRef.current = null;
-                  }
-                  setShowMoreMenu(true);
-                }}
-                onBlur={() => {
-                  if (moreMenuTimeoutRef.current) {
-                    clearTimeout(moreMenuTimeoutRef.current);
-                  }
-                  moreMenuTimeoutRef.current = window.setTimeout(() => {
-                    setShowMoreMenu(false);
-                  }, 200);
-                }}
-              >
-                {/* 新增路径纳入高亮集合：/music 与 /player */}
-                <button
-                  type="button"
-                  className={`${
-                    [
-                      "/groups",
-                      "/rss",
-                      "/staff",
-                      "/tutorials",
-                      "/seeding",
-                      "/dead-torrents",
-                      "/games",
-                      "/announcements",
-                      "/music",
-                      "/player",
-                    ].includes(location.pathname) || showMoreMenu
-                      ? "text-amber-400 transition-colors"
-                      : "text-white hover:text-amber-400 transition-colors"
-                  } flex items-center gap-1`}
-                >
-                  其他
-                  <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      showMoreMenu ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
+              {isOtherMenuEnabled && (
                 <div
-                  className={`absolute left-1/2 -translate-x-1/2 top-full w-32 py-2 bg-[#0F171E] rounded-xl shadow-lg border border-gray-800 z-50 transform-gpu transition-[opacity,transform] ease-out duration-150 ${
-                    showMoreMenu
-                      ? "opacity-100 pointer-events-auto translate-y-0"
-                      : "opacity-0 pointer-events-none translate-y-1"
-                  }`}
-                  style={{
-                    willChange: "opacity, transform",
-                    contain: "content",
+                  className="relative group"
+                  onMouseEnter={() => {
+                    if (moreMenuTimeoutRef.current) {
+                      clearTimeout(moreMenuTimeoutRef.current);
+                      moreMenuTimeoutRef.current = null;
+                    }
+                    setShowMoreMenu(true);
+                  }}
+                  onMouseLeave={() => {
+                    if (moreMenuTimeoutRef.current) {
+                      clearTimeout(moreMenuTimeoutRef.current);
+                    }
+                    moreMenuTimeoutRef.current = window.setTimeout(() => {
+                      setShowMoreMenu(false);
+                    }, 200);
+                  }}
+                  onFocus={() => {
+                    if (moreMenuTimeoutRef.current) {
+                      clearTimeout(moreMenuTimeoutRef.current);
+                      moreMenuTimeoutRef.current = null;
+                    }
+                    setShowMoreMenu(true);
+                  }}
+                  onBlur={() => {
+                    if (moreMenuTimeoutRef.current) {
+                      clearTimeout(moreMenuTimeoutRef.current);
+                    }
+                    moreMenuTimeoutRef.current = window.setTimeout(() => {
+                      setShowMoreMenu(false);
+                    }, 200);
                   }}
                 >
-                  <NavLink
-                    to="/tickets"
-                    className="block px-4 py-2 text-white hover:bg-white/10 transition-colors"
+                  {/* 新增路径纳入高亮集合：/music 与 /player */}
+                  <button
+                    type="button"
+                    className={`${
+                      [
+                        "/groups",
+                        "/rss",
+                        "/staff",
+                        "/tutorials",
+                        "/seeding",
+                        "/dead-torrents",
+                        "/games",
+                        "/announcements",
+                        "/music",
+                        "/player",
+                      ].includes(location.pathname) || showMoreMenu
+                        ? "text-amber-400 transition-colors"
+                        : "text-white hover:text-amber-400 transition-colors"
+                    } flex items-center gap-1`}
                   >
-                    工单
-                  </NavLink>
-                  {/* <NavLink
+                    其他
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        showMoreMenu ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                  <div
+                    className={`absolute left-1/2 -translate-x-1/2 top-full w-32 py-2 bg-[#0F171E] rounded-xl shadow-lg border border-gray-800 z-50 transform-gpu transition-[opacity,transform] ease-out duration-150 ${
+                      showMoreMenu
+                        ? "opacity-100 pointer-events-auto translate-y-0"
+                        : "opacity-0 pointer-events-none translate-y-1"
+                    }`}
+                    style={{
+                      willChange: "opacity, transform",
+                      contain: "content",
+                    }}
+                  >
+                    {canTickets && (
+                      <NavLink
+                        to="/tickets"
+                        className="block px-4 py-2 text-white hover:bg-white/10 transition-colors"
+                      >
+                        工单
+                      </NavLink>
+                    )}
+                    {/* ... other nav links ... */}
+                  </div>
+                </div>
+              )}
+              {/* <NavLink
                     to="/requests"
                     className="block px-4 py-2 text-white hover:bg-white/10 transition-colors"
                   >
@@ -514,12 +561,11 @@ export function Header() {
                   >
                     播放器
                   </NavLink> */}
-                </div>
-              </div>
             </nav>
           </div>
 
           <div className="flex items-center gap-4">
+            {/* 桌面端：用户数据面板 (上传/下载/魔力值) */}
             <div className="hidden lg:flex items-center gap-6 text-sm">
               {/* 上传量显示 */}
               <div className="flex items-center gap-1 text-green-400">
@@ -545,14 +591,16 @@ export function Header() {
                 </span>
               </div>
               {/* 魔力值入口按钮，点击跳转到 /bonus */}
-              <div
-                className="flex items-center gap-1 text-yellow-400"
-                onClick={() => navigate("/bonus")}
-              >
-                <Sparkles className="w-4 h-4" />
-                {/* 显示为每4位加点的整数分组，无小数 */}
-                <span>{formatBonusPoints(userSummary?.bonusPoints)}</span>
-              </div>
+              {canBonus && (
+                <div
+                  className="flex items-center gap-1 text-yellow-400 cursor-pointer"
+                  onClick={() => navigate("/bonus")}
+                >
+                  <Sparkles className="w-4 h-4" />
+                  {/* 显示为每4位加点的整数分组，无小数 */}
+                  <span>{formatBonusPoints(userSummary?.bonusPoints)}</span>
+                </div>
+              )}
             </div>
 
             <Button
@@ -640,17 +688,19 @@ export function Header() {
                   </div>
                   {/* 菜单项 */}
                   <div className="py-2">
-                    <button
-                      onClick={() => {
-                        setShowUserMenu(false);
-                        navigate("/torrent-history");
-                      }}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
-                    >
-                      <History className="w-5 h-5 text-amber-400" />
-                      <span>种子记录</span>
-                    </button>
-                    {
+                    {canHistory && (
+                      <button
+                        onClick={() => {
+                          setShowUserMenu(false);
+                          navigate("/torrent-history");
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
+                      >
+                        <History className="w-5 h-5 text-amber-400" />
+                        <span>种子记录</span>
+                      </button>
+                    )}
+                    {canInvite && (
                       <button
                         onClick={() => {
                           setShowUserMenu(false);
@@ -661,8 +711,8 @@ export function Header() {
                         <UserPlus className="w-5 h-5 text-amber-400" />
                         <span>邀请管理</span>
                       </button>
-                    }
-                    {
+                    )}
+                    {canBonus && (
                       <button
                         onClick={() => {
                           setShowUserMenu(false);
@@ -670,11 +720,11 @@ export function Header() {
                         }}
                         className="w-full flex items-center gap-3 px-4 py-2.5 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
                       >
-                        <UserPlus className="w-5 h-5 text-amber-400" />
+                        <Sparkles className="w-5 h-5 text-amber-400" />
                         <span>魔力管理</span>
                       </button>
-                    }
-                    {
+                    )}
+                    {canControl && (
                       <button
                         onClick={() => {
                           setShowUserMenu(false);
@@ -685,7 +735,7 @@ export function Header() {
                         <Settings className="w-5 h-5 text-amber-400" />
                         <span>控制面板</span>
                       </button>
-                    }
+                    )}
                   </div>
 
                   {/* 退出登录 */}

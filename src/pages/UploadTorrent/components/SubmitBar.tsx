@@ -29,6 +29,7 @@ export const SubmitBar = memo(function SubmitBar(props: SubmitBarProps) {
         {/* 发布种子按钮：需要上传权限 */}
         <AccessControl
           requiredPermissions={['torrent:create']}
+          name="发布种子"
           fallback={
             <Button type="button" disabled className="bg-neutral-700 text-neutral-400 px-8">
               <Upload className="w-4 h-4 mr-2" />

@@ -160,7 +160,7 @@ export class ActivityService {
         });
     }
     /**
-     * 查询种子批量下载/做种的数量统计
+     * 批量查询种子下载/做种的数量统计
      * @param requestBody
      * @returns any 成功
      * @throws ApiError

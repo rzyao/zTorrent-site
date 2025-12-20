@@ -2,11 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CreatePermissionDto } from './CreatePermissionDto';
+import type { PermissionTreeNodeInputDto } from './PermissionTreeNodeInputDto';
 export type BatchCreatePermissionsDto = {
     /**
-     * 权限列表
+     * 权限列表（支持树形嵌套结构）
      */
-    items: Array<CreatePermissionDto>;
+    items: Array<PermissionTreeNodeInputDto>;
 };
 

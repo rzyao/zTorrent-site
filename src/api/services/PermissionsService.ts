@@ -69,6 +69,7 @@ export class PermissionsService {
     }
     /**
      * 批量创建/更新权限
+     * 支持树形嵌套结构，自动处理 parentId/parentIds；也兼容扁平结构
      * @param requestBody
      * @returns any 成功
      * @throws ApiError

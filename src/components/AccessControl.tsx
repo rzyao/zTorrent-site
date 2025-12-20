@@ -12,6 +12,10 @@ interface AccessControlProps extends AccessRule {
    * 可以传入 disabled 的按钮或占位符
    */
   fallback?: ReactNode;
+  /**
+   * 仅用于权限采集脚本的显示名称，不参与运行时逻辑
+   */
+  name?: string;
 }
 
 /**

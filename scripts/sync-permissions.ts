@@ -48,12 +48,16 @@ type ButtonRecord = {
 type PageRecord = {
   path: string;
   permission: string;
+  displayName?: string;
   component?: string;
   componentFile?: string;
 };
 const buttons: ButtonRecord[] = [];
 const pages: PageRecord[] = [];
 let serviceIndex: ServiceIndex = {};
+const protectedPaths = new Set<string>();
+const publicPaths = new Set<string>(['/login', '/register', '/forgot-password', '/', '*']);
+const pageClosures: Record<string, Set<string>> = {};
 
 async function main() {
   const base = (process.env.API_BASE_URL || '').trim() || 'http://localhost:8890';
@@ -77,13 +81,14 @@ async function main() {
   // 额外：从后端获取 API 接口权限记录并并入注册表
   await fetchAndRegisterApiPermissions(base);
 
-  const payload = toBatchDto();
-  if (!payload.items.length) {
-    console.info('[permissions-sync] 未发现需要同步的权限项');
+  // 构建树形结构（items 数组中的 children）并上传（弃用扁平无层级）
+  const treeItems = buildTreeItems();
+  if (!treeItems || treeItems.length === 0) {
+    console.info('[permissions-sync] 未发现需要同步的权限树节点');
     return;
   }
-  console.info('[permissions-sync] 提交批量创建/更新…', payload.items.length, '项');
-  const resp: any = await PermissionsService.permissionsControllerBatchCreate(payload as any);
+  console.info('[permissions-sync] 提交树形批量创建/更新…', treeItems.length, '个页面节点');
+  const resp: any = await PermissionsService.permissionsControllerBatchCreate({ items: treeItems } as any);
   const body = resp?.code !== undefined ? resp : resp?.data;
   console.info('[permissions-sync] 完成：', Array.isArray(body?.data) ? body.data.length : 0, '项');
 
@@ -110,51 +115,51 @@ async function scanDir(dir: string) {
 
 function scanFile(text: string, filePath: string) {
   const locationHint = filePath.replace(/^.*src[\\/]/, '/').replace(/\\/g, '/');
+  const code = stripComments(text);
 
   // PermissionRoute 联合 Route path 的块
-  const routeBlocks = matchAll(text, /<Route[\s\S]*?>[\s\S]*?<PermissionRoute[\s\S]*?>/g);
+  const routeBlocks = matchAll(code, /<Route[\s\S]*?>[\s\S]*?<PermissionRoute[\s\S]*?>/g);
   for (const block of routeBlocks) {
     const routePath = matchFirst(block, /<Route[^>]*\bpath\s*=\s*["']([^"']+)["']/i);
     const permArray = matchArrayLiterals(block, /\brequiredPermissions\s*=\s*\{(\[[^\]]*\])\}/i);
+    const displayName = matchFirst(block, /<PermissionRoute[^>]*\bname\s*=\s*["']([^"']+)["']/i) || undefined;
     if (permArray.length > 0) {
       registerPage(permArray, routePath || undefined, undefined, `from:${locationHint}`);
       if (routePath && permArray[0]) {
-        pages.push({ path: routePath, permission: permArray[0] });
+        pages.push({ path: routePath, permission: permArray[0], displayName });
       }
     }
   }
 
   // 独立 PermissionRoute
-  const prPerms = matchArrayLiterals(text, /<PermissionRoute[^>]*\brequiredPermissions\s*=\s*\{(\[[^\]]*\])\}/gi);
+  const prPerms = matchArrayLiterals(code, /<PermissionRoute[^>]*\brequiredPermissions\s*=\s*\{(\[[^\]]*\])\}/gi);
   if (prPerms.length > 0) {
     registerPage(prPerms, undefined, undefined, `from:${locationHint}`);
   }
 
-  // AccessControl
-  const acPerms = matchArrayLiterals(text, /<AccessControl[^>]*\brequiredPermissions\s*=\s*\{(\[[^\]]*\])\}/gi);
-  if (acPerms.length > 0) {
-    registerButton(acPerms, undefined, undefined, `from:${locationHint}`);
-    const labels = matchAll(text, /<Button[^>]*>([\s\S]*?)<\/Button>/g).map((b) => {
-      const m = /<Button[^>]*>([\s\S]*?)<\/Button>/.exec(b);
-      const raw = m && m[1] ? String(m[1]).replace(/<[^>]+>/g, '').trim() : '';
-      return raw || undefined;
-    });
-    const apis = findApisInFile(text);
-    for (const p of acPerms) {
-      buttons.push({ file: locationHint, label: labels[0], permission: p, apis });
+  // AccessControl：按标签解析 requiredPermissions 与 name
+  const acTags = matchAll(code, /<AccessControl[^>]*?>/g);
+  for (const tag of acTags) {
+    const permsArr = matchArrayLiterals(tag, /\brequiredPermissions\s*=\s*\{(\[[^\]]*\])\}/i);
+    if (permsArr.length === 0) continue; // 无权限键（例如图片上传）跳过
+    const label = matchFirst(tag, /\bname\s*=\s*["']([^"']+)["']/i) || undefined;
+    registerButton(permsArr, undefined, undefined, `from:${locationHint}`);
+    const apis = findApisInFile(code);
+    for (const p of permsArr) {
+      buttons.push({ file: locationHint, label, permission: p, apis });
     }
   }
 
   // canAccess
-  const caPerms = matchArrayLiterals(text, /canAccess\([^)]*?\{\s*[^}]*\brequiredPermissions\s*:\s*\[([^\]]*)\][^}]*\}\s*\)/gi);
+  const caPerms = matchArrayLiterals(code, /canAccess\([^)]*?\{\s*[^}]*\brequiredPermissions\s*:\s*\[([^\]]*)\][^}]*\}\s*\)/gi);
   if (caPerms.length > 0) {
     registerButton(caPerms, undefined, undefined, `from:${locationHint}`);
-    const labels = matchAll(text, /<Button[^>]*>([\s\S]*?)<\/Button>/g).map((b) => {
+    const labels = matchAll(code, /<Button[^>]*>([\s\S]*?)<\/Button>/g).map((b) => {
       const m = /<Button[^>]*>([\s\S]*?)<\/Button>/.exec(b);
       const raw = m && m[1] ? String(m[1]).replace(/<[^>]+>/g, '').trim() : '';
       return raw || undefined;
     });
-    const apis = findApisInFile(text);
+    const apis = findApisInFile(code);
     for (const p of caPerms) {
       buttons.push({ file: locationHint, label: labels[0], permission: p, apis });
     }
@@ -226,19 +231,38 @@ async function parseAppRoutes(): Promise<void> {
       const abs = resolveAlias(rel);
       for (const n of names) importMap[n] = abs;
     }
-    const routeElems = matchAll(text, /path\s*=\s*["']([^"']+)["'][\s\S]*?element\s*=\s*\{[\s\S]*?<PermissionRoute[\s\S]*?>\s*<([\w]+)[\s/>]/g);
+    const routeElems = matchAll(text, /path\s*=\s*["']([^"']+)["'][\s\S]*?element\s*=\s*\{([\s\S]*?<PermissionRoute[\s\S]*?>)[\s\S]*?<([\w]+)[\s/>]/g);
     for (const blk of routeElems) {
-      const m = /path\s*=\s*["']([^"']+)["'][\s\S]*?element\s*=\s*\{[\s\S]*?<PermissionRoute[\s\S]*?>\s*<([\w]+)[\s/>]/.exec(blk);
+      const m = /path\s*=\s*["']([^"']+)["'][\s\S]*?element\s*=\s*\{([\s\S]*?<PermissionRoute[\s\S]*?>)[\s\S]*?<([\w]+)[\s/>]/.exec(blk);
       if (!m) continue;
       const p = m[1];
-      const comp = m[2];
+      const prBlock = m[2] || '';
+      const comp = m[3];
       const file = importMap[comp];
-      const rec = pages.find((x) => x.path === p);
-      if (rec) {
+      protectedPaths.add(p);
+      // 从 PermissionRoute 片段提取 requiredPermissions 与 name
+      const permsArr = matchArrayLiterals(prBlock, /\brequiredPermissions\s*=\s*\{(\[[^\]]*\])\}/i);
+      const displayName = matchFirst(prBlock, /\bname\s*=\s*["']([^"']+)["']/i) || undefined;
+      // 若 pages 中尚无该 path，新增记录
+      if (!pages.find((x) => x.path === p)) {
+        const perm = permsArr.length > 0 ? permsArr[0] : derivePagePermission(p);
+        pages.push({ path: p, permission: perm, displayName, component: comp, componentFile: file });
+      } else {
+        const rec = pages.find((x) => x.path === p)!;
         rec.component = comp;
         rec.componentFile = file;
-      } else {
-        pages.push({ path: p, permission: 'page:unknown', component: comp, componentFile: file });
+        if (displayName) rec.displayName = displayName;
+      }
+      // 为该页面构建依赖闭包
+      if (file) {
+        pageClosures[p] = await buildClosureForComponent(file);
+      }
+    }
+    // 对已有页面记录但未在上面覆盖到 componentFile 的，尝试通过组件名补全 closure
+    for (const rec of pages) {
+      if (!rec.componentFile && rec.component && importMap[rec.component]) {
+        rec.componentFile = importMap[rec.component];
+        pageClosures[rec.path] = await buildClosureForComponent(rec.componentFile);
       }
     }
   } catch (e) {
@@ -249,6 +273,19 @@ async function parseAppRoutes(): Promise<void> {
 function resolveAlias(rel: string): string {
   const clean = rel.replace(/^@\/?/, 'src/').replace(/^\.\//, 'src/').replace(/\\/g, '/');
   return path.resolve(process.cwd(), clean);
+}
+
+/**
+ * 从路由路径推断页面权限键，作为缺失时的回退
+ * 规则：取首段作为页面名，前缀 'page:'；空路径回退为 'page:home'
+ * 示例：/groups -> page:groups；/review -> page:review；/movie/:id -> page:movie
+ */
+function derivePagePermission(routePath: string): string {
+  const s = String(routePath || '').trim().replace(/^\/+|\/+$/g, '');
+  if (!s) return 'page:home';
+  const first = s.split('/')[0];
+  const base = first.replace(/[^a-zA-Z0-9_-]/g, '');
+  return `page:${base || 'home'}`;
 }
 
 /**
@@ -322,12 +359,14 @@ async function writePermissionTree(): Promise<void> {
     buttons: Array<{ label?: string; permission: string; apis: Array<{ method: string; url: string; service?: string; fn?: string }> }>;
   }> = [];
   for (const p of pages) {
-    const prefix = p.componentFile ? path.dirname(p.componentFile).replace(/\\/g, '/') : '';
-    const btns = buttons.filter((b) => prefix && b.file.startsWith(prefix.replace(/^.*src\//, '/')));
+    if (!protectedPaths.has(p.path)) continue; // 权限树仅输出受保护页面
+    if (publicPaths.has(p.path)) continue; // 进一步排除公开页面
+    const closure = pageClosures[p.path] || new Set<string>();
+    const btns = buttons.filter((b) => closure.has(b.file));
     tree.push({
       path: p.path,
       permission: p.permission,
-      name: p.permission,
+      name: p.displayName || p.permission,
       buttons: btns.map((b) => ({ label: b.label, permission: b.permission, apis: b.apis })),
     });
   }
@@ -336,6 +375,112 @@ async function writePermissionTree(): Promise<void> {
   const outFile = path.join(outDir, 'permissions-tree.json');
   await fs.writeFile(outFile, JSON.stringify({ pages: tree }, null, 2), 'utf8');
   console.info('[permissions-sync] 已生成权限树：', outFile);
+}
+
+/**
+ * 为页面根组件构建依赖闭包：递归解析 import，收集所有 TSX 文件路径（以 '/...' 形式）
+ */
+async function buildClosureForComponent(rootAbsPath: string): Promise<Set<string>> {
+  const visited = new Set<string>();
+  const results = new Set<string>();
+  async function dfs(absPath: string) {
+    const norm = path.normalize(absPath);
+    if (visited.has(norm)) return;
+    visited.add(norm);
+    // 仅收集 TSX 文件
+    if (norm.endsWith('.tsx')) {
+      const relFromSrc = toRelFromSrc(norm);
+      if (relFromSrc) results.add(relFromSrc);
+    }
+    let content = '';
+    try {
+      content = await fs.readFile(norm, 'utf8');
+    } catch {
+      return;
+    }
+    const imports = matchAll(content, /import\s+[^;]*\s+from\s+["']([^"']+)["']/g)
+      .map((blk) => {
+        const m = /from\s+["']([^"']+)["']/.exec(blk);
+        return m ? m[1] : null;
+      })
+      .filter((v): v is string => !!v);
+    for (const src of imports) {
+      const resolved = await resolveImportCandidate(norm, src);
+      if (resolved) {
+        await dfs(resolved);
+      }
+    }
+  }
+  await dfs(rootAbsPath);
+  return results;
+}
+
+function toRelFromSrc(abs: string): string | null {
+  const srcDir = path.resolve(process.cwd(), 'src');
+  const rel = path.relative(srcDir, abs).replace(/\\/g, '/');
+  return rel && !rel.startsWith('..') ? `/${rel}` : null;
+}
+
+async function resolveImportCandidate(baseFile: string, src: string): Promise<string | null> {
+  // 支持别名 '@/'
+  let candidate = src.replace(/^@\/?/, 'src/').replace(/\\/g, '/');
+  const baseDir = path.dirname(baseFile);
+  if (candidate.startsWith('src/')) {
+    const absBase = path.resolve(process.cwd(), candidate);
+    const abs = await tryResolveTsx(absBase);
+    if (abs) return abs;
+  } else if (candidate.startsWith('./') || candidate.startsWith('../')) {
+    const absBase = path.resolve(baseDir, candidate);
+    const abs = await tryResolveTsx(absBase);
+    if (abs) return abs;
+  } else {
+    // 非 src 内或第三方依赖，忽略
+    return null;
+  }
+  return null;
+}
+
+async function tryResolveTsx(absBase: string): Promise<string | null> {
+  const candidates = [
+    absBase,
+    `${absBase}.tsx`,
+    path.join(absBase, 'index.tsx'),
+  ];
+  for (const c of candidates) {
+    try {
+      const stat = await fs.stat(c);
+      if (stat.isFile()) return c;
+    } catch { }
+  }
+  return null;
+}
+
+/**
+ * 构建批量创建的树形结构：items 数组中，页面项包含 children 为按钮项
+ */
+function buildTreeItems(): Array<any> {
+  const items: Array<any> = [];
+  for (const p of pages) {
+    if (!protectedPaths.has(p.path)) continue; // 仅上传使用 PermissionRoute 保护的页面
+    const closure = pageClosures[p.path] || new Set<string>();
+    const btns = buttons.filter((b) => closure.has(b.file));
+    const pageItem: any = {
+      key: p.permission,
+      name: p.displayName || p.permission,
+      type: CreatePermissionDto.type.PAGE,
+      scope: CreatePermissionDto.scope.WEB,
+      urls: p.path,
+      children: btns.map((b) => ({
+        key: b.permission,
+        name: b.label || b.permission,
+        type: CreatePermissionDto.type.BUTTON,
+        scope: CreatePermissionDto.scope.WEB,
+        urls: p.path,
+      })),
+    };
+    items.push(pageItem);
+  }
+  return items;
 }
 
 function registerPage(keys: string[] | undefined, routePath?: string, name?: string, description?: string): void {
@@ -412,6 +557,19 @@ function matchArrayLiterals(text: string, re: RegExp): string[] {
     out.push(sm[1]);
   }
   return Array.from(new Set(out));
+}
+
+/**
+ * 移除注释，避免采集到示例/注释中的权限字符串
+ * - 移除块注释：/* ... *\/
+ * - 移除行注释：// ...
+ * - 移除 JSX 注释：{/* ... *\/}
+ */
+function stripComments(text: string): string {
+  return text
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/(^|\s)\/\/[^\n\r]*/g, '$1')
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, '');
 }
 
 function safeAppendUrl(existing: string | undefined, p: string): string {

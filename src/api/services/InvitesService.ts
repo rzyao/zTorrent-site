@@ -33,7 +33,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class InvitesService {
     /**
-     * 分页查询邀请记录
+     * 分页查询所有邀请记录
      * @param requestBody
      * @returns any 成功
      * @throws ApiError

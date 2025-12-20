@@ -121,12 +121,14 @@ function PermissionRoute({
   requiredRoles,
   matchAll = true,
   combine = "AND",
+  name,
 }: {
   children: React.ReactNode;
   requiredPermissions?: string[];
   requiredRoles?: string[];
   matchAll?: boolean;
   combine?: "AND" | "OR";
+  name?: string;
 }) {
   const isLoggedIn = !!localStorage.getItem("accessToken");
   if (!isLoggedIn) return <Navigate to="/login" replace />;
@@ -140,15 +142,15 @@ function PermissionRoute({
       !requiredRoles || requiredRoles.length === 0
         ? true
         : matchAll
-        ? requiredRoles.every((r) => access.roles.includes(r))
-        : requiredRoles.some((r) => access.roles.includes(r));
+          ? requiredRoles.every((r) => access.roles.includes(r))
+          : requiredRoles.some((r) => access.roles.includes(r));
 
     const hasPerms =
       !requiredPermissions || requiredPermissions.length === 0
         ? true
         : matchAll
-        ? requiredPermissions.every((p) => access.permissions.includes(p))
-        : requiredPermissions.some((p) => access.permissions.includes(p));
+          ? requiredPermissions.every((p) => access.permissions.includes(p))
+          : requiredPermissions.some((p) => access.permissions.includes(p));
 
     return hasRoles && hasPerms;
   };
@@ -165,14 +167,14 @@ function PermissionRoute({
         !requiredRoles || requiredRoles.length === 0
           ? false
           : matchAll
-          ? requiredRoles.every((r) => access.roles.includes(r))
-          : requiredRoles.some((r) => access.roles.includes(r));
+            ? requiredRoles.every((r) => access.roles.includes(r))
+            : requiredRoles.some((r) => access.roles.includes(r));
       const hasPerms =
         !requiredPermissions || requiredPermissions.length === 0
           ? false
           : matchAll
-          ? requiredPermissions.every((p) => access.permissions.includes(p))
-          : requiredPermissions.some((p) => access.permissions.includes(p));
+            ? requiredPermissions.every((p) => access.permissions.includes(p))
+            : requiredPermissions.some((p) => access.permissions.includes(p));
       return hasRoles || hasPerms;
     }
     return hasRequired();
@@ -231,7 +233,7 @@ export default function AppRoutes() {
         <Route
           path="/adult"
           element={
-            <PermissionRoute requiredPermissions={["page:adult"]}>
+            <PermissionRoute requiredPermissions={["page:adult"]} name="成人区">
               <AdultPage />
             </PermissionRoute>
           }
@@ -239,7 +241,7 @@ export default function AppRoutes() {
         <Route
           path="/adult/:category"
           element={
-            <PermissionRoute requiredPermissions={["page:adult"]}>
+            <PermissionRoute requiredPermissions={["page:adult"]} name="成人区">
               <AdultPage />
             </PermissionRoute>
           }
@@ -249,7 +251,7 @@ export default function AppRoutes() {
         <Route
           path="/upload"
           element={
-            <PermissionRoute requiredPermissions={["page:upload"]}>
+            <PermissionRoute requiredPermissions={["page:upload"]} name="上传资源">
               <UploadTorrentPage />
             </PermissionRoute>
           }
@@ -257,7 +259,7 @@ export default function AppRoutes() {
         <Route
           path="/edit/movie"
           element={
-            <PermissionRoute requiredPermissions={["page:edit"]}>
+            <PermissionRoute requiredPermissions={["page:edit:movie"]} name="编辑电影">
               <EditMoviePage />
             </PermissionRoute>
           }
@@ -265,7 +267,7 @@ export default function AppRoutes() {
         <Route
           path="/edit/series"
           element={
-            <PermissionRoute requiredPermissions={["page:edit"]}>
+            <PermissionRoute requiredPermissions={["page:edit:series"]} name="编辑剧集">
               <EditSeriesPage />
             </PermissionRoute>
           }
@@ -273,7 +275,7 @@ export default function AppRoutes() {
         <Route
           path="/edit/playlist"
           element={
-            <PermissionRoute requiredPermissions={["page:edit"]}>
+            <PermissionRoute requiredPermissions={["page:edit:playlist"]} name="编辑片单">
               <EditPlaylistPage />
             </PermissionRoute>
           }
@@ -283,7 +285,7 @@ export default function AppRoutes() {
         <Route
           path="/requests"
           element={
-            <PermissionRoute requiredPermissions={["page:requests"]}>
+            <PermissionRoute requiredPermissions={["page:requests"]} name="求种专区">
               <RequestsPage />
             </PermissionRoute>
           }
@@ -293,7 +295,7 @@ export default function AppRoutes() {
         <Route
           path="/invite"
           element={
-            <PermissionRoute requiredPermissions={["page:invite"]}>
+            <PermissionRoute requiredPermissions={["page:invite"]} name="邀请管理">
               <InvitePage />
             </PermissionRoute>
           }
@@ -301,7 +303,7 @@ export default function AppRoutes() {
         <Route
           path="/bonus"
           element={
-            <PermissionRoute requiredPermissions={["page:bonus"]}>
+            <PermissionRoute requiredPermissions={["page:bonus"]} name="魔力值">
               <BonusPage />
             </PermissionRoute>
           }
@@ -309,7 +311,7 @@ export default function AppRoutes() {
         <Route
           path="/torrent-history"
           element={
-            <PermissionRoute requiredPermissions={["page:torrent-history"]}>
+            <PermissionRoute requiredPermissions={["page:torrent-history"]} name="做种历史">
               <TorrentRecordPage />
             </PermissionRoute>
           }
@@ -319,7 +321,7 @@ export default function AppRoutes() {
         <Route
           path="/messages"
           element={
-            <PermissionRoute requiredPermissions={["page:messages"]}>
+            <PermissionRoute requiredPermissions={["page:messages"]} name="消息中心">
               <MessagesPage />
             </PermissionRoute>
           }
@@ -327,7 +329,7 @@ export default function AppRoutes() {
         <Route
           path="/tickets"
           element={
-            <PermissionRoute requiredPermissions={["page:tickets"]}>
+            <PermissionRoute requiredPermissions={["page:tickets"]} name="工单页面">
               <TicketsPage />
             </PermissionRoute>
           }
@@ -337,7 +339,7 @@ export default function AppRoutes() {
         <Route
           path="/rss"
           element={
-            <PermissionRoute requiredPermissions={["page:rss"]}>
+            <PermissionRoute requiredPermissions={["page:rss"]} name="RSS订阅">
               <RSSPage />
             </PermissionRoute>
           }
@@ -345,7 +347,7 @@ export default function AppRoutes() {
         <Route
           path="/seeding"
           element={
-            <PermissionRoute requiredPermissions={["page:seeding"]}>
+            <PermissionRoute requiredPermissions={["page:seeding"]} name="保种页面">
               <SeedingPage />
             </PermissionRoute>
           }
@@ -353,7 +355,7 @@ export default function AppRoutes() {
         <Route
           path="/dead-torrents"
           element={
-            <PermissionRoute requiredPermissions={["page:dead-torrents"]}>
+            <PermissionRoute requiredPermissions={["page:dead-torrents"]} name="断种页面">
               <DeadTorrentsPage />
             </PermissionRoute>
           }
@@ -363,7 +365,7 @@ export default function AppRoutes() {
         <Route
           path="/games"
           element={
-            <PermissionRoute requiredPermissions={["page:games"]}>
+            <PermissionRoute requiredPermissions={["page:games"]} name="小游戏">
               <GamesPage onNavigateMagicFarm={() => navigate("/magicfarm")} />
             </PermissionRoute>
           }
@@ -371,7 +373,7 @@ export default function AppRoutes() {
         <Route
           path="/magicfarm"
           element={
-            <PermissionRoute requiredPermissions={["page:magicfarm"]}>
+            <PermissionRoute requiredPermissions={["page:magicfarm"]} name="魔力农场">
               <MagicFarmPage />
             </PermissionRoute>
           }
@@ -379,7 +381,7 @@ export default function AppRoutes() {
         <Route
           path="/music"
           element={
-            <PermissionRoute requiredPermissions={["page:music"]}>
+            <PermissionRoute requiredPermissions={["page:music"]} name="音乐页面">
               <MusicPage />
             </PermissionRoute>
           }
@@ -387,7 +389,7 @@ export default function AppRoutes() {
         <Route
           path="/player"
           element={
-            <PermissionRoute requiredPermissions={["page:player"]}>
+            <PermissionRoute requiredPermissions={["page:player"]} name="播放器">
               <PlayerPage />
             </PermissionRoute>
           }
@@ -397,7 +399,7 @@ export default function AppRoutes() {
         <Route
           path="/groups"
           element={
-            <PermissionRoute requiredPermissions={["page:groups"]}>
+            <PermissionRoute requiredPermissions={["page:groups"]} name="管理组">
               <GroupsPage />
             </PermissionRoute>
           }
@@ -405,7 +407,7 @@ export default function AppRoutes() {
         <Route
           path="/candidates"
           element={
-            <PermissionRoute requiredPermissions={["page:candidates"]}>
+            <PermissionRoute requiredPermissions={["page:candidates"]} name="候选页面">
               <CandidatesPage />
             </PermissionRoute>
           }
@@ -417,6 +419,7 @@ export default function AppRoutes() {
               requiredPermissions={["review:write"]}
               requiredRoles={["admin"]}
               combine="OR"
+              name="审核页面"
             >
               <ReviewPage />
             </PermissionRoute>
@@ -425,7 +428,7 @@ export default function AppRoutes() {
         <Route
           path="/control"
           element={
-            <PermissionRoute requiredPermissions={["page:control"]}>
+            <PermissionRoute requiredPermissions={["page:control"]} name="控制面板">
               <ControlPage />
             </PermissionRoute>
           }
@@ -446,7 +449,7 @@ function PlaylistDetailPageWrapper() {
     <PlaylistDetailPage
       playlistId={id}
       onBack={() => navigate("/playlists")}
-      onFilmClick={() => {}}
+      onFilmClick={() => { }}
     />
   );
 }

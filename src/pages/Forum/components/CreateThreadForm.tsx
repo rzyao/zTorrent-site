@@ -113,6 +113,7 @@ export function CreateThreadForm({ categories, initialCategoryId, onCancel, onSu
           {/* 发布新帖按钮：需要论坛发帖权限 */}
           <AccessControl
             requiredPermissions={['forum:thread.create']}
+            name="发布新帖"
             fallback={
               <Button disabled className="bg-neutral-700 text-neutral-400">
                 <Send className="w-4 h-4 mr-2" />

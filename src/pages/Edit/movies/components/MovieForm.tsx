@@ -457,28 +457,14 @@ export function MovieForm({
               errors.poster ? "border-red-500" : "border-neutral-700"
             }`}
           />
-          {/* 上传海报按钮：需要影片编辑权限 */}
-          <AccessControl
-            requiredPermissions={["movie:update"]}
-            fallback={
-              <Button
-                variant="outline"
-                className="border-neutral-700 text-neutral-500"
-                disabled
-              >
-                <ImageIcon className="w-4 h-4 mr-2" />
-                上传
-              </Button>
-            }
+          {/* 上传海报按钮：默认权限，不做权限控制 */}
+          <Button
+            variant="outline"
+            className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
           >
-            <Button
-              variant="outline"
-              className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
-            >
-              <ImageIcon className="w-4 h-4 mr-2" />
-              上传
-            </Button>
-          </AccessControl>
+            <ImageIcon className="w-4 h-4 mr-2" />
+            上传
+          </Button>
         </div>
         {errors.poster && (
           <p className="text-red-500 text-xs">{errors.poster}</p>
@@ -500,6 +486,7 @@ export function MovieForm({
         {/* 保存影片按钮：需要影片更新权限 */}
         <AccessControl
           requiredPermissions={["movie:update"]}
+          name="保存影片"
           fallback={
             <Button
               disabled

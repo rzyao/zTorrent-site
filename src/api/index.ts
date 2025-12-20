@@ -242,6 +242,7 @@ export type { PendingSubmissionsDto } from './models/PendingSubmissionsDto';
 export { PermissionDto } from './models/PermissionDto';
 export type { PermissionIdDto } from './models/PermissionIdDto';
 export type { PermissionTreeNodeDto } from './models/PermissionTreeNodeDto';
+export { PermissionTreeNodeInputDto } from './models/PermissionTreeNodeInputDto';
 export { PermissionTreeRequestDto } from './models/PermissionTreeRequestDto';
 export { PlaylistDTO } from './models/PlaylistDTO';
 export type { PlaylistItemDTO } from './models/PlaylistItemDTO';

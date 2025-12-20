@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface EditFormState {
   title: string;
@@ -71,10 +71,13 @@ export function PlaylistForm({
 
   const { playlist, fetchCategories, isLoaded } =
     usePreferenceCategoriesStore();
+
   // 确保分类数据加载
-  if (!isLoaded) {
-    fetchCategories();
-  }
+  useEffect(() => {
+    if (!isLoaded) {
+      fetchCategories();
+    }
+  }, [isLoaded, fetchCategories]);
 
   return (
     <div className="space-y-6">
@@ -197,29 +200,15 @@ export function PlaylistForm({
             className="hidden"
             onChange={onUploadFile}
           />
-          {/* 上传封面按钮：需要片单封面上传权限 */}
-          <AccessControl
-            requiredPermissions={["playlist:cover.upload"]}
-            fallback={
-              <Button
-                variant="outline"
-                className="border-neutral-700 text-neutral-500"
-                disabled
-              >
-                <ImageIcon className="w-4 h-4 mr-2" />
-                上传
-              </Button>
-            }
+          {/* 上传封面按钮：默认权限，不做权限控制 */}
+          <Button
+            variant="outline"
+            onClick={onUploadClick}
+            className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
           >
-            <Button
-              variant="outline"
-              onClick={onUploadClick}
-              className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
-            >
-              <ImageIcon className="w-4 h-4 mr-2" />
-              上传
-            </Button>
-          </AccessControl>
+            <ImageIcon className="w-4 h-4 mr-2" />
+            上传
+          </Button>
         </div>
         {editForm.cover && (
           <img
@@ -264,6 +253,7 @@ export function PlaylistForm({
         {/* 保存片单按钮：需要片单更新权限 */}
         <AccessControl
           requiredPermissions={["playlist:update"]}
+          name="保存片单"
           fallback={
             <Button disabled className="flex-1 bg-neutral-700 text-neutral-400">
               <Save className="w-4 h-4 mr-2" />

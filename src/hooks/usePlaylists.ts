@@ -17,7 +17,7 @@ export function usePlaylists() {
   const [items, setItems] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
 
-  const listPlaylists = useCallback(async (params: { page?: number; limit?: number; keyword?: string | null; type?: 'general' | 'topic' | 'series' | 'director' | 'curation'; visibility?: 'public' | 'private' | 'friends'; ownerUserId?: string | null; }) => {
+  const listPlaylists = useCallback(async (params: { listType?: 'public' | 'mine' | 'following'; page?: number; limit?: number; keyword?: string | null; type?: 'general' | 'topic' | 'series' | 'director' | 'curation'; visibility?: 'public' | 'private' | 'friends'; ownerUserId?: string | null; }) => {
     setIsLoading(true);
     setError(null);
     try {

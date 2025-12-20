@@ -1,150 +1,18 @@
 {
   "pages": [
     {
-      "path": "/adult",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
       "path": "/adult/:category",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/torrents",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/forum",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": [
-        {
-          "permission": "forum:thread.create",
-          "apis": []
-        }
-      ]
-    },
-    {
-      "path": "/subtitles",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": [
-        {
-          "permission": "movie:update",
-          "apis": []
-        },
-        {
-          "label": "编辑",
-          "permission": "playlist:update",
-          "apis": []
-        },
-        {
-          "permission": "playlist:cover.upload",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "episode:update",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "episode:create",
-          "apis": []
-        },
-        {
-          "permission": "series:update",
-          "apis": []
-        },
-        {
-          "permission": "forum:thread.create",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "torrent:create",
-          "apis": []
-        }
-      ]
-    },
-    {
-      "path": "/movies",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/movie/:id",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/series",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/series/:id",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/episodes/:episodeId",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/playlists",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/playlist/:id",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/invite",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/bonus",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/torrent-history",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/requests",
-      "permission": "page:unknown",
-      "name": "page:unknown",
+      "permission": "page:adult",
+      "name": "成人区",
       "buttons": []
     },
     {
       "path": "/upload",
-      "permission": "page:unknown",
-      "name": "page:unknown",
+      "permission": "page:upload",
+      "name": "上传资源",
       "buttons": [
         {
-          "label": "取消",
+          "label": "发布种子",
           "permission": "torrent:create",
           "apis": []
         }
@@ -152,10 +20,11 @@
     },
     {
       "path": "/edit/movie",
-      "permission": "page:unknown",
-      "name": "page:unknown",
+      "permission": "page:edit:movie",
+      "name": "编辑电影",
       "buttons": [
         {
+          "label": "保存影片",
           "permission": "movie:update",
           "apis": []
         }
@@ -163,20 +32,21 @@
     },
     {
       "path": "/edit/series",
-      "permission": "page:unknown",
-      "name": "page:unknown",
+      "permission": "page:edit:series",
+      "name": "编辑剧集",
       "buttons": [
         {
-          "label": "取消",
+          "label": "保存分集",
           "permission": "episode:update",
           "apis": []
         },
         {
-          "label": "取消",
+          "label": "保存分集",
           "permission": "episode:create",
           "apis": []
         },
         {
+          "label": "保存剧集",
           "permission": "series:update",
           "apis": []
         }
@@ -184,394 +54,274 @@
     },
     {
       "path": "/edit/playlist",
-      "permission": "page:unknown",
-      "name": "page:unknown",
+      "permission": "page:edit:playlist",
+      "name": "编辑片单",
       "buttons": [
         {
-          "label": "编辑",
+          "label": "编辑片单",
           "permission": "playlist:update",
           "apis": []
         },
         {
-          "permission": "playlist:cover.upload",
+          "label": "删除片单",
+          "permission": "playlist:delete",
+          "apis": []
+        },
+        {
+          "label": "添加影片",
+          "permission": "playlist:item.add",
+          "apis": []
+        },
+        {
+          "label": "添加影片",
+          "permission": "playlist:item.add",
+          "apis": []
+        },
+        {
+          "label": "添加影片",
+          "permission": "playlist:item.add",
+          "apis": []
+        },
+        {
+          "label": "上移",
+          "permission": "playlist:order.update",
+          "apis": []
+        },
+        {
+          "label": "下移",
+          "permission": "playlist:order.update",
+          "apis": []
+        },
+        {
+          "label": "移除影片",
+          "permission": "playlist:item.remove",
+          "apis": []
+        },
+        {
+          "label": "保存片单",
+          "permission": "playlist:update",
           "apis": []
         }
       ]
     },
     {
-      "path": "/review",
-      "permission": "page:unknown",
-      "name": "page:unknown",
+      "path": "/requests",
+      "permission": "page:requests",
+      "name": "求种专区",
       "buttons": []
     },
     {
-      "path": "/messages",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/control",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/groups",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/candidates",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/rules",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/staff",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/tickets",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/tutorials",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/seeding",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": [
-        {
-          "permission": "movie:update",
-          "apis": []
-        },
-        {
-          "label": "编辑",
-          "permission": "playlist:update",
-          "apis": []
-        },
-        {
-          "permission": "playlist:cover.upload",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "episode:update",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "episode:create",
-          "apis": []
-        },
-        {
-          "permission": "series:update",
-          "apis": []
-        },
-        {
-          "permission": "forum:thread.create",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "torrent:create",
-          "apis": []
-        }
-      ]
-    },
-    {
-      "path": "/dead-torrents",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/rss",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": [
-        {
-          "permission": "movie:update",
-          "apis": []
-        },
-        {
-          "label": "编辑",
-          "permission": "playlist:update",
-          "apis": []
-        },
-        {
-          "permission": "playlist:cover.upload",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "episode:update",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "episode:create",
-          "apis": []
-        },
-        {
-          "permission": "series:update",
-          "apis": []
-        },
-        {
-          "permission": "forum:thread.create",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "torrent:create",
-          "apis": []
-        }
-      ]
-    },
-    {
-      "path": "/announcements",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/games",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/magicfarm",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/music",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": [
-        {
-          "permission": "movie:update",
-          "apis": []
-        },
-        {
-          "label": "编辑",
-          "permission": "playlist:update",
-          "apis": []
-        },
-        {
-          "permission": "playlist:cover.upload",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "episode:update",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "episode:create",
-          "apis": []
-        },
-        {
-          "permission": "series:update",
-          "apis": []
-        },
-        {
-          "permission": "forum:thread.create",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "torrent:create",
-          "apis": []
-        }
-      ]
-    },
-    {
-      "path": "/player",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": [
-        {
-          "permission": "movie:update",
-          "apis": []
-        },
-        {
-          "label": "编辑",
-          "permission": "playlist:update",
-          "apis": []
-        },
-        {
-          "permission": "playlist:cover.upload",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "episode:update",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "episode:create",
-          "apis": []
-        },
-        {
-          "permission": "series:update",
-          "apis": []
-        },
-        {
-          "permission": "forum:thread.create",
-          "apis": []
-        },
-        {
-          "label": "取消",
-          "permission": "torrent:create",
-          "apis": []
-        }
-      ]
-    },
-    {
-      "path": "/torrent/:id",
-      "permission": "page:unknown",
-      "name": "page:unknown",
-      "buttons": []
-    },
-    {
-      "path": "/login",
-      "permission": "page:home",
-      "name": "page:home",
-      "buttons": []
-    },
-    {
-      "path": "/adult",
-      "permission": "page:adult",
-      "name": "page:adult",
-      "buttons": []
-    },
-    {
-      "path": "/torrents",
-      "permission": "page:torrents",
-      "name": "page:torrents",
-      "buttons": []
-    },
-    {
-      "path": "/subtitles",
-      "permission": "page:ranking",
-      "name": "page:ranking",
-      "buttons": []
-    },
-    {
-      "path": "/movies",
-      "permission": "page:movies",
-      "name": "page:movies",
-      "buttons": []
-    },
-    {
-      "path": "/series",
-      "permission": "page:series",
-      "name": "page:series",
-      "buttons": []
-    },
-    {
-      "path": "/episodes/:episodeId",
-      "permission": "page:episode-detail",
-      "name": "page:episode-detail",
-      "buttons": []
-    },
-    {
-      "path": "/playlist/:id",
-      "permission": "page:playlist-detail",
-      "name": "page:playlist-detail",
+      "path": "/invite",
+      "permission": "page:invite",
+      "name": "邀请管理",
       "buttons": []
     },
     {
       "path": "/bonus",
       "permission": "page:bonus",
-      "name": "page:bonus",
+      "name": "魔力值",
       "buttons": []
     },
     {
-      "path": "/requests",
-      "permission": "page:requests",
-      "name": "page:requests",
-      "buttons": []
-    },
-    {
-      "path": "/edit/movie",
-      "permission": "page:edit",
-      "name": "page:edit",
-      "buttons": []
-    },
-    {
-      "path": "/edit/playlist",
-      "permission": "page:edit",
-      "name": "page:edit",
+      "path": "/torrent-history",
+      "permission": "page:torrent-history",
+      "name": "做种历史",
       "buttons": []
     },
     {
       "path": "/messages",
       "permission": "page:messages",
-      "name": "page:messages",
-      "buttons": []
-    },
-    {
-      "path": "/groups",
-      "permission": "page:groups",
-      "name": "page:groups",
-      "buttons": []
-    },
-    {
-      "path": "/rules",
-      "permission": "page:rules",
-      "name": "page:rules",
+      "name": "消息中心",
       "buttons": []
     },
     {
       "path": "/tickets",
       "permission": "page:tickets",
-      "name": "page:tickets",
-      "buttons": []
-    },
-    {
-      "path": "/seeding",
-      "permission": "page:seeding",
-      "name": "page:seeding",
+      "name": "工单页面",
       "buttons": []
     },
     {
       "path": "/rss",
       "permission": "page:rss",
-      "name": "page:rss",
+      "name": "RSS订阅",
+      "buttons": []
+    },
+    {
+      "path": "/seeding",
+      "permission": "page:seeding",
+      "name": "保种页面",
+      "buttons": []
+    },
+    {
+      "path": "/dead-torrents",
+      "permission": "page:dead-torrents",
+      "name": "断种页面",
       "buttons": []
     },
     {
       "path": "/games",
       "permission": "page:games",
-      "name": "page:games",
+      "name": "小游戏",
+      "buttons": []
+    },
+    {
+      "path": "/magicfarm",
+      "permission": "page:magicfarm",
+      "name": "魔力农场",
       "buttons": []
     },
     {
       "path": "/music",
       "permission": "page:music",
-      "name": "page:music",
+      "name": "音乐页面",
+      "buttons": []
+    },
+    {
+      "path": "/player",
+      "permission": "page:player",
+      "name": "播放器",
+      "buttons": []
+    },
+    {
+      "path": "/groups",
+      "permission": "page:groups",
+      "name": "管理组",
+      "buttons": []
+    },
+    {
+      "path": "/candidates",
+      "permission": "page:candidates",
+      "name": "候选页面",
+      "buttons": []
+    },
+    {
+      "path": "/review",
+      "permission": "review:write",
+      "name": "审核页面",
+      "buttons": []
+    },
+    {
+      "path": "/control",
+      "permission": "page:control",
+      "name": "控制面板",
+      "buttons": []
+    },
+    {
+      "path": "/adult/:category",
+      "permission": "page:adult",
+      "name": "成人区",
+      "buttons": []
+    },
+    {
+      "path": "/edit/movie",
+      "permission": "page:edit:movie",
+      "name": "编辑电影",
+      "buttons": [
+        {
+          "label": "保存影片",
+          "permission": "movie:update",
+          "apis": []
+        }
+      ]
+    },
+    {
+      "path": "/edit/playlist",
+      "permission": "page:edit:playlist",
+      "name": "编辑片单",
+      "buttons": [
+        {
+          "label": "编辑片单",
+          "permission": "playlist:update",
+          "apis": []
+        },
+        {
+          "label": "删除片单",
+          "permission": "playlist:delete",
+          "apis": []
+        },
+        {
+          "label": "添加影片",
+          "permission": "playlist:item.add",
+          "apis": []
+        },
+        {
+          "label": "添加影片",
+          "permission": "playlist:item.add",
+          "apis": []
+        },
+        {
+          "label": "添加影片",
+          "permission": "playlist:item.add",
+          "apis": []
+        },
+        {
+          "label": "上移",
+          "permission": "playlist:order.update",
+          "apis": []
+        },
+        {
+          "label": "下移",
+          "permission": "playlist:order.update",
+          "apis": []
+        },
+        {
+          "label": "移除影片",
+          "permission": "playlist:item.remove",
+          "apis": []
+        },
+        {
+          "label": "保存片单",
+          "permission": "playlist:update",
+          "apis": []
+        }
+      ]
+    },
+    {
+      "path": "/invite",
+      "permission": "page:invite",
+      "name": "邀请管理",
+      "buttons": []
+    },
+    {
+      "path": "/torrent-history",
+      "permission": "page:torrent-history",
+      "name": "做种历史",
+      "buttons": []
+    },
+    {
+      "path": "/tickets",
+      "permission": "page:tickets",
+      "name": "工单页面",
+      "buttons": []
+    },
+    {
+      "path": "/seeding",
+      "permission": "page:seeding",
+      "name": "保种页面",
+      "buttons": []
+    },
+    {
+      "path": "/games",
+      "permission": "page:games",
+      "name": "小游戏",
+      "buttons": []
+    },
+    {
+      "path": "/music",
+      "permission": "page:music",
+      "name": "音乐页面",
+      "buttons": []
+    },
+    {
+      "path": "/groups",
+      "permission": "page:groups",
+      "name": "管理组",
+      "buttons": []
+    },
+    {
+      "path": "/review",
+      "permission": "review:write",
+      "name": "审核页面",
       "buttons": []
     }
   ]

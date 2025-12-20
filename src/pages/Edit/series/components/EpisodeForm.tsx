@@ -208,6 +208,7 @@ export function EpisodeForm({
             {/* 保存分集按钮：根据模式区分创建与更新权限 */}
             <AccessControl
               requiredPermissions={[initialData ? "episode:update" : "episode:create"]}
+              name="保存分集"
               fallback={
                 <Button disabled className="bg-neutral-700 text-neutral-400">
                   {isSubmitting ? "保存中..." : "保存分集"}
