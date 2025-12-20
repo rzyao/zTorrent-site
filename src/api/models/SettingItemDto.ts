@@ -31,7 +31,7 @@ export namespace SettingItemDto {
         NUMBER = 'number',
         BOOLEAN = 'boolean',
         JSON = 'json',
-        DATETIME = 'datetime',
+        TIMESTAMP = 'timestamp',
         RATE = 'rate',
         PASSWORD = 'password',
     }

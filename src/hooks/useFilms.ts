@@ -114,16 +114,18 @@ export function useFilms() {
     }
   }, []);
 
-  const addTorrent = useCallback(async (filmId: string, torrentId: string, sort?: number) => {
+  const addTorrent = useCallback(async (filmId: string, torrentId: string, _sort?: number) => {
     setIsLoading(true);
     setError(null);
     try {
-      // TODO: 待后端实现 moviesControllerAddTorrent
-      // const MoviesService = await getMoviesService();
-      // const res = await MoviesService.moviesControllerAddTorrent({ filmId, torrentId, sort });
-      throw new Error("API not implemented: moviesControllerAddTorrent");
-      // const data = unwrap(res);
-      // return data;
+      const MoviesService = await getMoviesService();
+      // 使用 moviesControllerBindTorrents 接口绑定种子
+      const res = await MoviesService.moviesControllerBindTorrents({ 
+        id: filmId, 
+        torrentIds: [torrentId] 
+      });
+      const data = unwrap(res);
+      return data;
     } catch (e: any) {
       const msg = e?.body?.data?.message || e?.body?.message || e?.message || '绑定影片种子失败';
       setError(msg);
@@ -137,12 +139,14 @@ export function useFilms() {
     setIsLoading(true);
     setError(null);
     try {
-      // TODO: 待后端实现 moviesControllerRemoveTorrent
-      // const MoviesService = await getMoviesService();
-      // const res = await MoviesService.moviesControllerRemoveTorrent({ filmId, torrentId } as any);
-      throw new Error("API not implemented: moviesControllerRemoveTorrent");
-      // const data = unwrap(res);
-      // return data;
+      const MoviesService = await getMoviesService();
+      // 使用 moviesControllerUnbindTorrents 接口解绑种子
+      const res = await MoviesService.moviesControllerUnbindTorrents({ 
+        id: filmId, 
+        torrentIds: [torrentId] 
+      });
+      const data = unwrap(res);
+      return data;
     } catch (e: any) {
       const msg = e?.body?.data?.message || e?.body?.message || e?.message || '移除影片种子失败';
       setError(msg);
