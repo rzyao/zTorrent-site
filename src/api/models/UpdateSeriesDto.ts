@@ -84,9 +84,9 @@ export type UpdateSeriesDto = {
      */
     enabled?: boolean;
     /**
-     * 排序
+     * 奖项信息
      */
-    sort?: number;
+    awards?: Array<string>;
 };
 export namespace UpdateSeriesDto {
     /**

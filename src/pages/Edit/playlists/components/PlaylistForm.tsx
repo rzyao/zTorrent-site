@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { AccessControl } from "@/components/AccessControl";
+import { Label } from "@/components/ui/label";
 
 import {
   Edit,
@@ -114,54 +115,52 @@ export function PlaylistForm({
         />
       </div>
 
-      {/* 分类 */}
-      <div className="space-y-2">
-        <label className="text-neutral-300 text-sm">
-          分类 <span className="text-red-500">*</span>
-        </label>
-        <Select
-          value={editForm.category}
-          onValueChange={(val) => onChange({ ...editForm, category: val })}
-        >
-          <SelectTrigger className="w-full bg-neutral-900/50 border-neutral-700 text-white h-[42px]">
-            <SelectValue placeholder="选择片单分类" />
-          </SelectTrigger>
-          <SelectContent>
-            {playlist.map((cat) => (
-              <SelectItem key={cat.key} value={cat.key}>
-                {cat.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <div className="flex items-center gap-10">
+        {/* 片单类型 */}
+        <div className="flex items-center gap-2">
+          <label className="text-neutral-300 text-sm flex items-center gap-2">
+            片单类型 <span className="text-red-500">*</span>
+          </label>
+          <Select
+            value={editForm.type}
+            onValueChange={(val) =>
+              onChange({ ...editForm, type: val as PlaylistType })
+            }
+          >
+            <SelectTrigger className="w-full bg-neutral-900/50 border-neutral-700 text-white h-[42px]">
+              <SelectValue placeholder="选择片单类型" />
+            </SelectTrigger>
+            <SelectContent>
+              {PLAYLIST_TYPE_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-      {/* 片单类型 */}
-      <div className="space-y-2">
-        <label className="text-neutral-300 text-sm flex items-center gap-2">
-          <Layers className="w-4 h-4 text-amber-400" />
-          片单类型 <span className="text-red-500">*</span>
-        </label>
-        <Select
-          value={editForm.type}
-          onValueChange={(val) =>
-            onChange({ ...editForm, type: val as PlaylistType })
-          }
-        >
-          <SelectTrigger className="w-full bg-neutral-900/50 border-neutral-700 text-white h-[42px]">
-            <SelectValue placeholder="选择片单类型" />
-          </SelectTrigger>
-          <SelectContent>
-            {PLAYLIST_TYPE_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <p className="text-neutral-500 text-xs">
-          综合适合混合内容，主题适合特定话题，系列适合电影系列，导演/演员适合即人作品集
-        </p>
+        {/* 分类 */}
+        <div className="flex items-center gap-2">
+          <label className="text-neutral-300 text-sm">
+            片单分类 <span className="text-red-500">*</span>
+          </label>
+          <Select
+            value={editForm.category}
+            onValueChange={(val) => onChange({ ...editForm, category: val })}
+          >
+            <SelectTrigger className="w-full bg-neutral-900/50 border-neutral-700 text-white h-[42px]">
+              <SelectValue placeholder="选择片单分类" />
+            </SelectTrigger>
+            <SelectContent>
+              {playlist.map((cat) => (
+                <SelectItem key={cat.key} value={cat.key}>
+                  {cat.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* 片单描述 */}

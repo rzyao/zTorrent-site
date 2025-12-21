@@ -8,7 +8,7 @@ export type SetRolePermissionsDto = {
      */
     roleKey: string;
     /**
-     * 权限key列表
+     * 权限key列表（覆盖式设置）
      */
     permissionKeys: Array<string>;
 };

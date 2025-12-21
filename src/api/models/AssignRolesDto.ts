@@ -8,7 +8,7 @@ export type AssignRolesDto = {
      */
     userId: string;
     /**
-     * 角色key列表
+     * 角色key列表（覆盖式分配）
      */
     roleKeys: Array<string>;
 };

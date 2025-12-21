@@ -42,21 +42,21 @@ export function useEditPlaylist() {
 
   // 创建/编辑表单
   const [editForm, setEditForm] = useState<{
-    title: string;
-    description: string;
-    cover: string;
-    visibility: Visibility;
-    type: PlaylistType;
-    tags: string[];
-    category: string;
+    title: string,
+    description: string,
+    cover: string,
+    visibility: Visibility,
+    type: PlaylistType | undefined,
+    tags: string[],
+    category: string | undefined,
   }>({
     title: '',
     description: '',
     cover: '',
     visibility: 'public',
-    type: 'general',
+    type: undefined,
     tags: [],
-    category: '',
+    category: undefined,
   });
 
   // 上传封面需要的隐藏文件输入
@@ -137,7 +137,7 @@ export function useEditPlaylist() {
 
   /** 开始创建新片单 */
   const handleCreateNew = () => {
-    setEditForm({ title: '', description: '', cover: '', visibility: 'public', type: 'general', tags: [], category: '' });
+    setEditForm({ title: '', description: '', cover: '', visibility: 'public', type: undefined as any, tags: [], category: undefined });
     setIsCreating(true);
     setIsEditing(false);
     setSelectedPlaylist(null);
@@ -150,9 +150,9 @@ export function useEditPlaylist() {
       description: playlist.description,
       cover: playlist.cover,
       visibility: playlist.visibility,
-      type: playlist.type ?? 'general',
+      type: playlist.type || (undefined as any),
       tags: playlist.tags ?? [],
-      category: playlist.category ?? '',
+      category: playlist.category || undefined,
     });
     setSelectedPlaylist(playlist);
     setIsEditing(true);

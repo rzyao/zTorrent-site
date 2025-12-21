@@ -4,6 +4,14 @@
 /* eslint-disable */
 export type ListPermissionsDto = {
     /**
+     * 页码
+     */
+    page?: number;
+    /**
+     * 每页数量
+     */
+    limit?: number;
+    /**
      * 按 key 模糊搜索
      */
     key?: string;
@@ -19,14 +27,6 @@ export type ListPermissionsDto = {
      * 作用范围过滤
      */
     scope?: ListPermissionsDto.scope;
-    /**
-     * 页码
-     */
-    page?: number;
-    /**
-     * 每页数量
-     */
-    limit?: number;
 };
 export namespace ListPermissionsDto {
     /**

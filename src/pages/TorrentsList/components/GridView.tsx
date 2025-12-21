@@ -24,34 +24,26 @@ export function GridView({
   getCoverSrc,
 }: GridViewProps) {
   return (
-    <div
-      className="mb-8"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-        gap: "1rem",
-      }}
-    >
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-4 mt-4 mb-18">
       {items.map((torrent) => (
-        <div key={torrent.id}>
-          <TorrentCard
-            id={torrent.id}
-            thumbnail={getCoverSrc(torrent)}
-            title={torrent.title}
-            subTitle={torrent.subTitle}
-            category={getCategoryLabel(torrent.category) || torrent.category}
-            size={torrent.size}
-            seeders={torrent.seeders}
-            leechers={torrent.leechers}
-            isFree={torrent.isFree}
-            isVip={torrent.isVip}
-            isHot={torrent.isHot}
-            rating={torrent.rating}
-            comments={torrent.comments}
-            doubanUrl={torrent.doubanUrl}
-            onDownloadByIdTitle={onDownload}
-          />
-        </div>
+        <TorrentCard
+          key={torrent.id}
+          id={torrent.id}
+          thumbnail={getCoverSrc(torrent)}
+          title={torrent.title}
+          subTitle={torrent.subTitle}
+          category={getCategoryLabel(torrent.category) || torrent.category}
+          size={torrent.size}
+          seeders={torrent.seeders}
+          leechers={torrent.leechers}
+          isFree={torrent.isFree}
+          isVip={torrent.isVip}
+          isHot={torrent.isHot}
+          rating={torrent.rating}
+          comments={torrent.comments}
+          doubanUrl={torrent.doubanUrl}
+          onDownloadByIdTitle={onDownload}
+        />
       ))}
     </div>
   );

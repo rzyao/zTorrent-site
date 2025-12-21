@@ -1,14 +1,14 @@
-import React from 'react';
-import { useDynamicTitle } from '@/hooks/useDynamicTitle';
-import { useNavigate } from 'react-router-dom';
-import { Upload, Info } from 'lucide-react';
-import { BasicInfo } from '@/pages/UploadTorrent/components/BasicInfo';
-import { QualityInfo } from '@/pages/UploadTorrent/components/QualityInfo';
-import { ExtendedInfo } from '@/pages/UploadTorrent/components/ExtendedInfo';
-import { Images } from '@/pages/UploadTorrent/components/Images';
-import { PublishOptions } from '@/pages/UploadTorrent/components/PublishOptions';
-import { SubmitBar } from '@/pages/UploadTorrent/components/SubmitBar';
-import { useUploadTorrent } from '@/pages/UploadTorrent/hooks/useUploadTorrent';
+import React from "react";
+import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useNavigate } from "react-router-dom";
+import { Upload, Info } from "lucide-react";
+import { BasicInfo } from "@/pages/UploadTorrent/components/BasicInfo";
+import { QualityInfo } from "@/pages/UploadTorrent/components/QualityInfo";
+import { ExtendedInfo } from "@/pages/UploadTorrent/components/ExtendedInfo";
+import { Images } from "@/pages/UploadTorrent/components/Images";
+import { PublishOptions } from "@/pages/UploadTorrent/components/PublishOptions";
+import { SubmitBar } from "@/pages/UploadTorrent/components/SubmitBar";
+import { useUploadTorrent } from "@/pages/UploadTorrent/hooks/useUploadTorrent";
 
 /**
  * UploadTorrentPage
@@ -18,7 +18,7 @@ import { useUploadTorrent } from '@/pages/UploadTorrent/hooks/useUploadTorrent';
  * - 不直接包含业务逻辑，所有状态与方法来源于 `useUploadTorrent`。
  */
 export function UploadTorrentPage() {
-  useDynamicTitle('上传');
+  useDynamicTitle("上传");
   const navigate = useNavigate();
   const U = useUploadTorrent();
 
@@ -46,11 +46,11 @@ export function UploadTorrentPage() {
           <BasicInfo
             mainCategories={U.mainCategories}
             selectedCategory={U.selectedCategory}
-            selectedSubCategories={U.selectedSubCategories}
-            subCategories={U.subCategories}
+            selectedTags={U.selectedTags}
+            tags={U.tags}
             onChangeCategory={U.setSelectedCategory}
-            onClearSubCategories={U.handleClearSubCategories}
-            onToggleSubCategory={U.toggleSubCategory}
+            onClearTags={U.handleClearTags}
+            onToggleTag={U.toggleTag}
             onTorrentInputChange={U.onTorrentInputChange}
             title={U.title}
             onTitleChange={U.setTitle}
@@ -113,7 +113,9 @@ export function UploadTorrentPage() {
                 value={U.description}
                 onChange={(e) => U.handleDescriptionChange(e.target.value)}
               />
-              <p className="text-neutral-500 text-xs mt-3">支持BBCode格式，如 [b]粗体[/b] [i]斜体[/i] [img]图片链接[/img]</p>
+              <p className="text-neutral-500 text-xs mt-3">
+                支持BBCode格式，如 [b]粗体[/b] [i]斜体[/i] [img]图片链接[/img]
+              </p>
             </div>
           </div>
 
@@ -134,7 +136,10 @@ export function UploadTorrentPage() {
           />
 
           {/* 发布选项 */}
-          <PublishOptions isAnonymous={U.isAnonymous} onAnonymousChange={U.setIsAnonymous} />
+          <PublishOptions
+            isAnonymous={U.isAnonymous}
+            onAnonymousChange={U.setIsAnonymous}
+          />
 
           {/* 提交按钮 */}
           <SubmitBar submitting={U.submitting} onCancel={U.handleCancel} />
@@ -157,7 +162,9 @@ export function UploadTorrentPage() {
             </li>
             <li className="flex items-start gap-3">
               <span className="text-amber-400 mt-0.5">•</span>
-              <span>建议填写 MediaInfo 或 BDInfo 技术信息，便于用户了解资源质量</span>
+              <span>
+                建议填写 MediaInfo 或 BDInfo 技术信息，便于用户了解资源质量
+              </span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-amber-400 mt-0.5">•</span>
@@ -173,4 +180,3 @@ export function UploadTorrentPage() {
     </div>
   );
 }
-

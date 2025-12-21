@@ -14,7 +14,7 @@ export interface MappedFormData {
     description?: string;
     uploadedPoster?: string;
     selectedCategory?: string;
-    selectedSubCategories?: string[];
+    selectedTags?: string[];
     region?: string;
     videoStandard?: string;
     videoFormat?: string;
@@ -122,7 +122,7 @@ export const mapDataToForm = (data: ParsedHashData): MappedFormData => {
                     }
                 }
             }
-            result.selectedSubCategories = resolved;
+            result.selectedTags = resolved;
         }
     }
     if (!result.selectedCategory) {
@@ -139,8 +139,8 @@ export const mapDataToForm = (data: ParsedHashData): MappedFormData => {
             }
             if (cat) {
                 result.selectedCategory = cat.id;
-                if (subCatId) result.selectedSubCategories = [subCatId];
-                else if (cat.name === type || cat.id === type) result.selectedSubCategories = [];
+                if (subCatId) result.selectedTags = [subCatId];
+                else if (cat.name === type || cat.id === type) result.selectedTags = [];
             }
         }
     }

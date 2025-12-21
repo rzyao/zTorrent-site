@@ -72,8 +72,8 @@ export type CreateMovieDto = {
      */
     enabled?: boolean;
     /**
-     * 排序
+     * 奖项信息
      */
-    sort?: number;
+    awards?: Array<string>;
 };
 

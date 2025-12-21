@@ -12,6 +12,18 @@ export type PlaylistSummaryMetaDTO = {
      */
     updatedAt: string;
     /**
+     * 创建者ID
+     */
+    creatorId: string;
+    /**
+     * 创建者用户名
+     */
+    creator: string;
+    /**
+     * 拥有者ID
+     */
+    ownerId: string;
+    /**
      * 拥有者用户名
      */
     owner: string;

@@ -16,6 +16,11 @@ export type PlaylistDTO = {
     visibility: PlaylistDTO.visibility;
     coverUrl?: string;
     tags?: Array<string>;
+    category?: string;
+    /**
+     * 审核状态
+     */
+    approvalStatus: PlaylistDTO.approvalStatus;
     films: Array<PlaylistItemDTO>;
     stats: PlaylistStatsDTO;
     meta: PlaylistMetaDTO;
@@ -25,16 +30,22 @@ export namespace PlaylistDTO {
      * 片单类型
      */
     export enum type {
-        GENERAL = 'general',
-        TOPIC = 'topic',
+        MOVIE = 'movie',
         SERIES = 'series',
-        DIRECTOR = 'director',
-        CURATION = 'curation',
-        ACTOR = 'actor',
+        ADULT = 'adult',
+        MUSIC = 'music',
     }
     export enum visibility {
         PUBLIC = 'public',
         PRIVATE = 'private',
+    }
+    /**
+     * 审核状态
+     */
+    export enum approvalStatus {
+        PENDING = 'pending',
+        APPROVED = 'approved',
+        REJECTED = 'rejected',
     }
 }
 

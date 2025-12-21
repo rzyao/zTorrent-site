@@ -8,7 +8,7 @@ export type AssignPermissionsDto = {
      */
     userId: string;
     /**
-     * 权限key列表
+     * 权限key列表（覆盖式分配）
      */
     permissionKeys: Array<string>;
 };

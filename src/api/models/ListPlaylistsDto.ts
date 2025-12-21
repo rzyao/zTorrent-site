@@ -33,12 +33,10 @@ export namespace ListPlaylistsDto {
      * 片单类型筛选
      */
     export enum type {
-        GENERAL = 'general',
-        TOPIC = 'topic',
+        MOVIE = 'movie',
         SERIES = 'series',
-        DIRECTOR = 'director',
-        CURATION = 'curation',
-        ACTOR = 'actor',
+        ADULT = 'adult',
+        MUSIC = 'music',
     }
 }
 

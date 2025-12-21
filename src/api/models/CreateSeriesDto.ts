@@ -80,9 +80,9 @@ export type CreateSeriesDto = {
      */
     enabled?: boolean;
     /**
-     * 排序
+     * 奖项信息
      */
-    sort?: number;
+    awards?: Array<string>;
 };
 export namespace CreateSeriesDto {
     /**

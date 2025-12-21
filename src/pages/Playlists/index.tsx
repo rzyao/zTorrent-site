@@ -27,7 +27,6 @@ export function PlaylistsPage() {
   } = usePlaylists();
 
   const handlePlaylistClick = (playlist: Playlist) => {
-    incViews(playlist.id);
     navigate(`/playlist/${playlist.id}`);
   };
 
@@ -43,7 +42,7 @@ export function PlaylistsPage() {
         onCreate={() => {}}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
         {items.map((playlist) => (
           <PlaylistCard
             key={playlist.id}

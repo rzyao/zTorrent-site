@@ -1,10 +1,11 @@
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
-import { Download, Upload, Star, MessageSquare, HardDrive } from "lucide-react";
+import { Download, Upload, Star, CloudDownload, HardDrive } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatSize } from "@/utils/format";
+import { cn } from "@/components/ui/utils";
 
 interface TorrentCardProps {
   id: string | number;
@@ -48,117 +49,179 @@ function TorrentCardInner({
     navigate(`/torrent/${id}`);
   };
 
-  // 手机模式：点击卡片任意区域进入详情页
   const handleCardClick = (e: React.MouseEvent) => {
-    // 仅在窗口宽度小于 768px (md 断点) 时触发
     if (window.innerWidth < 768) {
       navigate(`/torrent/${id}`);
     }
   };
 
   return (
-    <div className="group cursor-pointer" onClick={handleCardClick}>
-      <div className="relative aspect-[2/3] rounded-md overflow-hidden mb-3">
-        <ImageWithFallback
-          src={thumbnail}
-          alt={title}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
-          decoding="async"
-        />
-        <div className="absolute top-2 left-2 flex flex-col gap-1">
-          <Badge color="gray" size="sm">
-            {category}
-          </Badge>
-          {isFree && (
-            <div className="bg-green-500 px-2 py-1 text-white text-xs rounded">
-              FREE
+    <div className="group relative hover:z-50">
+      {/* 实际卡片内容 */}
+      <div
+        className={cn(
+          "origin-center cursor-pointer overflow-hidden rounded-lg border border-transparent transition-all duration-300",
+          "hover:scale-110 hover:border-amber-500 hover:bg-[#1A1A1A] hover:shadow-2xl",
+        )}
+        onClick={handleCardClick}
+      >
+        <div className={cn("relative mb-2 aspect-2/3 overflow-hidden rounded-md", "sm:mb-3")}>
+          <ImageWithFallback
+            src={thumbnail}
+            alt={title}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            loading="lazy"
+            decoding="async"
+          />
+          <div className="absolute top-2 left-2 flex flex-col items-start gap-1.5 px-0.5">
+            {/* 分类标签：采用专业媒体库风格的标签设计 */}
+            <div
+              className={cn(
+                "flex items-center gap-1.5 rounded-sm bg-slate-900/80 px-2 py-0.5",
+                "border border-white/10 shadow-sm backdrop-blur-sm",
+              )}
+            >
+              {/* 装饰性小圆点/引导条，增加视觉精致度 */}
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-500 shadow-[0_0_4px_rgba(245,158,11,0.6)]" />
+              <span className="text-[10px] font-bold tracking-[0.1em] text-slate-100 uppercase">
+                {category}
+              </span>
             </div>
-          )}
-          {isVip && (
-            <div className="bg-yellow-500 px-2 py-1 text-white text-xs rounded">
-              VIP
+
+            {/* 状态标签：采用高对比度的渐变与微光感 */}
+            {isFree && (
+              <div
+                className={cn(
+                  "rounded-sm px-1.5 py-0.5 text-[9px] font-bold text-white shadow-lg",
+                  "bg-linear-to-r from-emerald-500 to-teal-500 shadow-emerald-500/20",
+                  "tracking-tighter",
+                )}
+              >
+                FREE
+              </div>
+            )}
+            {isVip && (
+              <div
+                className={cn(
+                  "rounded-sm px-1.5 py-0.5 text-[9px] font-bold text-white shadow-lg",
+                  "bg-linear-to-r from-amber-400 to-orange-500 shadow-amber-500/20",
+                  "tracking-tighter",
+                )}
+              >
+                VIP
+              </div>
+            )}
+            {isHot && (
+              <div
+                className={cn(
+                  "rounded-sm px-1.5 py-0.5 text-[9px] font-bold text-white shadow-lg",
+                  "bg-linear-to-r from-rose-500 to-red-600 shadow-rose-500/20",
+                  "tracking-tighter",
+                )}
+              >
+                HOT
+              </div>
+            )}
+          </div>
+
+          {/* 悬浮下载层 */}
+          <div
+            className={cn(
+              "absolute inset-0 hidden items-center justify-center opacity-0 transition-all duration-300",
+              "group-hover:opacity-100 md:flex",
+            )}
+          >
+            <div className="space-y-2 text-center">
+              <Button
+                className={cn(
+                  "flex items-center gap-2 rounded-full border-none bg-linear-to-r from-amber-400 to-amber-600 px-6 py-2.5",
+                  "font-semibold text-slate-950 shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all duration-300",
+                  "hover:scale-105 hover:from-amber-300 hover:to-amber-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.5)]",
+                )}
+                onClick={
+                  onDownloadByIdTitle ? () => onDownloadByIdTitle(String(id), title) : onDownload
+                }
+                title={!onDownload && !onDownloadByIdTitle ? "无下载权限" : undefined}
+                style={{
+                  fontFamily: '"Source Han Serif CN", "STSong", "SimSun", serif',
+                  fontWeight: 700,
+                }}
+              >
+                <CloudDownload className="h-5 w-5" />
+                <span>下载</span>
+              </Button>
             </div>
-          )}
-          {isHot && (
-            <div className="bg-red-500 px-2 py-1 text-white text-xs rounded">
-              HOT
-            </div>
-          )}
+          </div>
         </div>
-        {/* 悬浮按钮层：手机模式隐藏，桌面端显示 */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-300 hidden md:flex items-center justify-center opacity-0 group-hover:opacity-100">
-          <div className="text-center space-y-2">
-            <Button
-              className="bg-white hover:bg-gray-200 text-black px-6 py-2 rounded-md transition-colors"
-              onClick={handleDetailClick}
+
+        {/* 文本内容区域 */}
+        <div className="pt-0">
+          <div className="title relative">
+            {/* 占位层：支撑高度 */}
+            <div className="text pointer-events-none invisible py-2">
+              <h3 className="mb-0.5 line-clamp-1 text-xs sm:mb-1 sm:text-sm">{title}</h3>
+              {subTitle && <p className="mb-1 line-clamp-2 text-[10px] sm:text-xs">{subTitle}</p>}
+            </div>
+
+            {/* 实际显示层：处理悬浮展开 */}
+            <div
+              className={cn(
+                "text absolute bottom-0 left-0 w-full py-2 transition-all duration-300",
+                "group-hover:bg-[#1A1A1A]/80 group-hover:px-2",
+              )}
             >
-              详情
-            </Button>
-            <div className="flex items-center justify-center gap-4 text-white">
+              <h3
+                className={cn(
+                  "pointer-events-none mb-1 line-clamp-1 text-sm leading-relaxed tracking-wider text-white transition-colors",
+                  "shadow-black text-shadow-sm group-hover:text-amber-400 sm:text-base md:group-hover:line-clamp-none",
+                )}
+                style={{
+                  fontFamily: '"Source Han Serif CN", "STSong", "SimSun", serif',
+                  fontWeight: 700,
+                }}
+              >
+                {title}
+              </h3>
+              {subTitle && (
+                <p
+                  className={cn(
+                    "pointer-events-none mb-1 line-clamp-2 text-[10px] leading-normal tracking-wide text-gray-400 transition-colors",
+                    "group-hover:text-amber-200/90 sm:text-xs md:group-hover:line-clamp-none",
+                  )}
+                >
+                  {subTitle}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* 底部统计信息 */}
+          <div
+            className={cn(
+              "mb-1 flex items-center justify-between text-[10px] text-gray-400 transition-all duration-300",
+              "group-hover:px-2 sm:text-xs",
+            )}
+          >
+            <div className="flex items-center gap-1">
+              <HardDrive className="h-3 w-3" />
+              <span>{formatSize(size)}</span>
+            </div>
+            <div className="flex items-center gap-3 text-gray-500">
               <div className="flex items-center gap-1">
-                <Upload className="w-4 h-4 text-green-400" />
-                <span className="text-sm text-green-400">{seeders}</span>
+                <Upload className="h-3 w-3 text-green-400" />
+                <span>{seeders}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Download className="w-4 h-4 text-red-400" />
-                <span className="text-sm text-red-400">{leechers}</span>
+                <Download className="h-3 w-3 text-red-400" />
+                <span>{leechers}</span>
               </div>
             </div>
-            <Button
-              className="bg-white hover:bg-gray-200 text-black px-6 py-2 rounded-md transition-colors"
-              onClick={
-                onDownloadByIdTitle
-                  ? () => onDownloadByIdTitle(String(id), title)
-                  : onDownload
-              }
-              title={
-                !onDownload && !onDownloadByIdTitle ? "无下载权限" : undefined
-              }
-            >
-              下载
-            </Button>
           </div>
         </div>
       </div>
 
-      <h3 className="text-white text-sm mb-1 line-clamp-1 group-hover:text-[#FBBF24] transition-colors min-h-[1rem]">
-        {title}
-      </h3>
-      {subTitle && (
-        <p className="text-white text-sm mb-1 line-clamp-2 group-hover:text-[#FBBF24] text-gray-400 min-h-[2.5rem]">
-          {subTitle}
-        </p>
-      )}
-
-      <div className="flex items-center justify-between text-xs text-gray-400 mb-1">
-        <div className="flex items-center gap-1">
-          <HardDrive className="w-3 h-3" />
-          <span>{formatSize(size)}</span>
-        </div>
-        <div className="flex items-center gap-3 text-gray-500">
-          <div className="flex items-center gap-1">
-            <Upload className="w-3 h-3 text-green-400" />
-            <span>{seeders}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Download className="w-3 h-3 text-red-400" />
-            <span>{leechers}</span>
-          </div>
-          {comments !== undefined && comments > 0 && (
-            <div className="flex items-center gap-1">
-              <MessageSquare className="w-3 h-3" />
-              <span>{comments}</span>
-            </div>
-          )}
-          {rating && (
-            <div className="flex items-center gap-1">
-              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-              <span className="text-yellow-400">{rating}</span>
-            </div>
-          )}
-        </div>
-      </div>
+      {/* 桌面端布局占位 */}
+      <div className="pointer-events-none absolute inset-0 hidden md:block" />
     </div>
   );
 }

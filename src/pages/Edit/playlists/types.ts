@@ -10,26 +10,22 @@ export type Visibility = 'public' | 'private' | 'friends';
  * 片单类型
  * 与后端 CreatePlaylistDto.type / PlaylistDTO.type 枚举一一对应
  */
-export type PlaylistType = 'general' | 'topic' | 'series' | 'director' | 'curation' | 'actor' ;
+export type PlaylistType = 'movie' | 'series' | 'adult' | 'music' ;
 
 /** 片单类型中英文映射 */
 export const PLAYLIST_TYPE_LABELS: Record<PlaylistType, string> = {
-  general: '综合',
-  topic: '主题',
-  series: '系列',
-  director: '导演',
-  curation: '精选',
-  actor: '演员',
+  movie: '电影',
+  series: '剧集',
+  adult: '成人',
+  music: '音乐',
 };
 
 /** 片单类型选项列表，供表单 Select 使用 */
 export const PLAYLIST_TYPE_OPTIONS: { value: PlaylistType; label: string }[] = [
-  { value: 'general', label: '综合' },
-  { value: 'topic', label: '主题' },
-  { value: 'series', label: '系列' },
-  { value: 'director', label: '导演' },
-  { value: 'curation', label: '精选' },
-  { value: 'actor', label: '演员' },
+  { value: 'movie', label: '电影' },
+  { value: 'series', label: '剧集' },
+  { value: 'adult', label: '成人' },
+  { value: 'music', label: '音乐' },
 ];
 
 /**

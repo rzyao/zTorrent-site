@@ -1,0 +1,12 @@
+{
+  "plugins": ["prettier-plugin-classnames", "prettier-plugin-tailwindcss"],
+  "customAttributes": ["className", "class"],
+  "customFunctions": ["cn", "cva", "clsx"],
+  "tailwindAttributes": ["className", "class"],
+  "tailwindFunctions": ["cn", "cva", "clsx"],
+  "semi": true,
+  "singleQuote": false,
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "printWidth": 100
+}

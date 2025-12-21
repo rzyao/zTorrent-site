@@ -42,6 +42,16 @@ export const customToast = {
     });
   },
 
+  // 加载中消息
+  loading: (message: string, options?: ExternalToast) => {
+    return toast.loading(message, options);
+  },
+
+  // 关闭消息
+  dismiss: (id?: string | number) => {
+    toast.dismiss(id);
+  },
+
   // 也可以直接暴露原始的 toast 函数，以备不时之需
   raw: toast,
 };

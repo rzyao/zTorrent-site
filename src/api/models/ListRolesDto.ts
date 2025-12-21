@@ -4,14 +4,6 @@
 /* eslint-disable */
 export type ListRolesDto = {
     /**
-     * 按 key 模糊搜索
-     */
-    key?: string;
-    /**
-     * 按 name 模糊搜索
-     */
-    name?: string;
-    /**
      * 页码
      */
     page?: number;
@@ -19,5 +11,13 @@ export type ListRolesDto = {
      * 每页数量
      */
     limit?: number;
+    /**
+     * 按 key 模糊搜索
+     */
+    key?: string;
+    /**
+     * 按 name 模糊搜索
+     */
+    name?: string;
 };
 

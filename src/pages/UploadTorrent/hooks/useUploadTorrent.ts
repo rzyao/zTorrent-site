@@ -9,6 +9,7 @@ import { useUploadStore } from '@/stores/uploadStore';
 import { extractDataFromHash, mapDataToForm } from '@/utils/hashParser';
 import { extractErrorMessage } from '@/utils/errorMessage';
 import { extractInfoBytes } from '@/utils/torrentParser';
+import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
 
 /**
  * useUploadTorrent
@@ -21,10 +22,11 @@ export function useUploadTorrent() {
 
   // 从 Store 获取所有状态和 Action
   const store = useUploadStore();
+  const prefStore = usePreferenceCategoriesStore();
   const {
     // 状态
     selectedCategory,
-    selectedSubCategories,
+    selectedTags,
     selectedLanguages,
     selectedSubtitles,
     uploadedPoster,
@@ -51,10 +53,10 @@ export function useUploadTorrent() {
 
     // Actions
     setSelectedCategory,
-    setSelectedSubCategories,
+    setSelectedTags,
     setSelectedLanguages,
     setSelectedSubtitles,
-    toggleSubCategory,
+    toggleTag,
     toggleLanguage,
     toggleSubtitle,
     setUploadedPoster,
@@ -91,7 +93,20 @@ export function useUploadTorrent() {
   const shotsInputRef = useRef<HTMLInputElement>(null);
 
   // 选项常量（用 useMemo 保持稳定引用）
-  const mainCategories = useMemo(() => categoryTree, []);
+  const mainCategories = useMemo(() => {
+    if (prefStore.torrent && prefStore.torrent.length > 0) {
+      return prefStore.torrent.map((item) => {
+        // 尝试从原始硬编码 tree 中匹配子分类，以保留标签定义
+        const original = categoryTree.find((c) => c.id === item.key);
+        return {
+          id: item.key,
+          name: item.label,
+          subCategories: original?.subCategories ?? [],
+        };
+      });
+    }
+    return categoryTree;
+  }, [prefStore.torrent]);
   const resolutionOptions = useMemo(
     () => [
       'SD 480p', 'HD 720', 'HD 720i', 'HD 720p',
@@ -121,10 +136,10 @@ export function useUploadTorrent() {
     []
   );
 
-  // 根据主分类派生副分类列表
+  // 根据分类派生标签列表
   const subCategories = useMemo(
-    () => categoryTree.find((c) => c.id === selectedCategory)?.subCategories ?? [],
-    [selectedCategory]
+    () => mainCategories.find((c) => c.id === selectedCategory)?.subCategories ?? [],
+    [selectedCategory, mainCategories]
   );
 
   // 初始化：解析 Hash 或重置表单
@@ -281,7 +296,7 @@ export function useUploadTorrent() {
     if (submitting) return;
     const errors: string[] = [];
     if (!torrentFile) errors.push('请选择种子文件');
-    if (!selectedCategory) errors.push('请选择主分类');
+    if (!selectedCategory) errors.push('请选择分类');
     if (!title.trim()) errors.push('请输入标题');
     if (!subTitle.trim()) errors.push('请输入副标题');
     if (!description.trim()) errors.push('请输入简介');
@@ -297,7 +312,6 @@ export function useUploadTorrent() {
         file: torrentFile,
         name,
         category: selectedCategory,
-        subCategories: selectedSubCategories.length ? selectedSubCategories : undefined,
         title: title.trim(),
         subTitle: subTitle.trim(),
         standard: videoStandard || undefined,
@@ -314,7 +328,7 @@ export function useUploadTorrent() {
         mediaInfo: mediaInfoText || undefined,
         isAnonymous: isAnonymous ? 'true' : 'false',
         stills: screenshots.length ? screenshots : undefined,
-        tags: selectedSubCategories.length ? selectedSubCategories : undefined,
+        tags: selectedTags.length ? selectedTags : undefined,
       };
       const resp = await TorrentsService.torrentsControllerUpload(formData as any);
       const body: any = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
@@ -332,7 +346,7 @@ export function useUploadTorrent() {
     }
   }, [
     submitting, torrentFile, selectedCategory, title, subTitle, description, uploadedPoster,
-    selectedSubCategories, videoStandard, videoFormat, audioFormat, productionTeam, region,
+    selectedTags, videoStandard, videoFormat, audioFormat, productionTeam, region,
     selectedLanguages, selectedSubtitles, imdbUrl, doubanUrl, mediaInfoText, isAnonymous, screenshots,
     setSubmitting, reset, navigate
   ]);
@@ -364,7 +378,7 @@ export function useUploadTorrent() {
   }, [ptGenUrl, setPtGenError, setPtGenLoading, setDescription]);
 
   // Stable handlers for child components
-  const handleClearSubCategories = useCallback(() => setSelectedSubCategories([]), [setSelectedSubCategories]);
+  const handleClearTags = useCallback(() => setSelectedTags([]), [setSelectedTags]);
   const handleDescriptionChange = useCallback((v: string) => setDescription(v), [setDescription]);
   const handlePosterRemove = useCallback(() => setUploadedPoster(''), [setUploadedPoster]);
   const handleRemoveScreenshot = useCallback((index: number) => removeScreenshot(index), [removeScreenshot]);
@@ -383,11 +397,11 @@ export function useUploadTorrent() {
     subtitleOptions,
     selectedCategory,
     setSelectedCategory,
-    selectedSubCategories,
-    setSelectedSubCategories,
-    toggleSubCategory,
-    subCategories,
-    handleClearSubCategories,
+    selectedTags,
+    setSelectedTags,
+    toggleTag,
+    tags: subCategories,
+    handleClearTags,
 
     // 基本信息
     title,
@@ -457,7 +471,7 @@ export function useUploadTorrent() {
     handleCancel,
   }), [
     mainCategories, resolutionOptions, videoCodecOptions, audioCodecOptions, countryOptions, languageOptions, subtitleOptions,
-    selectedCategory, setSelectedCategory, selectedSubCategories, setSelectedSubCategories, toggleSubCategory, subCategories, handleClearSubCategories,
+    selectedCategory, setSelectedCategory, selectedTags, setSelectedTags, toggleTag, subCategories, handleClearTags,
     title, setTitle, subTitle, setSubTitle, torrentFile, onTorrentInputChange,
     videoResolution, setVideoResolution, videoStandard, setVideoStandard, audioFormat, setAudioFormat, videoFormat, setVideoFormat, productionTeam, setProductionTeam, mediaInfo, mediaInfoText, handleMediaInfoChange,
     region, setRegion, imdbUrl, setImdbUrl, doubanUrl, setDoubanUrl, ptGenUrl, setPtGenUrl, ptGenLoading, ptGenError, fetchPtGen,

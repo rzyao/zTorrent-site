@@ -3,7 +3,7 @@ import { MediaInfoResult } from '@/types/UploadTorrentPage'
 
 interface UploadState {
   selectedCategory: string
-  selectedSubCategories: string[]
+  selectedTags: string[]
   selectedLanguages: string[]
   selectedSubtitles: string[]
   uploadedPoster: string
@@ -29,10 +29,10 @@ interface UploadState {
   mediaInfo: MediaInfoResult
 
   setSelectedCategory: (id: string) => void
-  setSelectedSubCategories: (ids: string[]) => void
+  setSelectedTags: (ids: string[]) => void
   setSelectedLanguages: (langs: string[]) => void
   setSelectedSubtitles: (subs: string[]) => void
-  toggleSubCategory: (id: string) => void
+  toggleTag: (id: string) => void
   toggleLanguage: (lang: string) => void
   toggleSubtitle: (sub: string) => void
   setUploadedPoster: (url: string) => void
@@ -64,7 +64,7 @@ interface UploadState {
 
 const initialState = {
   selectedCategory: '',
-  selectedSubCategories: [],
+  selectedTags: [],
   selectedLanguages: [],
   selectedSubtitles: [],
   uploadedPoster: '',
@@ -93,14 +93,14 @@ const initialState = {
 export const useUploadStore = create<UploadState>((set, get) => ({
   ...initialState,
 
-  setSelectedCategory: (id) => set({ selectedCategory: id, selectedSubCategories: [] }),
-  setSelectedSubCategories: (ids) => set({ selectedSubCategories: ids }),
+  setSelectedCategory: (id) => set({ selectedCategory: id, selectedTags: [] }),
+  setSelectedTags: (ids) => set({ selectedTags: ids }),
   setSelectedLanguages: (langs) => set({ selectedLanguages: langs }),
   setSelectedSubtitles: (subs) => set({ selectedSubtitles: subs }),
-  toggleSubCategory: (id) => {
-    const cur = get().selectedSubCategories
+  toggleTag: (id) => {
+    const cur = get().selectedTags
     set({
-      selectedSubCategories: cur.includes(id) ? cur.filter(v => v !== id) : [...cur, id],
+      selectedTags: cur.includes(id) ? cur.filter(v => v !== id) : [...cur, id],
     })
   },
   toggleLanguage: (lang) => {

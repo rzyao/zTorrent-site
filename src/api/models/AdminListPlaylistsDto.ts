@@ -18,12 +18,10 @@ export type AdminListPlaylistsDto = {
 };
 export namespace AdminListPlaylistsDto {
     export enum type {
-        GENERAL = 'general',
-        TOPIC = 'topic',
+        MOVIE = 'movie',
         SERIES = 'series',
-        DIRECTOR = 'director',
-        CURATION = 'curation',
-        ACTOR = 'actor',
+        ADULT = 'adult',
+        MUSIC = 'music',
     }
     export enum visibility {
         PUBLIC = 'public',

@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AddFilmToPlaylistDto } from '../models/AddFilmToPlaylistDto';
+import type { AddItemToPlaylistDto } from '../models/AddItemToPlaylistDto';
 import type { AdminListPlaylistsDto } from '../models/AdminListPlaylistsDto';
 import type { AdminListPlaylistsResponseDto } from '../models/AdminListPlaylistsResponseDto';
 import type { CategoriesListResponseDto } from '../models/CategoriesListResponseDto';
@@ -24,9 +24,9 @@ import type { LikePlaylistResponseDto } from '../models/LikePlaylistResponseDto'
 import type { ListPlaylistsDto } from '../models/ListPlaylistsDto';
 import type { ListPlaylistsResponseDto } from '../models/ListPlaylistsResponseDto';
 import type { PlaylistDTO } from '../models/PlaylistDTO';
-import type { RemoveFilmFromPlaylistDto } from '../models/RemoveFilmFromPlaylistDto';
-import type { ReorderFilmsInPlaylistDto } from '../models/ReorderFilmsInPlaylistDto';
+import type { RemoveItemFromPlaylistDto } from '../models/RemoveItemFromPlaylistDto';
 import type { ReorderFilmsInPlaylistResponseDto } from '../models/ReorderFilmsInPlaylistResponseDto';
+import type { ReorderItemsInPlaylistDto } from '../models/ReorderItemsInPlaylistDto';
 import type { ReviewDto } from '../models/ReviewDto';
 import type { SubscribeDto } from '../models/SubscribeDto';
 import type { SubscribeResponseDto } from '../models/SubscribeResponseDto';
@@ -183,13 +183,13 @@ export class PlaylistsService {
         });
     }
     /**
-     * 添加影片到片单
+     * 添加内容到片单（支持电影和剧集）
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static playlistsControllerAddFilm(
-        requestBody: AddFilmToPlaylistDto,
+    public static playlistsControllerAddItem(
+        requestBody: AddItemToPlaylistDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -199,7 +199,7 @@ export class PlaylistsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/playlists/add-film',
+            url: '/playlists/add-item',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -212,13 +212,13 @@ export class PlaylistsService {
         });
     }
     /**
-     * 从片单移除影片
+     * 从片单移除内容（支持电影和剧集）
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static playlistsControllerRemoveFilm(
-        requestBody: RemoveFilmFromPlaylistDto,
+    public static playlistsControllerRemoveItem(
+        requestBody: RemoveItemFromPlaylistDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -228,7 +228,7 @@ export class PlaylistsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/playlists/remove-film',
+            url: '/playlists/remove-item',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -241,13 +241,13 @@ export class PlaylistsService {
         });
     }
     /**
-     * 片单内影片排序
+     * 片单内容排序（支持电影和剧集）
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static playlistsControllerReorder(
-        requestBody: ReorderFilmsInPlaylistDto,
+    public static playlistsControllerReorderItems(
+        requestBody: ReorderItemsInPlaylistDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -257,7 +257,7 @@ export class PlaylistsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/playlists/reorder-film',
+            url: '/playlists/reorder-items',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

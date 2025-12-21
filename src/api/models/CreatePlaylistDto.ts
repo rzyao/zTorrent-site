@@ -37,12 +37,10 @@ export namespace CreatePlaylistDto {
      * 片单类型
      */
     export enum type {
-        GENERAL = 'general',
-        TOPIC = 'topic',
+        MOVIE = 'movie',
         SERIES = 'series',
-        DIRECTOR = 'director',
-        CURATION = 'curation',
-        ACTOR = 'actor',
+        ADULT = 'adult',
+        MUSIC = 'music',
     }
     /**
      * 可见性
