@@ -12,5 +12,14 @@ export type MovieTorrentDto = {
     leechers: number;
     completed: number;
     uploadedAt: string;
+    standard?: string;
+    videoCodec?: string;
+    audioCodec?: string;
+    productionTeam?: string;
+    source?: string;
+    language?: string;
+    subtitleType?: string;
+    tags?: Array<string>;
+    badges?: Array<string>;
 };
 

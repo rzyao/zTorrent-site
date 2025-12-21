@@ -5,7 +5,7 @@ import { usePlaylists } from "@/pages/Playlists/hooks/usePlaylists";
 import { PlaylistCard } from "@/pages/Playlists/components/PlaylistCard";
 import { PlaylistsControls } from "@/pages/Playlists/components/PlaylistsControls";
 import { EmptyState } from "@/pages/Playlists/components/EmptyState";
-import { PageContainer } from "@/layouts/PageContainer";
+import { PageContainer } from "@/components/PageContainer";
 
 export function PlaylistsPage() {
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ export function PlaylistsPage() {
         onCreate={() => {}}
       />
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5">
         {items.map((playlist) => (
           <PlaylistCard
             key={playlist.id}
@@ -62,15 +62,15 @@ export function PlaylistsPage() {
         />
       )}
       {loading && (
-        <div className="text-center py-16">
-          <div className="w-20 h-20 rounded-2xl bg-neutral-900 border border-neutral-700 flex items-center justify-center mx-auto mb-4">
-            <Clock className="w-10 h-10 text-neutral-600" />
+        <div className="py-16 text-center">
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl border border-neutral-700 bg-neutral-900">
+            <Clock className="h-10 w-10 text-neutral-600" />
           </div>
-          <h3 className="text-white text-xl mb-2">加载中...</h3>
+          <h3 className="mb-2 text-xl text-white">加载中...</h3>
           <p className="text-neutral-500">正在获取片单列表</p>
         </div>
       )}
-      {error && <div className="text-center py-6 text-red-400">{error}</div>}
+      {error && <div className="py-6 text-center text-red-400">{error}</div>}
     </PageContainer>
   );
 }

@@ -17,7 +17,15 @@ export function usePlaylists() {
   const [items, setItems] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
 
-  const listPlaylists = useCallback(async (params: { listType?: 'public' | 'mine' | 'following'; page?: number; limit?: number; keyword?: string | null; type?: 'general' | 'topic' | 'series' | 'director' | 'curation'; visibility?: 'public' | 'private' | 'friends'; ownerUserId?: string | null; }) => {
+  const listPlaylists = useCallback(async (params: { 
+    listType?: 'public' | 'mine' | 'following'; 
+    page?: number; 
+    limit?: number; 
+    keyword?: string | null; 
+    type?: 'movie' | 'series' | 'adult' | 'music'; 
+    visibility?: 'public' | 'private'; 
+    ownerUserId?: string | null; 
+  }) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -99,11 +107,15 @@ export function usePlaylists() {
     }
   }, []);
 
-  const addFilm = useCallback(async (playlistId: string, filmId: string, sort?: number) => {
+  const addFilm = useCallback(async (playlistId: string, filmId: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerAddFilm({ playlistId, filmId });
+      const res = await PlaylistsService.playlistsControllerAddItem({
+        playlistId,
+        itemId: filmId,
+        itemType: 'movie' as any,
+      });
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -119,7 +131,11 @@ export function usePlaylists() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerRemoveFilm({ playlistId, filmId });
+      const res = await PlaylistsService.playlistsControllerRemoveItem({
+        playlistId,
+        itemId: filmId,
+        itemType: 'movie' as any,
+      });
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -137,11 +153,49 @@ export function usePlaylists() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerReorder({ playlistId, order });
+      const res = await PlaylistsService.playlistsControllerReorderItems({
+        playlistId,
+        order: order.map(id => ({
+          itemId: id,
+          itemType: 'movie' as any,
+        })),
+      });
       const data = unwrap(res);
       return data;
     } catch (e: any) {
       const msg = e?.body?.data?.message || e?.body?.message || e?.message || '片单影片排序失败';
+      setError(msg);
+      throw new Error(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const listItems = useCallback(async (params: { playlistId: string; page?: number; limit?: number }) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const res = await PlaylistsService.playlistsControllerListItems(params);
+      const data = unwrap(res);
+      return data;
+    } catch (e: any) {
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '获取片单内容失败';
+      setError(msg);
+      throw new Error(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const searchAddableItems = useCallback(async (params: { playlistId: string; page?: number; limit?: number; keyword?: string }) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const res = await PlaylistsService.playlistsControllerSearchAddableItems(params);
+      const data = unwrap(res);
+      return data;
+    } catch (e: any) {
+      const msg = e?.body?.data?.message || e?.body?.message || e?.message || '搜索可添加内容失败';
       setError(msg);
       throw new Error(msg);
     } finally {
@@ -158,6 +212,8 @@ export function usePlaylists() {
     addFilm,
     removeFilm,
     reorderFilm,
+    listItems,
+    searchAddableItems,
     items,
     total,
     isLoading,

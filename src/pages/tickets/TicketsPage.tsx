@@ -7,7 +7,7 @@ import { TicketManagementView } from "@/pages/Tickets/views/TicketManagementView
 import { MyTodosView } from "@/pages/Tickets/views/MyTodosView";
 import { TicketStatsView } from "@/pages/Tickets/views/TicketStatsView";
 import { TicketFAQView } from "@/pages/Tickets/views/TicketFAQView";
-import { PageContainer } from "@/layouts/PageContainer";
+import { PageContainer } from "@/components/PageContainer";
 
 export function TicketsPage() {
   const [activeTab, setActiveTab] = useState<TabType>("myTickets");
@@ -16,11 +16,7 @@ export function TicketsPage() {
   return (
     <PageContainer>
       <TicketsHeader />
-      <TicketsTabs
-        activeTab={activeTab}
-        onChange={setActiveTab}
-        isAdmin={isAdmin}
-      />
+      <TicketsTabs activeTab={activeTab} onChange={setActiveTab} isAdmin={isAdmin} />
 
       {/* 内容区域 */}
       <div>

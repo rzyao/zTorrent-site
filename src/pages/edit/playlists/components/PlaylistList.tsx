@@ -1,7 +1,11 @@
 import { Search, Globe, Lock, Users, ListVideo } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { Playlist } from "@/pages/Edit/playlists/types";
-import { APPROVAL_STATUS_LABELS, APPROVAL_STATUS_COLORS } from "@/pages/Edit/playlists/types";
+import {
+  APPROVAL_STATUS_LABELS,
+  APPROVAL_STATUS_COLORS,
+  PLAYLIST_TYPE_LABELS,
+} from "@/pages/Edit/playlists/types";
 import { getVisibilityText } from "@/pages/Edit/playlists/utils";
 
 interface PlaylistListProps {
@@ -108,6 +112,9 @@ export function PlaylistList({
                       className={`border px-2 py-0.5 text-[10px] font-medium ${APPROVAL_STATUS_COLORS[playlist.approvalStatus]}`}
                     >
                       {APPROVAL_STATUS_LABELS[playlist.approvalStatus]}
+                    </Badge>
+                    <Badge className="bg-neutral-800 px-2 py-0.5 text-[10px] font-medium text-neutral-300">
+                      {PLAYLIST_TYPE_LABELS[playlist.type]}
                     </Badge>
                     <span className="text-xs whitespace-nowrap text-neutral-500">
                       {playlist.movies.length} 部影片

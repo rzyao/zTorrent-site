@@ -1,13 +1,5 @@
 // 组件依赖：图标库（状态/指标）、路由跳转、图片占位、徽标、按钮、下载 Hook、格式化工具
-import {
-  Download,
-  Upload,
-  MessageSquare,
-  Star,
-  HardDrive,
-  Calendar,
-  Award,
-} from "lucide-react";
+import { Download, Upload, MessageSquare, Star, HardDrive, Calendar, Award } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
@@ -65,30 +57,30 @@ export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
   const mergedHash = location.hash;
   return (
     // 列表容器：与 TorrentsPage 列表视图一致的间距与外边距
-    <div className="space-y-4 mb-8">
+    <div className="mb-8 space-y-4">
       {torrents.map((torrent) => (
         // 单个种子卡片容器：hover 边框高亮、过渡细腻
         <div
           key={torrent.id}
-          className="bg-gray-900/50 rounded-lg border border-gray-800 hover:border-[#00A8E1] transition-all duration-300 cursor-pointer p-4"
+          className="card card-hover cursor-pointer rounded-lg p-4 transition-all duration-300"
         >
           <div className="flex gap-4">
             {/* 缩略图：统一 w-25 h-25，缺省时不渲染 */}
             {torrent.image && (
-              <div className="relative w-25 h-25 shrink-0 rounded overflow-hidden">
+              <div className="relative h-25 w-25 shrink-0 overflow-hidden rounded">
                 <ImageWithFallback
                   src={torrent.image}
                   alt={torrent.title}
-                  className="w-full h-full object-cover"
+                  className="h-full w-full object-cover"
                 />
               </div>
             )}
             {/* 信息区：标题/副标题 + 右侧下载按钮 */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start gap-3 mb-1">
-                <div className="flex flex-col flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
+              <div className="mb-1 flex items-start gap-3">
+                <div className="flex min-w-0 flex-1 flex-col">
                   {/* 标题：保持可点击跳转详情，悬停高亮 */}
-                  <h3 className="text-white flex-1 hover:text-[#00A8E1] transition-colors">
+                  <h3 className="flex-1 text-white transition-colors hover:text-amber-400">
                     <Link
                       to={{
                         pathname: `/torrent/${torrent.id}`,
@@ -101,15 +93,23 @@ export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
                   </h3>
                   {torrent.subTitle && (
                     // 副标题：存在时显示并与标题同样交互样式
-                    <h3 className="text-white flex-1 hover:text-[#00A8E1] transition-colors">
-                      {torrent.subTitle}
+                    <h3 className="flex-1 text-white transition-colors hover:text-amber-400">
+                      <Link
+                        to={{
+                          pathname: `/torrent/${torrent.id}`,
+                          search: mergedSearch,
+                          hash: mergedHash,
+                        }}
+                      >
+                        {torrent.subTitle}
+                      </Link>
                     </h3>
                   )}
                 </div>
                 {/* 下载按钮：弹出下载选项弹窗 */}
                 <Button
                   size="sm"
-                  className="bg-[#00A8E1] hover:bg-[#00A8E1]/90 text-white shrink-0"
+                  className="general-button shrink-0"
                   onClick={(e) => {
                     e.preventDefault();
                     setDownloadModal({
@@ -119,17 +119,15 @@ export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
                     });
                   }}
                 >
-                  <Download className="w-4 h-4 mr-1" />
+                  <Download className="mr-1 h-4 w-4" />
                   下载
                 </Button>
               </div>
               {/* 徽标区：类别/FREE/VIP/HOT/评分 */}
-              <div className="flex items-center gap-2 flex-wrap mb-1">
+              <div className="mb-1 flex flex-wrap items-center gap-2">
                 <Badge
-                  color="blue"
-                  border="white"
                   size="sm"
-                  className="text-xs"
+                  className="border-amber-500/30 bg-amber-500/20 text-xs text-amber-400"
                 >
                   {torrent.category}
                 </Badge>
@@ -150,43 +148,39 @@ export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
                 )}
                 {typeof torrent.rating === "number" && (
                   <div className="flex items-center gap-1">
-                    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                    <span className="text-yellow-400 text-xs">
-                      {torrent.rating}
-                    </span>
+                    <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                    <span className="text-xs text-amber-400">{torrent.rating}</span>
                   </div>
                 )}
               </div>
 
               {/* 指标区：大小/做种/下载/完成/评论/上传时间/上传者 */}
-              <div className="flex flex-wrap items-center gap-6 text-sm text-gray-400">
+              <div className="flex flex-wrap items-center gap-6 text-sm text-neutral-400">
                 <div className="flex items-center gap-1">
-                  <HardDrive className="w-4 h-4" />
+                  <HardDrive className="h-4 w-4" />
                   <span>{formatSize(torrent.size)}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Upload className="w-4 h-4 text-green-400" />
+                  <Upload className="h-4 w-4 text-green-400" />
                   <span className="text-green-400">{torrent.seeders} 做种</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Download className="w-4 h-4 text-red-400" />
-                  <span className="text-red-400">{torrent.leechers} 下载</span>
+                  <Download className="h-4 w-4 text-orange-400" />
+                  <span className="text-orange-400">{torrent.leechers} 下载</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <span>{torrent.completed} 完成</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <MessageSquare className="w-4 h-4" />
+                  <MessageSquare className="h-4 w-4" />
                   <span>{torrent.comments} 评论</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  <span>
-                    {formatDateTime(torrent.uploadDate || torrent.uploadTime)}
-                  </span>
+                  <Calendar className="h-4 w-4" />
+                  <span>{formatDateTime(torrent.uploadDate || torrent.uploadTime)}</span>
                 </div>
                 <div>
-                  <span className="text-[#00A8E1]">{torrent.uploader}</span>
+                  <span className="text-amber-400">{torrent.uploader}</span>
                 </div>
               </div>
             </div>

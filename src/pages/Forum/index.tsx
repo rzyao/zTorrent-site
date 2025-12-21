@@ -15,7 +15,7 @@ import { useState, useMemo } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { IForumThread, IForumPost } from "./types";
 import { unwrapResponse, extractErrorMessage, renderPreview } from "./utils";
-import { PageContainer } from "@/layouts/PageContainer";
+import { PageContainer } from "@/components/PageContainer";
 import { ForumHeader } from "./components/ForumHeader";
 import { CategoryNav } from "./components/CategoryNav";
 import { ThreadList } from "./components/ThreadList";
@@ -96,9 +96,7 @@ export function ForumPage() {
     content: string;
     categoryId: string;
   }) => {
-    const { ForumThreadsService } = await import(
-      "@/api/services/ForumThreadsService"
-    );
+    const { ForumThreadsService } = await import("@/api/services/ForumThreadsService");
     const resp = await ForumThreadsService.forumThreadsControllerCreate(data);
     unwrapResponse<IForumThread>(resp);
     setShowNewPost(false);
@@ -120,9 +118,7 @@ export function ForumPage() {
         return;
       }
 
-      const { ForumPostsService } = await import(
-        "@/api/services/ForumPostsService"
-      );
+      const { ForumPostsService } = await import("@/api/services/ForumPostsService");
       const resp = await ForumPostsService.forumPostsControllerCreate({
         threadId: selectedThread.id,
         content,
@@ -142,7 +138,7 @@ export function ForumPage() {
   // 正文 HTML：根据“详情内容优先，其次为列表项内容”生成展示 HTML
   const contentHtml = useMemo(
     () => renderPreview(threadDetail?.content ?? selectedThread?.content ?? ""),
-    [threadDetail?.content, selectedThread?.content]
+    [threadDetail?.content, selectedThread?.content],
   );
 
   // 工具函数：根据板块 ID 获取名称（若未知则回退为原 ID）
@@ -185,9 +181,7 @@ export function ForumPage() {
           // 发帖表单：独立封装内部表单状态与校验
           <CreateThreadForm
             categories={categories}
-            initialCategoryId={
-              activeCategoryId === "all" ? "" : activeCategoryId
-            }
+            initialCategoryId={activeCategoryId === "all" ? "" : activeCategoryId}
             onCancel={() => setShowNewPost(false)}
             onSubmit={handleNewPostSubmit}
           />
@@ -200,12 +194,11 @@ export function ForumPage() {
               onClose={() => setSelectedThread(null)}
               onReplyClick={() => {
                 const el = document.getElementById("reply-editor");
-                if (el)
-                  el.scrollIntoView({ behavior: "smooth", block: "center" });
+                if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
                 // 简化聚焦逻辑：滚动后尝试聚焦编辑器内部 textarea
                 setTimeout(() => {
                   const ta = document.querySelector(
-                    "#reply-editor textarea"
+                    "#reply-editor textarea",
                   ) as HTMLTextAreaElement | null;
                   if (ta) ta.focus();
                 }, 100);
@@ -221,23 +214,19 @@ export function ForumPage() {
                 setReplyParentId(reply.id);
                 const mention = `@${reply.authorUsername || reply.authorId} `;
                 setReplyContent((prev) =>
-                  prev.startsWith(mention) ? prev : mention + (prev || "")
+                  prev.startsWith(mention) ? prev : mention + (prev || ""),
                 );
                 const el = document.getElementById("reply-editor");
-                if (el)
-                  el.scrollIntoView({ behavior: "smooth", block: "center" });
+                if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
               }}
               onViewOriginal={(pid) => {
                 const el = document.getElementById(`reply-${pid}`);
-                if (el)
-                  el.scrollIntoView({ behavior: "smooth", block: "center" });
+                if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
                 // 本地浏览数占位更新：查看原回复视为该楼层浏览 +1
                 setPosts((prev) =>
                   prev.map((p) =>
-                    p.id === pid
-                      ? { ...p, viewsCount: (p.viewsCount ?? 0) + 1 }
-                      : p
-                  )
+                    p.id === pid ? { ...p, viewsCount: (p.viewsCount ?? 0) + 1 } : p,
+                  ),
                 );
               }}
             />
@@ -276,7 +265,7 @@ export function ForumPage() {
       {overallError && (
         // 全局错误提示条：显示当前页上任意数据源的错误
         <div className="mt-4">
-          <div className="bg-red-500/15 border border-red-500/50 text-red-300 rounded-lg px-4 py-3 mx-4 md:mx-0">
+          <div className="mx-4 rounded-lg border border-red-500/50 bg-red-500/15 px-4 py-3 text-red-300 md:mx-0">
             {overallError}
           </div>
         </div>

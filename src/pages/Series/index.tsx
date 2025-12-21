@@ -3,7 +3,7 @@ import { useSeriesPage } from "./hooks/useSeriesPage";
 import { Toolbar } from "./components/Toolbar";
 import { SeriesGrid } from "./components/SeriesGrid";
 import { LoadingState, ErrorState } from "./components/States";
-import { PageContainer } from "@/layouts/PageContainer";
+import { PageContainer } from "@/components/PageContainer";
 
 export function SeriesPage() {
   const {

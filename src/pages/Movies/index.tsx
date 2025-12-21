@@ -3,7 +3,7 @@ import { useMoviesPage } from "./hooks/useMoviesPage";
 import { Toolbar } from "./components/Toolbar";
 import { MovieGrid } from "./components/MovieGrid";
 import { LoadingState, ErrorState } from "./components/States";
-import { PageContainer } from "@/layouts/PageContainer";
+import { PageContainer } from "@/components/PageContainer";
 
 export function MoviesPage() {
   const {
@@ -40,9 +40,7 @@ export function MoviesPage() {
 
       {error && <ErrorState error={error} onRetry={retry} />}
 
-      {!loading && !error && (
-        <MovieGrid movies={cardMovies} onOpen={(m) => handleMovieClick(m)} />
-      )}
+      {!loading && !error && <MovieGrid movies={cardMovies} onOpen={(m) => handleMovieClick(m)} />}
     </PageContainer>
   );
 }

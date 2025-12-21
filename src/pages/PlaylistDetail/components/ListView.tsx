@@ -1,5 +1,5 @@
-import { Calendar, Clock, Film, Star } from 'lucide-react';
-import type { PlaylistFilm } from '../types';
+import { Calendar, Clock, Film, Star } from "lucide-react";
+import type { PlaylistFilm } from "../types";
 
 interface ListViewProps {
   movies: PlaylistFilm[];
@@ -11,7 +11,7 @@ interface ListViewProps {
 // - 将列表行的结构与样式集中管理，便于维护
 export function ListView({ movies, onOpenFilm }: ListViewProps) {
   if (movies.length === 0) {
-    return <div className="text-gray-400">暂无影片</div>;
+    return <div className="text-neutral-400">暂无影片</div>;
   }
   return (
     <div className="space-y-3">
@@ -19,61 +19,69 @@ export function ListView({ movies, onOpenFilm }: ListViewProps) {
         <div
           key={movie.id}
           onClick={() => onOpenFilm(movie.id)}
-          className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/30 transition-all cursor-pointer"
+          className="card card-hover text-parent flex cursor-pointer items-center gap-4 rounded-xl p-4 transition-all duration-300"
         >
-          <div className="flex items-center gap-4">
-            {/* 序号 */}
-            <div className="text-2xl text-gray-600 w-8 text-center shrink-0">
-              {index + 1}
-            </div>
+          {/* 序号 */}
+          <div className="w-8 shrink-0 text-center text-2xl text-neutral-600">{index + 1}</div>
 
-            {/* 海报 */}
-            <div className="relative w-16 h-24 rounded-lg overflow-hidden shrink-0 bg-white/5">
-              <img src={movie.poster} alt={movie.title} className="w-full h-full object-cover" />
+          {/* 海报 */}
+          <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-lg border border-neutral-700/50 bg-neutral-800/40">
+            <img src={movie.poster} alt={movie.title} className="h-full w-full object-cover" />
+            <div className="absolute top-1 left-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] text-white backdrop-blur-sm">
+              {movie.itemType === "series" ? "剧集" : "电影"}
             </div>
+          </div>
 
-            {/* 信息 */}
-            <div className="flex-1 min-w-0">
-              <h3 className="text-white text-lg mb-1">{movie.title}</h3>
-              <p className="text-gray-400 text-sm mb-2">{movie.originalTitle}</p>
-              <div className="flex items-center gap-4 text-sm text-gray-400">
+          {/* 信息 */}
+          <div className="min-w-0 flex-1">
+            <h3 className="text mb-1 text-lg font-medium">{movie.title}</h3>
+            <p className="mb-2 text-sm text-neutral-400">{movie.originalTitle}</p>
+            <div className="flex items-center gap-4 text-sm text-neutral-400">
+              <div className="flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                <span>{movie.year}</span>
+              </div>
+              {movie.itemType === "series" && movie.episodeCount ? (
                 <div className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
-                  <span>{movie.year}</span>
+                  <Film className="h-3 w-3" />
+                  <span>全{movie.episodeCount}集</span>
                 </div>
+              ) : null}
+              {movie.duration > 0 && (
                 <div className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
+                  <Clock className="h-3 w-3" />
                   <span>{movie.duration}分钟</span>
                 </div>
+              )}
+              {movie.torrentsCount > 0 && (
                 <div className="flex items-center gap-1">
-                  <Film className="w-3 h-3" />
+                  <Film className="h-3 w-3" />
                   <span>{movie.torrentsCount} 个种子</span>
                 </div>
-                <span>{movie.director}</span>
-              </div>
+              )}
+              {movie.director && <span>{movie.director}</span>}
             </div>
+          </div>
 
-            {/* 类型标签 */}
-            <div className="flex gap-2 shrink-0">
-              {movie.genre.slice(0, 2).map((g, i) => (
-                <span
-                  key={i}
-                  className="px-3 py-1 rounded-full bg-linear-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-400 text-sm"
-                >
-                  {g}
-                </span>
-              ))}
-            </div>
+          {/* 类型标签 */}
+          <div className="flex shrink-0 gap-2">
+            {movie.genre.slice(0, 2).map((g, i) => (
+              <span
+                key={i}
+                className="rounded-full border border-amber-500/30 bg-linear-to-r from-amber-500/20 to-orange-500/20 px-3 py-1 text-sm text-amber-400"
+              >
+                {g}
+              </span>
+            ))}
+          </div>
 
-            {/* 评分 */}
-            <div className="flex items-center gap-2 shrink-0">
-              <Star className="w-5 h-5 fill-amber-500 text-amber-500" />
-              <span className="text-white text-xl">{movie.rating}</span>
-            </div>
+          {/* 评分 */}
+          <div className="flex shrink-0 items-center gap-2">
+            <Star className="h-5 w-5 fill-amber-500 text-amber-500" />
+            <span className="text-xl text-white">{movie.rating}</span>
           </div>
         </div>
       ))}
     </div>
   );
 }
-

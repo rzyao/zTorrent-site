@@ -25,28 +25,58 @@ export function usePlaylistDetail(playlistId: string) {
     setError(null);
     (async () => {
       try {
-        const resp: any = await PlaylistsService.playlistsControllerGet({ id: playlistId });
-        const raw = resp?.data ?? resp;
-        const adapted: PlaylistDetail = {
-          id: raw?.id ?? playlistId,
-          title: raw?.name ?? '',
-          description: raw?.description ?? '',
-          coverImage: raw?.coverUrl ?? raw?.backdropUrl ?? '',
+        const [detailResp, itemsResp] = await Promise.all([
+          PlaylistsService.playlistsControllerGet({ id: playlistId }),
+          PlaylistsService.playlistsControllerListItems({ playlistId, page: 1, limit: 100 })
+        ]);
+
+        const rawDetail: any = (detailResp as any)?.data ?? detailResp;
+        const rawItems = itemsResp?.data?.items ?? [];
+
+        if (!mounted) return;
+
+        // 适配详情
+        const adaptedDetail: PlaylistDetail = {
+          id: rawDetail?.id ?? playlistId,
+          title: rawDetail?.name ?? '',
+          description: rawDetail?.description ?? '',
+          coverImage: rawDetail?.coverUrl ?? rawDetail?.backdropUrl ?? '',
           creator: '',
           creatorAvatar: '',
-          moviesCount: Array.isArray(raw?.films) ? raw.films.length : 0,
-          followersCount: Number(raw?.stats?.likes ?? 0),
-          viewsCount: Number(raw?.stats?.views ?? 0),
+          moviesCount: rawItems.length, // 使用实际条目数
+          followersCount: Number(rawDetail?.stats?.likes ?? 0),
+          viewsCount: Number(rawDetail?.stats?.views ?? 0),
           rating: 0,
-          createdAt: raw?.meta?.createdAt ?? '',
-          updatedAt: raw?.meta?.updatedAt ?? '',
-          tags: Array.isArray(raw?.tags) ? raw.tags : [],
-          films: raw?.films ?? [],
+          createdAt: rawDetail?.meta?.createdAt ?? '',
+          updatedAt: rawDetail?.meta?.updatedAt ?? '',
+          tags: Array.isArray(rawDetail?.tags) ? rawDetail.tags : [],
+          films: [], // 原始 films 已废弃，保持为空
           isLiked: false,
         };
-        if (!mounted) return;
-        setPlaylist(adapted);
-        setIsFollowing(!!adapted.isLiked);
+        
+        setPlaylist(adaptedDetail);
+        setIsFollowing(!!adaptedDetail.isLiked);
+
+        // 适配影片列表
+        const adaptedMovies: PlaylistFilm[] = rawItems.map((f: any) => ({
+          id: String(f?.itemId ?? ''),
+          title: f?.title ?? '',
+          originalTitle: f?.originalTitle ?? '',
+          year: Number(f?.year ?? 0),
+          director: '', // 接口暂缺
+          poster: f?.posterUrl ?? '',
+          backdrop: '', // 接口暂缺
+          rating: Number(f?.rating ?? 0),
+          genre: [f?.itemType === 'series' ? '剧集' : '电影'], // 使用类型作为默认标签
+          duration: 0, // 接口暂缺
+          torrentsCount: 0, // 接口暂缺
+          sort: Number(f?.sort ?? 0),
+          torrents: [], // 接口暂缺
+          itemType: f?.itemType ?? 'movie',
+          episodeCount: f?.episodeCount,
+        }));
+        setMovies(adaptedMovies);
+
         try {
           await PlaylistsService.playlistsControllerIncViews({ id: playlistId });
           setPlaylist((prev) => (prev ? { ...prev, viewsCount: Number(prev.viewsCount ?? 0) + 1 } : prev));
@@ -66,26 +96,7 @@ export function usePlaylistDetail(playlistId: string) {
     };
   }, [playlistId, reloadKey]);
 
-  // 适配影片项，确保 id 稳定为 filmId
-  useEffect(() => {
-    const rawFilms: any[] = (playlist?.films ?? []) as any[];
-    const adapted = rawFilms.map((f: any, idx: number): PlaylistFilm => ({
-      id: String(f?.filmId ?? f?.id ?? idx),
-      title: f?.title ?? '',
-      originalTitle: f?.originalTitle ?? '',
-      year: Number(f?.year ?? 0),
-      director: f?.director ?? '',
-      poster: f?.poster ?? f?.posterUrl ?? '',
-      backdrop: f?.backdrop ?? f?.backdropUrl ?? '',
-      rating: Number(f?.rating ?? 0),
-      genre: Array.isArray(f?.genre) ? f.genre : Array.isArray(f?.genres) ? f.genres : [],
-      duration: Number(f?.duration ?? 0),
-      torrentsCount: Number(f?.torrentsCount ?? (Array.isArray(f?.torrents) ? f.torrents.length : 0)),
-      sort: Number(f?.sort ?? idx),
-      torrents: f?.torrents ?? [],
-    }));
-    setMovies(adapted);
-  }, [playlist]);
+  // 移除旧的 useEffect 适配逻辑，因为上面已经一起处理了
 
   // 关注/取消关注
   async function toggleFollow() {

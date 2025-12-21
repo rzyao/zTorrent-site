@@ -64,7 +64,10 @@ export interface Movie {
   /** 评分（数值） */
   rating: number;
   /** 关联的种子数量 */
+  /** 关联的种子数量 */
   torrentCount: number;
+  /** 是否已在当前片单中（仅在搜索候选项时使用） */
+  isInPlaylist?: boolean;
 }
 
 /**

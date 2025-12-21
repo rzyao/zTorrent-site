@@ -16,7 +16,11 @@ import {
   Users,
 } from "lucide-react";
 import type { Playlist, Movie } from "@/pages/Edit/playlists/types";
-import { APPROVAL_STATUS_LABELS, APPROVAL_STATUS_COLORS } from "@/pages/Edit/playlists/types";
+import {
+  APPROVAL_STATUS_LABELS,
+  APPROVAL_STATUS_COLORS,
+  PLAYLIST_TYPE_LABELS,
+} from "@/pages/Edit/playlists/types";
 import { getVisibilityText } from "@/pages/Edit/playlists/utils";
 
 interface PlaylistDetailsProps {
@@ -104,6 +108,9 @@ export function PlaylistDetails(props: PlaylistDetailsProps) {
                 </Badge>
                 <Badge className={`border ${APPROVAL_STATUS_COLORS[playlist.approvalStatus]}`}>
                   {APPROVAL_STATUS_LABELS[playlist.approvalStatus]}
+                </Badge>
+                <Badge className="bg-neutral-800 text-neutral-300">
+                  {PLAYLIST_TYPE_LABELS[playlist.type]}
                 </Badge>
                 <span className="flex items-center gap-1 text-sm text-neutral-400">
                   <Film className="h-4 w-4" />
@@ -318,16 +325,21 @@ function AddMoviePanel({
               name="添加影片"
               fallback={
                 <Button size="sm" disabled className="bg-neutral-700 text-neutral-400">
-                  添加
+                  {movie.isInPlaylist ? "已添加" : "添加"}
                 </Button>
               }
             >
               <Button
                 size="sm"
-                onClick={() => onAddMovie(movie)}
-                className="bg-linear-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700"
+                disabled={movie.isInPlaylist}
+                onClick={() => !movie.isInPlaylist && onAddMovie(movie)}
+                className={
+                  movie.isInPlaylist
+                    ? "cursor-not-allowed bg-neutral-700 text-neutral-400"
+                    : "bg-linear-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700"
+                }
               >
-                添加
+                {movie.isInPlaylist ? "已添加" : "添加"}
               </Button>
             </AccessControl>
           </div>

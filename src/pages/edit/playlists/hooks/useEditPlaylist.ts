@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { usePlaylists } from '@/hooks/usePlaylists';
-import { useFilms } from '@/hooks/useFilms';
 import { ImagesService } from '@/api/services/ImagesService';
-import { MoviesService } from '@/api/services/MoviesService';
 import { customToast } from '@/hooks/useToast';
 import type { Playlist, Movie, Visibility, PlaylistType } from '@/pages/Edit/playlists/types';
 import {
@@ -23,8 +21,7 @@ import {
  */
 export function useEditPlaylist() {
   // 对接后端服务的通用 Hook
-  const { listPlaylists, getPlaylist, createPlaylist, updatePlaylist, deletePlaylist, addFilm, removeFilm, reorderFilm } = usePlaylists();
-  const { listFilms } = useFilms();
+  const { listPlaylists, getPlaylist, createPlaylist, updatePlaylist, deletePlaylist, addFilm, removeFilm, reorderFilm, listItems, searchAddableItems } = usePlaylists();
 
   // 片单列表与筛选
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -77,13 +74,28 @@ export function useEditPlaylist() {
         const mapped = (list?.items ?? []).map(mapBackendPlaylistSummaryToLocal);
         setPlaylists(mapped);
       } catch { /* 保持静默，列表失败不阻塞页面 */ }
-      try {
-        const films = await listFilms({ page: 1, limit: 50, keyword: '' });
-        const availableMapped = (films?.items ?? []).map(mapFilmListItemToMovie);
-        setAvailable(availableMapped);
-      } catch { /* 保持静默，可选影片失败不阻塞页面 */ }
+      
+      // 加载初始可添加项（当有选中片单时）
+      if (selectedPlaylist?.id) {
+        try {
+          const res = await searchAddableItems({ playlistId: selectedPlaylist.id, page: 1, limit: 50 });
+          const items = res?.items ?? [];
+          const mapped = items.map((f: any) => ({
+            id: String(f.id),
+            title: f.title,
+            originalTitle: f.originalTitle || '',
+            year: String(f.year || ''),
+            poster: f.posterUrl || '',
+            category: '',
+            rating: Number(f.rating || 0),
+            torrentCount: 0,
+            isInPlaylist: f.isInPlaylist,
+          }));
+          setAvailable(mapped);
+        } catch { /* 保持静默 */ }
+      }
     })();
-  }, [searchQuery]);
+  }, [searchQuery, selectedPlaylist?.id, listPlaylists, searchAddableItems]);
 
   // 添加影片面板的搜索节流与结果填充
   useEffect(() => {
@@ -95,9 +107,26 @@ export function useEditPlaylist() {
     }
     setIsSearching(true);
     const handler = setTimeout(async () => {
+      if (!selectedPlaylist?.id) return;
       try {
-        const films = await listFilms({ page: 1, limit: 50, keyword: q });
-        const mapped = (films?.items ?? []).map(mapFilmListItemToMovie);
+        const res = await searchAddableItems({ 
+          playlistId: selectedPlaylist.id,
+          page: 1, 
+          limit: 50, 
+          keyword: q 
+        });
+        const items = res?.items ?? [];
+        const mapped = items.map((f: any) => ({
+          id: String(f.id),
+          title: f.title,
+          originalTitle: f.originalTitle || '',
+          year: String(f.year || ''),
+          poster: f.posterUrl || '',
+          category: '',
+          rating: Number(f.rating || 0),
+          torrentCount: 0,
+          isInPlaylist: f.isInPlaylist,
+        }));
         setSearchResults(mapped);
       } catch (e: any) {
         customToast.error(e?.message || '搜索失败');
@@ -123,12 +152,19 @@ export function useEditPlaylist() {
         setSelectedPlaylist(mapped);
       } catch { /* 保持静默 */ }
       try {
-        // TODO: moviesControllerSearchFilmsForPlaylist API 待实现
-        // const res = await MoviesService.moviesControllerSearchFilmsForPlaylist({ search: '', playlistId: selectedPlaylist.id, limit: 100 });
-        const res = { data: { items: [] } } as any;
-        const items = (res?.data?.items ?? []) as any[];
-        if (Array.isArray(items) && items.length > 0) {
-          const movies = items.map(mapFilmListItemToMovie);
+        const res = await listItems({ playlistId: selectedPlaylist.id, page: 1, limit: 100 });
+        const items = res?.items ?? [];
+        if (Array.isArray(items)) {
+          const movies = items.map((f: any) => ({
+            id: String(f?.itemId ?? ''),
+            title: f?.title ?? '',
+            originalTitle: '', // 详情接口目前暂无此字段
+            year: String(f?.year ?? ''),
+            poster: f?.posterUrl ?? '',
+            category: '', // 详情接口目前暂无此字段
+            rating: Number(f?.rating ?? 0),
+            torrentCount: 0,
+          }));
           setSelectedPlaylist((prev) => (prev ? { ...prev, movies } : prev));
         }
       } catch { /* 保持静默 */ }
@@ -211,15 +247,41 @@ export function useEditPlaylist() {
     }
   };
 
+  /** 封装：加载并合并片单最新详情与内容 */
+  const refreshPlaylistContents = async (id: string) => {
+    try {
+      const [detail, itemsRes] = await Promise.all([
+        getPlaylist(id),
+        listItems({ playlistId: id, page: 1, limit: 100 })
+      ]);
+      
+      const mapped = mapBackendPlaylistToLocal(detail);
+      const items = itemsRes?.items ?? [];
+      const movies = items.map((f: any) => ({
+        id: String(f?.itemId ?? ''),
+        title: f?.title ?? '',
+        originalTitle: '',
+        year: String(f?.year ?? ''),
+        poster: f?.posterUrl ?? '',
+        category: '',
+        rating: Number(f?.rating ?? 0),
+        torrentCount: 0,
+      }));
+
+      const finalPlaylist = { ...mapped, movies };
+      setSelectedPlaylist(finalPlaylist);
+      setPlaylists(prev => prev.map((p) => (p.id === id ? finalPlaylist : p)));
+    } catch (e: any) {
+      customToast.error(e?.message || '刷新内容失败');
+    }
+  };
+
   /** 添加影片到片单后刷新详情 */
   const handleAddMovie = async (movie: Movie) => {
     if (!selectedPlaylist) return;
     try {
       await addFilm(selectedPlaylist.id, movie.id);
-      const detail = await getPlaylist(selectedPlaylist.id);
-      const mapped = mapBackendPlaylistToLocal(detail);
-      setSelectedPlaylist(mapped);
-      setPlaylists(playlists.map((p) => (p.id === mapped.id ? mapped : p)));
+      await refreshPlaylistContents(selectedPlaylist.id);
     } catch (e: any) {
       customToast.error(e?.message || '添加影片失败');
     }
@@ -230,10 +292,7 @@ export function useEditPlaylist() {
     if (!selectedPlaylist) return;
     try {
       await removeFilm(selectedPlaylist.id, movieId);
-      const detail = await getPlaylist(selectedPlaylist.id);
-      const mapped = mapBackendPlaylistToLocal(detail);
-      setSelectedPlaylist(mapped);
-      setPlaylists(playlists.map((p) => (p.id === mapped.id ? mapped : p)));
+      await refreshPlaylistContents(selectedPlaylist.id);
     } catch (e: any) {
       customToast.error(e?.message || '移除影片失败');
     }
@@ -251,10 +310,7 @@ export function useEditPlaylist() {
     const order = nextMovies.map((x) => x.id);
     try {
       await reorderFilm(selectedPlaylist.id, order);
-      const detail = await getPlaylist(selectedPlaylist.id);
-      const mapped = mapBackendPlaylistToLocal(detail);
-      setSelectedPlaylist(mapped);
-      setPlaylists(playlists.map((p) => (p.id === mapped.id ? mapped : p)));
+      await refreshPlaylistContents(selectedPlaylist.id);
     } catch (e: any) {
       customToast.error(e?.message || '更新排序失败');
     }

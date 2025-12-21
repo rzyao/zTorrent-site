@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
-import { PageContainer } from "@/layouts/PageContainer";
+import { PageContainer } from "@/components/PageContainer";
 import { Hero } from "./components/Hero";
 import { Stills } from "./components/Stills";
 import { TorrentTabs } from "./components/TorrentTabs";
@@ -23,8 +23,7 @@ interface FilmDetailPageProps {
 export default function MovieDetailPage({ filmId }: FilmDetailPageProps) {
   useDynamicTitle("影片详情");
   const params = useParams();
-  const effectiveFilmId =
-    filmId ?? (params?.id ? String(params.id) : undefined);
+  const effectiveFilmId = filmId ?? (params?.id ? String(params.id) : undefined);
 
   // 业务数据状态由 Hook 管理
   const { detail, loading, error } = useFilmDetail(effectiveFilmId);
@@ -41,14 +40,10 @@ export default function MovieDetailPage({ filmId }: FilmDetailPageProps) {
     setLightboxOpen(true);
   };
 
-  if (loading) return <div className="min-h-screen bg-[#0F171E]" />;
+  if (loading) return <div className="default-bg-color min-h-screen" />;
   if (error)
-    return (
-      <div className="min-h-screen bg-[#0F171E] text-red-400 px-4 py-8">
-        {error}
-      </div>
-    );
-  if (!detail) return <div className="min-h-screen bg-[#0F171E]" />;
+    return <div className="default-bg-color min-h-screen px-4 py-8 text-orange-400">{error}</div>;
+  if (!detail) return <div className="default-bg-color min-h-screen" />;
 
   return (
     <PageContainer
@@ -66,7 +61,7 @@ export default function MovieDetailPage({ filmId }: FilmDetailPageProps) {
       />
 
       {/* 主体内容区 */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-3">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_320px]">
         {/* 左侧主内容 */}
         <div className="space-y-6">
           {/* 剧照 */}
@@ -96,11 +91,7 @@ export default function MovieDetailPage({ filmId }: FilmDetailPageProps) {
         </div>
       </div>
       {/* 全屏图片查看器 */}
-      <Lightbox
-        open={lightboxOpen}
-        onOpenChange={setLightboxOpen}
-        stills={detail.stills}
-      />
+      <Lightbox open={lightboxOpen} onOpenChange={setLightboxOpen} stills={detail.stills} />
     </PageContainer>
   );
 }

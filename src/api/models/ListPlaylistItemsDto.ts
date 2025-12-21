@@ -2,7 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ReorderFilmsInPlaylistResponseDto = {
-    films: Array<Record<string, any>>;
+export type ListPlaylistItemsDto = {
+    /**
+     * 片单ID
+     */
+    playlistId: string;
+    page?: number;
+    limit?: number;
 };
 

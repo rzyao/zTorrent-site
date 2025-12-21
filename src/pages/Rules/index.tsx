@@ -5,7 +5,7 @@ import { ImportantNotice } from "./components/ImportantNotice";
 import { SectionCard } from "./components/SectionCard";
 import { FooterNote } from "./components/FooterNote";
 import { useRules } from "./hooks/useRules";
-import { PageContainer } from "@/layouts/PageContainer";
+import { PageContainer } from "@/components/PageContainer";
 
 /**
  * 规则页容器
@@ -44,7 +44,7 @@ export function RulesPage() {
       /> */}
 
       {isEditMode && (
-        <div className="mb-6 p-4 rounded-xl bg-linear-to-r from-amber-500/10 to-orange-600/10 border border-amber-500/30">
+        <div className="mb-6 rounded-xl border border-amber-500/30 bg-linear-to-r from-amber-500/10 to-orange-600/10 p-4">
           <div className="flex items-center gap-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -56,16 +56,16 @@ export function RulesPage() {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="w-5 h-5 text-amber-400"
+              className="h-5 w-5 text-amber-400"
             >
               <path d="M12 20h9" />
               <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
             </svg>
             <div>
-              <p className="text-amber-400 text-sm">
+              <p className="text-sm text-amber-400">
                 编辑模式已启用 - 您可以修改规则内容、添加或删除章节和项目
               </p>
-              <p className="text-neutral-400 text-xs mt-1">
+              <p className="mt-1 text-xs text-neutral-400">
                 完成后请点击"保存更改"按钮保存您的修改
               </p>
             </div>
@@ -80,7 +80,7 @@ export function RulesPage() {
         onToggleEdit={handleEditModeToggle}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
         <div className="lg:col-span-1">
           <SidebarNav
             sections={ruleSections}

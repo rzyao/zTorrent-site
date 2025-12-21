@@ -16,6 +16,8 @@ export interface PlaylistFilm {
   torrentsCount: number;
   sort: number;
   torrents: any[];
+  itemType: 'movie' | 'series';
+  episodeCount?: number;
 }
 
 export interface PlaylistDetail {

@@ -26,7 +26,7 @@ export function Hero({
     <div className="flex w-full flex-col gap-8 pt-12 pb-4 md:flex-row">
       {/* 海报 */}
       <div className="shrink-0">
-        <div className="w-48 overflow-hidden rounded-lg border-2 border-gray-700 shadow-2xl md:w-64">
+        <div className="w-48 overflow-hidden rounded-lg border-2 border-neutral-700/50 shadow-2xl md:w-64">
           <ImageWithFallback
             src={detail.poster}
             alt={detail.title}
@@ -42,58 +42,58 @@ export function Hero({
         {/* 标题与原名 */}
         <div>
           <h1 className="mb-2 text-4xl text-white md:text-5xl">{detail.title}</h1>
-          <p className="text-lg text-gray-300 md:text-xl">{detail.subtitle}</p>
+          <p className="text-lg text-neutral-300 md:text-xl">{detail.subtitle}</p>
         </div>
 
         {/* 标签与评分 */}
         <div className="flex flex-wrap items-center gap-3">
-          <Badge className="bg-gray-800 text-white">{detail.category}</Badge>
+          <Badge className="bg-neutral-800 text-white">{detail.category}</Badge>
           {detail.isFree && <Badge className="bg-green-500 text-white">FREE</Badge>}
           {detail.isHot && <Badge className="bg-red-500 text-white">HOT</Badge>}
           {detail.isVip && <Badge className="bg-yellow-500 text-white">VIP</Badge>}
-          <div className="flex items-center gap-2 rounded-full bg-gray-900/80 px-3 py-1">
-            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            <span className="text-yellow-400">{detail.rating}</span>
-            <span className="text-sm text-gray-400">({detail.ratingCount}人评分)</span>
+          <div className="flex items-center gap-2 rounded-full bg-neutral-900/80 px-3 py-1">
+            <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+            <span className="text-amber-400">{detail.rating}</span>
+            <span className="text-sm text-neutral-400">({detail.ratingCount}人评分)</span>
           </div>
-          <div className="flex items-center gap-2 rounded-full bg-gray-900/80 px-3 py-1">
-            <span className="text-sm text-gray-400">IMDb:</span>
-            <span className="text-[#00A8E1]">{detail.imdb}</span>
+          <div className="flex items-center gap-2 rounded-full bg-neutral-900/80 px-3 py-1">
+            <span className="text-sm text-neutral-400">IMDb:</span>
+            <span className="text-amber-400">{detail.imdb}</span>
           </div>
-          <div className="flex items-center gap-2 rounded-full bg-gray-900/80 px-3 py-1">
-            <span className="text-sm text-gray-400">豆瓣:</span>
-            <span className="text-[#00A8E1]">{detail.douban}</span>
+          <div className="flex items-center gap-2 rounded-full bg-neutral-900/80 px-3 py-1">
+            <span className="text-sm text-neutral-400">豆瓣:</span>
+            <span className="text-amber-400">{detail.douban}</span>
           </div>
         </div>
 
         {/* 基本信息：年份/时长/子分类 */}
-        <div className="flex flex-wrap items-center gap-6 text-gray-300">
+        <div className="flex flex-wrap items-center gap-6 text-neutral-300">
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-gray-400" />
+            <Calendar className="h-4 w-4 text-neutral-400" />
             <span>{detail.year}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-gray-400" />
+            <Clock className="h-4 w-4 text-neutral-400" />
             <span>{detail.duration}</span>
           </div>
           <div className="flex items-center gap-2">
-            <FilmIcon className="h-4 w-4 text-gray-400" />
+            <FilmIcon className="h-4 w-4 text-neutral-400" />
             <span>{detail.subCategory}</span>
           </div>
         </div>
 
         {/* 简介 */}
-        <p className="max-w-3xl text-base leading-relaxed text-gray-300">{detail.description}</p>
+        <p className="max-w-3xl text-base leading-relaxed text-neutral-300">{detail.description}</p>
 
         {/* 导演/主演 */}
         <div className="space-y-2 text-sm">
           <div className="flex gap-2">
-            <span className="min-w-16 text-gray-400">导演:</span>
-            <span className="text-[#00A8E1]">{detail.director}</span>
+            <span className="min-w-16 text-neutral-400">导演:</span>
+            <span className="text-amber-400">{detail.director}</span>
           </div>
           <div className="flex gap-2">
-            <span className="min-w-16 text-gray-400">主演:</span>
-            <span className="text-gray-300">
+            <span className="min-w-16 text-neutral-400">主演:</span>
+            <span className="text-neutral-300">
               {Array.isArray(detail.cast) ? detail.cast.join(" / ") : String(detail.cast ?? "")}
             </span>
           </div>
@@ -101,35 +101,35 @@ export function Hero({
 
         {/* 操作按钮 */}
         <div className="flex flex-wrap gap-3 pt-4">
+          {/* 收藏按钮 - 琥珀色 */}
           <Button
-            variant="outline"
             onClick={onToggleBookmark}
-            className={`border-gray-700 px-6 py-6 ${
+            className={`h-auto border px-4 py-2 transition-all duration-300 ${
               isBookmarked
-                ? "border-[#00A8E1] bg-[#00A8E1] text-white"
-                : "bg-gray-900 text-white hover:bg-gray-800"
+                ? "border-amber-500 bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/30"
+                : "border-neutral-700/50 bg-neutral-900/50 text-gray-300 hover:border-amber-500/50 hover:bg-neutral-800/70 hover:text-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
             }`}
           >
-            <Bookmark className={`mr-2 h-5 w-5 ${isBookmarked ? "fill-current" : ""}`} />
+            <Bookmark className={`mr-2 h-4 w-4 ${isBookmarked ? "fill-current" : ""}`} />
             收藏
           </Button>
+
+          {/* 感谢按钮 - 红/橙色 */}
           <Button
-            variant="outline"
             onClick={onToggleThanked}
-            className={`border-gray-700 px-6 py-6 ${
+            className={`h-auto border px-4 py-2 transition-all duration-300 ${
               hasThanked
-                ? "border-red-500 bg-red-500 text-white"
-                : "bg-gray-900 text-white hover:bg-gray-800"
+                ? "border-red-500 bg-linear-to-r from-red-500 to-orange-500 text-white shadow-lg shadow-red-500/30"
+                : "border-neutral-700/50 bg-neutral-900/50 text-gray-300 hover:border-red-500/50 hover:bg-neutral-800/70 hover:text-red-400 hover:shadow-lg hover:shadow-red-500/20"
             }`}
           >
-            <Heart className={`mr-2 h-5 w-5 ${hasThanked ? "fill-current" : ""}`} />
+            <Heart className={`mr-2 h-4 w-4 ${hasThanked ? "fill-current" : ""}`} />
             感谢
           </Button>
-          <Button
-            variant="outline"
-            className="border-gray-700 bg-gray-900 px-6 py-6 text-white hover:bg-gray-800"
-          >
-            <Share2 className="mr-2 h-5 w-5" />
+
+          {/* 分享按钮 - Ghost 蓝色 */}
+          <Button className="h-auto border border-neutral-700/50 bg-neutral-900/50 px-4 py-2 text-gray-300 transition-all duration-300 hover:border-blue-500/50 hover:bg-neutral-800/70 hover:text-blue-400 hover:shadow-lg hover:shadow-blue-500/20">
+            <Share2 className="mr-2 h-4 w-4" />
             分享
           </Button>
         </div>

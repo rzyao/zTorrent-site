@@ -12,115 +12,97 @@ interface HeroProps {
 // 拆分原因：
 // - 将页面的头部展示（封面、标题、统计、按钮）独立为纯展示组件，便于复用与维护
 // - 降低主页面文件体积与复杂度
-export function Hero({
-  playlist,
-  isFollowing,
-  onToggleFollow,
-  onBack,
-}: HeroProps) {
+// 片单页顶部横幅与操作区
+// 拆分原因：
+// - 将页面的头部展示（封面、标题、统计、按钮）独立为纯展示组件，便于复用与维护
+// - 降低主页面文件体积与复杂度
+export function Hero({ playlist, isFollowing, onToggleFollow, onBack }: HeroProps) {
   return (
-    <div className="relative h-[500px]">
-      {/* 返回按钮浮层 */}
-      <div className="absolute inset-0 px-8 pt-24 pointer-events-none">
+    <div className="relative pt-24 pb-8 md:pt-32">
+      {/* 返回按钮：相对于 Hero 容器定位，或者 sticky */}
+      <div className="pointer-events-none absolute top-0 right-0 left-0 px-4 pt-6 md:px-0 md:pt-8">
         <button
           onClick={onBack}
-          className="sticky top-0 z-50 px-4 py-2 rounded-lg bg-black/50 hover:bg-black/70 text-white transition-all flex items-center gap-2 backdrop-blur-sm pointer-events-auto"
+          className="pointer-events-auto sticky top-0 z-50 flex items-center gap-2 rounded-lg border border-white/10 bg-black/50 px-4 py-2 text-white backdrop-blur-sm transition-all hover:bg-black/70"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="h-5 w-5" />
           <span>返回片单</span>
         </button>
       </div>
 
-      {/* 背景封面与遮罩 */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${playlist?.coverImage ?? ""})` }}
-      />
-      <div className="absolute inset-0 bg-linear-to-t from-[#0F171E] via-[#0F171E]/80 to-transparent" />
-
-      {/* 片单信息区 */}
-      <div className="absolute bottom-0 left-0 right-0 p-8">
-        <div className="max-w-7xl mx-auto">
-          {/* 标签 */}
-          <div className="flex items-center gap-3 mb-4">
-            {(playlist?.tags ?? []).map((tag: string, index: number) => (
-              <span
-                key={index}
-                className="px-3 py-1 rounded-full bg-linear-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-400 text-sm"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          {/* 标题 */}
-          <h1 className="text-5xl text-white mb-4">{playlist?.title ?? ""}</h1>
-
-          {/* 统计 */}
-          <div className="flex items-center gap-6 mb-4 text-gray-300">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                <span className="text-white text-sm">
-                  {playlist?.creatorAvatar ?? ""}
-                </span>
-              </div>
-              <span>{playlist?.creator ?? ""}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Film className="w-4 h-4" />
-              <span>{playlist?.moviesCount ?? 0} 部影片</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Heart className="w-4 h-4" />
-              <span>
-                {Number(playlist?.followersCount ?? 0).toLocaleString()} 关注
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Eye className="w-4 h-4" />
-              <span>
-                {Number(playlist?.viewsCount ?? 0).toLocaleString()} 浏览
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
-              <span>
-                {typeof playlist?.rating === "number"
-                  ? (playlist!.rating as number).toFixed(1)
-                  : "0.0"}
-              </span>
-            </div>
-          </div>
-
-          {/* 描述 */}
-          <p className="text-gray-300 text-lg max-w-4xl mb-6 leading-relaxed">
-            {playlist?.description ?? ""}
-          </p>
-
-          {/* 操作按钮 */}
-          <div className="flex gap-3">
-            <button
-              onClick={onToggleFollow}
-              className={`px-6 py-2.5 rounded-lg transition-all flex items-center gap-2 ${
-                isFollowing
-                  ? "bg-amber-500/20 border border-amber-500/50 text-amber-400"
-                  : "bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
-              }`}
+      {/* 片单信息区：流式布局 */}
+      <div className="relative z-10 w-full">
+        {/* 标签 */}
+        <div className="mb-4 flex items-center gap-3">
+          {(playlist?.tags ?? []).map((tag: string, index: number) => (
+            <span
+              key={index}
+              className="rounded-full border border-amber-500/30 bg-linear-to-r from-amber-500/20 to-orange-500/20 px-3 py-1 text-sm text-amber-400"
             >
-              <Heart
-                className={`w-4 h-4 ${isFollowing ? "fill-current" : ""}`}
-              />
-              <span>{isFollowing ? "已关注" : "关注片单"}</span>
-            </button>
-            <button className="px-6 py-2.5 rounded-lg bg-white/5 border border-white/20 text-white hover:bg-white/10 transition-all flex items-center gap-2">
-              <Share2 className="w-4 h-4" />
-              <span>分享</span>
-            </button>
-            <button className="px-6 py-2.5 rounded-lg bg-white/5 border border-white/20 text-white hover:bg-white/10 transition-all flex items-center gap-2">
-              <Play className="w-4 h-4" />
-              <span>播放全部</span>
-            </button>
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        {/* 标题 */}
+        <h1 className="mb-4 text-4xl font-bold text-white md:text-5xl">{playlist?.title ?? ""}</h1>
+
+        {/* 统计 */}
+        <div className="mb-4 flex flex-wrap items-center gap-6 text-neutral-300">
+          <div className="flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-amber-500 to-orange-600">
+              <span className="text-sm text-white">{playlist?.creatorAvatar ?? ""}</span>
+            </div>
+            <span>{playlist?.creator ?? ""}</span>
           </div>
+          <div className="flex items-center gap-2">
+            <Film className="h-4 w-4" />
+            <span>{playlist?.moviesCount ?? 0} 部影片</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Heart className="h-4 w-4" />
+            <span>{Number(playlist?.followersCount ?? 0).toLocaleString()} 关注</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Eye className="h-4 w-4" />
+            <span>{Number(playlist?.viewsCount ?? 0).toLocaleString()} 浏览</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
+            <span>
+              {typeof playlist?.rating === "number"
+                ? (playlist!.rating as number).toFixed(1)
+                : "0.0"}
+            </span>
+          </div>
+        </div>
+
+        {/* 描述 */}
+        <p className="mb-8 max-w-4xl text-lg leading-relaxed text-neutral-300">
+          {playlist?.description ?? ""}
+        </p>
+
+        {/* 操作按钮 */}
+        <div className="flex gap-3">
+          <button
+            onClick={onToggleFollow}
+            className={`flex items-center gap-2 rounded-lg px-6 py-2.5 transition-all ${
+              isFollowing
+                ? "border border-amber-500/50 bg-amber-500/20 text-amber-400 hover:bg-amber-500/30"
+                : "bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30 hover:from-amber-600 hover:to-orange-700"
+            }`}
+          >
+            <Heart className={`h-4 w-4 ${isFollowing ? "fill-current" : ""}`} />
+            <span>{isFollowing ? "已关注" : "关注片单"}</span>
+          </button>
+          <button className="general-button">
+            <Share2 className="mr-2 h-4 w-4" />
+            <span>分享</span>
+          </button>
+          <button className="general-button">
+            <Play className="mr-2 h-4 w-4" />
+            <span>播放全部</span>
+          </button>
         </div>
       </div>
     </div>

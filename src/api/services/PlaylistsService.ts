@@ -21,13 +21,17 @@ import type { IsSubscribedDto } from '../models/IsSubscribedDto';
 import type { IsSubscribedResponseDto } from '../models/IsSubscribedResponseDto';
 import type { LikePlaylistDto } from '../models/LikePlaylistDto';
 import type { LikePlaylistResponseDto } from '../models/LikePlaylistResponseDto';
+import type { ListPlaylistItemsDto } from '../models/ListPlaylistItemsDto';
+import type { ListPlaylistItemsResponseDto } from '../models/ListPlaylistItemsResponseDto';
 import type { ListPlaylistsDto } from '../models/ListPlaylistsDto';
 import type { ListPlaylistsResponseDto } from '../models/ListPlaylistsResponseDto';
+import type { Object } from '../models/Object';
 import type { PlaylistDTO } from '../models/PlaylistDTO';
 import type { RemoveItemFromPlaylistDto } from '../models/RemoveItemFromPlaylistDto';
-import type { ReorderFilmsInPlaylistResponseDto } from '../models/ReorderFilmsInPlaylistResponseDto';
 import type { ReorderItemsInPlaylistDto } from '../models/ReorderItemsInPlaylistDto';
 import type { ReviewDto } from '../models/ReviewDto';
+import type { SearchAddableItemsDto } from '../models/SearchAddableItemsDto';
+import type { SearchAddableItemsResponseDto } from '../models/SearchAddableItemsResponseDto';
 import type { SubscribeDto } from '../models/SubscribeDto';
 import type { SubscribeResponseDto } from '../models/SubscribeResponseDto';
 import type { UpdatePlaylistDto } from '../models/UpdatePlaylistDto';
@@ -251,13 +255,71 @@ export class PlaylistsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: ReorderFilmsInPlaylistResponseDto;
+        data?: Object;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/playlists/reorder-items',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 获取片单内容项分页列表（支持电影和剧集）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static playlistsControllerListItems(
+        requestBody: ListPlaylistItemsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ListPlaylistItemsResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/playlists/list-items',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 搜索可添加到片单的内容项（严格按片单类型）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static playlistsControllerSearchAddableItems(
+        requestBody: SearchAddableItemsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: SearchAddableItemsResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/playlists/search-addable-items',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
