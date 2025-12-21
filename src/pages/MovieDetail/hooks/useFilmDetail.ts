@@ -94,12 +94,9 @@ export function useFilmDetail(filmId?: string) {
 
         // 2) 拉取关联的种子列表（不阻断页面展示）
         try {
-          // TODO: 待后端实现 moviesControllerListTorrents API
-          // 目前仅能获取详情，暂无法获取关联种子
-          // const listResp: any = await MoviesService.moviesControllerListTorrents({ filmId: String(filmId), page: 1, limit: 100 });
-          const listResp: any = { data: { items: [], total: 0 } }; // Mock empty response
+          const listResp: any = await MoviesService.moviesControllerListTorrents({ id: String(filmId) });
           const listBody = listResp?.code !== undefined ? listResp : listResp?.data ?? listResp;
-          const items = listBody?.data?.items ?? listBody?.items ?? [];
+          const items = listBody?.data ?? listBody?.items ?? [];
           if (!cancelled) {
             setDetail((prev) => {
               if (!prev) return prev;
@@ -121,7 +118,7 @@ export function useFilmDetail(filmId?: string) {
                     leechers: Number(t?.leechers ?? 0),
                     completed: 0,
                     uploader: String(t?.uploader ?? ''),
-                    uploadTime: String(t?.uploadDate ?? ''),
+                    uploadTime: String(t?.uploadedAt ?? t?.uploadDate ?? ''),
                     uploadDate: String(t?.uploadedAt ?? t?.uploadDate ?? ''),
                     isFree: Boolean(t?.isFree ?? false),
                     isVip: Boolean(t?.isVip ?? false),

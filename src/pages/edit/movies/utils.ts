@@ -44,6 +44,26 @@ export function validateFilmForm(form: any) {
   return { valid: Object.keys(errs).length === 0, errs };
 }
 
+export function mapBackendTorrentToLocal(t: any) {
+  return {
+    id: String(t?.id ?? t?.torrentId ?? ''),
+    title: t?.title ?? '',
+    subTitle: t?.subTitle ?? '',
+    version: t?.version ?? t?.name ?? t?.quality ?? '',
+    size: t?.size ?? '',
+    quality: t?.quality ?? '',
+    standard: t?.standard ?? '',
+    source: t?.source ?? '',
+    codec: t?.codec ?? t?.videoCodec ?? '',
+    audio: t?.audio ?? t?.audioCodec ?? '',
+    seeders: t?.seeders ?? 0,
+    leechers: t?.leechers ?? 0,
+    uploadDate: t?.uploadedAt ?? t?.uploadDate ?? '',
+    isFree: t?.isFree ?? false,
+    isVip: t?.isVip ?? false,
+  };
+}
+
 export function mapBackendFilmToLocal(detail: any) {
   const genres = Array.isArray(detail?.genre)
     ? detail.genre.filter(Boolean)
@@ -51,23 +71,7 @@ export function mapBackendFilmToLocal(detail: any) {
       ? detail.genres.map((g: any) => (typeof g === 'string' ? g : g?.name)).filter(Boolean)
       : [];
   const torrents = Array.isArray(detail?.torrents)
-    ? detail.torrents.map((t: any) => ({
-      id: String(t?.id ?? t?.torrentId ?? ''),
-      title: t?.title ?? '',
-      subTitle: t?.subTitle ?? '',
-      version: t?.version ?? t?.name ?? t?.quality ?? '',
-      size: t?.size ?? '',
-      quality: t?.quality ?? '',
-      standard: t?.standard ?? '',
-      source: t?.source ?? '',
-      codec: t?.codec ?? t?.videoCodec ?? '',
-      audio: t?.audio ?? t?.audioCodec ?? '',
-      seeders: t?.seeders ?? 0,
-      leechers: t?.leechers ?? 0,
-      uploadDate: t?.uploadDate ?? '',
-      isFree: t?.isFree ?? false,
-      isVip: t?.isVip ?? false,
-    }))
+    ? detail.torrents.map(mapBackendTorrentToLocal)
     : [];
   return {
     id: String(detail?.id ?? ''),
@@ -88,3 +92,4 @@ export function mapBackendFilmToLocal(detail: any) {
     updatedAt: String(detail?.updatedAt ?? ''),
   };
 }
+

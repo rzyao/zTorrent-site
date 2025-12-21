@@ -10,6 +10,7 @@ import type { GetMovieDto } from '../models/GetMovieDto';
 import type { ListMoviesDto } from '../models/ListMoviesDto';
 import type { ListMoviesResponseDto } from '../models/ListMoviesResponseDto';
 import type { MovieDetailDto } from '../models/MovieDetailDto';
+import type { MovieTorrentDto } from '../models/MovieTorrentDto';
 import type { Object } from '../models/Object';
 import type { UnbindTorrentsDto } from '../models/UnbindTorrentsDto';
 import type { UpdateMovieDto } from '../models/UpdateMovieDto';
@@ -180,6 +181,35 @@ export class MoviesService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/movies/detail',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 获取电影绑定的种子列表
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static moviesControllerListTorrents(
+        requestBody: GetMovieDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Array<MovieTorrentDto>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/movies/list-torrents',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

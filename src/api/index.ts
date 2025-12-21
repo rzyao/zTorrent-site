@@ -230,6 +230,7 @@ export type { MarkReadDto } from './models/MarkReadDto';
 export type { MarkResolvedDto } from './models/MarkResolvedDto';
 export type { MovieDetailDto } from './models/MovieDetailDto';
 export type { MovieSummaryDto } from './models/MovieSummaryDto';
+export type { MovieTorrentDto } from './models/MovieTorrentDto';
 export type { MyRequestsListDto } from './models/MyRequestsListDto';
 export type { MyResponsesListDto } from './models/MyResponsesListDto';
 export { MyTodosDto } from './models/MyTodosDto';

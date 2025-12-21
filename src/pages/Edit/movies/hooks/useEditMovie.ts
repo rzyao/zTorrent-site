@@ -3,7 +3,7 @@ import { useFilms } from '@/hooks/useFilms';
 import { TorrentsService } from '@/api/services/TorrentsService';
 import { MoviesService } from '@/api/services/MoviesService';
 import { PtGenService } from '@/api/services/PtGenService';
-import { stripBackticksAndTrim, parseDurationToMinutes, validateFilmForm, mapBackendFilmToLocal, isValidRating } from '@/pages/Edit/movies/utils';
+import { stripBackticksAndTrim, parseDurationToMinutes, validateFilmForm, mapBackendFilmToLocal, isValidRating, mapBackendTorrentToLocal } from '@/pages/Edit/movies/utils';
 import type { Movie, MovieFormState } from '@/pages/Edit/movies/types';
 import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
 
@@ -67,39 +67,29 @@ export function useEditMovie() {
     })();
   }, [searchQuery]);
 
+  async function fetchMovieTorrents(filmId: string) {
+    if (!filmId) return;
+    try {
+      const resp: any = await MoviesService.moviesControllerListTorrents({ id: filmId });
+      const body = resp?.code !== undefined ? resp : (resp?.data ?? resp);
+      const items = body?.data ?? body?.items ?? [];
+      const mappedTorrents = Array.isArray(items) ? items.map(mapBackendTorrentToLocal) : [];
+      
+      setSelectedMovie(prev => {
+        if (!prev || prev.id !== filmId) return prev;
+        return { ...prev, torrents: mappedTorrents };
+      });
+      
+      setMovies(prev => prev.map(m => m.id === filmId ? { ...m, torrents: mappedTorrents } : m));
+    } catch (e) {
+      console.error('Failed to fetch movie torrents:', e);
+    }
+  }
+
   useEffect(() => {
-    (async () => {
-      if (!selectedMovie) return;
-      try {
-        // TODO: moviesControllerListTorrents API 待实现
-        // const resp: any = await MoviesService.moviesControllerListTorrents({ filmId: selectedMovie.id, page: 1, limit: 100 });
-        const resp: any = { data: { items: [], total: 0 } };
-        const body = resp?.code !== undefined ? resp : resp?.data ?? resp;
-        const items = body?.data?.items ?? body?.items ?? [];
-        const mappedTorrents = Array.isArray(items)
-          ? items.map((t: any) => ({
-            id: String(t?.id ?? t?.torrentId ?? ''),
-            title: t?.title ?? '',
-            subTitle: t?.subTitle ?? '',
-            version: t?.version ?? t?.name ?? t?.quality ?? '',
-            size: t?.size ?? '',
-            quality: t?.quality ?? '',
-            standard: t?.standard ?? '',
-            source: t?.source ?? '',
-            codec: t?.codec ?? t?.videoCodec ?? '',
-            audio: t?.audio ?? t?.audioCodec ?? '',
-            seeders: t?.seeders ?? 0,
-            leechers: t?.leechers ?? 0,
-            uploadDate: t?.uploadDate ?? '',
-            isFree: t?.isFree ?? false,
-            isVip: t?.isVip ?? false,
-          }))
-          : [];
-        const next = { ...(selectedMovie as any), torrents: mappedTorrents } as Movie;
-        setSelectedMovie(next);
-        setMovies(movies.map((m) => (m.id === next.id ? next : m)));
-      } catch {}
-    })();
+    if (selectedMovie?.id) {
+      fetchMovieTorrents(selectedMovie.id);
+    }
   }, [selectedMovie?.id]);
 
   useEffect(() => {
@@ -336,33 +326,7 @@ export function useEditMovie() {
     if (!selectedMovie) return;
     try {
       await addTorrent(selectedMovie.id, String(torrentId));
-      // TODO: moviesControllerListTorrents API 待实现
-      // const resp: any = await MoviesService.moviesControllerListTorrents({ filmId: selectedMovie.id, page: 1, limit: 100 });
-      const resp: any = { data: { items: [], total: 0 } };
-      const body = resp?.code !== undefined ? resp : resp?.data ?? resp;
-      const items = body?.data?.items ?? body?.items ?? [];
-      const mappedTorrents = Array.isArray(items)
-        ? items.map((t: any) => ({
-          id: String(t?.id ?? t?.torrentId ?? ''),
-          title: t?.title ?? '',
-          subTitle: t?.subTitle ?? '',
-          version: t?.version ?? t?.name ?? t?.quality ?? '',
-          size: t?.size ?? '',
-          quality: t?.quality ?? '',
-          standard: t?.standard ?? '',
-          source: t?.source ?? '',
-          codec: t?.codec ?? t?.videoCodec ?? '',
-          audio: t?.audio ?? t?.audioCodec ?? '',
-          seeders: t?.seeders ?? 0,
-          leechers: t?.leechers ?? 0,
-          uploadDate: t?.uploadDate ?? '',
-          isFree: t?.isFree ?? false,
-          isVip: t?.isVip ?? false,
-        }))
-        : [];
-      const next = { ...(selectedMovie as any), torrents: mappedTorrents } as Movie;
-      setSelectedMovie(next);
-      setMovies(movies.map((m) => (m.id === next.id ? next : m)));
+      await fetchMovieTorrents(selectedMovie.id);
       setShowTorrentSearch(false);
       setTorrentSearchQuery('');
       setSearchResults([]);
@@ -375,33 +339,7 @@ export function useEditMovie() {
     if (selectedMovie) {
       try {
         await removeTorrent(selectedMovie.id, torrentId);
-        // TODO: moviesControllerListTorrents API 待实现
-        // const resp: any = await MoviesService.moviesControllerListTorrents({ filmId: selectedMovie.id, page: 1, limit: 100 });
-        const resp: any = { data: { items: [], total: 0 } };
-        const body = resp?.code !== undefined ? resp : resp?.data ?? resp;
-        const items = body?.data?.items ?? body?.items ?? [];
-        const mappedTorrents = Array.isArray(items)
-          ? items.map((t: any) => ({
-            id: String(t?.id ?? t?.torrentId ?? ''),
-            title: t?.title ?? '',
-            subTitle: t?.subTitle ?? '',
-            version: t?.version ?? t?.name ?? t?.quality ?? '',
-            size: t?.size ?? '',
-            quality: t?.quality ?? '',
-            standard: t?.standard ?? '',
-            source: t?.source ?? '',
-            codec: t?.codec ?? t?.videoCodec ?? '',
-            audio: t?.audio ?? t?.audioCodec ?? '',
-            seeders: t?.seeders ?? 0,
-            leechers: t?.leechers ?? 0,
-            uploadDate: t?.uploadDate ?? '',
-            isFree: t?.isFree ?? false,
-            isVip: t?.isVip ?? false,
-          }))
-          : [];
-        const next = { ...(selectedMovie as any), torrents: mappedTorrents } as Movie;
-        setSelectedMovie(next);
-        setMovies(movies.map((m) => (m.id === next.id ? next : m)));
+        await fetchMovieTorrents(selectedMovie.id);
       } catch (e: any) {
         alert(e?.message || '移除失败');
       }
