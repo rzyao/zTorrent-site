@@ -5,6 +5,22 @@
  */
 
 export type Visibility = 'public' | 'private' | 'friends';
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
+
+/** 审批状态中英文映射 */
+export const APPROVAL_STATUS_LABELS: Record<ApprovalStatus, string> = {
+  pending: '待审批',
+  approved: '已通过',
+  rejected: '已驳回',
+};
+
+/** 审批状态颜色映射 */
+export const APPROVAL_STATUS_COLORS: Record<ApprovalStatus, string> = {
+  pending: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+  approved: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+  rejected: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
+};
+
 
 /**
  * 片单类型
@@ -82,5 +98,7 @@ export interface Playlist {
   views: number;
   /** 点赞次数 */
   likes: number;
+  /** 审批状态 */
+  approvalStatus: ApprovalStatus;
 }
 

@@ -83,7 +83,7 @@ function TorrentCardInner({
             >
               {/* 装饰性小圆点/引导条，增加视觉精致度 */}
               <span className="h-1.5 w-1.5 rounded-full bg-amber-500 shadow-[0_0_4px_rgba(245,158,11,0.6)]" />
-              <span className="text-[10px] font-bold tracking-[0.1em] text-slate-100 uppercase">
+              <span className="tracking-0.1em text-[10px] font-bold text-slate-100 uppercase">
                 {category}
               </span>
             </div>

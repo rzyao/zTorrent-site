@@ -1097,7 +1097,7 @@ export function PTHomePage() {
                     alt="教父"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
                     <Badge className="border-0 bg-purple-500 text-white">
@@ -1123,7 +1123,7 @@ export function PTHomePage() {
                       </span>
                       <span className="text-neutral-400">65.3 GB</span>
                     </div>
-                    <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
+                    <Button className="w-full bg-linear-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
                       <Download className="mr-1 h-3 w-3" />
                       立即下载
                     </Button>
@@ -1142,16 +1142,16 @@ export function PTHomePage() {
             {/* 电影 7 */}
             <div className="group transform cursor-pointer transition-all duration-300 hover:z-10 hover:scale-110">
               <div className="relative overflow-hidden rounded-lg border border-neutral-700/50 bg-neutral-900/50 shadow-lg transition-all duration-300 hover:border-amber-500 hover:shadow-2xl hover:shadow-amber-500/50">
-                <div className="relative aspect-[2/3]">
+                <div className="relative aspect-2/3">
                   <img
                     src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600"
                     alt="肖申克的救赎"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
-                    <Badge className="border-0 bg-gradient-to-r from-amber-500 to-orange-600 text-white">
+                    <Badge className="border-0 bg-linear-to-r from-amber-500 to-orange-600 text-white">
                       <Crown className="mr-1 h-3 w-3" />
                       VIP
                     </Badge>
@@ -1178,7 +1178,7 @@ export function PTHomePage() {
                       </span>
                       <span className="text-neutral-400">71.2 GB</span>
                     </div>
-                    <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
+                    <Button className="w-full bg-linear-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
                       <Download className="mr-1 h-3 w-3" />
                       立即下载
                     </Button>
@@ -1197,13 +1197,13 @@ export function PTHomePage() {
             {/* 电影 8 */}
             <div className="group transform cursor-pointer transition-all duration-300 hover:z-10 hover:scale-110">
               <div className="relative overflow-hidden rounded-lg border border-neutral-700/50 bg-neutral-900/50 shadow-lg transition-all duration-300 hover:border-amber-500 hover:shadow-2xl hover:shadow-amber-500/50">
-                <div className="relative aspect-[2/3]">
+                <div className="relative aspect-2/3">
                   <img
                     src="https://images.unsplash.com/photo-1574267432644-f74f8cc3709f?w=600"
                     alt="银翼杀手2049"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
                     <Badge className="border-0 bg-red-500 text-white">
@@ -1229,7 +1229,7 @@ export function PTHomePage() {
                       </span>
                       <span className="text-neutral-400">88.9 GB</span>
                     </div>
-                    <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
+                    <Button className="w-full bg-linear-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
                       <Download className="mr-1 h-3 w-3" />
                       立即下载
                     </Button>
@@ -1248,13 +1248,13 @@ export function PTHomePage() {
             {/* 电影 9 */}
             <div className="group transform cursor-pointer transition-all duration-300 hover:z-10 hover:scale-110">
               <div className="relative overflow-hidden rounded-lg border border-neutral-700/50 bg-neutral-900/50 shadow-lg transition-all duration-300 hover:border-amber-500 hover:shadow-2xl hover:shadow-amber-500/50">
-                <div className="relative aspect-[2/3]">
+                <div className="relative aspect-2/3">
                   <img
                     src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=600"
                     alt="指环王"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
                     <Badge className="border-0 bg-purple-500 text-white">
@@ -1284,7 +1284,7 @@ export function PTHomePage() {
                       </span>
                       <span className="text-neutral-400">156.7 GB</span>
                     </div>
-                    <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
+                    <Button className="w-full bg-linear-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
                       <Download className="mr-1 h-3 w-3" />
                       立即下载
                     </Button>

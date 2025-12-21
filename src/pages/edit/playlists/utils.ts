@@ -1,4 +1,4 @@
-import type { Playlist, Movie, Visibility, PlaylistType } from '@/pages/Edit/playlists/types';
+import type { Playlist, Movie, Visibility, PlaylistType, ApprovalStatus } from '@/pages/Edit/playlists/types';
 
 /**
  * 从可能为对象或字符串的字段中提取分类 Key
@@ -45,6 +45,7 @@ export function mapBackendPlaylistToLocal(detail: any): Playlist {
     updatedAt: String(detail?.meta?.updatedAt ?? detail?.updatedAt ?? ''),
     views: Number(detail?.stats?.views ?? detail?.views ?? 0),
     likes: Number(detail?.stats?.likes ?? detail?.likes ?? 0),
+    approvalStatus: (detail?.approvalStatus ?? 'pending') as ApprovalStatus,
   };
 }
 
@@ -77,6 +78,7 @@ export function mapBackendPlaylistSummaryToLocal(summary: any): Playlist {
     updatedAt: String(summary?.meta?.updatedAt ?? ''),
     views: Number(summary?.stats?.views ?? 0),
     likes: Number(summary?.stats?.likes ?? 0),
+    approvalStatus: (summary?.approvalStatus ?? 'pending') as ApprovalStatus,
   };
 }
 
