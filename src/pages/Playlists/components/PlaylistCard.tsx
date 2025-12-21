@@ -35,7 +35,7 @@ export function PlaylistCard({ playlist, onClick, onFollowToggle }: Props) {
           alt=""
           className="w-full h-full object-cover scale-105 blur-[2px] opacity-40 group-hover:scale-110 transition-transform duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-900/90 to-black/80" />
+        <div className="absolute inset-0 bg-linear-to-br from-neutral-900 via-neutral-900/90 to-black/80" />
       </div>
 
       {/* 内容图层：占据主要位置 */}
@@ -66,7 +66,7 @@ export function PlaylistCard({ playlist, onClick, onFollowToggle }: Props) {
           {/* 第一行：创建者信息 */}
           <div className="flex items-center gap-2">
             {playlist.creatorAvatar ? (
-              <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-white text-[10px] font-black shadow-lg">
+              <div className="w-6 h-6 rounded-full bg-linear-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-white text-[10px] font-black shadow-lg">
                 {playlist.creatorAvatar}
               </div>
             ) : (

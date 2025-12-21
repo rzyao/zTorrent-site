@@ -8,9 +8,9 @@ import { Info } from 'lucide-react';
  */
 export const FooterNote: React.FC = () => {
   return (
-    <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm border border-neutral-700/50">
+    <div className="mt-8 p-6 rounded-2xl bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm border border-neutral-700/50">
       <div className="flex items-start gap-4">
-        <Info className="w-6 h-6 text-amber-400 flex-shrink-0" />
+        <Info className="w-6 h-6 text-amber-400 shrink-0" />
         <div>
           <h3 className="text-white mb-2">最终解释权</h3>
           <p className="text-neutral-400 text-sm leading-relaxed mb-3">

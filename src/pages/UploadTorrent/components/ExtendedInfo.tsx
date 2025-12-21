@@ -69,7 +69,7 @@ export const ExtendedInfo = memo(function ExtendedInfo(props: ExtendedInfoProps)
   return (
     <div className="bg-neutral-800/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 shadow-2xl overflow-hidden">
       {/* 模块标题区域 */}
-      <div className="bg-gradient-to-r from-yellow-600/20 to-amber-500/20 border-b border-neutral-700/50 px-6 py-3.5">
+      <div className="bg-linear-to-r from-yellow-600/20 to-amber-500/20 border-b border-neutral-700/50 px-6 py-3.5">
         <h2 className="text-white flex items-center gap-2">
           <Link2 className="w-5 h-5 text-yellow-400" />
           扩展信息
@@ -144,7 +144,7 @@ export const ExtendedInfo = memo(function ExtendedInfo(props: ExtendedInfoProps)
                 value={ptGenUrl}
                 onChange={(e) => onPtGenUrlChange(e.target.value)}
               />
-              <Button type="button" className="bg-gradient-to-r from-yellow-600 to-amber-600 hover:from-yellow-700 hover:to-amber-700 text-white whitespace-nowrap" onClick={onFetchPtGen} disabled={ptGenLoading}>
+              <Button type="button" className="bg-linear-to-r from-yellow-600 to-amber-600 hover:from-yellow-700 hover:to-amber-700 text-white whitespace-nowrap" onClick={onFetchPtGen} disabled={ptGenLoading}>
                 <Download className="w-4 h-4 mr-1.5" />
                 {ptGenLoading ? '获取中...' : '获取简介'}
               </Button>

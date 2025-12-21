@@ -167,7 +167,7 @@ export function TicketFAQView() {
 
   return (
     <div>
-      <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 mb-6">
+      <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 mb-6">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500" />
           <Input
@@ -179,7 +179,7 @@ export function TicketFAQView() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-4 mb-6">
+      <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-4 mb-6">
         <div className="flex flex-wrap gap-2">
           {categories.map((category) => (
             <button
@@ -187,7 +187,7 @@ export function TicketFAQView() {
               onClick={() => setSelectedCategory(category.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
                 selectedCategory === category.id
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-600 text白色'
+                  ? 'bg-linear-to-r from-amber-500 to-orange-600 text白色'
                   : `${category.color} hover:bg-neutral-700/50`
               }`}
             >
@@ -200,7 +200,7 @@ export function TicketFAQView() {
 
       <div className="space-y-4">
         {filteredFaqs.length === 0 ? (
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-12 text-center">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-12 text-center">
             <HelpCircle className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
             <p className="text-neutral-400">未找到相关问题</p>
           </div>
@@ -212,7 +212,7 @@ export function TicketFAQView() {
             return (
               <div
                 key={faq.id}
-                className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden hover:border-amber-500/30 transition-all"
+                className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden hover:border-amber-500/30 transition-all"
               >
                 <button
                   onClick={() => setExpandedId(isExpanded ? null : faq.id)}
@@ -231,7 +231,7 @@ export function TicketFAQView() {
                       ))}
                     </div>
                   </div>
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     {isExpanded ? (
                       <ChevronUp className="w-5 h-5 text-amber-400" />
                     ) : (
@@ -253,13 +253,13 @@ export function TicketFAQView() {
         )}
       </div>
 
-      <div className="mt-8 bg-gradient-to-br from-amber-500/10 to-orange-600/10 backdrop-blur-sm rounded-2xl border border-amber-500/20 p-6">
+      <div className="mt-8 bg-linear-to-br from-amber-500/10 to-orange-600/10 backdrop-blur-sm rounded-2xl border border-amber-500/20 p-6">
         <div className="flex items-start gap-4">
-          <HelpCircle className="w-6 h-6 text-amber-400 flex-shrink-0 mt-1" />
+          <HelpCircle className="w-6 h-6 text-amber-400 shrink-0 mt-1" />
           <div>
             <h4 className="text-amber-400 mb-2">没有找到您的问题?</h4>
             <p className="text-neutral-300 mb-4">如果以上常见问题无法解决您的疑问,您可以创建工单向我们寻求帮助。我们的支持团队会尽快为您解答。</p>
-            <button className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl transition-all">创建工单</button>
+            <button className="px-4 py-2 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl transition-all">创建工单</button>
           </div>
         </div>
       </div>

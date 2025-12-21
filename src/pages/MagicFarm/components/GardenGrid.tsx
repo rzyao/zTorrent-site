@@ -41,12 +41,12 @@ export function GardenGrid({ plots, crops, onPlotClick }: Props) {
           {/* 土地卡片 */}
           <div
             className={`aspect-square rounded-2xl border-4 transition-all relative overflow-hidden ${plot.isLocked
-              ? 'bg-gradient-to-br from-stone-600 to-stone-800 border-stone-900'
+              ? 'bg-linear-to-br from-stone-600 to-stone-800 border-stone-900'
               : plot.stage === 'empty'
-                ? 'bg-gradient-to-br from-amber-900 to-amber-950 border-amber-950 hover:shadow-[0_0_30px_rgba(251,191,36,0.5)] hover:scale-105'
+                ? 'bg-linear-to-br from-amber-900 to-amber-950 border-amber-950 hover:shadow-[0_0_30px_rgba(251,191,36,0.5)] hover:scale-105'
                 : plot.stage === 'mature'
-                  ? 'bg-gradient-to-br from-amber-800 to-amber-900 border-amber-950 shadow-[0_0_30px_rgba(34,197,94,0.6)] animate-pulse-slow'
-                  : 'bg-gradient-to-br from-amber-900 to-amber-950 border-amber-950 hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:scale-105'
+                  ? 'bg-linear-to-br from-amber-800 to-amber-900 border-amber-950 shadow-[0_0_30px_rgba(34,197,94,0.6)] animate-pulse-slow'
+                  : 'bg-linear-to-br from-amber-900 to-amber-950 border-amber-950 hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:scale-105'
             }`}
           >
             {/* 土壤纹理 */}
@@ -95,7 +95,7 @@ export function GardenGrid({ plots, crops, onPlotClick }: Props) {
               <>
                 <Sparkles className="absolute top-4 right-4 w-6 h-6 text-yellow-300 animate-ping" />
                 <Sparkles className="absolute bottom-4 left-4 w-6 h-6 text-yellow-300 animate-ping" style={{ animationDelay: '0.5s' }} />
-                <div className="absolute inset-0 bg-gradient-to-t from-green-400/20 to-transparent rounded-2xl"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-green-400/20 to-transparent rounded-2xl"></div>
               </>
             )}
 

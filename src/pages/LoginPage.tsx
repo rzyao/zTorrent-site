@@ -48,8 +48,8 @@ export function LoginPage({
           alt="Background"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0F171E]/95 via-[#0F171E]/85 to-[#0F171E]/95" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0F171E] via-transparent to-[#0F171E]" />
+        <div className="absolute inset-0 bg-linear-to-b from-[#0F171E]/95 via-[#0F171E]/85 to-[#0F171E]/95" />
+        <div className="absolute inset-0 bg-linear-to-r from-[#0F171E] via-transparent to-[#0F171E]" />
       </div>
 
       <div className="relative z-10 px-4 md:px-8 py-6">
@@ -203,7 +203,7 @@ export function LoginPage({
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0F171E] to-transparent z-0" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-[#0F171E] to-transparent z-0" />
     </div>
   );
 }

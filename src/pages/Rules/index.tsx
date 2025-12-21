@@ -44,7 +44,7 @@ export function RulesPage() {
       /> */}
 
       {isEditMode && (
-        <div className="mb-6 p-4 rounded-xl bg-gradient-to-r from-amber-500/10 to-orange-600/10 border border-amber-500/30">
+        <div className="mb-6 p-4 rounded-xl bg-linear-to-r from-amber-500/10 to-orange-600/10 border border-amber-500/30">
           <div className="flex items-center gap-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"

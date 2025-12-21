@@ -400,7 +400,7 @@ export function HomePage() {
         return "未知";
     }
   };
-  /* 卡片背景色从bg-gradient-to-br from-neutral-800/60 to-stone-900/60修改为bg-neutral-800/40 */
+  /* 卡片背景色从bg-linear-to-br from-neutral-800/60 to-stone-900/60修改为bg-neutral-800/40 */
   return (
     <PageContainer className="max-w-[1920px] px-4 md:px-14 py-6">
       {/* 顶部三列布局 */}
@@ -468,7 +468,7 @@ export function HomePage() {
                       backgroundImage: `url(${torrent.image})`,
                     }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/70 to-neutral-900/30" />
+                    <div className="absolute inset-0 bg-linear-to-t from-neutral-900 via-neutral-900/70 to-neutral-900/30" />
                   </div>
 
                   <div className="relative h-full flex flex-col justify-end p-8">
@@ -565,7 +565,7 @@ export function HomePage() {
             </h2>
 
             <div className="space-y-4">
-              <div className="text-center p-4 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-600/20 border border-blue-500/30">
+              <div className="text-center p-4 rounded-lg bg-linear-to-br from-blue-500/20 to-cyan-600/20 border border-blue-500/30">
                 <div className="text-blue-400 text-3xl mb-1">
                   {siteStats.totalUsers.toLocaleString()}
                 </div>
@@ -672,7 +672,7 @@ export function HomePage() {
                 <img
                   src={rec.poster}
                   alt={rec.title}
-                  className="w-20 h-28 object-cover rounded-lg flex-shrink-0"
+                  className="w-20 h-28 object-cover rounded-lg shrink-0"
                 />
                 <div className="flex-1 min-w-0">
                   <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 text-xs mb-2">
@@ -721,10 +721,10 @@ export function HomePage() {
               >
                 <div className="flex items-start gap-2 mb-2">
                   {post.isPinned && (
-                    <Pin className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                    <Pin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                   )}
                   {post.isHot && (
-                    <Flame className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                    <Flame className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
                   )}
                   <h3 className="text-white text-sm flex-1 line-clamp-2 group-hover:text-amber-400 transition-colors">
                     {post.title}

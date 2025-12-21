@@ -27,7 +27,7 @@ export function AcquireSection({
       <div className="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden hover:border-amber-500/30 transition-all">
         <div className="p-6">
           <div className="flex items-start gap-4 mb-6">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center flex-shrink-0">
+            <div className="w-14 h-14 rounded-xl bg-linear-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center shrink-0">
               <Sparkles className="w-7 h-7 text-amber-400" />
             </div>
             <div className="flex-1">
@@ -55,7 +55,7 @@ export function AcquireSection({
               <div className="text-red-400 text-sm mt-2">余额不足，请先获取更多魔力值</div>
             )}
           </div>
-          <button disabled={permanentDisabled} onClick={() => onPurchasePermanent()} className={`w-full py-3 rounded-lg ${permanentDisabled ? 'bg-neutral-800 text-neutral-400 cursor-not-allowed' : 'bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/20'} flex items-center justify-center gap-2`}>
+          <button disabled={permanentDisabled} onClick={() => onPurchasePermanent()} className={`w-full py-3 rounded-lg ${permanentDisabled ? 'bg-neutral-800 text-neutral-400 cursor-not-allowed' : 'bg-linear-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/20'} flex items-center justify-center gap-2`}>
             <span>购买永久名额</span>
           </button>
         </div>
@@ -64,7 +64,7 @@ export function AcquireSection({
       <div className="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden hover:border-amber-500/30 transition-all">
         <div className="p-6">
           <div className="flex items-start gap-4 mb-6">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center flex-shrink-0">
+            <div className="w-14 h-14 rounded-xl bg-linear-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center shrink-0">
               <Sparkles className="w-7 h-7 text-amber-400" />
             </div>
             <div className="flex-1">
@@ -92,7 +92,7 @@ export function AcquireSection({
               <div className="text-red-400 text-sm mt-2">余额不足，请先获取更多魔力值</div>
             )}
           </div>
-          <button disabled={tempDisabled} onClick={() => onPurchaseTemp()} className={`w-full py-3 rounded-lg ${tempDisabled ? 'bg-neutral-800 text-neutral-400 cursor-not-allowed' : 'bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/20'} flex items-center justify-center gap-2`}>
+          <button disabled={tempDisabled} onClick={() => onPurchaseTemp()} className={`w-full py-3 rounded-lg ${tempDisabled ? 'bg-neutral-800 text-neutral-400 cursor-not-allowed' : 'bg-linear-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/20'} flex items-center justify-center gap-2`}>
             <span>购买临时名额</span>
           </button>
         </div>
@@ -101,7 +101,7 @@ export function AcquireSection({
       <div className="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden hover:border-green-500/30 transition-all">
         <div className="p-6">
           <div className="flex items-start gap-4 mb-6">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-600/20 flex items-center justify-center flex-shrink-0">
+            <div className="w-14 h-14 rounded-xl bg-linear-to-br from-green-500/20 to-emerald-600/20 flex items-center justify-center shrink-0">
               <Gift className="w-7 h-7 text-green-400" />
             </div>
             <div className="flex-1">
@@ -130,7 +130,7 @@ export function AcquireSection({
       <div className="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden hover:border-purple-500/30 transition-all">
         <div className="p-6">
           <div className="flex items-start gap-4 mb-6">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-600/20 flex items-center justify-center flex-shrink-0">
+            <div className="w-14 h-14 rounded-xl bg-linear-to-br from-purple-500/20 to-pink-600/20 flex items-center justify-center shrink-0">
               <Shield className="w-7 h-7 text-purple-400" />
             </div>
             <div className="flex-1">
@@ -148,14 +148,14 @@ export function AcquireSection({
               <span className="text-purple-400">+10 邀请码/月</span>
             </div>
           </div>
-          <button className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-600 text-white hover:from-purple-600 hover:to-pink-700 transition-all shadow-lg shadow-purple-500/20">升级VIP</button>
+          <button className="w-full py-3 rounded-lg bg-linear-to-r from-purple-500 to-pink-600 text-white hover:from-purple-600 hover:to-pink-700 transition-all shadow-lg shadow-purple-500/20">升级VIP</button>
         </div>
       </div>
 
       <div className="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden hover:border-blue-500/30 transition-all">
         <div className="p-6">
           <div className="flex items-start gap-4 mb-6">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-600/20 flex items-center justify-center flex-shrink-0">
+            <div className="w-14 h-14 rounded-xl bg-linear-to-br from-blue-500/20 to-cyan-600/20 flex items-center justify-center shrink-0">
               <Users className="w-7 h-7 text-blue-400" />
             </div>
             <div className="flex-1">

@@ -3,9 +3,9 @@ import { earnMethods } from '../constants';
 export function EarnMethods() {
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-r from-amber-500/10 to-orange-600/10 border border-amber-500/20 rounded-xl p-6 mb-6">
+      <div className="bg-linear-to-r from-amber-500/10 to-orange-600/10 border border-amber-500/20 rounded-xl p-6 mb-6">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center flex-shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shrink-0">
             <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" />
           </div>
           <div>
@@ -21,7 +21,7 @@ export function EarnMethods() {
         {earnMethods.map((method, index) => (
           <div key={index} className="bg-neutral-900 border border-neutral-700 rounded-xl p-6 hover:border-amber-500/30 transition-all hover:shadow-lg hover:shadow-amber-500/10">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-linear-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center shrink-0">
                 <method.icon className="w-6 h-6 text-amber-400" />
               </div>
               <div className="flex-1 min-w-0">

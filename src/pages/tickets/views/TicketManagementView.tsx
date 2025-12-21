@@ -138,28 +138,28 @@ export function TicketManagementView() {
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
+        <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
           <div className="flex items中心 justify-between mb-2">
             <span className="text-neutral-400">全部工单</span>
             <Settings className="w-4 h-4 text-neutral-500" />
           </div>
           <div className="text-white text-3xl">{stats.total}</div>
         </div>
-        <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
+        <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-amber-400">未分配</span>
             <Users className="w-4 h-4 text-amber-400" />
           </div>
           <div className="text-white text-3xl">{stats.unassigned}</div>
         </div>
-        <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
+        <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
           <div className="flex items-center justify之间 mb-2">
             <span className="text-yellow-400">待处理</span>
             <Clock className="w-4 h-4 text-yellow-400" />
           </div>
           <div className="text-white text-3xl">{stats.pending}</div>
         </div>
-        <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
+        <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-red-400">紧急</span>
             <AlertCircle className="w-4 h-4 text-red-400" />
@@ -168,7 +168,7 @@ export function TicketManagementView() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 mb-6">
+      <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
@@ -211,12 +211,12 @@ export function TicketManagementView() {
 
       <div className="space-y-4">
         {isLoading ? (
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-12 text-center">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-12 text-center">
             <MessageCircle className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
             <p className="text-neutral-400">加载中...</p>
           </div>
         ) : filteredTickets.length === 0 ? (
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-12 text-center">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-12 text-center">
             <MessageCircle className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
             <p className="text-neutral-400">暂无工单</p>
           </div>
@@ -229,7 +229,7 @@ export function TicketManagementView() {
             return (
               <div
                 key={ticket.id}
-                className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 hover:border-amber-500/30 transition-all cursor-pointer group"
+                className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 hover:border-amber-500/30 transition-all cursor-pointer group"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
@@ -291,13 +291,13 @@ export function TicketManagementView() {
                           assignTicket({ ticketId: (ticket as any).id, assignee: 'TechSupport' });
                         }}
                         size="sm"
-                        className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                        className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
                       >
                         <Users className="w-4 h-4 mr-1" />
                         分配
                       </Button>
                     )}
-                    <ChevronDown className="w-5 h-5 text-neutral-500 group-hover:text-amber-400 transition-colors flex-shrink-0" />
+                    <ChevronDown className="w-5 h-5 text-neutral-500 group-hover:text-amber-400 transition-colors shrink-0" />
                   </div>
                 </div>
               </div>

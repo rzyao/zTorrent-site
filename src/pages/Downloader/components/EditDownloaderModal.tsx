@@ -37,7 +37,7 @@ export function EditDownloaderModal({
     <div className="modal-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="bg-neutral-900 rounded-2xl border border-neutral-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto m-4">
         {/* 头部：标题与关闭 */}
-        <div className="sticky top-0 bg-gradient-to-r from-amber-500 to-orange-600 p-6 flex items-center justify-between rounded-t-2xl">
+        <div className="sticky top-0 bg-linear-to-r from-amber-500 to-orange-600 p-6 flex items-center justify-between rounded-t-2xl">
           <h2 className="text-white text-xl flex items-center gap-2">
             <Edit className="w-6 h-6" />
             编辑下载器
@@ -185,7 +185,7 @@ export function EditDownloaderModal({
             <button
               onClick={onSubmit}
               disabled={!formData.name || !formData.host || !formData.port}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-xl text-white transition-all shadow-lg shadow-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-xl text-white transition-all shadow-lg shadow-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Edit className="w-5 h-5" />
               保存修改

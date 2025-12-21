@@ -21,10 +21,10 @@ export function CandidateCard({
   const isPassingVote = votePercentage >= requiredPercentage;
 
   return (
-    <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden hover:border-amber-500/30 transition-all group">
+    <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden hover:border-amber-500/30 transition-all group">
       <div className="flex flex-col md:flex-row gap-4 p-4">
-        <div className="relative w-full md:w-32 flex-shrink-0">
-          <div className="aspect-[2/3] rounded-lg overflow-hidden">
+        <div className="relative w-full md:w-32 shrink-0">
+          <div className="aspect-2/3 rounded-lg overflow-hidden">
             <img
               src={candidate.poster}
               alt={candidate.title}
@@ -54,7 +54,7 @@ export function CandidateCard({
               </div>
             </div>
             {candidate.status === 'voting' && (
-              <div className="text-right flex-shrink-0">
+              <div className="text-right shrink-0">
                 <p className="text-neutral-500 text-xs mb-1">剩余时间</p>
                 <p className="text-amber-400 text-sm flex items-center gap-1">
                   <Clock className="w-3 h-3" />
@@ -140,7 +140,7 @@ export function CandidateCard({
               )}
               <div
                 className={`h-full transition-all ${
-                  isPassingVote ? 'bg-gradient-to-r from-green-500 to-emerald-600' : 'bg-gradient-to-r from-amber-500 to-orange-600'
+                  isPassingVote ? 'bg-linear-to-r from-green-500 to-emerald-600' : 'bg-linear-to-r from-amber-500 to-orange-600'
                 }`}
                 style={{ width: `${votePercentage}%` }}
               />
@@ -150,7 +150,7 @@ export function CandidateCard({
           {candidate.status === 'rejected' && candidate.reason && (
             <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30">
               <div className="flex items-start gap-2">
-                <Ban className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                <Ban className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />
                 <div>
                   <p className="text-red-400 text-xs mb-1">驳回原因</p>
                   <p className="text-red-300 text-sm">{candidate.reason}</p>
@@ -162,7 +162,7 @@ export function CandidateCard({
           {candidate.status === 'approved' && (
             <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/30">
               <div className="flex items-center gap-2">
-                <CheckCheck className="w-4 h-4 text-green-400 flex-shrink-0" />
+                <CheckCheck className="w-4 h-4 text-green-400 shrink-0" />
                 <div className="flex-1">
                   <span className="text-green-400 text-sm">已自动发布为正式种子</span>
                   {candidate.publishedTorrentId && (
@@ -174,7 +174,7 @@ export function CandidateCard({
           )}
         </div>
 
-        <div className="flex md:flex-col gap-2 flex-shrink-0 w-full md:w-32">
+        <div className="flex md:flex-col gap-2 shrink-0 w-full md:w-32">
           {candidate.status === 'voting' && (
             <>
               <button
@@ -204,20 +204,20 @@ export function CandidateCard({
 
           <button
             onClick={onViewDetails}
-            className="flex-1 md:flex-none px-3 py-2 bg-gradient-to-r from-amber-500/20 to-orange-600/20 hover:from-amber-500/30 hover:to-orange-600/30 border border-amber-500/30 rounded-lg text-amber-400 text-sm transition-all"
+            className="flex-1 md:flex-none px-3 py-2 bg-linear-to-r from-amber-500/20 to-orange-600/20 hover:from-amber-500/30 hover:to-orange-600/30 border border-amber-500/30 rounded-lg text-amber-400 text-sm transition-all"
           >
             查看详情
           </button>
 
           {candidate.status === 'approved' && (
-            <button className="flex-1 md:flex-none px-3 py-2 bg-gradient-to-r from-green-500/20 to-emerald-600/20 hover:from-green-500/30 hover:to-emerald-600/30 border border-green-500/30 rounded-lg text-green-400 text-sm transition-all flex items-center justify-center gap-1">
+            <button className="flex-1 md:flex-none px-3 py-2 bg-linear-to-r from-green-500/20 to-emerald-600/20 hover:from-green-500/30 hover:to-emerald-600/30 border border-green-500/30 rounded-lg text-green-400 text-sm transition-all flex items-center justify-center gap-1">
               <ArrowRight className="w-3.5 h-3.5" />
               <span>查看种子</span>
             </button>
           )}
 
           {candidate.status === 'rejected' && candidate.submittedBy === currentUser && (
-            <button className="flex-1 md:flex-none px-3 py-2 bg-gradient-to-r from-amber-500/20 to-orange-600/20 hover:from-amber-500/30 hover:to-orange-600/30 border border-amber-500/30 rounded-lg text-amber-400 text-sm transition-all flex items-center justify-center gap-1">
+            <button className="flex-1 md:flex-none px-3 py-2 bg-linear-to-r from-amber-500/20 to-orange-600/20 hover:from-amber-500/30 hover:to-orange-600/30 border border-amber-500/30 rounded-lg text-amber-400 text-sm transition-all flex items-center justify-center gap-1">
               <Plus className="w-3.5 h-3.5" />
               <span>重新提交</span>
             </button>

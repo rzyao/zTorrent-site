@@ -18,7 +18,7 @@ export function AwardsSidebar({ awards }: { awards: AwardItem[] }) {
         <div className="space-y-4">
           {awards.map((award, index) => (
             <div key={index} className="flex items-start gap-3 py-1 border-b border-gray-800 last:border-0">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${award.won ? 'bg-yellow-500/20' : 'bg-gray-800'}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${award.won ? 'bg-yellow-500/20' : 'bg-gray-800'}`}>
                 {award.won ? <Award className="w-4 h-4 text-yellow-400" /> : <Star className="w-4 h-4 text-gray-500" />}
               </div>
               <div className="flex-1 min-w-0">

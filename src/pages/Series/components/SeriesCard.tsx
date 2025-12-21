@@ -36,7 +36,7 @@ export function SeriesCard({
       onClick={() => onClick(series)}
     >
       {/* 海报区域 */}
-      <div className="relative aspect-[2/3] overflow-hidden">
+      <div className="relative aspect-2/3 overflow-hidden">
         <ImageWithFallback
           src={
             series.posterUrl ||
@@ -47,7 +47,7 @@ export function SeriesCard({
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent" />
 
         {/* 评分标签 */}
         <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-sm flex items-center gap-1">

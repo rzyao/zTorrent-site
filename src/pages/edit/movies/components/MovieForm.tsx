@@ -66,7 +66,7 @@ export function MovieForm({
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center">
             <Edit className="w-4 h-4 text-white" />
           </div>
           <h2 className="text-white text-xl">
@@ -96,7 +96,7 @@ export function MovieForm({
             <Button
               onClick={onFetchPtGen}
               disabled={ptGenLoading}
-              className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+              className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
             >
               {ptGenLoading ? "获取中..." : "获取并填充"}
             </Button>
@@ -505,7 +505,7 @@ export function MovieForm({
               !form.poster ||
               Object.keys(errors).length > 0
             }
-            className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+            className="flex-1 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
           >
             <Save className="w-4 h-4 mr-2" />
             保存影片

@@ -97,8 +97,8 @@ export function TorrentRecordTable({ isLoading, torrents, activeTab }: TorrentRe
                         <div className="flex-1 h-2 bg-neutral-800 rounded-full overflow-hidden">
                           <div
                             className={`h-full transition-all ${torrent.progress === 100
-                              ? 'bg-gradient-to-r from-green-500 to-green-600'
-                              : 'bg-gradient-to-r from-amber-500 to-orange-600'
+                              ? 'bg-linear-to-r from-green-500 to-green-600'
+                              : 'bg-linear-to-r from-amber-500 to-orange-600'
                               }`}
                             style={{ width: `${torrent.progress}%` }}
                           />

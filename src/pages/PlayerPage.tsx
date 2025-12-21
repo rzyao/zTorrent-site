@@ -368,7 +368,7 @@ export function PlayerPage() {
             我喜欢的音乐
             <span className="text-neutral-500 text-sm">({likedSongsList.length})</span>
           </h2>
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
             {likedSongsList.length === 0 ? (
               <div className="p-12 text-center text-neutral-500">
                 <Heart className="w-12 h-12 mx-auto mb-3 opacity-30" />
@@ -382,7 +382,7 @@ export function PlayerPage() {
                 >
                   <button
                     onClick={() => handleSongSelect(songs.findIndex((s) => s.id === song.id))}
-                    className="relative flex-shrink-0 group"
+                    className="relative shrink-0 group"
                   >
                     <img
                       src={song.cover}
@@ -432,7 +432,7 @@ export function PlayerPage() {
             {myAlbums.map((album) => (
               <div
                 key={album.id}
-                className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-blue-500/50 transition-all group cursor-pointer"
+                className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-blue-500/50 transition-all group cursor-pointer"
               >
                 <div className="relative mb-3">
                   <img
@@ -470,7 +470,7 @@ export function PlayerPage() {
             </h2>
             <button
               onClick={() => setShowCreatePlaylist(true)}
-              className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white flex items-center gap-2 transition-all shadow-lg shadow-amber-500/30"
+              className="px-4 py-2 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white flex items-center gap-2 transition-all shadow-lg shadow-amber-500/30"
             >
               <Plus className="w-4 h-4" />
               新建歌单
@@ -484,7 +484,7 @@ export function PlayerPage() {
                   setSelectedPlaylistId(playlist.id);
                   setLibraryView('playlist-detail');
                 }}
-                className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-purple-500/50 transition-all group cursor-pointer relative"
+                className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-purple-500/50 transition-all group cursor-pointer relative"
               >
                 <div className="relative mb-3">
                   <img
@@ -557,7 +557,7 @@ export function PlayerPage() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
             {playlist.songs.length === 0 ? (
               <div className="p-12 text-center text-neutral-500">
                 <ListMusic className="w-12 h-12 mx-auto mb-3 opacity-30" />
@@ -573,7 +573,7 @@ export function PlayerPage() {
                   <span className="text-neutral-500 w-8 text-center">{index + 1}</span>
                   <button
                     onClick={() => handleSongSelect(songs.findIndex((s) => s.id === song.id))}
-                    className="relative flex-shrink-0 group"
+                    className="relative shrink-0 group"
                   >
                     <img
                       src={song.cover}
@@ -607,12 +607,12 @@ export function PlayerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16 pb-32">
+    <div className="min-h-screen bg-linear-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16 pb-32">
       <div className="max-w-[1800px] mx-auto px-4 md:px-8 py-8">
         {/* 页面标题 */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
               <Play className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -626,14 +626,14 @@ export function PlayerPage() {
 
         <div className="flex gap-6">
           {/* 左侧：音乐库导航 */}
-          <div className="w-56 flex-shrink-0">
-            <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-2xl border border-neutral-700/50 p-4 sticky top-24">
+          <div className="w-56 shrink-0">
+            <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-2xl border border-neutral-700/50 p-4 sticky top-24">
               <h3 className="text-neutral-400 text-sm mb-3 px-2">我的音乐</h3>
               <nav className="space-y-1">
                 <button
                   onClick={() => setLibraryView('liked')}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${libraryView === 'liked'
-                    ? 'bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-400 border border-red-500/30'
+                    ? 'bg-linear-to-r from-red-500/20 to-pink-500/20 text-red-400 border border-red-500/30'
                     : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
                     }`}
                 >
@@ -644,7 +644,7 @@ export function PlayerPage() {
                 <button
                   onClick={() => setLibraryView('albums')}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${libraryView === 'albums'
-                    ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400 border border-blue-500/30'
+                    ? 'bg-linear-to-r from-blue-500/20 to-cyan-500/20 text-blue-400 border border-blue-500/30'
                     : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
                     }`}
                 >
@@ -658,7 +658,7 @@ export function PlayerPage() {
                     setSelectedPlaylistId(null);
                   }}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${libraryView === 'playlists' || libraryView === 'playlist-detail'
-                    ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-400 border border-purple-500/30'
+                    ? 'bg-linear-to-r from-purple-500/20 to-pink-500/20 text-purple-400 border border-purple-500/30'
                     : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
                     }`}
                 >
@@ -676,7 +676,7 @@ export function PlayerPage() {
       </div>
 
       {/* 底部播放控制栏 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-br from-neutral-900 to-stone-950 border-t border-neutral-700/50 backdrop-blur-xl z-40">
+      <div className="fixed bottom-0 left-0 right-0 bg-linear-to-br from-neutral-900 to-stone-950 border-t border-neutral-700/50 backdrop-blur-xl z-40">
         {/* 进度条 */}
         <div
           ref={progressRef}
@@ -684,7 +684,7 @@ export function PlayerPage() {
           className="h-1 bg-neutral-800 cursor-pointer group relative"
         >
           <div
-            className="h-full bg-gradient-to-r from-amber-500 to-orange-600 relative transition-all"
+            className="h-full bg-linear-to-r from-amber-500 to-orange-600 relative transition-all"
             style={{ width: `${(currentTime / ((currentSong?.duration || 1))) * 100}%` }}
           >
             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg" />
@@ -725,7 +725,7 @@ export function PlayerPage() {
             </div>
 
             {/* 中间：播放控制 */}
-            <div className="flex flex-col items-center gap-2 flex-shrink-0">
+            <div className="flex flex-col items-center gap-2 shrink-0">
               <div className="flex items-center gap-2">
                 <button
                   onClick={cyclePlayMode}
@@ -742,7 +742,7 @@ export function PlayerPage() {
                 </button>
                 <button
                   onClick={handlePlayPause}
-                  className="w-10 h-10 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 flex items-center justify-center shadow-lg shadow-amber-500/30 transition-all"
+                  className="w-10 h-10 rounded-full bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 flex items-center justify-center shadow-lg shadow-amber-500/30 transition-all"
                 >
                   {isPlaying ? (
                     <Pause className="w-5 h-5 text-white" />
@@ -807,10 +807,10 @@ export function PlayerPage() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed inset-0 bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 z-50 flex flex-col"
+            className="fixed inset-0 bg-linear-to-br from-neutral-900 via-stone-900 to-neutral-950 z-50 flex flex-col"
           >
             {/* 顶部操作栏 */}
-            <div className="flex-shrink-0 flex items-center justify-between px-8 py-6 border-b border-neutral-800/50">
+            <div className="shrink-0 flex items-center justify-between px-8 py-6 border-b border-neutral-800/50">
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => setShowPlayerDetail(false)}
@@ -862,7 +862,7 @@ export function PlayerPage() {
                     >
                       <div className="relative w-32 h-40">
                         {/* 唱针臂 */}
-                        <div className="absolute top-0 right-0 w-2 h-32 bg-gradient-to-b from-neutral-600 to-neutral-700 rounded-full shadow-xl" />
+                        <div className="absolute top-0 right-0 w-2 h-32 bg-linear-to-b from-neutral-600 to-neutral-700 rounded-full shadow-xl" />
                         {/* 唱针头 */}
                         <div className="absolute bottom-0 right-0 w-3 h-3 bg-neutral-400 rounded-full" />
                         {/* 唱针支点 */}
@@ -872,7 +872,7 @@ export function PlayerPage() {
 
                     {/* 黑胶唱片外圈 */}
                     <motion.div
-                      className="absolute inset-0 rounded-full bg-gradient-to-br from-neutral-900 to-black shadow-2xl"
+                      className="absolute inset-0 rounded-full bg-linear-to-br from-neutral-900 to-black shadow-2xl"
                       animate={{ rotate: isPlaying ? 360 : 0 }}
                       transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
                     >
@@ -899,7 +899,7 @@ export function PlayerPage() {
                       </div>
 
                       {/* 中心圆点 */}
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-neutral-700 to-neutral-900 shadow-inner border-2 border-neutral-600" />
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-linear-to-br from-neutral-700 to-neutral-900 shadow-inner border-2 border-neutral-600" />
                     </motion.div>
                   </div>
 
@@ -916,7 +916,7 @@ export function PlayerPage() {
                       className="h-1.5 bg-neutral-800 rounded-full cursor-pointer group mb-2"
                     >
                       <div
-                        className="h-full bg-gradient-to-r from-amber-500 to-orange-600 rounded-full relative transition-all"
+                        className="h-full bg-linear-to-r from-amber-500 to-orange-600 rounded-full relative transition-all"
                         style={{ width: `${(currentTime / ((currentSong?.duration || 1))) * 100}%` }}
                       >
                         <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg" />
@@ -945,7 +945,7 @@ export function PlayerPage() {
                     </button>
                     <button
                       onClick={handlePlayPause}
-                      className="w-14 h-14 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 flex items-center justify-center shadow-2xl shadow-amber-500/50 transition-all hover:scale-105"
+                      className="w-14 h-14 rounded-full bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 flex items-center justify-center shadow-2xl shadow-amber-500/50 transition-all hover:scale-105"
                     >
                       {isPlaying ? (
                         <Pause className="w-7 h-7 text-white" />
@@ -1084,7 +1084,7 @@ export function PlayerPage() {
                                 comments.map((c: any) => (
                                   <div key={c.id} className="bg-neutral-800/30 rounded-lg p-4 hover:bg-neutral-800/50 transition-all">
                                     <div className="flex items-start gap-3 mb-2">
-                                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600" />
+                                      <div className="w-8 h-8 rounded-full bg-linear-to-br from-amber-500 to-orange-600" />
                                       <div className="flex-1">
                                         <p className="text-neutral-300 text-sm mb-1">{c.userName}</p>
                                         <p className="text-white text-sm">{c.content}</p>
@@ -1121,7 +1121,7 @@ export function PlayerPage() {
                               onClick={() => handleSongSelect(songs.findIndex((s) => s.id === song.id))}
                               className="flex items-center gap-3 p-3 rounded-lg hover:bg-neutral-800/50 cursor-pointer transition-all group"
                             >
-                              <div className="relative flex-shrink-0">
+                              <div className="relative shrink-0">
                                 <img
                                   src={song.cover}
                                   alt={song.title}
@@ -1154,7 +1154,7 @@ export function PlayerPage() {
       {/* 新建歌单对话框 */}
       {showCreatePlaylist && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-neutral-800 to-stone-900 rounded-2xl border border-neutral-700 p-6 max-w-md w-full shadow-2xl">
+          <div className="bg-linear-to-br from-neutral-800 to-stone-900 rounded-2xl border border-neutral-700 p-6 max-w-md w-full shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-white text-xl">新建歌单</h3>
               <button
@@ -1204,7 +1204,7 @@ export function PlayerPage() {
                 <button
                   onClick={handleCreatePlaylist}
                   disabled={!newPlaylistName.trim()}
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white transition-all shadow-lg shadow-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white transition-all shadow-lg shadow-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   创建
                 </button>
@@ -1217,7 +1217,7 @@ export function PlayerPage() {
       {/* 添加到歌单对话框 */}
       {showAddToPlaylist && selectedSongForAdd && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-neutral-800 to-stone-900 rounded-2xl border border-neutral-700 p-6 max-w-md w-full shadow-2xl">
+          <div className="bg-linear-to-br from-neutral-800 to-stone-900 rounded-2xl border border-neutral-700 p-6 max-w-md w-full shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-white text-xl">添加到歌单</h3>
               <button
@@ -1253,7 +1253,7 @@ export function PlayerPage() {
                       setShowAddToPlaylist(false);
                       setShowCreatePlaylist(true);
                     }}
-                    className="mt-3 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white text-sm transition-all"
+                    className="mt-3 px-4 py-2 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white text-sm transition-all"
                   >
                     创建歌单
                   </button>

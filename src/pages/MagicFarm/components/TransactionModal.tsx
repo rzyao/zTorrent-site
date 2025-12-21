@@ -44,7 +44,7 @@ export function TransactionModal({ open, title, crop, confirmText = '确认', on
         {/* 操作区 */}
         <div className="px-6 py-4 border-t border-neutral-200 flex justify-end gap-2">
           <button onClick={onClose} className="px-4 py-2 rounded-lg bg-neutral-200 hover:bg-neutral-300 text-neutral-800 transition-all">取消</button>
-          <button onClick={onConfirm} className="px-4 py-2 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white transition-all flex items-center gap-2">
+          <button onClick={onConfirm} className="px-4 py-2 rounded-lg bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white transition-all flex items-center gap-2">
             <Check className="w-4 h-4" />
             {confirmText}
           </button>

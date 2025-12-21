@@ -53,7 +53,7 @@ export const BasicInfo = memo(function BasicInfo(props: BasicInfoProps) {
   return (
     <div className="bg-neutral-800/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 shadow-2xl overflow-hidden">
       {/* 模块标题区域 */}
-      <div className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-b border-neutral-700/50 px-6 py-3.5">
+      <div className="bg-linear-to-r from-amber-500/20 to-orange-500/20 border-b border-neutral-700/50 px-6 py-3.5">
         <h2 className="text-white flex items-center gap-2">
           <FileText className="w-5 h-5 text-amber-400" />
           基本信息
@@ -70,7 +70,7 @@ export const BasicInfo = memo(function BasicInfo(props: BasicInfoProps) {
             <input
               type="file"
               accept=".torrent"
-              className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-2 py-1.5 text-white text-sm file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:bg-gradient-to-r file:from-amber-500 file:to-orange-600 file:text-white file:text-sm hover:file:from-amber-600 hover:file:to-orange-700 cursor-pointer transition-all"
+              className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-2 py-1.5 text-white text-sm file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:bg-linear-to-r file:from-amber-500 file:to-orange-600 file:text-white file:text-sm hover:file:from-amber-600 hover:file:to-orange-700 cursor-pointer transition-all"
               onChange={onTorrentInputChange}
             />
           </div>

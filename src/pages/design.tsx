@@ -393,7 +393,7 @@ export function PTHomePage() {
     <div className="flex min-h-screen flex-col bg-[#0F171E] pt-16">
       <div className="mx-auto w-full max-w-[1920px] flex-1 px-4 py-6 md:px-8">
         {/* 顶部搜索栏 */}
-        <div className="mb-6 rounded-xl border border-amber-500/30 bg-gradient-to-r from-neutral-800/40 via-neutral-800/60 to-neutral-800/40 p-4 shadow-lg shadow-amber-500/10 backdrop-blur-sm transition-all hover:border-amber-500/50 hover:shadow-amber-500/20">
+        <div className="mb-6 rounded-xl border border-amber-500/30 bg-linear-to-r from-neutral-800/40 via-neutral-800/60 to-neutral-800/40 p-4 shadow-lg shadow-amber-500/10 backdrop-blur-sm transition-all hover:border-amber-500/50 hover:shadow-amber-500/20">
           <div className="flex gap-3">
             <div className="flex-1">
               <Input
@@ -404,7 +404,7 @@ export function PTHomePage() {
                 className="h-12 border-neutral-700/50 bg-neutral-900/50 text-lg text-white transition-all placeholder:text-neutral-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
               />
             </div>
-            <Button className="h-12 border-0 bg-gradient-to-r from-amber-500 to-orange-500 px-8 text-white shadow-lg shadow-amber-500/30 transition-all hover:from-amber-600 hover:to-orange-600 hover:shadow-amber-500/50">
+            <Button className="h-12 border-0 bg-linear-to-r from-amber-500 to-orange-500 px-8 text-white shadow-lg shadow-amber-500/30 transition-all hover:from-amber-600 hover:to-orange-600 hover:shadow-amber-500/50">
               <Search className="mr-2 h-5 w-5" />
               搜索
             </Button>
@@ -415,7 +415,7 @@ export function PTHomePage() {
         <div className="mb-6">
           <div className="rounded-xl border border-neutral-700/50 bg-neutral-800/40 p-4 backdrop-blur-sm transition-colors hover:border-amber-500/50">
             <div className="scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-900 flex items-center gap-2 overflow-x-auto">
-              <button className="flex items-center gap-2 rounded-lg border border-amber-500/50 bg-gradient-to-r from-amber-500/20 to-orange-500/20 px-4 py-2 whitespace-nowrap text-amber-300 transition-all hover:from-amber-500/30 hover:to-orange-500/30">
+              <button className="flex items-center gap-2 rounded-lg border border-amber-500/50 bg-linear-to-r from-amber-500/20 to-orange-500/20 px-4 py-2 whitespace-nowrap text-amber-300 transition-all hover:from-amber-500/30 hover:to-orange-500/30">
                 <Flame className="h-4 w-4" />
                 最新种子
               </button>
@@ -458,7 +458,7 @@ export function PTHomePage() {
               {/* 滚动容器包装器 */}
               <div className="relative">
                 {/* 顶部渐变遮罩和图标 */}
-                <div className="pointer-events-none absolute top-0 right-0 left-0 z-10 flex h-8 items-start justify-center bg-gradient-to-b from-neutral-900/80 to-transparent pt-1">
+                <div className="pointer-events-none absolute top-0 right-0 left-0 z-10 flex h-8 items-start justify-center bg-linear-to-b from-neutral-900/80 to-transparent pt-1">
                   <ChevronUp
                     className="h-4 w-4 animate-bounce text-amber-400/60"
                     style={{ animationDuration: "2s" }}
@@ -498,7 +498,7 @@ export function PTHomePage() {
                 </div>
 
                 {/* 底部渐变遮罩和图标 */}
-                <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-10 flex h-8 items-end justify-center bg-gradient-to-t from-neutral-900/80 to-transparent pb-1">
+                <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-10 flex h-8 items-end justify-center bg-linear-to-t from-neutral-900/80 to-transparent pb-1">
                   <ChevronDown
                     className="h-4 w-4 animate-bounce text-amber-400/60"
                     style={{ animationDuration: "2s" }}
@@ -526,7 +526,7 @@ export function PTHomePage() {
                         backgroundImage: `url(${torrent.image})`,
                       }}
                     >
-                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/70 to-neutral-900/30" />
+                      <div className="absolute inset-0 bg-linear-to-t from-neutral-900 via-neutral-900/70 to-neutral-900/30" />
                     </div>
 
                     <div className="relative flex h-full flex-col justify-end p-8">
@@ -615,7 +615,7 @@ export function PTHomePage() {
               </h2>
 
               <div className="space-y-4">
-                <div className="rounded-lg border border-blue-500/30 bg-gradient-to-br from-blue-500/20 to-cyan-600/20 p-4 text-center">
+                <div className="rounded-lg border border-blue-500/30 bg-linear-to-br from-blue-500/20 to-cyan-600/20 p-4 text-center">
                   <div className="mb-1 text-3xl text-blue-400">
                     {siteStats.totalUsers.toLocaleString()}
                   </div>
@@ -722,7 +722,7 @@ export function PTHomePage() {
                   <img
                     src={rec.poster}
                     alt={rec.title}
-                    className="h-28 w-20 flex-shrink-0 rounded-lg object-cover"
+                    className="h-28 w-20 shrink-0 rounded-lg object-cover"
                   />
                   <div className="min-w-0 flex-1">
                     <Badge className="mb-2 border-purple-500/30 bg-purple-500/20 text-xs text-purple-400">
@@ -769,9 +769,9 @@ export function PTHomePage() {
                 >
                   <div className="mb-2 flex items-start gap-2">
                     {post.isPinned && (
-                      <Pin className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-400" />
+                      <Pin className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
                     )}
-                    {post.isHot && <Flame className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-400" />}
+                    {post.isHot && <Flame className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />}
                     <h3 className="line-clamp-2 flex-1 text-sm text-white transition-colors group-hover:text-amber-400">
                       {post.title}
                     </h3>
@@ -812,7 +812,7 @@ export function PTHomePage() {
             <h2 className="flex items-center gap-2 text-2xl text-white">
               <Film className="h-6 w-6 text-amber-400" />
               热门电影推荐
-              <Badge className="border-amber-500/50 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300">
+              <Badge className="border-amber-500/50 bg-linear-to-r from-amber-500/20 to-orange-500/20 text-amber-300">
                 精选
               </Badge>
             </h2>
@@ -825,17 +825,17 @@ export function PTHomePage() {
             {/* 电影 1 */}
             <div className="group transform cursor-pointer transition-all duration-300 hover:z-10 hover:scale-110">
               <div className="relative overflow-hidden rounded-lg border border-neutral-700/50 bg-neutral-900/50 shadow-lg transition-all duration-300 hover:border-amber-500 hover:shadow-2xl hover:shadow-amber-500/50">
-                <div className="relative aspect-[2/3]">
+                <div className="relative aspect-2/3">
                   <img
                     src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600"
                     alt="星际穿越"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                   {/* 徽章 */}
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
-                    <Badge className="border-0 bg-gradient-to-r from-amber-500 to-orange-600 text-white">
+                    <Badge className="border-0 bg-linear-to-r from-amber-500 to-orange-600 text-white">
                       <Crown className="mr-1 h-3 w-3" />
                       VIP
                     </Badge>
@@ -864,7 +864,7 @@ export function PTHomePage() {
                       </span>
                       <span className="text-neutral-400">68.5 GB</span>
                     </div>
-                    <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
+                    <Button className="w-full bg-linear-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
                       <Download className="mr-1 h-3 w-3" />
                       立即下载
                     </Button>
@@ -883,13 +883,13 @@ export function PTHomePage() {
             {/* 电影 2 */}
             <div className="group transform cursor-pointer transition-all duration-300 hover:z-10 hover:scale-110">
               <div className="relative overflow-hidden rounded-lg border border-neutral-700/50 bg-neutral-900/50 shadow-lg transition-all duration-300 hover:border-amber-500 hover:shadow-2xl hover:shadow-amber-500/50">
-                <div className="relative aspect-[2/3]">
+                <div className="relative aspect-2/3">
                   <img
                     src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=600"
                     alt="沙丘2"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
                     <Badge className="border-0 bg-red-500 text-white">
@@ -915,7 +915,7 @@ export function PTHomePage() {
                       </span>
                       <span className="text-neutral-400">92.3 GB</span>
                     </div>
-                    <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
+                    <Button className="w-full bg-linear-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
                       <Download className="mr-1 h-3 w-3" />
                       立即下载
                     </Button>
@@ -934,13 +934,13 @@ export function PTHomePage() {
             {/* 电影 3 */}
             <div className="group transform cursor-pointer transition-all duration-300 hover:z-10 hover:scale-110">
               <div className="relative overflow-hidden rounded-lg border border-neutral-700/50 bg-neutral-900/50 shadow-lg transition-all duration-300 hover:border-amber-500 hover:shadow-2xl hover:shadow-amber-500/50">
-                <div className="relative aspect-[2/3]">
+                <div className="relative aspect-2/3">
                   <img
                     src="https://images.unsplash.com/photo-1594908900066-3f47337549d8?w=600"
                     alt="奥本海默"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
                     <Badge className="border-0 bg-green-500 text-white">
@@ -966,7 +966,7 @@ export function PTHomePage() {
                       </span>
                       <span className="text-neutral-400">98.7 GB</span>
                     </div>
-                    <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
+                    <Button className="w-full bg-linear-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
                       <Download className="mr-1 h-3 w-3" />
                       立即下载
                     </Button>
@@ -985,16 +985,16 @@ export function PTHomePage() {
             {/* 电影 4 */}
             <div className="group transform cursor-pointer transition-all duration-300 hover:z-10 hover:scale-110">
               <div className="relative overflow-hidden rounded-lg border border-neutral-700/50 bg-neutral-900/50 shadow-lg transition-all duration-300 hover:border-amber-500 hover:shadow-2xl hover:shadow-amber-500/50">
-                <div className="relative aspect-[2/3]">
+                <div className="relative aspect-2/3">
                   <img
                     src="https://images.unsplash.com/photo-1585951237318-9ea5e175b891?w=600"
                     alt="盗梦空间"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
-                    <Badge className="border-0 bg-gradient-to-r from-amber-500 to-orange-600 text-white">
+                    <Badge className="border-0 bg-linear-to-r from-amber-500 to-orange-600 text-white">
                       <Crown className="mr-1 h-3 w-3" />
                       VIP
                     </Badge>
@@ -1017,7 +1017,7 @@ export function PTHomePage() {
                       </span>
                       <span className="text-neutral-400">75.6 GB</span>
                     </div>
-                    <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
+                    <Button className="w-full bg-linear-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
                       <Download className="mr-1 h-3 w-3" />
                       立即下载
                     </Button>
@@ -1036,13 +1036,13 @@ export function PTHomePage() {
             {/* 电影 5 */}
             <div className="group transform cursor-pointer transition-all duration-300 hover:z-10 hover:scale-110">
               <div className="relative overflow-hidden rounded-lg border border-neutral-700/50 bg-neutral-900/50 shadow-lg transition-all duration-300 hover:border-amber-500 hover:shadow-2xl hover:shadow-amber-500/50">
-                <div className="relative aspect-[2/3]">
+                <div className="relative aspect-2/3">
                   <img
                     src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600"
                     alt="黑暗骑士"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
                     <Badge className="border-0 bg-red-500 text-white">
@@ -1072,7 +1072,7 @@ export function PTHomePage() {
                       </span>
                       <span className="text-neutral-400">82.4 GB</span>
                     </div>
-                    <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
+                    <Button className="w-full bg-linear-to-r from-amber-500 to-orange-600 py-2 text-sm text-white hover:from-amber-600 hover:to-orange-700">
                       <Download className="mr-1 h-3 w-3" />
                       立即下载
                     </Button>
@@ -1091,7 +1091,7 @@ export function PTHomePage() {
             {/* 电影 6 */}
             <div className="group transform cursor-pointer transition-all duration-300 hover:z-10 hover:scale-110">
               <div className="relative overflow-hidden rounded-lg border border-neutral-700/50 bg-neutral-900/50 shadow-lg transition-all duration-300 hover:border-amber-500 hover:shadow-2xl hover:shadow-amber-500/50">
-                <div className="relative aspect-[2/3]">
+                <div className="relative aspect-2/3">
                   <img
                     src="https://images.unsplash.com/photo-1616530940355-351fabd9524b?w=600"
                     alt="教父"

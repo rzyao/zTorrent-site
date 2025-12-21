@@ -4,9 +4,9 @@ import type { TabStats, TabType } from '../types';
 
 export function WarningAlert({ activeTab, stats }: { activeTab: TabType; stats: TabStats }) {
   return (
-    <div className="mb-6 p-5 rounded-2xl bg-gradient-to-r from-red-500/10 to-rose-600/10 border border-red-500/30">
+    <div className="mb-6 p-5 rounded-2xl bg-linear-to-r from-red-500/10 to-rose-600/10 border border-red-500/30">
       <div className="flex items-start gap-4">
-        <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+        <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center shrink-0">
           <AlertTriangle className="w-5 h-5 text-red-400" />
         </div>
         <div>

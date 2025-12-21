@@ -15,7 +15,7 @@ interface ReplyListProps {
 export function ReplyList({ replies, postsMap, onReply, onViewOriginal, totalReplies }: ReplyListProps) {
   return (
     <div className="bg-neutral-800/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 shadow-2xl overflow-hidden">
-      <div className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-b border-neutral-700/50 px-6 py-4">
+      <div className="bg-linear-to-r from-amber-500/20 to-orange-500/20 border-b border-neutral-700/50 px-6 py-4">
         <h3 className="text-white flex items-center gap-2">
           <MessageCircle className="w-5 h-5 text-amber-400" />
           回复 ({totalReplies})
@@ -25,7 +25,7 @@ export function ReplyList({ replies, postsMap, onReply, onViewOriginal, totalRep
         {replies.map((reply) => (
           <div key={reply.id} id={`reply-${reply.id}`} className="p-6">
             <div className="flex gap-4">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <div className="w-10 h-10 rounded-lg bg-neutral-700 flex items-center justify-center">
                   <User className="w-5 h-5 text-neutral-400" />
                 </div>

@@ -20,7 +20,7 @@ export function CodesList({
   return (
     <div>
       <h3 className="text-white text-lg mb-4 flex items-center gap-2">
-        <span className="w-1 h-5 bg-gradient-to-b from-green-500 to-emerald-600 rounded-full"></span>
+        <span className="w-1 h-5 bg-linear-to-b from-green-500 to-emerald-600 rounded-full"></span>
         可用邀请码 ({unusedCodes.length})
       </h3>
       <div className="grid grid-cols-1 gap-3">
@@ -68,7 +68,7 @@ export function CodesList({
                     </>
                   )}
                 </button>
-                <button onClick={() => onOpenSend(invite)} className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-lg hover:from-amber-600 hover:to-orange-700 transition-all flex items-center gap-2 shadow-lg shadow-amber-500/20">
+                <button onClick={() => onOpenSend(invite)} className="px-4 py-2 bg-linear-to-r from-amber-500 to-orange-600 text-white rounded-lg hover:from-amber-600 hover:to-orange-700 transition-all flex items-center gap-2 shadow-lg shadow-amber-500/20">
                   <Send className="w-4 h-4" />
                   <span>发放</span>
                 </button>

@@ -67,7 +67,7 @@ export function MyTodosView() {
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
+        <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-amber-400">待处理</span>
             <ListTodo className="w-4 h-4 text-amber-400" />
@@ -75,7 +75,7 @@ export function MyTodosView() {
           <div className="text-white text-3xl">{items.length}</div>
           <p className="text-neutral-500 text-sm mt-2">分配给我的工单</p>
         </div>
-        <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
+        <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-orange-400">高优先级</span>
             <AlertCircle className="w-4 h-4 text-orange-400" />
@@ -85,7 +85,7 @@ export function MyTodosView() {
           </div>
           <p className="text-neutral-500 text-sm mt-2">需要优先处理</p>
         </div>
-        <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
+        <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-green-400">今日完成</span>
             <CheckCircle2 className="w-4 h-4 text-green-400" />
@@ -95,7 +95,7 @@ export function MyTodosView() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 mb-6">
+      <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 mb-6">
         <h3 className="text-white mb-4 flex items-center gap-2">
           <ListTodo className="w-5 h-5 text-amber-400" />
           我的待办工单
@@ -115,7 +115,7 @@ export function MyTodosView() {
               return (
                 <div
                   key={todo.id}
-                  className="bg-gradient-to-br from-neutral-700/30 to-neutral-800/30 rounded-xl border border-neutral-600/30 p-6 hover:border-amber-500/30 transition-all cursor-pointer group"
+                  className="bg-linear-to-br from-neutral-700/30 to-neutral-800/30 rounded-xl border border-neutral-600/30 p-6 hover:border-amber-500/30 transition-all cursor-pointer group"
                 >
                   <div className="flex items-start justify-between gap-4 mb-4">
                     <div className="flex-1 min-w-0">
@@ -151,7 +151,7 @@ export function MyTodosView() {
                         console.log('处理工单:', todo.id);
                       }}
                       size="sm"
-                      className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                      className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
                     >
                       立即处理
                     </Button>
@@ -178,7 +178,7 @@ export function MyTodosView() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
+      <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
         <h3 className="text-white mb-4 flex items-center gap-2">
           <CheckCircle2 className="w-5 h-5 text-green-400" />
           最近完成
@@ -204,7 +204,7 @@ export function MyTodosView() {
               className="flex items-center justify-between p-4 bg-neutral-700/20 rounded-xl border border-neutral-600/20"
             >
               <div className="flex items-center gap-3">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0" />
                 <div>
                   <h4 className="text-white text-sm">{completed.title}</h4>
                   <p className="text-neutral-500 text-xs mt-1">

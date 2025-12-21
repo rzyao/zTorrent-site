@@ -28,7 +28,7 @@ export function UploadTorrentPage() {
         {/* 页面标题 */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
               <Upload className="w-5 h-5 text-white" />
             </div>
             <div className="flex flex-row items-center gap-3">
@@ -100,7 +100,7 @@ export function UploadTorrentPage() {
 
           {/* 简介 */}
           <div className="bg-neutral-800/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 shadow-2xl overflow-hidden">
-            <div className="bg-gradient-to-r from-red-500/20 to-orange-500/20 border-b border-neutral-700/50 px-6 py-3.5">
+            <div className="bg-linear-to-r from-red-500/20 to-orange-500/20 border-b border-neutral-700/50 px-6 py-3.5">
               <h2 className="text-white flex items-center gap-2">
                 简介 <span className="text-red-400 text-sm ml-1">*</span>
               </h2>

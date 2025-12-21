@@ -5,7 +5,7 @@ export function Header({ onClickUpload }: { onClickUpload: () => void }) {
     <div className="mb-8">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
             <FileText className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -15,7 +15,7 @@ export function Header({ onClickUpload }: { onClickUpload: () => void }) {
         </div>
         <button
           onClick={onClickUpload}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-xl text-white transition-all shadow-lg shadow-amber-500/30"
+          className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-xl text-white transition-all shadow-lg shadow-amber-500/30"
         >
           <Upload className="w-5 h-5" />
           <span>发布字幕</span>

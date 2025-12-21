@@ -11,7 +11,7 @@ export function FilterBar({ value, onChange }: FilterBarProps) {
       onClick={() => onChange(key)}
       className={`px-4 py-2 rounded-lg transition-all ${
         value === key
-          ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+          ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
           : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
       }`}
     >

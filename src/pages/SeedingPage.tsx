@@ -139,12 +139,12 @@ export function SeedingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950">
+    <div className="min-h-screen bg-linear-to-br from-neutral-900 via-stone-900 to-neutral-950">
       <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8">
         {/* 页面标题 */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/30">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/30">
               <HardDrive className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -158,14 +158,14 @@ export function SeedingPage() {
 
         {/* 统计卡片 */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-5">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-5">
             <div className="flex items-center justify-between mb-2">
               <span className="text-neutral-400 text-sm">总做种数</span>
               <HardDrive className="w-4 h-4 text-green-400" />
             </div>
             <p className="text-white text-2xl">{mockTorrents.length}</p>
           </div>
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-5">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-5">
             <div className="flex items-center justify-between mb-2">
               <span className="text-neutral-400 text-sm">累计奖励</span>
               <DollarSign className="w-4 h-4 text-amber-400" />
@@ -174,7 +174,7 @@ export function SeedingPage() {
               {mockTorrents.reduce((sum, t) => sum + t.bonus, 0).toFixed(1)}
             </p>
           </div>
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-5">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-5">
             <div className="flex items-center justify-between mb-2">
               <span className="text-neutral-400 text-sm">平均分享率</span>
               <TrendingUp className="w-4 h-4 text-blue-400" />
@@ -183,7 +183,7 @@ export function SeedingPage() {
               {(mockTorrents.reduce((sum, t) => sum + t.ratio, 0) / mockTorrents.length).toFixed(2)}
             </p>
           </div>
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-5">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-5">
             <div className="flex items-center justify-between mb-2">
               <span className="text-neutral-400 text-sm">总上传量</span>
               <Upload className="w-4 h-4 text-green-400" />
@@ -221,12 +221,12 @@ export function SeedingPage() {
           {mockTorrents.map((torrent) => (
             <div
               key={torrent.id}
-              className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden hover:border-green-500/30 transition-all group"
+              className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden hover:border-green-500/30 transition-all group"
             >
               <div className="flex flex-col md:flex-row gap-4 p-4">
                 {/* 海报 */}
-                <div className="relative w-full md:w-24 flex-shrink-0">
-                  <div className="aspect-[2/3] rounded-lg overflow-hidden">
+                <div className="relative w-full md:w-24 shrink-0">
+                  <div className="aspect-2/3 rounded-lg overflow-hidden">
                     <img
                       src={torrent.poster}
                       alt={torrent.title}
@@ -296,7 +296,7 @@ export function SeedingPage() {
                 </div>
 
                 {/* 奖励显示 */}
-                <div className="flex flex-col items-center justify-center md:w-32 flex-shrink-0 p-4 bg-gradient-to-br from-amber-500/10 to-orange-600/10 rounded-xl border border-amber-500/30">
+                <div className="flex flex-col items-center justify-center md:w-32 shrink-0 p-4 bg-linear-to-br from-amber-500/10 to-orange-600/10 rounded-xl border border-amber-500/30">
                   <div className="flex items-center gap-2 mb-1">
                     <Star className="w-5 h-5 text-amber-400" />
                     <span className="text-2xl text-amber-400">{torrent.bonus.toFixed(1)}</span>

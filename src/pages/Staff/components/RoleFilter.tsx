@@ -15,7 +15,7 @@ export function RoleFilter({ selectedRole, setSelectedRole, roleConfig, roleStat
       <button
         onClick={() => setSelectedRole('all')}
         className={`px-6 py-3 rounded-xl transition-all ${selectedRole === 'all'
-          ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25'
+          ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25'
           : 'bg-neutral-800/50 text-neutral-400 hover:text-white hover:bg-neutral-700/50 border border-neutral-700'
           }`}
       >
@@ -31,7 +31,7 @@ export function RoleFilter({ selectedRole, setSelectedRole, roleConfig, roleStat
           key={role}
           onClick={() => setSelectedRole(role as keyof RoleStats)}
           className={`px-6 py-3 rounded-xl transition-all ${selectedRole === role
-            ? `bg-gradient-to-r ${config.color} text-white shadow-lg`
+            ? `bg-linear-to-r ${config.color} text-white shadow-lg`
             : `${config.bgColor} ${config.textColor} hover:opacity-80 border ${config.borderColor}`
             }`}
         >

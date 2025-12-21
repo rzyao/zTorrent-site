@@ -14,7 +14,7 @@ export function NotificationsTab({ notifications, setNotifications }: Notificati
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-lg bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center">
           <Bell className="w-4 h-4 text-white" />
         </div>
         <div>

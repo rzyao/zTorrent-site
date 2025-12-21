@@ -42,7 +42,7 @@ export function ActionPanel({ activePanel, onClose, crops, warehouse, tasks, use
       {activePanel === 'shop' && (
         <div className="space-y-4">
           {crops.map(crop => (
-            <div key={crop.id} className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border-2 border-amber-200 hover:border-amber-400 transition-all">
+            <div key={crop.id} className="bg-linear-to-r from-amber-50 to-orange-50 rounded-xl p-4 border-2 border-amber-200 hover:border-amber-400 transition-all">
               <div className="flex items-center gap-4">
                 <div className="text-5xl">{crop.icon}</div>
                 <div className="flex-1">
@@ -57,7 +57,7 @@ export function ActionPanel({ activePanel, onClose, crops, warehouse, tasks, use
               <button
                 onClick={() => onBuySeed && onBuySeed(crop.id)}
                 disabled={userStats.coins < crop.price}
-                className="w-full mt-3 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full mt-3 px-4 py-2 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 购买种子
               </button>
@@ -76,7 +76,7 @@ export function ActionPanel({ activePanel, onClose, crops, warehouse, tasks, use
             const crop = crops.find(c => c.id === item.cropId);
             if (!crop) return null;
             return (
-              <div key={item.cropId} className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
+              <div key={item.cropId} className="bg-linear-to-r from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className="text-4xl">{crop.icon}</div>
@@ -92,7 +92,7 @@ export function ActionPanel({ activePanel, onClose, crops, warehouse, tasks, use
                 </div>
                 <button
                   onClick={() => onSellAll && onSellAll(item.cropId)}
-                  className="w-full px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg transition-all"
+                  className="w-full px-4 py-2 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg transition-all"
                 >
                   出售 (+{crop.sellPrice * item.count})
                 </button>
@@ -106,7 +106,7 @@ export function ActionPanel({ activePanel, onClose, crops, warehouse, tasks, use
       {activePanel === 'friends' && (
         <div className="space-y-4">
           {['MovieMaster', 'CinemaFan', 'TorrentKing'].map((friend, idx) => (
-            <div key={friend} className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 border-2 border-blue-200">
+            <div key={friend} className="bg-linear-to-r from-blue-50 to-cyan-50 rounded-xl p-4 border-2 border-blue-200">
               <div className="flex items-center gap-3 mb-3">
                 <div className="text-4xl">👨‍🌾</div>
                 <div className="flex-1">
@@ -131,7 +131,7 @@ export function ActionPanel({ activePanel, onClose, crops, warehouse, tasks, use
       {activePanel === 'tasks' && (
         <div className="space-y-4">
           {tasks.map(task => (
-            <div key={task.id} className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border-2 border-purple-200">
+            <div key={task.id} className="bg-linear-to-r from-purple-50 to-pink-50 rounded-xl p-4 border-2 border-purple-200">
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <h4 className="text-purple-900 mb-1">{task.title}</h4>
@@ -144,7 +144,7 @@ export function ActionPanel({ activePanel, onClose, crops, warehouse, tasks, use
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-2 bg-purple-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500" style={{ width: `${(task.progress / task.target) * 100}%` }} />
+                  <div className="h-full bg-linear-to-r from-purple-500 to-pink-500" style={{ width: `${(task.progress / task.target) * 100}%` }} />
                 </div>
                 <span className="text-xs text-purple-700">{task.progress}/{task.target}</span>
               </div>

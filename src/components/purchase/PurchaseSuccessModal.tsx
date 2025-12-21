@@ -89,7 +89,7 @@ export function PurchaseSuccessModal({ open, onOpenChange, payload }: Props) {
         </div>
         <DialogFooter className="flex items-center justify-end gap-2">
           <button
-            className="px-4 py-2 rounded bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700"
+            className="px-4 py-2 rounded bg-linear-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700"
             onClick={() => onOpenChange(false)}
           >
             我知道了

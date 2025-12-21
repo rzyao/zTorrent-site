@@ -15,7 +15,7 @@ export function StatsCards({
 }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-      <div className="bg-gradient-to-br from-amber-500/20 to-orange-600/20 border border-amber-500/30 rounded-2xl p-6">
+      <div className="bg-linear-to-br from-amber-500/20 to-orange-600/20 border border-amber-500/30 rounded-2xl p-6">
         <div className="flex items-center justify-between mb-2">
           <span className="text-neutral-400 text-sm">总邀请数</span>
           <Gift className="w-5 h-5 text-amber-400" />

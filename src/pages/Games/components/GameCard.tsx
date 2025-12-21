@@ -9,7 +9,7 @@ export function GameCard({ game, onClick }: { game: Game; onClick: (g: Game) => 
       className="bg-neutral-900/50 border border-neutral-800 rounded-xl p-6 hover:border-amber-500/50 transition-all cursor-pointer group"
     >
       <div className="flex items-start justify-between mb-4">
-        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
+        <div className="w-16 h-16 rounded-xl bg-linear-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
           {game.icon}
         </div>
         <span className={`px-3 py-1 rounded-full text-xs border ${getDifficultyColor(game.difficulty)}`}>

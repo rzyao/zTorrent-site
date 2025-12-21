@@ -176,7 +176,7 @@ export function MyTicketsView() {
         <div className="text-neutral-400 text-sm">共 {filteredTickets.length} 个工单</div>
         <Button
           onClick={() => setView('create')}
-          className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+          className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
         >
           <Plus className="w-4 h-4 mr-2" />
           创建工单
@@ -189,7 +189,7 @@ export function MyTicketsView() {
           return (
             <div
               key={key}
-              className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6"
+              className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-xl border border-neutral-700/50 p-6"
             >
               <div className="flex items-center justify-between mb-2">
                 <span className={`${config.color}`}>{config.label}</span>
@@ -201,7 +201,7 @@ export function MyTicketsView() {
         })}
       </div>
 
-      <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 mb-6">
+      <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
@@ -245,12 +245,12 @@ export function MyTicketsView() {
 
       <div className="space-y-4">
         {isLoading ? (
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-12 text-center">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-12 text-center">
             <MessageCircle className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
             <p className="text-neutral-400">加载中...</p>
           </div>
         ) : filteredTickets.length === 0 ? (
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-12 text-center">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-12 text-center">
             <MessageCircle className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
             <p className="text-neutral-400">暂无工单</p>
           </div>
@@ -267,7 +267,7 @@ export function MyTicketsView() {
                   setSelectedTicketId(ticket.id);
                   setView('detail');
                 }}
-                className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 hover:border-amber-500/30 transition-all cursor-pointer group"
+                className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 hover:border-amber-500/30 transition-all cursor-pointer group"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
@@ -319,7 +319,7 @@ export function MyTicketsView() {
                       </span>
                     </div>
                   </div>
-                  <ChevronDown className="w-5 h-5 text-neutral-500 group-hover:text-amber-400 transition-colors flex-shrink-0" />
+                  <ChevronDown className="w-5 h-5 text-neutral-500 group-hover:text-amber-400 transition-colors shrink-0" />
                 </div>
               </div>
             );

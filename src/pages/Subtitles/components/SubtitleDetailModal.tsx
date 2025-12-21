@@ -90,7 +90,7 @@ export function SubtitleDetailModal({
           <div className="bg-neutral-800/50 rounded-xl p-4 mb-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white">
+                <div className="w-10 h-10 rounded-full bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white">
                   <User className="w-5 h-5" />
                 </div>
                 <div>
@@ -109,7 +109,7 @@ export function SubtitleDetailModal({
           </div>
 
           <div className="flex gap-3">
-            <button onClick={() => onDownload(subtitle)} className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-xl text-white transition-all shadow-lg shadow-amber-500/30">
+            <button onClick={() => onDownload(subtitle)} className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-xl text-white transition-all shadow-lg shadow-amber-500/30">
               <Download className="w-5 h-5" />
               下载字幕
             </button>

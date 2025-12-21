@@ -44,8 +44,8 @@ export function PageContainer({
             alt={backgroundAlt}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0F171E] via-[#0F171E]/90 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0F171E] via-[#0F171E]/60 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-[#0F171E] via-[#0F171E]/90 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-r from-[#0F171E] via-[#0F171E]/60 to-transparent" />
         </div>
       )}
 

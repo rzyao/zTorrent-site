@@ -27,7 +27,7 @@ export function RecordsTable({ records }: { records: SentInvite[] }) {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm ${invite.status === 'registered' ? 'bg-gradient-to-br from-green-500 to-emerald-600' : invite.status === 'pending' ? 'bg-gradient-to-br from-yellow-500 to-orange-600' : 'bg-neutral-700'}`}>{invite.recipientName.charAt(0)}</div>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm ${invite.status === 'registered' ? 'bg-linear-to-br from-green-500 to-emerald-600' : invite.status === 'pending' ? 'bg-linear-to-br from-yellow-500 to-orange-600' : 'bg-neutral-700'}`}>{invite.recipientName.charAt(0)}</div>
                       <span className={invite.status === 'expired' ? 'text-neutral-500' : 'text-white'}>{invite.recipientName}</span>
                     </div>
                   </td>

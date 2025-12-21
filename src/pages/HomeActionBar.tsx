@@ -68,7 +68,7 @@ export function HomeActionBar() {
   };
 
   return (
-    <div className="sticky bottom-0 bg-gradient-to-t from-[#0F171E] via-[#0F171E] to-[#0F171E]/95 border-t border-amber-500/20 z-30 backdrop-blur-sm shadow-2xl">
+    <div className="sticky bottom-0 bg-linear-to-t from-[#0F171E] via-[#0F171E] to-[#0F171E]/95 border-t border-amber-500/20 z-30 backdrop-blur-sm shadow-2xl">
       <div className="w-full px-4 md:px-8 py-4">
         {/* 按钮组 */}
         <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
@@ -109,13 +109,13 @@ export function HomeActionBar() {
           {/* 主要功能按钮 */}
           <div className="flex items-center gap-2">
             {/* 上传种子 - 绿色 */}
-            <Button className="transition-all duration-300 px-4 py-2 h-auto border bg-gradient-to-r from-green-500 to-emerald-500 border-green-500 text-white shadow-lg shadow-green-500/30 hover:from-green-600 hover:to-emerald-600">
+            <Button className="transition-all duration-300 px-4 py-2 h-auto border bg-linear-to-r from-green-500 to-emerald-500 border-green-500 text-white shadow-lg shadow-green-500/30 hover:from-green-600 hover:to-emerald-600">
               <Upload className="w-4 h-4 md:mr-2" />
               <span className="hidden md:inline">上传</span>
             </Button>
 
             {/* 发布求种 - 琥珀色 */}
-            <Button className="transition-all duration-300 px-4 py-2 h-auto border bg-gradient-to-r from-amber-500 to-orange-500 border-amber-500 text-white shadow-lg shadow-amber-500/30 hover:from-amber-600 hover:to-orange-600">
+            <Button className="transition-all duration-300 px-4 py-2 h-auto border bg-linear-to-r from-amber-500 to-orange-500 border-amber-500 text-white shadow-lg shadow-amber-500/30 hover:from-amber-600 hover:to-orange-600">
               <Gift className="w-4 h-4 md:mr-2" />
               <span className="hidden md:inline">求种</span>
             </Button>
@@ -176,7 +176,7 @@ export function HomeActionBar() {
             {/* 通知 - 带徽章 */}
             <Button className="transition-all duration-300 px-4 py-2 h-auto border bg-neutral-900/50 border-neutral-700/50 text-gray-300 hover:bg-neutral-800/70 hover:border-blue-500/50 hover:text-blue-400 hover:shadow-lg hover:shadow-blue-500/20 relative">
               <Bell className="w-4 h-4" />
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-red-500 to-orange-500 rounded-full text-white text-xs flex items-center justify-center shadow-lg shadow-red-500/50">
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-linear-to-r from-red-500 to-orange-500 rounded-full text-white text-xs flex items-center justify-center shadow-lg shadow-red-500/50">
                 3
               </span>
             </Button>

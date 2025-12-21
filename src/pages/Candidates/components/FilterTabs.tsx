@@ -21,7 +21,7 @@ export function FilterTabs({
         onClick={() => onChange('hall')}
         className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
           selected === 'hall'
-            ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
+            ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
             : 'bg-neutral-800/40 text-neutral-400 hover:text-white hover:bg-neutral-700/50'
         }`}
       >
@@ -32,7 +32,7 @@ export function FilterTabs({
         onClick={() => onChange('mySubmissions')}
         className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
           selected === 'mySubmissions'
-            ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
+            ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
             : 'bg-neutral-800/40 text-neutral-400 hover:text-white hover:bg-neutral-700/50'
         }`}
       >
@@ -43,7 +43,7 @@ export function FilterTabs({
         onClick={() => onChange('myVotes')}
         className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
           selected === 'myVotes'
-            ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
+            ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
             : 'bg-neutral-800/40 text-neutral-400 hover:text-white hover:bg-neutral-700/50'
         }`}
       >

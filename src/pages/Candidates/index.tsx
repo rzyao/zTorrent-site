@@ -220,7 +220,7 @@ export function CandidatesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950">
+    <div className="min-h-screen bg-linear-to-br from-neutral-900 via-stone-900 to-neutral-950">
       <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8">
         <CandidatesHeader onCreate={() => setShowCreateModal(true)} />
 

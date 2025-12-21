@@ -117,7 +117,7 @@ export function RequestsHall() {
   return (
     <div className="space-y-6">
       {/* Search and Filter Bar */}
-      <div className="bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4">
+      <div className="bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search */}
           <div className="flex-1 relative">
@@ -147,7 +147,7 @@ export function RequestsHall() {
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`px-4 py-2.5 rounded-lg flex items-center gap-2 transition-all ${showFilters
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                  ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
                   : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                 }`}
             >
@@ -169,7 +169,7 @@ export function RequestsHall() {
                     key={status}
                     onClick={() => setStatusFilter(status)}
                     className={`px-4 py-2 rounded-lg transition-all ${statusFilter === status
-                        ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                        ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
                         : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                       }`}
                   >
@@ -188,7 +188,7 @@ export function RequestsHall() {
                     key={cat}
                     onClick={() => setCategoryFilter(cat === '全部' ? 'all' : cat)}
                     className={`px-4 py-2 rounded-lg transition-all ${categoryFilter === (cat === '全部' ? 'all' : cat)
-                        ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                        ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
                         : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                       }`}
                   >
@@ -218,7 +218,7 @@ export function RequestsHall() {
         ].map((stat, index) => (
           <div
             key={index}
-            className="bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4"
+            className="bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4"
           >
             <div className="text-amber-400/60 mb-1">{stat.label}</div>
             <div className="text-amber-50">{stat.value}</div>
@@ -243,7 +243,7 @@ export function RequestsHall() {
           return (
             <div
               key={request.id}
-              className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 hover:border-amber-400/40 transition-all cursor-pointer group"
+              className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 hover:border-amber-400/40 transition-all cursor-pointer group"
             >
               <div className="flex flex-col lg:flex-row gap-4">
                 {/* Main Content */}
@@ -299,7 +299,7 @@ export function RequestsHall() {
 
                 {/* Bounty Card */}
                 <div className="lg:w-48 flex lg:flex-col gap-2">
-                  <div className="flex-1 bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-400/30 rounded-lg p-4">
+                  <div className="flex-1 bg-linear-to-br from-amber-500/20 to-orange-500/20 border border-amber-400/30 rounded-lg p-4">
                     <div className="flex items-center gap-2 text-amber-400/70 mb-1">
                       <Award className="w-4 h-4" />
                       <span className="text-sm">悬赏金额</span>
@@ -316,7 +316,7 @@ export function RequestsHall() {
                     <button
                       onClick={() => actions.claim.mutate({ id: request.id })}
                       disabled={actions.claim.isPending}
-                      className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+                      className="px-4 py-2 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                     >
                       <TrendingUp className="w-4 h-4" />
                       {actions.claim.isPending ? '认领中...' : '立即认领'}

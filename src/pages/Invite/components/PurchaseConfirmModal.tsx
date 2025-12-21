@@ -27,10 +27,10 @@ export function PurchaseConfirmModal({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-neutral-900 border border-neutral-700 rounded-2xl max-w-md w-full overflow-hidden shadow-2xl">
-        <div className="bg-gradient-to-r from-amber-500/20 to-orange-600/20 border-b border-neutral-700 px-6 py-4">
+        <div className="bg-linear-to-r from-amber-500/20 to-orange-600/20 border-b border-neutral-700 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
               <h3 className="text-white text-lg">确认购买</h3>
@@ -77,7 +77,7 @@ export function PurchaseConfirmModal({
         </div>
         <div className="bg-neutral-800/50 border-t border-neutral-700 px-6 py-4 flex gap-3">
           <button onClick={onCancel} disabled={submitting} className="flex-1 px-4 py-2.5 bg-neutral-800 text-white rounded-lg hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">取消</button>
-          <button onClick={onConfirm} disabled={submitting || insufficient || !Number.isFinite(total) || total <= 0} className="flex-1 px-4 py-2.5 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-lg hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2">
+          <button onClick={onConfirm} disabled={submitting || insufficient || !Number.isFinite(total) || total <= 0} className="flex-1 px-4 py-2.5 bg-linear-to-r from-amber-500 to-orange-600 text-white rounded-lg hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2">
             {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
             {submitting ? '购买中…' : '确认购买'}
           </button>

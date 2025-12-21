@@ -6,15 +6,25 @@ const TARGET_DIRS = ['src']; // 需要扫描的目录
 const FILE_EXTS = ['.html', '.js', '.jsx', '.ts', '.tsx', '.vue', '.svelte']; // 匹配的文件后缀
 
 const REPLACEMENTS = [
+  // 1. Aspect Ratio: aspect-[2/3] -> aspect-2/3
   {
-    // aspect-[2/3] -> aspect-2/3
     pattern: /aspect-\[(\d+)\/(\d+)\]/g,
     replacement: 'aspect-$1/$2'
   },
+  // 2. Linear Gradient: bg-gradient-to-t -> bg-linear-to-t
   {
-    // bg-gradient-to-t -> bg-linear-to-t
     pattern: /bg-gradient-to-([a-z]+)/g,
     replacement: 'bg-linear-to-$1'
+  },
+  // 3. Flex Shrink: flex-shrink(-0) -> shrink(-0)
+  {
+    pattern: /flex-shrink(-0|-1|)?(?=\s|"|'|`)/g,
+    replacement: (match, p1) => `shrink${p1 || ''}`
+  },
+  // 4. Flex Grow: flex-grow(-0) -> grow(-0)
+  {
+    pattern: /flex-grow(-0|-1|)?(?=\s|"|'|`)/g,
+    replacement: (match, p1) => `grow${p1 || ''}`
   }
 ];
 

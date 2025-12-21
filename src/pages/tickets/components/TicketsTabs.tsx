@@ -21,14 +21,14 @@ export function TicketsTabs({ activeTab, onChange, isAdmin = false }: TicketsTab
   const visibleTabs = getTabs(isAdmin).filter((t) => t.show);
 
   return (
-    <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-2">
+    <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-2">
       <div className="flex flex-wrap gap-2">
         {visibleTabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => onChange(tab.id)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all ${activeTab === tab.id
-              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25'
+              ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25'
               : 'text-neutral-400 hover:text-white hover:bg-neutral-700/50'
               }`}
           >

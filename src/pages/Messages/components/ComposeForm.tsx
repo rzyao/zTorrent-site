@@ -40,7 +40,7 @@ export function ComposeForm({
         <h3 className="text-white text-lg">撰写新消息</h3>
         <div className="flex items-center gap-2">
           <Button variant="ghost" className="text-neutral-300 hover:text-white" onClick={onCancel}>取消</Button>
-          <Button className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white" onClick={onSend}>发送</Button>
+          <Button className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white" onClick={onSend}>发送</Button>
         </div>
       </div>
 

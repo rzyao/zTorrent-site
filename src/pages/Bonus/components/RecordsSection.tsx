@@ -22,9 +22,9 @@ export function RecordsSection({
           <span className="text-neutral-400">筛选：</span>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => onFilterChange('all')} className={`px-4 py-2 rounded-lg transition-all ${filterType === 'all' ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white' : 'bg-neutral-800 text-neutral-400 hover:text-white'}`}>全部</button>
-          <button onClick={() => onFilterChange('earn')} className={`px-4 py-2 rounded-lg transition-all ${filterType === 'earn' ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white' : 'bg-neutral-800 text-neutral-400 hover:text-white'}`}>收入</button>
-          <button onClick={() => onFilterChange('spend')} className={`px-4 py-2 rounded-lg transition-all ${filterType === 'spend' ? 'bg-gradient-to-r from-red-500 to-rose-600 text-white' : 'bg-neutral-800 text-neutral-400 hover:text-white'}`}>支出</button>
+          <button onClick={() => onFilterChange('all')} className={`px-4 py-2 rounded-lg transition-all ${filterType === 'all' ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white' : 'bg-neutral-800 text-neutral-400 hover:text-white'}`}>全部</button>
+          <button onClick={() => onFilterChange('earn')} className={`px-4 py-2 rounded-lg transition-all ${filterType === 'earn' ? 'bg-linear-to-r from-green-500 to-emerald-600 text-white' : 'bg-neutral-800 text-neutral-400 hover:text-white'}`}>收入</button>
+          <button onClick={() => onFilterChange('spend')} className={`px-4 py-2 rounded-lg transition-all ${filterType === 'spend' ? 'bg-linear-to-r from-red-500 to-rose-600 text-white' : 'bg-neutral-800 text-neutral-400 hover:text-white'}`}>支出</button>
         </div>
       </div>
 
@@ -34,7 +34,7 @@ export function RecordsSection({
         {!loading && !error && records.map((record) => (
           <div key={record.id} className="bg-neutral-900 border border-neutral-700 rounded-xl p-4 hover:border-neutral-600 transition-colors">
             <div className="flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${record.type === 'earn' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${record.type === 'earn' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
                 <record.icon className="w-6 h-6" />
               </div>
               <div className="flex-1 min-w-0">

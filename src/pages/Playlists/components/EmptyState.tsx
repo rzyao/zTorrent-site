@@ -16,7 +16,7 @@ export function EmptyState({ activeTab, onCreate }: Props) {
         {activeTab === 'mine' ? '创建你的第一个片单吧' : '没有找到符合条件的片单'}
       </p>
       {activeTab === 'mine' && (
-        <button onClick={onCreate} className="px-8 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:shadow-lg hover:shadow-amber-500/30 transition-all inline-flex items-center gap-2">
+        <button onClick={onCreate} className="px-8 py-3 rounded-xl bg-linear-to-r from-amber-500 to-orange-600 text-white hover:shadow-lg hover:shadow-amber-500/30 transition-all inline-flex items-center gap-2">
           <Plus className="w-5 h-5" />
           <span>创建片单</span>
         </button>

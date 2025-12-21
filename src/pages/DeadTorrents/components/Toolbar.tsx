@@ -20,13 +20,13 @@ export function Toolbar({ activeTab, sortBy, onSortChange }: { activeTab: TabTyp
       </div>
 
       {activeTab === 'myDownloaded' && (
-        <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white text-sm transition-all shadow-lg shadow-amber-500/30">
+        <button className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white text-sm transition-all shadow-lg shadow-amber-500/30">
           <DollarSign className="w-4 h-4" />
           批量悬赏
         </button>
       )}
       {activeTab === 'myPublished' && (
-        <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-lg text-white text-sm transition-all shadow-lg shadow-green-500/30">
+        <button className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-lg text-white text-sm transition-all shadow-lg shadow-green-500/30">
           <RefreshCw className="w-4 h-4" />
           批量恢复做种
         </button>

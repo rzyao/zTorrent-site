@@ -490,7 +490,7 @@ export function RichTextEditor({
                 onClick={handleInsertImage}
                 disabled={!imageUrl.trim()}
                 className={`flex-1 py-2 rounded-lg transition-all ${imageUrl.trim()
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:shadow-lg hover:shadow-amber-500/25'
+                  ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white hover:shadow-lg hover:shadow-amber-500/25'
                   : 'bg-neutral-700 text-neutral-500 cursor-not-allowed'
                   }`}
               >
@@ -562,7 +562,7 @@ export function RichTextEditor({
                 onClick={handleInsertLink}
                 disabled={!linkUrl.trim()}
                 className={`flex-1 py-2 rounded-lg transition-all ${linkUrl.trim()
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:shadow-lg hover:shadow-amber-500/25'
+                  ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white hover:shadow-lg hover:shadow-amber-500/25'
                   : 'bg-neutral-700 text-neutral-500 cursor-not-allowed'
                   }`}
               >

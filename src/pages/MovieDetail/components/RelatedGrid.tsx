@@ -15,7 +15,7 @@ export function RelatedGrid({ items }: { items: RelatedItem[] }) {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {items.map((rec) => (
             <div key={rec.id} className="group cursor-pointer bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-[#00A8E1] transition-colors">
-              <div className="relative aspect-[2/3] w-full">
+              <div className="relative aspect-2/3 w-full">
                 <ImageWithFallback src={rec.thumbnail} alt={rec.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 {rec.isFree && (
                   <Badge className="absolute top-2 left-2 bg-green-500 text-white text-xs px-1 py-0">FREE</Badge>

@@ -4,11 +4,11 @@ import type { DeadTorrent, TabType } from '../types';
 
 export function DeadTorrentCard({ torrent, activeTab }: { torrent: DeadTorrent; activeTab: TabType }) {
   return (
-    <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-red-500/30 overflow-hidden hover:border-red-500/50 transition-all group">
+    <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-red-500/30 overflow-hidden hover:border-red-500/50 transition-all group">
       <div className="flex flex-col md:flex-row gap-4 p-4">
         {/* 海报 */}
-        <div className="relative w-full md:w-28 flex-shrink-0">
-          <div className="aspect-[2/3] rounded-lg overflow-hidden">
+        <div className="relative w-full md:w-28 shrink-0">
+          <div className="aspect-2/3 rounded-lg overflow-hidden">
             <img
               src={torrent.poster}
               alt={torrent.title}
@@ -44,7 +44,7 @@ export function DeadTorrentCard({ torrent, activeTab }: { torrent: DeadTorrent; 
           {/* 断种原因 */}
           <div className="mb-3 p-3 rounded-lg bg-red-500/10 border border-red-500/30">
             <div className="flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+              <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />
               <div>
                 <p className="text-red-400 text-xs mb-1">断种原因</p>
                 <p className="text-red-300 text-sm">{torrent.reason}</p>
@@ -86,7 +86,7 @@ export function DeadTorrentCard({ torrent, activeTab }: { torrent: DeadTorrent; 
         </div>
 
         {/* 悬赏显示与操作 */}
-        <div className="flex flex-col items-center justify-center md:w-40 flex-shrink-0 p-4 bg-gradient-to-br from-amber-500/10 to-orange-600/10 rounded-xl border border-amber-500/30">
+        <div className="flex flex-col items-center justify-center md:w-40 shrink-0 p-4 bg-linear-to-br from-amber-500/10 to-orange-600/10 rounded-xl border border-amber-500/30">
           <div className="flex items-center gap-2 mb-1">
             <Coins className="w-6 h-6 text-amber-400" />
             <span className="text-3xl text-amber-400">{torrent.bounty.toFixed(0)}</span>
@@ -98,19 +98,19 @@ export function DeadTorrentCard({ torrent, activeTab }: { torrent: DeadTorrent; 
           </div>
 
           {activeTab === 'hall' && (
-            <button className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-lg text-white text-sm transition-all shadow-lg shadow-green-500/30">
+            <button className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-lg text-white text-sm transition-all shadow-lg shadow-green-500/30">
               <RefreshCw className="w-3.5 h-3.5" />
               <span>恢复做种</span>
             </button>
           )}
           {activeTab === 'myPublished' && (
-            <button className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-lg text-white text-sm transition-all shadow-lg shadow-green-500/30">
+            <button className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-lg text-white text-sm transition-all shadow-lg shadow-green-500/30">
               <RefreshCw className="w-3.5 h-3.5" />
               <span>恢复</span>
             </button>
           )}
           {activeTab === 'myDownloaded' && (
-            <button className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white text-sm transition-all shadow-lg shadow-amber-500/30">
+            <button className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white text-sm transition-all shadow-lg shadow-amber-500/30">
               <Coins className="w-3.5 h-3.5" />
               <span>追加悬赏</span>
             </button>

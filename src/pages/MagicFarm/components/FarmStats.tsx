@@ -34,7 +34,7 @@ export function FarmStats({ userStats }: Props) {
             <span className="text-amber-900">{userStats.energy}/{userStats.maxEnergy}</span>
             <div className="w-24 h-2 bg-neutral-200 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-green-500 to-emerald-500"
+                className="h-full bg-linear-to-r from-green-500 to-emerald-500"
                 style={{ width: `${(userStats.energy / userStats.maxEnergy) * 100}%` }}
               />
             </div>
@@ -43,7 +43,7 @@ export function FarmStats({ userStats }: Props) {
       </div>
 
       {/* 每日礼包按钮（保持与原页面一致的视觉） */}
-      <button className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 transition-all">
+      <button className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 transition-all">
         <Gift className="w-5 h-5" />
         <span>每日礼包</span>
       </button>

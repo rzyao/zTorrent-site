@@ -153,7 +153,7 @@ export function RSSPage() {
   return (
     <div className="min-h-screen bg-[#0F171E]">
       {/* Header */}
-      <div className="bg-gradient-to-br from-amber-600/20 via-orange-600/20 to-amber-700/20 border-b border-amber-500/20">
+      <div className="bg-linear-to-br from-amber-600/20 via-orange-600/20 to-amber-700/20 border-b border-amber-500/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center gap-3 mb-2">
             <Rss className="w-8 h-8 text-amber-400" />
@@ -165,9 +165,9 @@ export function RSSPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* Security Notice */}
-        <div className="bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-400/30 rounded-lg p-4">
+        <div className="bg-linear-to-r from-red-500/20 to-orange-500/20 border border-red-400/30 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <Shield className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <Shield className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
             <div className="flex-1">
               <div className="text-red-300 mb-1">安全提示</div>
               <div className="text-red-200/70 text-sm">
@@ -178,7 +178,7 @@ export function RSSPage() {
         </div>
 
         {/* RSS Token Display */}
-        <div className="bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-6">
+        <div className="bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-6">
           <h3 className="text-amber-50 mb-4 flex items-center gap-2">
             <Settings className="w-5 h-5" />
             您的RSS Token
@@ -189,7 +189,7 @@ export function RSSPage() {
             </div>
             <button
               onClick={() => handleCopyUrl(userRSSToken)}
-              className="px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all flex items-center gap-2"
+              className="px-4 py-3 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all flex items-center gap-2"
             >
               {copiedUrl === userRSSToken ? (
                 <>
@@ -203,7 +203,7 @@ export function RSSPage() {
                 </>
               )}
             </button>
-            <button className="px-4 py-3 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all flex items-center gap-2">
+            <button className="px-4 py-3 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all flex items-center gap-2">
               <RefreshCw className="w-4 h-4" />
               重置
             </button>
@@ -211,7 +211,7 @@ export function RSSPage() {
         </div>
 
         {/* RSS Generator */}
-        <div className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 space-y-6">
+        <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 space-y-6">
           <h3 className="text-amber-50 flex items-center gap-2">
             <Filter className="w-5 h-5" />
             自定义RSS订阅
@@ -226,7 +226,7 @@ export function RSSPage() {
                   key={category.id}
                   onClick={() => toggleCategory(category.id)}
                   className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${selectedCategories.includes(category.id)
-                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                    ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
                     : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                     }`}
                 >
@@ -249,7 +249,7 @@ export function RSSPage() {
                   key={tag.id}
                   onClick={() => toggleTag(tag.id)}
                   className={`px-4 py-2 rounded-lg transition-all ${selectedTags.includes(tag.id)
-                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                    ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
                     : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                     }`}
                 >
@@ -271,7 +271,7 @@ export function RSSPage() {
                   key={quality.id}
                   onClick={() => toggleQuality(quality.id)}
                   className={`px-4 py-2 rounded-lg transition-all ${selectedQuality.includes(quality.id)
-                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                    ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
                     : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                     }`}
                 >
@@ -326,7 +326,7 @@ export function RSSPage() {
               </div>
               <button
                 onClick={() => handleCopyUrl(currentRSSUrl)}
-                className="px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all flex items-center gap-2 whitespace-nowrap"
+                className="px-4 py-3 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all flex items-center gap-2 whitespace-nowrap"
               >
                 {copiedUrl === currentRSSUrl ? (
                   <>
@@ -348,7 +348,7 @@ export function RSSPage() {
         </div>
 
         {/* My Feeds */}
-        <div className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6">
+        <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6">
           <h3 className="text-amber-50 mb-4 flex items-center gap-2">
             <Download className="w-5 h-5" />
             我的RSS订阅
@@ -376,7 +376,7 @@ export function RSSPage() {
                   </div>
                   <button
                     onClick={() => handleCopyUrl(feed.url)}
-                    className="px-3 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2"
+                    className="px-3 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2"
                   >
                     {copiedUrl === feed.url ? (
                       <>
@@ -400,7 +400,7 @@ export function RSSPage() {
         </div>
 
         {/* Usage Guide */}
-        <div className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6">
+        <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6">
           <h3 className="text-amber-50 mb-4">使用说明</h3>
           <div className="space-y-4 text-amber-200/70">
             <div>

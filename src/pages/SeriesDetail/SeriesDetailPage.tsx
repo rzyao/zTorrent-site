@@ -304,7 +304,7 @@ export function SeriesDetailPage() {
                     >
                       <div className="flex items-start gap-4">
                         {/* 集号 */}
-                        <div className="flex-shrink-0 w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center border border-amber-500/30">
+                        <div className="shrink-0 w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center border border-amber-500/30">
                           <span className="text-xl font-bold text-amber-400">
                             {episode.episodeNumber}
                           </span>
@@ -350,7 +350,7 @@ export function SeriesDetailPage() {
                         </div>
 
                         {/* 箭头 */}
-                        <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
                           <ArrowLeft className="w-5 h-5 text-amber-400 rotate-180" />
                         </div>
                       </div>

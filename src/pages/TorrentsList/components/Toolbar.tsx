@@ -139,7 +139,7 @@ export function Toolbar(props: ToolbarProps) {
                 onClick={() => onChangeViewMode("grid")}
                 className={`h-9 px-3 transition-colors ${
                   viewMode === "grid"
-                    ? "bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300 whitespace-nowrap"
+                    ? "bg-linear-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300 whitespace-nowrap"
                     : "bg-gray-900 text-gray-400 border border-gray-900 hover:text-amber-300 hover:border-amber-500/50"
                 }`}
               >
@@ -149,7 +149,7 @@ export function Toolbar(props: ToolbarProps) {
                 onClick={() => onChangeViewMode("list")}
                 className={`h-9 px-3 transition-colors ${
                   viewMode === "list"
-                    ? "bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300 whitespace-nowrap"
+                    ? "bg-linear-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300 whitespace-nowrap"
                     : "bg-gray-900 text-gray-400 border border-gray-900 hover:text-amber-300 hover:border-amber-500/50"
                 }`}
               >

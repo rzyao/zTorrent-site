@@ -92,7 +92,7 @@ export function CreateTicketView({ onBack, onCreate }: CreateTicketViewProps) {
         </Button>
       </div>
 
-      <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-8">
+      <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-8">
         <h2 className="text-white text-2xl mb-6">创建新工单</h2>
 
         <div className="space-y-6">
@@ -150,7 +150,7 @@ export function CreateTicketView({ onBack, onCreate }: CreateTicketViewProps) {
 
           <div className="flex justify-end gap-4 pt-4">
             <Button onClick={onBack} variant="outline" className="border-neutral-700 text-neutral-300 hover:bg-neutral-800">取消</Button>
-            <Button onClick={handleCreateTicket} disabled={!newTicketTitle || !newTicketContent} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">提交工单</Button>
+            <Button onClick={handleCreateTicket} disabled={!newTicketTitle || !newTicketContent} className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">提交工单</Button>
           </div>
         </div>
       </div>

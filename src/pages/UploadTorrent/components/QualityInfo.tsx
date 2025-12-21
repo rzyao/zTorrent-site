@@ -53,7 +53,7 @@ export const QualityInfo = memo(function QualityInfo(props: QualityInfoProps) {
   return (
     <div className="bg-neutral-800/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 shadow-2xl overflow-hidden">
       {/* 模块标题区域 */}
-      <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border-b border-neutral-700/50 px-6 py-3.5">
+      <div className="bg-linear-to-r from-orange-500/20 to-red-500/20 border-b border-neutral-700/50 px-6 py-3.5">
         <h2 className="text-white flex items-center gap-2">
           <Film className="w-5 h-5 text-orange-400" />
           质量信息

@@ -153,7 +153,7 @@ export function ThreadsView({
               )}
               <div className="mt-3 flex items-center gap-2">
                 <Button variant="ghost" className="text-neutral-300 hover:text-white" onClick={onClearReply}>清空</Button>
-                <Button className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white" onClick={onSendReply}>发送回复</Button>
+                <Button className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white" onClick={onSendReply}>发送回复</Button>
               </div>
             </div>
           </div>

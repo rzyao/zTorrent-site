@@ -36,7 +36,7 @@ export function Hero({
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${playlist?.coverImage ?? ""})` }}
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0F171E] via-[#0F171E]/80 to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-t from-[#0F171E] via-[#0F171E]/80 to-transparent" />
 
       {/* 片单信息区 */}
       <div className="absolute bottom-0 left-0 right-0 p-8">
@@ -46,7 +46,7 @@ export function Hero({
             {(playlist?.tags ?? []).map((tag: string, index: number) => (
               <span
                 key={index}
-                className="px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-400 text-sm"
+                className="px-3 py-1 rounded-full bg-linear-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-400 text-sm"
               >
                 {tag}
               </span>
@@ -59,7 +59,7 @@ export function Hero({
           {/* 统计 */}
           <div className="flex items-center gap-6 mb-4 text-gray-300">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center">
                 <span className="text-white text-sm">
                   {playlist?.creatorAvatar ?? ""}
                 </span>
@@ -104,7 +104,7 @@ export function Hero({
               className={`px-6 py-2.5 rounded-lg transition-all flex items-center gap-2 ${
                 isFollowing
                   ? "bg-amber-500/20 border border-amber-500/50 text-amber-400"
-                  : "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                  : "bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
               }`}
             >
               <Heart

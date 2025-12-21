@@ -62,7 +62,7 @@ export function ListView({
             }}
           >
             {/* 缩略图 */}
-            <div className="relative w-25 h-25 flex-shrink-0 rounded overflow-hidden hidden-in-mobile">
+            <div className="relative w-25 h-25 shrink-0 rounded overflow-hidden hidden-in-mobile">
               <ImageWithFallback
                 src={getCoverSrc(torrent)}
                 alt={torrent.title}

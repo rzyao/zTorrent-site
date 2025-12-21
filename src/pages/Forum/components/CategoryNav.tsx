@@ -28,7 +28,7 @@ export function CategoryNav({
               onClick={() => onCategoryChange(category.id)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all ${
                 activeCategoryId === category.id
-                  ? "bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-white"
+                  ? "bg-linear-to-r from-amber-500/20 to-orange-500/20 text-white"
                   : "text-neutral-400 hover:bg-neutral-700/30 hover:text-white"
               }`}
             >
@@ -52,7 +52,7 @@ export function CategoryNav({
           </div>
           <Button
             onClick={onNewPost}
-            className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+            className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
           >
             <Plus className="w-4 h-4 mr-2" />
             发布帖子

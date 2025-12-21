@@ -61,7 +61,7 @@ export function TorrentRow({ title, torrents }: TorrentRowProps) {
         {showLeftArrow && (
           <Button
             onClick={() => scroll("left")}
-            className="absolute left-0 top-0 bottom-0 z-20 w-14 bg-gradient-to-r from-[#0F171E] to-transparent hover:from-black/80 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity"
+            className="absolute left-0 top-0 bottom-0 z-20 w-14 bg-linear-to-r from-[#0F171E] to-transparent hover:from-black/80 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity"
           >
             <ChevronLeft className="w-8 h-8 text-white" />
           </Button>
@@ -85,7 +85,7 @@ export function TorrentRow({ title, torrents }: TorrentRowProps) {
         {showRightArrow && (
           <Button
             onClick={() => scroll("right")}
-            className="absolute right-0 top-0 bottom-0 z-20 w-14 bg-gradient-to-l from-[#0F171E] to-transparent hover:from-black/80 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity"
+            className="absolute right-0 top-0 bottom-0 z-20 w-14 bg-linear-to-l from-[#0F171E] to-transparent hover:from-black/80 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity"
           >
             <ChevronRight className="w-8 h-8 text-white" />
           </Button>

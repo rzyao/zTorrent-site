@@ -22,7 +22,7 @@ export function UsersTable({ users }: { users: InvitedUser[] }) {
               <tr key={user.id} className="border-b border-neutral-700 hover:bg-neutral-800/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-sm">{user.username.charAt(0)}</div>
+                    <div className="w-8 h-8 rounded-full bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-sm">{user.username.charAt(0)}</div>
                     <span className="text-white">{user.username}</span>
                   </div>
                 </td>

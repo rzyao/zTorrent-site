@@ -45,7 +45,7 @@ export function ReplyEditor({
       />
       <div className="flex justify-end mt-4">
         <Button
-          className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+          className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
           disabled={isLocked}
           onClick={onSubmit}
         >

@@ -59,7 +59,7 @@ export function MovieDetails({
               <Button
                 size="sm"
                 onClick={onEdit}
-                className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
               >
                 <Edit className="w-4 h-4 mr-2" />
                 编辑
@@ -107,7 +107,7 @@ export function MovieDetails({
           <Button
             size="sm"
             onClick={onAddTorrent}
-            className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+            className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
           >
             <Plus className="w-4 h-4 mr-2" />
             添加种子

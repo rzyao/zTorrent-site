@@ -10,7 +10,7 @@ export function Tabs({ activeTab, onChange }: { activeTab: TabType; onChange: (t
           onClick={() => onChange('hall')}
           className={`px-6 py-2.5 rounded-lg text-sm transition-all ${
             activeTab === 'hall'
-              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
+              ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
               : 'text-neutral-400 hover:text-white hover:bg-neutral-700/50'
           }`}
         >
@@ -20,7 +20,7 @@ export function Tabs({ activeTab, onChange }: { activeTab: TabType; onChange: (t
           onClick={() => onChange('myPublished')}
           className={`px-6 py-2.5 rounded-lg text-sm transition-all ${
             activeTab === 'myPublished'
-              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
+              ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
               : 'text-neutral-400 hover:text-white hover:bg-neutral-700/50'
           }`}
         >
@@ -30,7 +30,7 @@ export function Tabs({ activeTab, onChange }: { activeTab: TabType; onChange: (t
           onClick={() => onChange('myDownloaded')}
           className={`px-6 py-2.5 rounded-lg text-sm transition-all ${
             activeTab === 'myDownloaded'
-              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
+              ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30'
               : 'text-neutral-400 hover:text-white hover:bg-neutral-700/50'
           }`}
         >

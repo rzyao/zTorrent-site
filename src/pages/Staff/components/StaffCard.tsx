@@ -15,7 +15,7 @@ export function StaffCard({ member, roleConfig }: StaffCardProps) {
   const statusInfo = getStatusConfig(member.status);
 
   return (
-    <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 hover:border-amber-500/30 transition-all group">
+    <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 hover:border-amber-500/30 transition-all group">
       <div className="flex items-start gap-4 mb-4">
         <div className="relative">
           <img src={member.avatar} alt={member.username} className="w-16 h-16 rounded-xl object-cover" />
@@ -79,7 +79,7 @@ export function StaffCard({ member, roleConfig }: StaffCardProps) {
       </div>
 
       {member.contactAllowed && (
-        <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white" size="sm">
+        <Button className="w-full bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white" size="sm">
           <Mail className="w-4 h-4 mr-2" />
           发送消息
         </Button>

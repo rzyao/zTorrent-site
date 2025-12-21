@@ -15,9 +15,9 @@ export function ShopGrid({
 }) {
   return (
     <div>
-      <div className="bg-gradient-to-r from-amber-500/10 to-orange-600/10 border border-amber-500/20 rounded-xl p-6 mb-6">
+      <div className="bg-linear-to-r from-amber-500/10 to-orange-600/10 border border-amber-500/20 rounded-xl p-6 mb-6">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center flex-shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shrink-0">
             <Gift className="w-6 h-6 text-white" />
           </div>
           <div>
@@ -35,7 +35,7 @@ export function ShopGrid({
           <div key={item.id} className="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden hover:border-amber-500/30 transition-all hover:shadow-lg hover:shadow-amber-500/10">
             <div className="p-6">
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center flex-shrink-0">
+                <div className="w-14 h-14 rounded-xl bg-linear-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center shrink-0">
                   {(() => { const Icon = getIconByKey(item.key); return <Icon className="w-7 h-7 text-amber-400" />; })()}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -50,7 +50,7 @@ export function ShopGrid({
                 </div>
                 <span className={`text-xs px-2 py-1 rounded ${item.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>{item.status === 'active' ? '可购买' : '暂不可购买'}</span>
               </div>
-              <button className={`w-full py-2.5 rounded-lg text-white transition-all shadow-lg shadow-amber-500/20 ${item.status === 'active' ? 'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700' : 'bg-neutral-700 cursor-not-allowed'}`} disabled={item.status !== 'active'} onClick={() => onPurchase(item)}>购买</button>
+              <button className={`w-full py-2.5 rounded-lg text-white transition-all shadow-lg shadow-amber-500/20 ${item.status === 'active' ? 'bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700' : 'bg-neutral-700 cursor-not-allowed'}`} disabled={item.status !== 'active'} onClick={() => onPurchase(item)}>购买</button>
             </div>
           </div>
         ))}

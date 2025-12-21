@@ -47,7 +47,7 @@ export function DownloaderPage() {
   } = useDownloaderManager();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">
+    <div className="min-h-screen bg-linear-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">
       <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-8">
         {/* 页面头部 */}
         <Header onAddClick={() => setShowAddModal(true)} />

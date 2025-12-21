@@ -35,18 +35,18 @@ export function FiltersBar(props: Props) {
         </div>
 
         <div className="flex gap-2">
-          <button onClick={() => setTypeFilter('all')} className={`px-4 py-2 rounded-lg text-sm transition-all ${typeFilter === 'all' ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25' : 'bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700'}`}>
+          <button onClick={() => setTypeFilter('all')} className={`px-4 py-2 rounded-lg text-sm transition-all ${typeFilter === 'all' ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25' : 'bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700'}`}>
             全部
           </button>
-          <button onClick={() => setTypeFilter('movie')} className={`px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${typeFilter === 'movie' ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25' : 'bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700'}`}>
+          <button onClick={() => setTypeFilter('movie')} className={`px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${typeFilter === 'movie' ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25' : 'bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700'}`}>
             <Film className="w-4 h-4" />
             影片
           </button>
-          <button onClick={() => setTypeFilter('playlist')} className={`px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${typeFilter === 'playlist' ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25' : 'bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700'}`}>
+          <button onClick={() => setTypeFilter('playlist')} className={`px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${typeFilter === 'playlist' ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25' : 'bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700'}`}>
             <List className="w-4 h-4" />
             片单
           </button>
-          <button onClick={() => setTypeFilter('torrent')} className={`px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${typeFilter === 'torrent' ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25' : 'bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700'}`}>
+          <button onClick={() => setTypeFilter('torrent')} className={`px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${typeFilter === 'torrent' ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25' : 'bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700'}`}>
             <Package className="w-4 h-4" />
             种子
           </button>

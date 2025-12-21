@@ -93,8 +93,8 @@ export function EpisodeDetailPage() {
             alt={series.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0F171E] via-[#0F171E]/80 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0F171E] via-[#0F171E]/50 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-[#0F171E] via-[#0F171E]/80 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-r from-[#0F171E] via-[#0F171E]/50 to-transparent" />
         </div>
 
         {/* 统一的居中内容容器 */}
@@ -259,7 +259,7 @@ export function EpisodeDetailPage() {
                         >
                           <div className="flex gap-4 p-4">
                             {/* 缩略图 */}
-                            <div className="relative w-28 h-28 flex-shrink-0 rounded-lg overflow-hidden hidden md:block border border-white/10">
+                            <div className="relative w-28 h-28 shrink-0 rounded-lg overflow-hidden hidden md:block border border-white/10">
                               <ImageWithFallback
                                 src={t.cover}
                                 alt={t.title || t.name}

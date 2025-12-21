@@ -40,7 +40,7 @@ export function CreateThreadForm({ categories, initialCategoryId, onCancel, onSu
 
   return (
     <div className="bg-neutral-800/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 shadow-2xl overflow-hidden">
-      <div className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-b border-neutral-700/50 px-6 py-4 flex items-center justify-between">
+      <div className="bg-linear-to-r from-amber-500/20 to-orange-500/20 border-b border-neutral-700/50 px-6 py-4 flex items-center justify-between">
         <h2 className="text-white flex items-center gap-2">
           <Plus className="w-5 h-5 text-amber-400" />
           发布新帖
@@ -122,7 +122,7 @@ export function CreateThreadForm({ categories, initialCategoryId, onCancel, onSu
             }
           >
             <Button
-              className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+              className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
               onClick={handleSubmit}
               disabled={submitting}
             >

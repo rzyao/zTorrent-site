@@ -20,7 +20,7 @@ export function ReviewPage() {
       <ReviewHeader reviewSwitches={data.reviewSwitches} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-        <div className="bg-gradient-to-br from-amber-500/10 to-orange-600/10 border border-amber-500/20 rounded-xl p-5">
+        <div className="bg-linear-to-br from-amber-500/10 to-orange-600/10 border border-amber-500/20 rounded-xl p-5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-neutral-400 text-sm">待审核总数</span>
             <Clock className="w-5 h-5 text-amber-400" />
@@ -33,7 +33,7 @@ export function ReviewPage() {
             · 种子 {data.stats.pendingTorrents}
           </div>
         </div>
-        <div className="bg-gradient-to-br from-green-500/10 to-emerald-600/10 border border-green-500/20 rounded-xl p-5">
+        <div className="bg-linear-to-br from-green-500/10 to-emerald-600/10 border border-green-500/20 rounded-xl p-5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-neutral-400 text-sm">今日通过</span>
             <Check className="w-5 h-5 text-green-400" />
@@ -42,7 +42,7 @@ export function ReviewPage() {
             {data.stats.todayApproved}
           </div>
         </div>
-        <div className="bg-gradient-to-br from-red-500/10 to-rose-600/10 border border-red-500/20 rounded-xl p-5">
+        <div className="bg-linear-to-br from-red-500/10 to-rose-600/10 border border-red-500/20 rounded-xl p-5">
           <div className="flex items中心 justify-between mb-2">
             <span className="text-neutral-400 text-sm">今日驳回</span>
             <X className="w-5 h-5 text-red-400" />
@@ -51,14 +51,14 @@ export function ReviewPage() {
             {data.stats.todayRejected}
           </div>
         </div>
-        <div className="bg-gradient-to-br from-blue-500/10 to-cyan-600/10 border border-blue-500/20 rounded-xl p-5">
+        <div className="bg-linear-to-br from-blue-500/10 to-cyan-600/10 border border-blue-500/20 rounded-xl p-5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-neutral-400 text-sm">审核效率</span>
             <Shield className="w-5 h-5 text-blue-400" />
           </div>
           <div className="text-3xl text-blue-400">94%</div>
         </div>
-        <div className="bg-gradient-to-br from-purple-500/10 to-pink-600/10 border border-purple-500/20 rounded-xl p-5">
+        <div className="bg-linear-to-br from-purple-500/10 to-pink-600/10 border border-purple-500/20 rounded-xl p-5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-neutral-400 text-sm">平均用时</span>
             <Clock className="w-5 h-5 text-purple-400" />

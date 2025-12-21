@@ -67,7 +67,7 @@ export function TorrentSearchPanel({ visible, query, onQueryChange, isSearching,
                       <div className="flex items-center gap-1"><Download className="w-3 h-3 text-red-400" /><span className="text-red-400">{leechers}</span></div>
                     </div>
                   </div>
-                  <Button size="sm" onClick={() => onBind(id)} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">绑定到当前影片</Button>
+                  <Button size="sm" onClick={() => onBind(id)} className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">绑定到当前影片</Button>
                 </div>
               </div>
             );

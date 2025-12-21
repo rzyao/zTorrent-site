@@ -643,7 +643,7 @@ export function Header() {
               {showUserMenu && (
                 <div className="dropdown-menu absolute right-0 top-full mt-2 w-68 bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl overflow-hidden z-[60]">
                   {/* 用户信息区域 */}
-                  <div className="bg-gradient-to-br from-amber-500/20 to-orange-600/20 border-b border-neutral-700 p-4">
+                  <div className="bg-linear-to-br from-amber-500/20 to-orange-600/20 border-b border-neutral-700 p-4">
                     <div className="flex items-center gap-3 mb-3">
                       <UserAvatar
                         username={access?.username || "用户"}

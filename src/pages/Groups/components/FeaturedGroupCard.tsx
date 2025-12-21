@@ -15,15 +15,15 @@ export const FeaturedGroupCard: React.FC<FeaturedGroupCardProps> = ({ group }) =
   const Icon = getIconComponent(group.icon);
 
   return (
-    <div className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg overflow-hidden hover:border-amber-400/40 transition-all">
+    <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg overflow-hidden hover:border-amber-400/40 transition-all">
       {/* Banner */}
       <div className="relative h-32">
         <img src={group.banner} alt={group.name} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0F171E] to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-[#0F171E] to-transparent" />
 
         {/* 等级徽章 */}
         <div
-          className={`absolute top-3 right-3 px-3 py-1 bg-gradient-to-r ${getLevelColor(
+          className={`absolute top-3 right-3 px-3 py-1 bg-linear-to-r ${getLevelColor(
             group.level
           )} text-gray-900 rounded-full text-xs flex items-center gap-1`}
         >
@@ -33,7 +33,7 @@ export const FeaturedGroupCard: React.FC<FeaturedGroupCardProps> = ({ group }) =
 
         {/* 招募中标签 */}
         {group.recruiting && (
-          <div className="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full text-xs flex items-center gap-1">
+          <div className="absolute top-3 left-3 px-3 py-1 bg-linear-to-r from-green-500 to-emerald-500 text-white rounded-full text-xs flex items-center gap-1">
             <UserPlus className="w-3 h-3" />
             招募中
           </div>
@@ -77,7 +77,7 @@ export const FeaturedGroupCard: React.FC<FeaturedGroupCardProps> = ({ group }) =
             {group.specialties.map((specialty, idx) => (
               <span
                 key={idx}
-                className="px-2 py-1 bg-gradient-to-r from-amber-600/20 to-orange-600/20 border border-amber-500/30 text-amber-300 rounded text-xs"
+                className="px-2 py-1 bg-linear-to-r from-amber-600/20 to-orange-600/20 border border-amber-500/30 text-amber-300 rounded text-xs"
               >
                 {specialty}
               </span>
@@ -107,11 +107,11 @@ export const FeaturedGroupCard: React.FC<FeaturedGroupCardProps> = ({ group }) =
 
         {/* 操作按钮 */}
         <div className="flex gap-2">
-          <button className="flex-1 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded text-sm transition-all">
+          <button className="flex-1 px-4 py-2 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded text-sm transition-all">
             查看详情
           </button>
           {group.recruiting && (
-            <button className="px-4 py-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 hover:border-green-400 text-green-300 rounded text-sm transition-all">
+            <button className="px-4 py-2 bg-linear-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 hover:border-green-400 text-green-300 rounded text-sm transition-all">
               申请加入
             </button>
           )}

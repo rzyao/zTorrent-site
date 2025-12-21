@@ -39,7 +39,7 @@ export function TutorialsFilters({
               onClick={() => onCategoryChange(category.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
                 isSelected
-                  ? `bg-gradient-to-r from-${category.color}-500 to-${category.color}-600 text-white shadow-lg shadow-${category.color}-500/30`
+                  ? `bg-linear-to-r from-${category.color}-500 to-${category.color}-600 text-white shadow-lg shadow-${category.color}-500/30`
                   : 'bg-neutral-800/40 border border-neutral-700/50 text-neutral-300 hover:border-neutral-600'
               }`}
             >

@@ -32,7 +32,7 @@ export function RequestsTabs({ activeTab, tabs, onChange }: RequestsTabsProps) {
                 className={`
                   flex items-center gap-2 px-6 py-4 whitespace-nowrap transition-all duration-200
                   ${isActive
-                    ? 'text-amber-400 border-b-2 border-amber-400 bg-gradient-to-br from-amber-600/10 to-orange-600/10'
+                    ? 'text-amber-400 border-b-2 border-amber-400 bg-linear-to-br from-amber-600/10 to-orange-600/10'
                     : 'text-amber-200/60 hover:text-amber-300 hover:bg-amber-500/5'
                   }
                 `}

@@ -42,7 +42,7 @@ export function DownloaderCard({
   const isConnected = downloader.status === "connected";
 
   return (
-    <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
+    <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
       {/* 头部：图标 + 名称 + 版本 + 状态 */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">

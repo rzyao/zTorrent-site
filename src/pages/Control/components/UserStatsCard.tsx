@@ -13,12 +13,12 @@ interface UserStatsCardProps {
 // 职责：展示头像、用户名、会员标识与上传/下载/分享率概览
 export function UserStatsCard({ avatar, username, uploadText = '5.28TB', downloadText = '2.15TB', ratioText = '2.46' }: UserStatsCardProps) {
   return (
-    <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-5">
+    <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-5">
       <div className="flex items-center gap-3 mb-4">
         <img src={avatar} alt="Avatar" className="w-12 h-12 rounded-full border-2 border-amber-500/30" />
         <div>
           <p className="text-white">{username}</p>
-          <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs mt-1">VIP会员</Badge>
+          <Badge className="bg-linear-to-r from-amber-500 to-orange-600 text-white text-xs mt-1">VIP会员</Badge>
         </div>
       </div>
       <Separator className="bg-neutral-700/50 my-3" />

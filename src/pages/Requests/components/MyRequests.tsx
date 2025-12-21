@@ -133,7 +133,7 @@ export function MyRequests() {
         ].map((stat, index) => (
           <div
             key={index}
-            className="bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4"
+            className="bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4"
           >
             <div className="text-amber-400/60 mb-1">{stat.label}</div>
             <div className="text-amber-50 mb-1">{stat.value}</div>
@@ -148,8 +148,8 @@ export function MyRequests() {
           onClick={() => setStatusGroup('ongoing')}
           className={`flex-1 py-3 px-6 rounded-lg transition-all ${
             statusGroup === 'ongoing'
-              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
-              : 'bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 text-amber-300 hover:border-amber-400/40'
+              ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
+              : 'bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 text-amber-300 hover:border-amber-400/40'
           }`}
         >
           <div className="flex items-center justify-center gap-2">
@@ -167,8 +167,8 @@ export function MyRequests() {
           onClick={() => setStatusGroup('history')}
           className={`flex-1 py-3 px-6 rounded-lg transition-all ${
             statusGroup === 'history'
-              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
-              : 'bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 text-amber-300 hover:border-amber-400/40'
+              ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
+              : 'bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 text-amber-300 hover:border-amber-400/40'
           }`}
         >
           <div className="flex items-center justify-center gap-2">
@@ -185,9 +185,9 @@ export function MyRequests() {
 
       {/* Pending Submissions Alert */}
       {statusGroup === 'ongoing' && ongoingRequests.some(r => r.pendingSubmissions > 0) && (
-        <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-400/30 rounded-lg p-4">
+        <div className="bg-linear-to-r from-green-500/20 to-emerald-500/20 border border-green-400/30 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-green-400 shrink-0 mt-0.5" />
             <div className="flex-1">
               <div className="text-green-300 mb-1">验收提醒</div>
               <div className="text-green-200/70">
@@ -208,7 +208,7 @@ export function MyRequests() {
           return (
             <div
               key={request.id}
-              className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 hover:border-amber-400/40 transition-all"
+              className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 hover:border-amber-400/40 transition-all"
             >
               <div className="flex flex-col lg:flex-row gap-4">
                 {/* Main Content */}
@@ -271,13 +271,13 @@ export function MyRequests() {
                   <div className="flex flex-wrap gap-2 pt-2">
                     {request.status === 'draft' && (
                       <>
-                        <button className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all text-sm">
+                        <button className="px-4 py-2 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all text-sm">
                           继续编辑
                         </button>
                         <button
                           onClick={() => actions.publish.mutate({ id: request.id })}
                           disabled={actions.publish.isPending}
-                          className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all text-sm disabled:opacity-60"
+                          className="px-4 py-2 bg-linear-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all text-sm disabled:opacity-60"
                         >
                           发布
                         </button>
@@ -287,7 +287,7 @@ export function MyRequests() {
                     {request.status === 'active' && (
                       <>
                         {request.pendingSubmissions > 0 && (
-                          <button className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all text-sm flex items-center gap-2">
+                          <button className="px-4 py-2 bg-linear-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all text-sm flex items-center gap-2">
                             <CheckCircle2 className="w-4 h-4" />
                             去验收
                           </button>
@@ -299,7 +299,7 @@ export function MyRequests() {
                             actions.addBounty.mutate({ id: request.id, amount });
                           }}
                           disabled={actions.addBounty.isPending}
-                          className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
+                          className="px-4 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
                         >
                           <TrendingUp className="w-4 h-4" />
                           追加悬赏
@@ -307,7 +307,7 @@ export function MyRequests() {
                         <button
                           onClick={() => actions.cancel.mutate({ id: request.id })}
                           disabled={actions.cancel.isPending}
-                          className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
+                          className="px-4 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
                         >
                           <XCircle className="w-4 h-4" />
                           取消求种
@@ -319,7 +319,7 @@ export function MyRequests() {
                       <button
                         onClick={() => actions.republish.mutate({ id: request.id })}
                         disabled={actions.republish.isPending}
-                        className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
+                        className="px-4 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
                       >
                         <RefreshCw className="w-4 h-4" />
                         重新发布
@@ -333,7 +333,7 @@ export function MyRequests() {
                       </button>
                     )}
 
-                    <button className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
+                    <button className="px-4 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
                       查看详情
                     </button>
                   </div>
@@ -350,7 +350,7 @@ export function MyRequests() {
           <p className="mb-4">
             {statusGroup === 'ongoing' ? '暂无进行中的求种' : '暂无历史记录'}
           </p>
-          <button className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all">
+          <button className="px-6 py-3 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all">
             发布新求种
           </button>
         </div>

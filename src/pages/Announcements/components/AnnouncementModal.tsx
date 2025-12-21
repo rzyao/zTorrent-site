@@ -37,7 +37,7 @@ export function AnnouncementModal({ announcements, onClose, onViewAll }: Announc
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-[#0F171E] border-2 border-amber-500/30 rounded-xl max-w-3xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
-        <div className="bg-gradient-to-r from-amber-600/20 via-orange-600/20 to-amber-700/20 border-b border-amber-500/20 p-6">
+        <div className="bg-linear-to-r from-amber-600/20 via-orange-600/20 to-amber-700/20 border-b border-amber-500/20 p-6">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
               <Bell className="w-6 h-6 text-amber-400" />
@@ -84,7 +84,7 @@ export function AnnouncementModal({ announcements, onClose, onViewAll }: Announc
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
           <div className="mb-4">
-            <div className={`inline-block px-3 py-1 rounded bg-gradient-to-r ${typeColor[currentAnnouncement.type]} text-white text-sm mb-3`}>
+            <div className={`inline-block px-3 py-1 rounded bg-linear-to-r ${typeColor[currentAnnouncement.type]} text-white text-sm mb-3`}>
               {typeLabel[currentAnnouncement.type]}
             </div>
             <h3 className="text-amber-50 mb-2">{currentAnnouncement.title}</h3>
@@ -98,13 +98,13 @@ export function AnnouncementModal({ announcements, onClose, onViewAll }: Announc
         <div className="border-t border-amber-500/20 p-4 flex gap-3">
           <button
             onClick={onViewAll}
-            className="flex-1 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all"
+            className="flex-1 px-4 py-2 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all"
           >
             查看所有公告
           </button>
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all"
+            className="px-4 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all"
           >
             {announcements.length > 1 && currentIndex < announcements.length - 1 ? '稍后查看' : '关闭'}
           </button>

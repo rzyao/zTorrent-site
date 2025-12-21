@@ -22,7 +22,7 @@ export function SeriesList({
   onClearModes,
 }: SeriesListProps) {
   return (
-    <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden">
+    <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden">
       <div className="p-4 border-b border-neutral-700/50">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
@@ -54,7 +54,7 @@ export function SeriesList({
               }}
               className={`p-4 rounded-xl cursor-pointer transition-all ${
                 selectedSeries?.id === series.id
-                  ? "bg-gradient-to-r from-amber-500/20 to-orange-600/20 border border-amber-500/30"
+                  ? "bg-linear-to-r from-amber-500/20 to-orange-600/20 border border-amber-500/30"
                   : "bg-neutral-900/30 border border-neutral-700/50 hover:border-neutral-600"
               }`}
             >

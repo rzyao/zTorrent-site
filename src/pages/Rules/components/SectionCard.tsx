@@ -40,12 +40,12 @@ export const SectionCard: React.FC<{
     const isExpanded = expandedSection === section.id;
     return (
       <div
-        className={`bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden transition-all ${isExpanded ? 'border-amber-500/30 shadow-lg shadow-amber-500/10' : ''}`}
+        className={`bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden transition-all ${isExpanded ? 'border-amber-500/30 shadow-lg shadow-amber-500/10' : ''}`}
       >
         {/* 章节标题 */}
         <div className="flex items-center justify-between p-6 hover:bg-neutral-700/20 transition-colors">
           <button onClick={() => onToggle(section.id)} className="flex items-center gap-4 flex-1">
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isExpanded ? 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30' : 'bg-neutral-700/50'}`}>
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isExpanded ? 'bg-linear-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30' : 'bg-neutral-700/50'}`}>
               {getIconBySection(section.id)}
             </div>
             {isEditMode ? (
@@ -123,7 +123,7 @@ export const SectionCard: React.FC<{
                     <ul className="space-y-2 mb-3">
                       {item.items.map((listItem, itemIndex) => (
                         <li key={itemIndex} className="flex items-start gap-3 text-neutral-400 text-sm">
-                          <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+                          <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
                           {isEditMode ? (
                             <div className="flex items-center gap-2 flex-1">
                               <input
@@ -166,7 +166,7 @@ export const SectionCard: React.FC<{
                   {isEditMode ? (
                     <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/30">
                       <div className="flex items-start gap-3">
-                        <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                        <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                         <textarea
                           value={item.warning || ''}
                           onChange={(e) => onUpdateContentField(section.id, contentIndex, 'warning', e.target.value)}
@@ -179,7 +179,7 @@ export const SectionCard: React.FC<{
                   ) : (
                     item.warning && (
                       <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/30 flex items-start gap-3">
-                        <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                        <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                         <p className="text-red-400 text-sm">{item.warning}</p>
                       </div>
                     )

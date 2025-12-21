@@ -76,7 +76,7 @@ export function EditPlaylistPage() {
       <div className="mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-700 flex items-center justify-center shadow-lg shadow-amber-500/30">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-500 to-orange-700 flex items-center justify-center shadow-lg shadow-amber-500/30">
               <ListVideo className="w-5 h-5 text-white" />
             </div>
             <div className="flex items-end gap-1">
@@ -88,7 +88,7 @@ export function EditPlaylistPage() {
           </div>
           <Button
             onClick={handleCreateNew}
-            className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+            className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
           >
             <Plus className="w-4 h-4 mr-2" />
             创建片单
@@ -118,7 +118,7 @@ export function EditPlaylistPage() {
 
         {/* 右侧详情/编辑区 */}
         <div className="lg:col-span-2">
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 md:p-8">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 md:p-8">
             {/* 新增：无状态表单组件，替代内联表单（旧表单将被禁用显示） */}
             <PlaylistForm
               isCreating={isCreating}
@@ -139,7 +139,7 @@ export function EditPlaylistPage() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center">
                       <Edit className="w-4 h-4 text-white" />
                     </div>
                     <h2 className="text-white text-xl">
@@ -276,7 +276,7 @@ export function EditPlaylistPage() {
                   <Button
                     onClick={handleSave}
                     disabled={!editForm.title}
-                    className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+                    className="flex-1 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
                   >
                     <Save className="w-4 h-4 mr-2" />
                     保存片单
@@ -353,7 +353,7 @@ export function EditPlaylistPage() {
                         <Button
                           size="sm"
                           onClick={() => handleEdit(selectedPlaylist)}
-                          className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                          className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
                         >
                           <Edit className="w-4 h-4 mr-2" />
                           编辑
@@ -397,7 +397,7 @@ export function EditPlaylistPage() {
                     <Button
                       size="sm"
                       onClick={() => setShowAddMovie(!showAddMovie)}
-                      className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                      className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
                     >
                       <Plus className="w-4 h-4 mr-2" />
                       添加影片
@@ -462,7 +462,7 @@ export function EditPlaylistPage() {
                               <Button
                                 size="sm"
                                 onClick={() => handleAddMovie(movie)}
-                                className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                                className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
                               >
                                 添加
                               </Button>
@@ -482,7 +482,7 @@ export function EditPlaylistPage() {
                       <Button
                         size="sm"
                         onClick={() => setShowAddMovie(true)}
-                        className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                        className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
                       >
                         <Plus className="w-4 h-4 mr-2" />
                         添加第一部影片
@@ -570,7 +570,7 @@ export function EditPlaylistPage() {
                 </p>
                 <Button
                   onClick={handleCreateNew}
-                  className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+                  className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   创建新片单

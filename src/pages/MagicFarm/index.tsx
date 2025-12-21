@@ -55,7 +55,7 @@ export function MagicFarmPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-400 via-sky-300 to-green-200 overflow-hidden">
+    <div className="min-h-screen bg-linear-to-b from-sky-400 via-sky-300 to-green-200 overflow-hidden">
       {/* 天空与云朵背景（保持原页面视觉） */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-20 bg-white/40 rounded-full blur-xl animate-float" style={{ animationDelay: '0s' }}></div>
@@ -79,28 +79,28 @@ export function MagicFarmPage() {
           <div className="w-20 space-y-3">
             <button
               onClick={() => farm.togglePanel('shop')}
-              className={`w-full aspect-square rounded-2xl shadow-lg flex flex-col items-center justify-center gap-1 transition-all ${farm.activePanel === 'shop' ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-white scale-105' : 'bg-white/90 text-amber-900 hover:scale-105'}`}
+              className={`w-full aspect-square rounded-2xl shadow-lg flex flex-col items-center justify-center gap-1 transition-all ${farm.activePanel === 'shop' ? 'bg-linear-to-br from-amber-500 to-orange-600 text-white scale-105' : 'bg-white/90 text-amber-900 hover:scale-105'}`}
             >
               <ShoppingCart className="w-6 h-6" />
               <span className="text-xs">商店</span>
             </button>
             <button
               onClick={() => farm.togglePanel('warehouse')}
-              className={`w-full aspect-square rounded-2xl shadow-lg flex flex-col items-center justify-center gap-1 transition-all ${farm.activePanel === 'warehouse' ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-white scale-105' : 'bg-white/90 text-amber-900 hover:scale-105'}`}
+              className={`w-full aspect-square rounded-2xl shadow-lg flex flex-col items-center justify-center gap-1 transition-all ${farm.activePanel === 'warehouse' ? 'bg-linear-to-br from-amber-500 to-orange-600 text-white scale-105' : 'bg-white/90 text-amber-900 hover:scale-105'}`}
             >
               <Package className="w-6 h-6" />
               <span className="text-xs">仓库</span>
             </button>
             <button
               onClick={() => farm.togglePanel('friends')}
-              className={`w-full aspect-square rounded-2xl shadow-lg flex flex-col items-center justify-center gap-1 transition-all ${farm.activePanel === 'friends' ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-white scale-105' : 'bg-white/90 text-amber-900 hover:scale-105'}`}
+              className={`w-full aspect-square rounded-2xl shadow-lg flex flex-col items-center justify-center gap-1 transition-all ${farm.activePanel === 'friends' ? 'bg-linear-to-br from-amber-500 to-orange-600 text-white scale-105' : 'bg-white/90 text-amber-900 hover:scale-105'}`}
             >
               <Users className="w-6 h-6" />
               <span className="text-xs">好友</span>
             </button>
             <button
               onClick={() => farm.togglePanel('tasks')}
-              className={`w-full aspect-square rounded-2xl shadow-lg flex flex-col items-center justify-center gap-1 transition-all ${farm.activePanel === 'tasks' ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-white scale-105' : 'bg-white/90 text-amber-900 hover:scale-105'}`}
+              className={`w-full aspect-square rounded-2xl shadow-lg flex flex-col items-center justify-center gap-1 transition-all ${farm.activePanel === 'tasks' ? 'bg-linear-to-br from-amber-500 to-orange-600 text-white scale-105' : 'bg-white/90 text-amber-900 hover:scale-105'}`}
             >
               <Target className="w-6 h-6" />
               <span className="text-xs">任务</span>
@@ -112,18 +112,18 @@ export function MagicFarmPage() {
             {/* 农场建筑物（仓库屋顶与门） */}
             <div className="absolute -top-8 left-8 z-20">
               <div className="relative">
-                <div className="bg-gradient-to-b from-red-600 to-red-800 rounded-t-2xl w-32 h-24 border-4 border-red-900 shadow-2xl relative">
+                <div className="bg-linear-to-b from-red-600 to-red-800 rounded-t-2xl w-32 h-24 border-4 border-red-900 shadow-2xl relative">
                   <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-16 bg-amber-800 rounded border-2 border-amber-900"></div>
                   <div className="absolute top-0 -right-2 w-8 h-8 bg-yellow-100 rounded-full border-2 border-yellow-400 flex items-center justify-center">
                     <Home className="w-4 h-4 text-amber-900" />
                   </div>
                 </div>
-                <div className="bg-gradient-to-b from-amber-700 to-amber-900 h-4 rounded-b border-4 border-t-0 border-red-900"></div>
+                <div className="bg-linear-to-b from-amber-700 to-amber-900 h-4 rounded-b border-4 border-t-0 border-red-900"></div>
               </div>
             </div>
 
             {/* 草地与装饰背景容器 */}
-            <div className="bg-gradient-to-b from-green-400 to-green-600 rounded-3xl shadow-2xl border-8 border-green-800 p-8 min-h-[600px] relative overflow-hidden">
+            <div className="bg-linear-to-b from-green-400 to-green-600 rounded-3xl shadow-2xl border-8 border-green-800 p-8 min-h-[600px] relative overflow-hidden">
               {/* 草地纹理 */}
               <div className="absolute inset-0 opacity-20">
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(0,0,0,0.05)_10px,rgba(0,0,0,0.05)_20px)]"></div>

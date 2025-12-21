@@ -4,7 +4,7 @@ import { getLanguageFlag } from '../utils';
 
 export function SubtitlesList({ subtitles, onSelect }: { subtitles: Subtitle[]; onSelect: (s: Subtitle) => void }) {
   return (
-    <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden">
+    <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden">
       <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-neutral-800/60 border-b border-neutral-700/50 text-sm text-neutral-400">
         <div className="col-span-5">字幕名称</div>
         <div className="col-span-2">关联种子</div>
@@ -33,11 +33,11 @@ export function SubtitlesList({ subtitles, onSelect }: { subtitles: Subtitle[]; 
             className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-neutral-800/40 transition-all cursor-pointer group"
           >
             <div className="col-span-5 flex items-center gap-3 min-w-0">
-              <FileText className="w-5 h-5 text-amber-400 flex-shrink-0" />
+              <FileText className="w-5 h-5 text-amber-400 shrink-0" />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <p className="text-white text-sm truncate group-hover:text-amber-400 transition-colors">{subtitle.name}</p>
-                  {subtitle.verified && <CheckCircle className="w-4 h-4 text-blue-400 flex-shrink-0" />}
+                  {subtitle.verified && <CheckCircle className="w-4 h-4 text-blue-400 shrink-0" />}
                 </div>
                 <div className="flex items-center gap-3 text-xs text-neutral-500">
                   <span className="flex items-center gap-1">

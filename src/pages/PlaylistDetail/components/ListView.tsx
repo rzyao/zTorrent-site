@@ -23,12 +23,12 @@ export function ListView({ movies, onOpenFilm }: ListViewProps) {
         >
           <div className="flex items-center gap-4">
             {/* 序号 */}
-            <div className="text-2xl text-gray-600 w-8 text-center flex-shrink-0">
+            <div className="text-2xl text-gray-600 w-8 text-center shrink-0">
               {index + 1}
             </div>
 
             {/* 海报 */}
-            <div className="relative w-16 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-white/5">
+            <div className="relative w-16 h-24 rounded-lg overflow-hidden shrink-0 bg-white/5">
               <img src={movie.poster} alt={movie.title} className="w-full h-full object-cover" />
             </div>
 
@@ -54,11 +54,11 @@ export function ListView({ movies, onOpenFilm }: ListViewProps) {
             </div>
 
             {/* 类型标签 */}
-            <div className="flex gap-2 flex-shrink-0">
+            <div className="flex gap-2 shrink-0">
               {movie.genre.slice(0, 2).map((g, i) => (
                 <span
                   key={i}
-                  className="px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-400 text-sm"
+                  className="px-3 py-1 rounded-full bg-linear-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-400 text-sm"
                 >
                   {g}
                 </span>
@@ -66,7 +66,7 @@ export function ListView({ movies, onOpenFilm }: ListViewProps) {
             </div>
 
             {/* 评分 */}
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <Star className="w-5 h-5 fill-amber-500 text-amber-500" />
               <span className="text-white text-xl">{movie.rating}</span>
             </div>

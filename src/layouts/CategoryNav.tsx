@@ -77,7 +77,7 @@ export function CategoryNav({
       ),
       isActive
         ? cn(
-            "bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300",
+            "bg-linear-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300",
             activeClassName
           )
         : cn(

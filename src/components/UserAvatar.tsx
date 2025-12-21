@@ -48,7 +48,7 @@ export function UserAvatar({ username = 'User', size = 'md', className = '', ava
 
   return (
     <div
-      className={`rounded-full bg-gradient-to-br ${colorClass} flex items-center justify-center text-white shadow-lg ${sizeClasses[size]} ${className}`}
+      className={`rounded-full bg-linear-to-br ${colorClass} flex items-center justify-center text-white shadow-lg ${sizeClasses[size]} ${className}`}
     >
       {initial}
     </div>

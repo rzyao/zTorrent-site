@@ -127,7 +127,7 @@ export function MyResponses() {
         ].map((stat, index) => (
           <div
             key={index}
-            className="bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4"
+            className="bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4"
           >
             <div className="text-amber-400/60 mb-1">{stat.label}</div>
             <div className="text-amber-50 mb-1">{stat.value}</div>
@@ -142,7 +142,7 @@ export function MyResponses() {
       )}
 
       {/* Status Filter */}
-      <div className="bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4">
+      <div className="bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4">
         <div className="flex flex-wrap gap-2">
           {([
             { value: 'all', label: '全部' },
@@ -157,7 +157,7 @@ export function MyResponses() {
               onClick={() => setStatusFilter(filter.value)}
               className={`px-4 py-2 rounded-lg transition-all ${
                 statusFilter === filter.value
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                  ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
                   : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
               }`}
             >
@@ -174,9 +174,9 @@ export function MyResponses() {
 
       {/* Important Alert */}
       {activeTasks.some(r => r.status === 'claimed' && r.timeRemaining.includes('小时')) && (
-        <div className="bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-400/30 rounded-lg p-4">
+        <div className="bg-linear-to-r from-red-500/20 to-orange-500/20 border border-red-400/30 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
             <div className="flex-1">
               <div className="text-red-300 mb-1">紧急提醒</div>
               <div className="text-red-200/70">
@@ -197,7 +197,7 @@ export function MyResponses() {
           return (
             <div
               key={response.id}
-              className={`bg-gradient-to-br from-amber-600/5 to-orange-600/5 border rounded-lg p-6 hover:border-amber-400/40 transition-all ${
+              className={`bg-linear-to-br from-amber-600/5 to-orange-600/5 border rounded-lg p-6 hover:border-amber-400/40 transition-all ${
                 isUrgent ? 'border-red-400/40' : 'border-amber-500/20'
               }`}
             >
@@ -276,12 +276,12 @@ export function MyResponses() {
                           actions.submit.mutate({ claimId: response.id, resource: { link } });
                         }}
                         disabled={actions.submit.isPending}
-                        className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
+                        className="px-4 py-2 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-60"
                       >
                         <Upload className="w-4 h-4" />
                         {actions.submit.isPending ? '提交中...' : '提交资源'}
                       </button>
-                      <button className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
+                      <button className="px-4 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
                         联系需求方
                       </button>
                       <button
@@ -297,10 +297,10 @@ export function MyResponses() {
 
                   {response.status === 'submitted' && (
                     <>
-                      <button className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
+                      <button className="px-4 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
                         查看提交详情
                       </button>
-                      <button className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
+                      <button className="px-4 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
                         联系需求方
                       </button>
                     </>
@@ -314,11 +314,11 @@ export function MyResponses() {
                           actions.resubmit.mutate({ submissionId: response.id, resource: { link } });
                         }}
                         disabled={actions.resubmit.isPending}
-                        className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all text-sm disabled:opacity-60"
+                        className="px-4 py-2 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all text-sm disabled:opacity-60"
                       >
                         {actions.resubmit.isPending ? '提交中...' : '重新提交'}
                       </button>
-                      <button className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg transition-all text-sm flex items-center gap-2">
+                      <button className="px-4 py-2 bg-linear-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg transition-all text-sm flex items-center gap-2">
                         <MessageSquare className="w-4 h-4" />
                         发起仲裁
                       </button>
@@ -327,17 +327,17 @@ export function MyResponses() {
 
                   {response.status === 'disputed' && (
                     <>
-                      <button className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
+                      <button className="px-4 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
                         查看仲裁进度
                       </button>
-                      <button className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
+                      <button className="px-4 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
                         补充证据
                       </button>
                     </>
                   )}
 
                   {response.status === 'approved' && (
-                    <button className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
+                    <button className="px-4 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all text-sm">
                       查看详情
                     </button>
                   )}

@@ -60,7 +60,7 @@ export function SeriesDetails({
               <Button
                 size="sm"
                 onClick={onEdit}
-                className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
               >
                 <Edit className="w-4 h-4 mr-2" />
                 编辑
@@ -110,7 +110,7 @@ export function SeriesDetails({
           <Button
             size="sm"
              disabled
-            className="bg-gradient-to-r from-neutral-700 to-neutral-600 text-neutral-400 cursor-not-allowed"
+            className="bg-linear-to-r from-neutral-700 to-neutral-600 text-neutral-400 cursor-not-allowed"
           >
             <Plus className="w-4 h-4 mr-2" />
             添加种子 (暂不支持)

@@ -16,8 +16,8 @@ export function CandidateDetailModal({
 }) {
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-gradient-to-br from-neutral-800 to-stone-900 rounded-2xl border border-neutral-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-gradient-to-br from-neutral-800 to-stone-900 border-b border-neutral-700 p-6 flex items-center justify-between z-10">
+      <div className="bg-linear-to-br from-neutral-800 to-stone-900 rounded-2xl border border-neutral-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-linear-to-br from-neutral-800 to-stone-900 border-b border-neutral-700 p-6 flex items-center justify-between z-10">
           <div>
             <h2 className="text-white text-2xl mb-1">{candidate.title}</h2>
             <p className="text-neutral-400 text-sm">{candidate.type} ({candidate.year})</p>
@@ -87,7 +87,7 @@ export function CandidateDetailModal({
                     <span className="text-white">{candidate.votesUp}</span>
                     <div className="w-32 h-2 bg-neutral-700 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-green-500 to-emerald-600"
+                        className="h-full bg-linear-to-r from-green-500 to-emerald-600"
                         style={{ width: `${(candidate.votesUp / (candidate.votesUp + candidate.votesDown)) * 100}%` }}
                       />
                     </div>
@@ -100,7 +100,7 @@ export function CandidateDetailModal({
                     <span className="text-white">{candidate.votesDown}</span>
                     <div className="w-32 h-2 bg-neutral-700 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-red-500 to-rose-600"
+                        className="h-full bg-linear-to-r from-red-500 to-rose-600"
                         style={{ width: `${(candidate.votesDown / (candidate.votesUp + candidate.votesDown)) * 100}%` }}
                       />
                     </div>
@@ -149,9 +149,9 @@ export function CandidateDetailModal({
 
           {candidate.status === 'approved' && (
             <div className="space-y-3">
-              <div className="p-4 rounded-xl bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30">
+              <div className="p-4 rounded-xl bg-linear-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center shrink-0">
                     <CheckCheck className="w-5 h-5 text-green-400" />
                   </div>
                   <div className="flex-1">
@@ -174,7 +174,7 @@ export function CandidateDetailModal({
                   </div>
                 </div>
               </div>
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-lg text-white transition-all shadow-lg shadow-green-500/30">
+              <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-lg text-white transition-all shadow-lg shadow-green-500/30">
                 <ArrowRight className="w-5 h-5" />
                 查看种子详情页
               </button>
@@ -183,9 +183,9 @@ export function CandidateDetailModal({
 
           {candidate.status === 'rejected' && (
             <div className="space-y-3">
-              <div className="p-4 rounded-xl bg-gradient-to-r from-red-500/20 to-rose-600/20 border border-red-500/30">
+              <div className="p-4 rounded-xl bg-linear-to-r from-red-500/20 to-rose-600/20 border border-red-500/30">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center shrink-0">
                     <Ban className="w-5 h-5 text-red-400" />
                   </div>
                   <div>
@@ -200,7 +200,7 @@ export function CandidateDetailModal({
                   </div>
                 </div>
               </div>
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white transition-all shadow-lg shadow-amber-500/30">
+              <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white transition-all shadow-lg shadow-amber-500/30">
                 重新提交候选
               </button>
             </div>

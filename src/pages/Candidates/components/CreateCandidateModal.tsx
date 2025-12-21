@@ -3,8 +3,8 @@ import { X, Image as ImageIcon } from 'lucide-react';
 export function CreateCandidateModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-gradient-to-br from-neutral-800 to-stone-900 rounded-2xl border border-neutral-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-gradient-to-br from-neutral-800 to-stone-900 border-b border-neutral-700 p-6 flex items-center justify-between z-10">
+      <div className="bg-linear-to-br from-neutral-800 to-stone-900 rounded-2xl border border-neutral-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-linear-to-br from-neutral-800 to-stone-900 border-b border-neutral-700 p-6 flex items-center justify-between z-10">
           <h2 className="text-white text-2xl">提交候选资源</h2>
           <button onClick={onClose} className="p-2 rounded-lg bg-neutral-700 hover:bg-neutral-600 text-white transition-colors">
             <X className="w-5 h-5" />
@@ -58,7 +58,7 @@ export function CreateCandidateModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="flex gap-3 pt-4">
             <button onClick={onClose} className="flex-1 px-4 py-2 bg-neutral-700 hover:bg-neutral-600 rounded-lg text-white transition-colors">取消</button>
-            <button className="flex-1 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white transition-all shadow-lg shadow-amber-500/30">提交候选</button>
+            <button className="flex-1 px-4 py-2 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white transition-all shadow-lg shadow-amber-500/30">提交候选</button>
           </div>
         </div>
       </div>

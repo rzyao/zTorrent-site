@@ -98,7 +98,7 @@ export function CreateRequest() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-6">
+      <div className="bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-6">
         <h2 className="text-amber-50 mb-2">发布求种</h2>
         <p className="text-amber-200/70">
           详细描述您的资源需求，设置合理的悬赏金额，让社区帮您找到想要的资源
@@ -106,7 +106,7 @@ export function CreateRequest() {
       </div>
 
       {/* Balance Display */}
-      <div className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-400/30 rounded-lg p-4">
+      <div className="bg-linear-to-r from-amber-500/20 to-orange-500/20 border border-amber-400/30 rounded-lg p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-amber-300">
             <Award className="w-5 h-5" />
@@ -125,7 +125,7 @@ export function CreateRequest() {
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
-        <div className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 space-y-6">
+        <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 space-y-6">
           <h3 className="text-amber-50">基本信息</h3>
 
           {/* Title */}
@@ -158,7 +158,7 @@ export function CreateRequest() {
                     type="button"
                     onClick={() => setFormData({ ...formData, category: cat })}
                     className={`px-4 py-2 rounded-lg transition-all ${formData.category === cat
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                      ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
                       : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                       }`}
                   >
@@ -215,7 +215,7 @@ export function CreateRequest() {
               <button
                 type="button"
                 onClick={addAttachment}
-                className="px-4 py-2 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all flex items-center gap-2"
+                className="px-4 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all flex items-center gap-2"
               >
                 <Upload className="w-4 h-4" />
                 {isUploading ? '上传中...' : '上传图片'}
@@ -228,7 +228,7 @@ export function CreateRequest() {
         </div>
 
         {/* Bounty Settings */}
-        <div className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 space-y-6">
+        <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 space-y-6">
           <h3 className="text-amber-50">悬赏设置</h3>
 
           {/* Bounty Amount */}
@@ -268,7 +268,7 @@ export function CreateRequest() {
 
               {formData.bounty && parseInt(formData.bounty) > userBalance && (
                 <div className="flex items-start gap-2 text-red-400 text-sm">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                   <span>余额不足，请降低悬赏金额</span>
                 </div>
               )}
@@ -292,7 +292,7 @@ export function CreateRequest() {
                     type="button"
                     onClick={() => setFormData({ ...formData, deadline: option.value })}
                     className={`px-4 py-2 rounded-lg transition-all ${formData.deadline === option.value
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                      ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
                       : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                       }`}
                   >
@@ -308,28 +308,28 @@ export function CreateRequest() {
         </div>
 
         {/* Rules Confirmation */}
-        <div className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 space-y-4">
+        <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 space-y-4">
           <h3 className="text-amber-50">发布规则</h3>
 
           <div className="bg-[#0F171E]/50 rounded-lg p-4 space-y-2 text-sm text-amber-300/70">
             <div className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
               <span>发布后将立即从您的账户扣除悬赏积分，作为担保金冻结</span>
             </div>
             <div className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
               <span>任务完成后，悬赏积分将自动发放给认领者</span>
             </div>
             <div className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
               <span>如果超过截止时间无人完成，积分将自动退回</span>
             </div>
             <div className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
               <span>恶意求种、虚假描述将受到警告或封禁处罚</span>
             </div>
             <div className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
               <span>请合理设置悬赏金额，过高或过低都可能影响认领率</span>
             </div>
           </div>
@@ -357,7 +357,7 @@ export function CreateRequest() {
             type="submit"
             disabled={!isFormValid}
             className={`flex-1 py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${isFormValid
-              ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white'
+              ? 'bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white'
               : 'bg-gray-500/20 text-gray-400 cursor-not-allowed'
               }`}
           >
@@ -368,14 +368,14 @@ export function CreateRequest() {
           <button
             type="button"
             onClick={handleSaveDraft}
-            className="px-6 py-3 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all"
+            className="px-6 py-3 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all"
           >
             保存草稿
           </button>
 
           <button
             type="button"
-            className="px-6 py-3 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all"
+            className="px-6 py-3 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all"
           >
             取消
           </button>

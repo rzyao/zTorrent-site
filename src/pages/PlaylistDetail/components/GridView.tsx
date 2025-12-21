@@ -21,13 +21,13 @@ export function GridView({ movies, onOpenFilm }: GridViewProps) {
           onClick={() => onOpenFilm(movie.id)}
           className="group cursor-pointer"
         >
-          <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 bg-white/5">
+          <div className="relative aspect-2/3 rounded-xl overflow-hidden mb-3 bg-white/5">
             <img
               src={movie.poster}
               alt={movie.title}
               className="w-full h-full object-cover transition-transform group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
             {/* 评分 */}
             <div className="absolute top-2 right-2 px-2 py-1 rounded-lg bg-black/70 backdrop-blur-sm flex items-center gap-1">
@@ -37,7 +37,7 @@ export function GridView({ movies, onOpenFilm }: GridViewProps) {
 
             {/* 悬浮操作 */}
             <div className="absolute bottom-0 left-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button className="w-full py-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 text-white flex items-center justify-center gap-2">
+              <button className="w-full py-2 rounded-lg bg-linear-to-r from-amber-500 to-orange-600 text-white flex items-center justify-center gap-2">
                 <Play className="w-4 h-4" />
                 <span>查看详情</span>
               </button>

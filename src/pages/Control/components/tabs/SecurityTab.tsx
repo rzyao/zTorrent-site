@@ -38,7 +38,7 @@ export function SecurityTab(props: SecurityTabProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-lg bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center">
           <Shield className="w-4 h-4 text-white" />
         </div>
         <div>
@@ -48,7 +48,7 @@ export function SecurityTab(props: SecurityTabProps) {
       </div>
 
       {/* 修改密码 */}
-      <div className="p-5 rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-600/10 border border-amber-500/30">
+      <div className="p-5 rounded-xl bg-linear-to-br from-amber-500/10 to-orange-600/10 border border-amber-500/30">
         <div className="flex items-start gap-3">
           <Lock className="w-5 h-5 text-amber-400 mt-0.5" />
           <div className="flex-1">
@@ -91,7 +91,7 @@ export function SecurityTab(props: SecurityTabProps) {
                 onChange={(e) => setConfirmNewPassword(e.target.value)}
               />
               {passwordErrors.confirm && (<p className="text-xs text-red-400">{passwordErrors.confirm}</p>)}
-              <Button type="submit" size="sm" className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white" disabled={!canUpdatePassword()}>更新密码</Button>
+              <Button type="submit" size="sm" className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white" disabled={!canUpdatePassword()}>更新密码</Button>
             </form>
           </div>
         </div>
@@ -151,7 +151,7 @@ export function SecurityTab(props: SecurityTabProps) {
       <Separator className="bg-neutral-700/50" />
 
       {/* Passkey */}
-      <div className="p-5 rounded-xl bg-gradient-to-br from-neutral-800/50 to-stone-900/50 border border-neutral-700/50">
+      <div className="p-5 rounded-xl bg-linear-to-br from-neutral-800/50 to-stone-900/50 border border-neutral-700/50">
         <div className="flex items-start gap-3">
           <Key className="w-5 h-5 text-amber-400 mt-0.5" />
           <div className="flex-1">

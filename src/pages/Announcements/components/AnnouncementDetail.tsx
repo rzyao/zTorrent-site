@@ -22,10 +22,10 @@ interface AnnouncementDetailProps {
 
 export function AnnouncementDetail({ data, onClose }: AnnouncementDetailProps) {
   return (
-    <div className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 sticky top-20">
+    <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 sticky top-20">
       <div className="flex items-center justify-between mb-4">
         <div
-          className={`px-3 py-1 rounded bg-gradient-to-r ${typeColor[data.type]} border flex items-center gap-1`}
+          className={`px-3 py-1 rounded bg-linear-to-r ${typeColor[data.type]} border flex items-center gap-1`}
         >
           <span className="w-4 h-4 inline-block" />
           {typeLabel[data.type]}

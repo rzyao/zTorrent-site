@@ -18,7 +18,7 @@ export function ThreadContent({ thread, threadDetail, onClose, onReplyClick, con
   
   return (
     <div className="bg-neutral-800/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 shadow-2xl overflow-hidden">
-        <div className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-b border-neutral-700/50 px-6 py-4">
+        <div className="bg-linear-to-r from-amber-500/20 to-orange-500/20 border-b border-neutral-700/50 px-6 py-4">
             <div className="flex items-start justify-between">
             <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">

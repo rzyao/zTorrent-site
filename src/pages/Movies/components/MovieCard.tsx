@@ -19,7 +19,7 @@ export function MovieCard({ movie, onClick, onToggleCollect }: MovieCardProps) {
       onClick={() => onClick(movie)}
     >
       {/* 海报区域 */}
-      <div className="relative aspect-[2/3] overflow-hidden">
+      <div className="relative aspect-2/3 overflow-hidden">
         <ImageWithFallback
           src={
             movie.posterUrl ||
@@ -30,7 +30,7 @@ export function MovieCard({ movie, onClick, onToggleCollect }: MovieCardProps) {
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent" />
 
         {/* 评分与年份标签 */}
         <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-sm flex items-center gap-1">
@@ -77,7 +77,7 @@ export function MovieCard({ movie, onClick, onToggleCollect }: MovieCardProps) {
       <div className="p-3 md:p-4 space-y-2 md:space-y-3">
         {/* 导演 */}
         <div className="flex items-center gap-2 text-xs md:text-sm">
-          <Users className="w-3 md:w-3.5 h-3 md:h-3.5 text-amber-400 flex-shrink-0" />
+          <Users className="w-3 md:w-3.5 h-3 md:h-3.5 text-amber-400 shrink-0" />
           <span className="text-neutral-400 truncate">{movie.director}</span>
         </div>
 

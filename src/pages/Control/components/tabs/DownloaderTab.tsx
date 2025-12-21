@@ -47,7 +47,7 @@ export function DownloaderTab() {
             {/* 头部区：标题与添加按钮 */}
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center">
                         <Download className="w-4 h-4 text-white" />
                     </div>
                     <div>
@@ -57,7 +57,7 @@ export function DownloaderTab() {
                 </div>
                 <Button
                     onClick={() => setShowAddModal(true)}
-                    className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                    className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
                 >
                     <Plus className="w-4 h-4 mr-2" />
                     添加下载器

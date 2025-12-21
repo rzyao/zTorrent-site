@@ -81,7 +81,7 @@ export function ProfileTab({ profileData, setProfileData }: ProfileTabProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-lg bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center">
           <User className="w-4 h-4 text-white" />
         </div>
         <div>
@@ -96,7 +96,7 @@ export function ProfileTab({ profileData, setProfileData }: ProfileTabProps) {
         <div className="flex items-center gap-4">
           <img src={profileData.avatar} alt="Avatar" className="w-20 h-20 rounded-full border-2 border-amber-500/30" />
           <div>
-            <Button size="sm" onClick={onPickAvatar} disabled={isLoading} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">更换头像</Button>
+            <Button size="sm" onClick={onPickAvatar} disabled={isLoading} className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">更换头像</Button>
             <p className="text-neutral-500 text-xs mt-2">支持 JPG、PNG 格式，最大 2MB</p>
           </div>
         </div>
@@ -148,7 +148,7 @@ export function ProfileTab({ profileData, setProfileData }: ProfileTabProps) {
           profileData.signature === baselineRef.current.signature &&
           profileData.location === baselineRef.current.location &&
           profileData.bio === baselineRef.current.bio
-        )} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">保存更改</Button>
+        )} className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">保存更改</Button>
       </div>
     </div>
   );

@@ -156,7 +156,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
                             {torrent.title || torrent.subTitle || "未命名种子"}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 flex-shrink-0">
+                        <div className="flex items-center gap-2 shrink-0">
                           <span className="text-gray-500">
                             {formatSize(parseInt(torrent.size) || 0)}
                           </span>

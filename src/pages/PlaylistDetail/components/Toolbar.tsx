@@ -40,7 +40,7 @@ export function Toolbar({ sortBy, viewMode, onChangeSort, onChangeViewMode, movi
           <button
             onClick={() => onChangeViewMode('grid')}
             className={`p-2 rounded transition-all ${viewMode === 'grid'
-              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white'
+              ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white'
               : 'text-gray-400 hover:text-white'
               }`}
           >
@@ -49,7 +49,7 @@ export function Toolbar({ sortBy, viewMode, onChangeSort, onChangeViewMode, movi
           <button
             onClick={() => onChangeViewMode('list')}
             className={`p-2 rounded transition-all ${viewMode === 'list'
-              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white'
+              ? 'bg-linear-to-r from-amber-500 to-orange-600 text-white'
               : 'text-gray-400 hover:text-white'
               }`}
           >

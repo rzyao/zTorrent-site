@@ -50,9 +50,9 @@ export function ModerationCenter() {
   return (
     <div className="space-y-6">
       {/* Header Alert */}
-      <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 rounded-lg p-4">
+      <div className="bg-linear-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 rounded-lg p-4">
         <div className="flex items-start gap-3">
-          <Shield className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+          <Shield className="w-5 h-5 text-purple-400 shrink-0 mt-0.5" />
           <div className="flex-1">
             <div className="text-purple-300 mb-1">仲裁中心</div>
             <div className="text-purple-200/70 text-sm">
@@ -72,7 +72,7 @@ export function ModerationCenter() {
         ].map((stat, index) => (
           <div
             key={index}
-            className="bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4"
+            className="bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4"
           >
             <div className="text-amber-400/60 mb-1">{stat.label}</div>
             <div className="text-amber-50">{stat.value}</div>
@@ -81,7 +81,7 @@ export function ModerationCenter() {
       </div>
 
       {/* Priority Filter */}
-      <div className="bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4">
+      <div className="bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4">
         <div className="flex flex-wrap gap-2">
           {(['all', 'high', 'medium', 'low'] as const).map((priority) => (
             <button
@@ -89,7 +89,7 @@ export function ModerationCenter() {
               onClick={() => setPriorityFilter(priority)}
               className={`px-4 py-2 rounded-lg transition-all ${
                 priorityFilter === priority
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                  ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
                   : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
               }`}
             >
@@ -138,7 +138,7 @@ export function ModerationCenter() {
                   setSelectedCaseId(dispute.id);
                   await selectCase(dispute.id);
                 }}
-                className={`bg-gradient-to-br from-amber-600/5 to-orange-600/5 border rounded-lg p-4 cursor-pointer transition-all ${
+                className={`bg-linear-to-br from-amber-600/5 to-orange-600/5 border rounded-lg p-4 cursor-pointer transition-all ${
                   selectedCaseId === dispute.id
                     ? 'border-amber-400 bg-amber-500/10'
                     : 'border-amber-500/20 hover:border-amber-400/40'
@@ -175,7 +175,7 @@ export function ModerationCenter() {
         {/* Detail Panel */}
         <div className="lg:sticky lg:top-24 h-fit">
           {selectedCaseId ? (
-            <div className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 space-y-6">
+            <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 space-y-6">
               <div>
                 <h3 className="text-amber-50 mb-4">案件详情</h3>
                 
@@ -234,7 +234,7 @@ export function ModerationCenter() {
                         const Icon = ev.type === 'image' ? Image : ev.type === 'file' ? FileText : MessageSquare;
                         return (
                           <div key={index} className="flex items-start gap-2 text-sm">
-                            <Icon className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                            <Icon className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                             <div className="flex-1">
                               <div className="text-amber-300/60">{ev.content}</div>
                               <div className="text-amber-400/40 text-xs">
@@ -265,7 +265,7 @@ export function ModerationCenter() {
                   <button
                     onClick={() => actions.approveSubmission.mutate({ submissionId: String((getSelectedCase(selectedCaseId) as any)?.submissionId ?? '') })}
                     disabled={actions.approveSubmission.isPending}
-                    className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+                    className="w-full py-3 bg-linear-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     裁决：通过验收（发放悬赏）
@@ -277,13 +277,13 @@ export function ModerationCenter() {
                       actions.rejectSubmission.mutate({ submissionId: String((getSelectedCase(selectedCaseId) as any)?.submissionId ?? ''), reason: String(reason || '') });
                     }}
                     disabled={actions.rejectSubmission.isPending}
-                    className="w-full py-3 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+                    className="w-full py-3 bg-linear-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                   >
                     <XCircle className="w-4 h-4" />
                     裁决：拒绝验收（退款）
                   </button>
 
-                  <button className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg transition-all flex items-center justify-center gap-2">
+                  <button className="w-full py-3 bg-linear-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg transition-all flex items-center justify-center gap-2">
                     <AlertTriangle className="w-4 h-4" />
                     处罚违规方
                   </button>
@@ -294,7 +294,7 @@ export function ModerationCenter() {
                       // 此处使用 disputes request-evidence，若后端另有 create 仲裁接口，可替换
                       RequestsService.requestsDisputesControllerRequestEvidence({ id: String(selectedCaseId), note: String(note || '') } as any);
                     }}
-                    className="w-full py-3 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all"
+                    className="w-full py-3 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all"
                   >
                     请求更多证据
                   </button>
@@ -302,7 +302,7 @@ export function ModerationCenter() {
               </div>
             </div>
           ) : (
-            <div className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-12 text-center">
+            <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-12 text-center">
               <Shield className="w-12 h-12 mx-auto mb-4 text-amber-400/40" />
               <p className="text-amber-300/60">请从左侧选择一个案件查看详情</p>
             </div>

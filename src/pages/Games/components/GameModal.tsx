@@ -30,7 +30,7 @@ export function GameModal({
         <div className="p-6">
           {selectedGame === 1 && (
             <div className="text-center py-8">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-linear-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center">
                 <Star className="w-12 h-12 text-amber-400" />
               </div>
               <h3 className="text-2xl text-white mb-4">每日签到</h3>
@@ -43,7 +43,7 @@ export function GameModal({
               ) : (
                 <button
                   onClick={handleCheckIn}
-                  className="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all"
+                  className="px-8 py-4 bg-linear-to-r from-amber-500 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all"
                 >
                   立即签到
                 </button>
@@ -54,7 +54,7 @@ export function GameModal({
           {selectedGame === 2 && (
             <div className="text-center py-8">
               <div
-                className={`w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center ${spinning ? 'animate-spin' : ''}`}
+                className={`w-32 h-32 mx-auto mb-6 rounded-full bg-linear-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center ${spinning ? 'animate-spin' : ''}`}
               >
                 <Target className="w-16 h-16 text-amber-400" />
               </div>
@@ -68,7 +68,7 @@ export function GameModal({
               <button
                 onClick={handleSpin}
                 disabled={spinning}
-                className="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-8 py-4 bg-linear-to-r from-amber-500 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {spinning ? '转动中...' : '开始转动'}
               </button>
@@ -77,7 +77,7 @@ export function GameModal({
 
           {selectedGame === 3 && (
             <div className="text-center py-8">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-linear-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center">
                 <Dice5 className="w-12 h-12 text-amber-400" />
               </div>
               <h3 className="text-2xl text-white mb-4">猜数字</h3>
@@ -101,7 +101,7 @@ export function GameModal({
                 />
                 <button
                   onClick={handleGuess}
-                  className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all"
+                  className="px-6 py-3 bg-linear-to-r from-amber-500 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all"
                 >
                   猜！
                 </button>
@@ -111,7 +111,7 @@ export function GameModal({
 
           {selectedGame === 4 && (
             <div className="text-center py-8">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-linear-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center">
                 <Zap className="w-12 h-12 text-amber-400" />
               </div>
               <h3 className="text-2xl text-white mb-4">答题闯关</h3>
@@ -129,13 +129,13 @@ export function GameModal({
                   ))}
                 </div>
               </div>
-              <button className="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all">开始答题</button>
+              <button className="px-8 py-4 bg-linear-to-r from-amber-500 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all">开始答题</button>
             </div>
           )}
 
           {selectedGame === 5 && (
             <div className="text-center py-8">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-linear-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center">
                 <Sprout className="w-12 h-12 text-amber-400" />
               </div>
               <h3 className="text-2xl text-white mb-4">魔力农场</h3>
@@ -145,7 +145,7 @@ export function GameModal({
                   onClose();
                   if (onNavigateMagicFarm) onNavigateMagicFarm();
                 }}
-                className="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all"
+                className="px-8 py-4 bg-linear-to-r from-amber-500 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all"
               >
                 进入农场
               </button>

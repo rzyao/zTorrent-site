@@ -21,7 +21,7 @@ export function SeedSelector({ open, crops, userStats, onClose, onPick }: Props)
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
         {/* 标题栏 */}
-        <div className="sticky top-0 bg-gradient-to-r from-amber-500 to-orange-600 p-6 flex items-center justify-between rounded-t-2xl">
+        <div className="sticky top-0 bg-linear-to-r from-amber-500 to-orange-600 p-6 flex items-center justify-between rounded-t-2xl">
           <h3 className="text-white text-xl">选择要种植的作物</h3>
           <button onClick={onClose} className="w-8 h-8 rounded-lg bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all">
             <X className="w-5 h-5" />
@@ -35,7 +35,7 @@ export function SeedSelector({ open, crops, userStats, onClose, onPick }: Props)
               key={crop.id}
               onClick={() => onPick(crop.id)}
               disabled={userStats.coins < crop.price}
-              className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border-2 border-amber-200 hover:border-amber-400 hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="bg-linear-to-br from-amber-50 to-orange-50 rounded-xl p-5 border-2 border-amber-200 hover:border-amber-400 hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               <div className="text-6xl mb-3">{crop.icon}</div>
               <h4 className="text-amber-900 mb-2">{crop.name}</h4>

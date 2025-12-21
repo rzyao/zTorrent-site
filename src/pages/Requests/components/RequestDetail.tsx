@@ -131,11 +131,11 @@ export function RequestDetail() {
       if (requestStatus === 'active') {
         return (
           <div className="flex gap-3">
-            <button className="flex-1 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all flex items-center justify-center gap-2">
+            <button className="flex-1 py-3 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all flex items-center justify-center gap-2">
               <TrendingUp className="w-5 h-5" />
               立即认领
             </button>
-            <button className="px-6 py-3 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all flex items-center gap-2">
+            <button className="px-6 py-3 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all flex items-center gap-2">
               <Award className="w-5 h-5" />
               追加悬赏
             </button>
@@ -143,7 +143,7 @@ export function RequestDetail() {
         );
       }
       return (
-        <button className="w-full py-3 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all flex items-center justify-center gap-2">
+        <button className="w-full py-3 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all flex items-center justify-center gap-2">
           <Award className="w-5 h-5" />
           追加悬赏
         </button>
@@ -161,14 +161,14 @@ export function RequestDetail() {
             <div className="flex gap-3">
               <button 
                 onClick={() => setShowSubmitModal(false)}
-                className="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-3 bg-linear-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all flex items-center justify-center gap-2"
               >
                 <CheckCircle2 className="w-5 h-5" />
                 通过验收
               </button>
               <button 
                 onClick={() => setShowRejectModal(true)}
-                className="flex-1 py-3 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white rounded-lg transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-3 bg-linear-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white rounded-lg transition-all flex items-center justify-center gap-2"
               >
                 <XCircle className="w-5 h-5" />
                 拒绝验收
@@ -180,7 +180,7 @@ export function RequestDetail() {
       if (requestStatus === 'active' || requestStatus === 'claimed') {
         return (
           <div className="flex gap-3">
-            <button className="flex-1 py-3 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all flex items-center justify-center gap-2">
+            <button className="flex-1 py-3 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all flex items-center justify-center gap-2">
               <Award className="w-5 h-5" />
               追加悬赏
             </button>
@@ -204,7 +204,7 @@ export function RequestDetail() {
             <div className="flex gap-3">
               <button 
                 onClick={() => setShowSubmitModal(true)}
-                className="flex-1 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-3 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all flex items-center justify-center gap-2"
               >
                 <Upload className="w-5 h-5" />
                 提交资源
@@ -233,7 +233,7 @@ export function RequestDetail() {
     <div className="min-h-screen bg-[#0F171E] pt-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-6">
+        <div className="bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-6">
           <div className="flex items-start justify-between gap-4 mb-4">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
@@ -276,7 +276,7 @@ export function RequestDetail() {
 
           {/* Bounty Card */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-400/30 rounded-lg p-4">
+            <div className="bg-linear-to-br from-amber-500/20 to-orange-500/20 border border-amber-400/30 rounded-lg p-4">
               <div className="text-amber-400/70 text-sm mb-1">总悬赏</div>
               <div className="text-amber-50 text-xl mb-1">{requestData.totalBounty.toLocaleString()} 积分</div>
               {requestData.additionalBounty > 0 && (
@@ -286,7 +286,7 @@ export function RequestDetail() {
               )}
             </div>
 
-            <div className="bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4">
+            <div className="bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4">
               <div className="text-amber-400/70 text-sm mb-1">截止时间</div>
               <div className="text-amber-50">{requestData.deadline}</div>
               <div className="text-xs text-amber-400 mt-1">
@@ -294,7 +294,7 @@ export function RequestDetail() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4">
+            <div className="bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-4">
               <div className="text-amber-400/70 text-sm mb-1">互动</div>
               <div className="flex items-center gap-4 text-sm text-amber-300">
                 <span className="flex items-center gap-1">
@@ -311,12 +311,12 @@ export function RequestDetail() {
         </div>
 
         {/* Action Buttons */}
-        <div className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6">
+        <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6">
           {renderActionButtons()}
         </div>
 
         {/* Description */}
-        <div className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6">
+        <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6">
           <h3 className="text-amber-50 mb-4">详细描述</h3>
           <div className="text-amber-200/70 whitespace-pre-wrap leading-relaxed">
             {requestData.description}
@@ -341,7 +341,7 @@ export function RequestDetail() {
         </div>
 
         {/* Timeline */}
-        <div className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6">
+        <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6">
           <h3 className="text-amber-50 mb-4">时间线</h3>
           <div className="space-y-4">
             {mockTimeline.map((event, index) => (
@@ -368,7 +368,7 @@ export function RequestDetail() {
         </div>
 
         {/* Comments */}
-        <div className="bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6">
+        <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6">
           <h3 className="text-amber-50 mb-4">评论讨论 ({mockComments.length})</h3>
           
           {/* Comment Input */}
@@ -381,7 +381,7 @@ export function RequestDetail() {
               className="w-full px-4 py-3 bg-[#0F171E]/50 border border-amber-500/30 rounded-lg text-amber-50 placeholder-amber-400/40 focus:outline-none focus:border-amber-400 transition-colors resize-none"
             />
             <div className="flex justify-end mt-2">
-              <button className="px-6 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all">
+              <button className="px-6 py-2 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all">
                 发表评论
               </button>
             </div>
@@ -392,7 +392,7 @@ export function RequestDetail() {
             {mockComments.map((comment) => (
               <div key={comment.id} className="bg-[#0F171E]/30 rounded-lg p-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-linear-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white shrink-0">
                     {comment.author[0]}
                   </div>
                   <div className="flex-1">

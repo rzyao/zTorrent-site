@@ -75,7 +75,7 @@ export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
           <div className="flex gap-4">
             {/* 缩略图：统一 w-25 h-25，缺省时不渲染 */}
             {torrent.image && (
-              <div className="relative w-25 h-25 flex-shrink-0 rounded overflow-hidden">
+              <div className="relative w-25 h-25 shrink-0 rounded overflow-hidden">
                 <ImageWithFallback
                   src={torrent.image}
                   alt={torrent.title}
@@ -109,7 +109,7 @@ export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
                 {/* 下载按钮：弹出下载选项弹窗 */}
                 <Button
                   size="sm"
-                  className="bg-[#00A8E1] hover:bg-[#00A8E1]/90 text-white flex-shrink-0"
+                  className="bg-[#00A8E1] hover:bg-[#00A8E1]/90 text-white shrink-0"
                   onClick={(e) => {
                     e.preventDefault();
                     setDownloadModal({

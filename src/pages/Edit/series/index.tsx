@@ -96,7 +96,7 @@ export function EditSeriesPage() {
       <div className="mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
               <Tv className="w-5 h-5 text-white" />
             </div>
             <div className="flex items-end gap-1">
@@ -108,7 +108,7 @@ export function EditSeriesPage() {
           </div>
           <Button
             onClick={handleCreateNew}
-            className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+            className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
           >
             <Plus className="w-4 h-4 mr-2" />
             添加剧集
@@ -134,7 +134,7 @@ export function EditSeriesPage() {
         </div>
 
         <div className="lg:col-span-2">
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 md:p-8 space-y-8">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 md:p-8 space-y-8">
             {(isCreating || isEditing) && (
               <SeriesForm
                 isCreating={isCreating}
@@ -219,7 +219,7 @@ export function EditSeriesPage() {
                 </p>
                 <Button
                   onClick={handleCreateNew}
-                  className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+                  className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   添加新剧集

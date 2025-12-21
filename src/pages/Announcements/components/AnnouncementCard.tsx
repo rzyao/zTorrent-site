@@ -24,8 +24,8 @@ const typeColor = {
 export function AnnouncementCard({ data, variant = 'normal', onClick }: AnnouncementCardProps) {
   const containerClass =
     variant === 'pinned'
-      ? 'bg-gradient-to-br from-amber-600/10 to-orange-600/10 border-2 border-amber-400/40'
-      : 'bg-gradient-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20';
+      ? 'bg-linear-to-br from-amber-600/10 to-orange-600/10 border-2 border-amber-400/40'
+      : 'bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20';
 
   return (
     <div
@@ -33,11 +33,11 @@ export function AnnouncementCard({ data, variant = 'normal', onClick }: Announce
       className={`${containerClass} rounded-lg p-4 hover:border-amber-400/60 transition-all cursor-pointer`}
     >
       <div className="flex items-start gap-3">
-        {variant === 'pinned' && <Pin className="w-5 h-5 text-amber-400 flex-shrink-0 mt-1" />}
+        {variant === 'pinned' && <Pin className="w-5 h-5 text-amber-400 shrink-0 mt-1" />}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <div
-              className={`px-2 py-1 rounded text-xs bg-gradient-to-r ${typeColor[data.type]} border flex items-center gap-1`}
+              className={`px-2 py-1 rounded text-xs bg-linear-to-r ${typeColor[data.type]} border flex items-center gap-1`}
             >
               <span className="w-4 h-4 inline-block" />
               {typeLabel[data.type]}
@@ -69,7 +69,7 @@ export function AnnouncementCard({ data, variant = 'normal', onClick }: Announce
             </span>
           </div>
         </div>
-        <ChevronRight className="w-5 h-5 text-amber-400/50 flex-shrink-0" />
+        <ChevronRight className="w-5 h-5 text-amber-400/50 shrink-0" />
       </div>
     </div>
   );

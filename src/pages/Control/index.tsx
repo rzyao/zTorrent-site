@@ -49,7 +49,7 @@ export function ControlPage() {
         {/* 页面标题 */}
         <div className="mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
               <Settings className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -76,7 +76,7 @@ export function ControlPage() {
 
           {/* 右侧内容区 */}
           <div className="lg:col-span-3">
-            <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 md:p-8">
+            <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 md:p-8">
               {/* 个人信息 */}
               {state.activeTab === "profile" && (
                 <div className="space-y-6">
@@ -152,7 +152,7 @@ export function ControlPage() {
                         onClick={state.handleSave}
                         className={
                           state.hasUnsavedChanges
-                            ? "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+                            ? "bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
                             : "bg-neutral-700 text-neutral-300 hover:bg-neutral-600"
                         }
                       >

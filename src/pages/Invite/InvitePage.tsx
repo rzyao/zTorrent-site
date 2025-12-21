@@ -116,7 +116,7 @@ export function InvitePage() {
             {/* 获取邀请码 */}
             <div>
               <h3 className="text-white text-lg mb-4 flex items-center gap-2">
-                <span className="w-1 h-5 bg-gradient-to-b from-amber-500 to-orange-600 rounded-full"></span>
+                <span className="w-1 h-5 bg-linear-to-b from-amber-500 to-orange-600 rounded-full"></span>
                 获取邀请码
               </h3>
               <AcquireSection
@@ -136,9 +136,9 @@ export function InvitePage() {
         {/* 邀请记录 */}
         {activeTab === 'records' && (
           <div>
-            <div className="bg-gradient-to-r from-blue-500/10 to-cyan-600/10 border border-blue-500/20 rounded-xl p-4 mb-6">
+            <div className="bg-linear-to-r from-blue-500/10 to-cyan-600/10 border border-blue-500/20 rounded-xl p-4 mb-6">
               <div className="flex items-start gap-3">
-                <Send className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                <Send className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
                 <div className="text-sm text-neutral-300">
                   <p>这里显示您已发送给他人的所有邀请记录，包括已注册、待注册和已过期的邀请。</p>
                 </div>
@@ -152,9 +152,9 @@ export function InvitePage() {
         {/* 我的后宫 */}
         {activeTab === 'users' && (
           <div>
-            <div className="bg-gradient-to-r from-purple-500/10 to-pink-600/10 border border-purple-500/20 rounded-xl p-6 mb-6">
+            <div className="bg-linear-to-r from-purple-500/10 to-pink-600/10 border border-purple-500/20 rounded-xl p-6 mb-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-purple-500 to-pink-600 flex items-center justify-center shrink-0">
                   <Users className="w-6 h-6 text-white" />
                 </div>
                 <div>

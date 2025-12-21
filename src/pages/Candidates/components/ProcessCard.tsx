@@ -2,9 +2,9 @@ import { TrendingUp, Info, Bell } from 'lucide-react';
 
 export function ProcessCard() {
   return (
-    <div className="mb-6 p-6 rounded-2xl bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-amber-600/10 border border-amber-500/30">
+    <div className="mb-6 p-6 rounded-2xl bg-linear-to-br from-amber-500/10 via-orange-500/10 to-amber-600/10 border border-amber-500/30">
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/30">
+        <div className="w-12 h-12 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/30">
           <TrendingUp className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1">
@@ -15,7 +15,7 @@ export function ProcessCard() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="relative">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0 border border-amber-500/30">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0 border border-amber-500/30">
                   <span className="text-amber-400">1</span>
                 </div>
                 <div>
@@ -29,7 +29,7 @@ export function ProcessCard() {
             </div>
             <div className="relative">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0 border border-amber-500/30">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0 border border-amber-500/30">
                   <span className="text-amber-400">2</span>
                 </div>
                 <div>
@@ -45,7 +45,7 @@ export function ProcessCard() {
             </div>
             <div className="relative">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0 border border-amber-500/30">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0 border border-amber-500/30">
                   <span className="text-amber-400">3</span>
                 </div>
                 <div>

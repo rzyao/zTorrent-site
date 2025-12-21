@@ -3,9 +3,9 @@ import { Badge } from '@/components/ui/badge';
 
 export function IntroBanner() {
   return (
-    <div className="mb-8 p-6 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-600/10 border border-amber-500/30">
+    <div className="mb-8 p-6 rounded-2xl bg-linear-to-r from-amber-500/10 to-orange-600/10 border border-amber-500/30">
       <div className="flex items-start gap-4">
-        <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+        <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0">
           <Shield className="w-5 h-5 text-amber-400" />
         </div>
         <div>

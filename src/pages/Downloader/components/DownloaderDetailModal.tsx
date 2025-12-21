@@ -57,7 +57,7 @@ export function DownloaderDetailModal({
     <div className="modal-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="bg-neutral-900 rounded-2xl border border-neutral-700 max-w-3xl w-full max-h-[85vh] flex flex-col m-4">
         {/* 头部：标题与关闭 */}
-        <div className="sticky top-0 bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-5 flex items-center justify-between rounded-t-2xl">
+        <div className="sticky top-0 bg-linear-to-r from-amber-500 to-orange-600 px-6 py-5 flex items-center justify-between rounded-t-2xl">
           <h2 className="text-white text-xl flex items-center gap-2">
             <Folder className="w-6 h-6" />
             为下载器 [{downloader.name}] 设置预设的下载路径和标签
@@ -72,7 +72,7 @@ export function DownloaderDetailModal({
 
         <div className="p-6 space-y-5 flex-1 overflow-y-auto scrollbar-themed">
           {/* 基本信息 */}
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl p-5 border border-neutral-700/50">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl p-5 border border-neutral-700/50">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
               <div className="flex items-center gap-3">
                 <div
@@ -137,7 +137,7 @@ export function DownloaderDetailModal({
           </div>
 
           {/* 标签列表 */}
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
             <div className="flex items-center justify-between p-5">
               <button
                 onClick={onToggleTags}
@@ -162,7 +162,7 @@ export function DownloaderDetailModal({
               <button
                 onClick={onFetchTags}
                 disabled={fetchingTags}
-                className="ml-3 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white text-sm transition-all disabled:opacity-50"
+                className="ml-3 flex items-center gap-2 px-4 py-2 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-lg text-white text-sm transition-all disabled:opacity-50"
               >
                 {fetchingTags ? (
                   <>
@@ -207,7 +207,7 @@ export function DownloaderDetailModal({
           </div>
 
           {/* 下载路径列表 */}
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
             <div className="flex items-center justify-between p-5">
               <button
                 onClick={onTogglePaths}
@@ -232,7 +232,7 @@ export function DownloaderDetailModal({
               <button
                 onClick={onFetchPaths}
                 disabled={fetchingPaths}
-                className="ml-3 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 rounded-lg text-white text-sm transition-all disabled:opacity-50"
+                className="ml-3 flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 rounded-lg text-white text-sm transition-all disabled:opacity-50"
               >
                 {fetchingPaths ? (
                   <>
@@ -288,7 +288,7 @@ export function DownloaderDetailModal({
           {/* 使用说明提示 */}
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
               <div className="text-sm text-amber-300">
                 <p className="mb-1">使用说明：</p>
                 <ul className="space-y-1 text-amber-400/80">

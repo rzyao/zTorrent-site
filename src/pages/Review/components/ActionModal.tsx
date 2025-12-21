@@ -38,7 +38,7 @@ export function ActionModal({ visible, item, actionType, actionNotes, onNotesCha
         </div>
         <div className="p-6 border-t border-neutral-700 flex gap-3">
           <button onClick={onCancel} className="flex-1 py-2.5 bg-neutral-700 text-neutral-300 rounded-lg hover:bg-neutral-600 transition-all">取消</button>
-          <button onClick={onConfirm} disabled={actionNotes.trim().length === 0} className={`flex-1 py-2.5 rounded-lg transition-all ${actionNotes.trim().length === 0 ? 'bg-neutral-700 text-neutral-500 cursor-not-allowed' : actionType === 'approve' ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:shadow-lg hover:shadow-green-500/25' : 'bg-gradient-to-r from-red-500 to-rose-600 text-white hover:shadow-lg hover:shadow-red-500/25'}`}>确认{actionType === 'approve' ? '通过' : '驳回'}</button>
+          <button onClick={onConfirm} disabled={actionNotes.trim().length === 0} className={`flex-1 py-2.5 rounded-lg transition-all ${actionNotes.trim().length === 0 ? 'bg-neutral-700 text-neutral-500 cursor-not-allowed' : actionType === 'approve' ? 'bg-linear-to-r from-green-500 to-emerald-600 text-white hover:shadow-lg hover:shadow-green-500/25' : 'bg-linear-to-r from-red-500 to-rose-600 text-white hover:shadow-lg hover:shadow-red-500/25'}`}>确认{actionType === 'approve' ? '通过' : '驳回'}</button>
         </div>
       </div>
     </div>

@@ -13,15 +13,15 @@ export function TorrentRecordTabs({ activeTab, stats, onTabChange }: TorrentReco
 
     switch (tabId) {
       case 'uploaded':
-        return 'bg-gradient-to-br from-purple-500/20 to-purple-600/20 text-white border border-purple-500/30';
+        return 'bg-linear-to-br from-purple-500/20 to-purple-600/20 text-white border border-purple-500/30';
       case 'seeding':
-        return 'bg-gradient-to-br from-green-500/20 to-green-600/20 text-white border border-green-500/30';
+        return 'bg-linear-to-br from-green-500/20 to-green-600/20 text-white border border-green-500/30';
       case 'downloading':
-        return 'bg-gradient-to-br from-blue-500/20 to-blue-600/20 text-white border border-blue-500/30';
+        return 'bg-linear-to-br from-blue-500/20 to-blue-600/20 text-white border border-blue-500/30';
       case 'completed':
-        return 'bg-gradient-to-br from-amber-500/20 to-amber-600/20 text-white border border-amber-500/30';
+        return 'bg-linear-to-br from-amber-500/20 to-amber-600/20 text-white border border-amber-500/30';
       case 'incomplete':
-        return 'bg-gradient-to-br from-red-500/20 to-red-600/20 text-white border border-red-500/30';
+        return 'bg-linear-to-br from-red-500/20 to-red-600/20 text-white border border-red-500/30';
       default:
         return 'bg-neutral-800 text-white';
     }

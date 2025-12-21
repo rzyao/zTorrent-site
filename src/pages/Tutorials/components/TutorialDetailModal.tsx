@@ -13,7 +13,7 @@ export function TutorialDetailModal({ tutorial, onClose }: TutorialDetailModalPr
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-neutral-900 rounded-2xl border border-neutral-700 max-w-4xl w-full my-8">
-        <div className="sticky top-0 bg-gradient-to-r from-amber-500 to-orange-600 p-6 flex items-center justify-between rounded-t-2xl">
+        <div className="sticky top-0 bg-linear-to-r from-amber-500 to-orange-600 p-6 flex items-center justify-between rounded-t-2xl">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
               <Icon className="w-6 h-6 text-white" />
@@ -47,7 +47,7 @@ export function TutorialDetailModal({ tutorial, onClose }: TutorialDetailModalPr
               {tutorial.steps.map((step, index) => (
                 <div key={index} className="bg-neutral-800/50 rounded-xl p-5 border border-neutral-700/30">
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center flex-shrink-0 text-white">
+                    <div className="w-8 h-8 rounded-full bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shrink-0 text-white">
                       {index + 1}
                     </div>
                     <div className="flex-1">
@@ -70,7 +70,7 @@ export function TutorialDetailModal({ tutorial, onClose }: TutorialDetailModalPr
                 <ul className="space-y-2">
                   {tutorial.tips.map((tip, index) => (
                     <li key={index} className="flex items-start gap-2 text-blue-300 text-sm">
-                      <CheckCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-4 h-4 shrink-0 mt-0.5" />
                       <span>{tip}</span>
                     </li>
                   ))}

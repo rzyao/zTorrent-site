@@ -16,7 +16,7 @@ export function RelatedSidebar({ items }: { items: RelatedItem[] }) {
           items.map((torrent) => (
             <div key={torrent.id} className="group cursor-pointer">
               <div className="flex gap-3">
-                <div className="relative w-20 h-28 rounded overflow-hidden flex-shrink-0">
+                <div className="relative w-20 h-28 rounded overflow-hidden shrink-0">
                   <ImageWithFallback src={torrent.thumbnail} alt={torrent.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                   {torrent.isFree && (
                     <Badge className="absolute top-1 left-1 bg-green-500 text-white text-xs px-1 py-0">FREE</Badge>

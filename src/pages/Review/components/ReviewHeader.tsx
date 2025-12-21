@@ -3,7 +3,7 @@ import { Clock, Shield } from 'lucide-react';
 export function ReviewHeader({ reviewSwitches }: { reviewSwitches: { film?: boolean; playlist?: boolean; torrent?: boolean } }) {
   return (
     <div className="mb-8">
-      <h1 className="text-3xl mb-2 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+      <h1 className="text-3xl mb-2 bg-linear-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
         审核中心
       </h1>
       <div className="flex items-center gap-3 text-xs">

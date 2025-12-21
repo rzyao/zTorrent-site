@@ -3,9 +3,9 @@ import { Button } from '@/components/ui/button';
 
 export function RecruitmentSection() {
   return (
-    <div className="mt-12 p-8 rounded-2xl bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm border border-neutral-700/50">
+    <div className="mt-12 p-8 rounded-2xl bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm border border-neutral-700/50">
       <div className="text-center">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-amber-500/30">
+        <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-amber-500/30">
           <TrendingUp className="w-8 h-8 text-white" />
         </div>
         <h2 className="text-white text-2xl mb-3">加入管理组</h2>
@@ -26,7 +26,7 @@ export function RecruitmentSection() {
             <p className="text-neutral-400 text-sm">耐心友善、熟悉规则、在线时间充足</p>
           </div>
         </div>
-        <Button className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25">
+        <Button className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25">
           <Mail className="w-4 h-4 mr-2" />
           提交申请
         </Button>

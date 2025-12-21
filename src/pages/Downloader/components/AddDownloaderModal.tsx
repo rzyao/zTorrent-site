@@ -46,7 +46,7 @@ export function AddDownloaderModal({
     <div className="modal-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="bg-neutral-900 rounded-2xl border border-neutral-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto m-4">
         {/* 头部：标题与关闭 */}
-        <div className="sticky top-0 bg-gradient-to-r from-amber-500 to-orange-600 p-6 flex items-center justify-between rounded-t-2xl">
+        <div className="sticky top-0 bg-linear-to-r from-amber-500 to-orange-600 p-6 flex items-center justify-between rounded-t-2xl">
           <h2 className="text-white text-xl flex items-center gap-2">
             <Plus className="w-6 h-6" />
             添加下载器
@@ -192,7 +192,7 @@ export function AddDownloaderModal({
           {/* 提示信息：表单填写建议（纯文案） */}
           <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
               <div className="text-sm text-blue-300">
                 <p className="mb-1">配置提示：</p>
                 <ul className="space-y-1 text-blue-400/80">
@@ -216,7 +216,7 @@ export function AddDownloaderModal({
             <button
               onClick={onSubmit}
               disabled={!formData.name || !formData.host || !formData.port}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-xl text-white transition-all shadow-lg shadow-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-xl text-white transition-all shadow-lg shadow-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Plus className="w-5 h-5" />
               添加下载器

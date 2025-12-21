@@ -201,7 +201,7 @@ export function MusicPage() {
           {featuredSongs.slice(0, 4).map((song) => (
             <div
               key={song.id}
-              className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-amber-500/50 transition-all group cursor-pointer"
+              className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-amber-500/50 transition-all group cursor-pointer"
             >
               <div className="relative mb-3">
                 <img
@@ -265,7 +265,7 @@ export function MusicPage() {
           {playlists.map((playlist) => (
             <div
               key={playlist.id}
-              className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-purple-500/50 transition-all group cursor-pointer"
+              className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-purple-500/50 transition-all group cursor-pointer"
             >
               <div className="relative mb-3">
                 <img
@@ -330,7 +330,7 @@ export function MusicPage() {
           {artists.map((artist) => (
             <div
               key={artist.id}
-              className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-green-500/50 transition-all text-center cursor-pointer"
+              className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-green-500/50 transition-all text-center cursor-pointer"
             >
               <img
                 src={artist.avatar}
@@ -356,7 +356,7 @@ export function MusicPage() {
           {albums.map((album) => (
             <div
               key={album.id}
-              className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-blue-500/50 transition-all group cursor-pointer"
+              className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-blue-500/50 transition-all group cursor-pointer"
             >
               <div className="relative mb-3">
                 <img
@@ -417,7 +417,7 @@ export function MusicPage() {
           {featuredSongs.map((song) => (
             <div
               key={song.id}
-              className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-amber-500/50 transition-all group cursor-pointer"
+              className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-amber-500/50 transition-all group cursor-pointer"
             >
               <div className="relative mb-3">
                 <img
@@ -470,7 +470,7 @@ export function MusicPage() {
           ))}
         </div>
       ) : (
-        <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
+        <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
           {featuredSongs.map((song, index) => (
             <div
               key={song.id}
@@ -537,7 +537,7 @@ export function MusicPage() {
           {artists.map((artist) => (
             <div
               key={artist.id}
-              className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-6 hover:border-green-500/50 transition-all text-center cursor-pointer"
+              className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-6 hover:border-green-500/50 transition-all text-center cursor-pointer"
             >
               <img
                 src={artist.avatar}
@@ -553,7 +553,7 @@ export function MusicPage() {
           ))}
         </div>
       ) : (
-        <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
+        <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
           {artists.map((artist, index) => (
             <div
               key={artist.id}
@@ -593,7 +593,7 @@ export function MusicPage() {
           {albums.map((album) => (
             <div
               key={album.id}
-              className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-blue-500/50 transition-all group cursor-pointer"
+              className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-blue-500/50 transition-all group cursor-pointer"
             >
               <div className="relative mb-3">
                 <img
@@ -642,7 +642,7 @@ export function MusicPage() {
           ))}
         </div>
       ) : (
-        <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
+        <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
           {albums.map((album, index) => (
             <div
               key={album.id}
@@ -695,7 +695,7 @@ export function MusicPage() {
           {playlists.map((playlist) => (
             <div
               key={playlist.id}
-              className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-purple-500/50 transition-all group cursor-pointer"
+              className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 p-4 hover:border-purple-500/50 transition-all group cursor-pointer"
             >
               <div className="relative mb-3">
                 <img
@@ -747,7 +747,7 @@ export function MusicPage() {
           ))}
         </div>
       ) : (
-        <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
+        <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-xl border border-neutral-700/50 overflow-hidden">
           {playlists.map((playlist, index) => (
             <div
               key={playlist.id}
@@ -812,13 +812,13 @@ export function MusicPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16 pb-32">
+    <div className="min-h-screen bg-linear-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16 pb-32">
       <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-8">
         {/* 页面标题 */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center shadow-lg shadow-pink-500/30">
+              <div className="w-10 h-10 rounded-xl bg-linear-to-br from-pink-500 to-purple-600 flex items-center justify-center shadow-lg shadow-pink-500/30">
                 <Music className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -853,7 +853,7 @@ export function MusicPage() {
                     onClick={() => setActiveTab(tab.id as TabType)}
                     className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${
                       activeTab === tab.id
-                        ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/30"
+                        ? "bg-linear-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/30"
                         : "text-neutral-400 hover:text-white hover:bg-neutral-800/50"
                     }`}
                   >
@@ -901,7 +901,7 @@ export function MusicPage() {
       {/* 添加到歌单对话框 */}
       {showAddToPlaylist && selectedSongForAdd && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-neutral-800 to-stone-900 rounded-2xl border border-neutral-700 p-6 max-w-md w-full shadow-2xl">
+          <div className="bg-linear-to-br from-neutral-800 to-stone-900 rounded-2xl border border-neutral-700 p-6 max-w-md w-full shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-white text-xl">添加到歌单</h3>
               <button

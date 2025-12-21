@@ -37,7 +37,7 @@ export const SubmitBar = memo(function SubmitBar(props: SubmitBarProps) {
             </Button>
           }
         >
-          <Button type="submit" className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-8 shadow-lg shadow-amber-500/25" disabled={submitting}>
+          <Button type="submit" className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-8 shadow-lg shadow-amber-500/25" disabled={submitting}>
             <Upload className="w-4 h-4 mr-2" />
             {submitting ? '发布中...' : '发布种子'}
           </Button>

@@ -16,10 +16,10 @@ export function TutorialsList({ tutorials, onSelect }: TutorialsListProps) {
           <div
             key={tutorial.id}
             onClick={() => onSelect(tutorial)}
-            className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 hover:border-amber-500/50 transition-all cursor-pointer group"
+            className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 hover:border-amber-500/50 transition-all cursor-pointer group"
           >
             <div className="flex items-start gap-4 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/30">
+              <div className="w-12 h-12 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/30">
                 <Icon className="w-6 h-6 text-white" />
               </div>
               <div className="flex-1 min-w-0">

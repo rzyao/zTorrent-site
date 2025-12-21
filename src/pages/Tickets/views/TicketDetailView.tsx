@@ -172,7 +172,7 @@ export function TicketDetailView({ ticketId, onBack }: TicketDetailViewProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
             <h2 className="text-white text-2xl mb-4">{detail?.title || ""}</h2>
             <div className="flex flex-wrap gap-3">
               <Badge
@@ -196,7 +196,7 @@ export function TicketDetailView({ ticketId, onBack }: TicketDetailViewProps) {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
             <h3 className="text-white mb-6 flex items-center gap-2">
               <MessageCircle className="w-5 h-5 text-amber-400" />
               对话记录
@@ -213,10 +213,10 @@ export function TicketDetailView({ ticketId, onBack }: TicketDetailViewProps) {
                     }`}
                   >
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
                         isStaff
-                          ? "bg-gradient-to-br from-amber-500 to-orange-600"
-                          : "bg-gradient-to-br from-neutral-600 to-neutral-700"
+                          ? "bg-linear-to-br from-amber-500 to-orange-600"
+                          : "bg-linear-to-br from-neutral-600 to-neutral-700"
                       }`}
                     >
                       {isStaff ? (
@@ -256,8 +256,8 @@ export function TicketDetailView({ ticketId, onBack }: TicketDetailViewProps) {
                       <div
                         className={`rounded-2xl p-4 ${
                           isStaff
-                            ? "bg-gradient-to-br from-amber-500/10 to-orange-600/10 border border-amber-500/20"
-                            : "bg-gradient-to-br from-neutral-700/50 to-neutral-800/50 border border-neutral-600/30"
+                            ? "bg-linear-to-br from-amber-500/10 to-orange-600/10 border border-amber-500/20"
+                            : "bg-linear-to-br from-neutral-700/50 to-neutral-800/50 border border-neutral-600/30"
                         }`}
                       >
                         <p className="text-neutral-200 leading-relaxed">
@@ -292,7 +292,7 @@ export function TicketDetailView({ ticketId, onBack }: TicketDetailViewProps) {
                   <Button
                     onClick={handleSendReply}
                     disabled={!newReply.trim()}
-                    className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+                    className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
                   >
                     <Send className="w-4 h-4 mr-2" />
                     发送回复
@@ -311,7 +311,7 @@ export function TicketDetailView({ ticketId, onBack }: TicketDetailViewProps) {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
             <h3 className="text-white mb-4">工单详情</h3>
             <div className="space-y-4">
               <div>
@@ -345,7 +345,7 @@ export function TicketDetailView({ ticketId, onBack }: TicketDetailViewProps) {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
+          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
             <h3 className="text-white mb-4 flex items-center gap-2">
               <Users className="w-5 h-5 text-amber-400" />
               分配工单
@@ -387,7 +387,7 @@ export function TicketDetailView({ ticketId, onBack }: TicketDetailViewProps) {
           </div>
 
           {detail?.status !== "closed" && (
-            <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
+            <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
               <h3 className="text-white mb-4">操作</h3>
               <div className="space-y-3">
                 {detail?.status === "resolved" && (

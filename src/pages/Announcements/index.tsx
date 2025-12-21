@@ -32,7 +32,7 @@ export function AnnouncementsPage({
 
   return (
     <div className="min-h-screen bg-[#0F171E] pt-16">
-      <div className="bg-gradient-to-br from-amber-600/20 via-orange-600/20 to-amber-700/20 border-b border-amber-500/20">
+      <div className="bg-linear-to-br from-amber-600/20 via-orange-600/20 to-amber-700/20 border-b border-amber-500/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center gap-3 mb-2">
             <Bell className="w-8 h-8 text-amber-400" />

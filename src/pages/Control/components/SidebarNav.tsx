@@ -11,7 +11,7 @@ interface SidebarNavProps {
 // 职责：渲染 Tab 列表并处理切换交互
 export function SidebarNav({ tabs, activeTab, onChange }: SidebarNavProps) {
   return (
-    <div className="bg-gradient-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden">
+    <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 overflow-hidden">
       <div className="p-4">
         <h3 className="text-neutral-400 text-xs uppercase tracking-wide mb-3">设置菜单</h3>
         <nav className="space-y-1">
@@ -23,7 +23,7 @@ export function SidebarNav({ tabs, activeTab, onChange }: SidebarNavProps) {
                 key={tab.id}
                 onClick={() => onChange(tab.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
-                  ? 'bg-gradient-to-r from-amber-500/20 to-orange-600/20 text-amber-400 border border-amber-500/30'
+                  ? 'bg-linear-to-r from-amber-500/20 to-orange-600/20 text-amber-400 border border-amber-500/30'
                   : 'text-neutral-400 hover:text-white hover:bg-neutral-700/30'
                   }`}
               >
