@@ -2,6 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { ActivityInfoHashDto } from '../models/ActivityInfoHashDto';
+import type { ActivityUserIdDto } from '../models/ActivityUserIdDto';
 import type { TorrentCountsBatchItemDto } from '../models/TorrentCountsBatchItemDto';
 import type { TorrentCountsBatchRequestDto } from '../models/TorrentCountsBatchRequestDto';
 import type { UserCountsBatchItemDto } from '../models/UserCountsBatchItemDto';
@@ -12,12 +14,12 @@ import { request as __request } from '../core/request';
 export class ActivityService {
     /**
      * 查询某用户当前做种的种子集合
-     * @param userId 用户ID
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
     public static activityControllerUserSeeds(
-        userId: string,
+        requestBody: ActivityUserIdDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -26,11 +28,10 @@ export class ActivityService {
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/activity/user/{userId}/seeds',
-            path: {
-                'userId': userId,
-            },
+            method: 'POST',
+            url: '/activity/user/seeds',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -42,12 +43,12 @@ export class ActivityService {
     }
     /**
      * 查询某用户当前下载的种子集合
-     * @param userId 用户ID
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
     public static activityControllerUserLeeches(
-        userId: string,
+        requestBody: ActivityUserIdDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -56,11 +57,10 @@ export class ActivityService {
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/activity/user/{userId}/leeches',
-            path: {
-                'userId': userId,
-            },
+            method: 'POST',
+            url: '/activity/user/leeches',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -101,12 +101,12 @@ export class ActivityService {
     }
     /**
      * 查询某种子当前做种的用户集合（userId）
-     * @param infoHash 种子 infohash（小写十六进制）
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
     public static activityControllerTorrentSeeds(
-        infoHash: string,
+        requestBody: ActivityInfoHashDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -115,11 +115,10 @@ export class ActivityService {
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/activity/torrent/{infoHash}/seeds',
-            path: {
-                'infoHash': infoHash,
-            },
+            method: 'POST',
+            url: '/activity/torrent/seeds',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -131,12 +130,12 @@ export class ActivityService {
     }
     /**
      * 查询某种子当前下载的用户集合（userId）
-     * @param infoHash 种子 infohash（小写十六进制）
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
     public static activityControllerTorrentLeeches(
-        infoHash: string,
+        requestBody: ActivityInfoHashDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -145,11 +144,10 @@ export class ActivityService {
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/activity/torrent/{infoHash}/leeches',
-            path: {
-                'infoHash': infoHash,
-            },
+            method: 'POST',
+            url: '/activity/torrent/leeches',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

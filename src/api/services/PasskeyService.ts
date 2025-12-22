@@ -2,18 +2,20 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { EmptyObjectDto } from '../models/EmptyObjectDto';
+import type { PasskeyDto } from '../models/PasskeyDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class PasskeyService {
     /**
      * 回源校验：检查passkey是否有效（用于Tracker）
-     * @param passkey
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
     public static passkeyControllerVerify(
-        passkey: string,
+        requestBody: PasskeyDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -24,11 +26,10 @@ export class PasskeyService {
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
+            method: 'POST',
             url: '/passkey/verify',
-            query: {
-                'passkey': passkey,
-            },
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -45,9 +46,7 @@ export class PasskeyService {
      * @throws ApiError
      */
     public static passkeyControllerAdd(
-        requestBody: {
-            passkey: string;
-        },
+        requestBody: PasskeyDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -78,9 +77,7 @@ export class PasskeyService {
      * @throws ApiError
      */
     public static passkeyControllerRemove(
-        requestBody: {
-            passkey: string;
-        },
+        requestBody: PasskeyDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -106,10 +103,13 @@ export class PasskeyService {
     }
     /**
      * 从数据库全量刷新白名单（原子切换）
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static passkeyControllerRefresh(): CancelablePromise<{
+    public static passkeyControllerRefresh(
+        requestBody: EmptyObjectDto,
+    ): CancelablePromise<{
         code?: number;
         message?: string;
         data?: {
@@ -121,6 +121,8 @@ export class PasskeyService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/passkey/refresh',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

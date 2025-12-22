@@ -9,7 +9,10 @@ import type { AdminListBalancesDto } from '../models/AdminListBalancesDto';
 import type { AdminListLedgerDto } from '../models/AdminListLedgerDto';
 import type { AdminReverseDto } from '../models/AdminReverseDto';
 import type { AdminUnfreezeDto } from '../models/AdminUnfreezeDto';
+import type { ApplyBonusRuleDto } from '../models/ApplyBonusRuleDto';
 import type { BonusConfigDto } from '../models/BonusConfigDto';
+import type { EmptyObjectDto } from '../models/EmptyObjectDto';
+import type { QueryMyLedgerDto } from '../models/QueryMyLedgerDto';
 import type { SimulationRequestDto } from '../models/SimulationRequestDto';
 import type { SimulationResultDto } from '../models/SimulationResultDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -17,81 +20,119 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class BonusService {
     /**
-     * 查询积分余额
-     * @param userId
-     * @returns any
+     * 按规则计算并发放积分（管理员/系统）
+     * @param requestBody
+     * @returns any 成功
      * @throws ApiError
      */
-    public static bonusControllerBalance(
-        userId: string,
-    ): CancelablePromise<any> {
+    public static bonusControllerApply(
+        requestBody: ApplyBonusRuleDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Record<string, any>;
+        path?: string;
+        timestamp?: string;
+    }> {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/bonus/balance',
-            query: {
-                'userId': userId,
+            method: 'POST',
+            url: '/bonus/apply',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 积分概览
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static bonusControllerOverview(
+        requestBody: EmptyObjectDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Record<string, any>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/bonus/overview',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
             },
         });
     }
     /**
      * 查询积分余额（POST）
-     * @returns any
+     * @param requestBody
+     * @returns any 成功
      * @throws ApiError
      */
-    public static bonusControllerBalancePost(): CancelablePromise<any> {
+    public static bonusControllerBalancePost(
+        requestBody: EmptyObjectDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Record<string, any>;
+        path?: string;
+        timestamp?: string;
+    }> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/bonus/balance',
-        });
-    }
-    /**
-     * 查询积分流水
-     * @param userId
-     * @returns any
-     * @throws ApiError
-     */
-    public static bonusControllerLedger(
-        userId: string,
-    ): CancelablePromise<any> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/bonus/ledger',
-            query: {
-                'userId': userId,
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
             },
         });
     }
     /**
      * 查询积分流水（POST）
-     * @returns any
+     * @param requestBody
+     * @returns any 成功
      * @throws ApiError
      */
-    public static bonusControllerLedgerPost(): CancelablePromise<any> {
+    public static bonusControllerLedgerPost(
+        requestBody: QueryMyLedgerDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Record<string, any>;
+        path?: string;
+        timestamp?: string;
+    }> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/bonus/ledger',
-        });
-    }
-    /**
-     * 按规则计算并发放积分（管理员/系统）
-     * @returns any
-     * @throws ApiError
-     */
-    public static bonusControllerApply(): CancelablePromise<any> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/bonus/apply',
-        });
-    }
-    /**
-     * 积分概览
-     * @returns any
-     * @throws ApiError
-     */
-    public static bonusControllerOverview(): CancelablePromise<any> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/bonus/overview',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
         });
     }
     /**
@@ -176,13 +217,31 @@ export class BonusService {
     }
     /**
      * 读取积分规则/开关
-     * @returns any
+     * @param requestBody
+     * @returns any 成功
      * @throws ApiError
      */
-    public static bonusControllerAdminGetRules(): CancelablePromise<any> {
+    public static bonusControllerAdminGetRules(
+        requestBody: EmptyObjectDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Record<string, any>;
+        path?: string;
+        timestamp?: string;
+    }> {
         return __request(OpenAPI, {
-            method: 'GET',
+            method: 'POST',
             url: '/bonus/admin/get-rules',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
         });
     }
     /**

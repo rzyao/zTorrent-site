@@ -2,11 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ListFavoritesDto = {
+export type ListSubscriptionsDto = {
     /**
      * 按目标类型过滤
      */
-    targetType?: ListFavoritesDto.targetType;
+    targetType?: ListSubscriptionsDto.targetType;
     /**
      * 页码
      */
@@ -16,15 +16,13 @@ export type ListFavoritesDto = {
      */
     limit?: number;
 };
-export namespace ListFavoritesDto {
+export namespace ListSubscriptionsDto {
     /**
      * 按目标类型过滤
      */
     export enum targetType {
-        TORRENT = 'torrent',
-        MOVIE = 'movie',
-        SERIES = 'series',
         PLAYLIST = 'playlist',
+        SERIES = 'series',
     }
 }
 

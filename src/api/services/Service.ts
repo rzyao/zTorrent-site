@@ -2,66 +2,37 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AggregatePermissionsResponseDto } from '../models/AggregatePermissionsResponseDto';
-import type { AssignPermissionsDto } from '../models/AssignPermissionsDto';
-import type { AssignPermissionsResponseDto } from '../models/AssignPermissionsResponseDto';
-import type { BatchCreatePermissionsDto } from '../models/BatchCreatePermissionsDto';
-import type { CheckPermissionsRequestDto } from '../models/CheckPermissionsRequestDto';
-import type { CheckPermissionsResponseDto } from '../models/CheckPermissionsResponseDto';
-import type { CreatePermissionDto } from '../models/CreatePermissionDto';
-import type { DeletePermissionResponseDto } from '../models/DeletePermissionResponseDto';
-import type { EmptyObjectDto } from '../models/EmptyObjectDto';
-import type { ListPermissionsDto } from '../models/ListPermissionsDto';
-import type { ListPermissionsResponseDto } from '../models/ListPermissionsResponseDto';
-import type { PermissionDto } from '../models/PermissionDto';
-import type { PermissionIdDto } from '../models/PermissionIdDto';
-import type { PermissionTreeNodeDto } from '../models/PermissionTreeNodeDto';
-import type { PermissionTreeRequestDto } from '../models/PermissionTreeRequestDto';
-import type { UpdatePermissionRequestDto } from '../models/UpdatePermissionRequestDto';
+import type { BatchFavoriteActionDto } from '../models/BatchFavoriteActionDto';
+import type { FavoriteActionDto } from '../models/FavoriteActionDto';
+import type { FollowActionDto } from '../models/FollowActionDto';
+import type { ListFavoritesDto } from '../models/ListFavoritesDto';
+import type { ListFavoritesResponseDto } from '../models/ListFavoritesResponseDto';
+import type { ListFollowsDto } from '../models/ListFollowsDto';
+import type { ListSubscriptionsDto } from '../models/ListSubscriptionsDto';
+import type { Object } from '../models/Object';
+import type { SubscriptionActionDto } from '../models/SubscriptionActionDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class PermissionsService {
+export class Service {
     /**
-     * 获取所有 API 权限列表（公开接口）
+     * 添加订阅
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerAll(
-        requestBody: EmptyObjectDto,
+    public static subscriptionsControllerAdd(
+        requestBody: SubscriptionActionDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Array<PermissionDto>;
+        data?: Object;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/permissions/all',
-            body: requestBody,
-            mediaType: 'application/json',
-        });
-    }
-    /**
-     * 创建权限
-     * @param requestBody
-     * @returns any 已创建
-     * @throws ApiError
-     */
-    public static permissionsControllerCreate(
-        requestBody: CreatePermissionDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: PermissionDto;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/permissions/create',
+            url: '/subscriptions/add',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -74,24 +45,23 @@ export class PermissionsService {
         });
     }
     /**
-     * 批量创建/更新权限
-     * 支持树形嵌套结构，自动处理 parentId/parentIds；也兼容扁平结构
+     * 取消订阅
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerBatchCreate(
-        requestBody: BatchCreatePermissionsDto,
+    public static subscriptionsControllerRemove(
+        requestBody: SubscriptionActionDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Array<PermissionDto>;
+        data?: Object;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/permissions/batch-create',
+            url: '/subscriptions/remove',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -104,23 +74,23 @@ export class PermissionsService {
         });
     }
     /**
-     * 列出权限列表
+     * 检查是否已订阅
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerListPermissions(
-        requestBody: ListPermissionsDto,
+    public static subscriptionsControllerCheck(
+        requestBody: SubscriptionActionDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: ListPermissionsResponseDto;
+        data?: Object;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/permissions/list-permissions',
+            url: '/subscriptions/check',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -133,23 +103,23 @@ export class PermissionsService {
         });
     }
     /**
-     * 列出全部权限（前端自行构建树）
+     * 获取我的订阅列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerListPermissionsTree(
-        requestBody: ListPermissionsDto,
+    public static subscriptionsControllerList(
+        requestBody: ListSubscriptionsDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Array<PermissionDto>;
+        data?: Object;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/permissions/list-permissions-tree',
+            url: '/subscriptions/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -162,23 +132,23 @@ export class PermissionsService {
         });
     }
     /**
-     * 权限详情
+     * 添加关注
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerDetail(
-        requestBody: PermissionIdDto,
+    public static followsControllerAdd(
+        requestBody: FollowActionDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: PermissionDto;
+        data?: Object;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/permissions/detail',
+            url: '/follows/add',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -191,23 +161,23 @@ export class PermissionsService {
         });
     }
     /**
-     * 更新权限
+     * 取消关注
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerUpdate(
-        requestBody: UpdatePermissionRequestDto,
+    public static followsControllerRemove(
+        requestBody: FollowActionDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: PermissionDto;
+        data?: Object;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/permissions/update',
+            url: '/follows/remove',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -220,23 +190,23 @@ export class PermissionsService {
         });
     }
     /**
-     * 删除权限
+     * 检查是否已关注
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerRemove(
-        requestBody: PermissionIdDto,
+    public static followsControllerCheck(
+        requestBody: FollowActionDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: DeletePermissionResponseDto;
+        data?: Object;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/permissions/delete',
+            url: '/follows/check',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -249,23 +219,23 @@ export class PermissionsService {
         });
     }
     /**
-     * 为用户分配权限（覆盖式）
+     * 获取我的关注列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerAssign(
-        requestBody: AssignPermissionsDto,
+    public static followsControllerList(
+        requestBody: ListFollowsDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: AssignPermissionsResponseDto;
+        data?: Object;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/permissions/assign',
+            url: '/follows/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -278,24 +248,23 @@ export class PermissionsService {
         });
     }
     /**
-     * 查询权限树
-     * 按可选 scope/type 筛选并返回权限树结构
+     * 添加收藏
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerTree(
-        requestBody: PermissionTreeRequestDto,
+    public static favoritesControllerAdd(
+        requestBody: FavoriteActionDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Array<PermissionTreeNodeDto>;
+        data?: Object;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/permissions/tree',
+            url: '/favorites/add',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -308,48 +277,23 @@ export class PermissionsService {
         });
     }
     /**
-     * 查询当前用户拥有的权限树
-     * 根据 JWT 用户的权限集过滤后返回权限树
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static permissionsControllerTreeOfUser(): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: Array<PermissionTreeNodeDto>;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/permissions/tree-of-user',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 批量校验用户是否拥有指定权限键
+     * 批量添加收藏
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerCheck(
-        requestBody: CheckPermissionsRequestDto,
+    public static favoritesControllerBatchAdd(
+        requestBody: BatchFavoriteActionDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: CheckPermissionsResponseDto;
+        data?: Object;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/permissions/check',
+            url: '/favorites/batch-add',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -362,20 +306,112 @@ export class PermissionsService {
         });
     }
     /**
-     * 聚合并返回当前用户的权限键集合
+     * 取消收藏
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerAggregateOfUser(): CancelablePromise<{
+    public static favoritesControllerRemove(
+        requestBody: FavoriteActionDto,
+    ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: AggregatePermissionsResponseDto;
+        data?: Object;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/permissions/aggregate-of-user',
+            url: '/favorites/remove',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 批量取消收藏
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static favoritesControllerBatchRemove(
+        requestBody: BatchFavoriteActionDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Object;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/favorites/batch-remove',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 检查是否已收藏
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static favoritesControllerCheck(
+        requestBody: FavoriteActionDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Object;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/favorites/check',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 获取我的收藏列表
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static favoritesControllerList(
+        requestBody: ListFavoritesDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ListFavoritesResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/favorites/list',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

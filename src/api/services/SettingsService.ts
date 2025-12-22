@@ -69,36 +69,6 @@ export class SettingsService {
         });
     }
     /**
-     * 按分组获取设置列表（详细字段）- GET
-     * @param group 分组名称
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static settingsControllerListSettingsByGroupGet(
-        group: string,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: Array<SettingItemDto>;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/settings/list-setting-by-group',
-            query: {
-                'group': group,
-            },
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
      * 批量更新系统设置（仅更新值，不支持重命名）
      * @param requestBody
      * @returns any 成功
@@ -218,10 +188,13 @@ export class SettingsService {
     }
     /**
      * 读取审核开关（只读）
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static settingsControllerGetReviewSwitches(): CancelablePromise<{
+    public static settingsControllerGetReviewSwitches(
+        requestBody: EmptyObjectDto,
+    ): CancelablePromise<{
         code?: number;
         message?: string;
         data?: ReviewSwitchesResponseDto;
@@ -229,8 +202,10 @@ export class SettingsService {
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
+            method: 'POST',
             url: '/settings/review-switches',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

@@ -2,20 +2,19 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AuditHistoryDto } from '../models/AuditHistoryDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class AuditService {
     /**
      * 统一审核历史查询
-     * @param type
-     * @param resourceId
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
     public static auditControllerHistory(
-        type: string,
-        resourceId: string,
+        requestBody: AuditHistoryDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -32,12 +31,10 @@ export class AuditService {
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
+            method: 'POST',
             url: '/audit/history',
-            query: {
-                'type': type,
-                'resourceId': resourceId,
-            },
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

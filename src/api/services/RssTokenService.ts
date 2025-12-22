@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { EmptyObjectDto } from '../models/EmptyObjectDto';
 import type { GetRssTokenResultDto } from '../models/GetRssTokenResultDto';
 import type { ResetRssTokenResultDto } from '../models/ResetRssTokenResultDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -9,10 +10,13 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class RssTokenService {
     /**
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static rssTokenControllerGetMine(): CancelablePromise<{
+    public static rssTokenControllerGetMine(
+        requestBody: EmptyObjectDto,
+    ): CancelablePromise<{
         code?: number;
         message?: string;
         data?: GetRssTokenResultDto;
@@ -20,8 +24,10 @@ export class RssTokenService {
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
+            method: 'POST',
             url: '/rss/token',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -32,10 +38,13 @@ export class RssTokenService {
         });
     }
     /**
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static rssTokenControllerReset(): CancelablePromise<{
+    public static rssTokenControllerReset(
+        requestBody: EmptyObjectDto,
+    ): CancelablePromise<{
         code?: number;
         message?: string;
         data?: ResetRssTokenResultDto;
@@ -45,6 +54,8 @@ export class RssTokenService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/rss/token/reset',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

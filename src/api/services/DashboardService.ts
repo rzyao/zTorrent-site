@@ -2,16 +2,20 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { EmptyObjectDto } from '../models/EmptyObjectDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class DashboardService {
     /**
      * 用户概要查询（上传/下载/分享率/魔力值/未读通知/未读收件箱）
+     * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static dashboardControllerSummary(): CancelablePromise<{
+    public static dashboardControllerSummary(
+        requestBody: EmptyObjectDto,
+    ): CancelablePromise<{
         code?: number;
         message?: string;
         data?: {
@@ -26,8 +30,10 @@ export class DashboardService {
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
+            method: 'POST',
             url: '/dashboard/me/summary',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

@@ -2,23 +2,23 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ListFavoritesDto = {
+export type FavoriteActionDto = {
     /**
-     * 按目标类型过滤
+     * 目标资源ID
      */
-    targetType?: ListFavoritesDto.targetType;
+    targetId: string;
     /**
-     * 页码
+     * 目标类型
      */
-    page?: number;
+    targetType: FavoriteActionDto.targetType;
     /**
-     * 每页数量
+     * 备注
      */
-    limit?: number;
+    note?: string;
 };
-export namespace ListFavoritesDto {
+export namespace FavoriteActionDto {
     /**
-     * 按目标类型过滤
+     * 目标类型
      */
     export enum targetType {
         TORRENT = 'torrent',

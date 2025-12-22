@@ -4,15 +4,15 @@
 /* eslint-disable */
 export type UnifiedResponseDto = {
     /**
-     * 业务状态码。0 表示成功，非 0 表示错误。
+     * 业务状态码。1000 表示成功，其它为失败。
      */
     code: number;
     /**
-     * 统一成功消息，错误时为约定字符串。
+     * 提示信息。成功固定为 ok，失败为友好错误提示。
      */
     message: string;
     /**
-     * 实际业务数据。错误时通常为 null 或包含详细错误信息。
+     * 业务数据。失败时通常为包含 description 的对象或 null。
      */
     data: Record<string, any>;
     /**

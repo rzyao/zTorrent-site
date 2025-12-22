@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ChangePasswordDto } from '../models/ChangePasswordDto';
+import type { EmptyObjectDto } from '../models/EmptyObjectDto';
 import type { InviteStatusDto } from '../models/InviteStatusDto';
 import type { LoginDto } from '../models/LoginDto';
 import type { LoginResultDto } from '../models/LoginResultDto';
@@ -15,6 +16,7 @@ import type { ResetOkDto } from '../models/ResetOkDto';
 import type { ResetPasswordDto } from '../models/ResetPasswordDto';
 import type { SentDto } from '../models/SentDto';
 import type { VerifyEmailCodeDto } from '../models/VerifyEmailCodeDto';
+import type { VerifyInviteCodeDto } from '../models/VerifyInviteCodeDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -123,10 +125,13 @@ export class AuthService {
     }
     /**
      * 查询是否开放注册
+     * @param requestBody
      * @returns any 返回是否开放注册
      * @throws ApiError
      */
-    public static authControllerRegistrationEnabled(): CancelablePromise<{
+    public static authControllerRegistrationEnabled(
+        requestBody: EmptyObjectDto,
+    ): CancelablePromise<{
         code?: number;
         message?: string;
         data?: RegistrationStatusDto;
@@ -136,6 +141,8 @@ export class AuthService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/auth/registration-enabled',
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
     /**
@@ -145,10 +152,7 @@ export class AuthService {
      * @throws ApiError
      */
     public static authControllerVerifyInviteCode(
-        requestBody: {
-            email: string;
-            inviteCode: string;
-        },
+        requestBody: VerifyInviteCodeDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -178,10 +182,13 @@ export class AuthService {
     }
     /**
      * 查询是否允许邀请注册
+     * @param requestBody
      * @returns any 返回是否允许邀请注册
      * @throws ApiError
      */
-    public static authControllerInviteEnabled(): CancelablePromise<{
+    public static authControllerInviteEnabled(
+        requestBody: EmptyObjectDto,
+    ): CancelablePromise<{
         code?: number;
         message?: string;
         data?: InviteStatusDto;
@@ -191,6 +198,8 @@ export class AuthService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/auth/invite-enabled',
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
     /**
@@ -272,38 +281,15 @@ export class AuthService {
         });
     }
     /**
-     * 当前用户信息
-     * 返回 JWT 用户的基本信息、角色与权限集合
-     * @returns any 查询成功
-     * @throws ApiError
-     */
-    public static authControllerProfile(): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: {
-            user?: Record<string, any>;
-            roles?: Array<string>;
-            permissions?: Array<string>;
-            avatar?: string | null;
-            signature?: string | null;
-            location?: string | null;
-            bio?: string | null;
-        };
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/auth/profile',
-        });
-    }
-    /**
      * 当前用户信息（POST）
      * 返回 JWT 用户的基本信息、角色与权限集合
+     * @param requestBody
      * @returns any 查询成功
      * @throws ApiError
      */
-    public static authControllerProfilePost(): CancelablePromise<{
+    public static authControllerProfilePost(
+        requestBody: EmptyObjectDto,
+    ): CancelablePromise<{
         code?: number;
         message?: string;
         data?: {
@@ -321,6 +307,8 @@ export class AuthService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/auth/profile',
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
 }
