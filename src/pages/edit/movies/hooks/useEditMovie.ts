@@ -277,7 +277,6 @@ export function useEditMovie() {
       doubanRatingAverage: movieForm.doubanRatingAverage,
       imdbRatingAverage: movieForm.imdbRatingAverage,
       enabled: true,
-      sort: 0,
     };
 
     const { valid, errs } = validateFilmForm(movieForm);

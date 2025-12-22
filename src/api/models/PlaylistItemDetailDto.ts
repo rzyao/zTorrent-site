@@ -8,9 +8,17 @@ export type PlaylistItemDetailDto = {
     itemId: string;
     sort: number;
     title: string;
+    originalTitle?: string;
+    description?: string;
     posterUrl: string;
     year: string;
     rating: number;
+    director?: string;
+    cast?: Array<string>;
+    genres?: Array<string>;
+    language?: string;
+    viewsCount?: number;
+    collectionsCount?: number;
     episodeCount?: number;
 };
 export namespace PlaylistItemDetailDto {

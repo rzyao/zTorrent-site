@@ -40,7 +40,7 @@ export function Toolbar({
   return (
     <div>
       {/* 搜索与排序 */}
-      <div className="flex items-center gap-3 md:gap-4 mb-4">
+      <div className="mb-4 flex items-center gap-3 md:gap-4">
         <SearchInput
           value={searchQuery}
           onChange={onSearchChange}

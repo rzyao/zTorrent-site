@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Bell, UserPlus, Heart, Share2 } from "lucide-react";
+import ActionBtn from "@/components/ActionBtn";
+import { cn } from "@/components/ui/utils";
 import { Hero } from "@/pages/PlaylistDetail/components/Hero";
 import { Toolbar } from "@/pages/PlaylistDetail/components/Toolbar";
 import { GridView } from "@/pages/PlaylistDetail/components/GridView";
@@ -18,6 +21,11 @@ export function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: Playlist
   // 页面交互状态仅保留视图与排序
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<"order" | "rating" | "year">("order");
+
+  // 本地 Mock 状态，仅用于演示 (模仿 InfoBar)
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isCollected, setIsCollected] = useState(false);
+
   // 片单详情数据与行为统一由钩子管理
   const { loading, error, playlist, movies, isFollowing, toggleFollow, reload, openFilm } =
     usePlaylistDetail(playlistId);
@@ -50,7 +58,72 @@ export function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: Playlist
       />
 
       {/* 影片列表区域 */}
-      <div className="mt-8">
+      <div className="mt-8 space-y-6">
+        {/* ==== 交互按钮组 (参考 SeriesDetail InfoBar) ==== */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* 第一组：用户交互 */}
+          <div className="flex items-center gap-3">
+            {/* 订阅 (Primary CTA) */}
+            <ActionBtn
+              onClick={() => setIsSubscribed(!isSubscribed)}
+              variant="amber"
+              mode={isSubscribed ? "solid" : "ghost"}
+              size="md"
+              className="px-8"
+              icon={
+                <Bell className={cn("h-5 w-5 transition-colors", isSubscribed && "fill-current")} />
+              }
+            >
+              {isSubscribed ? "已订阅" : "订阅"}
+            </ActionBtn>
+
+            {/* 关注 (Secondary) - 映射到 API 的 isFollowing */}
+            <ActionBtn
+              onClick={toggleFollow}
+              variant="blue"
+              mode={isFollowing ? "solid" : "ghost"}
+              size="md"
+              className="px-6"
+              icon={
+                <UserPlus
+                  className={cn("h-5 w-5 transition-colors", isFollowing && "fill-current")}
+                />
+              }
+            >
+              {isFollowing ? "已关注" : "关注"}
+            </ActionBtn>
+
+            {/* 收藏 (Secondary) - Mock */}
+            <ActionBtn
+              onClick={() => setIsCollected(!isCollected)}
+              variant="red"
+              mode={isCollected ? "solid" : "ghost"}
+              size="md"
+              className="px-6"
+              icon={
+                <Heart className={cn("h-5 w-5 transition-colors", isCollected && "fill-current")} />
+              }
+            >
+              {isCollected ? "已收藏" : "收藏"}
+            </ActionBtn>
+          </div>
+
+          {/* 垂直分割线 */}
+          <div className="hidden h-8 w-px bg-white/20 lg:block" />
+
+          {/* 第二组：社交分享 */}
+          <div className="flex items-center gap-3">
+            <ActionBtn
+              variant="neutral"
+              mode="ghost"
+              size="md"
+              className="px-6"
+              icon={<Share2 className="h-5 w-5" />}
+            >
+              分享
+            </ActionBtn>
+          </div>
+        </div>
         {/* 工具栏 */}
         <Toolbar
           sortBy={sortBy}

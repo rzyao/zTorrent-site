@@ -31,7 +31,7 @@ import { PlaylistDetailPage } from "@/pages/PlaylistDetail/index.tsx";
 import TorrentDetailPage from "@/pages/TorrentDetail/index.tsx";
 import MovieDetailPage from "@/pages/MovieDetail/index.tsx";
 import { EpisodeDetailPage } from "@/pages/EpisodeDetail/EpisodeDetailPage.tsx";
-import { SeriesDetailPage } from "@/pages/SeriesDetail/SeriesDetailPage.tsx";
+import { SeriesDetailPage } from "@/pages/SeriesDetail/index.tsx";
 import { TorrentRecordPage } from "@/pages/TorrentRecord/index.tsx";
 import { RSSPage } from "@/pages/RSSPage.tsx";
 import { GroupsPage } from "@/pages/Groups/GroupsPage.tsx";
@@ -45,6 +45,7 @@ import { MagicFarmPage } from "@/pages/MagicFarm/index.tsx";
 import { AnnouncementsPage } from "@/pages/Announcements/index.tsx";
 import { MusicPage } from "@/pages/MusicPage.tsx";
 import { PlayerPage } from "@/pages/PlayerPage.tsx";
+import { DesignPage } from "@/pages/design.tsx";
 
 function LoginPageWrapper() {
   const navigate = useNavigate();
@@ -419,6 +420,7 @@ export default function AppRoutes() {
             </PermissionRoute>
           }
         />
+        <Route path="/design" element={<DesignPage />} />
       </Route>
 
       {/* 未登录或未匹配路径的重定向 */}

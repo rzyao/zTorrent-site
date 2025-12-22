@@ -1,10 +1,8 @@
-import { ArrowLeft, Heart, Share2, Eye, Film, Star, Play } from "lucide-react";
+import { ArrowLeft, Heart, Eye, Film, Star } from "lucide-react";
 import type { PlaylistDetail } from "../types";
 
 interface HeroProps {
   playlist: PlaylistDetail | null;
-  isFollowing: boolean;
-  onToggleFollow: () => void;
   onBack: () => void;
 }
 
@@ -16,7 +14,7 @@ interface HeroProps {
 // 拆分原因：
 // - 将页面的头部展示（封面、标题、统计、按钮）独立为纯展示组件，便于复用与维护
 // - 降低主页面文件体积与复杂度
-export function Hero({ playlist, isFollowing, onToggleFollow, onBack }: HeroProps) {
+export function Hero({ playlist, onBack }: HeroProps) {
   return (
     <div className="relative pt-24 pb-8 md:pt-32">
       {/* 返回按钮：相对于 Hero 容器定位，或者 sticky */}
@@ -81,29 +79,6 @@ export function Hero({ playlist, isFollowing, onToggleFollow, onBack }: HeroProp
         <p className="mb-8 max-w-4xl text-lg leading-relaxed text-neutral-300">
           {playlist?.description ?? ""}
         </p>
-
-        {/* 操作按钮 */}
-        <div className="flex gap-3">
-          <button
-            onClick={onToggleFollow}
-            className={`flex items-center gap-2 rounded-lg px-6 py-2.5 transition-all ${
-              isFollowing
-                ? "border border-amber-500/50 bg-amber-500/20 text-amber-400 hover:bg-amber-500/30"
-                : "bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30 hover:from-amber-600 hover:to-orange-700"
-            }`}
-          >
-            <Heart className={`h-4 w-4 ${isFollowing ? "fill-current" : ""}`} />
-            <span>{isFollowing ? "已关注" : "关注片单"}</span>
-          </button>
-          <button className="general-button">
-            <Share2 className="mr-2 h-4 w-4" />
-            <span>分享</span>
-          </button>
-          <button className="general-button">
-            <Play className="mr-2 h-4 w-4" />
-            <span>播放全部</span>
-          </button>
-        </div>
       </div>
     </div>
   );

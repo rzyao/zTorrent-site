@@ -102,7 +102,7 @@ interface ForumPost {
   isHot?: boolean;
 }
 
-export function PTHomePage() {
+export function DesignPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -768,9 +768,7 @@ export function PTHomePage() {
                   className="group cursor-pointer rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 transition-all hover:bg-neutral-800/50"
                 >
                   <div className="mb-2 flex items-start gap-2">
-                    {post.isPinned && (
-                      <Pin className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
-                    )}
+                    {post.isPinned && <Pin className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />}
                     {post.isHot && <Flame className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />}
                     <h3 className="line-clamp-2 flex-1 text-sm text-white transition-colors group-hover:text-amber-400">
                       {post.title}

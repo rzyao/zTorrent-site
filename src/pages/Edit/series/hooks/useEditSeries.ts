@@ -200,7 +200,6 @@ export function useEditSeries() {
              doubanRatingAverage: seriesForm.doubanRatingAverage,
              imdbRatingAverage: seriesForm.imdbRatingAverage,
              enabled: true,
-             sort: 0,
          };
 
          try {
