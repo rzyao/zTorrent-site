@@ -113,7 +113,7 @@ export default function TorrentsPage() {
       />
 
       {/* 列表区 */}
-      <div className="relative z-0 max-w-[1600px] mx-auto px-4 md:px-16 py-6">
+      <div className="relative z-0 mx-auto max-w-[1600px] px-4 py-6 md:px-16">
         {localViewMode === "grid" && (
           <GridView
             items={displayTorrents}

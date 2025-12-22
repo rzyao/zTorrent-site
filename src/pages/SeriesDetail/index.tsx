@@ -8,6 +8,7 @@ import { Hero } from "./components/Hero";
 import { InfoBar } from "./components/InfoBar";
 import { EpisodeList } from "./components/EpisodeList";
 import type { EpisodeItem } from "./types";
+import { DetailPageSkeleton } from "@/components/skeletons/DetailPageSkeleton";
 
 /**
  * 剧集详情页
@@ -28,19 +29,7 @@ export function SeriesDetailPage() {
 
   // 加载状态 - 优雅的骨架屏
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0F171E]">
-        <div className="text-center">
-          <div className="relative mx-auto mb-6 h-16 w-16">
-            {/* 外圈旋转 */}
-            <div className="absolute inset-0 animate-spin rounded-full border-4 border-transparent border-t-amber-500" />
-            {/* 内圈脉冲 */}
-            <div className="absolute inset-2 animate-pulse rounded-full bg-amber-500/20" />
-          </div>
-          <p className="text-neutral-400">正在加载剧集信息...</p>
-        </div>
-      </div>
-    );
+    return <DetailPageSkeleton />;
   }
 
   // 错误状态

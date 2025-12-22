@@ -4,6 +4,7 @@ import { Toolbar } from "./components/Toolbar";
 import { SeriesGrid } from "./components/SeriesGrid";
 import { LoadingState, ErrorState } from "./components/States";
 import { PageContainer } from "@/components/PageContainer";
+import { GridSkeleton } from "@/components/skeletons/GridSkeleton";
 
 export function SeriesPage() {
   const {
@@ -40,7 +41,11 @@ export function SeriesPage() {
         onChangeStatus={setSelectedStatus}
       />
 
-      {loading && <LoadingState />}
+      {loading && (
+        <div className="py-8">
+          <GridSkeleton count={24} />
+        </div>
+      )}
 
       {error && <ErrorState error={error} onRetry={retry} />}
 

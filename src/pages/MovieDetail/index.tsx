@@ -10,6 +10,7 @@ import { RelatedSidebar } from "./components/RelatedSidebar";
 import { AwardsSidebar } from "./components/AwardsSidebar";
 import { Lightbox } from "./components/Lightbox";
 import { useFilmDetail } from "./hooks/useFilmDetail";
+import { DetailPageSkeleton } from "@/components/skeletons/DetailPageSkeleton";
 
 interface FilmDetailPageProps {
   filmId?: string;
@@ -40,7 +41,7 @@ export default function MovieDetailPage({ filmId }: FilmDetailPageProps) {
     setLightboxOpen(true);
   };
 
-  if (loading) return <div className="default-bg-color min-h-screen" />;
+  if (loading) return <DetailPageSkeleton />;
   if (error)
     return <div className="default-bg-color min-h-screen px-4 py-8 text-orange-400">{error}</div>;
   if (!detail) return <div className="default-bg-color min-h-screen" />;

@@ -4,6 +4,7 @@ import { Toolbar } from "./components/Toolbar";
 import { MovieGrid } from "./components/MovieGrid";
 import { LoadingState, ErrorState } from "./components/States";
 import { PageContainer } from "@/components/PageContainer";
+import { GridSkeleton } from "@/components/skeletons/GridSkeleton";
 
 export function MoviesPage() {
   const {
@@ -36,7 +37,11 @@ export function MoviesPage() {
         onChangeGenre={setSelectedGenre}
       />
 
-      {loading && <LoadingState />}
+      {loading && (
+        <div className="py-8">
+          <GridSkeleton count={24} />
+        </div>
+      )}
 
       {error && <ErrorState error={error} onRetry={retry} />}
 
