@@ -70,6 +70,8 @@ git diff
 
 ### 6. 暂存所有变更（如果需要）
 
+// turbo
+
 ```bash
 git add -A
 ```
@@ -77,6 +79,8 @@ git add -A
 ### 7. 执行提交
 
 **Priority**: CRITICAL. always use chinese to git commit .
+
+// turbo
 
 ```bash
 git commit -m "<type>(<scope>): <description>"

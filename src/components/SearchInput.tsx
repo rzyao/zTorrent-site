@@ -1,65 +1,98 @@
+import * as React from "react";
 import { Search } from "lucide-react";
+import { cn } from "@/components/ui/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/components/ui/utils";
 
-interface SearchInputProps {
-  value: string;
-  onChange: (value: string) => void;
-  onSearch?: () => void;
+export interface SearchInputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
+  /** 初始值或外部控制的值 */
+  value?: string;
+  /** 搜索触发回调 (回车或点击按钮) */
+  onSearch?: (value: string) => void;
+  /** 占位符 */
   placeholder?: string;
-  className?: string; // 容器样式
-  inputClassName?: string; // 输入框额外样式
+  /** 输入框的额外样式 */
+  inputClassName?: string;
+  /** 传递给 Input 组件的 props */
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
 }
 
 /**
- * 通用搜索框组件
- * 默认样式：右侧搜索按钮，圆角输入框
- * 支持通过 className 自定义覆盖
+ * 搜索输入框组件
+ *
+ * 特性：
+ * 1. 内部管理输入状态，输入时不触发搜索
+ * 2. 仅在 "Enter" 键或点击搜索按钮时调用 onSearch
+ * 3. 支持 value prop 同步（如 URL 变化时更新内部状态）
  */
-export function SearchInput({
-  value,
-  onChange,
-  onSearch,
-  placeholder = "搜索...",
-  className,
-  inputClassName,
-}: SearchInputProps) {
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      onSearch?.();
-    }
-  };
+const SearchInput = React.forwardRef<HTMLDivElement, SearchInputProps>(
+  (
+    {
+      className,
+      value: propValue = "",
+      onSearch,
+      placeholder = "搜索...",
+      inputClassName,
+      inputProps,
+      ...props
+    },
+    ref,
+  ) => {
+    // 内部状态维护当前输入值
+    const [keyword, setKeyword] = React.useState(propValue);
 
-  return (
-    <div
-      className={cn(
-        "relative flex-1 min-w-0 md:min-w-[320px] md:max-w-[900px] lg:max-w-[1020px]",
-        className
-      )}
-    >
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        onClick={onSearch}
-        className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 text-gray-400 hover:text-amber-300 hover:bg-transparent"
-        aria-label="搜索"
-      >
-        <Search className="w-5 h-5" />
-      </Button>
-      <Input
-        type="text"
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyDown={handleKeyDown}
+    // 当 propValue 变化时（如 URL 参数变了），同步更新内部状态
+    React.useEffect(() => {
+      setKeyword(propValue);
+    }, [propValue]);
+
+    const handleSearch = () => {
+      onSearch?.(keyword.trim());
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleSearch();
+      }
+      inputProps?.onKeyDown?.(e);
+    };
+
+    return (
+      <div
+        ref={ref}
         className={cn(
-          "w-full input text-white pl-4 pr-11 py-2 md:py-4 rounded-full focus:border-[#00A8E1] focus:ring-[#00A8E1] placeholder:text-gray-500",
-          inputClassName
+          "relative min-w-0 flex-1 md:max-w-[900px] md:min-w-[320px] lg:max-w-[1020px]",
+          className,
         )}
-      />
-    </div>
-  );
-}
+        {...props}
+      >
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={handleSearch}
+          className="absolute top-1/2 right-2 h-8 w-8 -translate-y-1/2 text-gray-400 hover:bg-transparent hover:text-amber-300"
+          aria-label="搜索"
+        >
+          <Search className="h-5 w-5" />
+        </Button>
+        <Input
+          type="text"
+          placeholder={placeholder}
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className={cn(
+            "input w-full rounded-full py-2 pr-11 pl-4 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1] md:py-4",
+            inputClassName,
+          )}
+          {...inputProps}
+        />
+      </div>
+    );
+  },
+);
+SearchInput.displayName = "SearchInput";
+
+export { SearchInput };

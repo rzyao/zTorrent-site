@@ -43,7 +43,7 @@ export function Toolbar({
       <div className="mb-4 flex items-center gap-3 md:gap-4">
         <SearchInput
           value={searchQuery}
-          onChange={onSearchChange}
+          onSearch={onSearchChange}
           placeholder="搜索剧集名称..."
           inputClassName="md:py-5 rounded-lg focus:border-purple-500/50 focus:ring-purple-500/50"
         />

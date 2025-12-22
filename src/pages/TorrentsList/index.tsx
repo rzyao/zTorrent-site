@@ -9,6 +9,7 @@ import { useDownloaders } from "@/context/DownloadersContext";
 import { DownloadToDownloaderModal } from "@/components/DownloadToDownloaderModal";
 import type { Torrent, ViewMode } from "@/pages/TorrentsList/types";
 import { usePreferenceStore } from "@/stores/preferenceStore";
+import { TorrentGridSkeleton } from "@/components/skeletons/TorrentGridSkeleton";
 
 /**
  * TorrentsPage（容器组件）
@@ -31,6 +32,7 @@ export default function TorrentsPage() {
     setCurrentPage,
     totalPages,
     getCategoryLabel,
+    isLoading, // 解构出 isLoading
   } = useTorrentsList();
 
   // 视图模式与筛选开关为纯UI状态（不进入业务hook）
@@ -114,21 +116,29 @@ export default function TorrentsPage() {
 
       {/* 列表区 */}
       <div className="relative z-0 mx-auto max-w-[1600px] px-4 py-6 md:px-16">
-        {localViewMode === "grid" && (
-          <GridView
-            items={displayTorrents}
-            getCategoryLabel={getCategoryLabel}
-            onDownload={handleDownload}
-            getCoverSrc={getCoverSrc}
-          />
-        )}
-        {localViewMode === "list" && (
-          <ListView
-            items={displayTorrents}
-            getCategoryLabel={getCategoryLabel}
-            onDownload={handleDownload}
-            getCoverSrc={getCoverSrc}
-          />
+        {isLoading ? (
+          <div className="py-2">
+            <TorrentGridSkeleton count={24} />
+          </div>
+        ) : (
+          <>
+            {localViewMode === "grid" && (
+              <GridView
+                items={displayTorrents}
+                getCategoryLabel={getCategoryLabel}
+                onDownload={handleDownload}
+                getCoverSrc={getCoverSrc}
+              />
+            )}
+            {localViewMode === "list" && (
+              <ListView
+                items={displayTorrents}
+                getCategoryLabel={getCategoryLabel}
+                onDownload={handleDownload}
+                getCoverSrc={getCoverSrc}
+              />
+            )}
+          </>
         )}
 
         {/* 分页 */}

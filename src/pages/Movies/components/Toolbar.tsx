@@ -35,10 +35,10 @@ export function Toolbar({
   return (
     <div>
       {/* 搜索与排序 */}
-      <div className="flex items-center gap-3 md:gap-4 mb-4">
+      <div className="mb-4 flex items-center gap-3 md:gap-4">
         <SearchInput
           value={searchQuery}
-          onChange={onSearchChange}
+          onSearch={onSearchChange}
           placeholder="搜索电影名称、导演..."
           inputClassName="md:py-5 rounded-lg focus:border-amber-500/50 focus:ring-amber-500/50"
         />

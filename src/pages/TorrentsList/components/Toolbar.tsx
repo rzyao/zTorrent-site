@@ -23,7 +23,7 @@ interface ToolbarProps {
   /** 更改搜索关键字回调 */
   onChangeSearch: (v: string) => void;
   /** 提交搜索回调（点击图标或按 Enter） */
-  onSearch: () => void;
+  onSearch: (value?: string) => void;
 
   /** 视图模式 */
   viewMode: ViewMode;
@@ -65,11 +65,11 @@ export function Toolbar(props: ToolbarProps) {
   } = props;
 
   return (
-    <div className="sticky top-0 bg-[#0F171E] border-b border-gray-800 z-30">
-      <div className="w-full px-4 md:px-8 pt-4 pb-3">
-        <div className="flex flex-col flex-wrap md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
+    <div className="sticky top-0 z-30 border-b border-gray-800 bg-[#0F171E]">
+      <div className="w-full px-4 pt-4 pb-3 md:px-8">
+        <div className="flex flex-col flex-wrap gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
           {/* 分类导航 */}
-          <div className="w-full md:flex-auto md:w-auto md:min-w-0 md:pr-2 overflow-x-auto">
+          <div className="w-full overflow-x-auto md:w-auto md:min-w-0 md:flex-auto md:pr-2">
             <CategoryNav
               inline
               active={selectedCategory}
@@ -83,17 +83,19 @@ export function Toolbar(props: ToolbarProps) {
           </div>
 
           {/* 搜索 / 排序 / 视图切换 / 筛选 */}
-          <div className="flex items-center md:justify-end gap-2 md:gap-3 flex-wrap  max-w-full">
+          <div className="flex max-w-full flex-wrap items-center gap-2 md:justify-end md:gap-3">
             {/* 搜索框组件 */}
             <SearchInput
               value={searchQuery}
-              onChange={onChangeSearch}
-              onSearch={onSearch}
+              onSearch={(val) => {
+                onChangeSearch(val);
+                onSearch(val);
+              }}
               placeholder="搜索种子、标题..."
             />
 
             {/* 排序选择（移动端图标触发） */}
-            <div className="md:hidden relative">
+            <div className="relative md:hidden">
               <NativeSelect
                 value={sortBy}
                 onChange={(v) => onChangeSortBy(v as SortOption["value"])}
@@ -103,12 +105,12 @@ export function Toolbar(props: ToolbarProps) {
                 }))}
                 variant="cyan"
                 iconOnly
-                icon={<ArrowUpDown className="w-4 h-4" strokeWidth={1.75} />}
+                icon={<ArrowUpDown className="h-4 w-4" strokeWidth={1.75} />}
               />
             </div>
 
             {/* 排序选择（桌面端） */}
-            <div className="hidden md:block relative">
+            <div className="relative hidden md:block">
               <NativeSelect
                 value={sortBy}
                 onChange={(v) => onChangeSortBy(v as SortOption["value"])}
@@ -127,33 +129,33 @@ export function Toolbar(props: ToolbarProps) {
             <Button
               variant="outline"
               onClick={onToggleFilters}
-              className="bg-gray-900 border-gray-700 text-white border border-gray-700 hover:text-amber-300 hover:border-amber-500/50 px-4 h-9"
+              className="h-9 border border-gray-700 bg-gray-900 px-4 text-white hover:border-amber-500/50 hover:text-amber-300"
               aria-pressed={showFilters}
             >
-              <SlidersHorizontal className="w-5 h-5" />
+              <SlidersHorizontal className="h-5 w-5" />
             </Button>
 
             {/* 视图切换 */}
-            <div className="flex border border-gray-700 rounded-md overflow-hidden">
+            <div className="flex overflow-hidden rounded-md border border-gray-700">
               <Button
                 onClick={() => onChangeViewMode("grid")}
                 className={`h-9 px-3 transition-colors ${
                   viewMode === "grid"
-                    ? "bg-linear-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300 whitespace-nowrap"
-                    : "bg-gray-900 text-gray-400 border border-gray-900 hover:text-amber-300 hover:border-amber-500/50"
+                    ? "border border-amber-500/50 bg-linear-to-r from-amber-500/20 to-orange-500/20 whitespace-nowrap text-amber-300"
+                    : "border border-gray-900 bg-gray-900 text-gray-400 hover:border-amber-500/50 hover:text-amber-300"
                 }`}
               >
-                <Grid3x3 className="w-5 h-5" />
+                <Grid3x3 className="h-5 w-5" />
               </Button>
               <Button
                 onClick={() => onChangeViewMode("list")}
                 className={`h-9 px-3 transition-colors ${
                   viewMode === "list"
-                    ? "bg-linear-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300 whitespace-nowrap"
-                    : "bg-gray-900 text-gray-400 border border-gray-900 hover:text-amber-300 hover:border-amber-500/50"
+                    ? "border border-amber-500/50 bg-linear-to-r from-amber-500/20 to-orange-500/20 whitespace-nowrap text-amber-300"
+                    : "border border-gray-900 bg-gray-900 text-gray-400 hover:border-amber-500/50 hover:text-amber-300"
                 }`}
               >
-                <List className="w-5 h-5" />
+                <List className="h-5 w-5" />
               </Button>
             </div>
           </div>

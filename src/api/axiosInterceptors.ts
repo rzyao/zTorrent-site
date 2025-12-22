@@ -232,6 +232,10 @@ export function setupAxiosInterceptors() {
           }
         }
 
+        // 修改响应状态码，确保 generated client 能够识别为错误
+        // openapi-typescript-codegen 生成的代码会检查 status 是否在 200-299 之间
+        response.status = businessCode;
+
         // 抛出错误，中断后续 Promise 链，让 catch 或 useAsyncAction 捕获
         // 将原始 response 作为 mistake 抛出，或者构建一个新的 Error
         const error = new AxiosError(

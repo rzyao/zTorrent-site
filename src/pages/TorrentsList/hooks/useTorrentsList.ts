@@ -24,8 +24,8 @@ export function useTorrentsList() {
   const itemsPerPage = 50; // 保持与旧页面一致
 
   // 提交搜索（点击图标或按 Enter）
-  const handleSearch = () => {
-    setCommittedSearch(searchQuery.trim());
+  const handleSearch = (value?: string) => {
+    setCommittedSearch((value ?? searchQuery).trim());
     setCurrentPage(1); // 搜索时重置页码
   };
 
@@ -112,7 +112,6 @@ export function useTorrentsList() {
     },
     staleTime: 1000 * 60 * 10,
     gcTime: 1000 * 60 * 30,
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,

@@ -1,0 +1,107 @@
+---
+description: 页面拆分
+---
+
+拆分的核心原则是：关注点分离（Separation of Concerns）。我们可以从 UI、逻辑、数据定义三个维度进行拆分。
+
+以下是一套系统的拆分方案：
+
+1. 拆分 UI 组件 (提取视图层)
+观察 return (...) 中的 JSX 代码，将页面中独立的视觉块提取为子组件。
+
+原则：如果是“纯展示”的内容，尽量拆分为无状态组件 (Stateless Components)，只通过 props 接收数据和回调函数。
+
+识别方法：寻找 JSX 中的独立区域，例如：顶部的搜索栏、中间的表格/列表、底部的弹窗（Modal）。
+
+示例： 把原本混在一起的：
+
+TypeScript
+
+// ❌ MainPage.tsx
+return (
+  <div>
+    <div className="search-bar">...</div>
+    <div className="user-list">...</div>
+    <div className="edit-modal">...</div>
+  </div>
+)
+拆分为：
+
+TypeScript
+
+// ✅ MainPage.tsx
+return (
+  <div>
+    <SearchBar onSearch={handleSearch} />
+    <UserList data={users} onEdit={openEditModal} />
+    <EditUserModal visible={isModalOpen} onSubmit={handleEdit} />
+  </div>
+)
+2. 提取自定义 Hooks (提取逻辑层)
+如果你的组件里充斥着大量的 useState、useEffect 和事件处理函数，应该把它们抽离出去。
+
+原则：UI 组件只负责“显示”，Hook 负责“怎么做”（数据获取、状态变更）。
+
+做法：创建一个 use[PageName].ts 文件，把状态和函数移进去，最后返回 UI 需要的数据和方法。
+
+代码演示：
+
+TypeScript
+
+// 📂 useUserPage.ts (逻辑文件)
+export const useUserPage = () => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+     // 获取数据逻辑...
+  }, []);
+
+  const handleSearch = (keyword) => { /* ... */ };
+
+  return { users, loading, handleSearch }; // 返回给 UI 使用
+};
+
+// 📂 UserPage.tsx (主文件，现在很清爽)
+const UserPage = () => {
+  const { users, loading, handleSearch } = useUserPage(); // 引入逻辑
+
+  return <UserList users={users} loading={loading} onSearch={handleSearch} />;
+};
+3. 抽离静态数据、类型和工具函数
+不要让这些非组件代码占用 .tsx 文件的头部空间。
+
+TypeScript 类型 (interface/type)：移入 types.ts 或 interfaces.ts。
+
+常量 (Constants)：如下拉框选项、表单配置、API 地址，移入 constants.ts。
+
+纯函数 (Utils)：如日期格式化、数据转换，移入 utils.ts。
+
+4. 推荐的目录结构
+不要把拆分出来的文件随便乱放，建议采用 “文件夹即组件” 的模式。
+
+假设你的页面叫 Dashboard，重构后的目录结构如下：
+
+Plaintext
+
+src/pages/Dashboard/
+├── components/           # 存放该页面专用的子组件
+│   ├── Header.tsx        # 顶部栏
+│   ├── DataTable.tsx     # 数据表格
+│   └── ActionModal.tsx   # 操作弹窗
+├── hooks/                # 存放该页面专用的逻辑
+│   └── useDashboardData.ts
+├── utils/                # (可选) 页面专用的工具函数
+├── types.ts              # 类型定义
+├── constants.ts          # 静态常量 (如表格列定义 tableColumns)
+└── index.tsx             # 主入口文件 (负责组装以上所有内容)
+5. 实战拆分步骤清单
+你可以按照这个顺序操作，风险最小：
+
+剥离常量与类型：先把文件头部的 interface 和 const 移到单独文件，主文件 import 进来。
+
+拆分大块 UI：把 JSX 里明显的独立块（如 Modal、Table）剪切出去，新建文件，通过 Props 传参，确保主文件依然能运行。
+
+拆分逻辑 (Hook)：当 UI 拆分完后，如果主文件依然很大（因为有很多 state 和 function），就创建一个 Custom Hook，把这些逻辑剪切进去。
+
+最后整理：检查 import 路径，确保命名规范。

@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { getAuthService, getPermissionsService } from '../api/lazy';
+import { createContext, useContext, useEffect, useState } from "react";
+import { getAuthService, getPermissionsService } from "../api/lazy";
 
 /**
  * 用户访问权限类型定义
@@ -31,10 +31,10 @@ type AccessState = {
 
 // 创建 Access Context，设置默认值
 const AccessContext = createContext<AccessState>({
-  access: { roles: [], permissions: [], username: '', avatar: null },
+  access: { roles: [], permissions: [], username: "", avatar: null },
   loading: false,
   error: null,
-  reload: () => { },
+  reload: () => {},
 });
 
 /**
@@ -44,10 +44,15 @@ const AccessContext = createContext<AccessState>({
  */
 export function AccessProvider({ children }: { children: React.ReactNode }) {
   // 管理用户权限状态
-  const [access, setAccess] = useState<UserAccess>({ roles: [], permissions: [], username: '', avatar: null });
+  const [access, setAccess] = useState<UserAccess>({
+    roles: [],
+    permissions: [],
+    username: "",
+    avatar: null,
+  });
 
   // 初始化加载状态：如果本地有 accessToken，则初始 loading 为 true，避免未加载完时的页面闪烁或错误跳转
-  const [loading, setLoading] = useState(() => !!localStorage.getItem('accessToken'));
+  const [loading, setLoading] = useState(() => !!localStorage.getItem("accessToken"));
 
   // 错误状态管理
   const [error, setError] = useState<string | null>(null);
@@ -57,10 +62,10 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
    * 同时获取用户 Profile 和 聚合权限信息
    */
   const load = async () => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem("accessToken");
     // 如果没有 token，清空状态并结束加载
     if (!token) {
-      setAccess({ roles: [], permissions: [], username: '', avatar: null });
+      setAccess({ roles: [], permissions: [], username: "", avatar: null });
       setLoading(false);
       return;
     }
@@ -76,7 +81,7 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
 
     // 并行请求：获取用户信息和聚合权限
     Promise.allSettled([
-      AuthService.authControllerProfile() as Promise<any>,
+      AuthService.authControllerProfilePost({}) as Promise<any>,
       PermissionsService.permissionsControllerAggregateOfUser() as Promise<any>,
     ])
       .then((results) => {
@@ -84,29 +89,29 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
         const aggregateRes = results[1];
 
         let roles: string[] = [];
-        let username: string = '';
+        let username: string = "";
         let permissionsFromProfile: string[] = [];
         let permissionsFromAggregate: string[] = [];
         let avatar: string | null = null;
 
         // 处理 Profile 请求结果（包含基础信息和角色）
-        if (profileRes.status === 'fulfilled') {
+        if (profileRes.status === "fulfilled") {
           const resp: any = profileRes.value;
           // 兼容后端不同的响应结构 (code/data 包装)
           const body = resp?.code !== undefined ? resp : resp?.data;
           const data = body?.data ?? body;
           roles = Array.isArray(data?.roles) ? data.roles : [];
           permissionsFromProfile = Array.isArray(data?.permissions) ? data.permissions : [];
-          username = String(data?.username ?? data?.user?.username ?? '');
+          username = String(data?.username ?? data?.user?.username ?? "");
           const rawAvatar = (data?.avatar ?? data?.user?.avatar ?? null) as any;
           // 确保头像为非空字符串
-          avatar = typeof rawAvatar === 'string' && rawAvatar.trim().length > 0 ? rawAvatar : null;
+          avatar = typeof rawAvatar === "string" && rawAvatar.trim().length > 0 ? rawAvatar : null;
         } else {
-          setError((profileRes as any)?.reason?.message || '获取用户信息失败');
+          setError((profileRes as any)?.reason?.message || "获取用户信息失败");
         }
 
         // 处理聚合权限请求结果（包含细粒度权限）
-        if (aggregateRes.status === 'fulfilled') {
+        if (aggregateRes.status === "fulfilled") {
           const resp: any = aggregateRes.value;
           const body = resp?.code !== undefined ? resp : resp?.data;
           const data = body?.data ?? body;
@@ -116,12 +121,13 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
         }
 
         // 优先使用聚合接口返回的权限，若没有则回退到 Profile 接口的权限
-        const permissions = permissionsFromAggregate.length > 0 ? permissionsFromAggregate : permissionsFromProfile;
+        const permissions =
+          permissionsFromAggregate.length > 0 ? permissionsFromAggregate : permissionsFromProfile;
 
         // 更新全局 Access 状态
         setAccess({ roles, permissions, username, avatar });
       })
-      .catch((e: any) => setError(e?.message || '获取权限数据失败'))
+      .catch((e: any) => setError(e?.message || "获取权限数据失败"))
       .finally(() => setLoading(false));
   };
 
@@ -131,8 +137,8 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
 
     // 监听自定义事件 'authChange'，以便在登录/登出时自动重新加载状态
     const onAuthChange = () => load();
-    window.addEventListener('authChange', onAuthChange);
-    return () => window.removeEventListener('authChange', onAuthChange);
+    window.addEventListener("authChange", onAuthChange);
+    return () => window.removeEventListener("authChange", onAuthChange);
   }, []);
 
   return (

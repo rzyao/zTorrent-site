@@ -20,12 +20,12 @@ const sortOptions = [
 ];
 
 const navItems: CategoryNavItem[] = [
-  { label: "所有片单", value: "all", icon: <List className="w-4 h-4" /> },
-  { label: "我的片单", value: "mine", icon: <Film className="w-4 h-4" /> },
+  { label: "所有片单", value: "all", icon: <List className="h-4 w-4" /> },
+  { label: "我的片单", value: "mine", icon: <Film className="h-4 w-4" /> },
   {
     label: "我关注的",
     value: "following",
-    icon: <Heart className="w-4 h-4" />,
+    icon: <Heart className="h-4 w-4" />,
   },
 ];
 
@@ -49,10 +49,10 @@ export function PlaylistsControls({
         triggerClassName="rounded-xl px-4 md:px-4 py-4.5" // 覆盖默认样式以匹配原设计
         inactiveClassName="border border-neutral-700/50 text-neutral-300 whitespace-nowrap flex items-center gap-2 hover:border-amber-500/50 hover:text-amber-300 hover:bg-neutral-900/30 transition-all"
       />
-      <div className="flex items-center gap-3 md:gap-4 mb-4">
+      <div className="mb-4 flex items-center gap-3 md:gap-4">
         <SearchInput
           value={searchQuery}
-          onChange={onSearchChange}
+          onSearch={onSearchChange}
           placeholder="搜索片单..."
           inputClassName="md:py-5 rounded-lg focus:border-amber-500/50 focus:ring-amber-500/50" // 保持页面的琥珀色主题
         />
