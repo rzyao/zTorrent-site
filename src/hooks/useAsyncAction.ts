@@ -91,9 +91,15 @@ export function useAsyncAction(options: UseAsyncActionOptions = {}) {
       // 仅当 showErrorToast 为 true 时，手动显示错误 toast
       // 否则由 Axios 响应拦截器统一处理
       if (showErrorToast) {
-        const axiosError = err as { response?: { data?: { message?: string } }; data?: { message?: string }; message?: string };
-        const responseMessage = axiosError.response?.data?.message || axiosError.data?.message;
-        const errorMsg = responseMessage || axiosError?.message || errorMessage || '操作失败';
+        const anyError = err as any;
+        // 兼容 AxiosError (response.data) 和 ApiError (body)
+        const responseMessage =
+          anyError.response?.data?.message ||
+          anyError.body?.message ||
+          anyError.data?.message;
+        
+        const errorMsg =
+          responseMessage || anyError?.message || errorMessage || '操作失败';
         customToast.error(errorMsg);
       }
 
