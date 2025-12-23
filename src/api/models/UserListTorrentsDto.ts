@@ -3,7 +3,13 @@
 /* tslint:disable */
 /* eslint-disable */
 export type UserListTorrentsDto = {
+    /**
+     * 页码
+     */
     page?: number;
+    /**
+     * 每页数量
+     */
     limit?: number;
     /**
      * 用户可展示分类中进一步筛选的分类ID

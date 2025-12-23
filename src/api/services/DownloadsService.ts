@@ -8,7 +8,27 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class DownloadsService {
     /**
-     * 一次性下载种子（Token 原子消费）
+     * 通过 Token 下载种子（GET，适用于浏览器/下载器）
+     * @param token 一次性下载 Token
+     * @returns binary 返回 .torrent 文件
+     * @throws ApiError
+     */
+    public static downloadsControllerDownloadGet(
+        token: string,
+    ): CancelablePromise<Blob> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/download/{token}',
+            path: {
+                'token': token,
+            },
+            errors: {
+                404: `Token 无效或已过期`,
+            },
+        });
+    }
+    /**
+     * 一次性下载种子（POST，Token 原子消费）
      * @param requestBody
      * @returns binary 返回 .torrent 文件
      * @throws ApiError

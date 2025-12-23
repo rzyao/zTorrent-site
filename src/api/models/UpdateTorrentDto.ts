@@ -4,17 +4,9 @@
 /* eslint-disable */
 export type UpdateTorrentDto = {
     /**
-     * 种子ID
-     */
-    id: string;
-    /**
      * 种子名称
      */
     name?: string;
-    /**
-     * 描述
-     */
-    description?: string;
     /**
      * 分类
      */
@@ -27,22 +19,52 @@ export type UpdateTorrentDto = {
     audioCodec?: string;
     productionTeam?: string;
     region?: string;
-    imdbUrl?: string;
-    doubanUrl?: string;
     subtitleType?: string;
     /**
      * 语言类型
      */
     language?: string;
-    mediaInfo?: string;
+    imdbUrl?: string;
+    doubanUrl?: string;
     /**
-     * 是否匿名
+     * 描述
      */
-    isAnonymous?: boolean;
+    description?: string;
+    /**
+     * 封面URL或相对路径
+     */
+    cover?: string;
+    mediaInfo?: string;
     /**
      * 剧照链接数组
      */
     stills?: Array<string>;
+    source?: string;
+    price?: number;
+    /**
+     * 标签数组
+     */
+    tags?: Array<string>;
+    /**
+     * 徽章数组：热门、典藏、推荐
+     */
+    badges?: Array<string>;
+    /**
+     * IMDb评分 0-10
+     */
+    imdbRating?: number;
+    /**
+     * 豆瓣评分 0-10
+     */
+    doubanRating?: number;
+    /**
+     * 种子ID
+     */
+    id: string;
+    /**
+     * 是否匿名
+     */
+    isAnonymous?: boolean;
     /**
      * 剧照缩略图数组
      */
@@ -69,30 +91,9 @@ export type UpdateTorrentDto = {
      */
     approvedAt?: string;
     /**
-     * 价格
-     */
-    price?: number;
-    source?: string;
-    /**
-     * 标签数组
-     */
-    tags?: Array<string>;
-    /**
-     * 徽章数组：热门、典藏、推荐
-     */
-    badges?: Array<string>;
-    /**
      * 多文件列表
      */
     multiFileList?: Array<string>;
     nfoPath?: string;
-    /**
-     * IMDb评分 0-10，保留1位小数
-     */
-    imdbRating?: number;
-    /**
-     * 豆瓣评分 0-10，保留1位小数
-     */
-    doubanRating?: number;
 };
 

@@ -18,8 +18,13 @@ import type { ListPendingCoversResponseDto } from '../models/ListPendingCoversRe
 import type { ListTorrentsDto } from '../models/ListTorrentsDto';
 import type { ListTorrentsResponseDto } from '../models/ListTorrentsResponseDto';
 import type { OkDto } from '../models/OkDto';
+import type { PendingReviewsDto } from '../models/PendingReviewsDto';
+import type { PendingReviewsResponseDto } from '../models/PendingReviewsResponseDto';
 import type { RecordDownloadDto } from '../models/RecordDownloadDto';
 import type { ReviewDto } from '../models/ReviewDto';
+import type { ReviewerListTorrentsDto } from '../models/ReviewerListTorrentsDto';
+import type { ReviewHistoryDto } from '../models/ReviewHistoryDto';
+import type { ReviewHistoryResponseDto } from '../models/ReviewHistoryResponseDto';
 import type { SearchTorrentsDto } from '../models/SearchTorrentsDto';
 import type { SearchTorrentsResponseDto } from '../models/SearchTorrentsResponseDto';
 import type { UpdateTorrentDto } from '../models/UpdateTorrentDto';
@@ -251,7 +256,7 @@ export class TorrentsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/torrents/user/list-torrents',
+            url: '/torrents/user/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -309,7 +314,7 @@ export class TorrentsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/torrents/admin/list-torrents',
+            url: '/torrents/admin/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -368,6 +373,93 @@ export class TorrentsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/torrents/create',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 审核员：查询种子列表（支持按审核状态过滤）
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentsControllerListTorrentsForReviewer(
+        requestBody: ReviewerListTorrentsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: AdminListTorrentsResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/reviewer/list',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 审核员：获取待审核列表
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentsControllerListPendingReviews(
+        requestBody: PendingReviewsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: PendingReviewsResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/reviews/pending',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 审核员：获取审核历史
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentsControllerListReviewHistory(
+        requestBody: ReviewHistoryDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ReviewHistoryResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/reviews/history',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

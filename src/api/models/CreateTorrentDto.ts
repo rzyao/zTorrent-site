@@ -11,14 +11,6 @@ export type CreateTorrentDto = {
      * 分类
      */
     category?: string;
-    /**
-     * 子分类唯一键数组
-     */
-    subCategories?: Array<string>;
-    /**
-     * 子分类唯一键数组（兼容字段名：subCaterory）
-     */
-    subCaterory?: Array<string>;
     title?: string;
     subTitle?: string;
     year?: number;
@@ -44,17 +36,9 @@ export type CreateTorrentDto = {
     cover?: string;
     mediaInfo?: string;
     /**
-     * 是否匿名，字符串true/false
-     */
-    isAnonymous?: string;
-    /**
      * 剧照链接数组
      */
     stills?: Array<string>;
-    /**
-     * 剧照缩略图数组
-     */
-    stillsThumbs?: Array<string>;
     source?: string;
     price?: number;
     /**
@@ -66,12 +50,28 @@ export type CreateTorrentDto = {
      */
     badges?: Array<string>;
     /**
-     * IMDb评分 0-10，保留1位小数
+     * IMDb评分 0-10
      */
     imdbRating?: number;
     /**
-     * 豆瓣评分 0-10，保留1位小数
+     * 豆瓣评分 0-10
      */
     doubanRating?: number;
+    /**
+     * 子分类唯一键数组
+     */
+    subCategories?: Array<string>;
+    /**
+     * 子分类唯一键数组（兼容字段名：subCaterory）
+     */
+    subCaterory?: Array<string>;
+    /**
+     * 是否匿名，字符串true/false
+     */
+    isAnonymous?: string;
+    /**
+     * 剧照缩略图数组
+     */
+    stillsThumbs?: Array<string>;
 };
 

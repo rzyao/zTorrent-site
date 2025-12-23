@@ -4,19 +4,55 @@
 /* eslint-disable */
 import type { AdvancedRuleDto } from './AdvancedRuleDto';
 export type AdminListTorrentsDto = {
-    category?: string;
-    uploaderId?: string;
-    isEnabled?: boolean;
-    visible?: boolean;
-    isBanned?: boolean;
-    sortBy?: AdminListTorrentsDto.sortBy;
-    order?: AdminListTorrentsDto.order;
-    logic?: AdminListTorrentsDto.logic;
-    rules?: Array<AdvancedRuleDto>;
+    /**
+     * 页码
+     */
     page?: number;
+    /**
+     * 每页数量
+     */
     limit?: number;
+    /**
+     * 按分类过滤
+     */
+    category?: string;
+    /**
+     * 按上传者ID过滤
+     */
+    uploaderId?: string;
+    /**
+     * 是否启用
+     */
+    isEnabled?: boolean;
+    /**
+     * 是否可见
+     */
+    visible?: boolean;
+    /**
+     * 是否被封禁
+     */
+    isBanned?: boolean;
+    /**
+     * 排序字段
+     */
+    sortBy?: AdminListTorrentsDto.sortBy;
+    /**
+     * 排序方向
+     */
+    order?: AdminListTorrentsDto.order;
+    /**
+     * 高级规则逻辑
+     */
+    logic?: AdminListTorrentsDto.logic;
+    /**
+     * 高级查询规则
+     */
+    rules?: Array<AdvancedRuleDto>;
 };
 export namespace AdminListTorrentsDto {
+    /**
+     * 排序字段
+     */
     export enum sortBy {
         UPLOADED_AT = 'uploadedAt',
         UPDATED_AT = 'updatedAt',
@@ -26,10 +62,16 @@ export namespace AdminListTorrentsDto {
         APPROVED_AT = 'approvedAt',
         PRICE = 'price',
     }
+    /**
+     * 排序方向
+     */
     export enum order {
         ASC = 'ASC',
         DESC = 'DESC',
     }
+    /**
+     * 高级规则逻辑
+     */
     export enum logic {
         AND = 'AND',
         OR = 'OR',

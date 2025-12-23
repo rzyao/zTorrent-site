@@ -12,6 +12,10 @@ export type ReviewDto = {
      * 备注（≤500）
      */
     note?: string;
+    /**
+     * 拒绝原因代码
+     */
+    reasonCode?: string;
 };
 export namespace ReviewDto {
     export enum action {

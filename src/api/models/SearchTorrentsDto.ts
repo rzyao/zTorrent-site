@@ -4,12 +4,28 @@
 /* eslint-disable */
 export type SearchTorrentsDto = {
     /**
-     * 搜索字符串：ID或关键词
+     * 搜索关键词 (Title/SubTitle)
      */
-    'q': string;
+    keyword?: string;
     /**
-     * 影片ID（排除已关联该影片的种子）
+     * 分类 KEY
      */
-    filmId: string;
+    category?: string;
+    /**
+     * 排序字段
+     */
+    sortBy?: string;
+    /**
+     * 排序方向
+     */
+    order?: string;
+    /**
+     * 页码
+     */
+    page: number;
+    /**
+     * 每页数量
+     */
+    limit: number;
 };
 
