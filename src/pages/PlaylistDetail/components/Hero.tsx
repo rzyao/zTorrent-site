@@ -3,6 +3,8 @@ import type { PlaylistDetail } from "../types";
 
 interface HeroProps {
   playlist: PlaylistDetail | null;
+  isFollowing: boolean;
+  onToggleFollow: () => void;
   onBack: () => void;
 }
 
@@ -14,7 +16,7 @@ interface HeroProps {
 // 拆分原因：
 // - 将页面的头部展示（封面、标题、统计、按钮）独立为纯展示组件，便于复用与维护
 // - 降低主页面文件体积与复杂度
-export function Hero({ playlist, onBack }: HeroProps) {
+export function Hero({ playlist, isFollowing, onToggleFollow, onBack }: HeroProps) {
   return (
     <div className="relative pt-24 pb-8 md:pt-32">
       {/* 返回按钮：相对于 Hero 容器定位，或者 sticky */}

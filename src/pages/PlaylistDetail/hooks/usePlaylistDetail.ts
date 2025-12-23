@@ -52,6 +52,7 @@ export function usePlaylistDetail(playlistId: string) {
           tags: Array.isArray(rawDetail?.tags) ? rawDetail.tags : [],
           films: [], // 原始 films 已废弃，保持为空
           isLiked: false,
+          isFavorited: !!rawDetail?.isFavorited,
         };
         
         setPlaylist(adaptedDetail);

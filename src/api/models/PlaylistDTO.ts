@@ -24,6 +24,10 @@ export type PlaylistDTO = {
     films: Array<PlaylistItemDTO>;
     stats: PlaylistStatsDTO;
     meta: PlaylistMetaDTO;
+    /**
+     * 是否已收藏
+     */
+    isFavorited?: boolean;
 };
 export namespace PlaylistDTO {
     /**

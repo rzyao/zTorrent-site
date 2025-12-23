@@ -1,337 +1,96 @@
 ---
-description: 优化指定页面的样式，参考 index.css 中定义的设计规范
+description: 参照 /docs/design-style 目录下的设计规范，对指定页面/组件进行样式优化和风格统一。
 ---
 
-# 页面样式优化工作流
+# Style Optimizer (样式优化器)
 
-本工作流用于优化指定页面的样式，使其符合 `src/index.css` 中定义的设计规范。
+你是一位 **资深 UI/UX 工程师** 和 **前端架构师**。
+你的核心任务是根据 `/docs/design-style/` 下的设计系统文档，对用户指定的前端页面或组件进行样式重构，确保视觉风格的高度统一和代码的规范性。
 
-## 设计规范速查
+## Role & Goal
 
-### 颜色体系
+- **Role**: Design System Enforcer.
+- **Goal**:
+  1.  消除 Hardcoded 样式，转为使用设计 Token (Tailwind classes)。
+  2.  统一组件外观（Button, Card, Badge, Layouts 等）。
+  3.  提升页面的响应式表现和交互细节。
+- **Reference**: `/docs/design-style/*.md`。
 
-| 用途           | 颜色值                    | 说明               |
-| -------------- | ------------------------- | ------------------ |
-| **主色调**     | `#F59E0B` (amber-500)     | 高亮边框、焦点状态 |
-| **次色调**     | `#FBBF24` (amber-400)     | hover 文字颜色     |
-| **文字颜色**   | `#FCD34D` (amber-300)     | 按钮文字           |
-| **渐变起始**   | `rgba(245, 158, 11, 0.2)` | amber-500/20       |
-| **渐变结束**   | `rgba(249, 115, 22, 0.2)` | orange-500/20      |
-| **页面背景**   | `#0F171E`                 | 深蓝黑色           |
-| **卡片背景**   | `rgba(38, 38, 38, 0.4)`   | neutral-800/40     |
-| **输入框背景** | `rgba(23, 23, 23, 0.5)`   | neutral-900/50     |
-| **边框颜色**   | `rgba(64, 64, 64, 0.5)`   | neutral-700/50     |
-| **滚动条轨道** | `rgba(38, 38, 38, 0.6)`   | neutral-800/60     |
-| **滚动条滑块** | `#f97316` (orange-500)    | 主题滚动条         |
+## Workflow Steps
 
-### 预定义 CSS 类
+### 1. Initialization (初始化)
 
-| 类名                     | 用途         | 特性                  |
-| ------------------------ | ------------ | --------------------- |
-| `.default-bg-color`      | 页面背景     | `#0F171E`             |
-| `.card`                  | 卡片容器     | 背景 + 边框           |
-| `.card-hover`            | 可悬停卡片   | 带有 hover 边框变化   |
-| `.card-item`             | 卡片内部元素 | 较浅背景 + 边框       |
-| `.input`                 | 输入框       | 带有 hover/focus 状态 |
-| `.general-button`        | 通用按钮     | 渐变背景 + 边框       |
-| `.search-button`         | 搜索按钮     | 类似 general-button   |
-| `.page-container`        | 页面容器     | 响应式内边距          |
-| `.scrollbar-hide`        | 隐藏滚动条   | 保留滚动功能          |
-| `.scrollbar-themed`      | 主题滚动条   | 橙色滑块              |
-| `.scrollbar-themed-dark` | 深色滚动条   | 深棕色滑块            |
-| `.text` + `.text-parent` | 文字悬停效果 | 父级 hover 时子级变色 |
-| `.native-select`         | 原生 Select  | 与 Radix UI 一致      |
+确认用户需要优化的目标文件。
 
-### 悬浮效果模式
+- 如果用户提供了文件路径或名称，直接开始。
+- 如果未提供，请询问：`请告诉我需要优化的页面或组件文件路径。`
+- 使用 `view_file` 读取目标文件的当前代码。
 
-项目中定义了两种悬浮效果，可单独或组合使用：
+### 2. Load Design Context (加载设计规范)
 
-#### 1. 边框变色 (`.card-hover`)
-
-当鼠标悬停在元素上时，边框从默认的 `neutral-700/50` 变为 `amber-500/50`。
-
-```css
-/* index.css 中的定义 */
-.card-hover {
-  background-color: rgba(38, 38, 38, 0.4);
-}
-.card-hover:hover {
-  border-color: rgba(245, 158, 11, 0.5); /* amber-500/50 */
-}
-```
-
-**使用方式**：
-
-```tsx
-// ✅ 基础卡片 + hover 边框效果
-<div className="card card-hover rounded-lg p-4">卡片内容</div>
-```
-
-#### 2. 文字变色 (`.text-parent` + `.text`)
-
-当父元素被悬停时，内部带有 `.text` 类的子元素文字从白色变为 `amber-400`。
-
-```css
-/* index.css 中的定义 */
-.text {
-  color: #ffffff;
-  transition: color 0.15s ease-in-out;
-}
-.text-parent:hover .text {
-  color: #fbbf24; /* amber-400 */
-}
-```
-
-**使用方式**：
-
-```tsx
-// ✅ 列表项：悬停时标题变色
-<div className="text-parent cursor-pointer">
-  <h3 className="text truncate">标题文字</h3>
-  <p className="text-neutral-400">描述文字（不变色）</p>
-</div>
-```
-
-#### 3. 组合使用（推荐）
-
-在列表视图中，通常同时需要边框变色和文字变色效果：
-
-```tsx
-// ✅ 完整的列表项样式（参考 ListView.tsx）
-<div className="card card-hover text-parent cursor-pointer rounded-lg p-4 transition-all duration-300">
-  <div className="flex gap-4">
-    {/* 缩略图 */}
-    <div className="relative h-25 w-25 shrink-0 overflow-hidden rounded">
-      <img src="..." alt="..." className="h-full w-full object-cover" />
-    </div>
-
-    {/* 信息区 */}
-    <div className="flex min-w-0 flex-1 flex-col">
-      <h3 className="text truncate text-white">主标题（悬停变色）</h3>
-      <h3 className="text truncate text-white">副标题（悬停变色）</h3>
-      <p className="text-sm text-neutral-400">其他信息（不变色）</p>
-    </div>
-  </div>
-</div>
-```
-
-**效果说明**：
-
-- 悬停时边框从灰色变为琥珀色（`.card-hover` 提供）
-- 悬停时标题文字从白色变为琥珀色（`.text-parent` + `.text` 提供）
-- 过渡动画确保变化平滑（`transition-all duration-300`）
-
-#### 4. 其他 hover 效果
-
-对于不使用预定义类的场景，可以使用 Tailwind 类：
-
-```tsx
-// 边框 hover
-<div className="border border-neutral-700/50 hover:border-amber-500/50 transition-colors">
-
-// 文字 hover
-<span className="text-white hover:text-amber-400 transition-colors">
-
-// 背景 hover
-<div className="bg-neutral-900 hover:bg-neutral-800 transition-colors">
-```
-
----
-
-## 工作流步骤
-
-### 1. 分析目标页面
+为了准确优化，你需要阅读相关的设计文档。
 
 // turbo
-首先查看目标页面文件的结构：
-
-```
-使用 view_file_outline 查看页面组件结构
-```
-
-然后阅读页面代码，重点关注：
-
-- 现有的 className 使用方式
-- 是否有内联样式
-- 颜色和间距使用是否一致
-
-### 2. 识别样式问题
-
-检查以下常见问题：
-
-**颜色问题**：
-
-- [ ] 是否使用了规范外的颜色（如纯 `bg-zinc-*`, `bg-gray-*`，应改为 `bg-neutral-*`）
-- [ ] 主色调是否统一使用 `amber/orange` 系列
-- [ ] 边框颜色是否使用 `neutral-700/50`
-
-**布局问题**：
-
-- [ ] 页面容器是否使用 `.page-container` 或等效的响应式内边距
-- [ ] 卡片是否使用 `.card` 或 `.card-hover` 类
-- [ ] 输入框是否使用 `.input` 类
-
-**交互问题**：
-
-- [ ] 按钮是否有 hover 状态
-- [ ] 输入框是否有 focus 状态
-- [ ] 可点击元素是否有 `cursor-pointer`
-
-**滚动条问题**：
-
-- [ ] 长列表是否使用主题滚动条
-- [ ] 横向滚动区域是否隐藏滚动条
-
-### 3. 应用样式优化
-
-根据问题清单，按以下优先级修改：
-
-#### 3.1 替换为预定义类
-
-优先使用 `index.css` 中的预定义类：
-
-```tsx
-// ❌ 不推荐：重复定义样式
-<div className="bg-neutral-800/40 border border-neutral-700/50 rounded-xl">
-
-// ✅ 推荐：使用预定义类
-<div className="card rounded-xl">
-```
-
-#### 3.2 统一颜色使用
-
-确保颜色使用符合规范：
-
-```tsx
-// ❌ 不推荐
-<span className="text-blue-400">...</span>
-<div className="bg-zinc-900">...</div>
-<button className="border-gray-600">...</button>
-
-// ✅ 推荐
-<span className="text-amber-400">...</span>
-<div className="bg-neutral-900">...</div>
-<button className="border-neutral-700/50">...</button>
-```
-
-#### 3.3 添加交互效果
-
-为可交互元素添加适当的状态反馈：
-
-```tsx
-// ✅ 按钮 hover 效果
-<button className="general-button">操作</button>
-
-// ✅ 卡片 hover 效果
-<div className="card-hover rounded-xl">...</div>
-
-// ✅ 链接 hover 效果 (使用 text-parent 模式)
-<a className="text-parent">
-  <span className="text">链接文字</span>
-</a>
-```
-
-#### 3.4 优化滚动区域
-
-为需要滚动的区域添加主题滚动条：
-
-```tsx
-// ✅ 垂直滚动列表
-<div className="overflow-y-auto max-h-[600px] scrollbar-themed">
-  {/* 长列表内容 */}
-</div>
-
-// ✅ 隐藏滚动条（横向滚动常用）
-<div className="overflow-x-auto scrollbar-hide">
-  {/* 横向滚动内容 */}
-</div>
-```
-
-### 4. 验证修改
-
-// turbo
-启动开发服务器预览效果：
 
 ```powershell
-pnpm dev
+Get-ChildItem -Path "docs/design-style" -Filter "*.md" | Select-Object Name
 ```
 
-### 5. 视觉检查清单
+根据目标页面中包含的 UI 元素，有选择地读取设计文档：
 
-在浏览器中检查以下项目：
+- **容器/布局** -> 读取 `layouts.md`
+- **卡片/列表** -> 读取 `cards.md`
+- **按钮/操作** -> 读取 `buttons.md`
+- **标签/状态** -> 读取 `badges.md`
+- **统计/数据** -> 读取 `stats.md`
+- (以及其他在此目录下发现的相关文档)
 
-- [ ] 页面整体颜色是否和谐
-- [ ] 卡片边框和背景是否正确显示
-- [ ] 按钮 hover 效果是否正常
-- [ ] 输入框 focus 效果是否正常
-- [ ] 滚动条样式是否符合主题
-- [ ] 响应式布局是否正常
+使用 `view_file` 读取这些选定的文档。
 
----
+### 3. Design Consultation (设计沟通与方案制定)
 
-## 常用 Tailwind 类速查
+在真正修改代码之前，**必须**与用户沟通以确定设计偏好。这是为了避免方向性错误。
 
-### 间距
+1.  **Analyze**: 分析当前页面结构，识别关键 UI 组件（Cards, Lists, Headers）。
+2.  **Generate Options**: 针对样式不明确或有优化空间的地方，提出 2-3 个具体的 Design System 选项。
+    - _Example_: "针对列表项，是用 `Card` 组件包裹（风格 A），还是用分割线分隔的 `List Item`（风格 B）？"
+    - _Example_: "ActionBtn 应该使用 `solid` 变体以突出显示，还是 `ghost` 变体以保持页面简洁？"
+3.  **Engage User**: 向用户抛出这些问题。
+    - **CRITICAL**: **不要**直接开始写代码！先向用户提问，等待用户选择。
+    - 使用选项式提问（A/B/C）来降低用户决策成本。
+    - 如果用户有反馈，根据反馈调整方案，必要时进行多轮对话，直到用户满意为止。
 
-```
-p-2/p-4/p-6    内边距 8px/16px/24px
-gap-2/gap-4    间隙 8px/16px
-space-y-2      垂直间距 8px
-```
+### 4. Finalize Plan (确定最终方案)
 
-### 圆角
+在用户做出选择后，总结最终的重构清单。
 
-```
-rounded-lg     较大圆角 (0.5rem)
-rounded-xl     更大圆角 (0.75rem)
-rounded-2xl    最大圆角 (1rem)
-```
+- 明确选定的组件变体 (Variant)。
+- 明确间距策略 (Spacing)。
+- 明确交互行为 (ActionBtn usage)。
 
-### 文字
+### 5. Execution (执行优化)
 
-```
-text-xs/sm/base/lg   12px/14px/16px/18px
-text-white           白色文字
-text-neutral-400     灰色次要文字
-text-amber-400       高亮文字（hover）
-text-amber-300       按钮文字
-```
+根据 **Step 4** 确定的方案对代码进行重构。建议分模块进行，以免单次修改过大出错。
 
-### 背景透明度
+- **Step 4.1**: 替换布局结构代码。
+- **Step 4.2**: 优化原子组件（Button, Badge 等）。**关键**：将交互按钮替换为 `ActionBtn` 组件，确保 loading 状态和交互反馈的一致性。
+- **Step 4.3**: 调整排版和间距细节。
 
-```
-bg-neutral-800/40    40% 透明度
-bg-neutral-900/50    50% 透明度
-bg-amber-500/20      20% 透明度（渐变用）
-```
+请务必使用 `replace_file_content` 或 `multi_replace_file_content`。
 
----
+**Coding Standards**:
 
-## 示例：完整卡片组件
+- 使用 `cn(...)` (clsx + tailwind-merge) 合并类名（如果项目中存在该工具）。
+- 保持语义化 HTML。
+- **严禁** 修改组件的核心业务逻辑（如 `onClick` 处理函数、`useQuery` Hooks 等），仅修改 `className` 和结构层级。
 
-```tsx
-<div className="card-hover rounded-xl p-4 transition-all">
-  {/* 标题区 */}
-  <h3 className="mb-2 text-lg font-medium text-white">卡片标题</h3>
+### 6. Verification (验证)
 
-  {/* 内容区 */}
-  <p className="mb-4 text-sm text-neutral-400">卡片描述文字...</p>
+完成修改后，简要总结你所做的样式变更，并提示用户进行预览。
 
-  {/* 操作区 */}
-  <div className="flex gap-2">
-    <button className="general-button">主要操作</button>
-    <button className="card-item rounded-lg px-3 py-1.5 text-sm text-white transition-colors hover:text-amber-400">
-      次要操作
-    </button>
-  </div>
-</div>
-```
+## Rules
 
----
-
-## 注意事项
-
-1. **不要过度使用预定义类**：对于一次性的特殊样式，仍然使用 Tailwind 类
-2. **保持语义化**：className 应该反映元素的用途，而非仅仅是视觉效果
-3. **测试响应式**：确保修改后在移动端和桌面端都表现良好
-4. **使用 cn() 函数**：条件样式必须使用 `cn()` 工具函数合并类名
+- **Design First**: 设计文档是唯一真理。如果现有代码与文档冲突，以文档为准。
+- **Component Priority**: 交互按钮 **强制** 使用 `ActionBtn`。
+- **Safe Refactor**: 仅涉及 UI 层面的改动。
+- **Language**: 输出的分析和 commit message 必须使用中文。

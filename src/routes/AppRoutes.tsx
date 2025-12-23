@@ -46,6 +46,7 @@ import { AnnouncementsPage } from "@/pages/Announcements/index.tsx";
 import { MusicPage } from "@/pages/MusicPage.tsx";
 import { PlayerPage } from "@/pages/PlayerPage.tsx";
 import { DesignPage } from "@/pages/design.tsx";
+import FavoritesPage from "@/pages/Favorites/index.tsx";
 
 function LoginPageWrapper() {
   const navigate = useNavigate();
@@ -319,6 +320,14 @@ export default function AppRoutes() {
             <PermissionRoute requiredPermissions={["page:tickets"]} name="工单页面">
               <TicketsPage />
             </PermissionRoute>
+          }
+        />
+        <Route
+          path="/favorites"
+          element={
+            <AuthRoute>
+              <FavoritesPage />
+            </AuthRoute>
           }
         />
 

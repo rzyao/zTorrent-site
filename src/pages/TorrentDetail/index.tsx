@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Download,
@@ -17,12 +18,16 @@ import {
   ChevronDown,
   XIcon,
 } from "lucide-react";
+import ActionBtn from "@/components/ActionBtn";
+import { PageContainer } from "@/components/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
 import { useParams } from "react-router-dom";
 import { TorrentsService } from "@/api/services/TorrentsService";
+import { FavoriteActionDto } from "@/api";
+import { useFavorite } from "@/hooks/useFavorite";
 import { useTorrentDownload } from "@/utils/useTorrentDownload";
 import { formatSize } from "@/utils/format";
 import {
@@ -63,14 +68,24 @@ import {
 import { processDescription } from "./utils/processDescription";
 import { FileListItem } from "./components/FileListItem";
 
-export default function TorrentDetailPage({
-  torrentId,
-}: TorrentDetailPageProps) {
+export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps) {
   const { downloadByTorrentId } = useTorrentDownload();
   const { downloaders } = useDownloaders();
   const { sourcePayload } = useSourceTracker();
   const { id } = useParams();
+  const queryClient = useQueryClient();
   const effectiveId = torrentId ?? id;
+
+  // 收藏状态
+  const {
+    isFavorite,
+    toggle: toggleFavorite,
+    isLoading: isFavoriteLoading,
+  } = useFavorite({
+    targetType: FavoriteActionDto.targetType.TORRENT,
+    targetId: String(effectiveId),
+    enabled: !!effectiveId,
+  });
   const [isDescExpanded, setIsDescExpanded] = useState(true);
   const [isMediaInfoExpanded, setIsMediaInfoExpanded] = useState(false);
   const [isFilesExpanded, setIsFilesExpanded] = useState(false);
@@ -165,8 +180,7 @@ export default function TorrentDetailPage({
         const resp = await TorrentsService.torrentsControllerGet({
           id: String(effectiveId),
         });
-        const body: any =
-          (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
+        const body: any = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
         const data: any = body?.data ?? body;
         const mapped = {
           id: data?.id,
@@ -197,20 +211,49 @@ export default function TorrentDetailPage({
           // 字段重命名兼容：后端可能将 downloadUrl 重命名为 downloadURL / download_link / download
           // 这里进行多键回退以确保下载按钮可用
           downloadUrl: str(
-            data?.downloadUrl ??
-              data?.downloadURL ??
-              data?.download_link ??
-              data?.download
+            data?.downloadUrl ?? data?.downloadURL ?? data?.download_link ?? data?.download,
           ),
+          isFavorited: !!data?.isFavorited,
         };
-        if (!cancelled) setTorrentData(mapped);
-        const files = Array.isArray(data?.fileList)
-          ? data.fileList.map((f: any) => ({
-              name: str(f?.name),
-              size: str(f?.size),
-              type: "file",
-            }))
-          : fileList;
+        if (!cancelled) {
+          setTorrentData(mapped);
+          // 注入缓存以优化 FavoriteButton 初始加载
+          if (data?.isFavorited !== undefined) {
+            queryClient.setQueryData(
+              ["favorites", "check", FavoriteActionDto.targetType.TORRENT, String(effectiveId)],
+              !!data.isFavorited,
+            );
+          }
+        }
+        let rawFiles: any[] = [];
+        try {
+          if (typeof data?.multiFileList === "string") {
+            rawFiles = JSON.parse(data.multiFileList);
+          } else if (Array.isArray(data?.multiFileList)) {
+            rawFiles = data.multiFileList;
+          }
+        } catch (e) {
+          console.error("Failed to parse multiFileList", e);
+        }
+
+        const files = Array.isArray(rawFiles)
+          ? rawFiles.map((f: any) => {
+              // 处理 multiFileList 可能为 ["filename1", "filename2"] 字符串数组的情况
+              if (typeof f === "string") {
+                return {
+                  name: f,
+                  size: "未知", // 纯文件名列表无大小信息
+                  type: "file" as const,
+                };
+              }
+              // 处理可能的对象结构 {name:..., size:...}
+              return {
+                name: str(f?.name),
+                size: str(f?.size),
+                type: "file" as const,
+              };
+            })
+          : [];
         if (!cancelled) setFileList(files);
         const mi = str(data?.mediaInfo ?? mediaInfo);
         if (!cancelled) setMediaInfo(mi);
@@ -237,9 +280,7 @@ export default function TorrentDetailPage({
             }))
           : relatedTorrents;
         if (!cancelled) setRelatedTorrents(rel);
-        const stillsData = Array.isArray(data?.stills)
-          ? data.stills.map((s: any) => str(s))
-          : [];
+        const stillsData = Array.isArray(data?.stills) ? data.stills.map((s: any) => str(s)) : [];
         if (!cancelled) setStills(stillsData);
       } catch (e: any) {
         if (!cancelled) setError(String(e?.message ?? ""));
@@ -271,10 +312,7 @@ export default function TorrentDetailPage({
   /**
    * 发送到下载器
    */
-  const handleSendToDownloader = async (
-    downloaderId: string,
-    path?: string
-  ) => {
+  const handleSendToDownloader = async (downloaderId: string, path?: string) => {
     if (!effectiveId) return;
     try {
       // 1. 获取一次性下载链接
@@ -283,8 +321,7 @@ export default function TorrentDetailPage({
         torrentId: String(effectiveId),
         source,
       });
-      const body: any =
-        (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
+      const body: any = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
       const data = body?.data ?? body;
       const downloadTokenUrl = String(data?.url ?? "");
 
@@ -312,54 +349,50 @@ export default function TorrentDetailPage({
     <>
       <ContextMenu>
         {/* 将最外层容器作为触发器，右键弹出菜单；asChild 保留原有 DOM 结构与样式 */}
-        <ContextMenuTrigger asChild>
-          <div className="min-h-screen bg-[#0F171E] pt-8">
-            <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8">
+        <ContextMenuTrigger className="block min-h-screen w-full">
+          <PageContainer>
+            <div className="mx-auto max-w-[1400px]">
               {/* 标题区域 */}
               <div className="mb-6">
-                <div className="flex items-start justify-between mb-3">
+                <div className="mb-3 flex items-start justify-between">
                   <div className="flex-1">
-                    <h1 className="text-white text-2xl md:text-3xl mb-2">
-                      {torrentData.title}
-                    </h1>
+                    <h1 className="mb-2 text-2xl text-white md:text-3xl">{torrentData.title}</h1>
                     {torrentData.subTitle && (
-                      <p className="text-white text-lg">
-                        {torrentData.subTitle}
-                      </p>
+                      <p className="text-lg text-white">{torrentData.subTitle}</p>
                     )}
-                    {loading && (
-                      <p className="text-gray-500 text-sm">加载中...</p>
-                    )}
-                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    {loading && <p className="text-sm text-gray-500">加载中...</p>}
+                    {error && <p className="text-sm text-red-500">{error}</p>}
                   </div>
                 </div>
 
                 {/* 标签和状态 */}
-                <div className="flex flex-wrap items-center gap-2 mb-3">
-                  <Badge className="bg-amber-600 text-white">
+                <div className="mb-3 flex flex-wrap items-center gap-2">
+                  <Badge className="border border-amber-500/30 bg-amber-500/20 text-amber-400 hover:bg-amber-500/30">
                     {torrentData.category}
                   </Badge>
-                  <Badge className="bg-orange-600 text-white">
+                  <Badge className="border border-orange-500/30 bg-orange-500/20 text-orange-400 hover:bg-orange-500/30">
                     {torrentData.standard}
                   </Badge>
                   {torrentData.isFree && (
-                    <Badge className="bg-green-500 text-white">FREE</Badge>
+                    <Badge className="border border-green-500/30 bg-green-500/20 text-green-400 hover:bg-green-500/30">
+                      FREE
+                    </Badge>
                   )}
                   {Number.isFinite(torrentData.rating) && (
-                    <div className="flex items-center gap-1 text-yellow-400 ml-2">
-                      <Star className="w-4 h-4 fill-yellow-400" />
+                    <div className="ml-2 flex items-center gap-1 text-yellow-400">
+                      <Star className="h-4 w-4 fill-yellow-400" />
                       <span>{torrentData.rating}</span>
                     </div>
                   )}
                   {torrentData.isFree && (
-                    <div className="ml-2 flex items-center gap-1 text-green-400 text-sm">
-                      <Info className="w-3 h-3" />
+                    <div className="ml-2 flex items-center gap-1 text-sm text-green-400">
+                      <Info className="h-3 w-3" />
                       <span>限时免费至 {torrentData.promotionEnd}</span>
                     </div>
                   )}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 text-xs text-gray-400 mb-3">
+                <div className="mb-3 flex flex-wrap items-center gap-3 text-xs text-gray-400">
                   <span className="text-gray-200">分类</span>
                   <span className="text-gray-200">{torrentData.category}</span>
                   <span className="text-gray-600">|</span>
@@ -367,37 +400,27 @@ export default function TorrentDetailPage({
                   <span className="text-gray-200">{torrentData.medium}</span>
                   <span className="text-gray-600">|</span>
                   <span className="text-gray-200">编码</span>
-                  <span className="text-gray-200">
-                    {torrentData.videoCodec}
-                  </span>
+                  <span className="text-gray-200">{torrentData.videoCodec}</span>
                   <span className="text-gray-600">|</span>
                   <span className="text-gray-200">分辨率</span>
                   <span className="text-gray-200">{torrentData.standard}</span>
                   <span className="text-gray-600">|</span>
                   <span className="text-gray-200">音频</span>
-                  <span className="text-gray-200">
-                    {torrentData.audioCodec}
-                  </span>
+                  <span className="text-gray-200">{torrentData.audioCodec}</span>
                   <span className="text-gray-600">|</span>
                   <span className="text-gray-200">制作组</span>
-                  <span className="text-gray-200">
-                    {torrentData.productionTeam}
-                  </span>
+                  <span className="text-gray-200">{torrentData.productionTeam}</span>
                   <span className="text-gray-600">|</span>
                   <span className="text-gray-200">大小</span>
-                  <span className="text-gray-200">
-                    {formatSize(torrentData.size)}
-                  </span>
+                  <span className="text-gray-200">{formatSize(torrentData.size)}</span>
                   <span className="text-gray-600">|</span>
                   <span className="text-gray-200">发布时间</span>
-                  <span className="text-gray-200">
-                    {torrentData.uploadDate}
-                  </span>
+                  <span className="text-gray-200">{torrentData.uploadDate}</span>
                   <span className="text-gray-600">|</span>
                   <span className="text-gray-200">发布者</span>
                   <span className="text-gray-200">{torrentData.uploader}</span>
                   {torrentData.uploaderLevel && (
-                    <Badge className="ml-1 bg-orange-500 text-white text-xs">
+                    <Badge className="ml-1 border border-orange-500/30 bg-orange-500/20 text-xs text-orange-400">
                       {torrentData.uploaderLevel}
                     </Badge>
                   )}
@@ -430,72 +453,59 @@ export default function TorrentDetailPage({
                 </div>
 
                 {/* 操作按钮和统计信息 */}
-                <div className="flex flex-wrap items-center gap-2">
-                  <Button
-                    className="bg-amber-600 hover:bg-amber-700 text-white h-9"
+                <div className="flex flex-wrap items-center gap-3">
+                  <ActionBtn
+                    variant="amber"
+                    mode="solid"
+                    className="border-none bg-amber-600/90 bg-none"
                     onClick={() => {
-                      // 如果有下载器则打开弹窗，否则直接下载种子文件
                       if (downloaders.length > 0) {
                         setDownloadModalOpen(true);
                       } else {
                         downloadByTorrentId(
                           String(torrentData.id),
-                          String(torrentData.title || "download")
+                          String(torrentData.title || "download"),
                         );
                       }
                     }}
+                    icon={<Download className="h-4 w-4" />}
                   >
-                    <Download className="w-4 h-4 mr-1" />
                     下载种子
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm border-0"
+                  </ActionBtn>
+                  <ActionBtn
+                    variant="red"
+                    mode={isFavorite ? "solid" : "ghost"}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleFavorite();
+                    }}
+                    loading={isFavoriteLoading}
+                    icon={<Bookmark className={`h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />}
                   >
-                    <Bookmark className="w-4 h-4 mr-1" />
-                    收藏
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm border-0"
-                  >
-                    <Share2 className="w-4 h-4 mr-1" />
+                    {isFavorite ? "已收藏" : "收藏"}
+                  </ActionBtn>
+                  <ActionBtn variant="blue" mode="ghost" icon={<Share2 className="h-4 w-4" />}>
                     分享
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm border-0"
-                  >
-                    <Flag className="w-4 h-4 mr-1" />
+                  </ActionBtn>
+                  <ActionBtn variant="red" mode="ghost" icon={<Flag className="h-4 w-4" />}>
                     举报
-                  </Button>
+                  </ActionBtn>
 
-                  <Separator
-                    orientation="vertical"
-                    className="h-6 bg-gray-700 mx-1"
-                  />
+                  <Separator orientation="vertical" className="mx-1 h-6 bg-gray-700" />
 
                   <div className="flex items-center gap-4 text-sm">
                     <div className="flex items-center gap-1">
-                      <Upload className="w-4 h-4 text-green-400" />
-                      <span className="text-green-400">
-                        {torrentData.seeders}
-                      </span>
+                      <Upload className="h-4 w-4 text-green-400" />
+                      <span className="text-green-400">{torrentData.seeders}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Download className="w-4 h-4 text-red-400" />
-                      <span className="text-red-400">
-                        {torrentData.leechers}
-                      </span>
+                      <Download className="h-4 w-4 text-red-400" />
+                      <span className="text-red-400">{torrentData.leechers}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <UserRoundCheck className="w-4 h-4 text-gray-400" />
-                      <span className="text-white">
-                        {torrentData.completed}
-                      </span>
+                      <UserRoundCheck className="h-4 w-4 text-gray-400" />
+                      <span className="text-white">{torrentData.completed}</span>
                     </div>
                   </div>
                 </div>
@@ -505,16 +515,16 @@ export default function TorrentDetailPage({
                 {/* 主要内容区 */}
                 <div className="space-y-6">
                   {/* 简介 */}
-                  <div className="bg-gray-900/50 rounded-lg border border-gray-800 overflow-hidden">
+                  <div className="overflow-hidden rounded-xl border border-neutral-700/50 bg-neutral-800/40">
                     <div
-                      className="bg-gray-800/50 px-4 py-3 border-b border-gray-700 flex items-center justify-between cursor-pointer"
+                      className="flex cursor-pointer items-center justify-between border-b border-neutral-700/50 px-5 py-4"
                       onClick={() => setIsDescExpanded(!isDescExpanded)}
                     >
                       <h2 className="text-white">简介</h2>
                       {isDescExpanded ? (
-                        <ChevronUp className="w-5 h-5 text-gray-400" />
+                        <ChevronUp className="h-5 w-5 text-gray-400" />
                       ) : (
-                        <ChevronDown className="w-5 h-5 text-gray-400" />
+                        <ChevronDown className="h-5 w-5 text-gray-400" />
                       )}
                     </div>
                     {isDescExpanded && (
@@ -522,21 +532,17 @@ export default function TorrentDetailPage({
                         {/* PT风格的内容渲染 */}
                         {torrentData.description ? (
                           <div
-                            className="space-y-4 text-gray-300 leading-relaxed description-content"
+                            className="description-content space-y-4 leading-relaxed text-gray-300"
                             dangerouslySetInnerHTML={{
-                              __html: processDescription(
-                                torrentData.description
-                              ),
+                              __html: processDescription(torrentData.description),
                             }}
                           />
                         ) : (
-                          <div className="space-y-4 text-gray-300 leading-relaxed">
+                          <div className="space-y-4 leading-relaxed text-gray-300">
                             {/* 引用框 */}
-                            <fieldset className="border-2 border-amber-500/30 rounded p-4 bg-amber-500/5">
-                              <legend className="text-amber-400 px-2">
-                                引用
-                              </legend>
-                              <div className="text-amber-400 text-center">
+                            <fieldset className="rounded border-2 border-amber-500/30 bg-amber-500/5 p-4">
+                              <legend className="px-2 text-amber-400">引用</legend>
+                              <div className="text-center text-amber-400">
                                 <span className="text-xl">暂无简介信息</span>
                               </div>
                             </fieldset>
@@ -548,29 +554,25 @@ export default function TorrentDetailPage({
 
                   {/* 剧照 */}
                   {Array.isArray(stills) && stills.length > 0 && (
-                    <div className="bg-gray-900/50 rounded-lg border border-gray-800 overflow-hidden">
-                      <div className="px-4 py-3 border-b border-gray-700">
+                    <div className="overflow-hidden rounded-xl border border-neutral-700/50 bg-neutral-800/40">
+                      <div className="border-b border-neutral-700/50 px-5 py-4">
                         <h2 className="text-white">剧照</h2>
                       </div>
                       <div className="p-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                           {stills.map((url, index) => {
-                            const isActive =
-                              lightboxOpen && lightboxIndex === index;
+                            const isActive = lightboxOpen && lightboxIndex === index;
                             return (
                               <div
                                 key={index}
                                 className={
                                   isActive
-                                    ? "fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[1000] w-full h-full"
-                                    : "relative aspect-video rounded-lg overflow-hidden group cursor-pointer"
+                                    ? "fixed top-1/2 left-1/2 z-1000 h-full w-full -translate-x-1/2 -translate-y-1/2"
+                                    : "group relative aspect-video cursor-pointer overflow-hidden rounded-lg"
                                 }
                                 onClick={() => {
                                   const i = preloadRefs.current[index];
-                                  if (
-                                    i &&
-                                    typeof (i as any).decode === "function"
-                                  ) {
+                                  if (i && typeof (i as any).decode === "function") {
                                     (i as any).decode().catch(() => {});
                                   }
                                   setLightboxIndex(index);
@@ -585,19 +587,19 @@ export default function TorrentDetailPage({
                                   }}
                                   className={
                                     isActive
-                                      ? "w-full h-full object-contain"
-                                      : "w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                      ? "h-full w-full object-contain"
+                                      : "h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                                   }
                                 />
                                 {isActive && (
                                   <button
-                                    className="absolute top-4 right-4 bg-gray-900/70 border border-gray-600 text-white hover:bg-gray-800 w-6 h-6 rounded-md flex items-center justify-center"
+                                    className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center rounded-md border border-gray-600 bg-gray-900/70 text-white hover:bg-gray-800"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       setLightboxOpen(false);
                                     }}
                                   >
-                                    <X className="w-5 h-5" />
+                                    <X className="h-5 w-5" />
                                   </button>
                                 )}
                               </div>
@@ -610,29 +612,27 @@ export default function TorrentDetailPage({
 
                   {lightboxOpen && (
                     <div
-                      className="fixed inset-0 bg-black/95 z-[900]"
+                      className="fixed inset-0 z-900 bg-black/95"
                       onClick={() => setLightboxOpen(false)}
                     />
                   )}
 
                   {/* MediaInfo */}
-                  <div className="bg-gray-900/50 rounded-lg border border-gray-800 overflow-hidden">
+                  <div className="overflow-hidden rounded-xl border border-neutral-700/50 bg-neutral-800/40">
                     <div
-                      className="bg-gray-800/50 px-4 py-3 border-b border-gray-700 flex items-center justify-between cursor-pointer"
-                      onClick={() =>
-                        setIsMediaInfoExpanded(!isMediaInfoExpanded)
-                      }
+                      className="flex cursor-pointer items-center justify-between border-b border-neutral-700/50 px-5 py-4"
+                      onClick={() => setIsMediaInfoExpanded(!isMediaInfoExpanded)}
                     >
                       <h2 className="text-white">MediaInfo</h2>
                       {isMediaInfoExpanded ? (
-                        <ChevronUp className="w-5 h-5 text-gray-400" />
+                        <ChevronUp className="h-5 w-5 text-gray-400" />
                       ) : (
-                        <ChevronDown className="w-5 h-5 text-gray-400" />
+                        <ChevronDown className="h-5 w-5 text-gray-400" />
                       )}
                     </div>
                     {isMediaInfoExpanded && (
                       <div className="p-4">
-                        <pre className="text-xs text-gray-300 font-mono overflow-x-auto bg-gray-950 p-4 rounded">
+                        <pre className="overflow-x-auto rounded bg-gray-950 p-4 font-mono text-xs text-gray-300">
                           {mediaInfo}
                         </pre>
                       </div>
@@ -640,16 +640,16 @@ export default function TorrentDetailPage({
                   </div>
 
                   {/* 文件列表 */}
-                  <div className="bg-gray-900/50 rounded-lg border border-gray-800 overflow-hidden">
+                  <div className="overflow-hidden rounded-xl border border-neutral-700/50 bg-neutral-800/40">
                     <div
-                      className="bg-gray-800/50 px-4 py-3 border-b border-gray-700 flex items-center justify-between cursor-pointer"
+                      className="flex cursor-pointer items-center justify-between border-b border-neutral-700/50 px-5 py-4"
                       onClick={() => setIsFilesExpanded(!isFilesExpanded)}
                     >
                       <h2 className="text-white">文件列表</h2>
                       {isFilesExpanded ? (
-                        <ChevronUp className="w-5 h-5 text-gray-400" />
+                        <ChevronUp className="h-5 w-5 text-gray-400" />
                       ) : (
-                        <ChevronDown className="w-5 h-5 text-gray-400" />
+                        <ChevronDown className="h-5 w-5 text-gray-400" />
                       )}
                     </div>
                     {isFilesExpanded && (
@@ -662,8 +662,8 @@ export default function TorrentDetailPage({
                   </div>
 
                   {/* 评论区 */}
-                  <div className="bg-gray-900/50 rounded-lg border border-gray-800 overflow-hidden">
-                    <div className="bg-gray-800/50 px-4 py-3 border-b border-gray-700">
+                  <div className="overflow-hidden rounded-xl border border-neutral-700/50 bg-neutral-800/40">
+                    <div className="border-b border-neutral-700/50 px-5 py-4">
                       <h2 className="text-white">评论 ({comments.length})</h2>
                     </div>
                     <div className="p-6">
@@ -672,13 +672,16 @@ export default function TorrentDetailPage({
                         <textarea
                           rows={4}
                           placeholder="发表你的看法..."
-                          className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 text-white placeholder:text-gray-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none resize-none"
+                          className="w-full resize-none rounded-lg border border-neutral-700 bg-neutral-900/50 px-4 py-3 text-white outline-none placeholder:text-neutral-500 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50"
                         />
-                        <div className="flex justify-end mt-2">
-                          <Button className="bg-amber-600 hover:bg-amber-700 text-white">
-                            <MessageSquare className="w-4 h-4 mr-2" />
+                        <div className="mt-2 flex justify-end">
+                          <ActionBtn
+                            variant="amber"
+                            mode="solid"
+                            icon={<MessageSquare className="h-4 w-4" />}
+                          >
                             发表评论
-                          </Button>
+                          </ActionBtn>
                         </div>
                       </div>
 
@@ -689,34 +692,28 @@ export default function TorrentDetailPage({
                             <ImageWithFallback
                               src={comment.avatar}
                               alt={comment.user}
-                              className="w-10 h-10 rounded-full"
+                              className="h-10 w-10 rounded-full"
                             />
                             <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="text-white">
-                                  {comment.user}
-                                </span>
-                                <Badge className="bg-purple-500 text-white text-xs">
+                              <div className="mb-2 flex items-center gap-2">
+                                <span className="text-white">{comment.user}</span>
+                                <Badge className="border border-purple-500/30 bg-purple-500/20 text-xs text-purple-400">
                                   {comment.userLevel}
                                 </Badge>
-                                <span className="text-gray-500 text-sm">
-                                  {comment.date}
-                                </span>
+                                <span className="text-sm text-gray-500">{comment.date}</span>
                               </div>
-                              <p className="text-gray-300 mb-3">
-                                {comment.content}
-                              </p>
+                              <p className="mb-3 text-gray-300">{comment.content}</p>
                               <div className="flex items-center gap-4 text-sm">
                                 <Button className="flex items-center gap-1 text-gray-400 hover:text-amber-400">
-                                  <ThumbsUp className="w-4 h-4" />
+                                  <ThumbsUp className="h-4 w-4" />
                                   <span>赞</span>
                                 </Button>
                                 <Button className="flex items-center gap-1 text-gray-400 hover:text-gray-300">
-                                  <MessageSquare className="w-4 h-4" />
+                                  <MessageSquare className="h-4 w-4" />
                                   <span>回复</span>
                                 </Button>
                                 <div className="flex items-center gap-1 text-gray-400">
-                                  <Heart className="w-4 h-4 text-red-400" />
+                                  <Heart className="h-4 w-4 text-red-400" />
                                   <span>{comment.thanks} 感谢</span>
                                 </div>
                               </div>
@@ -727,179 +724,9 @@ export default function TorrentDetailPage({
                     </div>
                   </div>
                 </div>
-
-                {/* 侧边栏 */}
-                <div className="space-y-6 hidden">
-                  {/* 种子信息 */}
-                  <div className="bg-gray-900/50 rounded-lg border border-gray-800 overflow-hidden">
-                    <div className="bg-gray-800/50 px-4 py-3 border-b border-gray-700">
-                      <h3 className="text-white">种子信息</h3>
-                    </div>
-                    <div className="p-0">
-                      <table className="w-full text-sm">
-                        <tbody>
-                          <tr className="border-b border-gray-800">
-                            <td className="px-4 py-2.5 text-gray-400">分类</td>
-                            <td className="px-4 py-2.5 text-white">
-                              {torrentData.category}
-                            </td>
-                          </tr>
-                          <tr className="border-b border-gray-800">
-                            <td className="px-4 py-2.5 text-gray-400">媒介</td>
-                            <td className="px-4 py-2.5 text-white">
-                              {torrentData.medium}
-                            </td>
-                          </tr>
-                          <tr className="border-b border-gray-800">
-                            <td className="px-4 py-2.5 text-gray-400">编码</td>
-                            <td className="px-4 py-2.5 text-white">
-                              {torrentData.videoCodec}
-                            </td>
-                          </tr>
-                          <tr className="border-b border-gray-800">
-                            <td className="px-4 py-2.5 text-gray-400">
-                              分辨率
-                            </td>
-                            <td className="px-4 py-2.5 text-white">
-                              {torrentData.standard}
-                            </td>
-                          </tr>
-                          <tr className="border-b border-gray-800">
-                            <td className="px-4 py-2.5 text-gray-400">音频</td>
-                            <td className="px-4 py-2.5 text-white">
-                              {torrentData.audioCodec}
-                            </td>
-                          </tr>
-                          <tr className="border-b border-gray-800">
-                            <td className="px-4 py-2.5 text-gray-400">
-                              制作组
-                            </td>
-                            <td className="px-4 py-2.5 text-white">
-                              {torrentData.productionTeam}
-                            </td>
-                          </tr>
-                          <tr className="border-b border-gray-800">
-                            <td className="px-4 py-2.5 text-gray-400">大小</td>
-                            <td className="px-4 py-2.5 text-white">
-                              {formatSize(torrentData.size)}
-                            </td>
-                          </tr>
-                          <tr className="border-b border-gray-800">
-                            <td className="px-4 py-2.5 text-gray-400">
-                              发布时间
-                            </td>
-                            <td className="px-4 py-2.5 text-white text-xs">
-                              {torrentData.uploadDate}
-                            </td>
-                          </tr>
-                          <tr className="border-b border-gray-800">
-                            <td className="px-4 py-2.5 text-gray-400">
-                              发布者
-                            </td>
-                            <td className="px-4 py-2.5">
-                              <span className="text-white">
-                                {torrentData.uploader}
-                              </span>
-                              <Badge className="ml-2 bg-orange-500 text-white text-xs">
-                                {torrentData.uploaderLevel}
-                              </Badge>
-                            </td>
-                          </tr>
-                          <tr className="border-b border-gray-800">
-                            <td className="px-4 py-2.5 text-gray-400">IMDb</td>
-                            <td className="px-4 py-2.5">
-                              {/* 暖色调替换：侧边栏链接颜色由 violet 改为 amber，提升可读性与统一性 */}
-                              <a
-                                href={`https://www.imdb.com/title/${torrentData.imdb}/`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-amber-400 hover:underline text-xs"
-                              >
-                                {torrentData.imdb}
-                              </a>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-2.5 text-gray-400">豆瓣</td>
-                            <td className="px-4 py-2.5">
-                              <a
-                                href={`https://movie.douban.com/subject/${torrentData.douban}/`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-amber-400 hover:underline text-xs"
-                              >
-                                {torrentData.douban}
-                              </a>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  {/* 相关种子 */}
-                  <div className="bg-gray-900/50 rounded-lg border border-gray-800 overflow-hidden">
-                    <div className="bg-gray-800/50 px-4 py-3 border-b border-gray-700">
-                      <h3 className="text-white">相关种子</h3>
-                    </div>
-                    <div className="p-4 space-y-4">
-                      {relatedTorrents.map((torrent) => (
-                        <div
-                          key={torrent.id}
-                          className="border border-gray-800 rounded-lg p-3 hover:border-gray-700 transition-colors cursor-pointer"
-                        >
-                          <h4 className="text-white text-sm mb-2 line-clamp-2">
-                            {torrent.title}
-                          </h4>
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-gray-400">
-                              {torrent.size}
-                            </span>
-                            <div className="flex items-center gap-2">
-                              <span className="text-green-400">
-                                {torrent.seeders}
-                              </span>
-                              <span className="text-gray-500">/</span>
-                              <span className="text-red-400">
-                                {torrent.leechers}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* 操作按钮 */}
-                  <div className="bg-gray-900/50 rounded-lg border border-gray-800 p-4">
-                    <div className="space-y-2">
-                      <Button
-                        variant="outline"
-                        className="w-full border-gray-700 text-white hover:bg-gray-800 justify-start"
-                      >
-                        <Heart className="w-4 h-4 mr-2" />
-                        感谢发布者
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full border-gray-700 text-white hover:bg-gray-800 justify-start"
-                      >
-                        <Bookmark className="w-4 h-4 mr-2" />
-                        收藏种子
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full border-gray-700 text-white hover:bg-gray-800 justify-start"
-                      >
-                        <Flag className="w-4 h-4 mr-2" />
-                        举报问题
-                      </Button>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
-          </div>
+          </PageContainer>
         </ContextMenuTrigger>
         {/* 右键菜单内容：提供“下载种子”入口，复用统一下载逻辑 */}
         <ContextMenuContent className="w-48">
@@ -907,18 +734,18 @@ export default function TorrentDetailPage({
           <ContextMenuItem
             disabled={!torrentData.id}
             // 使用 Radix ContextMenu 的 onSelect，确保键盘与鼠标选择行为一致
-            onSelect={(e) => {
-              e.preventDefault();
+            // 移除 e.preventDefault() 以允许菜单自动关闭
+            onSelect={() => {
               if (torrentData.id) {
                 // 与按钮一致：以标题作为文件名回退
                 downloadByTorrentId(
                   String(torrentData.id),
-                  String(torrentData.title || "download")
+                  String(torrentData.title || "download"),
                 );
               }
             }}
           >
-            <Download className="w-4 h-4 mr-2" /> 下载种子
+            <Download className="mr-2 h-4 w-4" /> 下载种子
           </ContextMenuItem>
 
           <ContextMenuSeparator />
@@ -926,7 +753,7 @@ export default function TorrentDetailPage({
           {/* 发送到下载器逻辑 */}
           {downloaders.length === 0 ? (
             <ContextMenuItem disabled>
-              <Upload className="w-4 h-4 mr-2" /> 无可用下载器
+              <Upload className="mr-2 h-4 w-4" /> 无可用下载器
             </ContextMenuItem>
           ) : downloaders.length === 1 ? (
             // 只有一个下载器：直接展示路径列表（若有路径），否则直接点击发送
@@ -938,18 +765,13 @@ export default function TorrentDetailPage({
                 return (
                   <ContextMenuSub>
                     <ContextMenuSubTrigger>
-                      <Upload className="w-4 h-4 mr-2" /> 发送到下载器
+                      <Upload className="mr-2 h-4 w-4" /> 发送到下载器
                     </ContextMenuSubTrigger>
                     <ContextMenuSubContent className="w-48">
                       {paths.map((p, idx) => (
                         <ContextMenuItem
                           key={idx}
-                          onSelect={() =>
-                            handleSendToDownloader(
-                              String(downloader.id),
-                              p.path
-                            )
-                          }
+                          onSelect={() => handleSendToDownloader(String(downloader.id), p.path)}
                         >
                           {p.name || p.path}
                         </ContextMenuItem>
@@ -960,12 +782,8 @@ export default function TorrentDetailPage({
               } else {
                 // 无路径配置，直接发送
                 return (
-                  <ContextMenuItem
-                    onSelect={() =>
-                      handleSendToDownloader(String(downloader.id))
-                    }
-                  >
-                    <Upload className="w-4 h-4 mr-2" /> 发送到 {downloader.name}
+                  <ContextMenuItem onSelect={() => handleSendToDownloader(String(downloader.id))}>
+                    <Upload className="mr-2 h-4 w-4" /> 发送到 {downloader.name}
                   </ContextMenuItem>
                 );
               }
@@ -974,7 +792,7 @@ export default function TorrentDetailPage({
             // 多个下载器：先选下载器，再选路径
             <ContextMenuSub>
               <ContextMenuSubTrigger>
-                <Upload className="w-4 h-4 mr-2" /> 发送到下载器
+                <Upload className="mr-2 h-4 w-4" /> 发送到下载器
               </ContextMenuSubTrigger>
               <ContextMenuSubContent className="w-48">
                 {downloaders.map((d) => {
@@ -987,9 +805,7 @@ export default function TorrentDetailPage({
                           {paths.map((p, idx) => (
                             <ContextMenuItem
                               key={idx}
-                              onSelect={() =>
-                                handleSendToDownloader(String(d.id), p.path)
-                              }
+                              onSelect={() => handleSendToDownloader(String(d.id), p.path)}
                             >
                               {p.name || p.path}
                             </ContextMenuItem>

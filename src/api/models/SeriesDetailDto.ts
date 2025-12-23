@@ -30,5 +30,9 @@ export type SeriesDetailDto = {
     owner?: string;
     createdAt?: string;
     updatedAt?: string;
+    /**
+     * 是否已收藏
+     */
+    isFavorited?: boolean;
 };
 

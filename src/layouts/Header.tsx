@@ -641,7 +641,7 @@ export function Header() {
               </button>
 
               {showUserMenu && (
-                <div className="dropdown-menu absolute right-0 top-full mt-2 w-68 bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl overflow-hidden z-[60]">
+                <div className="dropdown-menu absolute right-0 top-full mt-2 w-68 bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl overflow-hidden z-60">
                   {/* 用户信息区域 */}
                   <div className="bg-linear-to-br from-amber-500/20 to-orange-600/20 border-b border-neutral-700 p-4">
                     <div className="flex items-center gap-3 mb-3">
@@ -763,7 +763,7 @@ export function Header() {
 
       {/* 移动端展开导航菜单 */}
       <div
-        className={`md:hidden fixed left-0 right-0 bg-[#0F171E] border-b border-gray-800 z-[60] overflow-hidden transition-all duration-300 ease-in-out ${
+        className={`md:hidden fixed left-0 right-0 bg-[#0F171E] border-b border-gray-800 z-60 overflow-hidden transition-all duration-300 ease-in-out ${
           showMobileMenu ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"
         }`}
         style={{ top: "64px" }}
@@ -923,7 +923,7 @@ export function Header() {
       {/* 移动端菜单打开时的遮罩层 */}
       {showMobileMenu && (
         <div
-          className="md:hidden fixed inset-0 bg-black/50 z-[55]"
+          className="md:hidden fixed inset-0 bg-black/50 z-55"
           style={{ top: "64px" }}
           onClick={() => setShowMobileMenu(false)}
         />

@@ -36,5 +36,6 @@ export interface PlaylistDetail {
   tags: string[];
   films: any[]; // 服务端原始 films 列表，保留以便后续扩展
   isLiked: boolean;
+  isFavorited?: boolean;
 }
 

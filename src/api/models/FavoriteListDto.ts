@@ -2,11 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ListFollowsDto = {
+import type { FavoriteTargetType } from './FavoriteTargetType';
+export type FavoriteListDto = {
     /**
      * 按目标类型过滤
      */
-    targetType?: ListFollowsDto.targetType;
+    targetType?: FavoriteTargetType;
     /**
      * 页码
      */
@@ -16,13 +17,4 @@ export type ListFollowsDto = {
      */
     limit?: number;
 };
-export namespace ListFollowsDto {
-    /**
-     * 按目标类型过滤
-     */
-    export enum targetType {
-        PLAYLIST = 'playlist',
-        SERIES = 'series',
-    }
-}
 

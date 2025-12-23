@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FavoriteActionDto } from "@/api";
+import { useFavorite } from "@/hooks/useFavorite";
 import { Film, Bell, UserPlus, Heart, Share2, Tv, Clock } from "lucide-react";
 import ActionBtn from "@/components/ActionBtn";
 import { cn } from "@/components/ui/utils";
@@ -8,20 +10,28 @@ import type { EpisodeItem, SeriesDetail } from "../types";
 interface InfoBarProps {
   series: SeriesDetail;
   episodes: EpisodeItem[];
-  isCollected: boolean;
-  onToggleCollect: () => void;
 }
 
 /**
  * 快速选集栏组件
  * 包含多个交互按钮（订阅、关注、收藏、分享）以及分集选择按钮
  */
-export function InfoBar({ series, episodes, isCollected, onToggleCollect }: InfoBarProps) {
+export function InfoBar({ series, episodes }: InfoBarProps) {
   const navigate = useNavigate();
 
   // 本地 Mock 状态，仅用于演示
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
+
+  // 收藏状态
+  const {
+    isFavorite,
+    toggle: toggleFavorite,
+    isLoading: isFavoriteLoading,
+  } = useFavorite({
+    targetType: FavoriteActionDto.targetType.SERIES,
+    targetId: series.id,
+  });
 
   return (
     <div className="mt-8 space-y-6">
@@ -61,16 +71,17 @@ export function InfoBar({ series, episodes, isCollected, onToggleCollect }: Info
 
           {/* 收藏 (Secondary) */}
           <ActionBtn
-            onClick={onToggleCollect}
+            onClick={toggleFavorite}
             variant="red"
-            mode={isCollected ? "solid" : "ghost"}
+            mode={isFavorite ? "solid" : "ghost"}
             size="md"
             className="px-6"
+            disabled={isFavoriteLoading}
             icon={
-              <Heart className={cn("h-5 w-5 transition-colors", isCollected && "fill-current")} />
+              <Heart className={cn("h-5 w-5 transition-colors", isFavorite && "fill-current")} />
             }
           >
-            {isCollected ? "已收藏" : "收藏"}
+            {isFavorite ? "已收藏" : "收藏"}
           </ActionBtn>
         </div>
 

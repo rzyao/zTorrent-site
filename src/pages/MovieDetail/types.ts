@@ -109,5 +109,6 @@ export interface FilmDetail {
   relatedTorrents: RelatedItem[];
   otherVersions: Array<{ id: string | number; title: string; seeders: number; size: string }>;
   torrents: TorrentItem[];
+  isFavorited?: boolean;
 }
 

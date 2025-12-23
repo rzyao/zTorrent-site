@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { FavoriteActionDto } from "@/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/PageContainer";
@@ -20,12 +22,22 @@ export function SeriesDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { series, episodes, loading, error } = useSeriesDetail(id);
+  const queryClient = useQueryClient();
+
+  // 同步收藏状态到缓存
+  useEffect(() => {
+    if (series?.isFavorited !== undefined && id) {
+      queryClient.setQueryData(
+        ["favorites", "check", FavoriteActionDto.targetType.SERIES, id],
+        !!series.isFavorited,
+      );
+    }
+  }, [series?.isFavorited, id, queryClient]);
 
   // 设置页面标题
   useDynamicTitle(series?.title || "剧集详情");
 
   // UI 状态
-  const [isCollected, setIsCollected] = useState(false);
 
   // 加载状态 - 优雅的骨架屏
   if (loading) {
@@ -68,12 +80,7 @@ export function SeriesDetailPage() {
       <Hero series={series} firstEpisode={firstEpisode} />
 
       {/* 信息栏 - 操作按钮 + 快速选集 */}
-      <InfoBar
-        series={series}
-        episodes={sortedEpisodes}
-        isCollected={isCollected}
-        onToggleCollect={() => setIsCollected((v) => !v)}
-      />
+      <InfoBar series={series} episodes={sortedEpisodes} />
 
       {/* 主内容区 */}
       <div className="mt-8">

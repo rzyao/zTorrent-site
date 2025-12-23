@@ -50,9 +50,7 @@ function TorrentCardInner({
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
-    if (window.innerWidth < 768) {
-      navigate(`/torrent/${id}`);
-    }
+    navigate(`/torrent/${id}`);
   };
 
   return (
@@ -138,9 +136,14 @@ function TorrentCardInner({
                   "font-semibold text-slate-950 shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all duration-300",
                   "hover:scale-105 hover:from-amber-300 hover:to-amber-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.5)]",
                 )}
-                onClick={
-                  onDownloadByIdTitle ? () => onDownloadByIdTitle(String(id), title) : onDownload
-                }
+                onClick={(e) => {
+                  e.stopPropagation(); // 阻止事件冒泡，防止触发卡片点击跳转
+                  if (onDownloadByIdTitle) {
+                    onDownloadByIdTitle(String(id), title);
+                  } else if (onDownload) {
+                    onDownload();
+                  }
+                }}
                 title={!onDownload && !onDownloadByIdTitle ? "无下载权限" : undefined}
                 style={{
                   fontFamily: '"Source Han Serif CN", "STSong", "SimSun", serif',

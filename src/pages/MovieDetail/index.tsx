@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { FavoriteActionDto } from "@/api";
 import { useParams } from "react-router-dom";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { PageContainer } from "@/components/PageContainer";
@@ -28,10 +30,20 @@ export default function MovieDetailPage({ filmId }: FilmDetailPageProps) {
 
   // 业务数据状态由 Hook 管理
   const { detail, loading, error } = useFilmDetail(effectiveFilmId);
+  const queryClient = useQueryClient();
+
+  // 同步收藏状态到缓存
+  useEffect(() => {
+    if (detail?.isFavorited !== undefined && effectiveFilmId) {
+      queryClient.setQueryData(
+        ["favorites", "check", FavoriteActionDto.targetType.MOVIE, effectiveFilmId],
+        !!detail.isFavorited,
+      );
+    }
+  }, [detail?.isFavorited, effectiveFilmId, queryClient]);
 
   // 纯 UI 状态：标签页、收藏/感谢、Lightbox
   const [activeTab, setActiveTab] = useState("torrents");
-  const [isBookmarked, setIsBookmarked] = useState(false);
   const [hasThanked, setHasThanked] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -55,9 +67,7 @@ export default function MovieDetailPage({ filmId }: FilmDetailPageProps) {
       {/* 顶部信息区 */}
       <Hero
         detail={detail}
-        isBookmarked={isBookmarked}
         hasThanked={hasThanked}
-        onToggleBookmark={() => setIsBookmarked((v) => !v)}
         onToggleThanked={() => setHasThanked((v) => !v)}
       />
 

@@ -25,7 +25,7 @@ export const processDescription = (description: string) => {
         return '';
       }
 
-      return `<fieldset style="border: 1px solid #4B5563; border-radius: 0.375rem; padding: 1rem; background-color: rgba(31, 41, 55, 0.5); margin: 1rem 0;"><legend style="color: #9CA3AF; padding: 0 0.5rem; font-size: 0.875rem;">引用</legend><div style="color: #D1D5DB; font-style: italic;">${content}</div></fieldset>`;
+      return `<fieldset style="border: 1px solid #4B5563; border-radius: 0.375rem; padding: 1rem; background-color: rgba(31, 41, 55, 0.5); margin: 1rem 0;"><legend style="color: #9CA3AF; padding: 0 0.5rem; font-size: 0.875rem;">引用</legend><div style="color: #D1D5DB;">${content}</div></fieldset>`;
     }
   );
 

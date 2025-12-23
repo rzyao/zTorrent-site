@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useFavorite } from "@/hooks/useFavorite";
+import { FavoriteActionDto } from "@/api";
 import { useNavigate } from "react-router-dom";
 import { Bell, UserPlus, Heart, Share2 } from "lucide-react";
 import ActionBtn from "@/components/ActionBtn";
@@ -24,11 +26,23 @@ export function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: Playlist
 
   // 本地 Mock 状态，仅用于演示 (模仿 InfoBar)
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isCollected, setIsCollected] = useState(false);
 
   // 片单详情数据与行为统一由钩子管理
   const { loading, error, playlist, movies, isFollowing, toggleFollow, reload, openFilm } =
     usePlaylistDetail(playlistId);
+
+  // 收藏状态 - 使用详情接口返回的 isFavorited 作为初始值，避免重复请求 check 接口
+  const {
+    isFavorite,
+    toggle: toggleFavorite,
+    isLoading: isFavoriteLoading,
+  } = useFavorite({
+    targetType: FavoriteActionDto.targetType.PLAYLIST,
+    targetId: playlistId,
+    initialValue: playlist?.isFavorited,
+    enabled: !!playlist, // 只有详情加载完成后才启用
+  });
+
   const sortedMovies = (() => {
     const list = [...movies];
     switch (sortBy) {
@@ -69,7 +83,7 @@ export function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: Playlist
               variant="amber"
               mode={isSubscribed ? "solid" : "ghost"}
               size="md"
-              className="px-8"
+              className="px-4"
               icon={
                 <Bell className={cn("h-5 w-5 transition-colors", isSubscribed && "fill-current")} />
               }
@@ -83,7 +97,7 @@ export function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: Playlist
               variant="blue"
               mode={isFollowing ? "solid" : "ghost"}
               size="md"
-              className="px-6"
+              className="px-4"
               icon={
                 <UserPlus
                   className={cn("h-5 w-5 transition-colors", isFollowing && "fill-current")}
@@ -93,18 +107,27 @@ export function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: Playlist
               {isFollowing ? "已关注" : "关注"}
             </ActionBtn>
 
-            {/* 收藏 (Secondary) - Mock */}
+            {/* 收藏 (Secondary) */}
             <ActionBtn
-              onClick={() => setIsCollected(!isCollected)}
+              onClick={() => toggleFavorite()}
               variant="red"
-              mode={isCollected ? "solid" : "ghost"}
+              mode={isFavorite ? "solid" : "ghost"}
               size="md"
-              className="px-6"
+              className="px-4"
+              loading={isFavoriteLoading}
               icon={
-                <Heart className={cn("h-5 w-5 transition-colors", isCollected && "fill-current")} />
+                <UserPlus
+                  className={cn("h-5 w-5 transition-colors", isFavorite && "fill-current")}
+                />
               }
             >
-              {isCollected ? "已收藏" : "收藏"}
+              {isFavoriteLoading
+                ? isFavorite
+                  ? "取消中"
+                  : "收藏中"
+                : isFavorite
+                  ? "已收藏"
+                  : "收藏"}
             </ActionBtn>
           </div>
 
@@ -117,7 +140,7 @@ export function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: Playlist
               variant="neutral"
               mode="ghost"
               size="md"
-              className="px-6"
+              className="px-4"
               icon={<Share2 className="h-5 w-5" />}
             >
               分享

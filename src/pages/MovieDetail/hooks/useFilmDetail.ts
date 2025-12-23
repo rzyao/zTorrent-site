@@ -77,6 +77,7 @@ export function useFilmDetail(filmId?: string) {
         ? raw.torrents.map((t: any) => ({ id: t?.id, title: t?.quality ?? '', seeders: t?.seeders ?? 0, size: t?.size ?? '' }))
         : [],
       torrents: [],
+      isFavorited: !!raw?.isFavorited,
     };
   };
 

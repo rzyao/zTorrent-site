@@ -5,12 +5,12 @@
 import type { DeleteMessageDto } from '../models/DeleteMessageDto';
 import type { DeleteThreadDto } from '../models/DeleteThreadDto';
 import type { FavoriteMessageDto } from '../models/FavoriteMessageDto';
-import type { ListFavoritesDto } from '../models/ListFavoritesDto';
 import type { ListInboxDto } from '../models/ListInboxDto';
 import type { ListMessagesDto } from '../models/ListMessagesDto';
 import type { ListOutboxDto } from '../models/ListOutboxDto';
 import type { ListThreadsDto } from '../models/ListThreadsDto';
 import type { MarkReadDto } from '../models/MarkReadDto';
+import type { MessageFavoriteListDto } from '../models/MessageFavoriteListDto';
 import type { PollDto } from '../models/PollDto';
 import type { ReplyMessageDto } from '../models/ReplyMessageDto';
 import type { SendMessageDto } from '../models/SendMessageDto';
@@ -324,7 +324,7 @@ export class MessagesService {
      * @throws ApiError
      */
     public static messagesControllerFavorites(
-        requestBody: ListFavoritesDto,
+        requestBody: MessageFavoriteListDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;

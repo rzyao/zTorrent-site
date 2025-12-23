@@ -25,6 +25,11 @@ const REPLACEMENTS = [
   {
     pattern: /flex-grow(-0|-1|)?(?=\s|"|'|`)/g,
     replacement: (match, p1) => `grow${p1 || ''}`
+  },
+  // 5. Z Index: z-[1000] -> z-1000
+  {
+    pattern: /z-\[(\d+)\]/g,
+    replacement: 'z-$1'
   }
 ];
 

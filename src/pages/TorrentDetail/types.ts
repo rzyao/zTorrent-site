@@ -29,6 +29,7 @@ export interface TorrentData {
   views: number;
   description: string;
   downloadUrl: string;
+  isFavorited?: boolean;
 }
 
 export interface FileItem {

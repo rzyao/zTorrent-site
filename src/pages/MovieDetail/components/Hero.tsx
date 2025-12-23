@@ -3,25 +3,29 @@ import { Button } from "@/components/ui/button";
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
 import { Star, Calendar, Clock, Film as FilmIcon, Bookmark, Heart, Share2 } from "lucide-react";
 import type { FilmDetail } from "../types";
+import { useFavorite } from "@/hooks/useFavorite";
+import { FavoriteActionDto } from "@/api";
 
 /**
  * Hero 组件
  * - 承载页面顶部的海报、标题、基础信息与操作按钮
  * - 纯展示组件：只接收数据与事件回调，通过 props 驱动
  */
+
 export function Hero({
   detail,
-  isBookmarked,
   hasThanked,
-  onToggleBookmark,
   onToggleThanked,
 }: {
   detail: FilmDetail;
-  isBookmarked: boolean;
   hasThanked: boolean;
-  onToggleBookmark: () => void;
   onToggleThanked: () => void;
 }) {
+  const { isFavorite, toggle, isLoading } = useFavorite({
+    targetType: FavoriteActionDto.targetType.MOVIE,
+    targetId: detail.id,
+  });
+
   return (
     <div className="flex w-full flex-col gap-8 pt-12 pb-4 md:flex-row">
       {/* 海报 */}
@@ -103,15 +107,20 @@ export function Hero({
         <div className="flex flex-wrap gap-3 pt-4">
           {/* 收藏按钮 - 琥珀色 */}
           <Button
-            onClick={onToggleBookmark}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggle();
+            }}
+            disabled={isLoading}
             className={`h-auto border px-4 py-2 transition-all duration-300 ${
-              isBookmarked
+              isFavorite
                 ? "border-amber-500 bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/30"
                 : "border-neutral-700/50 bg-neutral-900/50 text-gray-300 hover:border-amber-500/50 hover:bg-neutral-800/70 hover:text-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
             }`}
           >
-            <Bookmark className={`mr-2 h-4 w-4 ${isBookmarked ? "fill-current" : ""}`} />
-            收藏
+            <Bookmark className={`mr-2 h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />
+            {isFavorite ? "已收藏" : "收藏"}
           </Button>
 
           {/* 感谢按钮 - 红/橙色 */}
