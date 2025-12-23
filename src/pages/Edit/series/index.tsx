@@ -58,15 +58,11 @@ export function EditSeriesPage() {
 
   // Local state for episode editing
   const [isEpisodeFormOpen, setIsEpisodeFormOpen] = useState(false);
-  const [editingEpisode, setEditingEpisode] = useState<Episode | undefined>(
-    undefined
-  );
+  const [editingEpisode, setEditingEpisode] = useState<Episode | undefined>(undefined);
 
   // Local state for bind dialog
   const [isBindDialogOpen, setIsBindDialogOpen] = useState(false);
-  const [bindTargetEpisode, setBindTargetEpisode] = useState<
-    Episode | undefined
-  >(undefined);
+  const [bindTargetEpisode, setBindTargetEpisode] = useState<Episode | undefined>(undefined);
 
   const onAddEpisode = () => {
     setEditingEpisode(undefined);
@@ -92,31 +88,29 @@ export function EditSeriesPage() {
   };
 
   return (
-    <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-6">
+    <div className="mx-auto max-w-[1600px] px-4 py-6 md:px-6">
       <div className="mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
-              <Tv className="w-5 h-5 text-white" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30">
+              <Tv className="h-5 w-5 text-white" />
             </div>
             <div className="flex items-end gap-1">
-              <h1 className="text-white text-3xl">剧集编辑</h1>
-              <p className="text-neutral-400 text-sm mt-1">
-                管理剧集信息、分集与种子关联
-              </p>
+              <h1 className="text-3xl text-white">剧集编辑</h1>
+              <p className="mt-1 text-sm text-neutral-400">管理剧集信息、分集与种子关联</p>
             </div>
           </div>
           <Button
             onClick={handleCreateNew}
-            className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+            className="bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:from-amber-600 hover:to-orange-700"
           >
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="mr-2 h-4 w-4" />
             添加剧集
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-1">
           <SeriesList
             seriesList={seriesList}
@@ -134,7 +128,7 @@ export function EditSeriesPage() {
         </div>
 
         <div className="lg:col-span-2">
-          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 md:p-8 space-y-8">
+          <div className="space-y-8 rounded-2xl border border-neutral-700/50 bg-linear-to-br from-neutral-800/40 to-stone-900/40 p-6 backdrop-blur-sm md:p-8">
             {(isCreating || isEditing) && (
               <SeriesForm
                 isCreating={isCreating}
@@ -163,10 +157,8 @@ export function EditSeriesPage() {
                   onDelete={() => handleDeleteSeries(selectedSeries.id)}
                 />
 
-                <div className="pt-6 border-t border-neutral-700/50">
-                  <h3 className="text-lg font-medium text-white mb-4">
-                    分集管理
-                  </h3>
+                <div className="border-t border-neutral-700/50 pt-6">
+                  <h3 className="mb-4 text-lg font-medium text-white">分集管理</h3>
                   <EpisodeList
                     seriesId={selectedSeries.id}
                     episodes={episodes}
@@ -205,23 +197,22 @@ export function EditSeriesPage() {
                   onBind={async (tid, epNum) => {
                     await handleBindTorrent(selectedSeries.id, tid, epNum);
                   }}
-                  boundTorrentIds={seriesTorrents.map((t) => t.torrentId)}
                 />
               </>
             )}
 
             {!isCreating && !isEditing && !selectedSeries && (
-              <div className="text-center py-20">
-                <Tv className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
-                <h3 className="text-white text-lg mb-2">选择一部剧集</h3>
-                <p className="text-neutral-400 text-sm mb-6">
+              <div className="py-20 text-center">
+                <Tv className="mx-auto mb-4 h-16 w-16 text-neutral-600" />
+                <h3 className="mb-2 text-lg text-white">选择一部剧集</h3>
+                <p className="mb-6 text-sm text-neutral-400">
                   从左侧列表选择剧集进行编辑，或添加新剧集
                 </p>
                 <Button
                   onClick={handleCreateNew}
-                  className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+                  className="bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:from-amber-600 hover:to-orange-700"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="mr-2 h-4 w-4" />
                   添加新剧集
                 </Button>
               </div>

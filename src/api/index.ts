@@ -238,7 +238,7 @@ export type { ListThreadsDto } from './models/ListThreadsDto';
 export type { ListThreadStickiesDto } from './models/ListThreadStickiesDto';
 export { ListTicketsDto } from './models/ListTicketsDto';
 export type { ListTorrentPromotionsDto } from './models/ListTorrentPromotionsDto';
-export type { ListTorrentsDto } from './models/ListTorrentsDto';
+export { ListTorrentsDto } from './models/ListTorrentsDto';
 export type { ListTorrentsResponseDto } from './models/ListTorrentsResponseDto';
 export type { ListTorrentStickiesDto } from './models/ListTorrentStickiesDto';
 export type { ListTorrentThanksDto } from './models/ListTorrentThanksDto';

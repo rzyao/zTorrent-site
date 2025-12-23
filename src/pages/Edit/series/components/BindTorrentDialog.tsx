@@ -2,12 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatSize } from "@/utils/format";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link, Search, Loader2, Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -23,8 +18,6 @@ interface BindTorrentDialogProps {
   searchTorrents: (query: string) => Promise<any[]>;
   // 绑定操作
   onBind: (torrentId: string, episodeNumber?: number) => Promise<void>;
-  // 已绑定的种子 ID 列表
-  boundTorrentIds: string[];
 }
 
 export function BindTorrentDialog({
@@ -33,7 +26,6 @@ export function BindTorrentDialog({
   targetEpisode,
   searchTorrents,
   onBind,
-  boundTorrentIds,
 }: BindTorrentDialogProps) {
   // 所有状态都在弹窗内部管理
   const [localQuery, setLocalQuery] = useState("");
@@ -93,23 +85,28 @@ export function BindTorrentDialog({
     const epNum = targetEpisode
       ? targetEpisode.episodeNumber
       : bindEpisode
-      ? parseInt(bindEpisode)
-      : undefined;
+        ? parseInt(bindEpisode)
+        : undefined;
     await onBind(torrentId, epNum);
-    onClose();
+
+    // 更新本地状态显示为已绑定
+    setSearchResults((prev) =>
+      prev.map((item) => (item.id === torrentId ? { ...item, isBound: true } : item)),
+    );
+    // 不自动关闭弹窗，允许连续操作
+    // onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl bg-gray-950 border-gray-800 text-white">
+      <DialogContent className="max-w-2xl border-gray-800 bg-gray-950 text-white">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Link className="w-5 h-5 text-amber-500" />
+            <Link className="h-5 w-5 text-amber-500" />
             关联种子
             {targetEpisode && (
-              <span className="text-neutral-400 text-sm font-normal ml-2">
-                (绑定至: 第{targetEpisode.episodeNumber}集 {targetEpisode.title}
-                )
+              <span className="ml-2 text-sm font-normal text-neutral-400">
+                (绑定至: 第{targetEpisode.episodeNumber}集 {targetEpisode.title})
               </span>
             )}
           </DialogTitle>
@@ -118,7 +115,7 @@ export function BindTorrentDialog({
         <div className="space-y-4 py-4">
           {/* 搜索区域 */}
           <div className="space-y-2">
-            <label className="text-neutral-300 text-sm">搜索种子</label>
+            <label className="text-sm text-neutral-300">搜索种子</label>
             <div className="flex gap-2">
               <Input
                 type="text"
@@ -126,7 +123,7 @@ export function BindTorrentDialog({
                 onChange={(e) => setLocalQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="输入关键词搜索..."
-                className="bg-gray-900 border-gray-800 flex-1"
+                className="flex-1 border-gray-800 bg-gray-900"
               />
               <Button
                 onClick={handleSearch}
@@ -134,9 +131,9 @@ export function BindTorrentDialog({
                 className="bg-amber-500 text-black hover:bg-amber-400 disabled:opacity-50"
               >
                 {isSearching ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <Search className="w-4 h-4" />
+                  <Search className="h-4 w-4" />
                 )}
               </Button>
             </div>
@@ -145,74 +142,60 @@ export function BindTorrentDialog({
           {/* 绑定到指定分集（仅当未指定 targetEpisode 时显示） */}
           {!targetEpisode && (
             <div className="space-y-1">
-              <label className="text-xs text-neutral-400">
-                绑定到集 (可选)
-              </label>
+              <label className="text-xs text-neutral-400">绑定到集 (可选)</label>
               <Input
                 type="number"
                 value={bindEpisode}
                 onChange={(e) => setBindEpisode(e.target.value)}
                 placeholder="集号"
-                className="bg-gray-900 border-gray-800 w-32"
+                className="w-32 border-gray-800 bg-gray-900"
               />
             </div>
           )}
 
           {/* 搜索结果 */}
-          <div className="space-y-2 mt-4 max-h-[300px] overflow-y-auto">
-            {isSearching && (
-              <p className="text-sm text-neutral-500 text-center py-4">
-                搜索中...
-              </p>
-            )}
+          <div className="mt-4 max-h-[300px] space-y-2 overflow-y-auto">
+            {isSearching && <p className="py-4 text-center text-sm text-neutral-500">搜索中...</p>}
             {!isSearching && searchTriggered && searchResults.length === 0 && (
-              <p className="text-sm text-neutral-500 text-center py-4">
-                无结果
-              </p>
+              <p className="py-4 text-center text-sm text-neutral-500">无结果</p>
             )}
             {!searchTriggered && !isSearching && (
-              <p className="text-sm text-neutral-500 text-center py-4">
-                输入关键词并点击搜索按钮
-              </p>
+              <p className="py-4 text-center text-sm text-neutral-500">输入关键词并点击搜索按钮</p>
             )}
 
             {searchResults.map((item: any) => {
-              const isBound = boundTorrentIds.includes(item.id);
               return (
                 <div
                   key={item.id}
-                  className={`p-3 rounded-lg border flex justify-between items-center group transition-colors ${
-                    isBound
-                      ? "bg-green-900/20 border-green-800/50"
-                      : "bg-neutral-900/50 border-neutral-800 hover:bg-neutral-800/50"
+                  className={`group flex items-center justify-between rounded-lg border p-3 transition-colors ${
+                    item.isBound
+                      ? "border-green-800/50 bg-green-900/20"
+                      : "border-neutral-800 bg-neutral-900/50 hover:bg-neutral-800/50"
                   }`}
                 >
-                  <div className="flex-1 min-w-0 mr-4">
+                  <div className="mr-4 min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <div
-                        className="text-sm text-white truncate font-medium"
-                        title={item.title}
-                      >
+                      <div className="truncate text-sm font-medium text-white" title={item.title}>
                         {item.title}
                       </div>
-                      {isBound && (
-                        <Badge className="text-green-400 border border-green-600 text-xs bg-green-900/30">
-                          <Check className="w-3 h-3 mr-1" />
+                      {item.isBound && (
+                        <Badge className="border border-green-600 bg-green-900/30 text-xs text-green-400">
+                          <Check className="mr-1 h-3 w-3" />
                           已绑定
                         </Badge>
                       )}
                     </div>
-                    <div className="text-xs text-neutral-500 mt-1">
+                    <div className="mt-1 text-xs text-neutral-500">
                       {formatSize(item.size)} · {item.uploadDate}
                     </div>
                   </div>
-                  {isBound ? (
+                  {item.isBound ? (
                     <span className="text-xs text-green-500">已关联</span>
                   ) : (
                     <Button
                       size="sm"
                       onClick={() => handleBind(item.id)}
-                      className="bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-black border border-amber-500/50 h-8"
+                      className="h-8 border border-amber-500/50 bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-black"
                     >
                       绑定
                     </Button>

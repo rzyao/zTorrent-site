@@ -9,6 +9,7 @@ import { CreateSeriesDto } from '@/api/models/CreateSeriesDto';
 import { UpdateSeriesDto } from '@/api/models/UpdateSeriesDto';
 import { CreateEpisodeDto } from '@/api/models/CreateEpisodeDto';
 import { UpdateEpisodeDto } from '@/api/models/UpdateEpisodeDto';
+import { ListTorrentsDto } from '@/api/models/ListTorrentsDto';
 import type { Series, SeriesFormState, Episode, SeriesTorrent } from '@/pages/Edit/series/types';
 
 export function useEditSeries() {
@@ -365,10 +366,15 @@ export function useEditSeries() {
         if (!query || query.length < 2) return [];
         try {
             const { TorrentsService } = await import('@/api/services/TorrentsService');
-            const res = await TorrentsService.torrentsControllerListSimple({ 
+            // Check if selectedSeries is available, actually it should be if we are in edit mode
+            if (!selectedSeries) return [];
+
+            const res = await TorrentsService.torrentsControllerPicker({ 
                 page: 1, 
                 pageSize: 20, 
-                keyword: query 
+                keyword: query,
+                bindMediaId: selectedSeries.id,
+                bindMediaType: ListTorrentsDto.bindMediaType.SERIES
             });
             return res?.data?.items || [];
         } catch (e) {

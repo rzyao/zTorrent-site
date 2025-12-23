@@ -327,12 +327,12 @@ export class TorrentsService {
         });
     }
     /**
-     * 简化列出种子列表（分页+关键词）
+     * 种子选择器：用于电影/剧集/歌单等模块绑定种子
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static torrentsControllerListSimple(
+    public static torrentsControllerPicker(
         requestBody: ListTorrentsDto,
     ): CancelablePromise<{
         code?: number;
@@ -343,7 +343,7 @@ export class TorrentsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/torrents/list',
+            url: '/torrents/picker',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
