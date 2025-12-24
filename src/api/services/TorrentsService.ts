@@ -25,8 +25,6 @@ import type { ReviewDto } from '../models/ReviewDto';
 import type { ReviewerListTorrentsDto } from '../models/ReviewerListTorrentsDto';
 import type { ReviewHistoryDto } from '../models/ReviewHistoryDto';
 import type { ReviewHistoryResponseDto } from '../models/ReviewHistoryResponseDto';
-import type { SearchTorrentsDto } from '../models/SearchTorrentsDto';
-import type { SearchTorrentsResponseDto } from '../models/SearchTorrentsResponseDto';
 import type { UpdateTorrentDto } from '../models/UpdateTorrentDto';
 import type { UploadCoverThumbDto } from '../models/UploadCoverThumbDto';
 import type { UrlDto } from '../models/UrlDto';
@@ -269,35 +267,6 @@ export class TorrentsService {
         });
     }
     /**
-     * 搜索：字符串+影片ID；排除已关联该影片的种子
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static torrentsControllerSearch(
-        requestBody: SearchTorrentsDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: SearchTorrentsResponseDto;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/torrents/search',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
      * 后台管理员列出种子列表（高级筛选）
      * @param requestBody
      * @returns any 成功
@@ -327,7 +296,7 @@ export class TorrentsService {
         });
     }
     /**
-     * 种子选择器：用于电影/剧集/歌单等模块绑定种子
+     * 种子选择器：用于电影/剧集/歌单等模块查询可绑定种子
      * @param requestBody
      * @returns any 成功
      * @throws ApiError

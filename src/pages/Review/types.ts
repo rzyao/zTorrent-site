@@ -1,4 +1,4 @@
-export type ReviewType = 'movie' | 'playlist' | 'torrent';
+export type ReviewType = 'movie' | 'series' | 'playlist' | 'torrent';
 export type ReviewStatus = 'pending' | 'approved' | 'rejected';
 
 export interface ReviewItem {

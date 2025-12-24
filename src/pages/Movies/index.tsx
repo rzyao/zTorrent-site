@@ -6,7 +6,7 @@ import { LoadingState, ErrorState } from "./components/States";
 import { PageContainer } from "@/components/PageContainer";
 import { GridSkeleton } from "@/components/skeletons/GridSkeleton";
 
-export function MoviesPage() {
+export default function MoviesPage() {
   const {
     movies,
     genres,

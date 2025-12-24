@@ -10,7 +10,7 @@ import { useSubtitlesRemote } from './hooks/useSubtitlesRemote';
 
 
 
-export function SubtitlesPage() {
+export default function SubtitlesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortBy>('latest');
   const [filterLanguage, setFilterLanguage] = useState<FilterLanguage>('all');

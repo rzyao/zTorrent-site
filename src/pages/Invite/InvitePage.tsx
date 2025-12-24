@@ -21,7 +21,7 @@ import { useInvitedUsers } from './hooks/useInvitedUsers';
 import { useInviteStoreQuota } from './hooks/useInviteStoreQuota';
 
 
-export function InvitePage() {
+export default function InvitePage() {
   useDynamicTitle('邀请管理');
   const [activeTab, setActiveTab] = useState<'codes' | 'records' | 'users'>('codes');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);

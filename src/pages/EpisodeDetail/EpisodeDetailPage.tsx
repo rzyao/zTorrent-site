@@ -23,7 +23,7 @@ import { useDownloaders } from "@/context/DownloadersContext";
 import { DownloadToDownloaderModal } from "@/components/DownloadToDownloaderModal";
 import { useState } from "react";
 
-export function EpisodeDetailPage() {
+export default function EpisodeDetailPage() {
   const { id } = useParams<{
     id: string;
   }>();

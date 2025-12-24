@@ -24,7 +24,7 @@ import { AddToPlaylistModal } from "@/pages/PlayerPage/components/AddToPlaylistM
 
 /** 工具函数已移至 '@/pages/PlayerPage/utils' */
 
-export function PlayerPage() {
+export default function PlayerPage() {
   const {
     songs,
     myAlbums,

@@ -12,7 +12,7 @@ import { PageContainer } from "@/components/PageContainer";
  *
  * 说明：组合拆分后的子组件与业务 Hook，保持原有页面布局与交互。
  */
-export function RulesPage() {
+export default function RulesPage() {
   const {
     expandedSection,
     isEditMode,

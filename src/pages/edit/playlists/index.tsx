@@ -28,7 +28,7 @@ import { StatsPanel } from "@/pages/Edit/playlists/components/StatsPanel";
 import { PlaylistForm } from "@/pages/Edit/playlists/components/PlaylistForm";
 import { PlaylistDetails } from "@/pages/Edit/playlists/components/PlaylistDetails";
 
-export function EditPlaylistPage() {
+export default function EditPlaylistPage() {
   useDynamicTitle("片单编辑");
   // 接入拆分后的业务逻辑 Hook
   const {

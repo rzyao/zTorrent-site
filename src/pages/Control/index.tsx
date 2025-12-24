@@ -30,7 +30,7 @@ import type { TabType } from "./types";
 
 // 控制台页面入口
 // 职责：拼装左右布局、Tab 切换与保存区，承载公共状态 Hook 并向各 Tab 下发
-export function ControlPage() {
+export default function ControlPage() {
   const state = useControlState();
   const passwordForm = usePasswordForm();
 
@@ -169,4 +169,4 @@ export function ControlPage() {
   );
 }
 
-export default ControlPage;
+

@@ -12,7 +12,7 @@ import { StatsSidebar } from "./components/StatsSidebar";
  * @param onAnnouncementClick - 点击公告时的回调函数
  * **/
 
-export function AnnouncementsPage({
+export default function AnnouncementsPage({
   onAnnouncementClick,
 }: AnnouncementsPageProps) {
   const {

@@ -10,7 +10,7 @@ import { RequestsHeader } from '@/pages/Requests/components/RequestsHeader';
 import { RequestsTabs } from '@/pages/Requests/components/RequestsTabs';
 import { RequestsContent } from '@/pages/Requests/components/RequestsContent';
 
-export function RequestsPage() {
+export default function RequestsPage() {
   // 使用自定义 Hook 管理选项卡相关状态与数据源
   const { activeTab, setActiveTab, visibleTabs } = useRequestsTabs();
 

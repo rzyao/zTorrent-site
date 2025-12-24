@@ -17,7 +17,7 @@ import { useUploadTorrent } from "@/pages/UploadTorrent/hooks/useUploadTorrent";
  * - 组合各无状态子组件；
  * - 不直接包含业务逻辑，所有状态与方法来源于 `useUploadTorrent`。
  */
-export function UploadTorrentPage() {
+export default function UploadTorrentPage() {
   useDynamicTitle("上传");
   const navigate = useNavigate();
   const U = useUploadTorrent();

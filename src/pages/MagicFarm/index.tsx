@@ -15,7 +15,7 @@ import TransactionModal from './components/TransactionModal';
 // - 从 useTransactions 获取仓库与交易弹窗，用于出售确认（保持原页面功能为可选）
 // 页面层不直接实现业务细节，仅进行“何时调用哪个 Hook 的哪个方法”的编排，保证关注点分离。
 
-export function MagicFarmPage() {
+export default function MagicFarmPage() {
   // 1) 获取核心农场状态与动作
   const farm = useMagicFarm();
 

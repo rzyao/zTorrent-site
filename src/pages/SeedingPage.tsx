@@ -29,7 +29,7 @@ interface Torrent {
   category: string;
 }
 
-export function SeedingPage() {
+export default function SeedingPage() {
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'bonus' | 'ratio' | 'time'>('bonus');
 

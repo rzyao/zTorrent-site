@@ -102,7 +102,7 @@ interface ForumPost {
   isHot?: boolean;
 }
 
-export function DesignPage() {
+export default function DesignPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
 

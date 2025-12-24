@@ -6,7 +6,7 @@ import { games } from './constants';
 import { useGamesState } from './hooks/useGamesState';
 import type { GamesPageProps } from './types';
 
-export function GamesPage({ onNavigateMagicFarm }: GamesPageProps) {
+export default function GamesPage({ onNavigateMagicFarm }: GamesPageProps) {
   const { selectedGame, setSelectedGame, userStats, handleGameClick } = useGamesState(onNavigateMagicFarm);
 
   return (

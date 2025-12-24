@@ -9,7 +9,7 @@ import { MovieDetails } from "@/pages/Edit/movies/components/MovieDetails";
 import { TorrentSearchPanel } from "@/pages/Edit/movies/components/TorrentSearchPanel";
 import { TorrentList } from "@/pages/Edit/movies/components/TorrentList";
 
-export function EditMoviePage() {
+export default function EditMoviePage() {
   useDynamicTitle("影片编辑");
   const {
     movies,

@@ -31,7 +31,7 @@ import { TutorialDetailModal } from "@/pages/Tutorials/components/TutorialDetail
  *
  * 说明：组合拆分后的子组件与业务 Hook，保持原有页面布局与交互。
  * **/
-export function TutorialsPage() {
+export default function TutorialsPage() {
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>("all");
   const [selectedTutorial, setSelectedTutorial] = useState<Tutorial | null>(
     null

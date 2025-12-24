@@ -10,7 +10,7 @@ import { ActionModal } from "./components/ActionModal";
 import { HistoryModal } from "./components/HistoryModal";
 import { PageContainer } from "@/components/PageContainer";
 
-export function ReviewPage() {
+export default function ReviewPage() {
   const data = useReviewData();
   const actions = useReviewActions(data.setItems);
   const history = useReviewHistory(actions.selectedItem, actions.showHistory);
@@ -27,8 +27,8 @@ export function ReviewPage() {
           </div>
           <div className="mb-1 text-3xl text-amber-400">{data.stats.pending}</div>
           <div className="text-xs text-neutral-500">
-            影片 {data.stats.pendingMovies} · 片单 {data.stats.pendingPlaylists} · 种子{" "}
-            {data.stats.pendingTorrents}
+            种子 {data.stats.pendingTorrents} · 电影 {data.stats.pendingMovies} · 剧集{" "}
+            {data.stats.pendingSeries} · 片单 {data.stats.pendingPlaylists}
           </div>
         </div>
         <div className="rounded-xl border border-green-500/20 bg-linear-to-br from-green-500/10 to-emerald-600/10 p-5">

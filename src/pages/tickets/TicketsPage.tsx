@@ -9,7 +9,7 @@ import { TicketStatsView } from "@/pages/Tickets/views/TicketStatsView";
 import { TicketFAQView } from "@/pages/Tickets/views/TicketFAQView";
 import { PageContainer } from "@/components/PageContainer";
 
-export function TicketsPage() {
+export default function TicketsPage() {
   const [activeTab, setActiveTab] = useState<TabType>("myTickets");
   const [isAdmin] = useState(true);
 

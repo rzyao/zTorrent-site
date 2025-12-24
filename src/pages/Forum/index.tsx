@@ -28,7 +28,7 @@ import { useForumThreads } from "./hooks/useForumThreads";
 import { useForumThreadDetail } from "./hooks/useForumThreadDetail";
 import { useForumPosts } from "./hooks/useForumPosts";
 
-export function ForumPage() {
+export default function ForumPage() {
   // 设置页面标题（浏览器标题随页面更新）
   useDynamicTitle("论坛");
 

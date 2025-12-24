@@ -9,7 +9,7 @@ import { CreateCandidateModal } from './components/CreateCandidateModal';
 import { getVotePercentage } from './utils';
 
 
-export function CandidatesPage() {
+export default function CandidatesPage() {
   const [selectedTab, setSelectedTab] = useState<'hall' | 'mySubmissions' | 'myVotes'>('hall');
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);

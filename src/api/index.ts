@@ -330,8 +330,6 @@ export type { RssFeedItemDto } from './models/RssFeedItemDto';
 export type { SaveDraftDto } from './models/SaveDraftDto';
 export type { SearchAddableItemsDto } from './models/SearchAddableItemsDto';
 export type { SearchAddableItemsResponseDto } from './models/SearchAddableItemsResponseDto';
-export type { SearchTorrentsDto } from './models/SearchTorrentsDto';
-export type { SearchTorrentsResponseDto } from './models/SearchTorrentsResponseDto';
 export type { SendInviteDto } from './models/SendInviteDto';
 export type { SendMailDto } from './models/SendMailDto';
 export { SendMessageDto } from './models/SendMessageDto';

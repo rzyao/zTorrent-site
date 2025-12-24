@@ -18,7 +18,7 @@ import type { MagicRecord } from './types';
 
 
 
-export function BonusPage() {
+export default function BonusPage() {
   useDynamicTitle('魔力值');
   const [activeTab, setActiveTab] = useState<'overview' | 'records' | 'shop'>('overview');
 

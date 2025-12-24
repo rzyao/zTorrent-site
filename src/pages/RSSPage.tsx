@@ -10,7 +10,7 @@ interface RSSFeed {
   itemCount: number;
 }
 
-export function RSSPage() {
+export default function RSSPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>(['all']);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedQuality, setSelectedQuality] = useState<string[]>([]);

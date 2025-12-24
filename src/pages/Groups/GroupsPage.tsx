@@ -14,7 +14,7 @@ import { StatsSummary } from './components/StatsSummary';
 import { FeaturedGroupCard } from './components/FeaturedGroupCard';
 import { GroupCard } from './components/GroupCard';
 
-export const GroupsPage: React.FC = () => {
+export default function GroupsPage() {
   // 将数据按是否精选进行划分，便于渲染
   const featuredGroups: Group[] = mockGroups.filter((g) => g.featured);
   const normalGroups: Group[] = mockGroups.filter((g) => !g.featured);

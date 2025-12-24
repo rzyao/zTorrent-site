@@ -18,7 +18,7 @@ import { DetailPageSkeleton } from "@/components/skeletons/DetailPageSkeleton";
  * - 数据获取由 useSeriesDetail Hook 统一管理
  * - UI 状态与业务逻辑分离
  */
-export function SeriesDetailPage() {
+export default function SeriesDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { series, episodes, loading, error } = useSeriesDetail(id);

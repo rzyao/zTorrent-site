@@ -12,7 +12,7 @@ import { AlbumsSection } from "./components/AlbumsSection";
 import { PlaylistsSection } from "./components/PlaylistsSection";
 import { AddToPlaylistModal } from "./components/AddToPlaylistModal";
 
-export function MusicPage() {
+export default function MusicPage() {
   const { activeTab, setActiveTab, viewMode, setViewMode, searchQuery, deferredSearchQuery, setSearchQuery } =
     useViewState();
   const {

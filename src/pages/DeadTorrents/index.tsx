@@ -8,7 +8,7 @@ import { StatsCards } from "./components/StatsCards";
 import { Toolbar } from "./components/Toolbar";
 import { DeadTorrentsList } from "./components/DeadTorrentsList";
 
-export function DeadTorrentsPage() {
+export default function DeadTorrentsPage() {
   const [activeTab, setActiveTab] = useState<TabType>("hall");
   const [sortBy, setSortBy] = useState<"time" | "bounty" | "ratio">("bounty");
 

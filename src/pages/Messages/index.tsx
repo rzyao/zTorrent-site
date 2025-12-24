@@ -29,7 +29,7 @@ import { usePollingUnread } from './hooks/usePollingUnread';
  * - 职责：集中管理页面状态与业务逻辑，向子组件下发纯数据与回调函数
  * - 目标：保持原有 UI，不改动路由，对外导出同名组件以确保引用路径稳定
  */
-export function MessagesPage() {
+export default function MessagesPage() {
   useDynamicTitle('消息');
   const { activeTab, setActiveTab } = useTabState();
 

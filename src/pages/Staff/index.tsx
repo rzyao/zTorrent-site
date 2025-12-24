@@ -13,7 +13,7 @@ import { useStaffFilters } from "./hooks/useStaffFilters";
  *
  * 说明：组合拆分后的子组件与业务 Hook，保持原有页面布局与交互。
  */
-export function StaffPage() {
+export default function StaffPage() {
   useDynamicTitle("管理组");
   const { selectedRole, setSelectedRole, filteredMembers, roleStats } =
     useStaffFilters(staffMembers);

@@ -7,7 +7,7 @@ import { PlaylistsControls } from "@/pages/Playlists/components/PlaylistsControl
 import { EmptyState } from "@/pages/Playlists/components/EmptyState";
 import { PageContainer } from "@/components/PageContainer";
 
-export function PlaylistsPage() {
+export default function PlaylistsPage() {
   const navigate = useNavigate();
   const {
     activeTab,

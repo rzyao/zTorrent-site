@@ -12,7 +12,7 @@ import { EpisodeForm } from "@/pages/Edit/series/components/EpisodeForm";
 import { BindTorrentDialog } from "@/pages/Edit/series/components/BindTorrentDialog";
 import type { Episode } from "@/pages/Edit/series/types";
 
-export function EditSeriesPage() {
+export default function EditSeriesPage() {
   useDynamicTitle("剧集编辑");
   const {
     seriesList,

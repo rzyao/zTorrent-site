@@ -6,7 +6,7 @@ import { TorrentRecordTabs } from './components/TorrentRecordTabs';
 import { TorrentRecordFilters } from './components/TorrentRecordFilters';
 import { TorrentRecordTable } from './components/TorrentRecordTable';
 
-export function TorrentRecordPage() {
+export default function TorrentRecordPage() {
   const [activeTab, setActiveTab] = useState<TorrentStatus>('seeding');
   const [searchQuery, setSearchQuery] = useState('');
 

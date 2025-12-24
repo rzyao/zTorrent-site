@@ -18,7 +18,7 @@ interface PlaylistDetailPageProps {
   onFilmClick?: (filmId: string) => void;
 }
 
-export function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: PlaylistDetailPageProps) {
+export default function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: PlaylistDetailPageProps) {
   const navigate = useNavigate();
   // 页面交互状态仅保留视图与排序
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
