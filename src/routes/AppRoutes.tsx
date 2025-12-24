@@ -43,7 +43,7 @@ import { DeadTorrentsPage } from "@/pages/DeadTorrents/index.tsx";
 import { GamesPage } from "@/pages/Games/index.tsx";
 import { MagicFarmPage } from "@/pages/MagicFarm/index.tsx";
 import { AnnouncementsPage } from "@/pages/Announcements/index.tsx";
-import { MusicPage } from "@/pages/MusicPage.tsx";
+import { MusicPage } from "@/pages/Music/index.tsx";
 import { PlayerPage } from "@/pages/PlayerPage/index.tsx";
 import { DesignPage } from "@/pages/design.tsx";
 import FavoritesPage from "@/pages/Favorites/index.tsx";
