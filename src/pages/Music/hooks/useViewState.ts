@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import type { TabType, ViewMode } from "../types";
 import {
   Music as MusicIcon,
@@ -18,12 +18,53 @@ export const tabs = [
 
 /**
  * 页面视图状态（当前 Tab、列表视图模式、搜索词）
- * - 将原 MusicPage 中的视图相关状态集中管理，便于复用
+ * - 使用 URL SearchParams 管理状态，支持浏览器前进后退及链接分享
  */
 export function useViewState() {
-  const [activeTab, setActiveTab] = useState<TabType>("hall");
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // 获取状态，提供默认值
+  const activeTab = (searchParams.get("tab") as TabType) || "hall";
+  const viewMode = (searchParams.get("view") as ViewMode) || "grid";
+  const searchQuery = searchParams.get("q") || "";
+
+  // 状态更新函数
+  const setActiveTab = (tab: TabType) => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.set("tab", tab);
+        return next;
+      },
+      { replace: true }
+    );
+  };
+
+  const setViewMode = (mode: ViewMode) => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.set("view", mode);
+        return next;
+      },
+      { replace: true }
+    );
+  };
+
+  const setSearchQuery = (query: string) => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (query) {
+          next.set("q", query);
+        } else {
+          next.delete("q");
+        }
+        return next;
+      },
+      { replace: true }
+    );
+  };
 
   return {
     activeTab,
