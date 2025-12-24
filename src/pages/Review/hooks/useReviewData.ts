@@ -13,7 +13,7 @@ export function useReviewData() {
   useDynamicTitle('审核');
 
   const [typeFilter, setTypeFilter] = useState<ReviewType>('torrent');
-  const [statusFilter, setStatusFilter] = useState<ReviewStatus | 'all'>('pending');
+  const [statusFilter, setStatusFilter] = useState<ReviewStatus>('pending');
   const [timeRange, setTimeRange] = useState<'today' | 'week' | 'month' | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -74,14 +74,12 @@ export function useReviewData() {
           keyword: searchQuery || undefined,
         });
       } else {
-        // 兜底：使用审核员全量列表接口
-        resp = await TorrentsService.torrentsControllerListTorrentsForReviewer({
+        // 使用审核员列表接口获取已驳回种子
+        resp = await TorrentsService.torrentsControllerListReviewHistory({
           page,
           limit,
-          approvalStatus: ReviewerListTorrentsDto.approvalStatus.ALL,
+          status: ReviewHistoryDto.status.REJECTED,
           keyword: searchQuery || undefined,
-          sortBy: ReviewerListTorrentsDto.sortBy.APPROVED_AT,
-          order: ReviewerListTorrentsDto.order.DESC,
         });
       }
 

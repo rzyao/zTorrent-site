@@ -11,8 +11,8 @@ import type { ReviewStatus, ReviewType } from "../types";
 interface Props {
   typeFilter: ReviewType;
   setTypeFilter: (v: ReviewType) => void;
-  statusFilter: ReviewStatus | "all";
-  setStatusFilter: (v: ReviewStatus | "all") => void;
+  statusFilter: ReviewStatus;
+  setStatusFilter: (v: ReviewStatus) => void;
   searchQuery: string;
   setSearchQuery: (v: string) => void;
   showFilters: boolean;
@@ -100,12 +100,6 @@ export function FiltersBar(props: Props) {
             className={`rounded-lg px-4 py-2 text-sm transition-all ${statusFilter === "rejected" ? "border border-red-500/50 bg-red-500/20 text-red-400" : "bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700"}`}
           >
             已驳回
-          </button>
-          <button
-            onClick={() => setStatusFilter("all")}
-            className={`rounded-lg px-4 py-2 text-sm transition-all ${statusFilter === "all" ? "bg-neutral-600 text-neutral-200" : "bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700"}`}
-          >
-            全部
           </button>
         </div>
 
