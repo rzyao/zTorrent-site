@@ -28,7 +28,7 @@ export function useReviewData() {
   const filteredItems = useMemo(() => {
     return items.filter(item => {
       const typeMatch = item.type === typeFilter;
-      const statusMatch = statusFilter === 'all' || item.status === statusFilter;
+      const statusMatch = item.status === statusFilter;
       const searchMatch = searchQuery === '' ||
         item.title?.toLowerCase?.().includes(searchQuery.toLowerCase()) ||
         item.submitter?.toLowerCase?.().includes(searchQuery.toLowerCase());
@@ -157,7 +157,7 @@ export function useReviewData() {
         page,
         limit,
         keyword: searchQuery || undefined,
-        approvalStatus: statusFilter === 'all' ? undefined : (statusFilter as any),
+        approvalStatus: statusFilter === 'pending' ? 'pending' : (statusFilter as any),
         sortBy: 'approvedAt',
         order: 'DESC',
       } as any);
