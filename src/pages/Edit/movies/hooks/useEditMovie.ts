@@ -3,6 +3,7 @@ import { useFilms } from '@/hooks/useFilms';
 import { TorrentsService } from '@/api/services/TorrentsService';
 import { MoviesService } from '@/api/services/MoviesService';
 import { PtGenService } from '@/api/services/PtGenService';
+import { ListTorrentsDto } from '@/api/models/ListTorrentsDto';
 import { stripBackticksAndTrim, parseDurationToMinutes, validateFilmForm, mapBackendFilmToLocal, isValidRating, mapBackendTorrentToLocal } from '@/pages/Edit/movies/utils';
 import type { Movie, MovieFormState } from '@/pages/Edit/movies/types';
 import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
@@ -104,7 +105,13 @@ export function useEditMovie() {
     setSearchError(null);
     const timer = setTimeout(async () => {
       try {
-        const resp: any = await TorrentsService.torrentsControllerSearch({ q, filmId: selectedMovie.id });
+        const resp: any = await TorrentsService.torrentsControllerPicker({ 
+          keyword: q, 
+          bindMediaId: selectedMovie.id,
+          bindMediaType: ListTorrentsDto.bindMediaType.MOVIE,
+          page: 1,
+          pageSize: 50
+        });
         const body = resp?.code !== undefined ? resp : resp?.data ?? resp;
         const items = body?.data?.items ?? body?.items ?? [];
         setSearchResults(Array.isArray(items) ? items : []);
