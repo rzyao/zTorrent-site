@@ -16,7 +16,15 @@ export function useReviewData() {
   const [statusFilter, setStatusFilter] = useState<ReviewStatus>('pending');
   const [timeRange, setTimeRange] = useState<'today' | 'week' | 'month' | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<ReviewItem[]>([]);
@@ -29,12 +37,12 @@ export function useReviewData() {
     return items.filter(item => {
       const typeMatch = item.type === typeFilter;
       const statusMatch = item.status === statusFilter;
-      const searchMatch = searchQuery === '' ||
-        item.title?.toLowerCase?.().includes(searchQuery.toLowerCase()) ||
-        item.submitter?.toLowerCase?.().includes(searchQuery.toLowerCase());
+      const searchMatch = debouncedSearchQuery === '' ||
+        item.title?.toLowerCase?.().includes(debouncedSearchQuery.toLowerCase()) ||
+        item.submitter?.toLowerCase?.().includes(debouncedSearchQuery.toLowerCase());
       return typeMatch && statusMatch && searchMatch;
     });
-  }, [items, typeFilter, statusFilter, searchQuery]);
+  }, [items, typeFilter, statusFilter, debouncedSearchQuery]);
 
   const stats = useMemo(() => ({
     pending: items.filter(i => i.status === 'pending').length,
@@ -57,7 +65,7 @@ export function useReviewData() {
           page,
           limit,
           approvalStatus: ReviewerListTorrentsDto.approvalStatus.PENDING,
-          keyword: searchQuery || undefined,
+          keyword: debouncedSearchQuery || undefined,
           sortBy: ReviewerListTorrentsDto.sortBy.UPLOADED_AT,
           order: ReviewerListTorrentsDto.order.DESC,
         });
@@ -71,7 +79,7 @@ export function useReviewData() {
           page,
           limit,
           status: historyStatus,
-          keyword: searchQuery || undefined,
+          keyword: debouncedSearchQuery || undefined,
         });
       } else {
         // 使用审核员列表接口获取已驳回种子
@@ -79,7 +87,7 @@ export function useReviewData() {
           page,
           limit,
           status: ReviewHistoryDto.status.REJECTED,
-          keyword: searchQuery || undefined,
+          keyword: debouncedSearchQuery || undefined,
         });
       }
 
@@ -119,7 +127,7 @@ export function useReviewData() {
       const resp = await MoviesService.moviesControllerList({
         page,
         limit,
-        keyword: searchQuery || undefined,
+        keyword: debouncedSearchQuery || undefined,
         // approvalStatus 字段待后端支持
       } as any);
       const data = unwrapResponse(resp);
@@ -156,7 +164,7 @@ export function useReviewData() {
       const resp = await PlaylistsService.playlistsControllerAdminList({
         page,
         limit,
-        keyword: searchQuery || undefined,
+        keyword: debouncedSearchQuery || undefined,
         approvalStatus: statusFilter === 'pending' ? 'pending' : (statusFilter as any),
         sortBy: 'approvedAt',
         order: 'DESC',
@@ -194,7 +202,7 @@ export function useReviewData() {
       const resp = await SeriesService.seriesControllerList({
         page,
         limit,
-        keyword: searchQuery || undefined,
+        keyword: debouncedSearchQuery || undefined,
       } as any);
       const data = unwrapResponse(resp);
       const list: any[] = Array.isArray(data?.items) ? data.items : [];
@@ -230,7 +238,7 @@ export function useReviewData() {
     else if (typeFilter === 'series') fetchSeries();
     else if (typeFilter === 'playlist') fetchPlaylists();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [typeFilter, statusFilter, searchQuery, page, limit]);
+  }, [typeFilter, statusFilter, debouncedSearchQuery, page, limit]);
 
   useEffect(() => {
     let cancelled = false;
