@@ -1,4 +1,5 @@
 import { useSearchParams } from "react-router-dom";
+import { useDeferredValue } from "react";
 import type { TabType, ViewMode } from "../types";
 import {
   Music as MusicIcon,
@@ -19,6 +20,7 @@ export const tabs = [
 /**
  * 页面视图状态（当前 Tab、列表视图模式、搜索词）
  * - 使用 URL SearchParams 管理状态，支持浏览器前进后退及链接分享
+ * - 引入 useDeferredValue 优化搜索响应性能
  */
 export function useViewState() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,6 +29,9 @@ export function useViewState() {
   const activeTab = (searchParams.get("tab") as TabType) || "hall";
   const viewMode = (searchParams.get("view") as ViewMode) || "grid";
   const searchQuery = searchParams.get("q") || "";
+  
+  // 使用 deferredValue 延迟传递给重渲染成本高的组件
+  const deferredSearchQuery = useDeferredValue(searchQuery);
 
   // 状态更新函数
   const setActiveTab = (tab: TabType) => {
@@ -71,7 +76,8 @@ export function useViewState() {
     setActiveTab,
     viewMode,
     setViewMode,
-    searchQuery,
+    searchQuery,         // 用于绑定 input value (实时)
+    deferredSearchQuery, // 用于传递给列表组件 (延迟)
     setSearchQuery,
   };
 }

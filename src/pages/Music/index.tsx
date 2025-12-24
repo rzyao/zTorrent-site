@@ -13,7 +13,7 @@ import { PlaylistsSection } from "./components/PlaylistsSection";
 import { AddToPlaylistModal } from "./components/AddToPlaylistModal";
 
 export function MusicPage() {
-  const { activeTab, setActiveTab, viewMode, setViewMode, searchQuery, setSearchQuery } =
+  const { activeTab, setActiveTab, viewMode, setViewMode, searchQuery, deferredSearchQuery, setSearchQuery } =
     useViewState();
   const {
     loading,
@@ -23,7 +23,7 @@ export function MusicPage() {
     albums,
     playlists,
     myPlaylists,
-  } = useMusicData();
+  } = useMusicData(activeTab);
   const {
     likedSongs,
     favoriteAlbums,
