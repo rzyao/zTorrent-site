@@ -62,7 +62,7 @@ export interface UpdateUserPreferencesDto {
 
 ## 端点定义
 ### 1) 获取偏好
-- `POST /users/preferences/get`
+- `POST /users/preferences/detail`
 - 描述：获取当前登录用户的完整网站偏好。
 - Headers：`Authorization: Bearer {token}`
 - Body：`{}`（空对象）
@@ -80,13 +80,13 @@ export interface UpdateUserPreferencesDto {
     "defaultTorrentCategories": ["电影", "剧集"],
     "defaultFilmGenres": ["科幻", "剧情", "动作"]
   },
-  "path": "/users/preferences/get",
+  "path": "/users/preferences/detail",
   "timestamp": "2025-12-05T10:00:00Z"
 }
 ```
 
 ### 2) 保存偏好（增量）
-- `POST /users/preferences/save`
+- `POST /users/preferences/update`
 - 描述：增量更新当前用户偏好；未包含的字段保持不变。
 - Headers：`Authorization: Bearer {token}`
 - Body：`UpdateUserPreferencesDto`
@@ -116,7 +116,7 @@ export interface UpdateUserPreferencesDto {
     "defaultTorrentCategories": ["电影", "音乐"],
     "defaultFilmGenres": ["科幻", "犯罪"]
   },
-  "path": "/users/preferences/save",
+  "path": "/users/preferences/update",
   "timestamp": "2025-12-05T10:00:02Z"
 }
 ```
@@ -163,7 +163,7 @@ export interface UpdateUserPreferencesDto {
 {
   "code": 400,
   "message": "参数错误: defaultFilmGenres 包含未定义类型",
-  "path": "/users/preferences/save",
+  "path": "/users/preferences/update",
   "timestamp": "2025-12-05T10:00:00Z"
 }
 ```
@@ -174,8 +174,8 @@ export interface UpdateUserPreferencesDto {
   - 语言枚举：`src/pages/control/components/tabs/PreferencesTab.tsx:71-75`
   - 主题枚举：`src/pages/control/components/tabs/PreferencesTab.tsx:91-94`
   - 默认视图枚举：`src/pages/control/components/tabs/PreferencesTab.tsx:108-110`
-- 初始化：将`localStorage`读取替换为调用`POST /users/preferences/get`（参考 `src/pages/control/hooks/useControlState.ts` 初始化流程）。
-- 保存：将`savePreferences({...})`替换为`POST /users/preferences/save`，请求体包含当前UI状态 `adultMode`、`selectedTorrentCategories`、`selectedFilmGenres` 及 `preferences.language/theme/defaultView`。
+- 初始化：将`localStorage`读取替换为调用`POST /users/preferences/detail`（参考 `src/pages/control/hooks/useControlState.ts` 初始化流程）。
+- 保存：将`savePreferences({...})`替换为`POST /users/preferences/update`，请求体包含当前UI状态 `adultMode`、`selectedTorrentCategories`、`selectedFilmGenres` 及 `preferences.language/theme/defaultView`。
 - 选项获取：沿用当前分类与类型选项接口；保存前在前端进行预校验以提升反馈速度：
 ```ts
 selectedTorrentCategories.every(k => torrentCategoryOptions.some(c => c.key === k));
