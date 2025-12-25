@@ -4,7 +4,7 @@
 /* eslint-disable */
 export type PullRssDto = {
     /**
-     * RSS Token（由 /rss/token/detail 获取）
+     * RSS Token（由 /rss/token 获取）
      */
     token: string;
     /**

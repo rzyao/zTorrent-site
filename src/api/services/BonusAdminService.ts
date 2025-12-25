@@ -20,7 +20,7 @@ export class BonusAdminService {
      * @returns any
      * @throws ApiError
      */
-    public static bonusControllerAdminListBalances(
+    public static bonusAccountControllerAdminListBalances(
         requestBody: AdminListBalancesDto,
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
@@ -36,7 +36,7 @@ export class BonusAdminService {
      * @returns any
      * @throws ApiError
      */
-    public static bonusControllerAdminListLedger(
+    public static bonusAccountControllerAdminListLedger(
         requestBody: AdminListLedgerDto,
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
@@ -52,7 +52,7 @@ export class BonusAdminService {
      * @returns any
      * @throws ApiError
      */
-    public static bonusControllerAdminAdjust(
+    public static bonusAccountControllerAdminAdjust(
         requestBody: AdminAdjustDto,
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
@@ -68,7 +68,7 @@ export class BonusAdminService {
      * @returns any
      * @throws ApiError
      */
-    public static bonusControllerAdminReverse(
+    public static bonusAccountControllerAdminReverse(
         requestBody: AdminReverseDto,
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
@@ -84,7 +84,7 @@ export class BonusAdminService {
      * @returns any
      * @throws ApiError
      */
-    public static bonusControllerAdminBatchAdjust(
+    public static bonusAccountControllerAdminBatchAdjust(
         requestBody: AdminBatchAdjustDto,
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
@@ -100,7 +100,7 @@ export class BonusAdminService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static bonusControllerAdminGetRules(
+    public static bonusAccountControllerAdminGetRules(
         requestBody: EmptyObjectDto,
     ): CancelablePromise<{
         code?: number;
@@ -128,42 +128,10 @@ export class BonusAdminService {
      * @returns any
      * @throws ApiError
      */
-    public static bonusControllerAdminConfigRules(): CancelablePromise<any> {
+    public static bonusAccountControllerAdminConfigRules(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/bonus/admin/rules/update',
-        });
-    }
-    /**
-     * 导出流水为 CSV
-     * @param requestBody
-     * @returns any
-     * @throws ApiError
-     */
-    public static bonusControllerExportLedger(
-        requestBody: AdminListLedgerDto,
-    ): CancelablePromise<any> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/bonus/admin/ledger/export',
-            body: requestBody,
-            mediaType: 'application/json',
-        });
-    }
-    /**
-     * 管理员调整记录列表
-     * @param requestBody
-     * @returns any
-     * @throws ApiError
-     */
-    public static bonusControllerListAdjustments(
-        requestBody: AdminListLedgerDto,
-    ): CancelablePromise<any> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/bonus/adjustments/list',
-            body: requestBody,
-            mediaType: 'application/json',
         });
     }
     /**
@@ -172,7 +140,7 @@ export class BonusAdminService {
      * @returns any
      * @throws ApiError
      */
-    public static bonusControllerFreezeAccount(
+    public static bonusAccountControllerFreezeAccount(
         requestBody: AdminFreezeDto,
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
@@ -188,7 +156,7 @@ export class BonusAdminService {
      * @returns any
      * @throws ApiError
      */
-    public static bonusControllerUnfreezeAccount(
+    public static bonusAccountControllerUnfreezeAccount(
         requestBody: AdminUnfreezeDto,
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
