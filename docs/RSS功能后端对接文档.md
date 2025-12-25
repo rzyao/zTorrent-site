@@ -49,7 +49,7 @@
   - 示例：`GET /rss?token=a1b2c...&category=movie&tags=free&quality=4k&fields=title,category,seeders`
 
 ### Token 管理
-- GET `/rss/token`
+- GET `/rss/token/detail`
   - 描述：查询当前用户的 RSS Token 与状态。
   - Headers：`Authorization: Bearer {token}`
   - 200：`{ code:0, data:{ token:string, createdAt:string, lastUsedAt?:string, status:'active'|'revoked' } }`
@@ -149,7 +149,7 @@
   - `selectedQuality` → Query `quality`，见 `src/pages/RSSPage.tsx:100-102`。
   - `includeFields` → Query `fields`（当非全勾选时拼接），见 `src/pages/RSSPage.tsx:104-111`。
 - Token 显示与重置按钮：
-  - 显示：`GET /rss/token` 返回 `token` 填充到 `userRSSToken`。
+  - 显示：`GET /rss/token/detail` 返回 `token` 填充到 `userRSSToken`。
   - 重置：`POST /rss/token/reset` 触发“重置”按钮逻辑（对应 UI 的 `RefreshCw`），刷新页面后替换 `userRSSToken`。
 - 我的 RSS 订阅：
   - 列表：`POST /rss/feeds/list` 映射到页面 `mockFeeds` 数据结构。
