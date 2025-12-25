@@ -81,8 +81,8 @@ export function SeriesDetails({
               <span className="text-white">{series.rating}</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-neutral-400">
-              <Tv className="w-4 h-4" />第 {series.seasonNumber} 季 · 共{" "}
-              {series.episodeCount} 集
+              <Tv className="w-4 h-4" />
+              共 {series.episodeCount} 集
             </div>
             <div className="flex items-center gap-2 text-sm text-neutral-400">
               <Users className="w-4 h-4" />
