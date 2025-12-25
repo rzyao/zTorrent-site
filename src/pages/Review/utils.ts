@@ -17,9 +17,10 @@ export const getVisibilityLabel = (visibility?: string) => {
   }
 };
 
-export const getTypeLabel = (type: 'movie' | 'playlist' | 'torrent') => {
+export const getTypeLabel = (type: 'movie' | 'series' | 'playlist' | 'torrent') => {
   switch (type) {
     case 'movie': return '影片';
+    case 'series': return '剧集';
     case 'playlist': return '片单';
     case 'torrent': return '种子';
   }

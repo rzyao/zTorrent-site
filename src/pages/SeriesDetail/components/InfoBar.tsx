@@ -71,7 +71,7 @@ export function InfoBar({ series, episodes }: InfoBarProps) {
 
           {/* 收藏 (Secondary) */}
           <ActionBtn
-            onClick={toggleFavorite}
+            onClick={() => toggleFavorite()}
             variant="red"
             mode={isFavorite ? "solid" : "ghost"}
             size="md"

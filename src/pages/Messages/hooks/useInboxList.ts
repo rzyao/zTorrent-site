@@ -66,7 +66,7 @@ export function useInboxList() {
 
   const markRead = async (id: string) => {
     try {
-      await __request(OpenAPI, { method: 'POST', url: '/messages/mark-read', body: { id }, mediaType: 'application/json' });
+      await __request(OpenAPI, { method: 'POST', url: '/messages/read/mark', body: { id }, mediaType: 'application/json' });
       toast.success('已标记为已读');
       await load();
     } catch (err: any) {

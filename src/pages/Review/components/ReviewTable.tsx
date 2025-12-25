@@ -3,9 +3,10 @@ import { StatusBadge } from './StatusBadge';
 import { getVisibilityLabel, getTypeLabel } from '../utils';
 import type { ReviewItem } from '../types';
 
-function TypeIcon({ type }: { type: 'movie' | 'playlist' | 'torrent' }) {
+function TypeIcon({ type }: { type: 'movie' | 'series' | 'playlist' | 'torrent' }) {
   switch (type) {
     case 'movie': return <Film className="w-4 h-4" />;
+    case 'series': return <Film className="w-4 h-4" />;
     case 'playlist': return <List className="w-4 h-4" />;
     case 'torrent': return <Package className="w-4 h-4" />;
   }

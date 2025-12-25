@@ -19,6 +19,8 @@ description: 根据 Git 变化自动生成规范化提交信息并提交
 - `perf`: 性能优化
 - `test`: 添加或修改测试
 
+// turbo all
+
 ## 工作流步骤
 
 ### 1. 查看当前 Git 状态

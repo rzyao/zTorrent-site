@@ -44,7 +44,7 @@ export function useNotifications() {
 
   const markRead = async (ids: string[]) => {
     try {
-      await __request(OpenAPI, { method: 'POST', url: '/messages/notifications/mark-read', body: { ids }, mediaType: 'application/json' });
+      await __request(OpenAPI, { method: 'POST', url: '/messages/notifications/read/mark', body: { ids }, mediaType: 'application/json' });
       toast.success('已标记为已读');
       await load();
     } catch (err: any) {
