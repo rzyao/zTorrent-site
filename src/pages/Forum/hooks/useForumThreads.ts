@@ -20,7 +20,7 @@ export function useForumThreads({ categoryId, searchQuery }: UseForumThreadsProp
     setError(null);
     try {
       const { ForumThreadsService } = await import('@/api/services/ForumThreadsService');
-      const resp = await ForumThreadsService.forumThreadsControllerListThreads({
+      const resp = await ForumThreadsService.forumThreadsControllerList({
         page,
         limit,
         categoryId: categoryId === 'all' ? undefined : categoryId,

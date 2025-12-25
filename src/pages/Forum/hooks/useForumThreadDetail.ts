@@ -49,7 +49,7 @@ export function useForumThreadDetail(
       
       try {
         const { ForumThreadsService } = await import('@/api/services/ForumThreadsService');
-        const detailResp = await ForumThreadsService.forumThreadsControllerGetThread({ id: selectedThread.id });
+        const detailResp = await ForumThreadsService.forumThreadsControllerGet({ id: selectedThread.id });
         const detail = unwrapResponse<IForumThread>(detailResp);
         
         if (!cancelled) {

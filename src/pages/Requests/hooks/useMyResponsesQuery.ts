@@ -14,7 +14,7 @@ export function useMyResponsesQuery() {
     queryKey: ['my-responses'],
     queryFn: async () => {
       try {
-        const resp = await RequestsService.requestsControllerMyResponses();
+        const resp = await RequestsService.requestsControllerMyResponses({});
         return unwrap<{ items: any[]; total?: number }>(resp);
       } catch (err: any) {
         throw new Error(extractErrorMessage(err, '获取我的应答失败'));

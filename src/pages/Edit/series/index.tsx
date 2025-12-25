@@ -187,10 +187,10 @@ export default function EditSeriesPage() {
                   targetEpisode={
                     bindTargetEpisode
                       ? {
-                          id: bindTargetEpisode.id,
-                          episodeNumber: bindTargetEpisode.episodeNumber,
-                          title: bindTargetEpisode.title,
-                        }
+                        id: bindTargetEpisode.id,
+                        episodeNumber: bindTargetEpisode.episodeNumber,
+                        title: bindTargetEpisode.title,
+                      }
                       : undefined
                   }
                   searchTorrents={searchTorrents}

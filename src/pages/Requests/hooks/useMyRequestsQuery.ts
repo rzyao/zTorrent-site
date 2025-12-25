@@ -15,7 +15,7 @@ export function useMyRequestsQuery() {
     queryKey: ['my-requests'],
     queryFn: async () => {
       try {
-        const resp = await RequestsService.requestsControllerMyList();
+        const resp = await RequestsService.requestsControllerMyList({});
         return unwrap<{ items: any[]; total?: number }>(resp);
       } catch (err: any) {
         throw new Error(extractErrorMessage(err, '获取我的求种失败'));

@@ -38,7 +38,6 @@ export function mapBackendSeriesToLocal(backend: any): Series {
     director: backend.director || '',
     cast: backend.cast || [],
     description: backend.description || '',
-    seasonNumber: backend.seasonNumber || 1,
     episodeCount: backend.episodeCount || 0,
     status: backend.status || '',
     doubanLink: backend.doubanLink || '',

@@ -13,7 +13,7 @@ export function useForumPosts(threadId?: string) {
     if (!threadId) return;
     try {
       const { ForumPostsService } = await import('@/api/services/ForumPostsService');
-      const postsResp = await ForumPostsService.forumPostsControllerListPosts({ threadId, page, limit });
+      const postsResp = await ForumPostsService.forumPostsControllerList({ threadId, page, limit });
       const postsData = unwrapResponse<{ items?: IForumPost[]; total?: number; page?: number; limit?: number }>(postsResp);
       setPosts(Array.isArray(postsData?.items) ? postsData.items! : []);
       setTotal(Number(postsData?.total || 0));

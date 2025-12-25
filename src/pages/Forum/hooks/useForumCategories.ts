@@ -12,7 +12,7 @@ export function useForumCategories() {
       setLoading(true);
       try {
         const { ForumCategoriesService } = await import('@/api/services/ForumCategoriesService');
-        const resp = await ForumCategoriesService.forumCategoriesControllerListCategories({ page: 1, limit: 100, enabled: true });
+        const resp = await ForumCategoriesService.forumCategoriesControllerList({ page: 1, limit: 100, enabled: true });
         const data = unwrapResponse<{ items?: IForumCategory[]; total?: number; page?: number; limit?: number }>(resp);
         const list = Array.isArray(data?.items) ? data.items! : [];
         const ordered = list.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
