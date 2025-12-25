@@ -21,9 +21,9 @@
 
 ### 2.1 电影种子绑定
 
-#### `POST /movies/bind-torrents`
+#### `POST /movies/torrents/bind`
 
-**无变更**，请求体不变：
+**路径重命名**（签名不变），请求体不变：
 
 ```json
 {
@@ -32,9 +32,9 @@
 }
 ```
 
-#### `POST /movies/unbind-torrents`
+#### `POST /movies/torrents/unbind`
 
-**无变更**，请求体不变：
+**路径重命名**（签名不变），请求体不变：
 
 ```json
 {
