@@ -516,9 +516,8 @@ export default function DesignPage() {
                 {hotTorrents.map((torrent, index) => (
                   <div
                     key={torrent.id}
-                    className={`absolute inset-0 transition-opacity duration-700 ${
-                      index === currentSlide ? "opacity-100" : "opacity-0"
-                    }`}
+                    className={`absolute inset-0 transition-opacity duration-700 ${index === currentSlide ? "opacity-100" : "opacity-0"
+                      }`}
                   >
                     <div
                       className="absolute inset-0 bg-cover bg-center"
@@ -594,11 +593,10 @@ export default function DesignPage() {
                     <button
                       key={index}
                       onClick={() => setCurrentSlide(index)}
-                      className={`h-2 w-2 rounded-full transition-all ${
-                        index === currentSlide
+                      className={`h-2 w-2 rounded-full transition-all ${index === currentSlide
                           ? "w-8 bg-amber-400"
                           : "bg-white/50 hover:bg-white/70"
-                      }`}
+                        }`}
                     />
                   ))}
                 </div>
