@@ -128,7 +128,7 @@ export class StickiesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/stickies/list-stickies',
+            url: '/stickies/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -254,7 +254,7 @@ export class StickiesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/stickies/torrents/list-stickies',
+            url: '/stickies/torrents/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

@@ -13,7 +13,7 @@ export class MusicArtistsService {
     public static artistsControllerList(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/artists/list',
+            url: '/music/artists/list',
         });
     }
     /**
@@ -23,7 +23,7 @@ export class MusicArtistsService {
     public static artistsControllerDetail(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/artists/detail',
+            url: '/music/artists/detail',
         });
     }
     /**
@@ -33,7 +33,7 @@ export class MusicArtistsService {
     public static artistsControllerCreate(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/artists/create',
+            url: '/music/artists/create',
         });
     }
     /**
@@ -43,7 +43,7 @@ export class MusicArtistsService {
     public static artistsControllerUpdate(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/artists/update',
+            url: '/music/artists/update',
         });
     }
     /**
@@ -53,7 +53,7 @@ export class MusicArtistsService {
     public static artistsControllerDelete(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/artists/delete',
+            url: '/music/artists/delete',
         });
     }
 }

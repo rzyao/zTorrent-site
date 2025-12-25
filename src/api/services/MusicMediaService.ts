@@ -14,7 +14,7 @@ export class MusicMediaService {
     public static mediaControllerUploadAudio(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/songs/upload-audio',
+            url: '/music/songs/audio/upload',
         });
     }
     /**
@@ -24,7 +24,7 @@ export class MusicMediaService {
     public static mediaControllerUploadCover(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/songs/upload-cover',
+            url: '/music/songs/cover/upload',
         });
     }
     /**
@@ -38,7 +38,7 @@ export class MusicMediaService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/songs/media/stream',
+            url: '/music/songs/media/stream',
             body: requestBody,
             mediaType: 'application/json',
         });

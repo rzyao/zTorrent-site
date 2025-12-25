@@ -63,7 +63,7 @@ export class LevelsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/levels/list-levels',
+            url: '/levels/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -208,7 +208,7 @@ export class LevelsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/levels/list-permissions',
+            url: '/levels/permissions/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

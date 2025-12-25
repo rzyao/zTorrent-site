@@ -256,7 +256,7 @@ export class DownloadersService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/downloaders/categories',
+            url: '/downloaders/categories/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -314,7 +314,7 @@ export class DownloadersService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/downloaders/tags',
+            url: '/downloaders/tags/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -376,7 +376,7 @@ export class DownloadersService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/downloaders/paths',
+            url: '/downloaders/paths/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

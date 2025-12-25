@@ -27,7 +27,7 @@ export class TicketsService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/tickets/list',
+            url: '/tickets/list',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -39,7 +39,7 @@ export class TicketsService {
     public static ticketsControllerStats(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/tickets/stats',
+            url: '/tickets/stats',
         });
     }
     /**
@@ -52,7 +52,7 @@ export class TicketsService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/tickets/detail',
+            url: '/tickets/detail',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -67,7 +67,7 @@ export class TicketsService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/tickets/create',
+            url: '/tickets/create',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -82,7 +82,7 @@ export class TicketsService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/tickets/attachments/upload',
+            url: '/tickets/attachments/upload',
             formData: formData,
             mediaType: 'multipart/form-data',
         });
@@ -97,7 +97,7 @@ export class TicketsService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/tickets/reply',
+            url: '/tickets/reply',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -112,7 +112,7 @@ export class TicketsService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/tickets/close',
+            url: '/tickets/close',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -127,7 +127,7 @@ export class TicketsService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/tickets/confirm-resolved',
+            url: '/tickets/resolved/confirm',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -142,7 +142,7 @@ export class TicketsService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/tickets/assign',
+            url: '/tickets/assign',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -157,7 +157,7 @@ export class TicketsService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/tickets/mark-resolved',
+            url: '/tickets/resolved/mark',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -172,7 +172,7 @@ export class TicketsService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/tickets/admin/list',
+            url: '/tickets/admin/list',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -187,7 +187,7 @@ export class TicketsService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/tickets/todos',
+            url: '/tickets/todos/list',
             body: requestBody,
             mediaType: 'application/json',
         });

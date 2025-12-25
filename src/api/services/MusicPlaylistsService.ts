@@ -13,7 +13,7 @@ export class MusicPlaylistsService {
     public static playlistsControllerListPublic(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/playlists/list-public',
+            url: '/music/playlists/public/list',
         });
     }
     /**
@@ -23,7 +23,7 @@ export class MusicPlaylistsService {
     public static playlistsControllerMy(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/playlists/my',
+            url: '/music/playlists/my',
         });
     }
     /**
@@ -33,7 +33,7 @@ export class MusicPlaylistsService {
     public static playlistsControllerCreate(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/playlists/create',
+            url: '/music/playlists/create',
         });
     }
     /**
@@ -43,7 +43,7 @@ export class MusicPlaylistsService {
     public static playlistsControllerUpdate(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/playlists/update',
+            url: '/music/playlists/update',
         });
     }
     /**
@@ -53,7 +53,7 @@ export class MusicPlaylistsService {
     public static playlistsControllerDelete(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/playlists/delete',
+            url: '/music/playlists/delete',
         });
     }
     /**
@@ -63,7 +63,7 @@ export class MusicPlaylistsService {
     public static playlistsControllerAddSong(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/playlists/add-song',
+            url: '/music/playlists/songs/add',
         });
     }
     /**
@@ -73,7 +73,7 @@ export class MusicPlaylistsService {
     public static playlistsControllerRemoveSong(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/playlists/remove-song',
+            url: '/music/playlists/songs/remove',
         });
     }
     /**
@@ -83,7 +83,7 @@ export class MusicPlaylistsService {
     public static playlistsControllerFavorite(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/playlists/favorite',
+            url: '/music/playlists/favorite',
         });
     }
     /**
@@ -93,7 +93,7 @@ export class MusicPlaylistsService {
     public static playlistsControllerUnfavorite(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/playlists/unfavorite',
+            url: '/music/playlists/unfavorite',
         });
     }
 }

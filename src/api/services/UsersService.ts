@@ -41,7 +41,7 @@ export class UsersService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/users/list-users',
+            url: '/users/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -236,7 +236,7 @@ export class UsersService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/users/preferences/get',
+            url: '/users/preferences/detail',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -262,7 +262,7 @@ export class UsersService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/users/preferences/save',
+            url: '/users/preferences/update',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -287,7 +287,7 @@ export class UsersService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/users/preferences/list-categories',
+            url: '/users/preferences/categories/list',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -310,7 +310,7 @@ export class UsersService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/users/notifications/get',
+            url: '/users/notifications/detail',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -336,7 +336,7 @@ export class UsersService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/users/notifications/save',
+            url: '/users/notifications/update',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -362,7 +362,7 @@ export class UsersService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/users/privacy/get',
+            url: '/users/privacy/detail',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -389,7 +389,7 @@ export class UsersService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/users/privacy/save',
+            url: '/users/privacy/update',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

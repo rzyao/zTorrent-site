@@ -35,7 +35,7 @@ export class MoviesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/movies/bind-torrents',
+            url: '/movies/torrents/bind',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -64,7 +64,7 @@ export class MoviesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/movies/unbind-torrents',
+            url: '/movies/torrents/unbind',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -209,7 +209,7 @@ export class MoviesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/movies/list-torrents',
+            url: '/movies/torrents/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

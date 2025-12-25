@@ -177,7 +177,7 @@ export class MessagesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/messages/mark-read',
+            url: '/messages/read/mark',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -403,7 +403,7 @@ export class MessagesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/messages/threads/mark-read',
+            url: '/messages/threads/read/mark',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -561,7 +561,7 @@ export class MessagesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/messages/notifications/mark-read',
+            url: '/messages/notifications/read/mark',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

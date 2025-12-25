@@ -65,7 +65,7 @@ export class AnnouncementsService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/announcements/mark-read',
+            url: '/announcements/read/mark',
             body: requestBody,
             mediaType: 'application/json',
         });

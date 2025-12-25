@@ -120,7 +120,7 @@ export class PermissionsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/permissions/list-permissions',
+            url: '/permissions/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -149,7 +149,7 @@ export class PermissionsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/permissions/list-permissions-tree',
+            url: '/permissions/list/all',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

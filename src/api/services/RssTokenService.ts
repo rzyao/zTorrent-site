@@ -25,7 +25,7 @@ export class RssTokenService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/rss/token',
+            url: '/rss/token/detail',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

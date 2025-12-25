@@ -124,7 +124,7 @@ export class BanReasonsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/ban-reasons/list-ban-reasons',
+            url: '/ban-reasons/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

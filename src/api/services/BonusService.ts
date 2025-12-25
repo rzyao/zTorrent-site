@@ -146,7 +146,7 @@ export class BonusService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/bonus/admin/list-balances',
+            url: '/bonus/admin/balances/list',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -162,7 +162,7 @@ export class BonusService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/bonus/admin/list-ledger',
+            url: '/bonus/admin/ledger/list',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -232,7 +232,7 @@ export class BonusService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/bonus/admin/get-rules',
+            url: '/bonus/admin/rules/get',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -252,7 +252,7 @@ export class BonusService {
     public static bonusControllerAdminConfigRules(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/bonus/admin/config-rules',
+            url: '/bonus/admin/rules/update',
         });
     }
     /**
@@ -266,7 +266,7 @@ export class BonusService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/bonus/admin/export-ledger',
+            url: '/bonus/admin/ledger/export',
             body: requestBody,
             mediaType: 'application/json',
         });

@@ -124,7 +124,7 @@ export class BanDaysService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/ban-days/list-ban-days',
+            url: '/ban-days/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

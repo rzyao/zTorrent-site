@@ -13,7 +13,7 @@ export class MusicCommentsService {
     public static commentsControllerList(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/comments/list',
+            url: '/music/comments/list',
         });
     }
     /**
@@ -23,7 +23,7 @@ export class MusicCommentsService {
     public static commentsControllerCreate(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/comments/create',
+            url: '/music/comments/create',
         });
     }
     /**
@@ -33,7 +33,7 @@ export class MusicCommentsService {
     public static commentsControllerLike(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/comments/like',
+            url: '/music/comments/like',
         });
     }
     /**
@@ -43,7 +43,7 @@ export class MusicCommentsService {
     public static commentsControllerUnlike(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/comments/unlike',
+            url: '/music/comments/unlike',
         });
     }
 }

@@ -124,7 +124,7 @@ export class PunishmentTypesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/punishment-types/list-punishment-types',
+            url: '/punishment-types/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

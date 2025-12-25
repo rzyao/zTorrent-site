@@ -58,7 +58,7 @@ export class PlaylistsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/playlists/create-playlist',
+            url: '/playlists/create',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -87,7 +87,7 @@ export class PlaylistsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/playlists/update-playlist',
+            url: '/playlists/update',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -116,7 +116,7 @@ export class PlaylistsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/playlists/delete-playlist',
+            url: '/playlists/delete',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -145,7 +145,7 @@ export class PlaylistsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/playlists/list-playlists',
+            url: '/playlists/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -174,7 +174,7 @@ export class PlaylistsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/playlists/get-playlist',
+            url: '/playlists/detail',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -290,7 +290,7 @@ export class PlaylistsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/playlists/list-items',
+            url: '/playlists/items/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -319,7 +319,7 @@ export class PlaylistsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/playlists/search-addable-items',
+            url: '/playlists/items/search-addable',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -435,7 +435,7 @@ export class PlaylistsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/playlists/admin/list-playlists',
+            url: '/playlists/admin/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -461,7 +461,7 @@ export class PlaylistsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/playlists/list-categories',
+            url: '/playlists/categories/list',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

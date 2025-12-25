@@ -29,7 +29,7 @@ export class SettingsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/settings/list-setting',
+            url: '/settings/list',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -56,7 +56,7 @@ export class SettingsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/settings/list-setting-by-group',
+            url: '/settings/groups/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -85,7 +85,7 @@ export class SettingsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/settings/update-items',
+            url: '/settings/items/update',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -115,7 +115,7 @@ export class SettingsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/settings/create-setting',
+            url: '/settings/create',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -145,7 +145,7 @@ export class SettingsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/settings/delete-setting',
+            url: '/settings/delete',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -174,7 +174,7 @@ export class SettingsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/settings/update-setting-meta',
+            url: '/settings/meta/update',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

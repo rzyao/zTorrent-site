@@ -37,7 +37,7 @@ export class DictionaryService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/dictionary/dictionaries',
+            url: '/dictionary/list',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

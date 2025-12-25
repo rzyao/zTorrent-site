@@ -31,7 +31,7 @@ export class PunishmentsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/punishments/apply-punishment',
+            url: '/punishments/apply',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -60,7 +60,7 @@ export class PunishmentsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/punishments/revoke-punishment',
+            url: '/punishments/revoke',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -85,7 +85,7 @@ export class PunishmentsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/punishments/list-active-by-user',
+            url: '/punishments/user/active/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -114,7 +114,7 @@ export class PunishmentsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/punishments/list-all-by-user',
+            url: '/punishments/user/all/list',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -136,7 +136,7 @@ export class PunishmentsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/punishments/list-records',
+            url: '/punishments/records/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

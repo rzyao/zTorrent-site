@@ -128,7 +128,7 @@ export class PromotionsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/promotions/list-promotions',
+            url: '/promotions/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -254,7 +254,7 @@ export class PromotionsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/promotions/torrents/list-promotions',
+            url: '/promotions/torrents/records/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

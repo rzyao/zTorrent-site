@@ -564,7 +564,7 @@ export class TorrentsService {
     public static torrentsOptionsControllerOptions(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/torrents/options',
+            url: '/api/torrents/options/list',
         });
     }
 }

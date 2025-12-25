@@ -21,7 +21,7 @@ export class SubtitlesService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/subtitles/list',
+            url: '/subtitles/list',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -37,7 +37,7 @@ export class SubtitlesService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/subtitles/detail',
+            url: '/subtitles/detail',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -53,7 +53,7 @@ export class SubtitlesService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/subtitles/download',
+            url: '/subtitles/download',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -69,7 +69,7 @@ export class SubtitlesService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/subtitles/upload',
+            url: '/subtitles/upload',
             formData: formData,
             mediaType: 'multipart/form-data',
         });
@@ -85,7 +85,7 @@ export class SubtitlesService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/subtitles/like',
+            url: '/subtitles/like',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -101,7 +101,7 @@ export class SubtitlesService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/subtitles/report',
+            url: '/subtitles/report',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -114,7 +114,7 @@ export class SubtitlesService {
     public static subtitlesControllerStats(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/subtitles/stats',
+            url: '/subtitles/stats',
         });
     }
 }

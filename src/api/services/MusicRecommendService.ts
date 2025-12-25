@@ -13,7 +13,7 @@ export class MusicRecommendService {
     public static recommendControllerSimilar(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/songs/similar',
+            url: '/music/songs/similar',
         });
     }
 }

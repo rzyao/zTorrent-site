@@ -31,7 +31,7 @@ export class RecommendationsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/recommendations/create-config',
+            url: '/recommendations/configs/create',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -60,7 +60,7 @@ export class RecommendationsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/recommendations/update-config',
+            url: '/recommendations/configs/update',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -89,7 +89,7 @@ export class RecommendationsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/recommendations/delete-config',
+            url: '/recommendations/configs/delete',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -115,7 +115,7 @@ export class RecommendationsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/recommendations/list-ops-configs',
+            url: '/recommendations/configs/admin/list',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -133,7 +133,7 @@ export class RecommendationsService {
     public static recommendationsControllerGetIndex(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/recommendations/index',
+            url: '/recommendations/index/get',
         });
     }
     /**
@@ -147,7 +147,7 @@ export class RecommendationsService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/recommendations/content',
+            url: '/recommendations/content/get',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -169,7 +169,7 @@ export class RecommendationsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/recommendations/create-tab',
+            url: '/recommendations/tabs/create',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -198,7 +198,7 @@ export class RecommendationsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/recommendations/update-tab',
+            url: '/recommendations/tabs/update',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -227,7 +227,7 @@ export class RecommendationsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/recommendations/delete-tab',
+            url: '/recommendations/tabs/delete',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -253,7 +253,7 @@ export class RecommendationsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/recommendations/list-tabs',
+            url: '/recommendations/tabs/admin/list',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -277,7 +277,7 @@ export class RecommendationsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/recommendations/active-tabs',
+            url: '/recommendations/tabs/active/list',
         });
     }
 }

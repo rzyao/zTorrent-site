@@ -124,41 +124,6 @@ export class ForumPromotionsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/forum/promotions/list-promotions',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * @deprecated
-     * 主题高亮列表（旧）
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static forumPromotionsControllerListPromotionsLegacy(
-        requestBody: ListThreadPromotionsDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: {
-            items?: Array<Record<string, any>>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
             url: '/forum/promotions/list',
             body: requestBody,
             mediaType: 'application/json',

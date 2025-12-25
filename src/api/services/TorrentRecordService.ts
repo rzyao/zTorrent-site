@@ -220,7 +220,7 @@ export class TorrentRecordService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/torrent-record/torrent-records',
+            url: '/torrent-record/records/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -252,7 +252,7 @@ export class TorrentRecordService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/torrent-record/downloading-toorrent',
+            url: '/torrent-record/torrent/downloading/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -284,7 +284,7 @@ export class TorrentRecordService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/torrent-record/published-toorrent',
+            url: '/torrent-record/torrent/published/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -316,7 +316,7 @@ export class TorrentRecordService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/torrent-record/seeding-toorrent',
+            url: '/torrent-record/torrent/seeding/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -348,7 +348,7 @@ export class TorrentRecordService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/torrent-record/completed-toorrent',
+            url: '/torrent-record/torrent/completed/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -380,7 +380,7 @@ export class TorrentRecordService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/torrent-record/incomplete-toorrent',
+            url: '/torrent-record/torrent/incomplete/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -412,7 +412,7 @@ export class TorrentRecordService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/torrent-record/user_records',
+            url: '/torrent-record/user/records/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

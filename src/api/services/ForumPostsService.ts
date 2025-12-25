@@ -43,42 +43,7 @@ export class ForumPostsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static forumPostsControllerListPosts(
-        requestBody: ListForumPostsDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: {
-            items?: Array<Record<string, any>>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/forum/posts/list-posts',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * @deprecated
-     * 回帖列表（旧）
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static forumPostsControllerListPostsLegacy(
+    public static forumPostsControllerList(
         requestBody: ListForumPostsDto,
     ): CancelablePromise<{
         code?: number;

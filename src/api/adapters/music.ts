@@ -39,7 +39,7 @@ export async function listArtists(body?: any) {
 export async function listPublicPlaylists(body?: any) {
   const req = await getRequest();
   const api = await getOpenAPI();
-  return req(api, { method: 'POST', url: '/api/playlists/list-public', body, mediaType: 'application/json' });
+  return req(api, { method: 'POST', url: '/music/playlists/public/list', body, mediaType: 'application/json' });
 }
 
 export async function listMyPlaylists(body?: any) {
@@ -69,19 +69,19 @@ export async function deletePlaylist(payload: { playlistId: string }) {
 export async function addSongToPlaylist(payload: { playlistId: string; songId: string }) {
   const req = await getRequest();
   const api = await getOpenAPI();
-  return req(api, { method: 'POST', url: '/api/playlists/add-song', body: payload, mediaType: 'application/json' });
+  return req(api, { method: 'POST', url: '/music/playlists/songs/add', body: payload, mediaType: 'application/json' });
 }
 
 export async function removeSongFromPlaylist(payload: { playlistId: string; songId: string }) {
   const req = await getRequest();
   const api = await getOpenAPI();
-  return req(api, { method: 'POST', url: '/api/playlists/remove-song', body: payload, mediaType: 'application/json' });
+  return req(api, { method: 'POST', url: '/music/playlists/songs/remove', body: payload, mediaType: 'application/json' });
 }
 
 export async function getLyrics(payload: { songId: string; lang?: string }) {
   const req = await getRequest();
   const api = await getOpenAPI();
-  return req(api, { method: 'POST', url: '/api/songs/lyrics/get', body: payload, mediaType: 'application/json' });
+  return req(api, { method: 'POST', url: '/music/songs/lyrics/detail', body: payload, mediaType: 'application/json' });
 }
 
 export async function listComments(payload: { songId: string; page?: number; pageSize?: number }) {

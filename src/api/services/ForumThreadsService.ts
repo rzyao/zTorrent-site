@@ -44,7 +44,7 @@ export class ForumThreadsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static forumThreadsControllerGetThread(
+    public static forumThreadsControllerGet(
         requestBody: ForumThreadIdDto,
     ): CancelablePromise<{
         code?: number;
@@ -55,37 +55,7 @@ export class ForumThreadsService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/forum/threads/get-thread',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * @deprecated
-     * 获取主题详情（旧）
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static forumThreadsControllerGetThreadLegacy(
-        requestBody: ForumThreadIdDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: Record<string, any>;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/forum/threads/get',
+            url: '/forum/threads/detail',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -103,42 +73,7 @@ export class ForumThreadsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static forumThreadsControllerListThreads(
-        requestBody: ListForumThreadsDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: {
-            items?: Array<Record<string, any>>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/forum/threads/list-threads',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * @deprecated
-     * 主题列表（旧）
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static forumThreadsControllerListThreadsLegacy(
+    public static forumThreadsControllerList(
         requestBody: ListForumThreadsDto,
     ): CancelablePromise<{
         code?: number;

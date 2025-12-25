@@ -64,7 +64,7 @@ export class RolesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/roles/list-roles',
+            url: '/roles/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

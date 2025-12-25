@@ -89,7 +89,7 @@ export class ThanksService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/thanks/list-by-user',
+            url: '/thanks/user/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -120,7 +120,7 @@ export class ThanksService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/thanks/list-by-torrent',
+            url: '/thanks/torrent/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

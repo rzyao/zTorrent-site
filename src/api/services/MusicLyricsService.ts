@@ -13,7 +13,7 @@ export class MusicLyricsService {
     public static lyricsControllerGet(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/songs/lyrics/get',
+            url: '/music/songs/lyrics/detail',
         });
     }
 }

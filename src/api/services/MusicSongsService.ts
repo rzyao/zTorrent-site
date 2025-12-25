@@ -13,7 +13,7 @@ export class MusicSongsService {
     public static songsControllerList(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/songs/list',
+            url: '/music/songs/list',
         });
     }
     /**
@@ -23,7 +23,7 @@ export class MusicSongsService {
     public static songsControllerDetail(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/songs/detail',
+            url: '/music/songs/detail',
         });
     }
     /**
@@ -33,7 +33,7 @@ export class MusicSongsService {
     public static songsControllerCreate(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/songs/create',
+            url: '/music/songs/create',
         });
     }
     /**
@@ -43,7 +43,7 @@ export class MusicSongsService {
     public static songsControllerUpdate(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/songs/update',
+            url: '/music/songs/update',
         });
     }
     /**
@@ -53,7 +53,7 @@ export class MusicSongsService {
     public static songsControllerDelete(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/songs/delete',
+            url: '/music/songs/delete',
         });
     }
     /**
@@ -63,7 +63,7 @@ export class MusicSongsService {
     public static songsControllerLike(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/songs/like',
+            url: '/music/songs/like',
         });
     }
     /**
@@ -73,7 +73,7 @@ export class MusicSongsService {
     public static songsControllerUnlike(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/songs/unlike',
+            url: '/music/songs/unlike',
         });
     }
     /**
@@ -83,7 +83,7 @@ export class MusicSongsService {
     public static songsControllerReportPlay(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/songs/plays/report',
+            url: '/music/songs/plays/report',
         });
     }
     /**
@@ -93,7 +93,7 @@ export class MusicSongsService {
     public static songsControllerReportProgress(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/songs/progress/report',
+            url: '/music/songs/progress/report',
         });
     }
 }

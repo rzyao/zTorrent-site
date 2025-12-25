@@ -108,42 +108,7 @@ export class ForumCategoriesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static forumCategoriesControllerListCategories(
-        requestBody: ListForumCategoriesDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: {
-            items?: Array<Record<string, any>>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/forum/categories/list-categories',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * @deprecated
-     * 板块列表（旧）
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static forumCategoriesControllerListCategoriesLegacy(
+    public static forumCategoriesControllerList(
         requestBody: ListForumCategoriesDto,
     ): CancelablePromise<{
         code?: number;
