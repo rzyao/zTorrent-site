@@ -22,22 +22,22 @@ export function useTorrentRecord({ activeTab, searchQuery }: UseTorrentRecordPro
       let resp: any;
       switch (activeTab) {
         case 'uploaded':
-          resp = await TorrentRecordService.torrentRecordControllerFindPublished(undefined, searchQuery, 50, 1);
+          resp = await TorrentRecordService.torrentRecordControllerFindPublished({ page: 1, limit: 50, search: searchQuery });
           break;
         case 'seeding':
-          resp = await TorrentRecordService.torrentRecordControllerFindSeeding(undefined, searchQuery, 50, 1);
+          resp = await TorrentRecordService.torrentRecordControllerFindSeeding({ page: 1, limit: 50, search: searchQuery });
           break;
         case 'downloading':
-          resp = await TorrentRecordService.torrentRecordControllerFindDownloading(undefined, searchQuery, 50, 1);
+          resp = await TorrentRecordService.torrentRecordControllerFindDownloading({ page: 1, limit: 50, search: searchQuery });
           break;
         case 'completed':
-          resp = await TorrentRecordService.torrentRecordControllerFindCompleted(undefined, searchQuery, 50, 1);
+          resp = await TorrentRecordService.torrentRecordControllerFindCompleted({ page: 1, limit: 50, search: searchQuery });
           break;
         case 'incomplete':
-          resp = await TorrentRecordService.torrentRecordControllerFindIncomplete(undefined, searchQuery, 50, 1);
+          resp = await TorrentRecordService.torrentRecordControllerFindIncomplete({ page: 1, limit: 50, search: searchQuery });
           break;
         default:
-          resp = await TorrentRecordService.torrentRecordControllerFindSeeding(undefined, searchQuery, 50, 1);
+          resp = await TorrentRecordService.torrentRecordControllerFindSeeding({ page: 1, limit: 50, search: searchQuery });
           break;
       }
       const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data ?? (resp as any);
@@ -50,7 +50,7 @@ export function useTorrentRecord({ activeTab, searchQuery }: UseTorrentRecordPro
   const { data: statsResult, isLoading: isLoadingStats, isFetching: isFetchingStats } = useQuery({
     queryKey: ['torrentRecordStats'],
     queryFn: async () => {
-      const resp = await TorrentRecordService.torrentRecordControllerGetStats();
+      const resp = await TorrentRecordService.torrentRecordControllerGetStats({});
       const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data ?? (resp as any);
       const payload = body?.data ?? body;
       return transformStatsData(payload);
