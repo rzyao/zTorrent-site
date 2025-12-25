@@ -24,8 +24,7 @@ const freeTorrents = [
     id: 1,
     thumbnail:
       "https://images.unsplash.com/photo-1592780828756-c418d71faa1f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-    title:
-      "星际穿越 4K HDR REMUX 国英双语",
+    title: "星际穿越 4K HDR REMUX 国英双语",
     category: "电影",
     size: "68.5 GB",
     seeders: 2847,
@@ -39,8 +38,7 @@ const freeTorrents = [
     id: 2,
     thumbnail:
       "https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-    title:
-      "权力的游戏 全八季 1080p BluRay",
+    title: "权力的游戏 全八季 1080p BluRay",
     category: "剧集",
     size: "124.8 GB",
     seeders: 2156,
@@ -54,8 +52,7 @@ const freeTorrents = [
     id: 3,
     thumbnail:
       "https://images.unsplash.com/photo-1592780828756-c418d71faa1f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-    title:
-      "蝙蝠侠：黑暗骑士 IMAX 4K UHD",
+    title: "蝙蝠侠：黑暗骑士 IMAX 4K UHD",
     category: "电影",
     size: "87.2 GB",
     seeders: 1923,
@@ -94,8 +91,7 @@ const freeTorrents = [
     id: 6,
     thumbnail:
       "https://images.unsplash.com/photo-1587731556938-38755b4803a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-    title:
-      "Pink Floyd - Dark Side FLAC",
+    title: "Pink Floyd - Dark Side FLAC",
     category: "音乐",
     size: "3.8 GB",
     seeders: 1687,
@@ -111,8 +107,7 @@ const hotTorrents = [
     id: 7,
     thumbnail:
       "https://images.unsplash.com/photo-1592780828756-c418d71faa1f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-    title:
-      "碟中谍8：致命清算 4K 抢先版",
+    title: "碟中谍8：致命清算 4K 抢先版",
     category: "电影",
     size: "45.6 GB",
     seeders: 987,
@@ -125,8 +120,7 @@ const hotTorrents = [
     id: 8,
     thumbnail:
       "https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-    title:
-      "瑞克和莫蒂 S07 1080p WEB-DL",
+    title: "瑞克和莫蒂 S07 1080p WEB-DL",
     category: "动漫",
     size: "18.9 GB",
     seeders: 1245,
@@ -220,8 +214,7 @@ const vipTorrents = [
     id: 15,
     thumbnail:
       "https://images.unsplash.com/photo-1587731556938-38755b4803a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-    title:
-      "The Beatles 全集 FLAC 24bit",
+    title: "The Beatles 全集 FLAC 24bit",
     category: "音乐",
     size: "45.2 GB",
     seeders: 987,
@@ -346,38 +339,19 @@ const movieTorrents = [
   },
 ];
 
-export default function HomePage() {
+export default function AdultPage() {
   useDynamicTitle("首页");
-  const [params, setParams] =
-    useSearchParams();
-  const initial =
-    params.get("category") || "全部";
-  const [
-    activeCategory,
-    setActiveCategory,
-  ] = useState(initial);
+  const [params, setParams] = useSearchParams();
+  const initial = params.get("category") || "全部";
+  const [activeCategory, setActiveCategory] = useState(initial);
   return (
     <>
-      <FeaturedTorrent
-        {...featuredTorrent}
-      />
+      <FeaturedTorrent {...featuredTorrent} />
       <div className="relative -mt-24 space-y-8 pb-16">
-        <TorrentRow
-          title="免费下载"
-          torrents={freeTorrents}
-        />
-        <TorrentRow
-          title="本周热门"
-          torrents={hotTorrents}
-        />
-        <TorrentRow
-          title="VIP专享"
-          torrents={vipTorrents}
-        />
-        <TorrentRow
-          title="精选电影"
-          torrents={movieTorrents}
-        />
+        <TorrentRow title="免费下载" torrents={freeTorrents} />
+        <TorrentRow title="本周热门" torrents={hotTorrents} />
+        <TorrentRow title="VIP专享" torrents={vipTorrents} />
+        <TorrentRow title="精选电影" torrents={movieTorrents} />
       </div>
     </>
   );

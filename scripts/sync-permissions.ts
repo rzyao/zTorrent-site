@@ -137,11 +137,41 @@ function scanFile(text: string, filePath: string) {
     registerPage(prPerms, undefined, undefined, `from:${locationHint}`);
   }
 
-  // AccessControl：按标签解析 requiredPermissions 与 name
-  const acTags = matchAll(code, /<AccessControl[^>]*?>/g);
-  for (const tag of acTags) {
+  // AccessControl：使用平衡括号逻辑解析，以支持 fallback={<Button...>}
+  const acRegex = /<AccessControl\b/g;
+  let match;
+  while ((match = acRegex.exec(code)) !== null) {
+    const start = match.index;
+    let end = start + match[0].length;
+    let braceDepth = 0;
+    let inString = false;
+    let stringChar = '';
+
+    for (let i = end; i < code.length; i++) {
+      const char = code[i];
+      if (inString) {
+        if (char === stringChar && code[i - 1] !== '\\') { // Simple escape check
+          inString = false;
+        }
+      } else {
+        if (char === '"' || char === "'") {
+          inString = true;
+          stringChar = char;
+        } else if (char === '{') {
+          braceDepth++;
+        } else if (char === '}') {
+          braceDepth--;
+        } else if (char === '>' && braceDepth === 0) {
+          end = i + 1;
+          break;
+        }
+      }
+    }
+    const tag = code.substring(start, end);
+
     const permsArr = matchArrayLiterals(tag, /\brequiredPermissions\s*=\s*\{(\[[^\]]*\])\}/i);
-    if (permsArr.length === 0) continue; // 无权限键（例如图片上传）跳过
+    if (permsArr.length === 0) continue;
+
     const label = matchFirst(tag, /\bname\s*=\s*["']([^"']+)["']/i) || undefined;
     registerButton(permsArr, undefined, undefined, `from:${locationHint}`);
     const apis = findApisInFile(code);
@@ -230,6 +260,17 @@ async function parseAppRoutes(): Promise<void> {
       const rel = m[2];
       const abs = resolveAlias(rel);
       for (const n of names) importMap[n] = abs;
+    }
+
+    // Support React.lazy imports: const Foo = lazy(() => import('...'))
+    const lazyBlocks = matchAll(text, /const\s+(\w+)\s*=\s*lazy\([\s\S]*?import\s*\(\s*["']([^"']+)["']\s*\)/g);
+    for (const blk of lazyBlocks) {
+       const m = /const\s+(\w+)\s*=\s*lazy\([\s\S]*?import\s*\(\s*["']([^"']+)["']\s*\)/.exec(blk);
+       if (!m) continue;
+       const compName = m[1];
+       const relPath = m[2];
+       const abs = resolveAlias(relPath);
+       importMap[compName] = abs;
     }
     const routeElems = matchAll(text, /path\s*=\s*["']([^"']+)["'][\s\S]*?element\s*=\s*\{([\s\S]*?<PermissionRoute[\s\S]*?>)[\s\S]*?<([\w]+)[\s/>]/g);
     for (const blk of routeElems) {
@@ -463,6 +504,7 @@ function buildTreeItems(): Array<any> {
   for (const p of pages) {
     if (!protectedPaths.has(p.path)) continue; // 仅上传使用 PermissionRoute 保护的页面
     const closure = pageClosures[p.path] || new Set<string>();
+
     const btns = buttons.filter((b) => closure.has(b.file));
     const pageItem: any = {
       key: p.permission,

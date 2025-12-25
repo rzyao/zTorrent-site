@@ -100,7 +100,7 @@ interface ForumPost {
   isHot?: boolean;
 }
 
-export function HomePage() {
+export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
 

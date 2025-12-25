@@ -139,8 +139,8 @@ function matchFirst(text: string, re: RegExp): string | null {
  * 提取数组字面量内的字符串（兼容单引号/双引号）
  *
  * @example
- * 输入： requiredPermissions={['page:home', "review:write"]}
- * 返回： ['page:home', 'review:write']
+ * 输入： requiredPermissions={['home', "review:write"]}
+ * 返回： ['home', 'review:write']
  */
 function matchArrayLiterals(text: string, re: RegExp): string[] {
   const m = re.exec(text);

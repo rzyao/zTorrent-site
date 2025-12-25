@@ -28,7 +28,7 @@ const registry = new Map<string, RegistryItem>();
 
 /**
  * 注册“页面”权限
- * @param keys 页面所需的权限键列表（通常为 'page:*'）
+ * @param keys 页面所需的权限键列表（通常为页面名称如 'home'）
  * @param routePath 该页面对应的路由路径（如 '/torrents'）
  * @param name 可选的显示名称（默认与 key 相同）
  * @param description 可选描述
