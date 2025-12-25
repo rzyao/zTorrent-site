@@ -233,11 +233,10 @@ export default function EditPlaylistPage() {
                       onClick={() =>
                         setEditForm({ ...editForm, visibility: "public" })
                       }
-                      className={`p-4 rounded-xl border transition-all ${
-                        editForm.visibility === "public"
+                      className={`p-4 rounded-xl border transition-all ${editForm.visibility === "public"
                           ? "bg-green-500/20 border-green-500/50 text-green-400"
                           : "bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600"
-                      }`}
+                        }`}
                     >
                       <Globe className="w-5 h-5 mx-auto mb-2" />
                       <p className="text-sm">公开</p>
@@ -246,11 +245,10 @@ export default function EditPlaylistPage() {
                       onClick={() =>
                         setEditForm({ ...editForm, visibility: "friends" })
                       }
-                      className={`p-4 rounded-xl border transition-all ${
-                        editForm.visibility === "friends"
+                      className={`p-4 rounded-xl border transition-all ${editForm.visibility === "friends"
                           ? "bg-blue-500/20 border-blue-500/50 text-blue-400"
                           : "bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600"
-                      }`}
+                        }`}
                     >
                       <Users className="w-5 h-5 mx-auto mb-2" />
                       <p className="text-sm">好友可见</p>
@@ -259,11 +257,10 @@ export default function EditPlaylistPage() {
                       onClick={() =>
                         setEditForm({ ...editForm, visibility: "private" })
                       }
-                      className={`p-4 rounded-xl border transition-all ${
-                        editForm.visibility === "private"
+                      className={`p-4 rounded-xl border transition-all ${editForm.visibility === "private"
                           ? "bg-red-500/20 border-red-500/50 text-red-400"
                           : "bg-neutral-900/30 border-neutral-700 text-neutral-400 hover:border-neutral-600"
-                      }`}
+                        }`}
                     >
                       <Lock className="w-5 h-5 mx-auto mb-2" />
                       <p className="text-sm">私密</p>
