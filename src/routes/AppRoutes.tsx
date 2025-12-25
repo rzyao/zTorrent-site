@@ -239,19 +239,20 @@ export default function AppRoutes() {
             }
           />
 
-          {/* 上传与编辑 */}
+          {/* 上传 */}
           <Route
             path="/upload"
             element={
-              <PermissionRoute requiredPermissions={["upload"]} name="上传资源">
+              <PermissionRoute requiredPermissions={["torrent:upload"]} name="上传">
                 <UploadTorrentPage />
               </PermissionRoute>
             }
           />
+          {/* 编辑 */}
           <Route
             path="/edit/movie"
             element={
-              <PermissionRoute requiredPermissions={["edit:movie"]} name="编辑电影">
+              <PermissionRoute requiredRoles={["editor"]}>
                 <EditMoviePage />
               </PermissionRoute>
             }
@@ -259,7 +260,7 @@ export default function AppRoutes() {
           <Route
             path="/edit/series"
             element={
-              <PermissionRoute requiredPermissions={["edit:series"]} name="编辑剧集">
+              <PermissionRoute requiredRoles={["editor"]}>
                 <EditSeriesPage />
               </PermissionRoute>
             }
@@ -267,172 +268,54 @@ export default function AppRoutes() {
           <Route
             path="/edit/playlist"
             element={
-              <PermissionRoute requiredPermissions={["edit:playlist"]} name="编辑片单">
+              <PermissionRoute requiredRoles={["editor"]}>
                 <EditPlaylistPage />
+              </PermissionRoute>
+            }
+          />
+          {/* 审核 */}
+          <Route
+            path="/review"
+            element={
+              <PermissionRoute requiredRoles={["admin"]}>
+                <ReviewPage />
               </PermissionRoute>
             }
           />
 
           {/* 求种与悬赏 */}
-          <Route
-            path="/requests"
-            element={
-              <PermissionRoute requiredPermissions={["requests"]} name="求种专区">
-                <RequestsPage />
-              </PermissionRoute>
-            }
-          />
+          <Route path="/requests" element={<RequestsPage />} />
 
           {/* 魔力值与邀请 */}
-          <Route
-            path="/invite"
-            element={
-              <PermissionRoute requiredPermissions={["invite"]} name="邀请管理">
-                <InvitePage />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/bonus"
-            element={
-              <PermissionRoute requiredPermissions={["bonus"]} name="魔力值">
-                <BonusPage />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/torrent-history"
-            element={
-              <PermissionRoute requiredPermissions={["torrent-history"]} name="做种历史">
-                <TorrentRecordPage />
-              </PermissionRoute>
-            }
-          />
+          <Route path="/invite" element={<InvitePage />} />
+          <Route path="/bonus" element={<BonusPage />} />
+          <Route path="/torrent-history" element={<TorrentRecordPage />} />
+          <Route path="/torrent-history" element={<TorrentRecordPage />} />
 
           {/* 消息与工单 */}
-          <Route
-            path="/messages"
-            element={
-              <PermissionRoute requiredPermissions={["messages"]} name="消息中心">
-                <MessagesPage />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/tickets"
-            element={
-              <PermissionRoute requiredPermissions={["tickets"]} name="工单页面">
-                <TicketsPage />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/favorites"
-            element={
-              <AuthRoute>
-                <FavoritesPage />
-              </AuthRoute>
-            }
-          />
+          <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/tickets" element={<TicketsPage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
 
           {/* 高级功能 */}
-          <Route
-            path="/rss"
-            element={
-              <PermissionRoute requiredPermissions={["rss"]} name="RSS订阅">
-                <RSSPage />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/seeding"
-            element={
-              <PermissionRoute requiredPermissions={["seeding"]} name="保种页面">
-                <SeedingPage />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/dead-torrents"
-            element={
-              <PermissionRoute requiredPermissions={["dead"]} name="断种页面">
-                <DeadTorrentsPage />
-              </PermissionRoute>
-            }
-          />
+          <Route path="/rss" element={<RSSPage />} />
+          <Route path="/seeding" element={<SeedingPage />} />
+          <Route path="/dead-torrents" element={<DeadTorrentsPage />} />
 
           {/* 娱乐功能 */}
-          <Route
-            path="/games"
-            element={
-              <PermissionRoute requiredPermissions={["games"]} name="小游戏">
-                <GamesPage onNavigateMagicFarm={() => navigate("/magicfarm")} />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/magicfarm"
-            element={
-              <PermissionRoute requiredPermissions={["magicfarm"]} name="魔力农场">
-                <MagicFarmPage />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/music"
-            element={
-              <PermissionRoute requiredPermissions={["music"]} name="音乐页面">
-                <MusicPage />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/player"
-            element={
-              <PermissionRoute requiredPermissions={["player"]} name="播放器">
-                <PlayerPage />
-              </PermissionRoute>
-            }
-          />
+          <Route path="/games" element={<GamesPage />} />
+          <Route path="/magicfarm" element={<MagicFarmPage />} />
+          <Route path="/music" element={<MusicPage />} />
+          <Route path="/player" element={<PlayerPage />} />
 
           {/* 管理功能 */}
-          <Route
-            path="/groups"
-            element={
-              <PermissionRoute requiredPermissions={["groups"]} name="管理组">
-                <GroupsPage />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/candidates"
-            element={
-              <PermissionRoute requiredPermissions={["candidates"]} name="候选页面">
-                <CandidatesPage />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/review"
-            element={
-              <PermissionRoute
-                requiredPermissions={["review:write"]}
-                requiredRoles={["admin"]}
-                combine="OR"
-                name="审核页面"
-              >
-                <ReviewPage />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/control"
-            element={
-              <PermissionRoute requiredPermissions={["control"]} name="控制面板">
-                <ControlPage />
-              </PermissionRoute>
-            }
-          />
+          <Route path="/groups" element={<GroupsPage />} />
+          {/* 候选 */}
+          <Route path="/candidates" element={<CandidatesPage />} />
+
+          {/* 控制 */}
+          <Route path="/control" element={<ControlPage />} />
+          {/* 设计 */}
           <Route path="/design" element={<DesignPage />} />
         </Route>
 

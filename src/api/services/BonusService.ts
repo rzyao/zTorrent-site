@@ -301,7 +301,7 @@ export class BonusService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/bonus/config/read',
+            url: '/bonus/config/read',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,
@@ -328,7 +328,7 @@ export class BonusService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/bonus/config/update',
+            url: '/bonus/config/update',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -357,7 +357,7 @@ export class BonusService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/bonus/simulate',
+            url: '/bonus/simulate',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
