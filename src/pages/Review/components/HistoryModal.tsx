@@ -1,5 +1,6 @@
-import { X, Check, User } from 'lucide-react';
-import type { AuditHistory } from '../types';
+import { X, Check, User } from "lucide-react";
+import type { AuditHistory } from "../types";
+import { formatDateTime } from "@/utils/format";
 
 interface Props {
   visible: boolean;
@@ -11,46 +12,53 @@ interface Props {
 export function HistoryModal({ visible, items, loading, onClose }: Props) {
   if (!visible) return null;
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-neutral-900 border border-neutral-700 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
-        <div className="p-6 border-b border-neutral-700 flex items-center justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+      <div className="flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-neutral-700 bg-neutral-900">
+        <div className="flex items-center justify-between border-b border-neutral-700 p-6">
           <h2 className="text-xl text-neutral-100">审核历史</h2>
-          <button onClick={onClose} className="p-2 hover:bg-neutral-800 rounded-lg transition-colors">
-            <X className="w-5 h-5 text-neutral-400" />
+          <button
+            onClick={onClose}
+            className="rounded-lg p-2 transition-colors hover:bg-neutral-800"
+          >
+            <X className="h-5 w-5 text-neutral-400" />
           </button>
         </div>
-        <div className="p-6 overflow-y-auto">
+        <div className="overflow-y-auto p-6">
           <div className="space-y-4">
             {loading ? (
-              <div className="text-center py-8 text-neutral-400">加载历史中…</div>
+              <div className="py-8 text-center text-neutral-400">加载历史中…</div>
             ) : items.length > 0 ? (
               items.map((history) => (
-                <div key={history.id} className="bg-neutral-800/50 rounded-lg p-4">
-                  <div className="flex items-start justify-between mb-3">
+                <div key={history.id} className="rounded-lg bg-neutral-800/50 p-4">
+                  <div className="mb-3 flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <User className="w-5 h-5 text-neutral-400" />
+                      <User className="h-5 w-5 text-neutral-400" />
                       <div>
                         <div className="text-neutral-200">{history.reviewer}</div>
-                        <div className="text-xs text-neutral-500">{history.date}</div>
+                        <div className="text-xs text-neutral-500">
+                          {formatDateTime(history.date)}
+                        </div>
                       </div>
                     </div>
-                    {history.action === 'approved' ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">
-                        <Check className="w-3 h-3" />
+                    {history.action === "approved" ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-green-500/20 px-2.5 py-1 text-xs text-green-400">
+                        <Check className="h-3 w-3" />
                         已通过
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-500/20 text-red-400 rounded-full text-xs">
-                        <X className="w-3 h-3" />
+                      <span className="inline-flex items-center gap-1 rounded-full bg-red-500/20 px-2.5 py-1 text-xs text-red-400">
+                        <X className="h-3 w-3" />
                         已驳回
                       </span>
                     )}
                   </div>
-                  <div className="text-sm text-neutral-300 bg-neutral-900/50 rounded p-3">{history.notes}</div>
+                  <div className="rounded bg-neutral-900/50 p-3 text-sm text-neutral-300">
+                    {history.notes}
+                  </div>
                 </div>
               ))
             ) : (
-              <div className="text-center py-8 text-neutral-400">暂无审核历史</div>
+              <div className="py-8 text-center text-neutral-400">暂无审核历史</div>
             )}
           </div>
         </div>
@@ -58,4 +66,3 @@ export function HistoryModal({ visible, items, loading, onClose }: Props) {
     </div>
   );
 }
-

@@ -20,6 +20,7 @@ import { Separator } from "@/components/ui/separator";
 // 注意：ImageWithFallback 路径需要根据实际引用调整，假设是通用的
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
 import { processDescription } from "@/pages/TorrentDetail/utils/processDescription";
+import { formatDateTime } from "@/utils/format";
 
 // 复用 TorrentDetail 的类型定义，
 // 如果 types.ts 路径不同请自行调整引用
@@ -171,7 +172,7 @@ export function TorrentDetailBody(props: TorrentDetailBodyProps) {
           <span className="text-gray-200">{formatSize(torrentData.size)}</span>
           <span className="text-gray-600">|</span>
           <span className="text-gray-200">发布时间</span>
-          <span className="text-gray-200">{torrentData.uploadDate}</span>
+          <span className="text-gray-200">{formatDateTime(torrentData.uploadDate)}</span>
           <span className="text-gray-600">|</span>
           <span className="text-gray-200">发布者</span>
           <span className="text-gray-200">{torrentData.uploader}</span>
@@ -350,7 +351,7 @@ export function TorrentDetailBody(props: TorrentDetailBodyProps) {
                       <Badge className="border border-purple-500/30 bg-purple-500/20 text-xs text-purple-400">
                         {comment.userLevel}
                       </Badge>
-                      <span className="text-sm text-gray-500">{comment.date}</span>
+                      <span className="text-sm text-gray-500">{formatDateTime(comment.date)}</span>
                     </div>
                     <p className="mb-3 text-gray-300">{comment.content}</p>
                     <div className="flex items-center gap-1 text-sm text-gray-400">

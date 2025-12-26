@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+import { formatDateTime } from "@/utils/format";
 import {
   Calendar,
   Clock,
@@ -282,7 +283,7 @@ export function MovieDetailBody({
                         </div>
                         <p className="mb-2 text-xs text-neutral-300">{comment.content}</p>
                         <div className="flex items-center gap-3 text-xs text-neutral-500">
-                          <span>{comment.date}</span>
+                          <span>{formatDateTime(comment.date)}</span>
                           <div className="flex items-center gap-1">
                             <ThumbsUp className="h-3 w-3" />
                             <span>{comment.likes}</span>

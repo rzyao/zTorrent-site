@@ -6,6 +6,7 @@ export interface ReviewItem {
   type: ReviewType;
   title: string;
   submitter: string;
+  submitterAvatar?: string;
   submitterReputation: number;
   submitDate: string;
   status: ReviewStatus;
