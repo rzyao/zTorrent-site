@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { SeriesService } from "@/api/services/SeriesService";
+import { EpisodesService } from "@/api/services/EpisodesService";
 import type { SeriesDetailDto } from "@/api/models/SeriesDetailDto";
 import type { EpisodeDTO } from "@/api/models/EpisodeDTO";
 
@@ -24,7 +25,7 @@ export function useSeriesDetail(seriesId?: string) {
       setError(null);
       try {
         // 获取剧集详情
-        const resp = await SeriesService.seriesControllerGetDetail({
+        const resp = await SeriesService.seriesBaseControllerGetDetail({
           id: seriesId,
         });
         const data = resp.data;
@@ -36,7 +37,7 @@ export function useSeriesDetail(seriesId?: string) {
         setSeries(data);
 
         // 获取分集列表
-        const epResp = await SeriesService.seriesEpisodesControllerList({
+        const epResp = await EpisodesService.episodesControllerList({
           seriesId: seriesId,
         });
         setEpisodes((epResp.data?.items as any as EpisodeListItem[]) || []);

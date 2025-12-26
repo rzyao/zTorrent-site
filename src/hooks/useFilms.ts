@@ -32,7 +32,7 @@ export function useFilms() {
     try {
       const { page = 1, limit = 20, keyword = '', filters = {} } = params || {};
       const MoviesService = await getMoviesService();
-      const res = await MoviesService.moviesControllerList({ page, limit, keyword, ...filters } as any);
+      const res = await MoviesService.movieBaseControllerList({ page, limit, keyword, ...filters } as any);
       const data = unwrap(res);
       setItems(data?.items ?? []);
       setTotal(data?.total ?? 0);
@@ -51,7 +51,7 @@ export function useFilms() {
     setError(null);
     try {
       const MoviesService = await getMoviesService();
-      const res = await MoviesService.moviesControllerGetDetail({ id } as any);
+      const res = await MoviesService.movieBaseControllerGetDetail({ id } as any);
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -68,7 +68,7 @@ export function useFilms() {
     setError(null);
     try {
       const MoviesService = await getMoviesService();
-      const res = await MoviesService.moviesControllerCreate(payload);
+      const res = await MoviesService.movieBaseControllerCreate(payload);
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -85,7 +85,7 @@ export function useFilms() {
     setError(null);
     try {
       const MoviesService = await getMoviesService();
-      const res = await MoviesService.moviesControllerUpdate({ id, data: payload } as any);
+      const res = await MoviesService.movieBaseControllerUpdate({ id, data: payload } as any);
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -102,7 +102,7 @@ export function useFilms() {
     setError(null);
     try {
       const MoviesService = await getMoviesService();
-      const res = await MoviesService.moviesControllerDelete({ id } as any);
+      const res = await MoviesService.movieBaseControllerDelete({ id } as any);
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -120,7 +120,7 @@ export function useFilms() {
     try {
       const MoviesService = await getMoviesService();
       // 使用 moviesControllerBindTorrents 接口绑定种子
-      const res = await MoviesService.moviesControllerBindTorrents({ 
+      const res = await MoviesService.movieTorrentsControllerBindTorrents({ 
         id: filmId, 
         torrentIds: [torrentId] 
       });
@@ -141,7 +141,7 @@ export function useFilms() {
     try {
       const MoviesService = await getMoviesService();
       // 使用 moviesControllerUnbindTorrents 接口解绑种子
-      const res = await MoviesService.moviesControllerUnbindTorrents({ 
+      const res = await MoviesService.movieTorrentsControllerUnbindTorrents({ 
         id: filmId, 
         torrentIds: [torrentId] 
       });
