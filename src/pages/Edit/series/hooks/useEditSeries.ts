@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useFilms } from '@/hooks/useFilms'; // 复用 create/update (如果 SeriesService 完全独立，应封装 useSeries)
 import { SeriesService } from '@/api/services/SeriesService';
+import { EpisodesService } from '@/api/services/EpisodesService';
 import { stripBackticksAndTrim, parseDurationToMinutes, validateSeriesForm, mapBackendSeriesToLocal } from '../utils'; // Use relative path
 
 import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
@@ -64,7 +65,7 @@ export function useEditSeries() {
         (async () => {
             try {
                 // TODO: DTO mapping
-                const resp = await SeriesService.seriesControllerList({ page: 1, limit: 50, keyword: searchQuery });
+                const resp = await SeriesService.seriesBaseControllerList({ page: 1, limit: 50, keyword: searchQuery });
                 const list = resp?.message === 'ok' ? resp.data?.items : (resp as any)?.items || [];
                 // map to local type
                  const mapped = (list ?? []).map(mapBackendSeriesToLocal);
@@ -206,11 +207,11 @@ export function useEditSeries() {
          try {
              let savedData: any;
              if (isCreating) {
-                 const resp = await SeriesService.seriesControllerCreate(payloadBase as CreateSeriesDto);
+                 const resp = await SeriesService.seriesBaseControllerCreate(payloadBase as CreateSeriesDto);
                  savedData = resp.data;
                  setIsCreating(false);
              } else if (selectedSeries) {
-                 const resp = await SeriesService.seriesControllerUpdate({ 
+                 const resp = await SeriesService.seriesBaseControllerUpdate({ 
                      id: selectedSeries.id, 
                      ...payloadBase 
                  } as UpdateSeriesDto);
@@ -219,7 +220,7 @@ export function useEditSeries() {
              }
              
              // Refresh list
-             const respList = await SeriesService.seriesControllerList({ page: 1, limit: 50, keyword: searchQuery });
+             const respList = await SeriesService.seriesBaseControllerList({ page: 1, limit: 50, keyword: searchQuery });
              const list = respList?.message === 'ok' ? respList.data?.items : (respList as any)?.items || [];
              const mappedList = (list ?? []).map(mapBackendSeriesToLocal);
              setSeriesList(mappedList);
@@ -238,8 +239,8 @@ export function useEditSeries() {
     const handleDeleteSeries = async (id: string) => {
         if (!confirm('确认删除?')) return;
         try {
-            await SeriesService.seriesControllerDelete({ id });
-            const resp = await SeriesService.seriesControllerList({ page: 1, limit: 50, keyword: searchQuery });
+            await SeriesService.seriesBaseControllerDelete({ id });
+            const resp = await SeriesService.seriesBaseControllerList({ page: 1, limit: 50, keyword: searchQuery });
             const list = resp?.message === 'ok' ? resp.data?.items : (resp as any)?.items || [];
             setSeriesList((list ?? []).map(mapBackendSeriesToLocal));
             if (selectedSeries?.id === id) setSelectedSeries(null);
@@ -254,7 +255,7 @@ export function useEditSeries() {
 
     async function fetchEpisodes(seriesId: string) {
         try {
-            const resp = await SeriesService.seriesEpisodesControllerList({ seriesId });
+            const resp = await EpisodesService.episodesControllerList({ seriesId });
             // Map types from EpisodeDTO to local Episode
             // EpisodeDTO: { seriesId, seasonNumber, episodeNumber, title, ... }
             // Local Episode: { id: ???, ... }
@@ -311,7 +312,7 @@ export function useEditSeries() {
 
     const handleCreateEpisode = async (dto: CreateEpisodeDto) => {
         try {
-            await SeriesService.seriesEpisodesControllerCreate(dto);
+            await EpisodesService.episodesControllerCreate(dto);
             if(selectedSeries) fetchEpisodes(selectedSeries.id);
         } catch (e: any) {
             alert(e.message || '创建分集失败');
@@ -321,7 +322,7 @@ export function useEditSeries() {
 
     const handleUpdateEpisode = async (dto: UpdateEpisodeDto) => {
         try {
-             await SeriesService.seriesEpisodesControllerUpdate(dto);
+             await EpisodesService.episodesControllerUpdate(dto);
              // find season of updated episode to refresh? or reload all
              // Simplest: reload all for series
              if(selectedSeries) fetchEpisodes(selectedSeries.id);
@@ -334,7 +335,7 @@ export function useEditSeries() {
     const handleDeleteEpisode = async (id: string) => {
          if (!confirm('确认删除?')) return;
          try {
-             await SeriesService.seriesEpisodesControllerDelete({ id });
+             await EpisodesService.episodesControllerDelete({ id });
              if(selectedSeries) fetchEpisodes(selectedSeries.id);
          } catch (e: any) {
              alert(e.message || '删除分集失败');

@@ -53,7 +53,7 @@ export function useSeriesPage() {
         order: ListSeriesDto.order.DESC,
         status: selectedStatus === 'all' ? undefined : selectedStatus as ListSeriesDto.status,
       };
-      const response = await SeriesService.seriesControllerList(requestBody);
+      const response = await SeriesService.seriesBaseControllerList(requestBody);
       return {
         items: response.data?.items || [],
         total: response.data?.total || 0,
