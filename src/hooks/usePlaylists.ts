@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { PlaylistsService } from '@/api/services/PlaylistsService';
+import { PlaylistsItemsService } from '@/api/services/PlaylistsItemsService';
 
 function unwrap(response: any) {
   const body = response?.code !== undefined ? response : response?.data ?? response;
@@ -29,7 +30,7 @@ export function usePlaylists() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerList(params || {} as any);
+      const res = await PlaylistsService.playlistCoreControllerList(params || {} as any);
       const data = unwrap(res);
       setItems(data?.items ?? []);
       setTotal(data?.total ?? 0);
@@ -47,7 +48,7 @@ export function usePlaylists() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerGet({ id });
+      const res = await PlaylistsService.playlistCoreControllerGet({ id });
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -63,7 +64,7 @@ export function usePlaylists() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerCreate(payload);
+      const res = await PlaylistsService.playlistCoreControllerCreate(payload);
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -79,7 +80,7 @@ export function usePlaylists() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerUpdate({ id, ...payload });
+      const res = await PlaylistsService.playlistCoreControllerUpdate({ id, ...payload });
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -95,7 +96,7 @@ export function usePlaylists() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerDelete({ id });
+      const res = await PlaylistsService.playlistCoreControllerDelete({ id });
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -111,7 +112,7 @@ export function usePlaylists() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerAddItem({
+      const res = await PlaylistsItemsService.playlistItemsControllerAddItem({
         playlistId,
         itemId: filmId,
         itemType: 'movie' as any,
@@ -131,7 +132,7 @@ export function usePlaylists() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerRemoveItem({
+      const res = await PlaylistsItemsService.playlistItemsControllerRemoveItem({
         playlistId,
         itemId: filmId,
         itemType: 'movie' as any,
@@ -153,7 +154,7 @@ export function usePlaylists() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerReorderItems({
+      const res = await PlaylistsItemsService.playlistItemsControllerReorderItems({
         playlistId,
         order: order.map(id => ({
           itemId: id,
@@ -175,7 +176,7 @@ export function usePlaylists() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerListItems(params);
+      const res = await PlaylistsItemsService.playlistItemsControllerListItems(params);
       const data = unwrap(res);
       return data;
     } catch (e: any) {
@@ -191,7 +192,7 @@ export function usePlaylists() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await PlaylistsService.playlistsControllerSearchAddableItems(params);
+      const res = await PlaylistsItemsService.playlistItemsControllerSearchAddableItems(params);
       const data = unwrap(res);
       return data;
     } catch (e: any) {

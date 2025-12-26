@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlaylistsService } from '@/api/services/PlaylistsService';
+import { PlaylistsInteractionService } from '@/api/services/PlaylistsInteractionService';
+import { PlaylistsItemsService } from '@/api/services/PlaylistsItemsService';
 import type { PlaylistDetail, PlaylistFilm } from '../types';
 
 // 片单详情数据获取与行为封装
@@ -26,8 +28,8 @@ export function usePlaylistDetail(playlistId: string) {
     (async () => {
       try {
         const [detailResp, itemsResp] = await Promise.all([
-          PlaylistsService.playlistsControllerGet({ id: playlistId }),
-          PlaylistsService.playlistsControllerListItems({ playlistId, page: 1, limit: 100 })
+          PlaylistsService.playlistCoreControllerGet({ id: playlistId }),
+          PlaylistsItemsService.playlistItemsControllerListItems({ playlistId, page: 1, limit: 100 })
         ]);
 
         const rawDetail: any = (detailResp as any)?.data ?? detailResp;
@@ -79,7 +81,7 @@ export function usePlaylistDetail(playlistId: string) {
         setMovies(adaptedMovies);
 
         try {
-          await PlaylistsService.playlistsControllerIncViews({ id: playlistId });
+          await PlaylistsInteractionService.playlistInteractionControllerIncViews({ id: playlistId });
           setPlaylist((prev) => (prev ? { ...prev, viewsCount: Number(prev.viewsCount ?? 0) + 1 } : prev));
         } catch {
           // 忽略统计失败
@@ -109,7 +111,7 @@ export function usePlaylistDetail(playlistId: string) {
       return { ...prev, followersCount: Number(prev.followersCount ?? 0) + delta };
     });
     try {
-      await PlaylistsService.playlistsControllerLike({ id: playlistId });
+      await PlaylistsInteractionService.playlistInteractionControllerLike({ id: playlistId });
     } catch {
       // 回滚本地状态
       setIsFollowing(!next);

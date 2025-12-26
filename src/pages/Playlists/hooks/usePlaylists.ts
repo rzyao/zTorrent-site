@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { PlaylistsService } from '@/api/services/PlaylistsService';
+import { PlaylistsInteractionService } from '@/api/services/PlaylistsInteractionService';
 import { ListPlaylistsDto } from '@/api/models/ListPlaylistsDto';
 import type { Playlist } from '../types';
 
@@ -26,7 +27,7 @@ export function usePlaylists() {
     try {
       setLoading(true);
       setError(null);
-      const res = await PlaylistsService.playlistsControllerList({
+      const res = await PlaylistsService.playlistCoreControllerList({
         listType: getListType(activeTab),
         page,
         limit: pageSize,
@@ -75,7 +76,7 @@ export function usePlaylists() {
       return copy;
     });
     try {
-      await PlaylistsService.playlistsControllerLike({ id: playlistId });
+      await PlaylistsInteractionService.playlistInteractionControllerLike({ id: playlistId });
     } catch {
       setItems(prev => {
         const copy = [...prev];
@@ -87,7 +88,7 @@ export function usePlaylists() {
 
   const incViews = async (playlistId: string) => {
     try {
-      PlaylistsService.playlistsControllerIncViews({ id: playlistId });
+      PlaylistsInteractionService.playlistInteractionControllerIncViews({ id: playlistId });
       setItems(prev => prev.map(p => (p.id === playlistId ? { ...p, viewsCount: p.viewsCount + 1 } : p)));
     } catch { }
   };
