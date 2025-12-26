@@ -12,7 +12,7 @@ import { PageContainer } from "@/components/PageContainer";
 
 export default function ReviewPage() {
   const data = useReviewData();
-  const actions = useReviewActions(data.setItems);
+  const actions = useReviewActions();
   const history = useReviewHistory(actions.selectedItem, actions.showHistory);
 
   return (
