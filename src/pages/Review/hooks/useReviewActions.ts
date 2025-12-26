@@ -5,6 +5,7 @@ import { extractErrorMessage } from '../utils';
 import type { ReviewItem } from '../types';
 import { toast } from 'sonner'; 
 
+/** 审核操作 Hook */
 export function useReviewActions() {
   const [selectedItem, setSelectedItem] = useState<ReviewItem | null>(null);
   const [actionType, setActionType] = useState<'approve' | 'reject' | null>(null);

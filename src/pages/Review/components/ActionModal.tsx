@@ -31,7 +31,7 @@ export function ActionModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
       {/* 调高 z-index 确保盖过 Drawer */}
       <div className="w-full max-w-lg rounded-xl border border-neutral-700 bg-neutral-900 shadow-2xl">
         <div className="border-b border-neutral-700 p-6">
