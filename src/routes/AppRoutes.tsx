@@ -282,6 +282,15 @@ export default function AppRoutes() {
               </PermissionRoute>
             }
           />
+          {/* 工单 */}
+          <Route
+            path="/tickets"
+            element={
+              <PermissionRoute requiredPermissions={["tickets"]} name="工单">
+                <TicketsPage />
+              </PermissionRoute>
+            }
+          />
 
           {/* 求种与悬赏 */}
           <Route path="/requests" element={<RequestsPage />} />
@@ -294,7 +303,6 @@ export default function AppRoutes() {
 
           {/* 消息与工单 */}
           <Route path="/messages" element={<MessagesPage />} />
-          <Route path="/tickets" element={<TicketsPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
 
           {/* 高级功能 */}

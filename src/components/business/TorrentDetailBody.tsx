@@ -260,7 +260,7 @@ export function TorrentDetailBody(props: TorrentDetailBodyProps) {
         {/* Lightbox 简易实现 (若有通用 Lightbox 组件更好) */}
         {lightboxOpen && stills.length > 0 && (
           <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95"
+            className="fixed inset-0 z-9999 flex items-center justify-center bg-black/95"
             onClick={() => setLightboxOpen(false)}
           >
             <button
