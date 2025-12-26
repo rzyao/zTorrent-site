@@ -1,6 +1,7 @@
 import { useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTorrentsService, getOpenAPI } from '@/api/lazy';
+import { getOpenAPI } from '@/api/lazy';
+import { DownloadsService } from '@/api/services/DownloadsService';
 import { ApiError } from '@/api/core/ApiError';
 import { parseFilenameFromContentDisposition, saveBlobAsFile } from '@/utils/http/saveBlobAsFile';
 import { customToast } from '@/hooks/useToast';
@@ -48,8 +49,7 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
       let url: string = '';
       try {
         const source = sourceOverride ?? sourcePayload ?? { filmId: '', playListId: '' };
-        const TorrentsService = await getTorrentsService();
-        const resp = await TorrentsService.torrentsControllerCreateDownloadUrl({ torrentId, source });
+        const resp = await DownloadsService.downloadsControllerCreateDownloadUrl({ torrentId, source });
         const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
         const data = body?.data ?? body;
         url = String(data?.url ?? '');
@@ -121,8 +121,7 @@ export function useTorrentDownload(opts?: UseTorrentDownloadOptions) {
 
       // 成功后记录下载（可选，不影响用户体验）
       try {
-        const TorrentsService = await getTorrentsService();
-        await TorrentsService.torrentsControllerRecordDownload({ torrentId });
+        await DownloadsService.downloadsControllerRecordDownload({ torrentId });
       } catch (_) { }
     } catch (e: any) {
       const status = (e as ApiError)?.status ?? e?.status;

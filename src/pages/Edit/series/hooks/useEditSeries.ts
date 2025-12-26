@@ -365,11 +365,11 @@ export function useEditSeries() {
     const searchTorrents = async (query: string): Promise<any[]> => {
         if (!query || query.length < 2) return [];
         try {
-            const { TorrentsService } = await import('@/api/services/TorrentsService');
+            const { TorrentsSearchService } = await import('@/api/services/TorrentsSearchService');
             // Check if selectedSeries is available, actually it should be if we are in edit mode
             if (!selectedSeries) return [];
-
-            const res = await TorrentsService.torrentsControllerPicker({ 
+ 
+            const res: any = await TorrentsSearchService.torrentSearchControllerPicker({ 
                 page: 1, 
                 pageSize: 20, 
                 keyword: query,

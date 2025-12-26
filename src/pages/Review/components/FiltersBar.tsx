@@ -6,7 +6,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import type { ReviewStatus, ReviewType } from "../types";
+import type { ReviewStatus, ReviewType, ReviewStats } from "../types";
 
 interface Props {
   typeFilter: ReviewType;
@@ -19,6 +19,7 @@ interface Props {
   setShowFilters: (v: boolean) => void;
   timeRange: "today" | "week" | "month" | "all";
   setTimeRange: (v: "today" | "week" | "month" | "all") => void;
+  stats: ReviewStats;
 }
 
 export function FiltersBar(props: Props) {
@@ -30,10 +31,20 @@ export function FiltersBar(props: Props) {
     searchQuery,
     setSearchQuery,
     showFilters,
-    setShowFilters,
+    // setShowFilters,
     timeRange,
     setTimeRange,
+    stats,
   } = props;
+
+  const Badge = ({ count }: { count: number }) => {
+    if (count <= 0) return null;
+    return (
+      <span className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm ring-1 ring-white/10 transition-transform group-hover:scale-110">
+        {count > 99 ? "99+" : count}
+      </span>
+    );
+  };
 
   return (
     <div className="mb-6 rounded-xl border border-neutral-700/50 bg-neutral-800/50 p-4">
@@ -54,38 +65,42 @@ export function FiltersBar(props: Props) {
         <div className="flex gap-2">
           <button
             onClick={() => setTypeFilter("torrent")}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition-all ${typeFilter === "torrent" ? "bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25" : "bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700"}`}
+            className={`group relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition-all ${typeFilter === "torrent" ? "bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25" : "bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700"}`}
           >
             <Package className="h-4 w-4" />
             种子
+            <Badge count={stats.pendingTorrents} />
           </button>
           <button
             onClick={() => setTypeFilter("movie")}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition-all ${typeFilter === "movie" ? "bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25" : "bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700"}`}
+            className={`group relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition-all ${typeFilter === "movie" ? "bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25" : "bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700"}`}
           >
             <Film className="h-4 w-4" />
             电影
+            <Badge count={stats.pendingMovies} />
           </button>
           <button
             onClick={() => setTypeFilter("series")}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition-all ${typeFilter === "series" ? "bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25" : "bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700"}`}
+            className={`group relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition-all ${typeFilter === "series" ? "bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25" : "bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700"}`}
           >
             <Film className="h-4 w-4" />
             剧集
+            <Badge count={stats.pendingSeries} />
           </button>
           <button
             onClick={() => setTypeFilter("playlist")}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition-all ${typeFilter === "playlist" ? "bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25" : "bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700"}`}
+            className={`group relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition-all ${typeFilter === "playlist" ? "bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25" : "bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700"}`}
           >
             <List className="h-4 w-4" />
             片单
+            <Badge count={stats.pendingPlaylists} />
           </button>
         </div>
 
         <div className="flex gap-2">
           <button
             onClick={() => setStatusFilter("pending")}
-            className={`rounded-lg px-4 py-2 text-sm transition-all ${statusFilter === "pending" ? "border border-amber-500/50 bg-amber-500/20 text-amber-400" : "bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700"}`}
+            className={`group flex items-center rounded-lg px-4 py-2 text-sm transition-all ${statusFilter === "pending" ? "border border-amber-500/50 bg-amber-500/20 text-amber-400" : "bg-neutral-700/50 text-neutral-300 hover:bg-neutral-700"}`}
           >
             待审核
           </button>
@@ -103,7 +118,7 @@ export function FiltersBar(props: Props) {
           </button>
         </div>
 
-        <button
+        {/* <button
           onClick={() => setShowFilters(!showFilters)}
           className="flex items-center gap-2 rounded-lg bg-neutral-700/50 px-4 py-2 text-sm text-neutral-300 transition-all hover:bg-neutral-700"
         >
@@ -112,7 +127,7 @@ export function FiltersBar(props: Props) {
           <ChevronDown
             className={`h-4 w-4 transition-transform ${showFilters ? "rotate-180" : ""}`}
           />
-        </button>
+        </button> */}
       </div>
 
       {showFilters && (

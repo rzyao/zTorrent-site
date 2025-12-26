@@ -3,25 +3,22 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { BindTorrentDto } from '../models/BindTorrentDto';
-import type { CreateEpisodeDto } from '../models/CreateEpisodeDto';
 import type { CreateSeriesDto } from '../models/CreateSeriesDto';
-import type { DeleteEpisodeDto } from '../models/DeleteEpisodeDto';
 import type { DeleteSeriesDto } from '../models/DeleteSeriesDto';
 import type { DeleteSeriesResponseDto } from '../models/DeleteSeriesResponseDto';
 import type { EmptyObjectDto } from '../models/EmptyObjectDto';
-import type { EpisodeDetailResponseDto } from '../models/EpisodeDetailResponseDto';
-import type { GetEpisodeDetailDto } from '../models/GetEpisodeDetailDto';
 import type { GetSeriesDto } from '../models/GetSeriesDto';
-import type { ListEpisodesDto } from '../models/ListEpisodesDto';
-import type { ListEpisodesResponseDto } from '../models/ListEpisodesResponseDto';
+import type { ListPendingSeriesDto } from '../models/ListPendingSeriesDto';
+import type { ListPendingSeriesResponseDto } from '../models/ListPendingSeriesResponseDto';
 import type { ListSeriesDto } from '../models/ListSeriesDto';
 import type { ListSeriesResponseDto } from '../models/ListSeriesResponseDto';
 import type { ListSeriesTorrentsDto } from '../models/ListSeriesTorrentsDto';
 import type { ListSeriesTorrentsResponseDto } from '../models/ListSeriesTorrentsResponseDto';
+import type { ReviewSeriesDto } from '../models/ReviewSeriesDto';
 import type { SeriesDetailDto } from '../models/SeriesDetailDto';
-import type { SuccessDto } from '../models/SuccessDto';
+import type { SeriesReviewHistoryDto } from '../models/SeriesReviewHistoryDto';
+import type { SeriesReviewHistoryResponseDto } from '../models/SeriesReviewHistoryResponseDto';
 import type { UnbindTorrentDto } from '../models/UnbindTorrentDto';
-import type { UpdateEpisodeDto } from '../models/UpdateEpisodeDto';
 import type { UpdateSeriesDto } from '../models/UpdateSeriesDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -33,7 +30,7 @@ export class SeriesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static seriesControllerCreate(
+    public static seriesBaseControllerCreate(
         requestBody: CreateSeriesDto,
     ): CancelablePromise<{
         code?: number;
@@ -62,7 +59,7 @@ export class SeriesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static seriesControllerUpdate(
+    public static seriesBaseControllerUpdate(
         requestBody: UpdateSeriesDto,
     ): CancelablePromise<{
         code?: number;
@@ -91,7 +88,7 @@ export class SeriesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static seriesControllerDelete(
+    public static seriesBaseControllerDelete(
         requestBody: DeleteSeriesDto,
     ): CancelablePromise<{
         code?: number;
@@ -120,7 +117,7 @@ export class SeriesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static seriesControllerGetDetail(
+    public static seriesBaseControllerGetDetail(
         requestBody: GetSeriesDto,
     ): CancelablePromise<{
         code?: number;
@@ -149,7 +146,7 @@ export class SeriesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static seriesControllerList(
+    public static seriesBaseControllerList(
         requestBody: ListSeriesDto,
     ): CancelablePromise<{
         code?: number;
@@ -260,23 +257,23 @@ export class SeriesService {
         });
     }
     /**
-     * 获取分集列表
+     * 待审核剧集列表
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static seriesEpisodesControllerList(
-        requestBody: ListEpisodesDto,
+    public static seriesReviewControllerListPending(
+        requestBody: ListPendingSeriesDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: ListEpisodesResponseDto;
+        data?: ListPendingSeriesResponseDto;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/series/episodes/list',
+            url: '/series/review/pending',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -289,71 +286,13 @@ export class SeriesService {
         });
     }
     /**
-     * 获取分集详情（含关联剧集与种子）
+     * 审核剧集
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static seriesEpisodesControllerDetail(
-        requestBody: GetEpisodeDetailDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: EpisodeDetailResponseDto;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/series/episodes/detail',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 创建分集
-     * @param requestBody
-     * @returns any 已创建
-     * @throws ApiError
-     */
-    public static seriesEpisodesControllerCreate(
-        requestBody: CreateEpisodeDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: SuccessDto;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/series/episodes/create',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 更新分集
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static seriesEpisodesControllerUpdate(
-        requestBody: UpdateEpisodeDto,
+    public static seriesReviewControllerReview(
+        requestBody: ReviewSeriesDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -363,7 +302,7 @@ export class SeriesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/series/episodes/update',
+            url: '/series/review/action',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -376,23 +315,23 @@ export class SeriesService {
         });
     }
     /**
-     * 删除分集
+     * 剧集审核历史
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static seriesEpisodesControllerDelete(
-        requestBody: DeleteEpisodeDto,
+    public static seriesReviewControllerHistory(
+        requestBody: SeriesReviewHistoryDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: EmptyObjectDto;
+        data?: SeriesReviewHistoryResponseDto;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/series/episodes/delete',
+            url: '/series/review/history',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

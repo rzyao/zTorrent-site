@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TorrentsService } from '@/api/services/TorrentsService';
+import { DownloadsService } from '@/api/services/DownloadsService';
 import { DownloadersService } from '@/api/services/DownloadersService';
 import { customToast } from '@/hooks/useToast';
 
@@ -22,7 +22,7 @@ export function useSendToDownloader() {
     setSending(true);
     try {
       // 1. 获取一次性下载链接
-      const resp = await TorrentsService.torrentsControllerCreateDownloadUrl({
+      const resp = await DownloadsService.downloadsControllerCreateDownloadUrl({
         torrentId: String(torrentId),
         source: source || { filmId: "", playListId: "" },
       });

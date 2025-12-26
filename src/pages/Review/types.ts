@@ -31,3 +31,13 @@ export type AuditHistory = {
   notes: string;
 };
 
+export interface ReviewStats {
+  pending: number;
+  pendingMovies: number;
+  pendingSeries: number;
+  pendingPlaylists: number;
+  pendingTorrents: number;
+  todayApproved: number;
+  todayRejected: number;
+}
+

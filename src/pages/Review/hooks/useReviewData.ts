@@ -1,13 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+
+import { useState, useMemo, useEffect } from 'react';
 import { useDynamicTitle } from '@/hooks/useDynamicTitle';
-import { MoviesService } from '@/api/services/MoviesService';
-import { PlaylistsService } from '@/api/services/PlaylistsService';
-import { TorrentsService } from '@/api/services/TorrentsService';
-import { ReviewHistoryDto } from '@/api/models/ReviewHistoryDto';
-import { ReviewerListTorrentsDto } from '@/api/models/ReviewerListTorrentsDto';
-import { SettingsService } from '@/api/services/SettingsService';
-import { unwrapResponse, extractErrorMessage } from '../utils';
 import type { ReviewItem, ReviewStatus, ReviewType } from '../types';
+import { useReviewItems, useReviewCounts, useReviewSwitches } from './useReviewQueries';
 
 export function useReviewData() {
   useDynamicTitle('审核');
@@ -18,244 +13,61 @@ export function useReviewData() {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
 
+  // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
+      setPage(1); // Reset page on search
     }, 500);
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const [loading, setLoading] = useState(false);
-  const [items, setItems] = useState<ReviewItem[]>([]);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
-  const [total, setTotal] = useState(0);
-  const [reviewSwitches, setReviewSwitches] = useState<{ film?: boolean; playlist?: boolean; torrent?: boolean }>({});
+  // Reset page on filter change
+  useEffect(() => {
+    setPage(1);
+  }, [typeFilter, statusFilter]);
 
+  // Queries
+  const { data: itemsData, isLoading: itemsLoading } = useReviewItems({
+    type: typeFilter,
+    status: statusFilter,
+    page,
+    limit,
+    keyword: debouncedSearchQuery || undefined,
+  });
+
+  const { data: countsData } = useReviewCounts();
+  const { data: switchesData } = useReviewSwitches();
+
+  // Derived state
+  const items = itemsData?.items || [];
+  const total = itemsData?.total || 0;
+  const loading = itemsLoading;
+
+  // Client-side filtering for endpoints that don't support server-side search (e.g. pending lists)
+  // For history lists, the backend usually handles it, but client-side filtering here is safe as a fallback/refinement for current page.
   const filteredItems = useMemo(() => {
-    return items.filter(item => {
-      const typeMatch = item.type === typeFilter;
-      const statusMatch = item.status === statusFilter;
-      const searchMatch = debouncedSearchQuery === '' ||
+    if (!debouncedSearchQuery) return items;
+    return items.filter(item => 
         item.title?.toLowerCase?.().includes(debouncedSearchQuery.toLowerCase()) ||
-        item.submitter?.toLowerCase?.().includes(debouncedSearchQuery.toLowerCase());
-      return typeMatch && statusMatch && searchMatch;
-    });
-  }, [items, typeFilter, statusFilter, debouncedSearchQuery]);
+        item.submitter?.toLowerCase?.().includes(debouncedSearchQuery.toLowerCase())
+    );
+  }, [items, debouncedSearchQuery]);
 
   const stats = useMemo(() => ({
-    pending: items.filter(i => i.status === 'pending').length,
-    pendingMovies: items.filter(i => i.status === 'pending' && i.type === 'movie').length,
-    pendingSeries: items.filter(i => i.status === 'pending' && i.type === 'series').length,
-    pendingPlaylists: items.filter(i => i.status === 'pending' && i.type === 'playlist').length,
-    pendingTorrents: items.filter(i => i.status === 'pending' && i.type === 'torrent').length,
-    todayApproved: items.filter(i => i.status === 'approved' && (i.submitDate || '').startsWith(new Date().toISOString().slice(0, 10))).length,
-    todayRejected: items.filter(i => i.status === 'rejected' && (i.submitDate || '').startsWith(new Date().toISOString().slice(0, 10))).length,
-  }), [items]);
+    pending: (countsData?.torrent || 0) + (countsData?.movie || 0) + (countsData?.series || 0) + (countsData?.playlist || 0),
+    pendingMovies: countsData?.movie || 0,
+    pendingSeries: countsData?.series || 0,
+    pendingPlaylists: countsData?.playlist || 0,
+    pendingTorrents: countsData?.torrent || 0,
+    todayApproved: 0, 
+    todayRejected: 0,
+  }), [countsData]);
 
-  const fetchTorrents = async () => {
-    setLoading(true);
-    try {
-      let resp: any;
-      
-      if (statusFilter === 'pending') {
-        // 使用审核员列表接口获取待审核种子，现已支持关键词搜索
-        resp = await TorrentsService.torrentsControllerListTorrentsForReviewer({
-          page,
-          limit,
-          approvalStatus: ReviewerListTorrentsDto.approvalStatus.PENDING,
-          keyword: debouncedSearchQuery || undefined,
-          sortBy: ReviewerListTorrentsDto.sortBy.UPLOADED_AT,
-          order: ReviewerListTorrentsDto.order.DESC,
-        });
-      } else if (statusFilter === 'approved' || statusFilter === 'rejected') {
-        // 使用专门的审核历史接口，现已支持关键词搜索
-        const historyStatus = statusFilter === 'approved' 
-          ? ReviewHistoryDto.status.APPROVED 
-          : ReviewHistoryDto.status.REJECTED;
-          
-        resp = await TorrentsService.torrentsControllerListReviewHistory({
-          page,
-          limit,
-          status: historyStatus,
-          keyword: debouncedSearchQuery || undefined,
-        });
-      } else {
-        // 使用审核员列表接口获取已驳回种子
-        resp = await TorrentsService.torrentsControllerListReviewHistory({
-          page,
-          limit,
-          status: ReviewHistoryDto.status.REJECTED,
-          keyword: debouncedSearchQuery || undefined,
-        });
-      }
-
-      const data = unwrapResponse(resp);
-      const list: any[] = Array.isArray(data?.items) ? data.items : [];
-      const mapped: ReviewItem[] = list.map((it: any) => ({
-        id: String(it?.id ?? ''),
-        type: 'torrent',
-        title: String(it?.title ?? it?.name ?? '未命名种子'),
-        submitter: String(it?.uploader?.username ?? it?.uploaderName ?? '未知'),
-        submitterReputation: Number(it?.uploader?.reputation ?? 0),
-        submitDate: String(it?.uploadedAt ?? it?.createdAt ?? ''),
-        status: (String(it?.approvalStatus ?? 'pending') as any),
-        category: String(it?.category ?? ''),
-        description: String(it?.description ?? ''),
-        visibility: (it?.visibility as any) ?? 'public',
-        missingFields: Array.isArray(it?.missingFields) ? it.missingFields : undefined,
-        sensitiveWords: Array.isArray(it?.sensitiveWords) ? it.sensitiveWords : undefined,
-        screenshots: Array.isArray(it?.screenshots) ? it.screenshots : undefined,
-      }));
-      setItems(mapped);
-      setTotal(Number(data?.total ?? mapped.length));
-    } catch (e) {
-      console.error(extractErrorMessage(e));
-      setItems([]);
-      setTotal(0);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchMovies = async () => {
-    setLoading(true);
-    try {
-      // TODO: 待后端实现 moviesControllerAdminList API
-      // 目前使用普通列表 API
-      const resp = await MoviesService.moviesControllerList({
-        page,
-        limit,
-        keyword: debouncedSearchQuery || undefined,
-        // approvalStatus 字段待后端支持
-      } as any);
-      const data = unwrapResponse(resp);
-      const list: any[] = Array.isArray(data?.items) ? data.items : [];
-      const mapped: ReviewItem[] = list.map((it: any) => ({
-        id: String(it?.id ?? ''),
-        type: 'movie',
-        title: String(it?.title ?? '未命名影片'),
-        submitter: String(it?.uploader?.username ?? it?.uploaderName ?? '未知'),
-        submitterReputation: Number(it?.uploader?.reputation ?? 0),
-        submitDate: String(it?.approvedAt ?? it?.updatedAt ?? it?.createdAt ?? ''),
-        status: (String(it?.approvalStatus ?? 'pending') as any),
-        category: String(it?.category ?? ''),
-        description: String(it?.description ?? ''),
-        image: String(it?.posterUrl ?? ''),
-        rating: Number(it?.rating ?? it?.imdbRating ?? 0),
-        year: String(it?.year ?? ''),
-        visibility: (it?.visibility as any) ?? 'public',
-      }));
-      setItems(mapped);
-      setTotal(Number(data?.total ?? mapped.length));
-    } catch (e) {
-      console.error(extractErrorMessage(e));
-      setItems([]);
-      setTotal(0);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchPlaylists = async () => {
-    setLoading(true);
-    try {
-      const resp = await PlaylistsService.playlistsControllerAdminList({
-        page,
-        limit,
-        keyword: debouncedSearchQuery || undefined,
-        approvalStatus: statusFilter === 'pending' ? 'pending' : (statusFilter as any),
-        sortBy: 'approvedAt',
-        order: 'DESC',
-      } as any);
-      const data = unwrapResponse(resp);
-      const list: any[] = Array.isArray(data?.items) ? data.items : [];
-      const mapped: ReviewItem[] = list.map((it: any) => ({
-        id: String(it?.id ?? ''),
-        type: 'playlist',
-        title: String(it?.title ?? '未命名片单'),
-        submitter: String(it?.owner?.username ?? it?.ownerUsername ?? '未知'),
-        submitterReputation: Number(it?.owner?.reputation ?? 0),
-        submitDate: String(it?.approvedAt ?? it?.updatedAt ?? it?.createdAt ?? ''),
-        status: (String(it?.approvalStatus ?? 'pending') as any),
-        category: String(it?.type ?? ''),
-        description: String(it?.description ?? ''),
-        image: String(it?.coverUrl ?? ''),
-        visibility: (it?.visibility as any) ?? 'public',
-      }));
-      setItems(mapped);
-      setTotal(Number(data?.total ?? mapped.length));
-    } catch (e) {
-      console.error(extractErrorMessage(e));
-      setItems([]);
-      setTotal(0);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchSeries = async () => {
-    setLoading(true);
-    try {
-      const { SeriesService } = await import('@/api/services/SeriesService');
-      const resp = await SeriesService.seriesControllerList({
-        page,
-        limit,
-        keyword: debouncedSearchQuery || undefined,
-      } as any);
-      const data = unwrapResponse(resp);
-      const list: any[] = Array.isArray(data?.items) ? data.items : [];
-      const mapped: ReviewItem[] = list.map((it: any) => ({
-        id: String(it?.id ?? ''),
-        type: 'series',
-        title: String(it?.title ?? '未命名剧集'),
-        submitter: String(it?.uploader?.username ?? it?.uploaderName ?? '未知'),
-        submitterReputation: Number(it?.uploader?.reputation ?? 0),
-        submitDate: String(it?.approvedAt ?? it?.updatedAt ?? it?.createdAt ?? ''),
-        status: (String(it?.approvalStatus ?? 'pending') as any),
-        category: String(it?.category ?? ''),
-        description: String(it?.description ?? ''),
-        image: String(it?.posterUrl ?? ''),
-        rating: Number(it?.rating ?? 0),
-        year: String(it?.year ?? ''),
-        visibility: (it?.visibility as any) ?? 'public',
-      }));
-      setItems(mapped);
-      setTotal(Number(data?.total ?? mapped.length));
-    } catch (e) {
-      console.error(extractErrorMessage(e));
-      setItems([]);
-      setTotal(0);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (typeFilter === 'torrent') fetchTorrents();
-    else if (typeFilter === 'movie') fetchMovies();
-    else if (typeFilter === 'series') fetchSeries();
-    else if (typeFilter === 'playlist') fetchPlaylists();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [typeFilter, statusFilter, debouncedSearchQuery, page, limit]);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const resp = await SettingsService.settingsControllerGetReviewSwitches({});
-        const data = unwrapResponse(resp);
-        const film = Boolean(data?.filmReview ?? data?.film);
-        const playlist = Boolean(data?.playlistReview ?? data?.playlist);
-        const torrent = Boolean(data?.torrentReview ?? data?.torrent);
-        if (!cancelled) setReviewSwitches({ film, playlist, torrent });
-      } catch (e) {
-        console.error(extractErrorMessage(e));
-      }
-    })();
-    return () => { cancelled = true; };
-  }, []);
+  const reviewSwitches = switchesData || {};
 
   return {
     // filters
@@ -265,12 +77,10 @@ export function useReviewData() {
     searchQuery, setSearchQuery,
     showFilters, setShowFilters,
     // data
-    loading, items, setItems,
+    loading, items, setItems: () => {}, // No-op, managed by query
     filteredItems, stats,
-    page, setPage, limit, setLimit, total, setTotal,
+    page, setPage, limit, setLimit, total, setTotal: () => {}, // No-op
     reviewSwitches,
-    // fetchers
-    fetchTorrents, fetchMovies, fetchSeries, fetchPlaylists,
+    // fetchers are automatic now
   };
 }
-

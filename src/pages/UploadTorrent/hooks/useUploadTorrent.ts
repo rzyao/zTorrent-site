@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ImagesService } from '@/api/services/ImagesService';
 import { PtGenService } from '@/api/services/PtGenService';
-import { TorrentsService } from '@/api/services/TorrentsService';
+import { TorrentsUploadService } from '@/api/services/TorrentsUploadService';
 import { customToast } from '@/hooks/useToast';
 import { categoryTree, parseMediaInfo } from '@/types/UploadTorrentPage';
 import { useUploadStore } from '@/stores/uploadStore';
@@ -241,7 +241,7 @@ export function useUploadTorrent() {
       const infoBytes = extractInfoBytes(buffer);
       const digest = await crypto.subtle.digest('SHA-1', infoBytes);
       const infoHash = Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, '0')).join('');
-      const resp = await TorrentsService.torrentsControllerExistsByInfoHash({ infoHash });
+      const resp = await TorrentsUploadService.torrentUploadControllerExistsByInfoHash({ infoHash });
       const body: any = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
       const exists = Boolean(body?.data?.exists ?? body?.exists);
       if (exists) customToast.error('该种子在网站上已经存在');
@@ -330,7 +330,7 @@ export function useUploadTorrent() {
         stills: screenshots.length ? screenshots : undefined,
         tags: selectedTags.length ? selectedTags : undefined,
       };
-      const resp = await TorrentsService.torrentsControllerUpload(formData as any);
+      const resp = await TorrentsUploadService.torrentUploadControllerUpload(formData as any);
       const body: any = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
       const data: any = body?.data ?? body;
       const msg = data?.message ?? '发布成功';

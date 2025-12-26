@@ -243,7 +243,7 @@ export default function AppRoutes() {
           <Route
             path="/upload"
             element={
-              <PermissionRoute requiredPermissions={["torrent:upload"]} name="上传">
+              <PermissionRoute requiredPermissions={["upload"]} name="上传">
                 <UploadTorrentPage />
               </PermissionRoute>
             }
@@ -252,7 +252,7 @@ export default function AppRoutes() {
           <Route
             path="/edit/movie"
             element={
-              <PermissionRoute requiredRoles={["editor"]}>
+              <PermissionRoute requiredPermissions={["edit"]} name="编辑电影">
                 <EditMoviePage />
               </PermissionRoute>
             }
@@ -260,7 +260,7 @@ export default function AppRoutes() {
           <Route
             path="/edit/series"
             element={
-              <PermissionRoute requiredRoles={["editor"]}>
+              <PermissionRoute requiredPermissions={["edit"]} name="编辑剧集">
                 <EditSeriesPage />
               </PermissionRoute>
             }
@@ -268,7 +268,7 @@ export default function AppRoutes() {
           <Route
             path="/edit/playlist"
             element={
-              <PermissionRoute requiredRoles={["editor"]}>
+              <PermissionRoute requiredPermissions={["edit"]} name="编辑播放列表">
                 <EditPlaylistPage />
               </PermissionRoute>
             }
@@ -277,7 +277,7 @@ export default function AppRoutes() {
           <Route
             path="/review"
             element={
-              <PermissionRoute requiredRoles={["admin"]}>
+              <PermissionRoute requiredPermissions={["review"]} name="审核">
                 <ReviewPage />
               </PermissionRoute>
             }

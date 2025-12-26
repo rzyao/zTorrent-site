@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useFilms } from '@/hooks/useFilms';
-import { TorrentsService } from '@/api/services/TorrentsService';
+import { TorrentsSearchService } from '@/api/services/TorrentsSearchService';
 import { MoviesService } from '@/api/services/MoviesService';
 import { PtGenService } from '@/api/services/PtGenService';
 import { ListTorrentsDto } from '@/api/models/ListTorrentsDto';
@@ -105,7 +105,7 @@ export function useEditMovie() {
     setSearchError(null);
     const timer = setTimeout(async () => {
       try {
-        const resp: any = await TorrentsService.torrentsControllerPicker({ 
+        const resp: any = await TorrentsSearchService.torrentSearchControllerPicker({ 
           keyword: q, 
           bindMediaId: selectedMovie.id,
           bindMediaType: ListTorrentsDto.bindMediaType.MOVIE,

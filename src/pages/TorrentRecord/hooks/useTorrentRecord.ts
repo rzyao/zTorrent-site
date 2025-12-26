@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { TorrentRecordService } from '@/api/services/TorrentRecordService';
+import { TorrentsRecordService } from '@/api/services/TorrentsRecordService';
 import { TorrentStatus, Torrent, TorrentStats } from '../types';
 import { transformTorrentData, transformStatsData } from '../utils';
 
@@ -22,22 +22,22 @@ export function useTorrentRecord({ activeTab, searchQuery }: UseTorrentRecordPro
       let resp: any;
       switch (activeTab) {
         case 'uploaded':
-          resp = await TorrentRecordService.torrentRecordControllerFindPublished({ page: 1, limit: 50, search: searchQuery });
+          resp = await TorrentsRecordService.torrentRecordControllerFindPublished({ page: 1, limit: 50, search: searchQuery });
           break;
         case 'seeding':
-          resp = await TorrentRecordService.torrentRecordControllerFindSeeding({ page: 1, limit: 50, search: searchQuery });
+          resp = await TorrentsRecordService.torrentRecordControllerFindSeeding({ page: 1, limit: 50, search: searchQuery });
           break;
         case 'downloading':
-          resp = await TorrentRecordService.torrentRecordControllerFindDownloading({ page: 1, limit: 50, search: searchQuery });
+          resp = await TorrentsRecordService.torrentRecordControllerFindDownloading({ page: 1, limit: 50, search: searchQuery });
           break;
         case 'completed':
-          resp = await TorrentRecordService.torrentRecordControllerFindCompleted({ page: 1, limit: 50, search: searchQuery });
+          resp = await TorrentsRecordService.torrentRecordControllerFindCompleted({ page: 1, limit: 50, search: searchQuery });
           break;
         case 'incomplete':
-          resp = await TorrentRecordService.torrentRecordControllerFindIncomplete({ page: 1, limit: 50, search: searchQuery });
+          resp = await TorrentsRecordService.torrentRecordControllerFindIncomplete({ page: 1, limit: 50, search: searchQuery });
           break;
         default:
-          resp = await TorrentRecordService.torrentRecordControllerFindSeeding({ page: 1, limit: 50, search: searchQuery });
+          resp = await TorrentsRecordService.torrentRecordControllerFindSeeding({ page: 1, limit: 50, search: searchQuery });
           break;
       }
       const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data ?? (resp as any);
@@ -50,7 +50,7 @@ export function useTorrentRecord({ activeTab, searchQuery }: UseTorrentRecordPro
   const { data: statsResult, isLoading: isLoadingStats, isFetching: isFetchingStats } = useQuery({
     queryKey: ['torrentRecordStats'],
     queryFn: async () => {
-      const resp = await TorrentRecordService.torrentRecordControllerGetStats({});
+      const resp = await TorrentsRecordService.torrentRecordControllerGetStats({});
       const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data ?? (resp as any);
       const payload = body?.data ?? body;
       return transformStatsData(payload);

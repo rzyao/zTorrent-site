@@ -1,15 +1,17 @@
+
 import { useState } from 'react';
-import { MoviesService } from '@/api/services/MoviesService';
-import { PlaylistsService } from '@/api/services/PlaylistsService';
-import { TorrentsService } from '@/api/services/TorrentsService';
+import { useReviewAction } from './useReviewMutations';
 import { extractErrorMessage } from '../utils';
 import type { ReviewItem } from '../types';
+import { toast } from 'sonner'; 
 
-export function useReviewActions(onItemsUpdate: (updater: (prev: ReviewItem[]) => ReviewItem[]) => void) {
+export function useReviewActions() {
   const [selectedItem, setSelectedItem] = useState<ReviewItem | null>(null);
   const [actionType, setActionType] = useState<'approve' | 'reject' | null>(null);
   const [actionNotes, setActionNotes] = useState('');
   const [showHistory, setShowHistory] = useState(false);
+
+  const mutation = useReviewAction();
 
   const handleAction = (item: ReviewItem, action: 'approve' | 'reject') => {
     setSelectedItem(item);
@@ -20,19 +22,16 @@ export function useReviewActions(onItemsUpdate: (updater: (prev: ReviewItem[]) =
   const confirmAction = async () => {
     if (!selectedItem || !actionType) return;
     try {
-      const payload = { id: selectedItem.id, action: actionType, note: actionNotes.trim() } as any;
-      if (selectedItem.type === 'torrent') {
-        await TorrentsService.torrentsControllerReview(payload);
-      } else if (selectedItem.type === 'movie') {
-        // TODO: 待后端实现 moviesControllerReview API
-        console.warn('电影审核 API 待实现');
-        throw new Error('电影审核功能待实现');
-      } else if (selectedItem.type === 'playlist') {
-        await PlaylistsService.playlistsControllerReview(payload);
-      }
-      onItemsUpdate(prev => prev.map(it => it.id === selectedItem.id ? { ...it, status: actionType === 'approve' ? 'approved' : 'rejected', notes: payload.note } : it));
+      await mutation.mutateAsync({
+        id: selectedItem.id,
+        type: selectedItem.type,
+        action: actionType,
+        note: actionNotes.trim(),
+      });
+      toast.success(actionType === 'approve' ? '审核通过' : '审核驳回');
     } catch (e) {
       console.error(extractErrorMessage(e));
+      toast.error('操作失败: ' + extractErrorMessage(e));
     } finally {
       setActionType(null);
       setActionNotes('');
@@ -51,6 +50,6 @@ export function useReviewActions(onItemsUpdate: (updater: (prev: ReviewItem[]) =
     actionNotes, setActionNotes,
     showHistory, setShowHistory,
     handleAction, confirmAction, cancelAction,
+    isPending: mutation.isPending,
   };
 }
-

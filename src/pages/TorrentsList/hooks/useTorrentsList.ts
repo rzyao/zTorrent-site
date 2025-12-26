@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { TorrentsService } from '@/api/services/TorrentsService';
+import { TorrentsSearchService } from '@/api/services/TorrentsSearchService';
 import { useDictionaryLabels } from '@/hooks/useDictionary';
 import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
 import type { CategoryItem, SortOption } from '../types';
@@ -95,7 +95,7 @@ export function useTorrentsList() {
       },
     ],
     queryFn: async (): Promise<{ items: any[]; total: number }> => {
-      const resp = await TorrentsService.torrentsControllerListTorrentsForUser({
+      const resp: any = await TorrentsSearchService.torrentSearchControllerList({
         page: currentPage,
         limit: itemsPerPage,
         category: mapCategoryToKey(selectedCategory),

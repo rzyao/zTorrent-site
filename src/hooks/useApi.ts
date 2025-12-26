@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
-import { getAuthService, getTorrentsService, getUsersService, getImagesService } from '@/api/lazy';
+import { getAuthService, getUsersService, getImagesService } from '@/api/lazy';
+import { TorrentsSearchService } from '@/api/services/TorrentsSearchService';
 import type { UpdateUserProfileDto } from '@/api/models/UpdateUserProfileDto';
 import { extractErrorMessage } from '../utils/errorMessage';
 
@@ -113,8 +114,7 @@ export function useTorrents() {
       // 接口重命名适配：旧方法名 torrentsControllerList → 新方法名 torrentsControllerListTorrentsForUser
       // 原因：后端 OpenAPI operationId 统一为“用户可展示的种子列表”
       // 同时参数名 pageSize → limit（参考 UserListTorrentsDto），其余参数保持一致
-      const TorrentsService = await getTorrentsService();
-      const response = await TorrentsService.torrentsControllerListTorrentsForUser({ category, page, limit });
+      const response = await TorrentsSearchService.torrentSearchControllerList({ category, page, limit });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data;
       setTorrents(body?.data ?? body);
       return body?.data ?? body;
@@ -131,8 +131,7 @@ export function useTorrents() {
     setError(null);
 
     try {
-      const TorrentsService = await getTorrentsService();
-      const response = await TorrentsService.torrentsControllerGet({ id: String(id) });
+      const response = await TorrentsSearchService.torrentSearchControllerDetail({ id: String(id) });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data;
       return body?.data ?? body;
     } catch (err: any) {

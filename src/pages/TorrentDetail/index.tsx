@@ -25,7 +25,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
 import { useParams } from "react-router-dom";
-import { TorrentsService } from "@/api/services/TorrentsService";
+import { TorrentsSearchService } from "@/api/services/TorrentsSearchService";
+import { DownloadsService } from "@/api/services/DownloadsService";
 import { FavoriteActionDto } from "@/api";
 import { useFavorite } from "@/hooks/useFavorite";
 import { useTorrentDownload } from "@/utils/useTorrentDownload";
@@ -177,7 +178,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
       try {
         setLoading(true);
         setError(null);
-        const resp = await TorrentsService.torrentsControllerGet({
+        const resp = await TorrentsSearchService.torrentSearchControllerDetail({
           id: String(effectiveId),
         });
         const body: any = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
@@ -317,7 +318,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
     try {
       // 1. 获取一次性下载链接
       const source = sourcePayload ?? { filmId: "", playListId: "" };
-      const resp = await TorrentsService.torrentsControllerCreateDownloadUrl({
+      const resp = await DownloadsService.downloadsControllerCreateDownloadUrl({
         torrentId: String(effectiveId),
         source,
       });

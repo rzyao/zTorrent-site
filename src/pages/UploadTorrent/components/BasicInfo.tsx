@@ -51,26 +51,26 @@ export const BasicInfo = memo(function BasicInfo(props: BasicInfoProps) {
   } = props;
 
   return (
-    <div className="bg-neutral-800/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 shadow-2xl overflow-hidden">
+    <div className="overflow-hidden rounded-2xl border border-neutral-700/50 bg-neutral-800/40 shadow-2xl backdrop-blur-sm">
       {/* 模块标题区域 */}
-      <div className="bg-linear-to-r from-amber-500/20 to-orange-500/20 border-b border-neutral-700/50 px-6 py-3.5">
-        <h2 className="text-white flex items-center gap-2">
-          <FileText className="w-5 h-5 text-amber-400" />
+      <div className="border-b border-neutral-700/50 bg-linear-to-r from-amber-500/20 to-orange-500/20 px-6 py-3.5">
+        <h2 className="flex items-center gap-2 text-white">
+          <FileText className="h-5 w-5 text-amber-400" />
           基本信息
         </h2>
       </div>
 
-      <div className="px-6 py-3 space-y-3">
+      <div className="space-y-3 px-6 py-3">
         {/* 选择种子文件 */}
-        <div className="grid grid-cols-1 grid-cols-[160px_1fr] gap-2">
-          <label className="text-neutral-300 text-sm flex items-center gap-1">
+        <div className="grid grid-cols-[160px_1fr] gap-2">
+          <label className="flex items-center gap-1 text-sm text-neutral-300">
             选择种子 <span className="text-red-400">*</span>
           </label>
           <div>
             <input
               type="file"
               accept=".torrent"
-              className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-2 py-1.5 text-white text-sm file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:bg-linear-to-r file:from-amber-500 file:to-orange-600 file:text-white file:text-sm hover:file:from-amber-600 hover:file:to-orange-700 cursor-pointer transition-all"
+              className="w-full cursor-pointer rounded-lg border border-neutral-700/60 bg-neutral-900/60 px-2 py-1.5 text-sm text-white transition-all file:mr-4 file:rounded-lg file:border-0 file:bg-linear-to-r file:from-amber-500 file:to-orange-600 file:px-4 file:py-1.5 file:text-sm file:text-white hover:file:from-amber-600 hover:file:to-orange-700"
               onChange={onTorrentInputChange}
             />
           </div>
@@ -79,9 +79,9 @@ export const BasicInfo = memo(function BasicInfo(props: BasicInfoProps) {
         <Separator className="bg-neutral-700/40" />
 
         {/* 分类选择 */}
-        <div className="grid grid-cols-1 grid-cols-[160px_1fr] gap-2">
-          <label className="text-neutral-300 text-sm flex items-center gap-1">
-            分类 <span className="text-red-400 ">*</span>
+        <div className="grid grid-cols-[160px_1fr] gap-2">
+          <label className="flex items-center gap-1 text-sm text-neutral-300">
+            分类 <span className="text-red-400">*</span>
           </label>
           <div>
             <Select
@@ -91,10 +91,10 @@ export const BasicInfo = memo(function BasicInfo(props: BasicInfoProps) {
                 onClearTags();
               }}
             >
-              <SelectTrigger className="w-[160px] bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-2 text-white text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none transition-all">
+              <SelectTrigger className="w-[160px] rounded-lg border border-neutral-700/60 bg-neutral-900/60 px-4 py-2 text-sm text-white transition-all outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30">
                 <SelectValue placeholder="请选择分类" />
               </SelectTrigger>
-              <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg">
+              <SelectContent className="rounded-lg border border-neutral-700 bg-neutral-800 shadow-lg">
                 <SelectGroup>
                   {mainCategories.map((cat) => (
                     <SelectItem
@@ -114,21 +114,21 @@ export const BasicInfo = memo(function BasicInfo(props: BasicInfoProps) {
         <Separator className="bg-neutral-700/40" />
 
         {/* 标签复选 */}
-        <div className="grid grid-cols-1 grid-cols-[160px_1fr] gap-2 py-1">
-          <label className="text-neutral-300 text-sm space-y-6">标签</label>
+        <div className="grid grid-cols-[160px_1fr] gap-2 py-1">
+          <label className="space-y-6 text-sm text-neutral-300">标签</label>
           <div className="space-y-6">
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => (
                 <label
                   key={tag.id}
-                  className="flex items-center gap-2 cursor-pointer group min-w-[80px]"
+                  className="group flex min-w-[80px] cursor-pointer items-center gap-2"
                 >
                   <Checkbox
                     checked={selectedTags.includes(tag.id)}
                     onCheckedChange={() => onToggleTag(tag.id)}
-                    className="border-neutral-600 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500"
+                    className="border-neutral-600 data-[state=checked]:border-amber-500 data-[state=checked]:bg-amber-500"
                   />
-                  <span className="text-neutral-400 text-sm group-hover:text-white transition-colors">
+                  <span className="text-sm text-neutral-400 transition-colors group-hover:text-white">
                     {tag.name}
                   </span>
                 </label>
@@ -140,15 +140,15 @@ export const BasicInfo = memo(function BasicInfo(props: BasicInfoProps) {
         <Separator className="bg-neutral-700/40" />
 
         {/* 标题输入 */}
-        <div className="grid grid-cols-1 grid-cols-[160px_1fr] gap-2">
-          <label className="text-neutral-300 text-sm flex items-center gap-1">
+        <div className="grid grid-cols-[160px_1fr] gap-2">
+          <label className="flex items-center gap-1 text-sm text-neutral-300">
             标题 <span className="text-red-400">*</span>
           </label>
           <div>
             <input
               type="text"
               placeholder="例如: 星际穿越 Interstellar (2014)"
-              className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-2.5 text-white text-sm placeholder:text-neutral-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none transition-all"
+              className="w-full rounded-lg border border-neutral-700/60 bg-neutral-900/60 px-4 py-2.5 text-sm text-white transition-all outline-none placeholder:text-neutral-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30"
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
             />
@@ -158,15 +158,15 @@ export const BasicInfo = memo(function BasicInfo(props: BasicInfoProps) {
         <Separator className="bg-neutral-700/40" />
 
         {/* 副标题输入 */}
-        <div className="grid grid-cols-1 grid-cols-[160px_1fr] gap-2">
-          <label className="text-neutral-300 text-sm flex items-center gap-1">
+        <div className="grid grid-cols-[160px_1fr] gap-2">
+          <label className="flex items-center gap-1 text-sm text-neutral-300">
             副标题 <span className="text-red-400">*</span>
           </label>
           <div>
             <input
               type="text"
               placeholder="例如: 4K HDR REMUX 国英双语 中英字幕 BluRay 杜比全景声"
-              className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-2.5 text-white text-sm placeholder:text-neutral-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none transition-all"
+              className="w-full rounded-lg border border-neutral-700/60 bg-neutral-900/60 px-4 py-2.5 text-sm text-white transition-all outline-none placeholder:text-neutral-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30"
               value={subTitle}
               onChange={(e) => onSubTitleChange(e.target.value)}
             />

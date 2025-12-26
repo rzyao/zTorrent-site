@@ -30,6 +30,7 @@ export default function ReviewPage() {
         setShowFilters={data.setShowFilters}
         timeRange={data.timeRange}
         setTimeRange={data.setTimeRange}
+        stats={data.stats}
       />
 
       <ReviewTable
