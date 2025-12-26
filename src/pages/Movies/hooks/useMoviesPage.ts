@@ -51,7 +51,7 @@ export function useMoviesPage() {
         sortBy: sortBy as ListMoviesDto.sortBy,
         order: ListMoviesDto.order.DESC,
       };
-      const response = await MoviesService.moviesControllerList(requestBody);
+      const response = await MoviesService.movieBaseControllerList(requestBody);
       return {
         items: response.data?.items || [],
         total: response.data?.total || 0,

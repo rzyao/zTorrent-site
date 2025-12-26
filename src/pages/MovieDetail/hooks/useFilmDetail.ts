@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { MoviesService } from '@/api/services/MoviesService';
+import { MoviesTorrentsService } from '@/api/services/MoviesTorrentsService';
 import type { FilmDetail, TorrentItem } from '../types';
 
 /**
@@ -88,14 +89,14 @@ export function useFilmDetail(filmId?: string) {
       try {
         setLoading(true);
         // 1) 拉取影片详情
-        const resp = await MoviesService.moviesControllerGetDetail({ id: String(filmId) } as any);
+        const resp = await MoviesService.movieBaseControllerGetDetail({ id: String(filmId) } as any);
         const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data;
         const data = body?.data ?? body;
         if (!cancelled) setDetail(mapDetail(data));
 
         // 2) 拉取关联的种子列表（不阻断页面展示）
         try {
-          const listResp: any = await MoviesService.moviesControllerListTorrents({ id: String(filmId) });
+          const listResp: any = await MoviesTorrentsService.movieTorrentsControllerListTorrents({ id: String(filmId) });
           const listBody = listResp?.code !== undefined ? listResp : listResp?.data ?? listResp;
           const items = listBody?.data ?? listBody?.items ?? [];
           if (!cancelled) {
