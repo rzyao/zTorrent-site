@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useFilms } from '@/hooks/useFilms';
 import { TorrentsSearchService } from '@/api/services/TorrentsSearchService';
 import { MoviesService } from '@/api/services/MoviesService';
+import { MoviesTorrentsService } from '@/api/services/MoviesTorrentsService';
 import { PtGenService } from '@/api/services/PtGenService';
 import { ListTorrentsDto } from '@/api/models/ListTorrentsDto';
 import { stripBackticksAndTrim, parseDurationToMinutes, validateFilmForm, mapBackendFilmToLocal, isValidRating, mapBackendTorrentToLocal } from '@/pages/Edit/movies/utils';
@@ -71,7 +72,7 @@ export function useEditMovie() {
   async function fetchMovieTorrents(filmId: string) {
     if (!filmId) return;
     try {
-      const resp: any = await MoviesService.moviesControllerListTorrents({ id: filmId });
+      const resp: any = await MoviesTorrentsService.movieTorrentsControllerListTorrents({ id: filmId });
       const body = resp?.code !== undefined ? resp : (resp?.data ?? resp);
       const items = body?.data ?? body?.items ?? [];
       const mappedTorrents = Array.isArray(items) ? items.map(mapBackendTorrentToLocal) : [];

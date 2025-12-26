@@ -4,7 +4,13 @@
 /* eslint-disable */
 import type { ContentReview } from './ContentReview';
 export type SeriesReviewHistoryResponseDto = {
+    /**
+     * 审核历史列表
+     */
     items: Array<ContentReview>;
+    /**
+     * 总数
+     */
     total: number;
 };
 

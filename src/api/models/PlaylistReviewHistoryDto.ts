@@ -4,10 +4,32 @@
 /* eslint-disable */
 export type PlaylistReviewHistoryDto = {
     /**
-     * 片单ID
+     * 筛选状态，all/approved/rejected
      */
-    playlistId: string;
+    status?: string;
+    /**
+     * 创建者ID筛选
+     */
+    creatorId?: string;
+    /**
+     * 关键词搜索（标题）
+     */
+    keyword?: string;
+    /**
+     * 开始时间
+     */
+    startAt?: string;
+    /**
+     * 结束时间
+     */
+    endAt?: string;
+    /**
+     * 页码
+     */
     page: number;
+    /**
+     * 每页数量
+     */
     limit: number;
 };
 
