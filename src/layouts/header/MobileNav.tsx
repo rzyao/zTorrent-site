@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useNavigation } from "@/hooks/useNavigation";
 import { useAccess } from "@/context/AccessContext";
-import { canAccess } from "@/utils/access";
+import { filterNavigationTree } from "@/utils/navigation";
 
 interface MobileNavProps {
   onClose: () => void;
@@ -11,19 +11,10 @@ export function MobileNav({ onClose }: MobileNavProps) {
   const { mobile, isLoading } = useNavigation();
   const { access, loading: accessLoading } = useAccess();
 
-  // Filter items based on permissions
-  const visibleItems = mobile.filter((item) => {
-    if (!item.isVisible) return false;
+  const loading = isLoading || accessLoading;
 
-    // If no roles required, always show
-    if (!item.requiredRoles || item.requiredRoles.length === 0) return true;
-
-    // If roles required but access is loading, hide
-    if (accessLoading) return false;
-
-    // Check permissions
-    return canAccess(access, { requiredRoles: item.requiredRoles, combine: "OR" });
-  });
+  // Filter items using recursive utility
+  const visibleItems = filterNavigationTree(mobile, access, loading);
 
   if (isLoading) {
     return (

@@ -9,7 +9,7 @@ export const MOCK_DESKTOP_NAV: NavigationItem[] = [
   { id: '6', label: '剧集', path: '/series', platform: 'desktop', sortOrder: 6, isVisible: true },
   { id: '7', label: '片单', path: '/playlists', platform: 'desktop', sortOrder: 7, isVisible: true },
   { 
-    id: '8', label: '发布', path: '#', platform: 'desktop', sortOrder: 8, isVisible: true, requiredRoles: ['upload'],
+    id: '8', label: '发布', path: '#', platform: 'desktop', sortOrder: 8, isVisible: true, permissions: ['upload'],
     children: [
         { id: '8-1', label: '发资源', path: '/upload', platform: 'desktop', sortOrder: 1, isVisible: true },
         { id: '8-2', label: '发字幕', path: '/subtitles', platform: 'desktop', sortOrder: 2, isVisible: true },
@@ -19,18 +19,18 @@ export const MOCK_DESKTOP_NAV: NavigationItem[] = [
   {
     id: '10', label: '编辑', path: '#', platform: 'desktop', sortOrder: 10, isVisible: true,
     children: [
-        { id: '10-1', label: '电影', path: '/edit/movie', platform: 'desktop', sortOrder: 1, isVisible: true, requiredRoles: ['edit:movie'] },
-        { id: '10-2', label: '剧集', path: '/edit/series', platform: 'desktop', sortOrder: 2, isVisible: true, requiredRoles: ['edit:series'] },
-        { id: '10-3', label: '片单', path: '/edit/playlist', platform: 'desktop', sortOrder: 3, isVisible: true, requiredRoles: ['edit:playlist'] },
+        { id: '10-1', label: '电影', path: '/edit/movie', platform: 'desktop', sortOrder: 1, isVisible: true, permissions: ['edit:movie'] },
+        { id: '10-2', label: '剧集', path: '/edit/series', platform: 'desktop', sortOrder: 2, isVisible: true, permissions: ['edit:series'] },
+        { id: '10-3', label: '片单', path: '/edit/playlist', platform: 'desktop', sortOrder: 3, isVisible: true, permissions: ['edit:playlist'] },
     ]
   },
   { id: '11', label: '论坛', path: '/forum', platform: 'desktop', sortOrder: 11, isVisible: true },
   { id: '12', label: '规则', path: '/rules', platform: 'desktop', sortOrder: 12, isVisible: true },
-  { id: '13', label: '审核', path: '/review', platform: 'desktop', sortOrder: 13, isVisible: true, requiredRoles: ['review:write', 'admin', 'superadmin'] },
+  { id: '13', label: '审核', path: '/review', platform: 'desktop', sortOrder: 13, isVisible: true, permissions: ['review:write', 'admin', 'superadmin'] },
   {
     id: '14', label: '其他', path: '#', platform: 'desktop', sortOrder: 14, isVisible: true,
     children: [
-        { id: '14-1', label: '工单', path: '/tickets', platform: 'desktop', sortOrder: 1, isVisible: true, requiredRoles: ['tickets'] },
+        { id: '14-1', label: '工单', path: '/tickets', platform: 'desktop', sortOrder: 1, isVisible: true, permissions: ['tickets'] },
         { id: '14-2', label: '求种', path: '/requests', platform: 'desktop', sortOrder: 2, isVisible: true },
         { id: '14-3', label: '制作组', path: '/groups', platform: 'desktop', sortOrder: 3, isVisible: true },
         { id: '14-4', label: 'RSS订阅', path: '/rss', platform: 'desktop', sortOrder: 4, isVisible: true },
@@ -57,11 +57,11 @@ export const MOCK_MOBILE_NAV: NavigationItem[] = [
     { id: 'm-8', label: '片单', path: '/playlists', platform: 'mobile', sortOrder: 8, isVisible: true },
     { id: 'm-9', label: '音乐', path: '/music', platform: 'mobile', sortOrder: 9, isVisible: true },
     { id: 'm-10', label: '播放器', path: '/player', platform: 'mobile', sortOrder: 10, isVisible: true },
-    { id: 'm-11', label: '上传', path: '/upload', platform: 'mobile', sortOrder: 11, isVisible: true, requiredRoles: ['upload'] },
-    { id: 'm-12', label: '影片编辑', path: '/edit/movie', platform: 'mobile', sortOrder: 12, isVisible: true, requiredRoles: ['edit:movie'] },
-    { id: 'm-13', label: '片单编辑', path: '/edit/playlist', platform: 'mobile', sortOrder: 13, isVisible: true, requiredRoles: ['edit:playlist'] },
-    { id: 'm-14', label: '审核', path: '/review', platform: 'mobile', sortOrder: 14, isVisible: true, requiredRoles: ['review:write'] },
-    { id: 'm-15', label: '工单', path: '/tickets', platform: 'mobile', sortOrder: 15, isVisible: true, requiredRoles: ['tickets'] },
+    { id: 'm-11', label: '上传', path: '/upload', platform: 'mobile', sortOrder: 11, isVisible: true, permissions: ['upload'] },
+    { id: 'm-12', label: '影片编辑', path: '/edit/movie', platform: 'mobile', sortOrder: 12, isVisible: true, permissions: ['edit:movie'] },
+    { id: 'm-13', label: '片单编辑', path: '/edit/playlist', platform: 'mobile', sortOrder: 13, isVisible: true, permissions: ['edit:playlist'] },
+    { id: 'm-14', label: '审核', path: '/review', platform: 'mobile', sortOrder: 14, isVisible: true, permissions: ['review:write'] },
+    { id: 'm-15', label: '工单', path: '/tickets', platform: 'mobile', sortOrder: 15, isVisible: true, permissions: ['tickets'] },
     { id: 'm-16', label: '求种', path: '/requests', platform: 'mobile', sortOrder: 16, isVisible: true },
     { id: 'm-17', label: '规则', path: '/rules', platform: 'mobile', sortOrder: 17, isVisible: true },
     { id: 'm-18', label: 'RSS订阅', path: '/rss', platform: 'mobile', sortOrder: 18, isVisible: true },

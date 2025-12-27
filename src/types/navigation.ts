@@ -8,7 +8,7 @@ export interface NavigationItem {
   sortOrder: number;
   isVisible: boolean;
   target?: '_self' | '_blank';
-  requiredRoles?: string[];
+  permissions?: string[];
   children?: NavigationItem[];
 }
 

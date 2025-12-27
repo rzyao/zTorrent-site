@@ -16,8 +16,8 @@ export type UpdateNavigationItemDto = {
      */
     isVisible?: boolean;
     /**
-     * 可见用户组
+     * 所需权限
      */
-    requiredRoles?: Array<string>;
+    permissions?: Array<string>;
 };
 
