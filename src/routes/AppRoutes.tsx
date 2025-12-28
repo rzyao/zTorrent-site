@@ -252,7 +252,7 @@ export default function AppRoutes() {
           <Route
             path="/edit/movie"
             element={
-              <PermissionRoute requiredPermissions={["edit"]} name="编辑电影">
+              <PermissionRoute requiredPermissions={["edit:movie"]} name="编辑电影">
                 <EditMoviePage />
               </PermissionRoute>
             }
@@ -260,7 +260,7 @@ export default function AppRoutes() {
           <Route
             path="/edit/series"
             element={
-              <PermissionRoute requiredPermissions={["edit"]} name="编辑剧集">
+              <PermissionRoute requiredPermissions={["edit:series"]} name="编辑剧集">
                 <EditSeriesPage />
               </PermissionRoute>
             }
@@ -268,7 +268,7 @@ export default function AppRoutes() {
           <Route
             path="/edit/playlist"
             element={
-              <PermissionRoute requiredPermissions={["edit"]} name="编辑播放列表">
+              <PermissionRoute requiredPermissions={["edit:playlist"]} name="编辑播放列表">
                 <EditPlaylistPage />
               </PermissionRoute>
             }

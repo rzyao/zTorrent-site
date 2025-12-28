@@ -72,7 +72,7 @@ export function DesktopNavItem({ item }: DesktopNavItemProps) {
       </button>
 
       <div
-        className={`absolute top-full left-1/2 z-50 w-max min-w-[8rem] -translate-x-1/2 transform-gpu rounded-xl border border-gray-800 bg-[#0F171E] py-2 shadow-lg transition-[opacity,transform] duration-150 ease-out ${
+        className={`min-w-8rem absolute top-full left-1/2 z-50 w-max -translate-x-1/2 transform-gpu rounded-xl border border-gray-800 bg-[#0F171E] py-2 shadow-lg transition-[opacity,transform] duration-150 ease-out ${
           isOpen
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none translate-y-1 opacity-0"

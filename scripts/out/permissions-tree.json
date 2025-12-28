@@ -9,7 +9,7 @@
     {
       "path": "/upload",
       "permission": "upload",
-      "name": "上传资源",
+      "name": "上传",
       "buttons": [
         {
           "label": "发布种子",
@@ -55,7 +55,7 @@
     {
       "path": "/edit/playlist",
       "permission": "edit:playlist",
-      "name": "编辑片单",
+      "name": "编辑播放列表",
       "buttons": [
         {
           "label": "编辑片单",
@@ -105,105 +105,15 @@
       ]
     },
     {
-      "path": "/requests",
-      "permission": "requests",
-      "name": "求种专区",
-      "buttons": []
-    },
-    {
-      "path": "/invite",
-      "permission": "invite",
-      "name": "邀请管理",
-      "buttons": []
-    },
-    {
-      "path": "/bonus",
-      "permission": "bonus",
-      "name": "魔力值",
-      "buttons": []
-    },
-    {
-      "path": "/torrent-history",
-      "permission": "torrent-history",
-      "name": "做种历史",
-      "buttons": []
-    },
-    {
-      "path": "/messages",
-      "permission": "messages",
-      "name": "消息中心",
+      "path": "/review",
+      "permission": "review",
+      "name": "审核",
       "buttons": []
     },
     {
       "path": "/tickets",
       "permission": "tickets",
-      "name": "工单页面",
-      "buttons": []
-    },
-    {
-      "path": "/favorites",
-      "permission": "rss",
-      "name": "RSS订阅",
-      "buttons": []
-    },
-    {
-      "path": "/seeding",
-      "permission": "seeding",
-      "name": "保种页面",
-      "buttons": []
-    },
-    {
-      "path": "/dead-torrents",
-      "permission": "dead",
-      "name": "断种页面",
-      "buttons": []
-    },
-    {
-      "path": "/games",
-      "permission": "games",
-      "name": "小游戏",
-      "buttons": []
-    },
-    {
-      "path": "/magicfarm",
-      "permission": "magicfarm",
-      "name": "魔力农场",
-      "buttons": []
-    },
-    {
-      "path": "/music",
-      "permission": "music",
-      "name": "音乐页面",
-      "buttons": []
-    },
-    {
-      "path": "/player",
-      "permission": "player",
-      "name": "播放器",
-      "buttons": []
-    },
-    {
-      "path": "/groups",
-      "permission": "groups",
-      "name": "管理组",
-      "buttons": []
-    },
-    {
-      "path": "/candidates",
-      "permission": "candidates",
-      "name": "候选页面",
-      "buttons": []
-    },
-    {
-      "path": "/review",
-      "permission": "review:write",
-      "name": "审核页面",
-      "buttons": []
-    },
-    {
-      "path": "/control",
-      "permission": "control",
-      "name": "控制面板",
+      "name": "工单",
       "buttons": []
     },
     {
@@ -227,7 +137,7 @@
     {
       "path": "/edit/playlist",
       "permission": "edit:playlist",
-      "name": "编辑片单",
+      "name": "编辑播放列表",
       "buttons": [
         {
           "label": "编辑片单",
@@ -275,54 +185,6 @@
           "apis": []
         }
       ]
-    },
-    {
-      "path": "/invite",
-      "permission": "invite",
-      "name": "邀请管理",
-      "buttons": []
-    },
-    {
-      "path": "/torrent-history",
-      "permission": "torrent-history",
-      "name": "做种历史",
-      "buttons": []
-    },
-    {
-      "path": "/tickets",
-      "permission": "tickets",
-      "name": "工单页面",
-      "buttons": []
-    },
-    {
-      "path": "/seeding",
-      "permission": "seeding",
-      "name": "保种页面",
-      "buttons": []
-    },
-    {
-      "path": "/games",
-      "permission": "games",
-      "name": "小游戏",
-      "buttons": []
-    },
-    {
-      "path": "/music",
-      "permission": "music",
-      "name": "音乐页面",
-      "buttons": []
-    },
-    {
-      "path": "/groups",
-      "permission": "groups",
-      "name": "管理组",
-      "buttons": []
-    },
-    {
-      "path": "/review",
-      "permission": "review:write",
-      "name": "审核页面",
-      "buttons": []
     }
   ]
 }
