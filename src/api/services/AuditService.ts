@@ -3,12 +3,13 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AuditHistoryDto } from '../models/AuditHistoryDto';
+import type { AuditHistoryResponseDto } from '../models/AuditHistoryResponseDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class AuditService {
     /**
-     * 统一审核历史查询
+     * 查询单个资源的审核历史
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
@@ -18,15 +19,7 @@ export class AuditService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            items?: Array<{
-                reviewer?: string;
-                action?: string;
-                note?: string | null;
-                timestamp?: string;
-            }>;
-            total?: number;
-        };
+        data?: AuditHistoryResponseDto;
         path?: string;
         timestamp?: string;
     }> {

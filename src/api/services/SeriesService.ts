@@ -8,8 +8,12 @@ import type { DeleteSeriesDto } from '../models/DeleteSeriesDto';
 import type { DeleteSeriesResponseDto } from '../models/DeleteSeriesResponseDto';
 import type { EmptyObjectDto } from '../models/EmptyObjectDto';
 import type { GetSeriesDto } from '../models/GetSeriesDto';
+import type { ListApprovedSeriesDto } from '../models/ListApprovedSeriesDto';
+import type { ListApprovedSeriesResponseDto } from '../models/ListApprovedSeriesResponseDto';
 import type { ListPendingSeriesDto } from '../models/ListPendingSeriesDto';
 import type { ListPendingSeriesResponseDto } from '../models/ListPendingSeriesResponseDto';
+import type { ListRejectedSeriesDto } from '../models/ListRejectedSeriesDto';
+import type { ListRejectedSeriesResponseDto } from '../models/ListRejectedSeriesResponseDto';
 import type { ListSeriesDto } from '../models/ListSeriesDto';
 import type { ListSeriesResponseDto } from '../models/ListSeriesResponseDto';
 import type { ListSeriesTorrentsDto } from '../models/ListSeriesTorrentsDto';
@@ -332,6 +336,64 @@ export class SeriesService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/series/review/history',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 已通过剧集列表
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static seriesReviewControllerApproved(
+        requestBody: ListApprovedSeriesDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ListApprovedSeriesResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/series/review/approved',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 已驳回剧集列表
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static seriesReviewControllerRejected(
+        requestBody: ListRejectedSeriesDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ListRejectedSeriesResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/series/review/rejected',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

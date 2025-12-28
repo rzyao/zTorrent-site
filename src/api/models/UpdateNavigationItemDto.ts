@@ -19,5 +19,9 @@ export type UpdateNavigationItemDto = {
      * 所需权限
      */
     permissions?: Array<string>;
+    /**
+     * 父节点ID
+     */
+    parentId?: Record<string, any> | null;
 };
 

@@ -3,6 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { EmptyObjectDto } from '../models/EmptyObjectDto';
+import type { ListApprovedTorrentsDto } from '../models/ListApprovedTorrentsDto';
+import type { ListApprovedTorrentsResponseDto } from '../models/ListApprovedTorrentsResponseDto';
+import type { ListRejectedTorrentsDto } from '../models/ListRejectedTorrentsDto';
+import type { ListRejectedTorrentsResponseDto } from '../models/ListRejectedTorrentsResponseDto';
 import type { PendingReviewsDto } from '../models/PendingReviewsDto';
 import type { PendingReviewsResponseDto } from '../models/PendingReviewsResponseDto';
 import type { ReviewDto } from '../models/ReviewDto';
@@ -88,6 +92,64 @@ export class TorrentsReviewService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/torrents/review/action',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 已通过种子列表
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentReviewControllerApproved(
+        requestBody: ListApprovedTorrentsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ListApprovedTorrentsResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/review/approved',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 已驳回种子列表
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentReviewControllerRejected(
+        requestBody: ListRejectedTorrentsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ListRejectedTorrentsResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/review/rejected',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

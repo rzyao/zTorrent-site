@@ -35,8 +35,7 @@ interface Props {
   onViewHistory: (item: ReviewItem) => void;
 }
 
-export function ReviewTable({ items, onView, onViewHistory }: Props) {
-  // onApprove / onReject 暂时不直接在列表中使用，已移至详情抽屉
+export function ReviewTable({ items, onView, onApprove, onReject, onViewHistory }: Props) {
   return (
     <div className="overflow-hidden rounded-xl border border-neutral-700/50 bg-neutral-800/50">
       <div className="overflow-x-auto">
@@ -160,6 +159,7 @@ export function ReviewTable({ items, onView, onViewHistory }: Props) {
                   <td className="px-4 py-4">
                     <div className="flex items-center justify-end gap-2">
                       {item.status === "pending" ? (
+                        // 待审核：显示审核按钮
                         <button
                           onClick={() => onView(item)}
                           className="flex items-center gap-1 rounded border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs text-amber-500 transition-colors hover:bg-amber-500 hover:text-white"
@@ -167,14 +167,42 @@ export function ReviewTable({ items, onView, onViewHistory }: Props) {
                         >
                           审核
                         </button>
+                      ) : item.status === "approved" ? (
+                        // 已通过：显示驳回按钮和历史按钮
+                        <>
+                          <button
+                            onClick={() => onReject(item)}
+                            className="flex items-center gap-1 rounded border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs text-red-400 transition-colors hover:bg-red-500 hover:text-white"
+                            title="驳回"
+                          >
+                            驳回
+                          </button>
+                          <button
+                            onClick={() => onViewHistory(item)}
+                            className="rounded-lg p-2 transition-colors hover:bg-neutral-700"
+                            title="审核历史"
+                          >
+                            <History className="h-4 w-4 text-neutral-400" />
+                          </button>
+                        </>
                       ) : (
-                        <button
-                          onClick={() => onViewHistory(item)}
-                          className="rounded-lg p-2 transition-colors hover:bg-neutral-700"
-                          title="审核历史"
-                        >
-                          <History className="h-4 w-4 text-neutral-400" />
-                        </button>
+                        // 已驳回：显示重新通过按钮和历史按钮
+                        <>
+                          <button
+                            onClick={() => onApprove(item)}
+                            className="flex items-center gap-1 rounded border border-green-500/30 bg-green-500/10 px-3 py-1.5 text-xs text-green-400 transition-colors hover:bg-green-500 hover:text-white"
+                            title="重新通过"
+                          >
+                            通过
+                          </button>
+                          <button
+                            onClick={() => onViewHistory(item)}
+                            className="rounded-lg p-2 transition-colors hover:bg-neutral-700"
+                            title="审核历史"
+                          >
+                            <History className="h-4 w-4 text-neutral-400" />
+                          </button>
+                        </>
                       )}
                     </div>
                   </td>

@@ -17,9 +17,10 @@ export namespace AuditHistoryDto {
      * 资源类型
      */
     export enum type {
-        FILM = 'film',
-        PLAYLIST = 'playlist',
         TORRENT = 'torrent',
+        MOVIE = 'movie',
+        SERIES = 'series',
+        PLAYLIST = 'playlist',
     }
 }
 

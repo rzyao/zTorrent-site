@@ -4,46 +4,68 @@
 /* eslint-disable */
 export type TrackerReportDto = {
     /**
-     * 用户ID
+     * Info Hash
      */
-    userId: string;
+    infohash: string;
     /**
-     * 种子ID
+     * User Passkey
      */
-    torrentId?: string;
+    passkey: string;
     /**
-     * infoHash
+     * Peer ID
      */
-    infoHash?: string;
+    peer_id: string;
     /**
-     * 本次上报的上传增量（字节）
+     * Port
      */
-    deltaUploaded: string;
+    port?: Record<string, any>;
     /**
-     * 本次上报的下载增量（字节）
+     * Uploaded (Total)
      */
-    deltaDownloaded: string;
+    uploaded?: Record<string, any>;
     /**
-     * 当前是否做种
+     * Downloaded (Total)
      */
-    isSeeding?: boolean;
+    downloaded?: Record<string, any>;
     /**
-     * 事件
+     * Left (Remaining)
      */
-    event?: TrackerReportDto.event;
+    left?: Record<string, any>;
     /**
-     * announce 间隔秒数
+     * Compact
      */
-    announceIntervalSec?: number;
+    compact?: Record<string, any>;
+    /**
+     * No Peer ID
+     */
+    no_peer_id?: Record<string, any>;
+    /**
+     * Event
+     */
+    event?: string;
+    /**
+     * IP Address
+     */
+    ip?: string;
+    /**
+     * Delta Upload (Internal)
+     */
+    du?: Record<string, any>;
+    /**
+     * Delta Download (Internal)
+     */
+    dd?: Record<string, any>;
+    /**
+     * Timestamp (Internal)
+     */
+    ts?: number;
+    /**
+     * Film ID (Internal)
+     */
+    fd?: string;
+    /**
+     * Playlist ID (Internal)
+     */
+    pd?: string;
 };
-export namespace TrackerReportDto {
-    /**
-     * 事件
-     */
-    export enum event {
-        STARTED = 'started',
-        COMPLETED = 'completed',
-        STOPPED = 'stopped',
-    }
-}
 

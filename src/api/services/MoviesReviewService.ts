@@ -3,6 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { EmptyObjectDto } from '../models/EmptyObjectDto';
+import type { ListApprovedMoviesDto } from '../models/ListApprovedMoviesDto';
+import type { ListApprovedMoviesResponseDto } from '../models/ListApprovedMoviesResponseDto';
+import type { ListRejectedMoviesDto } from '../models/ListRejectedMoviesDto';
+import type { ListRejectedMoviesResponseDto } from '../models/ListRejectedMoviesResponseDto';
 import type { MovieReviewHistoryDto } from '../models/MovieReviewHistoryDto';
 import type { Object } from '../models/Object';
 import type { PendingMoviesDto } from '../models/PendingMoviesDto';
@@ -88,6 +92,64 @@ export class MoviesReviewService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/movies/review/history',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 已通过电影列表
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static movieReviewControllerApproved(
+        requestBody: ListApprovedMoviesDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ListApprovedMoviesResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/movies/review/approved',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 已驳回电影列表
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static movieReviewControllerRejected(
+        requestBody: ListRejectedMoviesDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ListRejectedMoviesResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/movies/review/rejected',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

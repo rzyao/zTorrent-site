@@ -113,11 +113,11 @@ export function DetailDrawer({ item, onClose, onApprove, onReject }: Props) {
           )}
         </div>
 
-        {/* Footer (Sticky Action Bar) */}
-        {item.status === "pending" && (
-          <div className="z-20 shrink-0 border-t border-neutral-700 bg-neutral-900 p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.5)] md:p-6">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center">
-              {/* 审核建议区域 */}
+        {/* Footer (Sticky Action Bar) - 根据状态显示不同操作 */}
+        <div className="z-20 shrink-0 border-t border-neutral-700 bg-neutral-900 p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.5)] md:p-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center">
+            {/* 审核建议区域（仅待审核状态显示） */}
+            {item.status === "pending" && (
               <div className="flex-1">
                 <div className="mb-2 flex items-center gap-2">
                   <ShieldCheck className="h-4 w-4 text-neutral-400" />
@@ -142,16 +142,50 @@ export function DetailDrawer({ item, onClose, onApprove, onReject }: Props) {
                   </div>
                 )}
               </div>
+            )}
 
-              {/* 按钮组 */}
-              <div className="flex gap-3 md:w-1/3">
-                <button
-                  onClick={() => onApprove(item)}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-linear-to-r from-green-500 to-emerald-600 py-2.5 text-white transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-green-500/25 active:scale-[0.98]"
-                >
-                  <Check className="h-5 w-5" />
-                  通过
-                </button>
+            {/* 已审核状态提示 */}
+            {item.status !== "pending" && (
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <RotateCcw className="h-4 w-4 text-neutral-400" />
+                  <span className="text-sm text-neutral-400">
+                    当前状态:
+                    <span
+                      className={
+                        item.status === "approved" ? "ml-1 text-green-400" : "ml-1 text-red-400"
+                      }
+                    >
+                      {item.status === "approved" ? "已通过" : "已驳回"}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* 按钮组 - 根据状态显示不同按钮 */}
+            <div className="flex gap-3 md:w-1/3">
+              {/* 待审核: 显示通过和驳回 */}
+              {item.status === "pending" && (
+                <>
+                  <button
+                    onClick={() => onApprove(item)}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-linear-to-r from-green-500 to-emerald-600 py-2.5 text-white transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-green-500/25 active:scale-[0.98]"
+                  >
+                    <Check className="h-5 w-5" />
+                    通过
+                  </button>
+                  <button
+                    onClick={() => onReject(item)}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-linear-to-r from-red-500 to-rose-600 py-2.5 text-white transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-red-500/25 active:scale-[0.98]"
+                  >
+                    <X className="h-5 w-5" />
+                    驳回
+                  </button>
+                </>
+              )}
+              {/* 已通过: 只显示驳回 */}
+              {item.status === "approved" && (
                 <button
                   onClick={() => onReject(item)}
                   className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-linear-to-r from-red-500 to-rose-600 py-2.5 text-white transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-red-500/25 active:scale-[0.98]"
@@ -159,10 +193,20 @@ export function DetailDrawer({ item, onClose, onApprove, onReject }: Props) {
                   <X className="h-5 w-5" />
                   驳回
                 </button>
-              </div>
+              )}
+              {/* 已驳回: 只显示通过 */}
+              {item.status === "rejected" && (
+                <button
+                  onClick={() => onApprove(item)}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-linear-to-r from-green-500 to-emerald-600 py-2.5 text-white transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-green-500/25 active:scale-[0.98]"
+                >
+                  <Check className="h-5 w-5" />
+                  重新通过
+                </button>
+              )}
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
