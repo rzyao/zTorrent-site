@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { X, Check, User } from "lucide-react";
 import type { AuditHistory } from "../types";
 import { formatDateTime } from "@/utils/format";
@@ -10,6 +11,18 @@ interface Props {
 }
 
 export function HistoryModal({ visible, items, loading, onClose }: Props) {
+  // 弹窗打开时禁用页面滚动
+  useEffect(() => {
+    if (visible) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [visible]);
+
   if (!visible) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
