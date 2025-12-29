@@ -11,7 +11,7 @@ const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPassword.tsx"));
 const HomePage = lazy(() => import("@/pages/Home.tsx"));
 const AdultPage = lazy(() => import("@/pages/Adult/index.tsx"));
 const TorrentsPage = lazy(() => import("@/pages/TorrentsList/index.tsx"));
-const ForumPage = lazy(() => import("@/pages/Forum/index.tsx"));
+const ForumPage = lazy(() => import("@/pages/Forums/index.tsx"));
 const SubtitlesPage = lazy(() => import("@/pages/Subtitles/index.tsx"));
 const RankingPage = lazy(() => import("@/pages/RankingPage.tsx"));
 const EditMoviePage = lazy(() => import("@/pages/Edit/movies/index.tsx"));
