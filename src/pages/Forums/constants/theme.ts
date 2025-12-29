@@ -67,14 +67,14 @@ export const themeConfig: Record<Theme, ThemeColors> = {
   },
   dark: {
     // 首页深色风格
-    pageBg: "bg-[#0F171E]",
+    pageBg: "bg-[#0F171E]/60",
     // pageBg: "bg-neutral-900",
     borderColor: "border-neutral-700/50",
-    dividerColor: "border-neutral-700/50",
+    dividerColor: "border-neutral-600/60",
 
     textPrimary: "text-white",
     textSecondary: "text-neutral-300",
-    textMuted: "text-neutral-400",
+    textMuted: "text-neutral-500",
 
     // 玻璃拟态
     cardBg: "bg-neutral-800/40 backdrop-blur-md",
@@ -82,7 +82,7 @@ export const themeConfig: Record<Theme, ThemeColors> = {
     cardBorder: "border-neutral-700/50",
 
     listBg: "bg-neutral-800/40 backdrop-blur-md",
-    listHover: "hover:bg-neutral-800/60 transition-colors",
+    listHover: "hover:bg-neutral-800/50 transition-colors",
 
     inputBg: "bg-neutral-800",
     inputBorder: "border-neutral-700",

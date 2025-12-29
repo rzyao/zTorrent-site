@@ -208,6 +208,174 @@ const mockTopics: Topic[] = [
     participants: [],
     lastReplier: mockParticipants[3],
   },
+  {
+    id: "9",
+    title: "2024年最佳开源项目盘点 - GitHub Star 破万的宝藏项目",
+    author: {
+      id: "a9",
+      name: "开源爱好者",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=9",
+    },
+    category: "tech",
+    tags: ["开源", "GitHub", "项目推荐"],
+    excerpt: "整理了今年最火的开源项目...",
+    views: 18765,
+    replies: 312,
+    likes: 876,
+    isPinned: false,
+    isTrending: true,
+    createdAt: "6小时前",
+    lastReplyTime: "15分钟前",
+    participants: mockParticipants.slice(0, 3),
+    lastReplier: mockParticipants[0],
+  },
+  {
+    id: "10",
+    title: "远程办公三年心得：如何保持高效与健康的工作状态",
+    author: {
+      id: "a10",
+      name: "远程工作者",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=10",
+    },
+    category: "learning",
+    tags: ["远程办公", "效率", "工作"],
+    excerpt: "分享我三年远程办公的经验...",
+    views: 9876,
+    replies: 156,
+    likes: 423,
+    isPinned: false,
+    isTrending: false,
+    createdAt: "1天前",
+    lastReplyTime: "1小时前",
+    participants: mockParticipants.slice(1, 4),
+    lastReplier: mockParticipants[2],
+  },
+  {
+    id: "11",
+    title: "Vue 3 + Vite 项目最佳实践指南",
+    author: {
+      id: "a11",
+      name: "Vue开发者",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=11",
+    },
+    category: "tech",
+    tags: ["Vue", "Vite", "前端"],
+    excerpt: "从零搭建一个生产级 Vue 3 项目...",
+    views: 14567,
+    replies: 234,
+    likes: 654,
+    isPinned: true,
+    isTrending: false,
+    createdAt: "3天前",
+    lastReplyTime: "25分钟前",
+    participants: mockParticipants.slice(0, 2),
+    lastReplier: mockParticipants[3],
+  },
+  {
+    id: "12",
+    title: "摄影后期修图技巧：Lightroom 调色教程",
+    author: {
+      id: "a12",
+      name: "摄影师",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=12",
+    },
+    category: "design",
+    tags: ["摄影", "Lightroom", "后期"],
+    excerpt: "教你如何调出电影感的色调...",
+    views: 7654,
+    replies: 98,
+    likes: 321,
+    isPinned: false,
+    isTrending: false,
+    createdAt: "2天前",
+    lastReplyTime: "4小时前",
+    participants: mockParticipants.slice(2, 4),
+    lastReplier: mockParticipants[1],
+  },
+  {
+    id: "13",
+    title: "电竞显示器选购指南：高刷新率 vs 高分辨率如何选择",
+    author: {
+      id: "a13",
+      name: "硬件达人",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=13",
+    },
+    category: "gaming",
+    tags: ["硬件", "显示器", "电竞"],
+    excerpt: "详细分析各价位段电竞显示器...",
+    views: 8765,
+    replies: 167,
+    likes: 432,
+    isPinned: false,
+    isTrending: true,
+    createdAt: "4小时前",
+    lastReplyTime: "20分钟前",
+    participants: mockParticipants.slice(0, 4),
+    lastReplier: mockParticipants[0],
+  },
+  {
+    id: "14",
+    title: "独立游戏开发日记：从零到上架 Steam 的全过程",
+    author: {
+      id: "a14",
+      name: "独立开发者",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=14",
+    },
+    category: "gaming",
+    tags: ["游戏开发", "独立游戏", "Steam"],
+    excerpt: "记录我的第一款游戏从开发到上架的历程...",
+    views: 12345,
+    replies: 289,
+    likes: 765,
+    isPinned: false,
+    isTrending: false,
+    createdAt: "5天前",
+    lastReplyTime: "2小时前",
+    participants: mockParticipants.slice(1, 3),
+    lastReplier: mockParticipants[2],
+  },
+  {
+    id: "15",
+    title: "古典音乐入门推荐：从巴赫到肖邦",
+    author: {
+      id: "a15",
+      name: "古典乐迷",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=15",
+    },
+    category: "music",
+    tags: ["古典音乐", "推荐", "入门"],
+    excerpt: "给初学者的古典音乐欣赏指南...",
+    views: 4321,
+    replies: 67,
+    likes: 198,
+    isPinned: false,
+    isTrending: false,
+    createdAt: "3天前",
+    lastReplyTime: "6小时前",
+    participants: mockParticipants.slice(0, 1),
+    lastReplier: mockParticipants[3],
+  },
+  {
+    id: "16",
+    title: "Rust 语言入门：为什么它被称为最受欢迎的编程语言",
+    author: {
+      id: "a16",
+      name: "系统程序员",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=16",
+    },
+    category: "tech",
+    tags: ["Rust", "编程语言", "系统编程"],
+    excerpt: "深入了解 Rust 的核心特性...",
+    views: 16789,
+    replies: 378,
+    likes: 912,
+    isPinned: false,
+    isTrending: true,
+    createdAt: "8小时前",
+    lastReplyTime: "5分钟前",
+    participants: mockParticipants.slice(0, 4),
+    lastReplier: mockParticipants[1],
+  },
 ];
 
 export function ForumList({ selectedCategory, searchQuery, onTopicClick }: ForumListProps) {
@@ -255,7 +423,7 @@ export function ForumList({ selectedCategory, searchQuery, onTopicClick }: Forum
               <button
                 key={sort.id}
                 onClick={() => setSortBy(sort.id as any)}
-                className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
+                className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm transition-colors ${
                   sortBy === sort.id
                     ? theme === "dark"
                       ? "bg-amber-500/20 text-amber-400"
@@ -274,16 +442,16 @@ export function ForumList({ selectedCategory, searchQuery, onTopicClick }: Forum
       <div className={`overflow-hidden rounded-xl border ${colors.borderColor} ${colors.listBg}`}>
         {/* Table Header (Desktop) */}
         <div
-          className={`hidden items-center border-b px-4 py-3 md:flex ${colors.dividerColor} text-sm ${colors.textMuted}`}
+          className={`hidden items-center border-b px-4 py-3 md:flex ${colors.dividerColor} text-sm font-semibold ${colors.textMuted}`}
         >
           <div className="flex-1">话题</div>
           {/* Middle Spacer for Avatar Group alignment - same width as avatar group (w-48) */}
           <div className="w-48 shrink-0"></div>
           {/* Stats Header */}
-          <div className="ml-4 flex shrink-0 items-center gap-6">
-            <div className="w-16 text-center">回复</div>
-            <div className="w-16 text-center">浏览量</div>
-            <div className="w-20 pr-2 text-right">活动</div>
+          <div className="ml-4 flex shrink-0 items-center gap-5">
+            <div className="w-14 text-center">回复</div>
+            <div className="w-14 text-center">浏览</div>
+            <div className="w-16 text-right">活动</div>
           </div>
         </div>
 
@@ -296,46 +464,50 @@ export function ForumList({ selectedCategory, searchQuery, onTopicClick }: Forum
             <div
               key={topic.id}
               onClick={() => onTopicClick(topic.id)}
-              className={`group flex flex-col border-b p-4 md:flex-row md:items-center ${colors.dividerColor} last:border-0 ${colors.listHover} cursor-pointer gap-4 transition-colors`}
+              className={`group flex items-start border-b px-4 py-4 ${colors.dividerColor} cursor-pointer gap-3 transition-all last:border-0 ${theme === "dark" ? "hover:bg-neutral-800/50" : "hover:bg-gray-50"}`}
             >
               {/* Left: Info (Flex-1) */}
               <div className="min-w-0 flex-1">
-                <div className="mb-1.5 flex items-start gap-2">
+                <div className="mb-1 flex items-start gap-2">
                   {topic.isPinned && (
                     <Pin
-                      className={`mt-1 h-4 w-4 shrink-0 ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
+                      className={`mt-0.5 h-4 w-4 shrink-0 ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
                     />
                   )}
                   {topic.isTrending && (
-                    <TrendingUp className="mt-1 h-4 w-4 shrink-0 text-red-500" />
+                    <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
                   )}
                   <h3
-                    className={`truncate text-base font-medium ${colors.textPrimary} group-hover:${theme === "dark" ? "text-amber-400" : "text-blue-600"} transition-colors`}
+                    className={`line-clamp-2 text-sm font-medium transition-colors ${theme === "dark" ? "text-white group-hover:text-amber-400" : "text-gray-900 group-hover:text-blue-600"}`}
                   >
                     {topic.title}
                   </h3>
                 </div>
 
-                {/* Mobile: Tags + Details inline */}
-                <div className="flex flex-wrap items-center gap-2">
+                {/* Tags + Author */}
+                <div className="flex flex-wrap items-center gap-2 text-xs">
                   <span
-                    className={`rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-neutral-800 dark:text-neutral-400`}
+                    className={`rounded px-1.5 py-0.5 font-medium transition-colors ${theme === "dark" ? "border border-blue-500/30 bg-blue-500/20 text-blue-400" : "bg-gray-100 text-gray-600"}`}
                   >
                     {topic.category}
                   </span>
-                  {topic.tags.map((tag) => (
-                    <span key={tag} className={`text-xs ${colors.textMuted}`}>
+                  {topic.tags.slice(0, 2).map((tag) => (
+                    <span key={tag} className={`${colors.textMuted}`}>
                       #{tag}
                     </span>
                   ))}
+                  <span className="hidden md:inline">•</span>
+                  <span className={`hidden md:inline ${colors.textMuted}`}>
+                    {topic.author.name}
+                  </span>
                 </div>
               </div>
 
               {/* Middle: Avatar Group (Desktop Only) */}
-              <div className="relative hidden h-8 w-48 shrink-0 items-center justify-end md:flex">
+              <div className="hidden h-8 w-48 shrink-0 items-center justify-end gap-1.5 md:flex">
                 {/* Slot 1: Author */}
                 <div
-                  className="z-30 -ml-3 h-8 w-8 overflow-hidden rounded-full border-2 border-white dark:border-[#0F171E]"
+                  className={`h-6 w-6 overflow-hidden rounded-full border ${theme === "dark" ? "border-neutral-700" : "border-white"}`}
                   title={`楼主: ${topic.author.name}`}
                 >
                   <img
@@ -345,11 +517,10 @@ export function ForumList({ selectedCategory, searchQuery, onTopicClick }: Forum
                   />
                 </div>
                 {/* Slots 2-4: Participants */}
-                {topic.participants.slice(0, 3).map((p, index) => (
+                {topic.participants.slice(0, 3).map((p) => (
                   <div
                     key={p.id}
-                    className="z-20 -ml-3 h-8 w-8 overflow-hidden rounded-full border-2 border-white dark:border-[#0F171E]"
-                    style={{ zIndex: 20 - index }}
+                    className={`h-6 w-6 overflow-hidden rounded-full border ${theme === "dark" ? "border-neutral-700" : "border-white"}`}
                     title={`参与者: ${p.name}`}
                   >
                     <img src={p.avatar} alt={p.name} className="h-full w-full object-cover" />
@@ -357,7 +528,7 @@ export function ForumList({ selectedCategory, searchQuery, onTopicClick }: Forum
                 ))}
                 {/* Slot 5: Last Replier */}
                 <div
-                  className="z-10 -ml-3 h-8 w-8 overflow-hidden rounded-full border-2 border-white dark:border-[#0F171E]"
+                  className={`h-6 w-6 overflow-hidden rounded-full border ${theme === "dark" ? "border-neutral-700" : "border-white"}`}
                   title={`最新回复: ${topic.lastReplier.name}`}
                 >
                   <img
@@ -369,42 +540,33 @@ export function ForumList({ selectedCategory, searchQuery, onTopicClick }: Forum
               </div>
 
               {/* Right: Stats (Desktop) */}
-              <div className="ml-4 hidden shrink-0 items-center gap-6 md:flex">
-                <div className="flex w-16 flex-col items-center">
+              <div className="ml-4 hidden shrink-0 items-center gap-5 md:flex">
+                <div className="flex w-14 flex-col items-center">
                   <span
-                    className={`text-base font-bold ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
+                    className={`text-sm font-medium ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
                   >
                     {topic.replies}
                   </span>
                 </div>
-                <div className="flex w-16 flex-col items-center">
-                  <span className={`text-base font-medium ${colors.textSecondary}`}>
+                <div className="flex w-14 flex-col items-center">
+                  <span className={`text-sm ${colors.textMuted}`}>
                     {topic.views > 9999 ? (topic.views / 10000).toFixed(1) + "w" : topic.views}
                   </span>
                 </div>
-                <div className={`text-sm ${colors.textSecondary} w-20 pr-2 text-right`}>
+                <div className={`text-xs ${colors.textMuted} w-16 text-right`}>
                   {topic.lastReplyTime}
                 </div>
               </div>
 
-              {/* Mobile Stats (Right side in Mobile view) */}
-              <div className="ml-2 flex shrink-0 flex-col items-end gap-1 md:hidden">
-                <img
-                  src={topic.lastReplier.avatar}
-                  alt="Last"
-                  className="mb-1 h-6 w-6 rounded-full"
-                />
-                <div className="flex items-center gap-1">
-                  <MessageSquare
-                    className={`h-3 w-3 ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
-                  />
-                  <span
-                    className={`text-sm font-bold ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
-                  >
-                    {topic.replies}
-                  </span>
-                </div>
-                <span className="text-xs text-gray-500">{topic.lastReplyTime}</span>
+              {/* Mobile Stats (Right side - horizontal layout like linux.do) */}
+              <div className="flex shrink-0 items-center gap-2 md:hidden">
+                <img src={topic.lastReplier.avatar} alt="Last" className="h-6 w-6 rounded-full" />
+                <span
+                  className={`text-sm font-bold ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
+                >
+                  {topic.replies}
+                </span>
+                <span className="text-xs text-neutral-500">{topic.lastReplyTime}</span>
               </div>
             </div>
           ))

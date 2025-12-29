@@ -112,7 +112,7 @@ export function TopicDetail({ topicId, onBack }: TopicDetailProps) {
       {/* Back Button */}
       <button
         onClick={onBack}
-        className={`flex items-center gap-2 transition-colors ${colors.textSecondary} ${colors.accentHover}`}
+        className={`flex cursor-pointer items-center gap-2 transition-colors ${colors.textSecondary} ${colors.accentHover}`}
       >
         <ArrowLeft className="h-5 w-5" />
         <span>返回列表</span>
@@ -164,7 +164,7 @@ export function TopicDetail({ topicId, onBack }: TopicDetailProps) {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsLiked(!isLiked)}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
+              className={`flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
                 isLiked
                   ? theme === "dark"
                     ? "bg-amber-500/20 text-amber-400"
@@ -176,7 +176,7 @@ export function TopicDetail({ topicId, onBack }: TopicDetailProps) {
               <span>{mockTopic.likes + (isLiked ? 1 : 0)}</span>
             </button>
             <button
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${colors.buttonSecondary}`}
+              className={`flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2 transition-colors ${colors.buttonSecondary}`}
             >
               <MessageSquare className="h-5 w-5" />
               <span>回复</span>
@@ -185,7 +185,7 @@ export function TopicDetail({ topicId, onBack }: TopicDetailProps) {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsBookmarked(!isBookmarked)}
-              className={`rounded-lg p-2 transition-colors ${
+              className={`cursor-pointer rounded-lg p-2 transition-colors ${
                 isBookmarked
                   ? theme === "dark"
                     ? "bg-amber-500/20 text-amber-400"
@@ -195,10 +195,14 @@ export function TopicDetail({ topicId, onBack }: TopicDetailProps) {
             >
               <Bookmark className="h-5 w-5" fill={isBookmarked ? "currentColor" : "none"} />
             </button>
-            <button className={`rounded-lg p-2 transition-colors ${colors.buttonSecondary}`}>
+            <button
+              className={`cursor-pointer rounded-lg p-2 transition-colors ${colors.buttonSecondary}`}
+            >
               <Share2 className="h-5 w-5" />
             </button>
-            <button className={`rounded-lg p-2 transition-colors ${colors.buttonSecondary}`}>
+            <button
+              className={`cursor-pointer rounded-lg p-2 transition-colors ${colors.buttonSecondary}`}
+            >
               <MoreVertical className="h-5 w-5" />
             </button>
           </div>
@@ -224,7 +228,7 @@ export function TopicDetail({ topicId, onBack }: TopicDetailProps) {
           />
           <div className="mt-2 flex justify-end">
             <button
-              className={`flex items-center gap-2 rounded-lg px-6 py-2 transition-colors ${colors.buttonPrimary}`}
+              className={`flex cursor-pointer items-center gap-2 rounded-lg px-6 py-2 transition-colors ${colors.buttonPrimary}`}
             >
               <Send className="h-4 w-4" />
               发布回复
@@ -237,7 +241,9 @@ export function TopicDetail({ topicId, onBack }: TopicDetailProps) {
           {mockReplies.map((reply) => (
             <div
               key={reply.id}
-              className={`flex gap-4 rounded-lg p-4 transition-colors ${colors.cardHover}`}
+              className={`flex gap-4 rounded-lg p-4 transition-colors ${
+                theme === "dark" ? "bg-neutral-900/30 hover:bg-neutral-800/50" : "hover:bg-gray-50"
+              }`}
             >
               <img
                 src={reply.avatar}
@@ -252,13 +258,13 @@ export function TopicDetail({ topicId, onBack }: TopicDetailProps) {
                 <p className={`${colors.textSecondary} mb-3`}>{reply.content}</p>
                 <div className="flex items-center gap-3">
                   <button
-                    className={`flex items-center gap-1 text-sm ${colors.textMuted} ${colors.accentHover} transition-colors`}
+                    className={`flex cursor-pointer items-center gap-1 text-sm ${colors.textMuted} ${colors.accentHover} transition-colors`}
                   >
                     <ThumbsUp className="h-4 w-4" />
                     <span>{reply.likes}</span>
                   </button>
                   <button
-                    className={`text-sm ${colors.textMuted} ${colors.accentHover} transition-colors`}
+                    className={`cursor-pointer text-sm ${colors.textMuted} ${colors.accentHover} transition-colors`}
                   >
                     回复
                   </button>

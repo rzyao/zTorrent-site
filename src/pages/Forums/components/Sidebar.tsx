@@ -110,7 +110,7 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
               <button
                 key={category.id}
                 onClick={() => onCategoryChange(category.id)}
-                className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 transition-colors ${buttonClass}`}
+                className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors ${buttonClass}`}
               >
                 <Icon className="h-5 w-5" />
                 <span className="text-sm">{category.name}</span>
@@ -143,7 +143,7 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
               <button
                 key={topic.id}
                 onClick={() => onCategoryChange(topic.id)}
-                className={`flex w-full items-center justify-between rounded-lg px-3 py-2 transition-colors ${buttonClass}`}
+                className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-colors ${buttonClass}`}
               >
                 <div className="flex items-center gap-3">
                   <Icon className={`h-5 w-5 ${iconColor}`} />
@@ -165,9 +165,9 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
           {popularTags.map((tag) => (
             <button
               key={tag.name}
-              className={`rounded-full px-3 py-1.5 text-xs transition-colors ${
+              className={`cursor-pointer rounded-full px-3 py-1.5 text-xs transition-colors ${
                 theme === "dark"
-                  ? "bg-neutral-700/50 text-neutral-300 hover:bg-neutral-600"
+                  ? "bg-neutral-900/30 text-neutral-300 hover:bg-neutral-800/50"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -179,7 +179,7 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
 
       {/* Stats - 社区统计卡片在深色模式下可以保持鲜艳，或者稍微调暗 */}
       <div
-        className={`rounded-xl p-4 text-white shadow-sm ${theme === "dark" ? "border border-neutral-700 bg-neutral-800/60" : "bg-linear-to-br from-blue-500 to-purple-600"}`}
+        className={`rounded-xl p-4 text-white ${theme === "dark" ? "border border-neutral-700/50 bg-neutral-800/40" : "bg-linear-to-br from-blue-500 to-purple-600"}`}
       >
         <div className="mb-3 flex items-center gap-3">
           <Users className={`h-6 w-6 ${theme === "dark" ? "text-amber-400" : "text-white"}`} />

@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 body {
-    /* 阻止页面溢出时的回弹效果，在一定程度上能减少误触系统侧滑感 */
-    overscroll-behavior-x: none; 
+  /* 阻止页面溢出时的回弹效果，在一定程度上能减少误触系统侧滑感 */
+  overscroll-behavior-x: none;
 }
 /* Scale Transition Animations - Pure Scale Effect */
 .scale-transition-enter {
@@ -37,7 +37,6 @@ body {
   /* Chrome, Safari and Opera */
 }
 
-
 @media (width >=64rem) {
   .lg\:grid-cols-auto {
     grid-template-columns: 1fr 300px;
@@ -69,6 +68,103 @@ body {
   background: #3d2514;
 }
 
+/* 滚动条仅在悬停时显示 (通用样式) */
+.scrollbar-hover-show {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.scrollbar-hover-show::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-hover-show::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 0.5rem;
+  transition: background 0.5s ease 0.3s;
+}
+
+.scrollbar-hover-show::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 0.5rem;
+  transition: background 0.5s ease 0.3s;
+}
+
+.scrollbar-hover-show:hover {
+  scrollbar-color: #3d2514 rgba(38, 38, 38, 0.4);
+}
+
+.scrollbar-hover-show:hover::-webkit-scrollbar-track {
+  background: rgba(38, 38, 38, 0.4);
+  transition: background 0.15s ease;
+}
+
+.scrollbar-hover-show:hover::-webkit-scrollbar-thumb {
+  background: #3d2514;
+  transition: background 0.15s ease;
+}
+
+/* 论坛页面专用滚动条 - 深色模式 (参考 linux.do 样式) */
+.scrollbar-forum-dark {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.scrollbar-forum-dark::-webkit-scrollbar {
+  width: 0.5em;
+  height: 0.5em;
+}
+
+.scrollbar-forum-dark::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-forum-dark::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 0.25em;
+  transition: background 0.5s ease 0.3s;
+}
+
+.scrollbar-forum-dark:hover {
+  scrollbar-color: #303030 transparent;
+}
+
+.scrollbar-forum-dark:hover::-webkit-scrollbar-thumb {
+  background: #303030;
+  transition: background 0.15s ease;
+}
+
+/* 论坛页面专用滚动条 - 浅色模式 (参考 linux.do 样式) */
+.scrollbar-forum-light {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.scrollbar-forum-light::-webkit-scrollbar {
+  width: 0.5em;
+  height: 0.5em;
+}
+
+.scrollbar-forum-light::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-forum-light::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 0.25em;
+  transition: background 0.5s ease 0.3s;
+}
+
+.scrollbar-forum-light:hover {
+  scrollbar-color: #E9E9E9 transparent;
+}
+
+.scrollbar-forum-light:hover::-webkit-scrollbar-thumb {
+  background: #E9E9E9;
+  transition: background 0.15s ease;
+}
+
 .scrollbar-themed {
   scrollbar-width: thin;
   scrollbar-color: #f97316 rgba(38, 38, 38, 0.6);
@@ -97,7 +193,7 @@ body {
 /* 针对所有当 body 被锁定滚动时（Radix 加上 overflow: hidden 时），
    具有 fixed 类的元素（但排除弹窗遮罩层 .modal-overlay）
 */
-body[style*="overflow: hidden"] .fixed.modal-overlay{
+body[style*="overflow: hidden"] .fixed.modal-overlay {
   padding-right: var(--removed-body-scroll-bar-size);
 }
 
@@ -123,7 +219,10 @@ body[data-scroll-locked] .fixed.modal-overlay {
   line-height: 1.25rem;
   color: white;
   white-space: nowrap;
-  transition: color 0.15s, box-shadow 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    box-shadow 0.15s,
+    border-color 0.15s;
   outline: none;
   cursor: pointer;
   /* 自定义下拉箭头 - 与 Radix chevron 一致，默认状态 */
@@ -162,30 +261,28 @@ body[data-scroll-locked] .fixed.modal-overlay {
 
 /* 卡片背景色 */
 .pop {
- background-color: rgb(23, 28, 32);
- border-style: solid;
- border-color: rgba(64, 64, 64, 0.5);
+  background-color: rgb(23, 28, 32);
+  border-style: solid;
+  border-color: rgba(64, 64, 64, 0.5);
 }
 
-
-
 .default-bg-color {
-  background-color: #0F171E;
+  background-color: #0f171e;
 }
 
 /* 卡片边框 */
 .card {
   background-color: rgba(38, 38, 38, 0.4);
   /* 1. 边框宽度 (相当于 Tailwind 的 'border' 或 'border-1') */
-  border-width: 1px; 
-  
+  border-width: 1px;
+
   /* 2. 边框样式 */
   border-style: solid;
-  
+
   /* 3. 边框颜色（核心：使用 RGBA 实现 50% 透明度） */
   /* (64, 64, 64) 是 #404040 的 RGB 值，0.5 是 50% 的不透明度。*/
   border-color: rgba(64, 64, 64, 0.5);
-  
+
   /* 💡 简化写法：可以使用 border 简写属性 */
   /* border: 1px solid rgba(64, 64, 64, 0.5); */
 }
@@ -202,11 +299,11 @@ body[data-scroll-locked] .fixed.modal-overlay {
 .card-item {
   /* 1. bg-neutral-900/30 (默认背景色) */
   background-color: rgba(23, 23, 23, 0.3);
-  
+
   /* 2. border (默认 1px 宽度, solid 样式) */
   /* border-neutral-700/50 (边框颜色) */
   border: 1px solid rgba(64, 64, 64, 0.5);
-  
+
   /* 💡 增加平滑过渡效果 (可选, 推荐用于 hover 状态) */
   transition: background-color 0.3s ease;
 }
@@ -219,9 +316,9 @@ body[data-scroll-locked] .fixed.modal-overlay {
 
 /* 自定义输入框样式 */
 .input {
- /* 1. bg-neutral-900/50 (背景颜色) */
+  /* 1. bg-neutral-900/50 (背景颜色) */
   background-color: rgba(23, 23, 23, 0.5);
-  
+
   /* 2. border-neutral-700/50 (边框颜色) */
   /* 使用 border 简写属性同时设置宽度、样式和颜色 */
   border: 1px solid rgba(64, 64, 64, 0.5);
@@ -234,21 +331,22 @@ body[data-scroll-locked] .fixed.modal-overlay {
 
 .input:focus {
   /* 移除浏览器默认的焦点外边框 */
-  outline: 2px solid transparent; 
+  outline: 2px solid transparent;
   outline-offset: 2px;
-  
+
   /* 1. focus:border-amber-500: 边框颜色变为纯琥珀色 (完全不透明) */
-  border-color: #F59E0B; 
+  border-color: #f59e0b;
 
   /* 2. focus:ring-2 & 3. focus:ring-amber-500/20: 外环样式 */
-  
+
   /* 设置外环颜色为 20% 透明度的 amber-500 */
   --tw-ring-color: rgba(245, 158, 11, 0.2);
-  
+
   /* 设置外环宽度为 2px (来自 ring-2) */
-  --tw-ring-offset-width: 0px; 
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  
+  --tw-ring-offset-width: 0px;
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width))
+    var(--tw-ring-color);
+
   /* 应用 box-shadow 属性来显示外环 */
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
@@ -281,9 +379,9 @@ body[data-scroll-locked] .fixed.modal-overlay {
 /* 2. 子元素默认样式 (Default styles) */
 .text {
   /* text-white */
-  color: #FFFFFF; 
+  color: #ffffff;
   /* text-sm */
-  font-size: 0.875rem; 
+  font-size: 0.875rem;
   /* transition-colors */
   transition: color 0.15s ease-in-out; /* Tailwind 默认的 transition duration */
 }
@@ -292,119 +390,119 @@ body[data-scroll-locked] .fixed.modal-overlay {
 /* 当 .parent-group 被悬停时，应用样式到 .group-text */
 .text-parent:hover .text {
   /* text-amber-400 */
-  color: #FBBF24; 
+  color: #fbbf24;
 }
 
 .general-button {
   /* ====================== 1. 布局与尺寸 ====================== */
-  display: flex;                /* flex */
-  align-items: center;          /* items-center */
-  gap: 0.5rem;                  /* gap-2 */
-  padding: 0.5rem 1rem;         /* py-2 px-4 */
-  border-radius: 0.5rem;        /* rounded-lg */
-  white-space: nowrap;          /* whitespace-nowrap */
-  
+  display: flex; /* flex */
+  align-items: center; /* items-center */
+  gap: 0.5rem; /* gap-2 */
+  padding: 0.5rem 1rem; /* py-2 px-4 */
+  border-radius: 0.5rem; /* rounded-lg */
+  white-space: nowrap; /* whitespace-nowrap */
+
   /* ====================== 4. 动画效果 ====================== */
   /* transition-all: 确保背景和颜色变化平滑 */
-  transition: all 0.15s ease-in-out; 
+  transition: all 0.15s ease-in-out;
 
   /* ====================== 2. 默认外观 ====================== */
-  
+
   /* 默认背景渐变：bg-gradient-to-r from-amber-500/20 to-orange-500/20 */
   background: linear-gradient(
-    to right, 
-    rgba(245, 158, 11, 0.2),  /* from-amber-500/20 */
-    rgba(249, 115, 22, 0.2)   /* to-orange-500/20 */
+    to right,
+    rgba(245, 158, 11, 0.2),
+    /* from-amber-500/20 */ rgba(249, 115, 22, 0.2) /* to-orange-500/20 */
   );
-  
+
   /* 边框：border border-amber-500/50 */
-  border: 1px solid rgba(245, 158, 11, 0.5); 
-  
+  border: 1px solid rgba(245, 158, 11, 0.5);
+
   /* 文本颜色：text-amber-300 */
-  color: #FCD34D; 
+  color: #fcd34d;
 }
 
 /* ====================== 3. 交互状态 (Hover) ====================== */
 .general-button:hover {
   /* 悬停背景渐变变化：hover:from-amber-500/30 hover:to-orange-500/30 */
   background: linear-gradient(
-    to right, 
-    rgba(245, 158, 11, 0.3),  /* hover:from-amber-500/30 */
-    rgba(249, 115, 22, 0.3)   /* hover:to-orange-500/30 */
+    to right,
+    rgba(245, 158, 11, 0.3),
+    /* hover:from-amber-500/30 */ rgba(249, 115, 22, 0.3) /* hover:to-orange-500/30 */
   );
-  
+
   /* 注意：这里没有 hover:border-xxx 或 hover:text-xxx 的类，因此边框和文本颜色保持不变。 */
 }
 
 .search-button {
   /* ====================== 1. 布局与尺寸 ====================== */
-  display: flex;                /* flex */
-  align-items: center;          /* items-center */
-  gap: 0.5rem;                  /* gap-2 */
+  display: flex; /* flex */
+  align-items: center; /* items-center */
+  gap: 0.5rem; /* gap-2 */
   /* padding-right: 2rem; */
-  white-space: nowrap;          /* whitespace-nowrap */
-  
+  white-space: nowrap; /* whitespace-nowrap */
+
   /* ====================== 4. 动画效果 ====================== */
   /* transition-all: 确保背景和颜色变化平滑 */
-  transition: all 0.15s ease-in-out; 
+  transition: all 0.15s ease-in-out;
 
   /* ====================== 2. 默认外观 ====================== */
-  
+
   /* 默认背景渐变：bg-gradient-to-r from-amber-500/20 to-orange-500/20 */
   background: linear-gradient(
-    to right, 
-    rgba(245, 158, 11, 0.2),  /* from-amber-500/20 */
-    rgba(249, 115, 22, 0.2)   /* to-orange-500/20 */
+    to right,
+    rgba(245, 158, 11, 0.2),
+    /* from-amber-500/20 */ rgba(249, 115, 22, 0.2) /* to-orange-500/20 */
   );
-  
+
   /* 边框：border border-amber-500/50 */
-  border: 1px solid rgba(245, 158, 11, 0.5); 
-  
+  border: 1px solid rgba(245, 158, 11, 0.5);
+
   /* 文本颜色：text-amber-300 */
-  color: #FCD34D; 
+  color: #fcd34d;
 }
 
 /* ====================== 3. 交互状态 (Hover) ====================== */
 .search-button:hover {
   /* 悬停背景渐变变化：hover:from-amber-500/30 hover:to-orange-500/30 */
   background: linear-gradient(
-    to right, 
-    rgba(245, 158, 11, 0.3),  /* hover:from-amber-500/30 */
-    rgba(249, 115, 22, 0.3)   /* hover:to-orange-500/30 */
+    to right,
+    rgba(245, 158, 11, 0.3),
+    /* hover:from-amber-500/30 */ rgba(249, 115, 22, 0.3) /* hover:to-orange-500/30 */
   );
-  
+
   /* 注意：这里没有 hover:border-xxx 或 hover:text-xxx 的类，因此边框和文本颜色保持不变。 */
 }
 
 .page-container {
   /* 基础尺寸与居中 */
-  width: 100%;                  /* w-full */
-  max-width: 1600px;            /* max-w-[1600px] */
-  margin-left: auto;            /* mx-auto (left) */
-  margin-right: auto;           /* mx-auto (right) */
+  width: 100%; /* w-full */
+  max-width: 1600px; /* max-w-[1600px] */
+  margin-left: auto; /* mx-auto (left) */
+  margin-right: auto; /* mx-auto (right) */
 
   /* 垂直内边距 (所有尺寸生效) */
-  padding-top: 1rem;            /* py-4 (16px) */
-  padding-bottom: 1rem;         /* py-4 (16px) */
+  padding-top: 1rem; /* py-4 (16px) */
+  padding-bottom: 1rem; /* py-4 (16px) */
 
   /* 水平内边距 - 移动端优先 (Mobile First) */
-  padding-left: 0.5rem;         /* px-2 (8px) */
-  padding-right: 0.5rem;        /* px-2 (8px) */
+  padding-left: 0.5rem; /* px-2 (8px) */
+  padding-right: 0.5rem; /* px-2 (8px) */
 }
 
 /* 响应式断点：小型屏幕 (Small / 640px) */
 @media (min-width: 640px) {
   .page-container {
-    padding-left: 1rem;         /* sm:px-4 (16px) */
-    padding-right: 1rem;        /* sm:px-4 (16px) */
+    padding-left: 1rem; /* sm:px-4 (16px) */
+    padding-right: 1rem; /* sm:px-4 (16px) */
   }
 }
 
 /* 响应式断点：中型屏幕 (Medium / 768px) */
 @media (min-width: 768px) {
   .page-container {
-    padding-left: 1.5rem;       /* md:px-6 (24px) */
-    padding-right: 1.5rem;      /* md:px-6 (24px) */
+    padding-left: 1.5rem; /* md:px-6 (24px) */
+    padding-right: 1.5rem; /* md:px-6 (24px) */
   }
 }
 
