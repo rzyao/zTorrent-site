@@ -72,8 +72,8 @@ export const themeConfig: Record<Theme, ThemeColors> = {
     borderColor: "border-neutral-700/50",
     dividerColor: "border-neutral-600/60",
 
-    textPrimary: "text-white",
-    textSecondary: "text-neutral-300",
+    textPrimary: "text-[#dadada]",
+    textSecondary: "text-neutral-400",
     textMuted: "text-neutral-500",
 
     // 玻璃拟态

@@ -476,7 +476,7 @@ export function ForumList({ selectedCategory, searchQuery, onTopicClick }: Forum
                     <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
                   )}
                   <h3
-                    className={`line-clamp-2 text-sm font-medium transition-colors ${theme === "dark" ? "text-white group-hover:text-amber-400" : "text-gray-900 group-hover:text-blue-600"}`}
+                    className={`line-clamp-2 text-sm font-medium transition-colors ${colors.textPrimary} ${theme === "dark" ? "group-hover:text-amber-400" : "group-hover:text-blue-600"}`}
                   >
                     {topic.title}
                   </h3>
