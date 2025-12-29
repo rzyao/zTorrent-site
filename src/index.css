@@ -4,6 +4,71 @@ body {
   /* 阻止页面溢出时的回弹效果，在一定程度上能减少误触系统侧滑感 */
   overscroll-behavior-x: none;
 }
+
+/* 全局主体内容区域滚动条 (Discourse 风格：始终显示，高对比度) */
+.scrollbar-main-dark {
+  scrollbar-width: auto;
+  scrollbar-color: #a6a6a6 transparent;
+}
+
+.scrollbar-main-dark::-webkit-scrollbar {
+  width: 14px; /* 稍微加宽一点更明显 */
+}
+
+.scrollbar-main-dark::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-main-dark::-webkit-scrollbar-thumb {
+  background-color: #a6a6a6; /* Discourse 深色模式滑块色 */
+  border-radius: 10px;
+  border: 3px solid #0f171e; /* 必须匹配你的背景色 #0f171e 才能出效果 */
+  background-clip: content-box;
+}
+
+.scrollbar-main-dark::-webkit-scrollbar-thumb:hover {
+  background-color: #d1d1d1;
+}
+
+/* 论坛主体区域滚动条 - 浅色模式 (Discourse 风格) */
+.scrollbar-main-light {
+  scrollbar-width: auto;
+  scrollbar-color: #919191 transparent;
+}
+
+.scrollbar-main-light::-webkit-scrollbar {
+  width: 14px;
+}
+
+.scrollbar-main-light::-webkit-scrollbar-thumb {
+  background-color: #919191; /* Discourse 浅色模式滑块色 */
+  border-radius: 10px;
+  border: 3px solid #ffffff; /* 匹配浅色背景 */
+  background-clip: content-box;
+}
+
+.scrollbar-main-light::-webkit-scrollbar-thumb:hover {
+  background-color: #717171;
+}
+
+/* 全局 html 滚动条同步 */
+html::-webkit-scrollbar {
+  width: 14px;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: #919191;
+  border-radius: 10px;
+  border: 3px solid white;
+  background-clip: content-box;
+}
+
+@media (prefers-color-scheme: dark) {
+  html::-webkit-scrollbar-thumb {
+    background-color: #a6a6a6;
+    border: 3px solid #0f171e;
+  }
+}
 /* Scale Transition Animations - Pure Scale Effect */
 .scale-transition-enter {
   transform: scale(0);
@@ -105,85 +170,73 @@ body {
   transition: background 0.15s ease;
 }
 
-/* 论坛页面专用滚动条 - 深色模式 (linux.do 风格：延迟消失+平滑动画) */
-/* 使用 scrollbar-color 属性动画（现代浏览器支持 Chrome 121+, Firefox） */
-.scrollbar-forum-dark {
-  scrollbar-width: thin;
-  /* 默认状态：滚动条透明 */
-  scrollbar-color: rgba(0, 0, 0, 0) transparent;
-  /* 延迟 1 秒后消失，消失动画 0.3 秒 */
-  transition: scrollbar-color 0.3s ease-in-out 1s;
+/* 论坛侧边栏专用滚动条 - 深色模式 (linux.do 风格) */
+.scrollbar-sidebar-dark {
+  scrollbar-width: auto;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
 }
 
-/* 悬停时显示滚动条 */
-.scrollbar-forum-dark:hover {
-  scrollbar-color: rgba(100, 100, 100, 0.5) transparent;
-  /* 立即显示，无延迟 */
-  transition-delay: 0s;
+.scrollbar-sidebar-dark:hover {
+  scrollbar-color: #313131 transparent;
 }
 
-/* Webkit 回退方案 (旧版 Chrome/Safari) */
-.scrollbar-forum-dark::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+.scrollbar-sidebar-dark::-webkit-scrollbar {
+  width: 12px;
+}
+
+.scrollbar-sidebar-dark::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.scrollbar-forum-dark::-webkit-scrollbar-track {
-  background: transparent;
+.scrollbar-sidebar-dark::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 6px;
 }
 
-.scrollbar-forum-dark::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0);
-  border-radius: 4px;
+.scrollbar-sidebar-dark:hover::-webkit-scrollbar-thumb {
+  background-color: #313131;
 }
 
-.scrollbar-forum-dark:hover::-webkit-scrollbar-thumb {
-  background-color: rgba(100, 100, 100, 0.5);
+/* 论坛侧边栏专用滚动条 - 浅色模式 */
+.scrollbar-sidebar-light {
+  scrollbar-width: auto;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
 }
 
-.scrollbar-forum-dark::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(100, 100, 100, 0.7);
+.scrollbar-sidebar-light:hover {
+  scrollbar-color: #ced4da transparent;
 }
 
-/* 论坛页面专用滚动条 - 浅色模式 (linux.do 风格：延迟消失+平滑动画) */
-.scrollbar-forum-light {
-  scrollbar-width: thin;
-  /* 默认状态：滚动条透明 */
-  scrollbar-color: rgba(0, 0, 0, 0) transparent;
-  /* 延迟 1 秒后消失，消失动画 0.3 秒 */
-  transition: scrollbar-color 0.3s ease-in-out 1s;
+.scrollbar-sidebar-light::-webkit-scrollbar {
+  width: 12px;
 }
 
-/* 悬停时显示滚动条 */
-.scrollbar-forum-light:hover {
-  scrollbar-color: rgba(150, 150, 150, 0.5) transparent;
-  /* 立即显示，无延迟 */
-  transition-delay: 0s;
+.scrollbar-sidebar-light::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 6px;
 }
 
-/* Webkit 回退方案 (旧版 Chrome/Safari) */
-.scrollbar-forum-light::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-  background: transparent;
+.scrollbar-sidebar-light:hover::-webkit-scrollbar-thumb {
+  background-color: #ced4da;
 }
 
-.scrollbar-forum-light::-webkit-scrollbar-track {
-  background: transparent;
+/* Simplebar 自定义样式 - linux.do 风格 (12px) */
+.forum-scrollbar-dark .simplebar-scrollbar::before {
+  background-color: #313131;
+  border-radius: 6px;
+  width: 12px;
+  left: 0px;
+  transition: opacity 0.3s ease;
 }
 
-.scrollbar-forum-light::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0);
-  border-radius: 4px;
-}
-
-.scrollbar-forum-light:hover::-webkit-scrollbar-thumb {
-  background-color: rgba(150, 150, 150, 0.5);
-}
-
-.scrollbar-forum-light::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(150, 150, 150, 0.7);
+.forum-scrollbar-light .simplebar-scrollbar::before {
+  background-color: #ced4da;
+  border-radius: 6px;
+  width: 12px;
+  left: 0px;
+  transition: opacity 0.3s ease;
 }
 
 /* ============================================

@@ -17,14 +17,16 @@ function ForumLayoutInner() {
   const { theme, colors } = useForumTheme();
 
   // 根据主题选择滚动条样式类
-  const scrollbarClass = theme === "dark" ? "scrollbar-forum-dark" : "scrollbar-forum-light";
+  const mainScrollbarClass = theme === "dark" ? "scrollbar-main-dark" : "scrollbar-main-light";
+  const sidebarScrollbarClass =
+    theme === "dark" ? "scrollbar-sidebar-dark" : "scrollbar-sidebar-light";
   // 移动端菜单控制回调
   const handleOpenMobileMenu = useCallback(() => setIsMobileMenuOpen(true), []);
   const handleCloseMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
 
   return (
     <div
-      className={`h-screen overflow-y-scroll ${scrollbarClass} ${colors.pageBg} transition-colors duration-200`}
+      className={`h-screen overflow-y-scroll ${mainScrollbarClass} ${colors.pageBg} transition-colors duration-200`}
     >
       {/* 顶部导航栏 - 传入移动端菜单控制回调 */}
       <Header
@@ -46,7 +48,7 @@ function ForumLayoutInner() {
         <div className={`grid grid-cols-1 gap-8 lg:grid-cols-12 ${colors.listBg}`}>
           {/* 左侧边栏: 使用纯 CSS 滚动条动画 (linux.do 风格) */}
           <aside
-            className={`${scrollbarClass} hidden border-r pr-4 ${colors.borderColor} lg:sticky lg:top-16 lg:col-span-3 lg:block lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto lg:overscroll-contain`}
+            className={`${sidebarScrollbarClass} hidden border-r pr-4 ${colors.borderColor} lg:sticky lg:top-16 lg:col-span-3 lg:block lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto lg:overscroll-contain`}
           >
             <Sidebar selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
           </aside>
