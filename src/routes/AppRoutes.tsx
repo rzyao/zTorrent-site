@@ -11,7 +11,22 @@ const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPassword.tsx"));
 const HomePage = lazy(() => import("@/pages/Home.tsx"));
 const AdultPage = lazy(() => import("@/pages/Adult/index.tsx"));
 const TorrentsPage = lazy(() => import("@/pages/TorrentsList/index.tsx"));
-const ForumPage = lazy(() => import("@/pages/Forums/index.tsx"));
+// 论坛布局与页面 (独立路由系统)
+const ForumLayout = lazy(() =>
+  import("@/pages/Forums/layouts").then((m) => ({ default: m.ForumLayout })),
+);
+const ForumHomePage = lazy(() =>
+  import("@/pages/Forums/pages").then((m) => ({ default: m.ForumHomePage })),
+);
+const TopicDetailPage = lazy(() =>
+  import("@/pages/Forums/pages").then((m) => ({ default: m.TopicDetailPage })),
+);
+const CategoryPage = lazy(() =>
+  import("@/pages/Forums/pages").then((m) => ({ default: m.CategoryPage })),
+);
+const CreateTopicPage = lazy(() =>
+  import("@/pages/Forums/pages").then((m) => ({ default: m.CreateTopicPage })),
+);
 const SubtitlesPage = lazy(() => import("@/pages/Subtitles/index.tsx"));
 const RankingPage = lazy(() => import("@/pages/RankingPage.tsx"));
 const EditMoviePage = lazy(() => import("@/pages/Edit/movies/index.tsx"));
@@ -187,15 +202,30 @@ export default function AppRoutes() {
         <Route path="/forgot-password" element={<ForgotPasswordPageWrapper />} />
         <Route path="/" element={<Navigate to="/home" replace />} />
 
-        {/* 独立页面：论坛 (脱离全局布局) */}
+        {/* 独立页面：论坛 (脱离全局布局，使用自己的布局系统) */}
         <Route
           path="/forum"
           element={
             <AuthRoute>
-              <ForumPage />
+              <ForumLayout />
             </AuthRoute>
           }
-        />
+        >
+          {/* 论坛首页 */}
+          <Route index element={<ForumHomePage />} />
+          {/* 热门话题 */}
+          <Route path="trending" element={<ForumHomePage />} />
+          {/* 最新发布 */}
+          <Route path="latest" element={<ForumHomePage />} />
+          {/* 话题详情 */}
+          <Route path="topic/:topicId" element={<TopicDetailPage />} />
+          {/* 分类页面 */}
+          <Route path="category/:categoryId" element={<CategoryPage />} />
+          {/* 标签页面 */}
+          <Route path="tag/:tagName" element={<CategoryPage />} />
+          {/* 发布话题 */}
+          <Route path="create" element={<CreateTopicPage />} />
+        </Route>
 
         {/* 受保护路由统一持久布局：AuthRoute + AppLayout 持久化，内部通过 Outlet 渲染子页面 */}
         <Route
