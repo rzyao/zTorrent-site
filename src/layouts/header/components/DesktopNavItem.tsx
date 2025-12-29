@@ -32,7 +32,7 @@ export function DesktopNavItem({ item }: DesktopNavItemProps) {
     return (
       <NavLink
         to={item.path}
-        target={item.target}
+        target={item.path === "/forum" ? "_blank" : item.target}
         className={({ isActive: routeActive }) => linkClass(routeActive)}
       >
         {item.label}
@@ -85,7 +85,7 @@ export function DesktopNavItem({ item }: DesktopNavItemProps) {
               <NavLink
                 key={child.id}
                 to={child.path}
-                target={child.target}
+                target={child.path === "/forum" ? "_blank" : child.target}
                 className="block px-4 py-2 text-white transition-colors hover:bg-white/10 hover:text-amber-400"
               >
                 {child.label}

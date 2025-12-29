@@ -186,6 +186,17 @@ export default function AppRoutes() {
         <Route path="/register" element={<RegisterPageWrapper />} />
         <Route path="/forgot-password" element={<ForgotPasswordPageWrapper />} />
         <Route path="/" element={<Navigate to="/home" replace />} />
+
+        {/* 独立页面：论坛 (脱离全局布局) */}
+        <Route
+          path="/forum"
+          element={
+            <AuthRoute>
+              <ForumPage />
+            </AuthRoute>
+          }
+        />
+
         {/* 受保护路由统一持久布局：AuthRoute + AppLayout 持久化，内部通过 Outlet 渲染子页面 */}
         <Route
           element={
@@ -201,7 +212,6 @@ export default function AppRoutes() {
           <Route path="/home" element={<HomePage />} />
           <Route path="/torrents" element={<TorrentsPage />} />
           <Route path="/torrent/:id" element={<TorrentDetailPage />} />
-          <Route path="/forum" element={<ForumPage />} />
           <Route path="/subtitles" element={<SubtitlesPage />} />
           <Route path="/ranking" element={<RankingPage />} />
 

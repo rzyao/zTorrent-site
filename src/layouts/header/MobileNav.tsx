@@ -32,7 +32,7 @@ export function MobileNav({ onClose }: MobileNavProps) {
         <NavLink
           key={item.id}
           to={item.path}
-          target={item.target}
+          target={item.path === "/forum" ? "_blank" : item.target}
           className="rounded-lg px-4 py-3 text-white transition-colors hover:bg-white/10"
           onClick={onClose}
         >
