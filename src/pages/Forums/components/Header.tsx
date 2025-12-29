@@ -5,11 +5,24 @@ import { useForumTheme } from "../context/ForumThemeContext";
 interface HeaderProps {
   onSearch: (query: string) => void;
   searchQuery: string;
+  /** 可选：外部控制移动端菜单开关（用于布局层控制抽屉） */
+  onMobileMenuToggle?: () => void;
 }
 
-export function Header({ onSearch, searchQuery }: HeaderProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProps) {
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const { theme, toggleTheme, colors } = useForumTheme();
+
+  // 汉堡菜单点击处理
+  const handleMenuClick = () => {
+    if (onMobileMenuToggle) {
+      // 外部控制模式：打开抽屉
+      onMobileMenuToggle();
+    } else {
+      // 内部控制模式：切换搜索框
+      setIsMobileSearchOpen(!isMobileSearchOpen);
+    }
+  };
 
   return (
     <header
@@ -21,7 +34,8 @@ export function Header({ onSearch, searchQuery }: HeaderProps) {
           <div className="flex items-center gap-3">
             <button
               className={`rounded-lg p-2 lg:hidden ${colors.buttonHover}`}
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={handleMenuClick}
+              aria-label="打开菜单"
             >
               <Menu className={`h-5 w-5 ${colors.textSecondary}`} />
             </button>

@@ -202,7 +202,7 @@ export function ForumSidebar({ selectedCategory, onCategoryChange }: ForumSideba
         className={`rounded-xl p-4 text-white ${
           theme === "dark"
             ? "border border-neutral-700/50 bg-neutral-800/40"
-            : "bg-gradient-to-br from-blue-500 to-purple-600"
+            : "bg-linear-to-br from-blue-500 to-purple-600"
         }`}
       >
         <div className="mb-3 flex items-center gap-3">
