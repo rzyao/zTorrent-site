@@ -18,7 +18,7 @@ function ForumContent() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* Sidebar */}
-          <aside className="lg:col-span-3">
+          <aside className="no-scrollbar lg:sticky lg:top-24 lg:col-span-3 lg:h-[calc(100vh-8rem)] lg:overflow-y-auto">
             <Sidebar selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
           </aside>
 

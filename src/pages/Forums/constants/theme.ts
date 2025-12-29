@@ -16,6 +16,10 @@ export interface ThemeColors {
   cardHover: string;
   cardBorder: string;
 
+  // 列表样式 (New)
+  listBg: string;
+  listHover: string;
+
   // 交互元素
   inputBg: string;
   inputBorder: string;
@@ -46,6 +50,9 @@ export const themeConfig: Record<Theme, ThemeColors> = {
     cardHover: "hover:shadow-md transition-shadow",
     cardBorder: "border-gray-200",
 
+    listBg: "bg-white",
+    listHover: "hover:bg-gray-50",
+
     inputBg: "bg-white",
     inputBorder: "border-gray-300",
 
@@ -73,6 +80,9 @@ export const themeConfig: Record<Theme, ThemeColors> = {
     cardBg: "bg-neutral-800/40 backdrop-blur-md",
     cardHover: "hover:bg-neutral-800/60 transition-colors",
     cardBorder: "border-neutral-700/50",
+
+    listBg: "bg-neutral-800/40 backdrop-blur-md",
+    listHover: "hover:bg-neutral-800/60 transition-colors",
 
     inputBg: "bg-neutral-800",
     inputBorder: "border-neutral-700",

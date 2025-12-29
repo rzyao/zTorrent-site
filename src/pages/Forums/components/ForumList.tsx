@@ -1,6 +1,30 @@
-import { MessageSquare, ThumbsUp, Eye, Clock, Pin, TrendingUp } from "lucide-react";
+import { MessageSquare, Eye, Clock, Pin, TrendingUp, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useForumTheme } from "../context/ForumThemeContext";
+
+interface Participant {
+  id: string;
+  avatar: string;
+  name: string;
+}
+
+interface Topic {
+  id: string;
+  title: string;
+  author: Participant;
+  category: string;
+  tags: string[];
+  excerpt: string;
+  views: number;
+  replies: number;
+  likes: number; // Keep in interface but don't display in list
+  isPinned: boolean;
+  isTrending: boolean;
+  createdAt: string;
+  lastReplyTime: string;
+  participants: Participant[]; // Frequent repliers (Slot 2-4)
+  lastReplier: Participant; // Slot 5
+}
 
 interface ForumListProps {
   selectedCategory: string;
@@ -8,134 +32,181 @@ interface ForumListProps {
   onTopicClick: (id: string) => void;
 }
 
-const mockTopics = [
+const mockParticipants = [
+  { id: "p1", name: "User1", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=p1" },
+  { id: "p2", name: "User2", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=p2" },
+  { id: "p3", name: "User3", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=p3" },
+  { id: "p4", name: "User4", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=p4" },
+];
+
+const mockTopics: Topic[] = [
   {
     id: "1",
     title: "React 19 新特性深度解析 - Server Components 实战指南",
-    author: "前端架构师",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=1",
+    author: {
+      id: "a1",
+      name: "前端架构师",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=1",
+    },
     category: "tech",
     tags: ["React", "TypeScript", "前端开发"],
-    excerpt: "React 19 带来了革命性的 Server Components，本文将深入探讨其实现原理和最佳实践...",
+    excerpt: "React 19 带来了革命性的 Server Components...",
     views: 12456,
     replies: 234,
     likes: 567,
     isPinned: true,
     isTrending: true,
     createdAt: "2小时前",
-    lastReply: "5分钟前",
+    lastReplyTime: "5分钟前",
+    participants: mockParticipants.slice(0, 3),
+    lastReplier: mockParticipants[0],
   },
   {
     id: "2",
     title: "如何设计一个现代化的用户界面？分享我的设计心得",
-    author: "UI设计师",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=2",
+    author: {
+      id: "a2",
+      name: "UI设计师",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=2",
+    },
     category: "design",
     tags: ["UI设计", "Figma", "用户体验"],
-    excerpt: "好的设计不仅仅是美观，更重要的是用户体验。今天分享一些我在实际项目中的设计经验...",
+    excerpt: "好的设计不仅仅是美观...",
     views: 8934,
     replies: 156,
     likes: 423,
     isPinned: false,
     isTrending: true,
     createdAt: "5小时前",
-    lastReply: "15分钟前",
+    lastReplyTime: "15分钟前",
+    participants: mockParticipants.slice(1, 4),
+    lastReplier: mockParticipants[1],
   },
   {
     id: "3",
     title: "Python 数据分析入门教程 - 从零开始学习 Pandas",
-    author: "数据科学家",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=3",
+    author: {
+      id: "a3",
+      name: "数据科学家",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=3",
+    },
     category: "tech",
     tags: ["Python", "数据分析", "Pandas"],
-    excerpt: "Pandas 是 Python 数据分析的核心库，本教程将带你从零开始掌握数据处理技能...",
+    excerpt: "Pandas 是 Python 数据分析的核心库...",
     views: 15678,
     replies: 289,
     likes: 789,
     isPinned: true,
     isTrending: false,
     createdAt: "1天前",
-    lastReply: "30分钟前",
+    lastReplyTime: "30分钟前",
+    participants: mockParticipants.slice(0, 2),
+    lastReplier: mockParticipants[2],
   },
   {
     id: "4",
     title: "2024年最值得玩的独立游戏推荐",
-    author: "游戏玩家",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=4",
+    author: {
+      id: "a4",
+      name: "游戏玩家",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=4",
+    },
     category: "gaming",
     tags: ["游戏", "独立游戏", "推荐"],
-    excerpt: "今年涌现了很多优秀的独立游戏，让我来为大家推荐几款不容错过的佳作...",
+    excerpt: "今年涌现了很多优秀的独立游戏...",
     views: 6543,
     replies: 98,
     likes: 234,
     isPinned: false,
     isTrending: true,
     createdAt: "8小时前",
-    lastReply: "1小时前",
+    lastReplyTime: "1小时前",
+    participants: mockParticipants.slice(2, 4),
+    lastReplier: mockParticipants[3],
   },
   {
     id: "5",
     title: "分享一些提升编程效率的 VS Code 插件",
-    author: "全栈工程师",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=5",
+    author: {
+      id: "a5",
+      name: "全栈工程师",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=5",
+    },
     category: "tech",
     tags: ["VSCode", "工具", "效率"],
-    excerpt: "工欲善其事必先利其器，这些插件可以让你的开发效率提升数倍...",
+    excerpt: "工欲善其事必先利其器...",
     views: 9876,
     replies: 187,
     likes: 456,
     isPinned: false,
     isTrending: false,
     createdAt: "12小时前",
-    lastReply: "2小时前",
+    lastReplyTime: "2小时前",
+    participants: mockParticipants.slice(0, 1),
+    lastReplier: mockParticipants[0],
   },
   {
     id: "6",
     title: "AI绘画工具对比：Midjourney vs Stable Diffusion",
-    author: "AI爱好者",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=6",
+    author: {
+      id: "a6",
+      name: "AI爱好者",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=6",
+    },
     category: "design",
     tags: ["人工智能", "AI绘画", "设计"],
-    excerpt: "详细对比两款最流行的AI绘画工具，帮助你选择最适合自己的工具...",
+    excerpt: "详细对比两款最流行的AI绘画工具...",
     views: 11234,
     replies: 203,
     likes: 567,
     isPinned: false,
     isTrending: true,
     createdAt: "1天前",
-    lastReply: "45分钟前",
+    lastReplyTime: "45分钟前",
+    participants: mockParticipants.slice(1, 3),
+    lastReplier: mockParticipants[1],
   },
   {
     id: "7",
     title: "如何准备前端面试？我的面试经验分享",
-    author: "资深开发",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=7",
+    author: {
+      id: "a7",
+      name: "资深开发",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=7",
+    },
     category: "learning",
     tags: ["面试", "前端", "求职"],
-    excerpt: "最近面试了多家大厂，总结了一些面试经验和常见问题，希望能帮到大家...",
+    excerpt: "最近面试了多家大厂...",
     views: 23456,
     replies: 445,
     likes: 1234,
     isPinned: false,
     isTrending: false,
     createdAt: "2天前",
-    lastReply: "10分钟前",
+    lastReplyTime: "10分钟前",
+    participants: mockParticipants.slice(0, 4),
+    lastReplier: mockParticipants[2],
   },
   {
     id: "8",
     title: "音乐制作入门：如何用 Logic Pro 创作你的第一首歌",
-    author: "音乐制作人",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=8",
+    author: {
+      id: "a8",
+      name: "音乐制作人",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=8",
+    },
     category: "music",
     tags: ["音乐制作", "Logic Pro", "教程"],
-    excerpt: "音乐制作并不难，跟着这个教程，你也能创作出属于自己的音乐...",
+    excerpt: "音乐制作并不难...",
     views: 5432,
     replies: 76,
     likes: 189,
     isPinned: false,
     isTrending: false,
     createdAt: "1天前",
-    lastReply: "3小时前",
+    lastReplyTime: "3小时前",
+    participants: [],
+    lastReplier: mockParticipants[3],
   },
 ];
 
@@ -199,98 +270,143 @@ export function ForumList({ selectedCategory, searchQuery, onTopicClick }: Forum
         </div>
       </div>
 
-      {/* Topics List */}
-      <div className="space-y-3">
+      {/* Topics List Container */}
+      <div className={`overflow-hidden rounded-xl border ${colors.borderColor} ${colors.listBg}`}>
+        {/* Table Header (Desktop) */}
+        <div
+          className={`hidden items-center border-b px-4 py-3 md:flex ${colors.dividerColor} text-sm ${colors.textMuted}`}
+        >
+          <div className="flex-1">话题</div>
+          {/* Middle Spacer for Avatar Group alignment - same width as avatar group (w-48) */}
+          <div className="w-48 shrink-0"></div>
+          {/* Stats Header */}
+          <div className="ml-4 flex shrink-0 items-center gap-6">
+            <div className="w-16 text-center">回复</div>
+            <div className="w-16 text-center">浏览量</div>
+            <div className="w-20 pr-2 text-right">活动</div>
+          </div>
+        </div>
+
         {filteredTopics.length === 0 ? (
-          <div
-            className={`${colors.cardBg} rounded-xl p-12 ${colors.shadow} border ${colors.cardBorder} text-center transition-colors`}
-          >
+          <div className="p-12 text-center">
             <p className={colors.textMuted}>暂无相关话题</p>
           </div>
         ) : (
           filteredTopics.map((topic) => (
-            <article
+            <div
               key={topic.id}
               onClick={() => onTopicClick(topic.id)}
-              className={`${colors.cardBg} rounded-xl p-5 ${colors.shadow} border ${colors.cardBorder} ${colors.cardHover} group cursor-pointer transition-all`}
+              className={`group flex flex-col border-b p-4 md:flex-row md:items-center ${colors.dividerColor} last:border-0 ${colors.listHover} cursor-pointer gap-4 transition-colors`}
             >
-              {/* Header */}
-              <div className="flex items-start gap-4">
-                <img
-                  src={topic.avatar}
-                  alt={topic.author}
-                  className="h-12 w-12 shrink-0 rounded-full"
-                />
-                <div className="min-w-0 flex-1">
-                  {/* Title */}
-                  <div className="mb-2 flex items-start gap-2">
-                    {topic.isPinned && (
-                      <Pin
-                        className={`mt-1 h-4 w-4 shrink-0 ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
-                      />
-                    )}
-                    {topic.isTrending && (
-                      <TrendingUp className="mt-1 h-4 w-4 shrink-0 text-red-500" />
-                    )}
-                    <h3
-                      className={`flex-1 transition-colors ${colors.textPrimary} ${colors.accentHover}`}
-                    >
-                      {topic.title}
-                    </h3>
-                  </div>
-
-                  {/* Author and Time */}
-                  <div className={`flex items-center gap-3 text-sm ${colors.textMuted} mb-3`}>
-                    <span className={`font-medium ${colors.textSecondary}`}>{topic.author}</span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      {topic.createdAt}
-                    </span>
-                  </div>
-
-                  {/* Excerpt */}
-                  <p className={`${colors.textSecondary} mb-3 line-clamp-2 text-sm`}>
-                    {topic.excerpt}
-                  </p>
-
-                  {/* Tags */}
-                  <div className="mb-3 flex flex-wrap gap-2">
-                    {topic.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className={`rounded px-2 py-1 text-xs transition-colors ${theme === "dark" ? "bg-neutral-700/50 text-neutral-300" : "bg-gray-100 text-gray-700"}`}
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Footer Stats */}
-                  <div
-                    className={`flex items-center justify-between border-t pt-3 ${colors.dividerColor}`}
+              {/* Left: Info (Flex-1) */}
+              <div className="min-w-0 flex-1">
+                <div className="mb-1.5 flex items-start gap-2">
+                  {topic.isPinned && (
+                    <Pin
+                      className={`mt-1 h-4 w-4 shrink-0 ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
+                    />
+                  )}
+                  {topic.isTrending && (
+                    <TrendingUp className="mt-1 h-4 w-4 shrink-0 text-red-500" />
+                  )}
+                  <h3
+                    className={`truncate text-base font-medium ${colors.textPrimary} group-hover:${theme === "dark" ? "text-amber-400" : "text-blue-600"} transition-colors`}
                   >
-                    <div className={`flex items-center gap-4 text-sm ${colors.textMuted}`}>
-                      <span className="flex items-center gap-1">
-                        <Eye className="h-4 w-4" />
-                        {topic.views.toLocaleString()}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <MessageSquare className="h-4 w-4" />
-                        {topic.replies}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <ThumbsUp className="h-4 w-4" />
-                        {topic.likes}
-                      </span>
-                    </div>
-                    <span className={`text-xs ${colors.textMuted}`}>
-                      最后回复: {topic.lastReply}
+                    {topic.title}
+                  </h3>
+                </div>
+
+                {/* Mobile: Tags + Details inline */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className={`rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-neutral-800 dark:text-neutral-400`}
+                  >
+                    {topic.category}
+                  </span>
+                  {topic.tags.map((tag) => (
+                    <span key={tag} className={`text-xs ${colors.textMuted}`}>
+                      #{tag}
                     </span>
-                  </div>
+                  ))}
                 </div>
               </div>
-            </article>
+
+              {/* Middle: Avatar Group (Desktop Only) */}
+              <div className="relative hidden h-8 w-48 shrink-0 items-center justify-end md:flex">
+                {/* Slot 1: Author */}
+                <div
+                  className="z-30 -ml-3 h-8 w-8 overflow-hidden rounded-full border-2 border-white dark:border-[#0F171E]"
+                  title={`楼主: ${topic.author.name}`}
+                >
+                  <img
+                    src={topic.author.avatar}
+                    alt={topic.author.name}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                {/* Slots 2-4: Participants */}
+                {topic.participants.slice(0, 3).map((p, index) => (
+                  <div
+                    key={p.id}
+                    className="z-20 -ml-3 h-8 w-8 overflow-hidden rounded-full border-2 border-white dark:border-[#0F171E]"
+                    style={{ zIndex: 20 - index }}
+                    title={`参与者: ${p.name}`}
+                  >
+                    <img src={p.avatar} alt={p.name} className="h-full w-full object-cover" />
+                  </div>
+                ))}
+                {/* Slot 5: Last Replier */}
+                <div
+                  className="z-10 -ml-3 h-8 w-8 overflow-hidden rounded-full border-2 border-white dark:border-[#0F171E]"
+                  title={`最新回复: ${topic.lastReplier.name}`}
+                >
+                  <img
+                    src={topic.lastReplier.avatar}
+                    alt={topic.lastReplier.name}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
+
+              {/* Right: Stats (Desktop) */}
+              <div className="ml-4 hidden shrink-0 items-center gap-6 md:flex">
+                <div className="flex w-16 flex-col items-center">
+                  <span
+                    className={`text-base font-bold ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
+                  >
+                    {topic.replies}
+                  </span>
+                </div>
+                <div className="flex w-16 flex-col items-center">
+                  <span className={`text-base font-medium ${colors.textSecondary}`}>
+                    {topic.views > 9999 ? (topic.views / 10000).toFixed(1) + "w" : topic.views}
+                  </span>
+                </div>
+                <div className={`text-sm ${colors.textSecondary} w-20 pr-2 text-right`}>
+                  {topic.lastReplyTime}
+                </div>
+              </div>
+
+              {/* Mobile Stats (Right side in Mobile view) */}
+              <div className="ml-2 flex shrink-0 flex-col items-end gap-1 md:hidden">
+                <img
+                  src={topic.lastReplier.avatar}
+                  alt="Last"
+                  className="mb-1 h-6 w-6 rounded-full"
+                />
+                <div className="flex items-center gap-1">
+                  <MessageSquare
+                    className={`h-3 w-3 ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
+                  />
+                  <span
+                    className={`text-sm font-bold ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
+                  >
+                    {topic.replies}
+                  </span>
+                </div>
+                <span className="text-xs text-gray-500">{topic.lastReplyTime}</span>
+              </div>
+            </div>
           ))
         )}
       </div>
