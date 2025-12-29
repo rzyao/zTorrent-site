@@ -27,15 +27,18 @@
  */
 
 // 导出布局组件
-export { ForumLayout, ForumHeader, ForumSidebar } from "./layouts";
-export type { ForumOutletContext } from "./layouts";
+export { ForumLayout } from "./layouts/ForumLayout";
+export type { ForumOutletContext } from "./layouts/ForumLayout";
 
 // 导出页面组件
-export { ForumHomePage, TopicDetailPage, CategoryPage, CreateTopicPage } from "./pages";
+export { ForumHomePage } from "./pages/ForumHomePage";
+// export { TopicDetailPage } from "./pages/TopicDetailPage";
+export { CategoryPage } from "./pages/CategoryPage";
+export { CreateTopicPage } from "./pages/CreateTopicPage";
 
 // 导出共享组件
-export { ForumList } from "./components/ForumList";
-export { TopicDetail } from "./components/TopicDetail";
+export { ForumList } from "./pages/ForumList";
+export { TopicDetail } from "./pages/TopicDetail";
 
 // 导出主题上下文
 export { ForumThemeProvider, useForumTheme } from "./context/ForumThemeContext";

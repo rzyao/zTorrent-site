@@ -1,7 +1,7 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
-import { ForumList } from "../components/ForumList";
-import { type ForumOutletContext } from "../layouts";
+import { ForumList } from "./ForumList";
+import { type ForumOutletContext } from "../layouts/ForumLayout";
 
 /**
  * 分类页面
@@ -10,6 +10,7 @@ import { type ForumOutletContext } from "../layouts";
 export function CategoryPage() {
   const { categoryId } = useParams<{ categoryId: string }>();
   const { searchQuery } = useOutletContext<ForumOutletContext>();
+  const navigate = useNavigate();
 
   if (!categoryId) {
     return <div className="flex h-64 items-center justify-center text-neutral-400">分类不存在</div>;
@@ -22,7 +23,7 @@ export function CategoryPage() {
         selectedCategory={categoryId}
         searchQuery={searchQuery}
         onTopicClick={(topicId) => {
-          console.log("Navigate to topic:", topicId);
+          navigate(`/forum/topic/${topicId}`);
         }}
       />
     </div>

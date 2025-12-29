@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
 import { useState, useCallback } from "react";
-import { Header } from "../components/Header";
-import { Sidebar } from "../components/Sidebar";
-import { MobileSidebarDrawer } from "../components/MobileSidebarDrawer";
+import { Header } from "./Header";
+import { Sidebar } from "./Sidebar";
+import { MobileSidebarDrawer } from "./MobileSidebarDrawer";
 import { ForumThemeProvider, useForumTheme } from "../context/ForumThemeContext";
 
 /**
@@ -26,6 +26,7 @@ function ForumLayoutInner() {
 
   return (
     <div
+      id="forum-scroll-container"
       className={`h-screen overflow-y-scroll ${mainScrollbarClass} ${colors.pageBg} transition-colors duration-200`}
     >
       {/* 顶部导航栏 - 传入移动端菜单控制回调 */}

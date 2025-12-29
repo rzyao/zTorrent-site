@@ -13,19 +13,19 @@ const AdultPage = lazy(() => import("@/pages/Adult/index.tsx"));
 const TorrentsPage = lazy(() => import("@/pages/TorrentsList/index.tsx"));
 // 论坛布局与页面 (独立路由系统)
 const ForumLayout = lazy(() =>
-  import("@/pages/Forums/layouts").then((m) => ({ default: m.ForumLayout })),
+  import("@/pages/Forums/layouts/ForumLayout").then((m) => ({ default: m.ForumLayout })),
 );
 const ForumHomePage = lazy(() =>
-  import("@/pages/Forums/pages").then((m) => ({ default: m.ForumHomePage })),
+  import("@/pages/Forums/pages/ForumHomePage").then((m) => ({ default: m.ForumHomePage })),
 );
-const TopicDetailPage = lazy(() =>
-  import("@/pages/Forums/pages").then((m) => ({ default: m.TopicDetailPage })),
+const TopicDetail = lazy(() =>
+  import("@/pages/Forums/pages/TopicDetail/index").then((m) => ({ default: m.TopicDetail })),
 );
 const CategoryPage = lazy(() =>
-  import("@/pages/Forums/pages").then((m) => ({ default: m.CategoryPage })),
+  import("@/pages/Forums/pages/CategoryPage").then((m) => ({ default: m.CategoryPage })),
 );
 const CreateTopicPage = lazy(() =>
-  import("@/pages/Forums/pages").then((m) => ({ default: m.CreateTopicPage })),
+  import("@/pages/Forums/pages/CreateTopicPage").then((m) => ({ default: m.CreateTopicPage })),
 );
 const SubtitlesPage = lazy(() => import("@/pages/Subtitles/index.tsx"));
 const RankingPage = lazy(() => import("@/pages/RankingPage.tsx"));
@@ -218,7 +218,7 @@ export default function AppRoutes() {
           {/* 最新发布 */}
           <Route path="latest" element={<ForumHomePage />} />
           {/* 话题详情 */}
-          <Route path="topic/:topicId" element={<TopicDetailPage />} />
+          <Route path="topic/:topicId" element={<TopicDetail />} />
           {/* 分类页面 */}
           <Route path="category/:categoryId" element={<CategoryPage />} />
           {/* 标签页面 */}

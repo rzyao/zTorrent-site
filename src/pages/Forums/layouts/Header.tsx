@@ -1,5 +1,6 @@
 import { Search, MessageSquare, Bell, User, Menu, Sun, Moon } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useForumTheme } from "../context/ForumThemeContext";
 
 interface HeaderProps {
@@ -91,11 +92,12 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
               <User className={`h-5 w-5 ${colors.textSecondary}`} />
             </button>
 
-            <button
+            <Link
+              to="/forum/create"
               className={`hidden rounded-lg px-4 py-2 transition-colors sm:block ${colors.buttonPrimary}`}
             >
               发布话题
-            </button>
+            </Link>
           </div>
         </div>
 
