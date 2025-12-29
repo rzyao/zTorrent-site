@@ -51,7 +51,7 @@ export function ForumHeader({ onSearch, searchQuery }: ForumHeaderProps) {
                 className={`flex h-10 w-10 items-center justify-center rounded-xl ${
                   theme === "dark"
                     ? "bg-amber-500/20"
-                    : "bg-gradient-to-br from-blue-500 to-purple-600"
+                    : "bg-linear-to-br from-blue-500 to-purple-600"
                 }`}
               >
                 <MessageSquare

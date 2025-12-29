@@ -398,48 +398,46 @@ export function ForumList({ selectedCategory, searchQuery, onTopicClick }: Forum
 
   return (
     <div className="space-y-4">
-      {/* Sort Controls */}
-      <div
-        className={`${colors.cardBg} rounded-xl p-4 ${colors.shadow} border ${colors.cardBorder} transition-colors`}
-      >
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className={`font-semibold ${colors.textPrimary}`}>
-            {selectedCategory === "all" && "全部话题"}
-            {selectedCategory === "trending" && "热门话题"}
-            {selectedCategory === "new" && "最新发布"}
-            {selectedCategory === "tech" && "技术讨论"}
-            {selectedCategory === "design" && "设计创意"}
-            {selectedCategory === "gaming" && "游戏娱乐"}
-            {selectedCategory === "music" && "音乐分享"}
-            {selectedCategory === "learning" && "学习成长"}
-            {selectedCategory === "competition" && "竞赛活动"}
-          </h2>
-          <div className="flex gap-2">
-            {[
-              { id: "latest", label: "最新" },
-              { id: "popular", label: "最热" },
-              { id: "trending", label: "趋势" },
-            ].map((sort) => (
-              <button
-                key={sort.id}
-                onClick={() => setSortBy(sort.id as any)}
-                className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm transition-colors ${
-                  sortBy === sort.id
-                    ? theme === "dark"
-                      ? "bg-amber-500/20 text-amber-400"
-                      : "bg-blue-100 text-blue-700"
-                    : `${colors.buttonSecondary}`
-                }`}
-              >
-                {sort.label}
-              </button>
-            ))}
+      {/* 统一卡片容器：排序控件 + 话题列表 */}
+      <div className="overflow-hidden">
+        {/* Sort Controls */}
+        <div className={`border-b p-4 ${colors.dividerColor} transition-colors`}>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className={`font-semibold ${colors.textPrimary}`}>
+              {selectedCategory === "all" && "全部话题"}
+              {selectedCategory === "trending" && "热门话题"}
+              {selectedCategory === "new" && "最新发布"}
+              {selectedCategory === "tech" && "技术讨论"}
+              {selectedCategory === "design" && "设计创意"}
+              {selectedCategory === "gaming" && "游戏娱乐"}
+              {selectedCategory === "music" && "音乐分享"}
+              {selectedCategory === "learning" && "学习成长"}
+              {selectedCategory === "competition" && "竞赛活动"}
+            </h2>
+            <div className="flex gap-2">
+              {[
+                { id: "latest", label: "最新" },
+                { id: "popular", label: "最热" },
+                { id: "trending", label: "趋势" },
+              ].map((sort) => (
+                <button
+                  key={sort.id}
+                  onClick={() => setSortBy(sort.id as any)}
+                  className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm transition-colors ${
+                    sortBy === sort.id
+                      ? theme === "dark"
+                        ? "bg-amber-500/20 text-amber-400"
+                        : "bg-blue-100 text-blue-700"
+                      : `${colors.buttonSecondary}`
+                  }`}
+                >
+                  {sort.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Topics List Container */}
-      <div className={`overflow-hidden rounded-xl border ${colors.borderColor} ${colors.listBg}`}>
         {/* Table Header (Desktop) */}
         <div
           className={`hidden items-center border-b px-4 py-3 md:flex ${colors.dividerColor} text-sm font-semibold ${colors.textMuted}`}

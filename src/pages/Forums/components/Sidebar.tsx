@@ -83,15 +83,22 @@ const popularTags = [
   { name: "人工智能", count: 1156 },
 ];
 
+/**
+ * 分割线组件
+ */
+function Divider({ className = "" }: { className?: string }) {
+  const { colors } = useForumTheme();
+  return <div className={`border-t ${colors.borderColor} ${className}`} />;
+}
+
 export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
   const { theme, colors } = useForumTheme();
 
   return (
-    <div className="space-y-6">
-      {/* Navigation */}
-      <div
-        className={`${colors.cardBg} rounded-xl p-4 ${colors.shadow} border ${colors.cardBorder} transition-colors`}
-      >
+    // 整体一个大卡片
+    <div className="overflow-hidden transition-colors">
+      {/* 导航模块 */}
+      <div className="p-4">
         <h3 className={`mb-3 text-sm font-semibold ${colors.textPrimary}`}>导航</h3>
         <nav className="space-y-1">
           {categories.map((category) => {
@@ -120,10 +127,11 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
         </nav>
       </div>
 
-      {/* Topics */}
-      <div
-        className={`${colors.cardBg} rounded-xl p-4 ${colors.shadow} border ${colors.cardBorder} transition-colors`}
-      >
+      {/* 分割线 */}
+      <Divider />
+
+      {/* 话题分类模块 */}
+      <div className="p-4">
         <h3 className={`mb-3 text-sm font-semibold ${colors.textPrimary}`}>话题分类</h3>
         <div className="space-y-1">
           {topics.map((topic) => {
@@ -131,7 +139,6 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
             const isActive = selectedCategory === topic.id;
             const iconColor = theme === "dark" ? topic.darkColor : topic.color;
 
-            // 深色模式下，非激活状态的文字颜色需要调整，激活状态下背景也不同
             let buttonClass: string;
             if (isActive) {
               buttonClass = theme === "dark" ? "bg-neutral-700/50" : "bg-gray-50";
@@ -147,19 +154,22 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
               >
                 <div className="flex items-center gap-3">
                   <Icon className={`h-5 w-5 ${iconColor}`} />
-                  <span className={`text-sm ${colors.textSecondary}`}>{topic.name}</span>
+                  <span className={`text-sm ${colors.textSecondary}`}>
+                    {topic.name}
+                    <span className={`ml-1 ${colors.textMuted}`}>({topic.count})</span>
+                  </span>
                 </div>
-                <span className={`text-xs ${colors.textMuted}`}>{topic.count}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Popular Tags */}
-      <div
-        className={`${colors.cardBg} rounded-xl p-4 ${colors.shadow} border ${colors.cardBorder} transition-colors`}
-      >
+      {/* 分割线 */}
+      <Divider />
+
+      {/* 热门标签模块 */}
+      <div className="p-4">
         <h3 className={`mb-3 text-sm font-semibold ${colors.textPrimary}`}>热门标签</h3>
         <div className="flex flex-wrap gap-2">
           {popularTags.map((tag) => (
@@ -177,32 +187,27 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
         </div>
       </div>
 
-      {/* Stats - 社区统计卡片在深色模式下可以保持鲜艳，或者稍微调暗 */}
-      <div
-        className={`rounded-xl p-4 text-white ${theme === "dark" ? "border border-neutral-700/50 bg-neutral-800/40" : "bg-linear-to-br from-blue-500 to-purple-600"}`}
-      >
+      {/* 分割线 */}
+      <Divider />
+
+      {/* 社区统计模块 - 统一样式 */}
+      <div className="p-4">
         <div className="mb-3 flex items-center gap-3">
-          <Users className={`h-6 w-6 ${theme === "dark" ? "text-amber-400" : "text-white"}`} />
-          <h3 className="font-semibold">社区统计</h3>
+          <Users className={`h-5 w-5 ${theme === "dark" ? "text-amber-400" : "text-blue-500"}`} />
+          <h3 className={`text-sm font-semibold ${colors.textPrimary}`}>社区统计</h3>
         </div>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className={theme === "dark" ? "text-neutral-400" : "text-blue-100"}>
-              总用户数
-            </span>
-            <span className="font-semibold">128,456</span>
+            <span className={colors.textSecondary}>总用户数</span>
+            <span className={`font-semibold ${colors.textPrimary}`}>128,456</span>
           </div>
           <div className="flex justify-between">
-            <span className={theme === "dark" ? "text-neutral-400" : "text-blue-100"}>
-              今日活跃
-            </span>
-            <span className="font-semibold">12,345</span>
+            <span className={colors.textSecondary}>今日活跃</span>
+            <span className={`font-semibold ${colors.textPrimary}`}>12,345</span>
           </div>
           <div className="flex justify-between">
-            <span className={theme === "dark" ? "text-neutral-400" : "text-blue-100"}>
-              总帖子数
-            </span>
-            <span className="font-semibold">456,789</span>
+            <span className={colors.textSecondary}>总帖子数</span>
+            <span className={`font-semibold ${colors.textPrimary}`}>456,789</span>
           </div>
         </div>
       </div>

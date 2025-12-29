@@ -14,19 +14,17 @@ function ForumLayoutInner() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { theme } = useForumTheme();
+  const { theme, colors } = useForumTheme();
 
   // 根据主题选择滚动条样式类
   const scrollbarClass = theme === "dark" ? "scrollbar-forum-dark" : "scrollbar-forum-light";
-  const pageBg = theme === "dark" ? "bg-[#0F171E]" : "bg-gray-50";
-
   // 移动端菜单控制回调
   const handleOpenMobileMenu = useCallback(() => setIsMobileMenuOpen(true), []);
   const handleCloseMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
 
   return (
     <div
-      className={`h-screen overflow-y-scroll ${scrollbarClass} ${pageBg} transition-colors duration-200`}
+      className={`h-screen overflow-y-scroll ${scrollbarClass} ${colors.pageBg} transition-colors duration-200`}
     >
       {/* 顶部导航栏 - 传入移动端菜单控制回调 */}
       <Header
@@ -43,12 +41,12 @@ function ForumLayoutInner() {
         onCategoryChange={setSelectedCategory}
       />
 
-      {/* 主体内容区域 */}
-      <div className="mx-auto max-w-7xl px-4 pt-8 pb-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-          {/* 左侧边栏: 桌面端显示，sticky 定位 */}
+      {/* 主体内容区域 - 左侧栏紧贴 header */}
+      <div className="mx-auto max-w-7xl px-4 pb-0 sm:px-6 lg:px-8">
+        <div className={`grid grid-cols-1 gap-8 lg:grid-cols-12 ${colors.listBg}`}>
+          {/* 左侧边栏: 使用纯 CSS 滚动条动画 (linux.do 风格) */}
           <aside
-            className={`${scrollbarClass} hidden lg:sticky lg:top-24 lg:col-span-3 lg:block lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto lg:overscroll-contain`}
+            className={`${scrollbarClass} hidden border-r pr-4 ${colors.borderColor} lg:sticky lg:top-16 lg:col-span-3 lg:block lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto lg:overscroll-contain`}
           >
             <Sidebar selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
           </aside>
