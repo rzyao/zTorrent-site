@@ -2,85 +2,34 @@ import {
   Home,
   TrendingUp,
   Sparkles,
-  Code,
-  Palette,
-  Gamepad2,
-  Music,
-  BookOpen,
-  Trophy,
+  BookOpen, // Fallback icon
   Users,
+  Pencil,
+  Hash,
+  Square,
 } from "lucide-react";
 import { useForumTheme } from "../context/ForumThemeContext";
+import { useForumsCategories } from "../hooks/useForumsCategories";
+import { useForumsTagsQuery } from "../hooks/useForumsTagsQuery";
+import { SidebarCustomizeModal } from "./SidebarCustomizeModal";
+import { useState, useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { UsersService, ForumCategory, ForumTag } from "@/api";
+import { useNavigate } from "react-router-dom";
+
+// Extended types to include ID which might be missing in generated DTOs
+type ExtendedForumCategory = ForumCategory & { id: string };
+type ExtendedForumTag = ForumTag & { id: string };
 
 interface SidebarProps {
   selectedCategory: string;
   onCategoryChange: (category: string) => void;
 }
 
-const categories = [
+const NAV_ITEMS = [
   { id: "all", name: "全部", icon: Home },
   { id: "trending", name: "热门话题", icon: TrendingUp },
   { id: "new", name: "最新发布", icon: Sparkles },
-];
-
-const topics = [
-  {
-    id: "tech",
-    name: "技术讨论",
-    icon: Code,
-    color: "text-blue-600",
-    darkColor: "text-blue-400",
-    count: 1234,
-  },
-  {
-    id: "design",
-    name: "设计创意",
-    icon: Palette,
-    color: "text-pink-600",
-    darkColor: "text-pink-400",
-    count: 856,
-  },
-  {
-    id: "gaming",
-    name: "游戏娱乐",
-    icon: Gamepad2,
-    color: "text-purple-600",
-    darkColor: "text-purple-400",
-    count: 654,
-  },
-  {
-    id: "music",
-    name: "音乐分享",
-    icon: Music,
-    color: "text-green-600",
-    darkColor: "text-green-400",
-    count: 432,
-  },
-  {
-    id: "learning",
-    name: "学习成长",
-    icon: BookOpen,
-    color: "text-orange-600",
-    darkColor: "text-orange-400",
-    count: 987,
-  },
-  {
-    id: "competition",
-    name: "竞赛活动",
-    icon: Trophy,
-    color: "text-yellow-600",
-    darkColor: "text-yellow-400",
-    count: 321,
-  },
-];
-
-const popularTags = [
-  { name: "React", count: 2345 },
-  { name: "TypeScript", count: 1890 },
-  { name: "UI设计", count: 1567 },
-  { name: "Python", count: 1423 },
-  { name: "前端开发", count: 1289 },
-  { name: "人工智能", count: 1156 },
 ];
 
 /**
@@ -93,124 +42,303 @@ function Divider({ className = "" }: { className?: string }) {
 
 export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
   const { theme, colors } = useForumTheme();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  // Modals state
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+
+  // 1. Fetch Data
+  const { data } = useForumsCategories();
+  const allCategories = (data || []) as ExtendedForumCategory[];
+
+  const { data: tagsData } = useForumsTagsQuery();
+  const allTags = (tagsData || []) as ExtendedForumTag[];
+
+  // 2. Fetch User Customization Preferences
+  const { data: userPreferences, isLoading: isPrefsLoading } = useQuery({
+    queryKey: ["user", "preferences"],
+    queryFn: async () => {
+      try {
+        const response = await UsersService.usersPreferencesControllerGet();
+        return response.data;
+      } catch (err) {
+        // Fallback or ignore if not logged in
+        return null;
+      }
+    },
+    staleTime: 1000 * 60 * 60, // 1 hour
+    retry: false,
+  });
+
+  // 3. Mutation to save preferences
+  const savePreferencesMutation = useMutation({
+    mutationFn: (data: { forumSidebarCategories?: string[]; forumSidebarTags?: string[] }) => {
+      return UsersService.usersPreferencesControllerSave(data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", "preferences"] });
+    },
+  });
+
+  // 4. Compute displayed items based on preferences
+  const displayedCategories = useMemo(() => {
+    // If no prefs (visitor), show top 5 or all? Let's show all for now or top 6
+    // If prefs exist but empty list, maybe means "show nothing" or "default"?
+    // PRD says: "If user clears selection: show default recommended".
+    // Let's assume if array is undefined/null => usage default. If empty array => show nothing.
+
+    // Default logic: Show all if no preference set
+    // Also if user preferences is empty array (user unchecked everything), show default recommended
+    const sidebarCategories = userPreferences?.forumSidebarCategories;
+    if (!sidebarCategories || sidebarCategories.length === 0) {
+      return allCategories.slice(0, 10); // Show max 10/all by default
+    }
+
+    return allCategories.filter((cat) => sidebarCategories.includes(cat.id));
+  }, [allCategories, userPreferences?.forumSidebarCategories]);
+
+  const displayedTags = useMemo(() => {
+    const sidebarTags = userPreferences?.forumSidebarTags;
+    if (!sidebarTags || sidebarTags.length === 0) {
+      return allTags.slice(0, 20); // Show top 20 by default
+    }
+
+    return allTags.filter((tag) => sidebarTags.includes(tag.id));
+  }, [allTags, userPreferences?.forumSidebarTags]);
+
+  // Handlers
+  const handleSaveCategories = (ids: string[]) => {
+    // If user clears all, maybe we want to save empty array.
+    savePreferencesMutation.mutate({ forumSidebarCategories: ids });
+  };
+
+  const handleSaveTags = (ids: string[]) => {
+    savePreferencesMutation.mutate({ forumSidebarTags: ids });
+  };
+
+  const handleResetCategories = () => {
+    // Reset means setting to undefined so it falls back to default logic?
+    // Or explicitly setting the "default" ids.
+    // API DTO says optional. If we send null/undefined maybe it merges?
+    // Usually usersPreferencesControllerSave is a PATCH (merge).
+    // To "reset" we probably need to know what the default IDs are or specific logic.
+    // For now, let's just select top 10 as "Default".
+    const defaultIds = allCategories.slice(0, 10).map((c) => c.id);
+    savePreferencesMutation.mutate({ forumSidebarCategories: defaultIds });
+    setIsCategoryModalOpen(false);
+  };
+
+  const handleResetTags = () => {
+    const defaultIds = allTags.slice(0, 20).map((t) => t.id);
+    savePreferencesMutation.mutate({ forumSidebarTags: defaultIds });
+    setIsTagModalOpen(false);
+  };
 
   return (
     // 整体一个大卡片
     <div className="overflow-hidden transition-colors">
       {/* 导航模块 */}
       <div className="p-4">
-        <h3 className={`mb-3 text-sm font-semibold ${colors.textPrimary}`}>导航</h3>
+        <h3 className={`mb-3 text-xs font-semibold tracking-wider uppercase ${colors.textMuted}`}>
+          导航
+        </h3>
         <nav className="space-y-1">
-          {categories.map((category) => {
-            const Icon = category.icon;
-            const isActive = selectedCategory === category.id;
+          {NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            const isActive = selectedCategory === item.id;
 
             let buttonClass: string;
             if (isActive) {
               buttonClass =
-                theme === "dark" ? "bg-amber-500/20 text-amber-400" : "bg-blue-50 text-blue-600";
+                theme === "dark" ? "bg-amber-500/10 text-amber-500" : "bg-blue-50 text-blue-600";
             } else {
               buttonClass = `${colors.textSecondary} ${colors.buttonHover}`;
             }
 
             return (
               <button
-                key={category.id}
-                onClick={() => onCategoryChange(category.id)}
+                key={item.id}
+                onClick={() => onCategoryChange(item.id)}
                 className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors ${buttonClass}`}
               >
-                <Icon className="h-5 w-5" />
-                <span className="text-sm">{category.name}</span>
+                <Icon className="h-4 w-4" />
+                <span className="text-sm font-medium">{item.name}</span>
               </button>
             );
           })}
         </nav>
       </div>
 
-      {/* 分割线 */}
       <Divider />
 
       {/* 话题分类模块 */}
-      <div className="p-4">
-        <h3 className={`mb-3 text-sm font-semibold ${colors.textPrimary}`}>话题分类</h3>
-        <div className="space-y-1">
-          {topics.map((topic) => {
-            const Icon = topic.icon;
-            const isActive = selectedCategory === topic.id;
-            const iconColor = theme === "dark" ? topic.darkColor : topic.color;
+      <div className="group p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className={`text-xs font-semibold tracking-wider uppercase ${colors.textMuted}`}>
+            话题分类
+          </h3>
+          {userPreferences && (
+            <button
+              onClick={() => setIsCategoryModalOpen(true)}
+              className={`rounded p-1 text-neutral-500 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-neutral-200 dark:hover:bg-neutral-800`}
+              title="编辑分类"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+
+        <div className="space-y-0.5">
+          {displayedCategories.map((cat) => {
+            const isActive = selectedCategory === cat.id;
 
             let buttonClass: string;
             if (isActive) {
-              buttonClass = theme === "dark" ? "bg-neutral-700/50" : "bg-gray-50";
+              buttonClass =
+                theme === "dark" ? "bg-neutral-800 text-neutral-200" : "bg-gray-100 text-gray-900";
             } else {
-              buttonClass = colors.buttonHover;
+              buttonClass = `${colors.textSecondary} ${colors.buttonHover}`;
             }
 
             return (
               <button
-                key={topic.id}
-                onClick={() => onCategoryChange(topic.id)}
+                key={cat.id}
+                onClick={() => onCategoryChange(cat.id)}
                 className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-colors ${buttonClass}`}
               >
                 <div className="flex items-center gap-3">
-                  <Icon className={`h-5 w-5 ${iconColor}`} />
-                  <span className={`text-sm ${colors.textSecondary}`}>
-                    {topic.name}
-                    <span className={`ml-1 ${colors.textMuted}`}>({topic.count})</span>
-                  </span>
+                  {/* Category Color Block */}
+                  {cat.color ? (
+                    <span
+                      className="h-3 w-3 rounded-[2px]"
+                      style={{ backgroundColor: cat.color }}
+                    />
+                  ) : (
+                    <Square className="h-3 w-3 text-gray-400" />
+                  )}
+                  <span className="text-sm">{cat.name}</span>
                 </div>
+                {/* 暂时没有 count 字段在 API 返回中，若有可显示 */}
+                {/* <span className={`text-xs ${colors.textMuted}`}>{cat.count}</span> */}
               </button>
             );
           })}
+
+          {displayedCategories.length === 0 && (
+            <div className={`px-3 py-2 text-sm italic ${colors.textMuted}`}>未选择分类</div>
+          )}
         </div>
       </div>
 
-      {/* 分割线 */}
       <Divider />
 
       {/* 热门标签模块 */}
-      <div className="p-4">
-        <h3 className={`mb-3 text-sm font-semibold ${colors.textPrimary}`}>热门标签</h3>
-        <div className="flex flex-wrap gap-2">
-          {popularTags.map((tag) => (
+      <div className="group p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className={`text-xs font-semibold tracking-wider uppercase ${colors.textMuted}`}>
+            热门标签
+          </h3>
+          {userPreferences && (
             <button
-              key={tag.name}
-              className={`cursor-pointer rounded-full px-3 py-1.5 text-xs transition-colors ${
+              onClick={() => setIsTagModalOpen(true)}
+              className={`rounded p-1 text-neutral-500 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-neutral-200 dark:hover:bg-neutral-800`}
+              title="编辑标签"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {displayedTags.map((tag) => (
+            <button
+              key={tag.id}
+              onClick={() => {
+                // Navigate to search or filter by tag?
+                // For now assuming onCategoryChange handles ID or we assume specific route
+                // Usually tag click filters list.
+                // Implementation specific: passing tag id as 'category' might be wrong if onCategoryChange only expects categories.
+                // But SidebarProps says `onCategoryChange`. The parent handles routing.
+                // Ideally we should navigate to `/forum/tag/:id`.
+                navigate(`/forum/tag/${tag.id}`);
+              }}
+              className={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-sm transition-colors ${
                 theme === "dark"
-                  ? "bg-neutral-900/30 text-neutral-300 hover:bg-neutral-800/50"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-neutral-800 text-neutral-400 hover:bg-neutral-700 hover:text-neutral-200"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900"
               }`}
             >
-              #{tag.name} <span className={colors.textMuted}>({tag.count})</span>
+              <Hash className="h-3 w-3 opacity-50" />
+              {tag.name}
             </button>
           ))}
+          {displayedTags.length === 0 && (
+            <div className={`text-sm italic ${colors.textMuted}`}>未选择标签</div>
+          )}
         </div>
       </div>
 
-      {/* 分割线 */}
       <Divider />
 
       {/* 社区统计模块 - 统一样式 */}
       <div className="p-4">
-        <div className="mb-3 flex items-center gap-3">
-          <Users className={`h-5 w-5 ${theme === "dark" ? "text-amber-400" : "text-blue-500"}`} />
-          <h3 className={`text-sm font-semibold ${colors.textPrimary}`}>社区统计</h3>
+        <div className="mb-3 flex items-center gap-2">
+          <Users className={`h-4 w-4 ${theme === "dark" ? "text-amber-500" : "text-blue-600"}`} />
+          <h3 className={`text-xs font-semibold tracking-wider uppercase ${colors.textMuted}`}>
+            社区统计
+          </h3>
         </div>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className={colors.textSecondary}>总用户数</span>
-            <span className={`font-semibold ${colors.textPrimary}`}>128,456</span>
+            <span className={`font-medium ${colors.textPrimary}`}>128,456</span>
           </div>
           <div className="flex justify-between">
             <span className={colors.textSecondary}>今日活跃</span>
-            <span className={`font-semibold ${colors.textPrimary}`}>12,345</span>
+            <span className={`font-medium ${colors.textPrimary}`}>12,345</span>
           </div>
           <div className="flex justify-between">
             <span className={colors.textSecondary}>总帖子数</span>
-            <span className={`font-semibold ${colors.textPrimary}`}>456,789</span>
+            <span className={`font-medium ${colors.textPrimary}`}>456,789</span>
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <SidebarCustomizeModal
+        title="编辑类别导航"
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        items={allCategories.map((c) => ({
+          id: c.id,
+          name: c.name,
+          description: c.description,
+          color: c.color,
+        }))}
+        selectedIds={
+          userPreferences?.forumSidebarCategories || displayedCategories.map((c) => c.id)
+        }
+        onSave={handleSaveCategories}
+        onReset={handleResetCategories}
+        isLoading={savePreferencesMutation.isPending}
+      />
+
+      <SidebarCustomizeModal
+        title="编辑标签导航"
+        isOpen={isTagModalOpen}
+        onClose={() => setIsTagModalOpen(false)}
+        items={allTags.map((t) => ({
+          id: t.id,
+          name: t.name,
+          // Tags might not have color/desc properly mapped in simple DTO but let's pass what we have
+        }))}
+        selectedIds={userPreferences?.forumSidebarTags || displayedTags.map((t) => t.id)}
+        onSave={handleSaveTags}
+        onReset={handleResetTags}
+        isLoading={savePreferencesMutation.isPending}
+      />
     </div>
   );
 }

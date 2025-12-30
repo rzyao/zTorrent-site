@@ -3,6 +3,7 @@ export type Theme = "light" | "dark";
 export interface ThemeColors {
   // 基础布局
   pageBg: string;
+  headerBg: string;
   borderColor: string;
   dividerColor: string;
 
@@ -38,6 +39,7 @@ export interface ThemeColors {
 export const themeConfig: Record<Theme, ThemeColors> = {
   light: {
     pageBg: "bg-gray-50",
+    headerBg: "bg-white",
     borderColor: "border-gray-200",
     dividerColor: "border-gray-100",
 
@@ -67,7 +69,8 @@ export const themeConfig: Record<Theme, ThemeColors> = {
   },
   dark: {
     // 首页深色风格
-    pageBg: "bg-[#0F171E]/60",
+    pageBg: "bg-[#111111]",
+    headerBg: "bg-[#111111]",
     // pageBg: "bg-neutral-900",
     borderColor: "border-neutral-700/50",
     dividerColor: "border-neutral-600/60",
@@ -81,7 +84,7 @@ export const themeConfig: Record<Theme, ThemeColors> = {
     cardHover: "hover:bg-neutral-800/60 transition-colors",
     cardBorder: "border-neutral-700/50",
 
-    listBg: "bg-neutral-800/40 backdrop-blur-md",
+    listBg: "bg-[#222222]",
     listHover: "hover:bg-neutral-800/50 transition-colors",
 
     inputBg: "bg-neutral-800",

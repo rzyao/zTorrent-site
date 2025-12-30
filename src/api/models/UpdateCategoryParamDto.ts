@@ -2,15 +2,15 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type CreateCategoryDto = {
+export type UpdateCategoryParamDto = {
     /**
      * Category name
      */
-    name: string;
+    name?: string;
     /**
      * URL slug
      */
-    slug: string;
+    slug?: string;
     /**
      * Description
      */
@@ -31,5 +31,9 @@ export type CreateCategoryDto = {
      * Is active
      */
     isActive?: boolean;
+    /**
+     * 分类唯一标识符
+     */
+    id: string;
 };
 

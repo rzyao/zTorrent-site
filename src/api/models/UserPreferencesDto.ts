@@ -15,6 +15,14 @@ export type UserPreferencesDto = {
      * 默认展示的影片类型 ID 列表
      */
     defaultMovieCategories: Array<string>;
+    /**
+     * 论坛侧边栏展示的分类 ID 列表
+     */
+    forumSidebarCategories: Array<string>;
+    /**
+     * 论坛侧边栏展示的标签 ID 列表
+     */
+    forumSidebarTags: Array<string>;
 };
 export namespace UserPreferencesDto {
     export enum language {

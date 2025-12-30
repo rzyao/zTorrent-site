@@ -1,35 +1,61 @@
-import { categoryColors, suggestedTopics } from "../constants";
+import { useNavigate } from "react-router-dom";
+import { useForumsTopicsQuery } from "../../../hooks/useForumsTopicsQuery";
+import { useForumTheme } from "../../../context/ForumThemeContext";
 
 interface SuggestedTopicsProps {
   theme: string;
+  categoryId?: string;
+  currentTopicId?: string;
 }
 
-export const SuggestedTopics = ({ theme }: SuggestedTopicsProps) => {
+export const SuggestedTopics = ({ theme, categoryId, currentTopicId }: SuggestedTopicsProps) => {
+  const navigate = useNavigate();
+  const { colors } = useForumTheme();
+
+  // 查询相关话题 (同分类)
+  // 注意：我们这里用 "replies_desc" 或 "latest" 来模拟推荐
+  const { data: topicsData } = useForumsTopicsQuery({
+    categoryId: categoryId || "all",
+    page: 1,
+    limit: 5,
+    sortBy: "popular", // 推荐一些热门的
+  });
+
+  const topics = topicsData?.items?.filter((t) => t.id !== currentTopicId).slice(0, 5) || [];
+
+  if (topics.length === 0) return null;
+
   return (
     <div className="mt-10">
       <h3 className={`mb-3 text-[19px] font-bold text-[#DDDDDD] dark:text-neutral-100`}>
-        Suggested Topics
+        建议话题
       </h3>
       <div className="overflow-hidden">
         <div
           className={`grid grid-cols-[auto_1fr_auto_auto_auto] gap-x-4 py-2 text-[15px] font-medium text-[#919191] dark:border-neutral-700`}
         >
           <div className="w-8"></div> {/* Avatar Spacer */}
-          <div className="pl-2">Topic</div>
-          <div className="w-16 text-center">Replies</div>
-          <div className="w-16 text-center">Views</div>
-          <div className="w-16 text-center">Activity</div>
+          <div className="pl-2">话题</div>
+          <div className="w-16 text-center">回复</div>
+          <div className="w-16 text-center">浏览</div>
+          <div className="w-16 text-center">活动</div>
         </div>
-        {suggestedTopics.map((topic, index) => (
+        {topics.map((topic) => (
           <div
-            key={index}
+            key={topic.id}
+            onClick={() => navigate(`/forum/topic/${topic.id}`)}
             className={`grid grid-cols-[auto_1fr_auto_auto_auto] items-center gap-x-4 border-b border-[#e9e9e9] py-3 text-sm transition-colors dark:border-neutral-700 ${theme === "dark" ? "hover:bg-white/5" : "hover:bg-[#f9f9f9]"} cursor-pointer`}
           >
             {/* Posters Column */}
             <div className="flex w-8 justify-center">
-              {topic.posters && topic.posters[0] && (
-                <img src={topic.posters[0]} alt="poster" className="h-6 w-6 rounded-full" />
-              )}
+              <img
+                src={
+                  topic.author?.avatar ||
+                  `https://api.dicebear.com/7.x/avataaars/svg?seed=${topic.author?.username}`
+                }
+                alt="poster"
+                className="h-6 w-6 rounded-full"
+              />
             </div>
             <div className="min-w-0 pl-2">
               <div
@@ -42,22 +68,26 @@ export const SuggestedTopics = ({ theme }: SuggestedTopicsProps) => {
                 <span className="flex items-center gap-1">
                   <span
                     className="h-[9px] w-[9px]"
-                    style={{ backgroundColor: categoryColors[topic.category] || "#999" }}
+                    style={{ backgroundColor: topic.category?.color || "#999" }}
                   ></span>
-                  <span className="text-[13px] font-bold text-[#919191]">{topic.category}</span>
+                  <span className="text-[13px] font-bold text-[#919191]">
+                    {topic.category?.name || "常规"}
+                  </span>
                 </span>
                 {topic.tags &&
                   topic.tags.map((t) => (
-                    <span key={t} className="ml-1 flex items-center text-[11px] text-[#919191]">
+                    <span key={t.id} className="ml-1 flex items-center text-[11px] text-[#919191]">
                       <span className="mr-0.5 inline-block h-1 w-1 rounded-full bg-[#919191]"></span>
-                      {t}
+                      {t.name}
                     </span>
                   ))}
               </div>
             </div>
-            <div className={`w-16 text-center text-[#919191]`}>{topic.replies}</div>
+            <div className={`w-16 text-center text-[#919191]`}>{topic.reply_count}</div>
             <div className={`w-16 text-center text-[#919191]`}>{topic.views}</div>
-            <div className={`w-16 text-center text-[#919191]`}>{topic.activity}</div>
+            <div className={`w-16 text-center text-[#919191]`}>
+              {topic.last_reply_at ? new Date(topic.last_reply_at).toLocaleDateString() : ""}
+            </div>
           </div>
         ))}
       </div>

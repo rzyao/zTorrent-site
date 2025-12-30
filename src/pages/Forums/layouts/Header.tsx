@@ -27,7 +27,7 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
 
   return (
     <header
-      className={`${theme === "light" ? "bg-white" : "bg-[#0F171E]/80 backdrop-blur-md"} border-b ${colors.borderColor} sticky top-0 z-50 transition-colors duration-200`}
+      className={`shrink-0 ${colors.headerBg} border-b ${colors.borderColor} z-50 transition-colors duration-200`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">

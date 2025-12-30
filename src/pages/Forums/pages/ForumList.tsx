@@ -1,14 +1,17 @@
-import { MessageSquare, Eye, Clock, Pin, TrendingUp, MoreHorizontal } from "lucide-react";
+import { MessageSquare, Eye, Pin, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { useForumTheme } from "../context/ForumThemeContext";
+import { useForumsTopicsQuery, ExtendedApiTopic } from "../hooks/useForumsTopicsQuery";
+import { useNavigate } from "react-router-dom";
 
+// UI 类型定义
 interface Participant {
   id: string;
   avatar: string;
   name: string;
 }
 
-interface Topic {
+interface UiTopic {
   id: string;
   title: string;
   author: Participant;
@@ -17,13 +20,13 @@ interface Topic {
   excerpt: string;
   views: number;
   replies: number;
-  likes: number; // Keep in interface but don't display in list
+  likes: number;
   isPinned: boolean;
   isTrending: boolean;
   createdAt: string;
   lastReplyTime: string;
-  participants: Participant[]; // Frequent repliers (Slot 2-4)
-  lastReplier: Participant; // Slot 5
+  participants: Participant[];
+  lastReplier: Participant;
 }
 
 interface ForumListProps {
@@ -32,369 +35,91 @@ interface ForumListProps {
   onTopicClick: (id: string) => void;
 }
 
-const mockParticipants = [
-  { id: "p1", name: "User1", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=p1" },
-  { id: "p2", name: "User2", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=p2" },
-  { id: "p3", name: "User3", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=p3" },
-  { id: "p4", name: "User4", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=p4" },
-];
+/**
+ * 格式化日期 (简化版)
+ */
+function formatDate(dateStr: string | undefined): string {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
 
-const mockTopics: Topic[] = [
-  {
-    id: "1",
-    title: "React 19 新特性深度解析 - Server Components 实战指南",
+  if (diffMins < 60) return `${diffMins}分钟前`;
+  if (diffHours < 24) return `${diffHours}小时前`;
+  if (diffDays < 30) return `${diffDays}天前`;
+  return date.toLocaleDateString();
+}
+
+/**
+ * 将 API 数据转换为 UI 数据
+ */
+function transformTopic(apiTopic: ExtendedApiTopic): UiTopic {
+  const author = apiTopic.author || { id: "unknown", username: "unknown", avatar: "" };
+  const participants = (apiTopic.participants || []).map((p) => ({
+    id: p.id,
+    name: p.username,
+    avatar: p.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.username}`,
+  }));
+
+  const lastReplierApi = apiTopic.last_replier;
+  const lastReplier = lastReplierApi
+    ? {
+        id: lastReplierApi.id,
+        name: lastReplierApi.username,
+        avatar:
+          lastReplierApi.avatar ||
+          `https://api.dicebear.com/7.x/avataaars/svg?seed=${lastReplierApi.username}`,
+      }
+    : {
+        id: author.id,
+        name: author.username,
+        avatar:
+          author.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${author.username}`,
+      };
+
+  return {
+    id: apiTopic.id,
+    title: apiTopic.title,
     author: {
-      id: "a1",
-      name: "前端架构师",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=1",
+      id: author.id,
+      name: author.username,
+      avatar: author.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${author.username}`,
     },
-    category: "tech",
-    tags: ["React", "TypeScript", "前端开发"],
-    excerpt: "React 19 带来了革命性的 Server Components...",
-    views: 12456,
-    replies: 234,
-    likes: 567,
-    isPinned: true,
-    isTrending: true,
-    createdAt: "2小时前",
-    lastReplyTime: "5分钟前",
-    participants: mockParticipants.slice(0, 3),
-    lastReplier: mockParticipants[0],
-  },
-  {
-    id: "2",
-    title: "如何设计一个现代化的用户界面？分享我的设计心得",
-    author: {
-      id: "a2",
-      name: "UI设计师",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=2",
-    },
-    category: "design",
-    tags: ["UI设计", "Figma", "用户体验"],
-    excerpt: "好的设计不仅仅是美观...",
-    views: 8934,
-    replies: 156,
-    likes: 423,
-    isPinned: false,
-    isTrending: true,
-    createdAt: "5小时前",
-    lastReplyTime: "15分钟前",
-    participants: mockParticipants.slice(1, 4),
-    lastReplier: mockParticipants[1],
-  },
-  {
-    id: "3",
-    title: "Python 数据分析入门教程 - 从零开始学习 Pandas",
-    author: {
-      id: "a3",
-      name: "数据科学家",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=3",
-    },
-    category: "tech",
-    tags: ["Python", "数据分析", "Pandas"],
-    excerpt: "Pandas 是 Python 数据分析的核心库...",
-    views: 15678,
-    replies: 289,
-    likes: 789,
-    isPinned: true,
-    isTrending: false,
-    createdAt: "1天前",
-    lastReplyTime: "30分钟前",
-    participants: mockParticipants.slice(0, 2),
-    lastReplier: mockParticipants[2],
-  },
-  {
-    id: "4",
-    title: "2024年最值得玩的独立游戏推荐",
-    author: {
-      id: "a4",
-      name: "游戏玩家",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=4",
-    },
-    category: "gaming",
-    tags: ["游戏", "独立游戏", "推荐"],
-    excerpt: "今年涌现了很多优秀的独立游戏...",
-    views: 6543,
-    replies: 98,
-    likes: 234,
-    isPinned: false,
-    isTrending: true,
-    createdAt: "8小时前",
-    lastReplyTime: "1小时前",
-    participants: mockParticipants.slice(2, 4),
-    lastReplier: mockParticipants[3],
-  },
-  {
-    id: "5",
-    title: "分享一些提升编程效率的 VS Code 插件",
-    author: {
-      id: "a5",
-      name: "全栈工程师",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=5",
-    },
-    category: "tech",
-    tags: ["VSCode", "工具", "效率"],
-    excerpt: "工欲善其事必先利其器...",
-    views: 9876,
-    replies: 187,
-    likes: 456,
-    isPinned: false,
-    isTrending: false,
-    createdAt: "12小时前",
-    lastReplyTime: "2小时前",
-    participants: mockParticipants.slice(0, 1),
-    lastReplier: mockParticipants[0],
-  },
-  {
-    id: "6",
-    title: "AI绘画工具对比：Midjourney vs Stable Diffusion",
-    author: {
-      id: "a6",
-      name: "AI爱好者",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=6",
-    },
-    category: "design",
-    tags: ["人工智能", "AI绘画", "设计"],
-    excerpt: "详细对比两款最流行的AI绘画工具...",
-    views: 11234,
-    replies: 203,
-    likes: 567,
-    isPinned: false,
-    isTrending: true,
-    createdAt: "1天前",
-    lastReplyTime: "45分钟前",
-    participants: mockParticipants.slice(1, 3),
-    lastReplier: mockParticipants[1],
-  },
-  {
-    id: "7",
-    title: "如何准备前端面试？我的面试经验分享",
-    author: {
-      id: "a7",
-      name: "资深开发",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=7",
-    },
-    category: "learning",
-    tags: ["面试", "前端", "求职"],
-    excerpt: "最近面试了多家大厂...",
-    views: 23456,
-    replies: 445,
-    likes: 1234,
-    isPinned: false,
-    isTrending: false,
-    createdAt: "2天前",
-    lastReplyTime: "10分钟前",
-    participants: mockParticipants.slice(0, 4),
-    lastReplier: mockParticipants[2],
-  },
-  {
-    id: "8",
-    title: "音乐制作入门：如何用 Logic Pro 创作你的第一首歌",
-    author: {
-      id: "a8",
-      name: "音乐制作人",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=8",
-    },
-    category: "music",
-    tags: ["音乐制作", "Logic Pro", "教程"],
-    excerpt: "音乐制作并不难...",
-    views: 5432,
-    replies: 76,
-    likes: 189,
-    isPinned: false,
-    isTrending: false,
-    createdAt: "1天前",
-    lastReplyTime: "3小时前",
-    participants: [],
-    lastReplier: mockParticipants[3],
-  },
-  {
-    id: "9",
-    title: "2024年最佳开源项目盘点 - GitHub Star 破万的宝藏项目",
-    author: {
-      id: "a9",
-      name: "开源爱好者",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=9",
-    },
-    category: "tech",
-    tags: ["开源", "GitHub", "项目推荐"],
-    excerpt: "整理了今年最火的开源项目...",
-    views: 18765,
-    replies: 312,
-    likes: 876,
-    isPinned: false,
-    isTrending: true,
-    createdAt: "6小时前",
-    lastReplyTime: "15分钟前",
-    participants: mockParticipants.slice(0, 3),
-    lastReplier: mockParticipants[0],
-  },
-  {
-    id: "10",
-    title: "远程办公三年心得：如何保持高效与健康的工作状态",
-    author: {
-      id: "a10",
-      name: "远程工作者",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=10",
-    },
-    category: "learning",
-    tags: ["远程办公", "效率", "工作"],
-    excerpt: "分享我三年远程办公的经验...",
-    views: 9876,
-    replies: 156,
-    likes: 423,
-    isPinned: false,
-    isTrending: false,
-    createdAt: "1天前",
-    lastReplyTime: "1小时前",
-    participants: mockParticipants.slice(1, 4),
-    lastReplier: mockParticipants[2],
-  },
-  {
-    id: "11",
-    title: "Vue 3 + Vite 项目最佳实践指南",
-    author: {
-      id: "a11",
-      name: "Vue开发者",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=11",
-    },
-    category: "tech",
-    tags: ["Vue", "Vite", "前端"],
-    excerpt: "从零搭建一个生产级 Vue 3 项目...",
-    views: 14567,
-    replies: 234,
-    likes: 654,
-    isPinned: true,
-    isTrending: false,
-    createdAt: "3天前",
-    lastReplyTime: "25分钟前",
-    participants: mockParticipants.slice(0, 2),
-    lastReplier: mockParticipants[3],
-  },
-  {
-    id: "12",
-    title: "摄影后期修图技巧：Lightroom 调色教程",
-    author: {
-      id: "a12",
-      name: "摄影师",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=12",
-    },
-    category: "design",
-    tags: ["摄影", "Lightroom", "后期"],
-    excerpt: "教你如何调出电影感的色调...",
-    views: 7654,
-    replies: 98,
-    likes: 321,
-    isPinned: false,
-    isTrending: false,
-    createdAt: "2天前",
-    lastReplyTime: "4小时前",
-    participants: mockParticipants.slice(2, 4),
-    lastReplier: mockParticipants[1],
-  },
-  {
-    id: "13",
-    title: "电竞显示器选购指南：高刷新率 vs 高分辨率如何选择",
-    author: {
-      id: "a13",
-      name: "硬件达人",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=13",
-    },
-    category: "gaming",
-    tags: ["硬件", "显示器", "电竞"],
-    excerpt: "详细分析各价位段电竞显示器...",
-    views: 8765,
-    replies: 167,
-    likes: 432,
-    isPinned: false,
-    isTrending: true,
-    createdAt: "4小时前",
-    lastReplyTime: "20分钟前",
-    participants: mockParticipants.slice(0, 4),
-    lastReplier: mockParticipants[0],
-  },
-  {
-    id: "14",
-    title: "独立游戏开发日记：从零到上架 Steam 的全过程",
-    author: {
-      id: "a14",
-      name: "独立开发者",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=14",
-    },
-    category: "gaming",
-    tags: ["游戏开发", "独立游戏", "Steam"],
-    excerpt: "记录我的第一款游戏从开发到上架的历程...",
-    views: 12345,
-    replies: 289,
-    likes: 765,
-    isPinned: false,
-    isTrending: false,
-    createdAt: "5天前",
-    lastReplyTime: "2小时前",
-    participants: mockParticipants.slice(1, 3),
-    lastReplier: mockParticipants[2],
-  },
-  {
-    id: "15",
-    title: "古典音乐入门推荐：从巴赫到肖邦",
-    author: {
-      id: "a15",
-      name: "古典乐迷",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=15",
-    },
-    category: "music",
-    tags: ["古典音乐", "推荐", "入门"],
-    excerpt: "给初学者的古典音乐欣赏指南...",
-    views: 4321,
-    replies: 67,
-    likes: 198,
-    isPinned: false,
-    isTrending: false,
-    createdAt: "3天前",
-    lastReplyTime: "6小时前",
-    participants: mockParticipants.slice(0, 1),
-    lastReplier: mockParticipants[3],
-  },
-  {
-    id: "16",
-    title: "Rust 语言入门：为什么它被称为最受欢迎的编程语言",
-    author: {
-      id: "a16",
-      name: "系统程序员",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=16",
-    },
-    category: "tech",
-    tags: ["Rust", "编程语言", "系统编程"],
-    excerpt: "深入了解 Rust 的核心特性...",
-    views: 16789,
-    replies: 378,
-    likes: 912,
-    isPinned: false,
-    isTrending: true,
-    createdAt: "8小时前",
-    lastReplyTime: "5分钟前",
-    participants: mockParticipants.slice(0, 4),
-    lastReplier: mockParticipants[1],
-  },
-];
+    category: apiTopic.category?.name || "常规",
+    tags: apiTopic.tags?.map((t) => t.name) || [],
+    excerpt: apiTopic.content
+      ? apiTopic.content.substring(0, 100).replace(/[#*`]/g, "") + "..."
+      : "",
+    views: apiTopic.views || 0,
+    replies: apiTopic.reply_count || 0,
+    likes: 0,
+    isPinned: apiTopic.is_pinned,
+    isTrending: apiTopic.is_trending,
+    createdAt: formatDate(apiTopic.created_at),
+    lastReplyTime: formatDate(apiTopic.last_reply_at || apiTopic.updated_at),
+    participants: participants.slice(0, 3),
+    lastReplier: lastReplier,
+  };
+}
 
 export function ForumList({ selectedCategory, searchQuery, onTopicClick }: ForumListProps) {
   const [sortBy, setSortBy] = useState<"latest" | "popular" | "trending">("latest");
   const { theme, colors } = useForumTheme();
+  const navigate = useNavigate();
 
-  const filteredTopics = mockTopics.filter((topic) => {
-    const matchesCategory =
-      selectedCategory === "all" ||
-      (selectedCategory === "trending" && topic.isTrending) ||
-      selectedCategory === "new" ||
-      topic.category === selectedCategory;
-    const matchesSearch =
-      searchQuery === "" ||
-      topic.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      topic.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      topic.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesSearch;
+  // 查询 API
+  const { data, isLoading, isError, error } = useForumsTopicsQuery({
+    categoryId: selectedCategory,
+    search: searchQuery,
+    page: 1, // 暂时固定第一页，后续可加分页组件
+    limit: 20,
+    sortBy,
   });
+
+  const topics: UiTopic[] = data?.items?.map(transformTopic) || [];
 
   return (
     <div className="space-y-4">
@@ -413,6 +138,17 @@ export function ForumList({ selectedCategory, searchQuery, onTopicClick }: Forum
               {selectedCategory === "music" && "音乐分享"}
               {selectedCategory === "learning" && "学习成长"}
               {selectedCategory === "competition" && "竞赛活动"}
+              {![
+                "all",
+                "trending",
+                "new",
+                "tech",
+                "design",
+                "gaming",
+                "music",
+                "learning",
+                "competition",
+              ].includes(selectedCategory) && "话题列表"}
             </h2>
             <div className="flex gap-2">
               {[
@@ -453,12 +189,39 @@ export function ForumList({ selectedCategory, searchQuery, onTopicClick }: Forum
           </div>
         </div>
 
-        {filteredTopics.length === 0 ? (
+        {/* Loading State */}
+        {isLoading && (
+          <div className="p-12 text-center">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-current border-t-transparent text-blue-600 dark:text-amber-400"></div>
+            <p className={`mt-4 ${colors.textMuted}`}>加载中...</p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {isError && (
+          <div className="p-12 text-center">
+            <p className="text-red-500">加载失败: {(error as any)?.message || "未知错误"}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 rounded-md bg-blue-600 px-4 py-2 text-sm text-white"
+            >
+              重试
+            </button>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!isLoading && !isError && topics.length === 0 && (
           <div className="p-12 text-center">
             <p className={colors.textMuted}>暂无相关话题</p>
           </div>
-        ) : (
-          filteredTopics.map((topic) => (
+        )}
+
+        {/* Content */}
+        {!isLoading &&
+          !isError &&
+          topics.length > 0 &&
+          topics.map((topic) => (
             <div
               key={topic.id}
               onClick={() => onTopicClick(topic.id)}
@@ -567,8 +330,7 @@ export function ForumList({ selectedCategory, searchQuery, onTopicClick }: Forum
                 <span className="text-xs text-neutral-500">{topic.lastReplyTime}</span>
               </div>
             </div>
-          ))
-        )}
+          ))}
       </div>
     </div>
   );

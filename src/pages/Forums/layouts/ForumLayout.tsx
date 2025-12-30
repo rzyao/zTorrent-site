@@ -26,10 +26,9 @@ function ForumLayoutInner() {
 
   return (
     <div
-      id="forum-scroll-container"
-      className={`h-screen overflow-y-scroll ${mainScrollbarClass} ${colors.pageBg} transition-colors duration-200`}
+      className={`flex h-screen flex-col overflow-hidden ${colors.pageBg} transition-colors duration-200`}
     >
-      {/* 顶部导航栏 - 传入移动端菜单控制回调 */}
+      {/* 顶部导航栏 - 固定高度，不参与滚动 */}
       <Header
         onSearch={setSearchQuery}
         searchQuery={searchQuery}
@@ -44,20 +43,25 @@ function ForumLayoutInner() {
         onCategoryChange={setSelectedCategory}
       />
 
-      {/* 主体内容区域 - 左侧栏紧贴 header */}
-      <div className="mx-auto max-w-7xl px-4 pb-0 sm:px-6 lg:px-8">
-        <div className={`grid grid-cols-1 gap-8 lg:grid-cols-12 ${colors.listBg}`}>
-          {/* 左侧边栏: 使用纯 CSS 滚动条动画 (linux.do 风格) */}
-          <aside
-            className={`${sidebarScrollbarClass} hidden border-r pr-4 ${colors.borderColor} lg:sticky lg:top-16 lg:col-span-3 lg:block lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto lg:overscroll-contain`}
-          >
-            <Sidebar selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
-          </aside>
+      {/* 主体内容区域 - 占据剩余高度 */}
+      <div
+        id="forum-scroll-container"
+        className={`min-h-0 flex-1 overflow-y-auto ${mainScrollbarClass}`}
+      >
+        <div className="mx-auto h-full max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className={`grid h-full grid-cols-1 gap-8 lg:grid-cols-12 ${colors.listBg}`}>
+            {/* 左侧边栏: 使用纯 CSS 滚动条动画 (linux.do 风格) */}
+            <aside
+              className={`${sidebarScrollbarClass} hidden border-r pr-4 ${colors.borderColor} lg:sticky lg:top-0 lg:col-span-3 lg:block lg:max-h-full lg:overflow-y-auto lg:overscroll-contain`}
+            >
+              <Sidebar selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
+            </aside>
 
-          {/* 右侧内容区域 */}
-          <main className="lg:col-span-9">
-            <Outlet context={{ selectedCategory, searchQuery }} />
-          </main>
+            {/* 右侧内容区域 */}
+            <main className="lg:col-span-9">
+              <Outlet context={{ selectedCategory, searchQuery }} />
+            </main>
+          </div>
         </div>
       </div>
     </div>

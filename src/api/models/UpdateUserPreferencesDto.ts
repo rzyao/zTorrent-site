@@ -17,6 +17,14 @@ export type UpdateUserPreferencesDto = {
      * 默认播放列表分类
      */
     defaultPlaylistCategories?: Array<string>;
+    /**
+     * 论坛侧边栏展示的分类 ID 列表
+     */
+    forumSidebarCategories?: Array<string>;
+    /**
+     * 论坛侧边栏展示的标签 ID 列表
+     */
+    forumSidebarTags?: Array<string>;
 };
 export namespace UpdateUserPreferencesDto {
     export enum language {

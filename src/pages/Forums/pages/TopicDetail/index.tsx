@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForumTheme } from "../../context/ForumThemeContext";
 import { TopicDetailProps } from "./types";
-import { topicData as mockTopicData } from "./constants";
 import { Post } from "./components/Post";
 import { Timeline } from "./components/Timeline";
 import { TopicHeader } from "./components/TopicHeader";
@@ -24,10 +23,7 @@ export function TopicDetail({
   const onBack = propOnBack || (() => navigate("/forum"));
 
   // 从 API 获取数据
-  const { topicData: apiTopicData, isLoading, isError } = useTopicDetail(topicId);
-
-  // 使用 API 数据，如果不可用则回退到 mock 数据
-  const topicData = apiTopicData || mockTopicData;
+  const { topicData, isLoading, isError, error } = useTopicDetail(topicId);
 
   // 计算非系统操作的真正帖子
   const regularPosts = topicData.posts.filter((p) => !p.isSmallAction);
@@ -138,10 +134,16 @@ export function TopicDetail({
   }
 
   // 错误状态
-  if (isError && !apiTopicData) {
+  if (isError || !topicData) {
     return (
       <div className="flex h-64 flex-col items-center justify-center gap-4 text-neutral-400">
-        <span>加载失败，正在使用演示数据</span>
+        <span>{(error as any)?.message || "加载失败，请重试"}</span>
+        <button
+          onClick={() => window.location.reload()}
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+        >
+          重试
+        </button>
       </div>
     );
   }
