@@ -27,7 +27,7 @@ export function ForumScrollArea({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 滚动条主题类名
-  const themeClass = theme === "dark" ? "forum-scrollbar-dark" : "forum-scrollbar-light";
+  const themeClass = "forum-scrollbar";
 
   // 显示滚动条
   const showScrollbar = useCallback(() => {

@@ -26,9 +26,7 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
   };
 
   return (
-    <header
-      className={`sticky top-0 ${colors.headerBg} border-b ${colors.borderColor} z-50 transition-colors duration-200`}
-    >
+    <header className={`sticky top-0 ${colors.headerBg} border-b ${colors.borderColor} z-50`}>
       <div className="mx-auto max-w-[1420px] px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -42,11 +40,9 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
             </button>
             <div className="flex items-center gap-2">
               <div
-                className={`flex h-10 w-10 items-center justify-center rounded-xl ${theme === "dark" ? "bg-amber-500/20" : "bg-linear-to-br from-blue-500 to-purple-600"}`}
+                className={`flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-purple-600 dark:bg-amber-500/20`}
               >
-                <MessageSquare
-                  className={`h-6 w-6 ${theme === "dark" ? "text-amber-400" : "text-white"}`}
-                />
+                <MessageSquare className={`h-6 w-6 text-white dark:text-amber-400`} />
               </div>
               <span className={`text-xl font-semibold ${colors.textPrimary}`}>论坛社区</span>
             </div>
@@ -63,7 +59,7 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
                 placeholder="搜索话题、帖子..."
                 value={searchQuery}
                 onChange={(e) => onSearch(e.target.value)}
-                className={`focus:ring-opacity-50 w-full rounded-lg border py-2 pr-4 pl-10 transition-colors focus:ring-2 focus:outline-none ${colors.inputBg} ${colors.inputBorder} ${colors.textPrimary} ${theme === "dark" ? "placeholder:text-neutral-500 focus:ring-amber-500" : "placeholder:text-gray-400 focus:ring-blue-500"}`}
+                className={`focus:ring-opacity-50 w-full rounded-lg border py-2 pr-4 pl-10 transition-colors focus:ring-2 focus:outline-none ${colors.inputBg} ${colors.inputBorder} ${colors.textPrimary} placeholder:text-gray-400 focus:ring-blue-500 dark:placeholder:text-neutral-500 dark:focus:ring-amber-500`}
               />
             </div>
           </div>
@@ -77,11 +73,7 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
                   useComposerStore.getState().open("CREATE_TOPIC");
                 });
               }}
-              className={`hidden items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors sm:flex ${
-                theme === "dark"
-                  ? "bg-amber-600 text-white hover:bg-amber-700"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
-              }`}
+              className={`hidden items-center gap-2 rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 sm:flex dark:bg-amber-600 dark:hover:bg-amber-700`}
             >
               <MessageSquare className="h-4 w-4" />
               <span>新话题</span>
@@ -122,7 +114,7 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
               placeholder="搜索话题、帖子..."
               value={searchQuery}
               onChange={(e) => onSearch(e.target.value)}
-              className={`focus:ring-opacity-50 w-full rounded-lg border py-2 pr-4 pl-10 transition-colors focus:ring-2 focus:outline-none ${colors.inputBg} ${colors.inputBorder} ${colors.textPrimary} ${theme === "dark" ? "focus:ring-amber-500" : "focus:ring-blue-500"}`}
+              className={`focus:ring-opacity-50 w-full rounded-lg border py-2 pr-4 pl-10 transition-colors focus:ring-2 focus:outline-none ${colors.inputBg} ${colors.inputBorder} ${colors.textPrimary} focus:ring-blue-500 dark:focus:ring-amber-500`}
             />
           </div>
         </div>

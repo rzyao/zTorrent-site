@@ -54,7 +54,7 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
         <div className="flex items-center gap-2">
           <button
             className={cn(
-              "hidden cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium transition-all select-none hover:border-[#0088CC] sm:flex",
+              "hidden cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium select-none hover:border-[#0088CC] sm:flex",
               colors.footerButtonBg,
               colors.footerButtonText,
             )}
@@ -64,7 +64,7 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
           </button>
           <button
             className={cn(
-              "hidden cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium transition-all select-none hover:border-[#0088CC] sm:flex",
+              "hidden cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium select-none hover:border-[#0088CC] sm:flex",
               colors.footerButtonBg,
               colors.footerButtonText,
             )}
@@ -74,7 +74,7 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
           </button>
           <button
             className={cn(
-              "hidden cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium transition-all select-none hover:border-[#0088CC] sm:flex",
+              "hidden cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium select-none hover:border-[#0088CC] sm:flex",
               colors.footerButtonBg,
               colors.footerButtonText,
             )}
@@ -90,7 +90,7 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
                 useComposerStore.getState().open("REPLY", { replyToTopicId: topicId });
               });
             }}
-            className="flex cursor-pointer items-center gap-2 rounded-full border border-transparent bg-[#0088CC] px-5 py-2 text-sm font-bold text-white transition-all select-none hover:border-white hover:bg-[#0088CC]"
+            className="flex cursor-pointer items-center gap-2 rounded-full border border-transparent bg-[#0088CC] px-5 py-2 text-sm font-bold text-white select-none hover:border-white hover:bg-[#0088CC]"
           >
             <Reply className="h-4 w-4" />
             <span>Reply</span>

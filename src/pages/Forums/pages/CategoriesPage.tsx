@@ -20,9 +20,7 @@ export function CategoriesPage() {
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className={`h-20 animate-pulse border-b ${
-                theme === "dark" ? "border-neutral-700/50" : "border-gray-200"
-              }`}
+              className={`h-20 animate-pulse border-b border-gray-200 dark:border-neutral-700/50`}
             />
           ))}
         </div>
@@ -40,15 +38,11 @@ export function CategoriesPage() {
           {/* 新话题（全局） */}
           <button
             onClick={() => {
-              import("../../components/Composer/ComposerStore").then(({ useComposerStore }) => {
+              import("../components/Composer/ComposerStore").then(({ useComposerStore }) => {
                 useComposerStore.getState().open("CREATE_TOPIC");
               });
             }}
-            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-              theme === "dark"
-                ? "bg-amber-600 text-white hover:bg-amber-700"
-                : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
+            className={`flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-amber-600 dark:hover:bg-amber-700`}
           >
             <MessageSquare className="h-4 w-4" />
             新话题
@@ -57,11 +51,7 @@ export function CategoriesPage() {
           {/* 新增类别按钮 - TODO: 添加管理员权限判断 */}
           <Link
             to="/forum/new-category"
-            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-              theme === "dark"
-                ? "bg-amber-500 text-white hover:bg-amber-600"
-                : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
+            className={`flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600`}
           >
             <Plus className="h-4 w-4" />
             新增类别
@@ -71,9 +61,7 @@ export function CategoriesPage() {
 
       {/* 列表头部 - 桌面端 */}
       <div
-        className={`hidden border-b pb-2 text-xs font-medium tracking-wider uppercase md:grid md:grid-cols-12 md:gap-4 ${colors.textMuted} ${
-          theme === "dark" ? "border-neutral-700/50" : "border-gray-200"
-        }`}
+        className={`hidden border-b pb-2 text-xs font-medium tracking-wider uppercase md:grid md:grid-cols-12 md:gap-4 ${colors.textMuted} border-gray-200 dark:border-neutral-700/50`}
       >
         <div className="col-span-7">类别</div>
         <div className="col-span-2 text-center">话题</div>
@@ -86,11 +74,7 @@ export function CategoriesPage() {
           <Link
             key={(category as any).id}
             to={`/forum/category/${(category as any).id}`}
-            className={`group relative block border-b transition-colors ${
-              theme === "dark"
-                ? "border-neutral-700/50 hover:bg-neutral-800/40"
-                : "border-gray-100 hover:bg-gray-50"
-            }`}
+            className={`group relative block border-b border-gray-100 hover:bg-gray-50 dark:border-neutral-700/50 dark:hover:bg-neutral-800/40`}
           >
             <div className="grid grid-cols-1 items-center gap-4 py-4 md:grid-cols-12">
               {/* 类别信息 */}
@@ -104,11 +88,7 @@ export function CategoriesPage() {
                 {/* 分类名称和描述 */}
                 <div className="min-w-0 flex-1">
                   <h2
-                    className={`text-[15px] font-semibold transition-colors ${
-                      theme === "dark"
-                        ? "text-neutral-100 group-hover:text-amber-400"
-                        : "text-gray-900 group-hover:text-blue-600"
-                    }`}
+                    className={`text-[15px] font-semibold text-gray-900 group-hover:text-blue-600 dark:text-neutral-100 dark:group-hover:text-amber-400`}
                   >
                     {category.name}
                   </h2>
@@ -126,16 +106,8 @@ export function CategoriesPage() {
               {/* 本周活跃 - 桌面端 */}
               <div className={`col-span-3 hidden items-center justify-end md:flex`}>
                 <div className="flex items-center gap-1.5">
-                  <TrendingUp
-                    className={`h-3.5 w-3.5 ${
-                      theme === "dark" ? "text-green-400" : "text-green-600"
-                    }`}
-                  />
-                  <span
-                    className={`text-sm font-medium ${
-                      theme === "dark" ? "text-green-400" : "text-green-600"
-                    }`}
-                  >
+                  <TrendingUp className={`h-3.5 w-3.5 text-green-600 dark:text-green-400`} />
+                  <span className={`text-sm font-medium text-green-600 dark:text-green-400`}>
                     --
                   </span>
                   <span className={`text-sm ${colors.textMuted}`}>/周</span>
@@ -149,16 +121,8 @@ export function CategoriesPage() {
                   <span className={`text-xs ${colors.textMuted}`}>--</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <TrendingUp
-                    className={`h-3.5 w-3.5 ${
-                      theme === "dark" ? "text-green-400" : "text-green-600"
-                    }`}
-                  />
-                  <span
-                    className={`text-xs ${theme === "dark" ? "text-green-400" : "text-green-600"}`}
-                  >
-                    --/周
-                  </span>
+                  <TrendingUp className={`h-3.5 w-3.5 text-green-600 dark:text-green-400`} />
+                  <span className={`text-xs text-green-600 dark:text-green-400`}>--/周</span>
                 </div>
               </div>
             </div>

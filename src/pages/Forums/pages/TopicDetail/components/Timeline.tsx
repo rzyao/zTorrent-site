@@ -8,7 +8,6 @@ interface TimelineProps {
   scrollPercentage?: number; // 新增: 基于距离的滚动百分比
   startDate?: string;
   lastPostedAt?: string;
-  theme?: string;
   colors?: any;
   className?: string;
   onChange?: (index: number) => void;
@@ -24,7 +23,6 @@ export const Timeline = ({
   scrollPercentage,
   startDate = "May '13",
   lastPostedAt = "Now",
-  theme,
   colors,
   className,
   onChange,
@@ -146,8 +144,9 @@ export const Timeline = ({
     displayIndex === 1 ? startDate : displayIndex === totalPosts ? lastPostedAt : "May 10";
 
   // 颜色定义
-  const trackColor = theme === "dark" ? "bg-[#0F82AF]" : "bg-[#0F82AF]"; // Discourse Blue
-  const handleColor = theme === "dark" ? "bg-[#0F82AF]" : "bg-[#0F82AF]";
+  // 颜色定义
+  const trackColor = "bg-[#0F82AF]"; // Discourse Blue
+  const handleColor = "bg-[#0F82AF]";
 
   // 计算滑块位置
   const availableHeight = SCROLL_AREA_HEIGHT - SCROLLER_HEIGHT;
@@ -187,7 +186,7 @@ export const Timeline = ({
         <div
           className={cn(
             "absolute right-0 left-0 z-10 cursor-grab active:cursor-grabbing",
-            "flex flex-col items-center justify-center transition-transform duration-75 ease-out",
+            "flex flex-col items-center justify-center",
             isDragging && "scale-105",
           )}
           style={{

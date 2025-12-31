@@ -47,7 +47,7 @@ export function ForumFilterBar({
 }: ForumFilterBarProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { theme, colors } = useForumTheme();
+  const { colors } = useForumTheme();
 
   // Data Fetching
   const { data: categories = [] } = useForumsCategories();
@@ -85,22 +85,16 @@ export function ForumFilterBar({
   // 共用的按钮样式 - 与 Sidebar 一致
   const filterButtonClass = cn(
     "flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
-    theme === "dark"
-      ? "bg-neutral-800 text-neutral-400 hover:bg-neutral-700 hover:text-neutral-200"
-      : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900",
+    "flex cursor-pointer items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-900 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200",
   );
 
   // 排序标签样式
   const getSortTabClass = (isActive: boolean) =>
     cn(
-      "cursor-pointer rounded-md px-3 py-1.5 text-sm transition-colors",
+      "cursor-pointer rounded-md px-3 py-1.5 text-sm",
       isActive
-        ? theme === "dark"
-          ? "bg-amber-500/10 text-amber-500"
-          : "bg-blue-50 text-blue-600"
-        : theme === "dark"
-          ? "text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200"
-          : "text-gray-500 hover:bg-gray-100 hover:text-gray-900",
+        ? "bg-blue-50 text-blue-600 dark:bg-amber-500/10 dark:text-amber-500"
+        : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200",
     );
 
   // 下拉菜单项样式 - 类别和标签通用
@@ -110,7 +104,7 @@ export function ForumFilterBar({
   return (
     <div
       className={cn(
-        "sticky top-0 z-30 flex flex-col gap-3 py-3 transition-colors duration-200 md:flex-row md:items-center md:justify-between",
+        "sticky top-0 z-30 flex flex-col gap-3 py-3 md:flex-row md:items-center md:justify-between",
         className,
       )}
     >
@@ -128,15 +122,12 @@ export function ForumFilterBar({
           <PopoverContent
             className={cn(
               "w-[220px] border p-0",
-              theme === "dark" ? "border-neutral-700 bg-neutral-900" : "border-gray-200 bg-white",
+              "w-[220px] border border-gray-200 bg-white p-0 dark:border-neutral-700 dark:bg-neutral-900",
             )}
             align="start"
           >
-            <Command className={theme === "dark" ? "bg-neutral-900" : "bg-white"}>
-              <CommandInput
-                placeholder="搜索类别..."
-                className={theme === "dark" ? "text-neutral-200" : ""}
-              />
+            <Command className="bg-white dark:bg-neutral-900">
+              <CommandInput placeholder="搜索类别..." className="dark:text-neutral-200" />
               <CommandList>
                 <CommandEmpty className={colors.textMuted}>无结果.</CommandEmpty>
                 <CommandGroup>
@@ -190,15 +181,12 @@ export function ForumFilterBar({
           <PopoverContent
             className={cn(
               "w-[200px] border p-0",
-              theme === "dark" ? "border-neutral-700 bg-neutral-900" : "border-gray-200 bg-white",
+              "w-[200px] border border-gray-200 bg-white p-0 dark:border-neutral-700 dark:bg-neutral-900",
             )}
             align="start"
           >
-            <Command className={theme === "dark" ? "bg-neutral-900" : "bg-white"}>
-              <CommandInput
-                placeholder="搜索标签..."
-                className={theme === "dark" ? "text-neutral-200" : ""}
-              />
+            <Command className="bg-white dark:bg-neutral-900">
+              <CommandInput className="dark:text-neutral-200" />
               <CommandList>
                 <CommandEmpty className={colors.textMuted}>无结果.</CommandEmpty>
                 <CommandGroup>
@@ -214,8 +202,7 @@ export function ForumFilterBar({
                         <Hash
                           className={cn(
                             "mr-2 h-3 w-3 opacity-50",
-                            isSelected &&
-                              (theme === "dark" ? "text-amber-500" : "text-blue-600 opacity-100"),
+                            isSelected && "text-blue-600 opacity-100 dark:text-amber-500",
                           )}
                         />
                         {tag.name}
@@ -266,10 +253,7 @@ export function ForumFilterBar({
           <Link to={`/forum/category/${selectedCategory}/edit`}>
             <button
               className={cn(
-                "flex items-center justify-center rounded-lg border p-2 transition-colors",
-                theme === "dark"
-                  ? "border-neutral-700 bg-neutral-800 text-neutral-400 hover:bg-neutral-700 hover:text-neutral-200"
-                  : "border-gray-200 bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-900",
+                "flex items-center justify-center rounded-lg border border-gray-200 bg-white p-2 text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200",
               )}
               title="编辑类别"
             >
@@ -288,8 +272,7 @@ export function ForumFilterBar({
             });
           }}
           className={cn(
-            "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors",
-            theme === "dark" ? "bg-amber-500 hover:bg-amber-600" : "bg-blue-600 hover:bg-blue-700",
+            "flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600",
           )}
         >
           <Plus className="h-4 w-4" />

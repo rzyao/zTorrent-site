@@ -17,10 +17,10 @@ function ForumLayoutInner() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, colors } = useForumTheme();
 
-  // 根据主题选择滚动条样式类
-  const mainScrollbarClass = theme === "dark" ? "scrollbar-main-dark" : "scrollbar-main-light";
-  const sidebarScrollbarClass =
-    theme === "dark" ? "scrollbar-sidebar-dark" : "scrollbar-sidebar-light";
+  // 滚动条样式现在由 CSS 类本身处理暗黑模式，无需 JS 动态计算
+  const mainScrollbarClass = "scrollbar-main";
+  const sidebarScrollbarClass = "scrollbar-sidebar";
+
   // 移动端菜单控制回调
   const handleOpenMobileMenu = useCallback(() => setIsMobileMenuOpen(true), []);
   const handleCloseMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
@@ -28,7 +28,7 @@ function ForumLayoutInner() {
   return (
     <div
       id="forum-scroll-container"
-      className={`flex h-screen flex-col overflow-y-auto ${colors.pageBg} ${mainScrollbarClass} transition-colors duration-200`}
+      className={`flex h-screen flex-col overflow-y-auto ${colors.pageBg} ${mainScrollbarClass}`}
       style={{ scrollbarGutter: "stable" }}
     >
       {/* 顶部导航栏 - 固定在顶部 */}

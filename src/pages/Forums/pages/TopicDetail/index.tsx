@@ -139,10 +139,10 @@ export function TopicDetail({
   }
 
   return (
-    <div className={`min-h-screen pb-20 ${theme === "light" ? "bg-white" : ""}`}>
+    <div className={`min-h-screen pb-20 ${colors.pageBg}`}>
       <div className="mx-auto max-w-[1100px] px-4 pt-6 sm:px-6">
         {/* Title Section */}
-        <TopicHeader theme={theme} colors={colors} topicData={topicData} />
+        <TopicHeader topicData={topicData} />
 
         {/* Header Divider */}
         <div className={cn("mt-2 mb-2 border-t", colors.dividerColor)}></div>
@@ -166,7 +166,6 @@ export function TopicDetail({
                     post={post}
                     postIndex={post.isSmallAction ? -1 : regularPostIndex}
                     isLast={index === topicData.posts.length - 1}
-                    theme={theme}
                     colors={colors}
                   />
                 );
@@ -177,12 +176,11 @@ export function TopicDetail({
             <TopicFooter topicData={topicData} />
 
             {/* Suggested Topics */}
-            <SuggestedTopics theme={theme} />
+            <SuggestedTopics />
           </div>
 
           {/* Right: Timeline (Sticky) */}
           <Timeline
-            theme={theme}
             colors={colors}
             totalPosts={totalRegularPosts}
             currentPost={currentPost}

@@ -12,7 +12,7 @@ import { Loader2 } from "lucide-react";
  */
 export function EditCategoryPage() {
   const { categoryId } = useParams<{ categoryId: string }>();
-  const { theme, colors } = useForumTheme();
+  const { colors } = useForumTheme();
 
   // 通过 ID 获取类别数据
   const {
@@ -44,9 +44,7 @@ export function EditCategoryPage() {
     return (
       <div className="py-6">
         <div
-          className={`rounded-lg border p-6 text-center ${
-            theme === "dark" ? "border-neutral-700 bg-neutral-800/50" : "border-gray-200 bg-gray-50"
-          }`}
+          className={`rounded-lg border border-gray-200 bg-gray-50 p-6 text-center dark:border-neutral-700 dark:bg-neutral-800/50`}
         >
           <p className={colors.textMuted}>{error ? "加载类别失败" : "类别不存在"}</p>
         </div>

@@ -39,7 +39,7 @@ export function ForumThemeProvider({ children }: { children: ReactNode }) {
   const value = {
     theme,
     toggleTheme,
-    colors: themeConfig[theme],
+    colors: themeConfig[theme], // themeConfig[theme] 现在指向同一个对象 FORUM_THEME
   };
 
   return <ForumThemeContext.Provider value={value}>{children}</ForumThemeContext.Provider>;

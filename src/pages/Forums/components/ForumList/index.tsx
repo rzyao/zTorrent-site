@@ -196,21 +196,19 @@ export function ForumList({
             <div
               key={topic.id}
               onClick={() => onTopicClick(topic.id)}
-              className={`group flex items-center border-b px-4 py-4 ${colors.dividerColor} cursor-pointer gap-3 transition-all last:border-0 ${theme === "dark" ? "hover:bg-neutral-800/50" : "hover:bg-gray-50"}`}
+              className={`group flex items-center border-b px-4 py-4 ${colors.dividerColor} cursor-pointer gap-3 last:border-0 hover:bg-gray-50 dark:hover:bg-neutral-800/50`}
             >
               {/* Left: Info (Flex-1) */}
               <div className="min-w-0 flex-1">
                 <div className="mb-1 flex items-start gap-2">
                   {topic.isPinned && (
-                    <Pin
-                      className={`mt-0.5 h-4 w-4 shrink-0 ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
-                    />
+                    <Pin className={`mt-0.5 h-4 w-4 shrink-0 text-blue-600 dark:text-amber-400`} />
                   )}
                   {topic.isTrending && (
                     <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
                   )}
                   <h3
-                    className={`line-clamp-2 text-sm font-medium transition-colors ${colors.textPrimary} ${theme === "dark" ? "group-hover:text-amber-400" : "group-hover:text-blue-600"}`}
+                    className={`line-clamp-2 text-sm font-medium ${colors.textPrimary} group-hover:text-blue-600 dark:group-hover:text-amber-400`}
                   >
                     {topic.title}
                   </h3>
@@ -219,7 +217,7 @@ export function ForumList({
                 {/* Tags + Author */}
                 <div className="flex flex-wrap items-center gap-2 text-xs">
                   <span
-                    className={`rounded px-1.5 py-0.5 font-medium transition-colors ${theme === "dark" ? "border border-blue-500/30 bg-blue-500/20 text-blue-400" : "bg-gray-100 text-gray-600"}`}
+                    className={`rounded bg-gray-100 px-1.5 py-0.5 font-medium text-gray-600 dark:border dark:border-blue-500/30 dark:bg-blue-500/20 dark:text-blue-400`}
                   >
                     {topic.category}
                   </span>
@@ -239,7 +237,7 @@ export function ForumList({
               <div className="hidden h-8 w-48 shrink-0 items-center justify-end gap-1.5 md:flex">
                 {/* Slot 1: Author */}
                 <div
-                  className={`h-6 w-6 overflow-hidden rounded-full border ${theme === "dark" ? "border-neutral-700" : "border-white"}`}
+                  className={`h-6 w-6 overflow-hidden rounded-full border border-white dark:border-neutral-700`}
                   title={`楼主: ${topic.author.name}`}
                 >
                   <img
@@ -252,7 +250,7 @@ export function ForumList({
                 {topic.participants.slice(0, 3).map((p) => (
                   <div
                     key={p.id}
-                    className={`h-6 w-6 overflow-hidden rounded-full border ${theme === "dark" ? "border-neutral-700" : "border-white"}`}
+                    className={`h-6 w-6 overflow-hidden rounded-full border border-white dark:border-neutral-700`}
                     title={`参与者: ${p.name}`}
                   >
                     <img src={p.avatar} alt={p.name} className="h-full w-full object-cover" />
@@ -260,7 +258,7 @@ export function ForumList({
                 ))}
                 {/* Slot 5: Last Replier */}
                 <div
-                  className={`h-6 w-6 overflow-hidden rounded-full border ${theme === "dark" ? "border-neutral-700" : "border-white"}`}
+                  className={`h-6 w-6 overflow-hidden rounded-full border border-white dark:border-neutral-700`}
                   title={`最新回复: ${topic.lastReplier.name}`}
                 >
                   <img
@@ -274,9 +272,7 @@ export function ForumList({
               {/* Right: Stats (Desktop) */}
               <div className="ml-4 hidden shrink-0 items-center gap-5 md:flex">
                 <div className="flex w-14 flex-col items-center">
-                  <span
-                    className={`text-sm font-medium ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
-                  >
+                  <span className={`text-sm font-medium text-blue-600 dark:text-amber-400`}>
                     {topic.replies}
                   </span>
                 </div>
@@ -293,9 +289,7 @@ export function ForumList({
               {/* Mobile Stats (Right side - horizontal layout like linux.do) */}
               <div className="flex shrink-0 items-center gap-2 md:hidden">
                 <img src={topic.lastReplier.avatar} alt="Last" className="h-6 w-6 rounded-full" />
-                <span
-                  className={`text-sm font-bold ${theme === "dark" ? "text-amber-400" : "text-blue-600"}`}
-                >
+                <span className={`text-sm font-bold text-blue-600 dark:text-amber-400`}>
                   {topic.replies}
                 </span>
                 <span className="text-xs text-neutral-500">{topic.lastReplyTime}</span>

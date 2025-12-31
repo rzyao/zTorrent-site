@@ -1,320 +1,137 @@
 @import "tailwindcss";
+@config "../tailwind.config.js";
+
+@variant dark (&:where(.dark, .dark *));
 
 body {
   /* 阻止页面溢出时的回弹效果，在一定程度上能减少误触系统侧滑感 */
   overscroll-behavior-x: none;
 }
 
-/* 全局主体内容区域滚动条 (Discourse 风格：始终显示，高对比度) */
-.scrollbar-main-dark {
-  scrollbar-width: auto;
-  scrollbar-color: #a6a6a6 transparent;
-}
-
-.scrollbar-main-dark::-webkit-scrollbar {
-  width: 12px; /* 稍微加宽一点更明显 */
-}
-
-.scrollbar-main-dark::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollbar-main-dark::-webkit-scrollbar-thumb {
-  background-color: #a6a6a6; /* Discourse 深色模式滑块色 */
-  border-radius: 10px;
-  border: 3px solid #0f171e; /* 必须匹配你的背景色 #0f171e 才能出效果 */
-  background-clip: content-box;
-}
-
-.scrollbar-main-dark::-webkit-scrollbar-thumb:hover {
-  background-color: #d1d1d1;
-}
-
-/* 论坛主体区域滚动条 - 浅色模式 (Discourse 风格) */
-.scrollbar-main-light {
+/* 论坛主体区域滚动条 (Discourse 风格) */
+.scrollbar-main {
   scrollbar-width: auto;
   scrollbar-color: #919191 transparent;
 }
 
-.scrollbar-main-light::-webkit-scrollbar {
+.scrollbar-main::-webkit-scrollbar {
   width: 12px;
 }
 
-.scrollbar-main-light::-webkit-scrollbar-thumb {
-  background-color: #919191; /* Discourse 浅色模式滑块色 */
+.scrollbar-main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-main::-webkit-scrollbar-thumb {
+  background-color: #919191; /* Light mode default */
   border-radius: 10px;
-  border: 3px solid #ffffff; /* 匹配浅色背景 */
+  border: 3px solid #ffffff;
   background-clip: content-box;
 }
 
-.scrollbar-main-light::-webkit-scrollbar-thumb:hover {
+.scrollbar-main::-webkit-scrollbar-thumb:hover {
   background-color: #717171;
 }
 
-/* 全局 html 滚动条同步 */
-html::-webkit-scrollbar {
-  width: 12px;
+/* Dark mode overrides */
+.dark .scrollbar-main {
+  scrollbar-color: #a6a6a6 transparent;
 }
 
-html::-webkit-scrollbar-thumb {
-  background-color: #919191;
-  border-radius: 10px;
-  border: 3px solid white;
-  background-clip: content-box;
+.dark .scrollbar-main::-webkit-scrollbar-thumb {
+  background-color: #a6a6a6;
+  border: 3px solid #0f171e;
 }
 
-@media (prefers-color-scheme: dark) {
-  html::-webkit-scrollbar-thumb {
-    background-color: #a6a6a6;
-    border: 3px solid #0f171e;
-  }
-}
-/* Scale Transition Animations - Pure Scale Effect */
-.scale-transition-enter {
-  transform: scale(0);
-  color: #17150f;
+.dark .scrollbar-main::-webkit-scrollbar-thumb:hover {
+  background-color: #d1d1d1;
 }
 
-.scale-transition-enter-active {
-  transform: scale(1);
-  transition: transform 300ms ease-out;
-}
-
-.scale-transition-exit {
-  transform: scale(1);
-}
-
-.scale-transition-exit-active {
-  transform: scale(0);
-  transition: transform 300ms ease-in;
-}
-
-/* Hide scrollbar but keep scroll functionality */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-  /* Chrome, Safari and Opera */
-}
-
-@media (width >=64rem) {
-  .lg\:grid-cols-auto {
-    grid-template-columns: 1fr 300px;
-  }
-}
-
-.scrollbar-themed-dark {
-  scrollbar-width: thin;
-  scrollbar-color: #3d2514 rgba(38, 38, 38, 0.6);
-}
-
-.scrollbar-themed-dark::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-.scrollbar-themed-dark::-webkit-scrollbar-track {
-  background: rgba(38, 38, 38, 0.6);
-  border-radius: 0.5rem;
-}
-
-.scrollbar-themed-dark::-webkit-scrollbar-thumb {
-  background: #3d2514;
-  border-radius: 0.5rem;
-  border: 2px solid rgba(38, 38, 38, 0.6);
-}
-
-.scrollbar-themed-dark::-webkit-scrollbar-thumb:hover {
-  background: #3d2514;
-}
-
-/* 滚动条仅在悬停时显示 (通用样式) */
-.scrollbar-hover-show {
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
-}
-
-.scrollbar-hover-show::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.scrollbar-hover-show::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 0.5rem;
-  transition: background 0.5s ease 0.3s;
-}
-
-.scrollbar-hover-show::-webkit-scrollbar-thumb {
-  background: transparent;
-  border-radius: 0.5rem;
-  transition: background 0.5s ease 0.3s;
-}
-
-.scrollbar-hover-show:hover {
-  scrollbar-color: #3d2514 rgba(38, 38, 38, 0.4);
-}
-
-.scrollbar-hover-show:hover::-webkit-scrollbar-track {
-  background: rgba(38, 38, 38, 0.4);
-  transition: background 0.15s ease;
-}
-
-.scrollbar-hover-show:hover::-webkit-scrollbar-thumb {
-  background: #3d2514;
-  transition: background 0.15s ease;
-}
-
-/* 论坛侧边栏专用滚动条 - 深色模式 (linux.do 风格) */
-.scrollbar-sidebar-dark {
+/* 论坛侧边栏专用滚动条 */
+.scrollbar-sidebar {
   scrollbar-width: auto;
   scrollbar-color: transparent transparent;
   transition: scrollbar-color 0.3s ease;
 }
 
-.scrollbar-sidebar-dark:hover {
-  scrollbar-color: #313131 transparent;
-}
-
-.scrollbar-sidebar-dark::-webkit-scrollbar {
-  width: 12px;
-}
-
-.scrollbar-sidebar-dark::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollbar-sidebar-dark::-webkit-scrollbar-thumb {
-  background-color: transparent;
-  border-radius: 6px;
-}
-
-.scrollbar-sidebar-dark:hover::-webkit-scrollbar-thumb {
-  background-color: #313131;
-}
-
-/* 论坛侧边栏专用滚动条 - 浅色模式 */
-.scrollbar-sidebar-light {
-  scrollbar-width: auto;
-  scrollbar-color: transparent transparent;
-  transition: scrollbar-color 0.3s ease;
-}
-
-.scrollbar-sidebar-light:hover {
+.scrollbar-sidebar:hover {
   scrollbar-color: #ced4da transparent;
 }
 
-.scrollbar-sidebar-light::-webkit-scrollbar {
+.dark .scrollbar-sidebar:hover {
+  scrollbar-color: #313131 transparent;
+}
+
+.scrollbar-sidebar::-webkit-scrollbar {
   width: 10px;
 }
 
-.scrollbar-sidebar-light::-webkit-scrollbar-thumb {
+.dark .scrollbar-sidebar::-webkit-scrollbar {
+  width: 12px;
+}
+
+.scrollbar-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-sidebar::-webkit-scrollbar-thumb {
   background-color: transparent;
   border-radius: 6px;
 }
 
-.scrollbar-sidebar-light:hover::-webkit-scrollbar-thumb {
+.scrollbar-sidebar:hover::-webkit-scrollbar-thumb {
   background-color: #ced4da;
+}
+
+.dark .scrollbar-sidebar:hover::-webkit-scrollbar-thumb {
+  background-color: #313131;
 }
 
 /* Simplebar 自定义样式 - linux.do 风格 (12px) */
-.forum-scrollbar-dark .simplebar-scrollbar::before {
-  background-color: #313131;
-  border-radius: 6px;
-  width: 12px;
-  left: 0px;
-  transition: opacity 0.3s ease;
-}
-
-.forum-scrollbar-light .simplebar-scrollbar::before {
+/* 统一 .forum-scrollbar 类，通过 .dark 父类自动切换 */
+.forum-scrollbar .simplebar-scrollbar::before {
   background-color: #ced4da;
   border-radius: 6px;
   width: 12px;
   left: 0px;
-  transition: opacity 0.3s ease;
-}
-
-/* ============================================
-   Simplebar 自定义样式 - linux.do 风格
-   支持延迟消失 + 平滑淡出动画
-   ============================================ */
-
-/* 深色主题滚动条 */
-.forum-scrollbar-dark .simplebar-scrollbar::before {
-  background-color: rgba(100, 100, 100, 0.6);
-  border-radius: 4px;
-  /* 淡出动画：延迟 1 秒后，0.5 秒淡出 */
-  transition: opacity 0.5s ease 1s;
-}
-
-.forum-scrollbar-dark .simplebar-scrollbar.simplebar-visible::before {
-  /* 淡入动画：立即显示，0.15秒淡入 */
-  transition: opacity 0.15s ease 0s;
-  opacity: 1;
-}
-
-.forum-scrollbar-dark .simplebar-scrollbar:hover::before {
-  background-color: rgba(100, 100, 100, 0.8);
-  /* 悬停时保持显示 */
-  opacity: 1;
-  transition: opacity 0.15s ease 0s;
-}
-
-/* 滚动时保持显示 */
-.forum-scrollbar-dark .simplebar-wrapper[data-scrolling="true"] .simplebar-scrollbar::before {
-  opacity: 1 !important;
-  transition: opacity 0.15s ease 0s;
-}
-
-/* 滚动条轨道 */
-.forum-scrollbar-dark .simplebar-track.simplebar-vertical {
-  width: 10px;
-  right: 2px;
-}
-
-.forum-scrollbar-dark .simplebar-track.simplebar-horizontal {
-  height: 10px;
-}
-
-/* 浅色主题滚动条 */
-.forum-scrollbar-light .simplebar-scrollbar::before {
+  transition: opacity 0.5s ease 1s; /* 淡出动画 */
   background-color: rgba(150, 150, 150, 0.6);
   border-radius: 4px;
-  /* 淡出动画：延迟 1 秒后，0.5 秒淡出 */
-  transition: opacity 0.5s ease 1s;
 }
 
-.forum-scrollbar-light .simplebar-scrollbar.simplebar-visible::before {
-  /* 淡入动画：立即显示，0.15秒淡入 */
+.dark .forum-scrollbar .simplebar-scrollbar::before {
+  background-color: #313131;
+  background-color: rgba(100, 100, 100, 0.6);
+}
+
+.forum-scrollbar .simplebar-scrollbar.simplebar-visible::before {
   transition: opacity 0.15s ease 0s;
   opacity: 1;
 }
 
-.forum-scrollbar-light .simplebar-scrollbar:hover::before {
+.forum-scrollbar .simplebar-scrollbar:hover::before {
   background-color: rgba(150, 150, 150, 0.8);
-  /* 悬停时保持显示 */
   opacity: 1;
   transition: opacity 0.15s ease 0s;
+}
+
+.dark .forum-scrollbar .simplebar-scrollbar:hover::before {
+  background-color: rgba(100, 100, 100, 0.8);
 }
 
 /* 滚动时保持显示 */
-.forum-scrollbar-light .simplebar-wrapper[data-scrolling="true"] .simplebar-scrollbar::before {
+.forum-scrollbar .simplebar-wrapper[data-scrolling="true"] .simplebar-scrollbar::before {
   opacity: 1 !important;
   transition: opacity 0.15s ease 0s;
 }
 
 /* 滚动条轨道 */
-.forum-scrollbar-light .simplebar-track.simplebar-vertical {
+.forum-scrollbar .simplebar-track.simplebar-vertical {
   width: 10px;
   right: 2px;
 }
 
-.forum-scrollbar-light .simplebar-track.simplebar-horizontal {
+.forum-scrollbar .simplebar-track.simplebar-horizontal {
   height: 10px;
 }
 

@@ -20,8 +20,8 @@ export function MobileSidebarDrawer({
   selectedCategory,
   onCategoryChange,
 }: MobileSidebarDrawerProps) {
-  const { theme, colors } = useForumTheme();
-  const scrollbarClass = theme === "dark" ? "scrollbar-forum-dark" : "scrollbar-forum-light";
+  const { colors } = useForumTheme();
+  const scrollbarClass = "scrollbar-sidebar";
 
   // 锁定 body 滚动
   useEffect(() => {
@@ -69,11 +69,7 @@ export function MobileSidebarDrawer({
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div
-          className={`flex h-full flex-col ${
-            theme === "dark" ? "bg-[#0F171E]" : "bg-white"
-          } ${colors.shadow}`}
-        >
+        <div className={`flex h-full flex-col bg-white dark:bg-[#0F171E] ${colors.shadow}`}>
           {/* 抽屉头部 */}
           <div
             className={`flex h-16 items-center justify-between border-b px-4 ${colors.borderColor}`}

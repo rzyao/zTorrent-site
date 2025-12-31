@@ -128,7 +128,7 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
 
   return (
     // 整体一个大卡片
-    <div className="overflow-hidden transition-colors">
+    <div className="overflow-hidden">
       <SidebarNav />
 
       <SidebarDivider />

@@ -2,13 +2,14 @@ import { TopicData } from "../types";
 import { getIconByName } from "@/components/ui/icon-picker";
 import { Square } from "lucide-react";
 
+import { useForumTheme } from "../../../context/ForumThemeContext";
+
 interface TopicHeaderProps {
-  theme: string;
-  colors: any;
   topicData?: TopicData;
 }
 
-export const TopicHeader = ({ theme, colors, topicData }: TopicHeaderProps) => {
+export const TopicHeader = ({ topicData }: TopicHeaderProps) => {
+  const { colors } = useForumTheme();
   // 如果没有传入 topicData，显示占位符
   if (!topicData) {
     return (
@@ -42,15 +43,13 @@ export const TopicHeader = ({ theme, colors, topicData }: TopicHeaderProps) => {
           ) : (
             <Square className="h-3 w-3 opacity-50" />
           )}
-          <span className={`text-sm transition-colors ${colors.textSecondary}`}>
-            {topicData.category}
-          </span>
+          <span className={`text-sm ${colors.textSecondary}`}>{topicData.category}</span>
         </a>
         {topicData.tags.map((tag) => (
           <a
             href="#"
             key={tag}
-            className={`ml-1 text-sm transition-colors ${colors.textMuted} ${colors.accentHover}`}
+            className={`ml-1 text-sm ${colors.textMuted} ${colors.accentHover}`}
           >
             {tag}
           </a>

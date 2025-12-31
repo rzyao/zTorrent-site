@@ -1,15 +1,12 @@
-const { heroui } = require('@heroui/theme');
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/@heroui/theme/dist/components/(toast|spinner).js"
   ],
   theme: {
     extend: {
       spacing: {
-        // 确保所有间距值都包含响应式变体
         0: '0px',
         1: '0.25rem',
         2: '0.5rem',
@@ -30,8 +27,8 @@ export default {
       },
     },
   },
+  darkMode: 'class',
   plugins: [
-    heroui(),
     require("tailwindcss-animate")
   ],
 }

@@ -13,7 +13,7 @@ interface CategoryHeaderProps {
 }
 
 export function CategoryHeader({ category }: CategoryHeaderProps) {
-  const { colors, theme } = useForumTheme();
+  const { colors } = useForumTheme();
 
   const IconComponent = category.icon ? getIconByName(category.icon) : null;
 
@@ -71,8 +71,7 @@ export function CategoryHeader({ category }: CategoryHeaderProps) {
             });
           }}
           className={cn(
-            "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90",
-            theme === "dark" ? "bg-amber-600" : "bg-blue-600",
+            "flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 dark:bg-amber-600",
           )}
         >
           <span>创建新话题</span>

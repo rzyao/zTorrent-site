@@ -4,12 +4,11 @@ import { useForumTheme } from "../../../context/ForumThemeContext";
 import { cn } from "@/components/ui/utils";
 
 interface SuggestedTopicsProps {
-  theme: string;
   categoryId?: string;
   currentTopicId?: string;
 }
 
-export const SuggestedTopics = ({ theme, categoryId, currentTopicId }: SuggestedTopicsProps) => {
+export const SuggestedTopics = ({ categoryId, currentTopicId }: SuggestedTopicsProps) => {
   const navigate = useNavigate();
   const { colors } = useForumTheme();
 
@@ -46,9 +45,9 @@ export const SuggestedTopics = ({ theme, categoryId, currentTopicId }: Suggested
             key={topic.id}
             onClick={() => navigate(`/forum/topic/${topic.id}`)}
             className={cn(
-              "grid cursor-pointer grid-cols-[auto_1fr_auto_auto_auto] items-center gap-x-4 border-b py-3 text-sm transition-colors",
+              "grid cursor-pointer grid-cols-[auto_1fr_auto_auto_auto] items-center gap-x-4 border-b py-3 text-sm",
               colors.dividerColor,
-              theme === "dark" ? "hover:bg-white/5" : "hover:bg-[#f9f9f9]",
+              "hover:bg-[#f9f9f9] dark:hover:bg-white/5",
             )}
           >
             {/* Posters Column */}

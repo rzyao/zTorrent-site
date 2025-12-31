@@ -37,7 +37,7 @@ interface CategoryFormProps {
  */
 export function CategoryForm({ mode, initialData, categoryId, onSuccess }: CategoryFormProps) {
   const navigate = useNavigate();
-  const { theme, colors } = useForumTheme();
+  const { colors } = useForumTheme();
 
   // 表单状态
   const [name, setName] = useState(initialData?.name || "");
@@ -102,11 +102,7 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess }: Categ
           <button
             type="button"
             onClick={() => navigate(`/forum/category/${categoryId}`)}
-            className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              theme === "dark"
-                ? "bg-amber-500/10 text-amber-500 hover:bg-amber-500/20"
-                : "bg-blue-50 text-blue-600 hover:bg-blue-100"
-            }`}
+            className={`flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-100 dark:bg-amber-500/10 dark:text-amber-500 dark:hover:bg-amber-500/20`}
             title="返回话题列表"
           >
             <Undo2 className="h-4 w-4" />
@@ -132,11 +128,7 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess }: Categ
             onChange={(e) => setName(e.target.value)}
             placeholder="输入类别名称..."
             maxLength={50}
-            className={`h-11 w-full rounded-lg border px-4 text-sm transition-colors focus:ring-2 focus:outline-none ${
-              theme === "dark"
-                ? "border-neutral-700 bg-neutral-800 text-neutral-200 placeholder-neutral-500 focus:border-amber-500 focus:ring-amber-500/30"
-                : "border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500/30"
-            }`}
+            className={`h-11 w-full rounded-lg border border-gray-300 bg-white px-4 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:placeholder-neutral-500 dark:focus:border-amber-500 dark:focus:ring-amber-500/30`}
           />
           {/* 自动生成的 slug 预览 (已隐藏) */}
         </div>
@@ -156,11 +148,7 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess }: Categ
             placeholder="输入类别描述（可选）..."
             rows={3}
             maxLength={500}
-            className={`w-full resize-none rounded-lg border px-4 py-3 text-sm transition-colors focus:ring-2 focus:outline-none ${
-              theme === "dark"
-                ? "border-neutral-700 bg-neutral-800 text-neutral-200 placeholder-neutral-500 focus:border-amber-500 focus:ring-amber-500/30"
-                : "border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500/30"
-            }`}
+            className={`w-full resize-none rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:placeholder-neutral-500 dark:focus:border-amber-500 dark:focus:ring-amber-500/30`}
           />
         </div>
 
@@ -181,18 +169,14 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess }: Categ
         </div>
 
         {/* 分割线 */}
-        <div
-          className={`border-t ${theme === "dark" ? "border-neutral-700" : "border-gray-200"}`}
-        />
+        <div className={`border-t border-gray-200 dark:border-neutral-700`} />
 
         {/* 提交按钮 */}
         <div className="flex items-center gap-3">
           <button
             type="submit"
             disabled={!isValid || loading}
-            className={`flex h-11 items-center gap-2 rounded-lg px-6 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
-              theme === "dark" ? "bg-amber-500 hover:bg-amber-600" : "bg-blue-600 hover:bg-blue-700"
-            }`}
+            className={`flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-amber-500 dark:hover:bg-amber-600`}
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             {mode === "create" ? "创建类别" : "保存更改"}
@@ -200,11 +184,7 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess }: Categ
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className={`h-11 rounded-lg px-6 text-sm font-medium transition-colors ${
-              theme === "dark"
-                ? "text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200"
-                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-            }`}
+            className={`h-11 rounded-lg px-6 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
           >
             取消
           </button>

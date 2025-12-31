@@ -107,9 +107,7 @@ export function SidebarCustomizeModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent
-        className={`sm:max-w-2xl ${theme === "dark" ? "border-neutral-800 bg-[#1E1E1E]" : "bg-white"}`}
-      >
+      <DialogContent className={`bg-white sm:max-w-2xl dark:border-neutral-800 dark:bg-[#1E1E1E]`}>
         <DialogHeader>
           <DialogTitle className={`text-xl font-bold ${colors.textPrimary}`}>{title}</DialogTitle>
         </DialogHeader>
@@ -133,11 +131,7 @@ export function SidebarCustomizeModal({
               placeholder="筛选..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full rounded-md border px-9 py-2 text-sm focus:ring-2 focus:outline-none ${
-                theme === "dark"
-                  ? "border-neutral-700 bg-neutral-800 text-neutral-100 placeholder:text-neutral-500 focus:ring-blue-500/50"
-                  : "border-gray-200 bg-white focus:ring-blue-500/50"
-              }`}
+              className={`w-full rounded-md border border-gray-200 bg-white px-9 py-2 text-sm focus:ring-2 focus:ring-blue-500/50 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:ring-blue-500/50`}
             />
           </div>
 
@@ -146,11 +140,7 @@ export function SidebarCustomizeModal({
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value as any)}
-              className={`h-9 cursor-pointer appearance-none rounded-md border px-3 pr-8 text-sm focus:ring-2 focus:outline-none ${
-                theme === "dark"
-                  ? "border-neutral-700 bg-neutral-800 text-neutral-200"
-                  : "border-gray-200 bg-white text-gray-700"
-              }`}
+              className={`h-9 cursor-pointer appearance-none rounded-md border border-gray-200 bg-white px-3 pr-8 text-sm text-gray-700 focus:ring-2 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200`}
             >
               <option value="all">所有</option>
               <option value="selected">已选择</option>
@@ -165,7 +155,7 @@ export function SidebarCustomizeModal({
 
         {/* List Area */}
         <div
-          className={`mt-2 h-[400px] overflow-y-auto rounded-md border ${theme === "dark" ? "border-neutral-800 bg-black/20" : "border-gray-100 bg-gray-50"}`}
+          className={`mt-2 h-[400px] overflow-y-auto rounded-md border border-gray-100 bg-gray-50 dark:border-neutral-800 dark:bg-black/20`}
         >
           {filteredItems.length === 0 ? (
             <div className="flex h-full items-center justify-center text-sm text-gray-500">
@@ -178,9 +168,7 @@ export function SidebarCustomizeModal({
                 return (
                   <div
                     key={item.id}
-                    className={`flex cursor-pointer items-center justify-between px-4 py-3 transition-colors ${
-                      theme === "dark" ? "hover:bg-white/5" : "hover:bg-white"
-                    }`}
+                    className={`flex cursor-pointer items-center justify-between px-4 py-3 transition-colors hover:bg-white dark:hover:bg-white/5`}
                     onClick={() => toggleSelection(item.id)}
                   >
                     <div className="flex items-center gap-3">
@@ -208,7 +196,7 @@ export function SidebarCustomizeModal({
                       className={`flex h-5 w-5 items-center justify-center rounded border ${
                         isSelected
                           ? "border-blue-500 bg-blue-500 text-white"
-                          : `border-gray-300 bg-transparent ${theme === "dark" ? "border-neutral-600" : ""}`
+                          : `border-gray-300 bg-transparent dark:border-neutral-600`
                       }`}
                     >
                       {isSelected && <span className="text-xs font-bold">✓</span>}
@@ -233,7 +221,7 @@ export function SidebarCustomizeModal({
           <div className="flex gap-3">
             <button
               onClick={onClose}
-              className={`rounded-md px-4 py-2 text-sm ${theme === "dark" ? "text-neutral-400 hover:bg-white/5" : "text-gray-600 hover:bg-gray-100"}`}
+              className={`rounded-md px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 dark:text-neutral-400 dark:hover:bg-white/5`}
             >
               取消
             </button>

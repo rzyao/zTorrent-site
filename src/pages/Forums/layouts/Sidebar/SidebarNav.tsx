@@ -32,7 +32,7 @@ export function SidebarNav() {
           <button
             key={item.id}
             onClick={() => navigate(item.path)}
-            className={`flex w-full cursor-pointer items-center gap-3 rounded-lg py-1.5 pr-4 pl-8 transition-colors ${buttonClass}`}
+            className={`flex w-full cursor-pointer items-center gap-3 rounded-lg py-1.5 pr-4 pl-8 ${buttonClass}`}
           >
             <Icon className="h-4 w-4" />
             <span className="text-base font-medium">{item.name}</span>

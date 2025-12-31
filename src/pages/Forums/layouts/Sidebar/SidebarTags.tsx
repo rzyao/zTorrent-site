@@ -30,7 +30,7 @@ export function SidebarTags({
       {/* 可点击的模块标题 */}
       <button
         onClick={onToggleExpand}
-        className={`flex w-full cursor-pointer items-center justify-between rounded-lg py-1.5 pr-4 pl-8 transition-colors ${colors.textSecondary} ${colors.buttonHover}`}
+        className={`flex w-full cursor-pointer items-center justify-between rounded-lg py-1.5 pr-4 pl-8 ${colors.textSecondary} ${colors.buttonHover}`}
       >
         <div className="flex items-center gap-2">
           <ChevronDown
@@ -75,7 +75,7 @@ export function SidebarTags({
             <button
               key={tag.id}
               onClick={() => navigate(tagPath)}
-              className={`flex w-full cursor-pointer items-center justify-between rounded-lg py-1.5 pr-4 pl-8 transition-colors ${buttonClass}`}
+              className={`flex w-full cursor-pointer items-center justify-between rounded-lg py-1.5 pr-4 pl-8 ${buttonClass}`}
             >
               <div className="flex items-center gap-3">
                 <Hash className="h-3 w-3 opacity-50" />
@@ -87,7 +87,7 @@ export function SidebarTags({
 
         <button
           onClick={() => navigate("/forum/tags")}
-          className={`flex w-full cursor-pointer items-center gap-3 rounded-lg py-1.5 pr-4 pl-8 transition-colors ${colors.textSecondary} ${colors.buttonHover}`}
+          className={`flex w-full cursor-pointer items-center gap-3 rounded-lg py-1.5 pr-4 pl-8 ${colors.textSecondary} ${colors.buttonHover}`}
         >
           <div className="flex items-center gap-3">
             <LayoutGrid className="h-4 w-4" />

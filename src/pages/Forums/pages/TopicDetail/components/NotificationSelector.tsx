@@ -60,7 +60,7 @@ export const NotificationSelector = () => {
       <PopoverTrigger asChild>
         <button
           className={cn(
-            "group flex cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-[15px] font-medium transition-all select-none hover:border-[#0088CC]",
+            "group flex cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-[15px] font-medium select-none hover:border-[#0088CC]",
             colors.footerButtonBg,
             colors.footerButtonText,
           )}
@@ -95,7 +95,7 @@ export const NotificationSelector = () => {
                   setOpen(false);
                 }}
                 className={cn(
-                  "flex w-full cursor-pointer items-start gap-3 border-b px-4 py-4 text-left transition-colors",
+                  "flex w-full cursor-pointer items-start gap-3 border-b px-4 py-4 text-left",
                   colors.dividerColor,
                   isActive ? colors.menuItemActive : colors.menuItemHover,
                   isLast && "border-b-0",

@@ -33,7 +33,7 @@ const Toolbar = ({ onAction }: { onAction: (action: string) => void }) => {
 
   return (
     <div
-      className={`flex items-center gap-1 border-b px-2 py-2 ${colors.borderColor} ${theme === "dark" ? "bg-white/5" : "bg-gray-50"}`}
+      className={`flex items-center gap-1 border-b px-2 py-2 ${colors.borderColor} bg-gray-50 dark:bg-white/5`}
     >
       {tools.map((tool) => (
         <button
@@ -117,11 +117,7 @@ const SimpleMarkdownPreview = ({ content }: { content: string }) => {
     });
   };
 
-  return (
-    <div className={`prose max-w-none p-4 ${theme === "dark" ? "prose-invert" : ""}`}>
-      {renderContent()}
-    </div>
-  );
+  return <div className={`prose dark:prose-invert max-w-none p-4`}>{renderContent()}</div>;
 };
 
 export function CreateTopicPage() {
@@ -248,9 +244,7 @@ export function CreateTopicPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="输入话题标题..."
-              className={`w-full bg-transparent text-lg font-semibold placeholder:font-normal focus:outline-none ${colors.textPrimary} ${
-                theme === "dark" ? "placeholder:text-gray-600" : "placeholder:text-gray-300"
-              }`}
+              className={`w-full bg-transparent text-lg font-semibold placeholder:font-normal focus:outline-none ${colors.textPrimary} placeholder:text-gray-300 dark:placeholder:text-gray-600`}
             />
           </div>
           <div className="w-full md:w-64">
@@ -258,9 +252,7 @@ export function CreateTopicPage() {
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className={`w-full appearance-none rounded-lg border px-4 py-2 pr-10 text-sm font-medium transition-colors focus:ring-2 focus:outline-none ${colors.inputBg} ${colors.borderColor} ${colors.textPrimary} ${
-                  theme === "dark" ? "focus:ring-amber-500" : "focus:ring-blue-500"
-                }`}
+                className={`w-full appearance-none rounded-lg border px-4 py-2 pr-10 text-sm font-medium transition-colors focus:ring-2 focus:outline-none ${colors.inputBg} ${colors.borderColor} ${colors.textPrimary} focus:ring-blue-500 dark:focus:ring-amber-500`}
               >
                 <option value="" disabled>
                   选择分类...
@@ -287,7 +279,7 @@ export function CreateTopicPage() {
           {tags.map((tag) => (
             <span
               key={tag}
-              className={`flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium ${theme === "dark" ? "bg-amber-500/20 text-amber-400" : "bg-blue-100 text-blue-700"}`}
+              className={`flex items-center gap-1 rounded bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-amber-500/20 dark:text-amber-400`}
             >
               {tag}
               <button onClick={() => removeTag(tag)} className="hover:text-red-500">

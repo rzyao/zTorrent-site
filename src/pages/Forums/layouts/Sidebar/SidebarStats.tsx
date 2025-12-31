@@ -11,7 +11,7 @@ export function SidebarStats() {
   return (
     <div className="py-4 pr-4 pl-8">
       <div className="mb-3 flex items-center gap-2">
-        <Users className={`h-4 w-4 ${theme === "dark" ? "text-amber-500" : "text-blue-600"}`} />
+        <Users className={`h-4 w-4 text-blue-600 dark:text-amber-500`} />
         <h3 className={`text-xs font-semibold tracking-wider uppercase ${colors.textMuted}`}>
           社区统计
         </h3>
