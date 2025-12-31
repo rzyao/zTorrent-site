@@ -84,8 +84,8 @@ export function ForumFilterBar({
 
   // 共用的按钮样式 - 与 Sidebar 一致
   const filterButtonClass = cn(
-    "flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
-    "flex cursor-pointer items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-900 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200",
+    "flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm",
+    "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200",
   );
 
   // 排序标签样式

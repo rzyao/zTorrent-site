@@ -69,7 +69,7 @@ export function MobileSidebarDrawer({
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className={`flex h-full flex-col bg-white dark:bg-[#0F171E] ${colors.shadow}`}>
+        <div className={`flex h-full flex-col bg-white dark:bg-[#090909]`}>
           {/* 抽屉头部 */}
           <div
             className={`flex h-16 items-center justify-between border-b px-4 ${colors.borderColor}`}
