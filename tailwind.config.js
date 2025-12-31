@@ -29,6 +29,7 @@ export default {
   },
   darkMode: 'class',
   plugins: [
-    require("tailwindcss-animate")
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography")
   ],
 }

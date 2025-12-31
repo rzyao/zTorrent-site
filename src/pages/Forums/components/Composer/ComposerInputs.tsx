@@ -95,7 +95,7 @@ export const ComposerInputs: React.FC = () => {
                   value={cat.slug}
                   className={cn(
                     colors.textSecondary,
-                    "focus:bg-neutral-700 focus:text-white dark:focus:bg-neutral-700", // Hover/Focus 状态可能 theme 不够用，暂时保留
+                    "focus:bg-gray-100 focus:text-gray-900 dark:focus:bg-neutral-700 dark:focus:text-white",
                   )}
                 >
                   <div className="flex items-center gap-2">
@@ -139,14 +139,14 @@ export const ComposerInputs: React.FC = () => {
               <Plus className="h-3 w-3" />
               <span>可选标签</span>
             </SelectTrigger>
-            <SelectContent className="border-neutral-700 bg-neutral-800">
+            <SelectContent className="border-gray-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
               {tags
                 .filter((tag) => !(draft.tags || []).includes(tag.name))
                 .map((tag) => (
                   <SelectItem
                     key={tag.name}
                     value={tag.name}
-                    className="text-neutral-200 focus:bg-neutral-700 focus:text-white"
+                    className="text-gray-700 focus:bg-gray-100 focus:text-gray-900 dark:text-neutral-200 dark:focus:bg-neutral-700 dark:focus:text-white"
                   >
                     <div className="flex items-center gap-2">
                       <Tag className="h-3 w-3 text-neutral-400" />

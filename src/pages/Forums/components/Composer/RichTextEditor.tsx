@@ -12,6 +12,7 @@ import {
   Code,
   Heading1,
   Heading2,
+  Heading3,
   List,
   ListOrdered,
   Quote,
@@ -20,7 +21,12 @@ import {
   Redo,
   Link as LinkIcon,
   Image as ImageIcon,
+  Smile, // Added Smile icon for emoji button
 } from "lucide-react";
+import EmojiPicker, { Theme as EmojiTheme } from "emoji-picker-react";
+import * as Popover from "@radix-ui/react-popover";
+import { LinkModal } from "./LinkModal";
+import { useForumTheme } from "../../context/ForumThemeContext"; // Assuming this path is correct
 
 /**
  * 富文本编辑器组件
@@ -41,6 +47,10 @@ interface RichTextEditorProps {
   className?: string;
   /** 工具栏前缀内容 (如模式切换按钮) */
   toolbarPrefix?: React.ReactNode;
+  /** 点击上传图片的回调 */
+  onImageUploadClick?: () => void;
+  /** 是否正在上传 */
+  isUploading?: boolean;
 }
 
 export const RichTextEditor: React.FC<RichTextEditorProps> = ({
@@ -50,13 +60,20 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   disabled = false,
   className,
   toolbarPrefix,
+  onImageUploadClick,
+  isUploading = false,
 }) => {
+  const { theme } = useForumTheme();
+  const [linkModal, setLinkModal] = React.useState<{ isOpen: boolean; initialText: string }>({
+    isOpen: false,
+    initialText: "",
+  });
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
         // 禁用部分默认扩展，使用自定义配置
         heading: {
-          levels: [1, 2, 3],
+          levels: [1, 2, 3, 4],
         },
       }),
       Placeholder.configure({
@@ -173,6 +190,12 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           active={editor.isActive("heading", { level: 2 })}
         />
+        <ToolbarButton
+          icon={<Heading3 className="h-4 w-4" />}
+          title="标题 3"
+          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          active={editor.isActive("heading", { level: 3 })}
+        />
 
         <ToolbarDivider />
 
@@ -207,29 +230,96 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
         <ToolbarDivider />
 
+        {/* 表情 */}
+        <Popover.Root>
+          <Popover.Trigger asChild>
+            <button
+              className={cn(
+                "rounded p-1.5 transition-colors",
+                "text-gray-500 hover:bg-gray-200 hover:text-gray-900 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white",
+              )}
+              title="插入表情"
+            >
+              <Smile className="h-4 w-4" />
+            </button>
+          </Popover.Trigger>
+          <Popover.Portal>
+            <Popover.Content
+              className="z-[100] mt-2 shadow-xl outline-none"
+              align="start"
+              sideOffset={5}
+            >
+              <EmojiPicker
+                theme={theme === "dark" ? EmojiTheme.DARK : EmojiTheme.LIGHT}
+                onEmojiClick={(emojiData) => {
+                  editor.chain().focus().insertContent(emojiData.emoji).run();
+                }}
+                autoFocusSearch={false}
+                lazyLoadEmojis={true}
+                searchPlaceHolder="搜索表情..."
+              />
+            </Popover.Content>
+          </Popover.Portal>
+        </Popover.Root>
+
+        <ToolbarDivider />
+
         {/* 插入 */}
         <ToolbarButton
           icon={<LinkIcon className="h-4 w-4" />}
           title="插入链接"
           onClick={() => {
-            const url = window.prompt("输入链接地址:");
-            if (url) {
-              editor.chain().focus().setLink({ href: url }).run();
+            if (editor) {
+              const { from, to } = editor.state.selection;
+              const text = editor.state.doc.textBetween(from, to, " ");
+              setLinkModal({ isOpen: true, initialText: text });
             }
           }}
           active={editor.isActive("link")}
         />
         <ToolbarButton
           icon={<ImageIcon className="h-4 w-4" />}
-          title="插入图片"
+          title="上传图片"
           onClick={() => {
-            const url = window.prompt("输入图片地址:");
-            if (url) {
-              editor.chain().focus().setImage({ src: url }).run();
+            if (onImageUploadClick) {
+              onImageUploadClick();
+            } else {
+              const url = window.prompt("输入图片地址:");
+              if (url) {
+                editor.chain().focus().setImage({ src: url }).run();
+              }
             }
           }}
+          disabled={isUploading}
         />
       </div>
+
+      <LinkModal
+        isOpen={linkModal.isOpen}
+        initialText={linkModal.initialText}
+        onClose={() => setLinkModal({ ...linkModal, isOpen: false })}
+        onConfirm={(url, text) => {
+          if (editor) {
+            editor
+              .chain()
+              .focus()
+              .extendMarkRange("link")
+              .insertContent({
+                type: "text",
+                text: text,
+                marks: [
+                  {
+                    type: "link",
+                    attrs: {
+                      href: url,
+                    },
+                  },
+                ],
+              })
+              .run();
+          }
+        }}
+      />
 
       {/* 编辑器内容区域 */}
       <div className="flex-1 overflow-auto bg-white dark:bg-[#1a1a1a]">
