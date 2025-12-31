@@ -66,11 +66,11 @@ export const NotificationSelector = () => {
           )}
         >
           <ActiveIcon
-            className={cn("h-4 w-4", level === "muted" ? colors.textMuted : colors.accentColor)}
+            className={cn("h-4 w-4", level === "muted" ? "text-neutral-400" : "text-[#0088CC]")}
             fill={isFilled ? "currentColor" : "none"}
           />
           <span>{currentOption.name}</span>
-          <ChevronDown className="h-4 w-4 text-neutral-400 transition-transform group-data-[state=open]:rotate-180" />
+          <ChevronDown className="h-4 w-4 text-[#0088CC] transition-transform group-data-[state=open]:rotate-180" />
         </button>
       </PopoverTrigger>
       <PopoverContent

@@ -1,8 +1,8 @@
 import { Pin, TrendingUp } from "lucide-react";
 import { useState } from "react";
-import { useForumTheme } from "../context/ForumThemeContext";
-import { useForumsTopicsQuery, ExtendedApiTopic } from "../hooks/useForumsTopicsQuery";
-import { ForumFilterBar } from "../components/ForumFilterBar";
+import { useForumTheme } from "../../context/ForumThemeContext";
+import { useForumsTopicsQuery, ExtendedApiTopic } from "../../hooks/useForumsTopicsQuery";
+import { ForumFilterBar } from "./components/ForumFilterBar";
 
 // UI 类型定义
 interface Participant {

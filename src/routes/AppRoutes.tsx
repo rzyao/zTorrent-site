@@ -22,7 +22,7 @@ const TopicDetail = lazy(() =>
   import("@/pages/Forums/pages/TopicDetail/index").then((m) => ({ default: m.TopicDetail })),
 );
 const CategoryPage = lazy(() =>
-  import("@/pages/Forums/pages/CategoryPage").then((m) => ({ default: m.CategoryPage })),
+  import("@/pages/Forums/pages/CategoryPage/index").then((m) => ({ default: m.CategoryPage })),
 );
 const CreateTopicPage = lazy(() =>
   import("@/pages/Forums/pages/CreateTopicPage").then((m) => ({ default: m.CreateTopicPage })),

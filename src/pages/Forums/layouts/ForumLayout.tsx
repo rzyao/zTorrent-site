@@ -28,6 +28,7 @@ function ForumLayoutInner() {
     <div
       id="forum-scroll-container"
       className={`flex h-screen flex-col overflow-y-auto ${colors.pageBg} ${mainScrollbarClass} transition-colors duration-200`}
+      style={{ scrollbarGutter: "stable" }}
     >
       {/* 顶部导航栏 - 固定在顶部 */}
       <Header
@@ -50,14 +51,14 @@ function ForumLayoutInner() {
           <div className={`flex items-start gap-8 ${colors.listBg}`}>
             {/* 左侧边栏: Fixed 定位，独立滚动 */}
             <aside
-              className={`fixed top-[64px] left-0 hidden w-[280px] shrink-0 border-r pr-4 pl-5 ${colors.borderColor} ${sidebarScrollbarClass} lg:block lg:h-[calc(100vh-64px)] lg:overflow-y-auto`}
+              className={`fixed top-[64px] left-0 hidden w-[280px] shrink-0 border-r pt-[20px] pr-4 pl-5 ${colors.borderColor} ${sidebarScrollbarClass} lg:block lg:h-[calc(100vh-64px)] lg:overflow-y-auto`}
               style={{ left: "max(0px, calc((100vw - 1420px) / 2))" }}
             >
               <Sidebar selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
             </aside>
 
             {/* 右侧内容区域: 使用全局滚动，左边距为侧栏宽度 */}
-            <main className="min-w-0 flex-1 pr-5 lg:ml-[280px]">
+            <main className="min-w-0 flex-1 pt-[20px] pr-5 lg:ml-[280px]">
               <Outlet context={{ selectedCategory, searchQuery }} />
             </main>
           </div>

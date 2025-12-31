@@ -1,11 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ForumList } from "./ForumList";
-import { type ForumOutletContext } from "../layouts/ForumLayout";
+import { ForumList } from "../../components/ForumList";
+import { type ForumOutletContext } from "../../layouts/ForumLayout";
 import { ForumsCategoriesService } from "@/api";
-import { useForumTheme } from "../context/ForumThemeContext";
+import { useForumTheme } from "../../context/ForumThemeContext";
 import { Loader2 } from "lucide-react";
+import { CategoryHeader } from "./components/CategoryHeader";
 
 /**
  * 分类页面
@@ -61,15 +62,20 @@ export function CategoryPage() {
   const validSortBy = sortBy === "hot" ? "hot" : "latest";
 
   return (
-    <ForumList
-      selectedCategory={categoryId || "all"}
-      categoryName={category?.name}
-      selectedTag={tagName}
-      searchQuery={searchQuery}
-      sortBy={validSortBy}
-      onTopicClick={(topicId) => {
-        navigate(`/forum/topic/${topicId}`);
-      }}
-    />
+    <div className="flex flex-col">
+      {/* 分类头部信息 */}
+      {category && <CategoryHeader category={category} />}
+
+      <ForumList
+        selectedCategory={categoryId || "all"}
+        categoryName={category?.name}
+        selectedTag={tagName}
+        searchQuery={searchQuery}
+        sortBy={validSortBy}
+        onTopicClick={(topicId) => {
+          navigate(`/forum/topic/${topicId}`);
+        }}
+      />
+    </div>
   );
 }

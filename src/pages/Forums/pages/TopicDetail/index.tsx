@@ -141,15 +141,6 @@ export function TopicDetail({
   return (
     <div className={`min-h-screen pb-20 ${theme === "light" ? "bg-white" : ""}`}>
       <div className="mx-auto max-w-[1100px] px-4 pt-6 sm:px-6">
-        {/* Breadcrumbs (Discourse style) */}
-        <div className="flex items-center gap-2 py-4 text-sm text-[#919191]">
-          <span className="cursor-pointer hover:underline" onClick={() => navigate("/forum")}>
-            论坛首页
-          </span>
-          <span>{">"}</span>
-          <span className="cursor-pointer hover:underline">{topicData.category}</span>
-        </div>
-
         {/* Title Section */}
         <TopicHeader theme={theme} colors={colors} topicData={topicData} />
 

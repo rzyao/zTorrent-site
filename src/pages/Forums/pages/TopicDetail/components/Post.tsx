@@ -82,26 +82,26 @@ export function Post({ post, postIndex, isLast, theme, colors }: PostProps) {
         <div className="mt-4 flex items-center justify-end gap-4 select-none">
           <div className="flex items-center gap-1">
             <button
-              className={`flex items-center gap-1.5 rounded p-2 text-[#A6A6A6] transition-all hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
+              className={`flex cursor-pointer items-center gap-1.5 rounded-full p-2 text-[#A6A6A6] transition-all hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
               title="like this post"
             >
               <Heart className="h-5 w-5" />
               {post.likes > 0 && <span className="text-sm font-normal">{post.likes}</span>}
             </button>
             <button
-              className={`flex items-center justify-center rounded p-2 text-[#A6A6A6] transition-all hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
+              className={`flex cursor-pointer items-center justify-center rounded-full p-2 text-[#A6A6A6] transition-all hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
               title="share a link to this post"
             >
               <LinkIcon className="h-5 w-5" />
             </button>
             <button
-              className={`flex items-center justify-center rounded p-2 text-[#A6A6A6] transition-all hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
+              className={`flex cursor-pointer items-center justify-center rounded-full p-2 text-[#A6A6A6] transition-all hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
               title="bookmark this post"
             >
               <Bookmark className="h-5 w-5" />
             </button>
             <button
-              className={`hidden items-center justify-center rounded p-2 text-[#A6A6A6] transition-all group-hover:flex hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
+              className={`hidden cursor-pointer items-center justify-center rounded-full p-2 text-[#A6A6A6] transition-all group-hover:flex hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
               title="flag this post"
             >
               <Flag className="h-5 w-5" />
@@ -110,7 +110,7 @@ export function Post({ post, postIndex, isLast, theme, colors }: PostProps) {
 
           {/* Main Reply Button for Post - Moved to right */}
           <button
-            className={`flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold text-[#A6A6A6] transition-all hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
+            className={`flex cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-[#A6A6A6] transition-all hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
           >
             <Reply className="h-5 w-5" />
             <span>Reply</span>

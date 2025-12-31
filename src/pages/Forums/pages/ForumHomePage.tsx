@@ -1,5 +1,5 @@
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { ForumList } from "./ForumList";
+import { ForumList } from "../components/ForumList";
 import { type ForumOutletContext } from "../layouts/ForumLayout";
 
 /**

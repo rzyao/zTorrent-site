@@ -21,9 +21,9 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { useForumsCategories } from "../hooks/useForumsCategories";
-import { useForumsTagsQuery } from "../hooks/useForumsTagsQuery";
-import { useForumTheme } from "../context/ForumThemeContext";
+import { useForumsCategories } from "../../../hooks/useForumsCategories";
+import { useForumsTagsQuery } from "../../../hooks/useForumsTagsQuery";
+import { useForumTheme } from "../../../context/ForumThemeContext";
 import { getIconByName } from "@/components/ui/icon-picker";
 
 interface ForumFilterBarProps {
@@ -228,7 +228,7 @@ export function ForumFilterBar({
           </PopoverContent>
         </Popover>
         {/* Divider */}
-        <div className="mx-2 hidden h-4 w-[1px] bg-neutral-200 md:block dark:bg-neutral-700" />
+        <div className="w-1px mx-2 hidden h-4 bg-neutral-200 md:block dark:bg-neutral-700" />
 
         {/* Sort Tabs */}
         <div className="flex items-center gap-1">

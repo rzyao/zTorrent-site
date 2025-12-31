@@ -1,40 +1,39 @@
-import { Home, Users, Pencil, Hash, Square, LayoutGrid, ChevronDown } from "lucide-react";
-import { useForumTheme } from "../context/ForumThemeContext";
-import { useForumsCategories } from "../hooks/useForumsCategories";
-import { useForumsTagsQuery } from "../hooks/useForumsTagsQuery";
-import { SidebarCustomizeModal } from "./SidebarCustomizeModal";
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { UsersService, ForumCategory, ForumTag } from "@/api";
-import { useNavigate, useLocation } from "react-router-dom";
-import { getIconByName } from "@/components/ui/icon-picker";
-
-// Extended types to include ID which might be missing in generated DTOs
-type ExtendedForumCategory = ForumCategory & { id: string };
-type ExtendedForumTag = ForumTag & { id: string };
+import { UsersService } from "@/api";
+// Hooks
+import { useForumsCategories } from "../hooks/useForumsCategories";
+import { useForumsTagsQuery } from "../hooks/useForumsTagsQuery";
+// Components
+import { SidebarCustomizeModal } from "./SidebarCustomizeModal";
+import { SidebarNav } from "./Sidebar/SidebarNav";
+import { SidebarDivider } from "./Sidebar/SidebarDivider";
+import { SidebarCategories } from "./Sidebar/SidebarCategories";
+import { SidebarTags } from "./Sidebar/SidebarTags";
+import { SidebarStats } from "./Sidebar/SidebarStats";
+// Types
+import { ExtendedForumCategory, ExtendedForumTag } from "./Sidebar/types";
 
 interface SidebarProps {
+  /** 当前选中的分类 ID */
   selectedCategory: string;
+  /** 分类切换回调函数 */
   onCategoryChange: (category: string) => void;
 }
 
-const NAV_ITEMS = [{ id: "topics", name: "话题", icon: Home, path: "/forum/latest" }];
-
 /**
- * 分割线组件
+ * 侧边栏主容器组件
+ *
+ * 职责：
+ * 1. 组装各个侧边栏子模块 (导航、分类、标签、统计)
+ * 2. 管理侧边栏的展开/收起状态
+ * 3. 处理用户自定义侧边栏显示的偏好设置 (获取与保存)
+ * 4. 负责数据的过滤与展示逻辑
  */
-function Divider({ className = "" }: { className?: string }) {
-  const { colors } = useForumTheme();
-  return <div className={`border-t ${colors.borderColor} ${className}`} />;
-}
-
 export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
-  const { theme, colors } = useForumTheme();
-  const navigate = useNavigate();
-  const location = useLocation();
   const queryClient = useQueryClient();
 
-  // Modals state
+  // 模态框控制状态
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
 
@@ -42,14 +41,14 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
   const [isCategoriesExpanded, setIsCategoriesExpanded] = useState(true);
   const [isTagsExpanded, setIsTagsExpanded] = useState(true);
 
-  // 1. Fetch Data
+  // 1. 获取基础数据 (分类和标签)
   const { data } = useForumsCategories();
   const allCategories = (data || []) as ExtendedForumCategory[];
 
   const { data: tagsData } = useForumsTagsQuery();
   const allTags = (tagsData || []) as ExtendedForumTag[];
 
-  // 2. Fetch User Customization Preferences
+  // 2. 获取用户自定义偏好设置
   const { data: userPreferences, isLoading: isPrefsLoading } = useQuery({
     queryKey: ["user", "preferences"],
     queryFn: async () => {
@@ -57,73 +56,71 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
         const response = await UsersService.usersPreferencesControllerGet();
         return response.data;
       } catch (err) {
-        // Fallback or ignore if not logged in
+        // 未登录或获取失败时忽略，返回 null 以使用默认显示逻辑
         return null;
       }
     },
-    staleTime: 1000 * 60 * 60, // 1 hour
+    staleTime: 1000 * 60 * 60, // 缓存 1 小时
     retry: false,
   });
 
-  // 3. Mutation to save preferences
+  // 3. 保存偏好设置的 Mutation
   const savePreferencesMutation = useMutation({
     mutationFn: (data: { forumSidebarCategories?: string[]; forumSidebarTags?: string[] }) => {
       return UsersService.usersPreferencesControllerSave(data);
     },
     onSuccess: () => {
+      // 保存成功后刷新偏好设置查询
       queryClient.invalidateQueries({ queryKey: ["user", "preferences"] });
     },
   });
 
-  // 4. Compute displayed items based on preferences
+  // 4. 计算最终显示的列表项
   const displayedCategories = useMemo(() => {
-    // If no prefs (visitor), show top 5 or all? Let's show all for now or top 6
-    // If prefs exist but empty list, maybe means "show nothing" or "default"?
-    // PRD says: "If user clears selection: show default recommended".
-    // Let's assume if array is undefined/null => usage default. If empty array => show nothing.
-
-    // Default logic: Show all if no preference set
-    // Also if user preferences is empty array (user unchecked everything), show default recommended
     const sidebarCategories = userPreferences?.forumSidebarCategories;
+    // 如果没有偏好设置（如访客）或偏好设置为空数组
+    // 默认行为：显示前 10 个分类
     if (!sidebarCategories || sidebarCategories.length === 0) {
-      return allCategories.slice(0, 10); // Show max 10/all by default
+      return allCategories.slice(0, 10);
     }
-
+    // 否则仅显示用户选中的分类
     return allCategories.filter((cat) => sidebarCategories.includes(cat.id));
   }, [allCategories, userPreferences?.forumSidebarCategories]);
 
   const displayedTags = useMemo(() => {
     const sidebarTags = userPreferences?.forumSidebarTags;
+    // 如果没有偏好设置（如访客）或偏好设置为空数组
+    // 默认行为：显示前 20 个热门标签
     if (!sidebarTags || sidebarTags.length === 0) {
-      return allTags.slice(0, 20); // Show top 20 by default
+      return allTags.slice(0, 20);
     }
-
+    // 否则仅显示用户选中的标签
     return allTags.filter((tag) => sidebarTags.includes(tag.id));
   }, [allTags, userPreferences?.forumSidebarTags]);
 
-  // Handlers
+  // 事件处理函数
+
+  /** 保存分类偏好 */
   const handleSaveCategories = (ids: string[]) => {
-    // If user clears all, maybe we want to save empty array.
     savePreferencesMutation.mutate({ forumSidebarCategories: ids });
   };
 
+  /** 保存标签偏好 */
   const handleSaveTags = (ids: string[]) => {
     savePreferencesMutation.mutate({ forumSidebarTags: ids });
   };
 
+  /** 重置分类偏好为默认值 */
   const handleResetCategories = () => {
-    // Reset means setting to undefined so it falls back to default logic?
-    // Or explicitly setting the "default" ids.
-    // API DTO says optional. If we send null/undefined maybe it merges?
-    // Usually usersPreferencesControllerSave is a PATCH (merge).
-    // To "reset" we probably need to know what the default IDs are or specific logic.
-    // For now, let's just select top 10 as "Default".
+    // 默认选中前 10 个
     const defaultIds = allCategories.slice(0, 10).map((c) => c.id);
     savePreferencesMutation.mutate({ forumSidebarCategories: defaultIds });
     setIsCategoryModalOpen(false);
   };
 
+  /** 重置标签偏好为默认值 */
   const handleResetTags = () => {
+    // 默认选中前 20 个
     const defaultIds = allTags.slice(0, 20).map((t) => t.id);
     savePreferencesMutation.mutate({ forumSidebarTags: defaultIds });
     setIsTagModalOpen(false);
@@ -131,227 +128,32 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
 
   return (
     // 整体一个大卡片
-    <div className="overflow-hidden pl-5 transition-colors">
-      {/* 导航模块 - 直接显示导航项 */}
-      {/* 导航模块 - 直接显示导航项 */}
-      <nav className="space-y-1 py-2">
-        {NAV_ITEMS.map((item) => {
-          const Icon = item.icon;
-          // 根据当前路径判断激活状态
-          const isActive =
-            location.pathname === item.path || location.pathname.startsWith(item.path + "/");
+    <div className="overflow-hidden transition-colors">
+      <SidebarNav />
 
-          let buttonClass: string;
-          if (isActive) {
-            buttonClass =
-              theme === "dark" ? "bg-amber-500/10 text-amber-500" : "bg-blue-50 text-blue-600";
-          } else {
-            buttonClass = `${colors.textSecondary} ${colors.buttonHover}`;
-          }
+      <SidebarDivider />
 
-          return (
-            <button
-              key={item.id}
-              onClick={() => navigate(item.path)}
-              className={`flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 transition-colors ${buttonClass}`}
-            >
-              <Icon className="h-4 w-4" />
-              <span className="text-sm leading-none font-medium">{item.name}</span>
-            </button>
-          );
-        })}
-      </nav>
+      <SidebarCategories
+        categories={displayedCategories}
+        isExpanded={isCategoriesExpanded}
+        onToggleExpand={() => setIsCategoriesExpanded(!isCategoriesExpanded)}
+        showEditButton={!!userPreferences}
+        onEditClick={() => setIsCategoryModalOpen(true)}
+      />
 
-      <Divider />
+      <SidebarDivider />
 
-      {/* 话题分类模块 */}
-      <div className="group">
-        {/* 可点击的模块标题 */}
-        <button
-          onClick={() => setIsCategoriesExpanded(!isCategoriesExpanded)}
-          className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-colors ${colors.textSecondary} ${colors.buttonHover}`}
-        >
-          <div className="flex items-center gap-2">
-            <ChevronDown
-              className={`h-4 w-4 transition-transform duration-200 ${
-                isCategoriesExpanded ? "" : "-rotate-90"
-              }`}
-            />
-            <span className="text-sm font-medium">话题分类</span>
-          </div>
-          {userPreferences && (
-            <span
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsCategoryModalOpen(true);
-              }}
-              className={`rounded p-1 text-neutral-500 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-neutral-200 dark:hover:bg-neutral-700`}
-              title="编辑分类"
-            >
-              <Pencil className="h-3.5 w-3.5" />
-            </span>
-          )}
-        </button>
+      <SidebarTags
+        tags={displayedTags}
+        isExpanded={isTagsExpanded}
+        onToggleExpand={() => setIsTagsExpanded(!isTagsExpanded)}
+        showEditButton={!!userPreferences}
+        onEditClick={() => setIsTagModalOpen(true)}
+      />
 
-        {/* 可折叠的内容区域 */}
-        <div
-          className={`space-y-0.5 overflow-hidden transition-all duration-200 ${
-            isCategoriesExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-          }`}
-        >
-          {displayedCategories.map((cat) => {
-            // 使用路由路径判断激活状态
-            const categoryPath = `/forum/category/${cat.id}`;
-            const isActive = location.pathname === categoryPath;
+      <SidebarDivider />
 
-            let buttonClass: string;
-            if (isActive) {
-              buttonClass =
-                theme === "dark" ? "bg-neutral-800 text-neutral-200" : "bg-gray-100 text-gray-900";
-            } else {
-              buttonClass = `${colors.textSecondary} ${colors.buttonHover}`;
-            }
-
-            return (
-              <button
-                key={cat.id}
-                onClick={() => navigate(categoryPath)}
-                className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-colors ${buttonClass}`}
-              >
-                <div className="flex items-center gap-3">
-                  {/* Category Icon or Color Block */}
-                  {(() => {
-                    const IconComponent = cat.icon ? getIconByName(cat.icon) : null;
-                    if (IconComponent) {
-                      return <IconComponent className="h-3.5 w-3.5" style={{ color: cat.color }} />;
-                    }
-                    return cat.color ? (
-                      <span
-                        className="h-3 w-3 rounded-[2px]"
-                        style={{ backgroundColor: cat.color }}
-                      />
-                    ) : (
-                      <Square className="h-3 w-3 text-gray-400" />
-                    );
-                  })()}
-                  <span className="text-sm">{cat.name}</span>
-                </div>
-              </button>
-            );
-          })}
-
-          <button
-            onClick={() => navigate("/forum/categories")}
-            className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors ${colors.textSecondary} ${colors.buttonHover}`}
-          >
-            <div className="flex items-center gap-3">
-              <LayoutGrid className="h-4 w-4" />
-              <span className="text-sm">所有类别</span>
-            </div>
-          </button>
-        </div>
-      </div>
-
-      <Divider />
-
-      {/* 热门标签模块 */}
-      <div className="group">
-        {/* 可点击的模块标题 */}
-        <button
-          onClick={() => setIsTagsExpanded(!isTagsExpanded)}
-          className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-colors ${colors.textSecondary} ${colors.buttonHover}`}
-        >
-          <div className="flex items-center gap-2">
-            <ChevronDown
-              className={`h-4 w-4 transition-transform duration-200 ${
-                isTagsExpanded ? "" : "-rotate-90"
-              }`}
-            />
-            <span className="text-sm font-medium">热门标签</span>
-          </div>
-          {userPreferences && (
-            <span
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsTagModalOpen(true);
-              }}
-              className={`rounded p-1 text-neutral-500 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-neutral-200 dark:hover:bg-neutral-700`}
-              title="编辑标签"
-            >
-              <Pencil className="h-3.5 w-3.5" />
-            </span>
-          )}
-        </button>
-
-        {/* 可折叠的内容区域 */}
-        <div
-          className={`space-y-0.5 overflow-hidden transition-all duration-200 ${
-            isTagsExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-          }`}
-        >
-          {displayedTags.map((tag) => {
-            const tagPath = `/forum/tag/${tag.id}`;
-            const isActive = location.pathname === tagPath;
-
-            let buttonClass: string;
-            if (isActive) {
-              buttonClass =
-                theme === "dark" ? "bg-neutral-800 text-neutral-200" : "bg-gray-100 text-gray-900";
-            } else {
-              buttonClass = `${colors.textSecondary} ${colors.buttonHover}`;
-            }
-
-            return (
-              <button
-                key={tag.id}
-                onClick={() => navigate(tagPath)}
-                className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-colors ${buttonClass}`}
-              >
-                <div className="flex items-center gap-3">
-                  <Hash className="h-3 w-3 opacity-50" />
-                  <span className="text-sm">{tag.name}</span>
-                </div>
-              </button>
-            );
-          })}
-
-          <button
-            onClick={() => navigate("/forum/tags")}
-            className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors ${colors.textSecondary} ${colors.buttonHover}`}
-          >
-            <div className="flex items-center gap-3">
-              <LayoutGrid className="h-4 w-4" />
-              <span className="text-sm">所有标签</span>
-            </div>
-          </button>
-        </div>
-      </div>
-
-      <Divider />
-
-      {/* 社区统计模块 - 统一样式 */}
-      <div className="p-4">
-        <div className="mb-3 flex items-center gap-2">
-          <Users className={`h-4 w-4 ${theme === "dark" ? "text-amber-500" : "text-blue-600"}`} />
-          <h3 className={`text-xs font-semibold tracking-wider uppercase ${colors.textMuted}`}>
-            社区统计
-          </h3>
-        </div>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className={colors.textSecondary}>总用户数</span>
-            <span className={`font-medium ${colors.textPrimary}`}>128,456</span>
-          </div>
-          <div className="flex justify-between">
-            <span className={colors.textSecondary}>今日活跃</span>
-            <span className={`font-medium ${colors.textPrimary}`}>12,345</span>
-          </div>
-          <div className="flex justify-between">
-            <span className={colors.textSecondary}>总帖子数</span>
-            <span className={`font-medium ${colors.textPrimary}`}>456,789</span>
-          </div>
-        </div>
-      </div>
+      <SidebarStats />
 
       {/* Modals */}
       <SidebarCustomizeModal
