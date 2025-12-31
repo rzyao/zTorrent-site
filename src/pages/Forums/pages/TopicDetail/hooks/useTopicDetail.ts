@@ -18,11 +18,13 @@ interface ExtendedApiPost {
     avatar?: string;
     role?: string;
   };
-  reply_to?: {
+  replyTo?: {
     id: string;
     floor: number;
+    content?: string;
     author?: {
       username: string;
+      avatar?: string;
     };
   } | null;
 }
@@ -86,6 +88,15 @@ function transformPost(apiPost: ExtendedApiPost, index: number): PostData {
             links: 0,
           }
         : undefined,
+    replyTo: apiPost.replyTo
+      ? {
+          id: apiPost.replyTo.id,
+          floor: apiPost.replyTo.floor,
+          username: apiPost.replyTo.author?.username || "unknown",
+          avatar: apiPost.replyTo.author?.avatar,
+          content: apiPost.replyTo.content,
+        }
+      : undefined,
   };
 }
 

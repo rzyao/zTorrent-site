@@ -39,7 +39,7 @@ export function FullScreenLoader() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="mt-8 bg-gradient-to-r from-neutral-100 to-neutral-400 bg-clip-text text-2xl font-bold tracking-[0.25em] text-transparent md:text-3xl"
+          className="mt-8 bg-linear-to-r from-neutral-100 to-neutral-400 bg-clip-text text-2xl font-bold tracking-[0.25em] text-transparent md:text-3xl"
         >
           GuoYuan
         </motion.h1>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   ThumbsUp,
   Share2,
@@ -21,10 +22,21 @@ interface PostProps {
   colors: any;
   topicTitle?: string;
   topicId?: string;
+  incomingReplies?: PostData[];
 }
 
-export function Post({ post, postIndex, isLast, colors, topicTitle, topicId }: PostProps) {
+export function Post({
+  post,
+  postIndex,
+  isLast,
+  colors,
+  topicTitle,
+  topicId,
+  incomingReplies,
+}: PostProps) {
   const isSmallAction = post.isSmallAction;
+  const [isReplyExpanded, setIsReplyExpanded] = useState(false);
+  const [areIncomingRepliesExpanded, setAreIncomingRepliesExpanded] = useState(false);
 
   if (isSmallAction) {
     return (
@@ -67,12 +79,36 @@ export function Post({ post, postIndex, isLast, colors, topicTitle, topicId }: P
               <Shield className="h-4 w-4" />
             </span>
           )}
-          <div className="ml-auto flex items-center text-[#919191] dark:text-neutral-400">
-            <span className="cursor-pointer hover:text-[#222] hover:underline dark:hover:text-neutral-200">
-              {post.createdAt}
-            </span>
+          <div className="ml-auto flex items-center gap-3">
+            {post.replyTo && (
+              <button
+                onClick={() => setIsReplyExpanded(!isReplyExpanded)}
+                className="flex items-center gap-1.5 text-sm text-[#919191] transition-colors hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+              >
+                <Reply className="h-3.5 w-3.5 scale-x-[-1]" />
+                {post.replyTo.avatar && (
+                  <img src={post.replyTo.avatar} className="h-4 w-4 rounded-full" alt="" />
+                )}
+                <span className="font-medium">{post.replyTo.username}</span>
+              </button>
+            )}
+            <span className="text-[#919191] dark:text-neutral-400">{post.createdAt}</span>
           </div>
         </div>
+
+        {isReplyExpanded && post.replyTo?.content && (
+          <div className="mt-2 mb-3 rounded-md border-l-4 border-amber-500 bg-neutral-50 p-3 text-sm text-neutral-600 dark:bg-neutral-800/50 dark:text-neutral-300">
+            <div className="mb-2 flex items-center gap-2 font-medium">
+              <Reply className="h-3 w-3 scale-x-[-1] text-neutral-400" />
+              <span>{post.replyTo.username}</span>
+              <span className="text-xs text-neutral-400">#{post.replyTo.floor}</span>
+            </div>
+            <div
+              className="prose prose-sm dark:prose-invert max-w-none [&>p]:mb-0"
+              dangerouslySetInnerHTML={{ __html: marked.parse(post.replyTo.content) as string }}
+            />
+          </div>
+        )}
 
         <div
           className={`prose dark:prose-invert max-w-none text-lg leading-normal ${colors.textPrimary} [&_img]:my-4 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-lg [&_img]:shadow-md`}
@@ -128,6 +164,48 @@ export function Post({ post, postIndex, isLast, colors, topicTitle, topicId }: P
             <span>Reply</span>
           </button>
         </div>
+
+        {/* Incoming Replies (Bottom) */}
+        {incomingReplies && incomingReplies.length > 0 && (
+          <div className="mt-2">
+            <button
+              onClick={() => setAreIncomingRepliesExpanded(!areIncomingRepliesExpanded)}
+              className="flex items-center gap-2 rounded-lg bg-neutral-100 px-3 py-2 text-sm font-semibold text-[#A6A6A6] transition-colors hover:bg-neutral-200 hover:text-gray-900 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200"
+            >
+              <Reply className="h-4 w-4 scale-x-[-1] scale-y-[-1]" />
+              {incomingReplies.length} Replies
+            </button>
+
+            {areIncomingRepliesExpanded && (
+              <div className="mt-3 space-y-3 pl-4">
+                {incomingReplies.map((reply) => (
+                  <div
+                    key={reply.id}
+                    className="flex gap-3 rounded-lg bg-neutral-50 p-3 dark:bg-neutral-800/30"
+                  >
+                    <img
+                      src={reply.avatar}
+                      alt={reply.username}
+                      className="h-8 w-8 rounded-full object-cover"
+                    />
+                    <div className="flex-1">
+                      <div className="mb-1 flex items-center gap-2 text-sm">
+                        <span className={`font-bold ${colors.usernameColor}`}>
+                          {reply.username}
+                        </span>
+                        <span className="text-xs text-neutral-500">{reply.createdAt}</span>
+                      </div>
+                      <div
+                        className="prose prose-sm dark:prose-invert max-w-none [&>p]:mb-0"
+                        dangerouslySetInnerHTML={{ __html: marked.parse(reply.content) as string }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

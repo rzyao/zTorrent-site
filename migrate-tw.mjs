@@ -30,7 +30,13 @@ const REPLACEMENTS = [
   {
     pattern: /z-\[(\d+)\]/g,
     replacement: 'z-$1'
-  }
+  },
+  // 6. bg-gradient-to-r -> bg-linear-to-r
+  {
+    pattern: /bg-gradient-to-([a-z]+)/g,
+    replacement: 'bg-linear-to-$1'
+  },
+  // 7. 
 ];
 
 // --- 核心逻辑 ---

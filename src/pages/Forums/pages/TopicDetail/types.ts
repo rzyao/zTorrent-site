@@ -27,6 +27,13 @@ export interface PostData {
   isSmallAction?: boolean;
   actionCode?: string;
   stats?: PostStats;
+  replyTo?: {
+    id: string;
+    floor: number;
+    username: string;
+    avatar?: string;
+    content?: string;
+  };
 }
 
 export interface Participant {
