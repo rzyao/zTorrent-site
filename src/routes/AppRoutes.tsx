@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate, useNavigate, useParams, Outlet } from "react-router-dom";
 import { useAccess } from "@/context/AccessContext.tsx";
 import { lazy, Suspense } from "react";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { FullScreenLoader } from "@/components/ui/FullScreenLoader";
 import AppLayout from "../layouts/AppLayout.tsx";
 
 const LoginPage = lazy(() => import("@/pages/Login.tsx"));
@@ -206,7 +206,7 @@ function PermissionRoute({
 export default function AppRoutes() {
   const navigate = useNavigate();
   return (
-    <Suspense fallback={<LoadingSpinner />}>
+    <Suspense fallback={<FullScreenLoader />}>
       <Routes>
         {/* 公开路由 登录、注册、忘记密码页面 */}
         <Route path="/login" element={<LoginPageWrapper />} />
