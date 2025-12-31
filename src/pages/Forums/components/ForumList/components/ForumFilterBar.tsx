@@ -278,21 +278,24 @@ export function ForumFilterBar({
           </Link>
         )}
 
-        {/* Create Topic Button - 与 theme.ts buttonPrimary 保持一致 */}
-        <Link to="/forum/create">
-          <button
-            className={cn(
-              "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors",
-              theme === "dark"
-                ? "bg-amber-500 hover:bg-amber-600"
-                : "bg-blue-600 hover:bg-blue-700",
-            )}
-          >
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">新建话题</span>
-            <span className="sm:hidden">新建</span>
-          </button>
-        </Link>
+        {/* Create Topic Button - 使用 Composer 组件 */}
+        <button
+          onClick={() => {
+            import("../../Composer/ComposerStore").then(({ useComposerStore }) => {
+              useComposerStore.getState().open("CREATE_TOPIC", {
+                categoryId: selectedCategory !== "all" ? selectedCategory : "",
+              });
+            });
+          }}
+          className={cn(
+            "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors",
+            theme === "dark" ? "bg-amber-500 hover:bg-amber-600" : "bg-blue-600 hover:bg-blue-700",
+          )}
+        >
+          <Plus className="h-4 w-4" />
+          <span className="hidden sm:inline">新建话题</span>
+          <span className="sm:hidden">新建</span>
+        </button>
       </div>
     </div>
   );

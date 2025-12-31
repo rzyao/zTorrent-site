@@ -4,6 +4,7 @@ import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
 import { MobileSidebarDrawer } from "./MobileSidebarDrawer";
 import { ForumThemeProvider, useForumTheme } from "../context/ForumThemeContext";
+import { ForumComposer } from "../components/Composer/ForumComposer";
 
 /**
  * 论坛布局内部组件
@@ -64,6 +65,8 @@ function ForumLayoutInner() {
           </div>
         </div>
       </div>
+      {/* 论坛全局编辑器 */}
+      <ForumComposer />
     </div>
   );
 }

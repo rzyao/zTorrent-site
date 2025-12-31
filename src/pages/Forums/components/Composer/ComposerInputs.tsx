@@ -1,0 +1,169 @@
+import React from "react";
+import { useComposerStore } from "./ComposerStore";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useForumsCategories } from "../../hooks/useForumsCategories";
+import { useForumsTagsQuery } from "../../hooks/useForumsTagsQuery";
+import { cn } from "@/components/ui/utils";
+import { Hash, Tag, Plus, X } from "lucide-react";
+import { useForumTheme } from "../../context/ForumThemeContext";
+
+/**
+ * Composer 输入区域
+ * 参考 Discourse composer-container.gjs 第 240-306 行的布局：
+ * - 第一行：标题输入 (全宽)
+ * - 第二行：分类选择 + 标签选择
+ */
+export const ComposerInputs: React.FC = () => {
+  const { colors } = useForumTheme();
+  const { draft, updateDraft } = useComposerStore();
+
+  // 获取分类列表 (hook 返回的 data 直接是数组)
+  const { data: categories = [] } = useForumsCategories();
+
+  // 获取标签列表 (hook 返回的 data 直接是数组)
+  const { data: tags = [] } = useForumsTagsQuery();
+
+  // 处理标签选择
+  const handleTagToggle = (tagId: string) => {
+    const currentTags = draft.tags || [];
+    if (currentTags.includes(tagId)) {
+      updateDraft({ tags: currentTags.filter((t) => t !== tagId) });
+    } else {
+      updateDraft({ tags: [...currentTags, tagId] });
+    }
+  };
+
+  // 移除标签
+  const handleTagRemove = (tagId: string) => {
+    updateDraft({ tags: (draft.tags || []).filter((t) => t !== tagId) });
+  };
+
+  return (
+    <div className="composer-fields flex flex-col gap-3">
+      {/* 第一行：标题输入 - 参考 Discourse .title-input */}
+      <div className="title-input">
+        <Input
+          id="reply-title"
+          placeholder="输入标题，或在此处粘贴链接"
+          value={draft.title}
+          onChange={(e) => updateDraft({ title: e.target.value })}
+          className={cn(
+            "h-auto border-none bg-transparent px-0 text-lg font-medium shadow-none focus-visible:ring-0",
+            colors.textPrimary,
+            "placeholder:text-neutral-500",
+          )}
+          autoComplete="off"
+        />
+      </div>
+
+      {/* 第二行：分类 + 标签 - 参考 Discourse .title-and-category */}
+      <div className="title-and-category flex flex-wrap items-center gap-2">
+        {/* 分类选择 - 参考 Discourse .category-input */}
+        <div className="category-input">
+          <Select
+            value={draft.categoryId}
+            onValueChange={(val) => updateDraft({ categoryId: val })}
+          >
+            <SelectTrigger
+              className={cn(
+                "h-8 min-w-[150px] gap-2 text-sm",
+                colors.inputBorder,
+                colors.inputBg,
+                colors.textSecondary,
+                draft.categoryId && "border-transparent",
+              )}
+              style={{
+                backgroundColor: draft.categoryId
+                  ? `#${categories.find((c) => c.slug === draft.categoryId)?.color || "333"}30`
+                  : undefined,
+              }}
+            >
+              <Hash className="h-3.5 w-3.5 text-neutral-400" />
+              <SelectValue placeholder="选择分类" />
+            </SelectTrigger>
+            <SelectContent className={cn(colors.borderColor, colors.inputBg)}>
+              {categories.map((cat) => (
+                <SelectItem
+                  key={cat.slug}
+                  value={cat.slug}
+                  className={cn(
+                    colors.textSecondary,
+                    "focus:bg-neutral-700 focus:text-white dark:focus:bg-neutral-700", // Hover/Focus 状态可能 theme 不够用，暂时保留
+                  )}
+                >
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="h-2.5 w-2.5 rounded"
+                      style={{ backgroundColor: `#${cat.color}` }}
+                    />
+                    <span>{cat.name}</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* 标签选择 - 参考 Discourse .tags-input */}
+        <div className="tags-input flex flex-1 flex-wrap items-center gap-1.5">
+          {/* 已选中的标签 */}
+          {(draft.tags || []).map((tagName) => {
+            const tag = tags.find((t) => t.name === tagName);
+            return tag ? (
+              <span
+                key={tagName}
+                className="inline-flex items-center gap-1 rounded bg-sky-500/20 px-2 py-0.5 text-xs text-sky-300"
+              >
+                <Tag className="h-3 w-3" />
+                {tag.name}
+                <button
+                  onClick={() => handleTagRemove(tagName)}
+                  className="ml-0.5 rounded-full p-0.5 hover:bg-sky-500/30"
+                >
+                  <X className="h-2.5 w-2.5" />
+                </button>
+              </span>
+            ) : null;
+          })}
+
+          {/* 添加标签选择器 */}
+          <Select onValueChange={handleTagToggle}>
+            <SelectTrigger className="h-7 w-auto min-w-[100px] gap-1 border-dashed border-neutral-600 bg-transparent px-2 text-xs text-neutral-400 hover:border-neutral-500 hover:text-neutral-300">
+              <Plus className="h-3 w-3" />
+              <span>可选标签</span>
+            </SelectTrigger>
+            <SelectContent className="border-neutral-700 bg-neutral-800">
+              {tags
+                .filter((tag) => !(draft.tags || []).includes(tag.name))
+                .map((tag) => (
+                  <SelectItem
+                    key={tag.name}
+                    value={tag.name}
+                    className="text-neutral-200 focus:bg-neutral-700 focus:text-white"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Tag className="h-3 w-3 text-neutral-400" />
+                      <span>{tag.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              {tags.filter((tag) => !(draft.tags || []).includes(tag.name)).length === 0 && (
+                <div className="px-2 py-1.5 text-xs text-neutral-500">没有更多标签</div>
+              )}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* 分隔线 */}
+      <div className="h-px w-full bg-neutral-700/50" />
+    </div>
+  );
+};

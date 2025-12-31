@@ -59,6 +59,25 @@ export function CategoryHeader({ category }: CategoryHeaderProps) {
           {category.description}
         </div>
       )}
+
+      {/* Actions */}
+      <div className="mt-4 flex">
+        <button
+          onClick={() => {
+            import("../../../components/Composer/ComposerStore").then(({ useComposerStore }) => {
+              useComposerStore.getState().open("CREATE_TOPIC", {
+                categoryId: category.id || "",
+              });
+            });
+          }}
+          className={cn(
+            "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90",
+            theme === "dark" ? "bg-amber-600" : "bg-blue-600",
+          )}
+        >
+          <span>创建新话题</span>
+        </button>
+      </div>
     </div>
   );
 }

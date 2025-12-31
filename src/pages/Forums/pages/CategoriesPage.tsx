@@ -37,6 +37,23 @@ export function CategoriesPage() {
         <h1 className={`text-lg font-semibold ${colors.textPrimary}`}>所有类别</h1>
         <div className="flex items-center gap-3">
           <span className={`text-sm ${colors.textMuted}`}>{categories?.length || 0} 个类别</span>
+          {/* 新话题（全局） */}
+          <button
+            onClick={() => {
+              import("../../components/Composer/ComposerStore").then(({ useComposerStore }) => {
+                useComposerStore.getState().open("CREATE_TOPIC");
+              });
+            }}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+              theme === "dark"
+                ? "bg-amber-600 text-white hover:bg-amber-700"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
+          >
+            <MessageSquare className="h-4 w-4" />
+            新话题
+          </button>
+
           {/* 新增类别按钮 - TODO: 添加管理员权限判断 */}
           <Link
             to="/forum/new-category"

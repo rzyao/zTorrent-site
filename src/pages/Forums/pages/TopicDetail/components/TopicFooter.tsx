@@ -82,7 +82,16 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
             <Flag className="h-4 w-4 text-[#0088CC]" />
             <span>Flag</span>
           </button>
-          <button className="flex cursor-pointer items-center gap-2 rounded-full border border-transparent bg-[#0088CC] px-5 py-2 text-sm font-bold text-white transition-all select-none hover:border-white hover:bg-[#0088CC]">
+          <button
+            onClick={() => {
+              // Get topic ID from props if available
+              const topicId = topicData?.id;
+              import("../../../components/Composer/ComposerStore").then(({ useComposerStore }) => {
+                useComposerStore.getState().open("REPLY", { replyToTopicId: topicId });
+              });
+            }}
+            className="flex cursor-pointer items-center gap-2 rounded-full border border-transparent bg-[#0088CC] px-5 py-2 text-sm font-bold text-white transition-all select-none hover:border-white hover:bg-[#0088CC]"
+          >
             <Reply className="h-4 w-4" />
             <span>Reply</span>
           </button>

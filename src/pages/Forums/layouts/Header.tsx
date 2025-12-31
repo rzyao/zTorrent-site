@@ -70,6 +70,23 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">
+            {/* New Topic Button */}
+            <button
+              onClick={() => {
+                import("../components/Composer/ComposerStore").then(({ useComposerStore }) => {
+                  useComposerStore.getState().open("CREATE_TOPIC");
+                });
+              }}
+              className={`hidden items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors sm:flex ${
+                theme === "dark"
+                  ? "bg-amber-600 text-white hover:bg-amber-700"
+                  : "bg-blue-600 text-white hover:bg-blue-700"
+              }`}
+            >
+              <MessageSquare className="h-4 w-4" />
+              <span>新话题</span>
+            </button>
+
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}

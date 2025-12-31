@@ -36,6 +36,9 @@ const NewCategoryPage = lazy(() =>
 const EditCategoryPage = lazy(() =>
   import("@/pages/Forums/pages/EditCategoryPage").then((m) => ({ default: m.EditCategoryPage })),
 );
+const TagsPage = lazy(() =>
+  import("@/pages/Forums/pages/TagsPage").then((m) => ({ default: m.TagsPage })),
+);
 const SubtitlesPage = lazy(() => import("@/pages/Subtitles/index.tsx"));
 const RankingPage = lazy(() => import("@/pages/RankingPage.tsx"));
 const EditMoviePage = lazy(() => import("@/pages/Edit/movies/index.tsx"));
@@ -236,6 +239,8 @@ export default function AppRoutes() {
           <Route path="tag/:tagName" element={<CategoryPage />} />
           {/* 类别概览页 */}
           <Route path="categories" element={<CategoriesPage />} />
+          {/* 标签概览页 */}
+          <Route path="tags" element={<TagsPage />} />
           {/* 新建类别 */}
           <Route path="new-category" element={<NewCategoryPage />} />
           {/* 编辑类别 */}

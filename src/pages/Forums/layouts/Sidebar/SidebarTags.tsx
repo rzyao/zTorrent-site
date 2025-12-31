@@ -78,9 +78,7 @@ export function SidebarTags({
               className={`flex w-full cursor-pointer items-center justify-between rounded-lg py-1.5 pr-4 pl-8 transition-colors ${buttonClass}`}
             >
               <div className="flex items-center gap-3">
-                <span className="flex h-3.5 w-3.5 items-center justify-center rounded-[2px] bg-neutral-200 dark:bg-neutral-700">
-                  <Hash className="h-2.5 w-2.5 text-neutral-500 dark:text-neutral-400" />
-                </span>
+                <Hash className="h-3 w-3 opacity-50" />
                 <span className="text-base font-medium">{tag.name}</span>
               </div>
             </button>

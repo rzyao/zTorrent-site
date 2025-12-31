@@ -110,6 +110,17 @@ export function Post({ post, postIndex, isLast, theme, colors }: PostProps) {
 
           {/* Main Reply Button for Post - Moved to right */}
           <button
+            onClick={() => {
+              // Determine Topic ID (Prop drilling or Params)
+              // For now, let's use a dynamic import to avoid circular heavy dependencies if possible
+              // But grabbing ID from URL is safer for specific post reply
+              import("../../../components/Composer/ComposerStore").then(({ useComposerStore }) => {
+                useComposerStore.getState().open("REPLY", {
+                  replyToPostId: post.id,
+                  // We might need to fetch topicId from context or url if not passed
+                });
+              });
+            }}
             className={`flex cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-[#A6A6A6] transition-all hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
           >
             <Reply className="h-5 w-5" />
