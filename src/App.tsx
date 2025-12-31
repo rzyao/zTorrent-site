@@ -22,7 +22,7 @@ export default function App() {
    * 导致 useEffect 重复执行或在手机端出现竞态条件
    */
   useEffect(() => {
-    document.documentElement.classList.add("dark");
+    // document.documentElement.classList.add("dark"); // Removed to prevent flash and conflict with ForumThemeContext
     // 应用初始化时：先加载字典数据，再获取分类数据（确保 label 能正确填充）
     const init = async () => {
       await useDictionaryStore.getState().fetchDictionaries();

@@ -59,7 +59,7 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
                 placeholder="搜索话题、帖子..."
                 value={searchQuery}
                 onChange={(e) => onSearch(e.target.value)}
-                className={`focus:ring-opacity-50 w-full rounded-lg border py-2 pr-4 pl-10 transition-colors focus:ring-2 focus:outline-none ${colors.inputBg} ${colors.inputBorder} ${colors.textPrimary} placeholder:text-gray-400 focus:ring-blue-500 dark:placeholder:text-neutral-500 dark:focus:ring-amber-500`}
+                className={`focus:ring-opacity-50 w-full rounded-lg border py-2 pr-4 pl-10 focus:ring-2 focus:outline-none ${colors.inputBg} ${colors.inputBorder} ${colors.textPrimary} placeholder:text-gray-400 focus:ring-blue-500 dark:placeholder:text-neutral-500 dark:focus:ring-amber-500`}
               />
             </div>
           </div>
@@ -114,7 +114,7 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
               placeholder="搜索话题、帖子..."
               value={searchQuery}
               onChange={(e) => onSearch(e.target.value)}
-              className={`focus:ring-opacity-50 w-full rounded-lg border py-2 pr-4 pl-10 transition-colors focus:ring-2 focus:outline-none ${colors.inputBg} ${colors.inputBorder} ${colors.textPrimary} focus:ring-blue-500 dark:focus:ring-amber-500`}
+              className={`focus:ring-opacity-50 w-full rounded-lg border py-2 pr-4 pl-10 focus:ring-2 focus:outline-none ${colors.inputBg} ${colors.inputBorder} ${colors.textPrimary} focus:ring-blue-500 dark:focus:ring-amber-500`}
             />
           </div>
         </div>
