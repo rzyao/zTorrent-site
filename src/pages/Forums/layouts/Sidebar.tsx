@@ -1,13 +1,4 @@
-import {
-  Home,
-  TrendingUp,
-  Sparkles,
-  BookOpen, // Fallback icon
-  Users,
-  Pencil,
-  Hash,
-  Square,
-} from "lucide-react";
+import { Home, Users, Pencil, Hash, Square, LayoutGrid, ChevronDown } from "lucide-react";
 import { useForumTheme } from "../context/ForumThemeContext";
 import { useForumsCategories } from "../hooks/useForumsCategories";
 import { useForumsTagsQuery } from "../hooks/useForumsTagsQuery";
@@ -15,7 +6,8 @@ import { SidebarCustomizeModal } from "./SidebarCustomizeModal";
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { UsersService, ForumCategory, ForumTag } from "@/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { getIconByName } from "@/components/ui/icon-picker";
 
 // Extended types to include ID which might be missing in generated DTOs
 type ExtendedForumCategory = ForumCategory & { id: string };
@@ -26,11 +18,7 @@ interface SidebarProps {
   onCategoryChange: (category: string) => void;
 }
 
-const NAV_ITEMS = [
-  { id: "all", name: "全部", icon: Home },
-  { id: "trending", name: "热门话题", icon: TrendingUp },
-  { id: "new", name: "最新发布", icon: Sparkles },
-];
+const NAV_ITEMS = [{ id: "topics", name: "话题", icon: Home, path: "/forum/latest" }];
 
 /**
  * 分割线组件
@@ -43,11 +31,16 @@ function Divider({ className = "" }: { className?: string }) {
 export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
   const { theme, colors } = useForumTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
 
   // Modals state
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+
+  // 伸缩状态（默认展开）
+  const [isCategoriesExpanded, setIsCategoriesExpanded] = useState(true);
+  const [isTagsExpanded, setIsTagsExpanded] = useState(true);
 
   // 1. Fetch Data
   const { data } = useForumsCategories();
@@ -138,61 +131,78 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
 
   return (
     // 整体一个大卡片
-    <div className="overflow-hidden transition-colors">
-      {/* 导航模块 */}
-      <div className="p-4">
-        <h3 className={`mb-3 text-xs font-semibold tracking-wider uppercase ${colors.textMuted}`}>
-          导航
-        </h3>
-        <nav className="space-y-1">
-          {NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            const isActive = selectedCategory === item.id;
+    <div className="overflow-hidden pl-5 transition-colors">
+      {/* 导航模块 - 直接显示导航项 */}
+      {/* 导航模块 - 直接显示导航项 */}
+      <nav className="space-y-1 py-2">
+        {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          // 根据当前路径判断激活状态
+          const isActive =
+            location.pathname === item.path || location.pathname.startsWith(item.path + "/");
 
-            let buttonClass: string;
-            if (isActive) {
-              buttonClass =
-                theme === "dark" ? "bg-amber-500/10 text-amber-500" : "bg-blue-50 text-blue-600";
-            } else {
-              buttonClass = `${colors.textSecondary} ${colors.buttonHover}`;
-            }
+          let buttonClass: string;
+          if (isActive) {
+            buttonClass =
+              theme === "dark" ? "bg-amber-500/10 text-amber-500" : "bg-blue-50 text-blue-600";
+          } else {
+            buttonClass = `${colors.textSecondary} ${colors.buttonHover}`;
+          }
 
-            return (
-              <button
-                key={item.id}
-                onClick={() => onCategoryChange(item.id)}
-                className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors ${buttonClass}`}
-              >
-                <Icon className="h-4 w-4" />
-                <span className="text-sm font-medium">{item.name}</span>
-              </button>
-            );
-          })}
-        </nav>
-      </div>
+          return (
+            <button
+              key={item.id}
+              onClick={() => navigate(item.path)}
+              className={`flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 transition-colors ${buttonClass}`}
+            >
+              <Icon className="h-4 w-4" />
+              <span className="text-sm leading-none font-medium">{item.name}</span>
+            </button>
+          );
+        })}
+      </nav>
 
       <Divider />
 
       {/* 话题分类模块 */}
-      <div className="group p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <h3 className={`text-xs font-semibold tracking-wider uppercase ${colors.textMuted}`}>
-            话题分类
-          </h3>
+      <div className="group">
+        {/* 可点击的模块标题 */}
+        <button
+          onClick={() => setIsCategoriesExpanded(!isCategoriesExpanded)}
+          className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-colors ${colors.textSecondary} ${colors.buttonHover}`}
+        >
+          <div className="flex items-center gap-2">
+            <ChevronDown
+              className={`h-4 w-4 transition-transform duration-200 ${
+                isCategoriesExpanded ? "" : "-rotate-90"
+              }`}
+            />
+            <span className="text-sm font-medium">话题分类</span>
+          </div>
           {userPreferences && (
-            <button
-              onClick={() => setIsCategoryModalOpen(true)}
-              className={`rounded p-1 text-neutral-500 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-neutral-200 dark:hover:bg-neutral-800`}
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsCategoryModalOpen(true);
+              }}
+              className={`rounded p-1 text-neutral-500 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-neutral-200 dark:hover:bg-neutral-700`}
               title="编辑分类"
             >
               <Pencil className="h-3.5 w-3.5" />
-            </button>
+            </span>
           )}
-        </div>
+        </button>
 
-        <div className="space-y-0.5">
+        {/* 可折叠的内容区域 */}
+        <div
+          className={`space-y-0.5 overflow-hidden transition-all duration-200 ${
+            isCategoriesExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
           {displayedCategories.map((cat) => {
-            const isActive = selectedCategory === cat.id;
+            // 使用路由路径判断激活状态
+            const categoryPath = `/forum/category/${cat.id}`;
+            const isActive = location.pathname === categoryPath;
 
             let buttonClass: string;
             if (isActive) {
@@ -205,78 +215,115 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
             return (
               <button
                 key={cat.id}
-                onClick={() => onCategoryChange(cat.id)}
+                onClick={() => navigate(categoryPath)}
                 className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-colors ${buttonClass}`}
               >
                 <div className="flex items-center gap-3">
-                  {/* Category Color Block */}
-                  {cat.color ? (
-                    <span
-                      className="h-3 w-3 rounded-[2px]"
-                      style={{ backgroundColor: cat.color }}
-                    />
-                  ) : (
-                    <Square className="h-3 w-3 text-gray-400" />
-                  )}
+                  {/* Category Icon or Color Block */}
+                  {(() => {
+                    const IconComponent = cat.icon ? getIconByName(cat.icon) : null;
+                    if (IconComponent) {
+                      return <IconComponent className="h-3.5 w-3.5" style={{ color: cat.color }} />;
+                    }
+                    return cat.color ? (
+                      <span
+                        className="h-3 w-3 rounded-[2px]"
+                        style={{ backgroundColor: cat.color }}
+                      />
+                    ) : (
+                      <Square className="h-3 w-3 text-gray-400" />
+                    );
+                  })()}
                   <span className="text-sm">{cat.name}</span>
                 </div>
-                {/* 暂时没有 count 字段在 API 返回中，若有可显示 */}
-                {/* <span className={`text-xs ${colors.textMuted}`}>{cat.count}</span> */}
               </button>
             );
           })}
 
-          {displayedCategories.length === 0 && (
-            <div className={`px-3 py-2 text-sm italic ${colors.textMuted}`}>未选择分类</div>
-          )}
+          <button
+            onClick={() => navigate("/forum/categories")}
+            className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors ${colors.textSecondary} ${colors.buttonHover}`}
+          >
+            <div className="flex items-center gap-3">
+              <LayoutGrid className="h-4 w-4" />
+              <span className="text-sm">所有类别</span>
+            </div>
+          </button>
         </div>
       </div>
 
       <Divider />
 
       {/* 热门标签模块 */}
-      <div className="group p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <h3 className={`text-xs font-semibold tracking-wider uppercase ${colors.textMuted}`}>
-            热门标签
-          </h3>
+      <div className="group">
+        {/* 可点击的模块标题 */}
+        <button
+          onClick={() => setIsTagsExpanded(!isTagsExpanded)}
+          className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-colors ${colors.textSecondary} ${colors.buttonHover}`}
+        >
+          <div className="flex items-center gap-2">
+            <ChevronDown
+              className={`h-4 w-4 transition-transform duration-200 ${
+                isTagsExpanded ? "" : "-rotate-90"
+              }`}
+            />
+            <span className="text-sm font-medium">热门标签</span>
+          </div>
           {userPreferences && (
-            <button
-              onClick={() => setIsTagModalOpen(true)}
-              className={`rounded p-1 text-neutral-500 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-neutral-200 dark:hover:bg-neutral-800`}
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsTagModalOpen(true);
+              }}
+              className={`rounded p-1 text-neutral-500 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-neutral-200 dark:hover:bg-neutral-700`}
               title="编辑标签"
             >
               <Pencil className="h-3.5 w-3.5" />
-            </button>
+            </span>
           )}
-        </div>
+        </button>
 
-        <div className="flex flex-wrap gap-2">
-          {displayedTags.map((tag) => (
-            <button
-              key={tag.id}
-              onClick={() => {
-                // Navigate to search or filter by tag?
-                // For now assuming onCategoryChange handles ID or we assume specific route
-                // Usually tag click filters list.
-                // Implementation specific: passing tag id as 'category' might be wrong if onCategoryChange only expects categories.
-                // But SidebarProps says `onCategoryChange`. The parent handles routing.
-                // Ideally we should navigate to `/forum/tag/:id`.
-                navigate(`/forum/tag/${tag.id}`);
-              }}
-              className={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-sm transition-colors ${
-                theme === "dark"
-                  ? "bg-neutral-800 text-neutral-400 hover:bg-neutral-700 hover:text-neutral-200"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900"
-              }`}
-            >
-              <Hash className="h-3 w-3 opacity-50" />
-              {tag.name}
-            </button>
-          ))}
-          {displayedTags.length === 0 && (
-            <div className={`text-sm italic ${colors.textMuted}`}>未选择标签</div>
-          )}
+        {/* 可折叠的内容区域 */}
+        <div
+          className={`space-y-0.5 overflow-hidden transition-all duration-200 ${
+            isTagsExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          {displayedTags.map((tag) => {
+            const tagPath = `/forum/tag/${tag.id}`;
+            const isActive = location.pathname === tagPath;
+
+            let buttonClass: string;
+            if (isActive) {
+              buttonClass =
+                theme === "dark" ? "bg-neutral-800 text-neutral-200" : "bg-gray-100 text-gray-900";
+            } else {
+              buttonClass = `${colors.textSecondary} ${colors.buttonHover}`;
+            }
+
+            return (
+              <button
+                key={tag.id}
+                onClick={() => navigate(tagPath)}
+                className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-colors ${buttonClass}`}
+              >
+                <div className="flex items-center gap-3">
+                  <Hash className="h-3 w-3 opacity-50" />
+                  <span className="text-sm">{tag.name}</span>
+                </div>
+              </button>
+            );
+          })}
+
+          <button
+            onClick={() => navigate("/forum/tags")}
+            className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors ${colors.textSecondary} ${colors.buttonHover}`}
+          >
+            <div className="flex items-center gap-3">
+              <LayoutGrid className="h-4 w-4" />
+              <span className="text-sm">所有标签</span>
+            </div>
+          </button>
         </div>
       </div>
 

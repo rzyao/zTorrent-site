@@ -26,9 +26,10 @@ function ForumLayoutInner() {
 
   return (
     <div
-      className={`flex h-screen flex-col overflow-hidden ${colors.pageBg} transition-colors duration-200`}
+      id="forum-scroll-container"
+      className={`flex h-screen flex-col overflow-y-auto ${colors.pageBg} ${mainScrollbarClass} transition-colors duration-200`}
     >
-      {/* 顶部导航栏 - 固定高度，不参与滚动 */}
+      {/* 顶部导航栏 - 固定在顶部 */}
       <Header
         onSearch={setSearchQuery}
         searchQuery={searchQuery}
@@ -43,22 +44,20 @@ function ForumLayoutInner() {
         onCategoryChange={setSelectedCategory}
       />
 
-      {/* 主体内容区域 - 占据剩余高度 */}
-      <div
-        id="forum-scroll-container"
-        className={`min-h-0 flex-1 overflow-y-auto ${mainScrollbarClass}`}
-      >
-        <div className="mx-auto h-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className={`grid h-full grid-cols-1 gap-8 lg:grid-cols-12 ${colors.listBg}`}>
-            {/* 左侧边栏: 使用纯 CSS 滚动条动画 (linux.do 风格) */}
+      {/* 主体内容区域 */}
+      <div className={`relative flex-1 ${colors.listBg}`}>
+        <div className="mx-auto max-w-[1420px] px-4 sm:px-6 lg:px-8">
+          <div className={`flex items-start gap-8 ${colors.listBg}`}>
+            {/* 左侧边栏: Fixed 定位，独立滚动 */}
             <aside
-              className={`${sidebarScrollbarClass} hidden border-r pr-4 ${colors.borderColor} lg:sticky lg:top-0 lg:col-span-3 lg:block lg:max-h-full lg:overflow-y-auto lg:overscroll-contain`}
+              className={`fixed top-[64px] left-0 hidden w-[280px] shrink-0 border-r pr-4 pl-5 ${colors.borderColor} ${sidebarScrollbarClass} lg:block lg:h-[calc(100vh-64px)] lg:overflow-y-auto`}
+              style={{ left: "max(0px, calc((100vw - 1420px) / 2))" }}
             >
               <Sidebar selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
             </aside>
 
-            {/* 右侧内容区域 */}
-            <main className="lg:col-span-9">
+            {/* 右侧内容区域: 使用全局滚动，左边距为侧栏宽度 */}
+            <main className="min-w-0 flex-1 pr-5 lg:ml-[280px]">
               <Outlet context={{ selectedCategory, searchQuery }} />
             </main>
           </div>

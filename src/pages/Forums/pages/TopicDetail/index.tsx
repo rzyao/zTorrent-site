@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForumTheme } from "../../context/ForumThemeContext";
+import { cn } from "@/components/ui/utils";
 import { TopicDetailProps } from "./types";
 import { Post } from "./components/Post";
 import { Timeline } from "./components/Timeline";
@@ -17,6 +18,7 @@ export function TopicDetail({
   const navigate = useNavigate();
   const { theme, colors } = useForumTheme();
   const [currentPost, setCurrentPost] = useState(1);
+  const [scrollPercentage, setScrollPercentage] = useState(0); // 新增：基于距离的百分比
   const [isProgrammaticScroll, setIsProgrammaticScroll] = useState(false);
 
   const topicId = propTopicId || paramTopicId;
@@ -25,41 +27,44 @@ export function TopicDetail({
   // 从 API 获取数据
   const { topicData, isLoading, isError, error } = useTopicDetail(topicId);
 
-  // 计算非系统操作的真正帖子
-  const regularPosts = topicData.posts.filter((p) => !p.isSmallAction);
+  // 计算非系统操作的真正帖子 (在渲染时进行，避免 topicData 为 null 时报错)
+  const regularPosts = topicData?.posts?.filter((p) => !p.isSmallAction) ?? [];
   const totalRegularPosts = regularPosts.length;
 
-  // Handle Timeline Change
+  // Handle Timeline Change (用于点击跳转到特定帖子)
   const handleTimelineChange = (index: number) => {
-    setIsProgrammaticScroll(true);
     setCurrentPost(index);
-
-    const scrollContainer = document.getElementById("forum-scroll-container");
-    const element = document.getElementById(`post-${index}`);
-
-    if (element && scrollContainer) {
-      // 计算元素相对于滚动容器的偏移
-      const containerRect = scrollContainer.getBoundingClientRect();
-      const elementRect = element.getBoundingClientRect();
-      const headerOffset = 100; // Sticky header + padding
-
-      // 当前滚动位置 + 元素相对于容器的位置 - header偏移
-      const targetScrollTop =
-        scrollContainer.scrollTop + (elementRect.top - containerRect.top) - headerOffset;
-
-      scrollContainer.scrollTo({
-        top: targetScrollTop,
-        behavior: "auto", // 拖拽需要即时响应
-      });
-
-      // Reset flag after a short delay
-      setTimeout(() => {
-        setIsProgrammaticScroll(false);
-      }, 100);
-    }
   };
 
-  // 滚动监听
+  // 处理百分比滚动 (用于平滑拖拽)
+  const handlePercentageScroll = (pct: number) => {
+    const scrollContainer = document.getElementById("forum-scroll-container");
+    if (!scrollContainer) return;
+
+    setIsProgrammaticScroll(true);
+
+    // 计算可滚动的总高度
+    const scrollHeight = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+    const targetScrollTop = pct * scrollHeight;
+
+    // 直接设置 scrollTop，无动画延迟
+    scrollContainer.scrollTop = targetScrollTop;
+
+    // 同时更新百分比状态
+    setScrollPercentage(pct);
+
+    // 计算当前帖子索引
+    const newIndex = Math.round(pct * (totalRegularPosts - 1)) + 1;
+    if (newIndex !== currentPost && newIndex >= 1 && newIndex <= totalRegularPosts) {
+      setCurrentPost(newIndex);
+    }
+
+    setTimeout(() => {
+      setIsProgrammaticScroll(false);
+    }, 50);
+  };
+
+  // 滚动监听 - 基于距离的百分比计算
   useEffect(() => {
     const scrollContainer = document.getElementById("forum-scroll-container");
     if (!scrollContainer) return;
@@ -67,49 +72,34 @@ export function TopicDetail({
     const handleScroll = () => {
       if (isProgrammaticScroll) return;
 
+      // 直接计算滚动百分比
+      const scrollHeight = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+      const pct = scrollHeight > 0 ? scrollContainer.scrollTop / scrollHeight : 0;
+      setScrollPercentage(pct);
+
+      // 同时计算当前帖子索引（用于显示楼层号）
       const posts = document.querySelectorAll("[data-post-index]");
-      let activePostIndex: number | null = null;
       const headerOffset = 150;
 
-      // 找到第一个顶部在视口上半部分的帖子
-      let found = false;
-      for (let i = 0; i < posts.length; i++) {
+      for (let i = posts.length - 1; i >= 0; i--) {
         const post = posts[i];
         const rect = post.getBoundingClientRect();
-
-        if (rect.top >= 0 && rect.top < window.innerHeight / 2) {
+        if (rect.top < headerOffset) {
           const indexStr = post.getAttribute("data-post-index");
           if (indexStr) {
-            activePostIndex = parseInt(indexStr, 10);
-            found = true;
+            const activePostIndex = parseInt(indexStr, 10);
+            if (!isNaN(activePostIndex) && activePostIndex !== currentPost) {
+              setCurrentPost(activePostIndex);
+            }
             break;
           }
         }
-      }
-
-      // 回退逻辑
-      if (!found) {
-        for (let i = posts.length - 1; i >= 0; i--) {
-          const post = posts[i];
-          const rect = post.getBoundingClientRect();
-          if (rect.top < headerOffset) {
-            const indexStr = post.getAttribute("data-post-index");
-            if (indexStr) {
-              activePostIndex = parseInt(indexStr, 10);
-              break;
-            }
-          }
-        }
-      }
-
-      if (activePostIndex !== null && !isNaN(activePostIndex)) {
-        setCurrentPost(activePostIndex);
       }
     };
 
     scrollContainer.addEventListener("scroll", handleScroll);
     return () => scrollContainer.removeEventListener("scroll", handleScroll);
-  }, [isProgrammaticScroll]);
+  }, [isProgrammaticScroll, currentPost]);
 
   // 页面加载时滚动到顶部
   useEffect(() => {
@@ -161,7 +151,10 @@ export function TopicDetail({
         </div>
 
         {/* Title Section */}
-        <TopicHeader theme={theme} topicData={topicData} />
+        <TopicHeader theme={theme} colors={colors} topicData={topicData} />
+
+        {/* Header Divider */}
+        <div className={cn("mt-2 mb-2 border-t", colors.dividerColor)}></div>
 
         {/* Main Layout: Posts Stream + Timeline */}
         <div className="flex items-start">
@@ -202,9 +195,11 @@ export function TopicDetail({
             colors={colors}
             totalPosts={totalRegularPosts}
             currentPost={currentPost}
+            scrollPercentage={scrollPercentage}
             startDate={topicData.createdAt}
             lastPostedAt={topicData.stats.lastReply}
             onChange={handleTimelineChange}
+            onPercentageChange={handlePercentageScroll}
           />
         </div>
       </div>

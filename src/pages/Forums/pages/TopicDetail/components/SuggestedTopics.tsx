@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useForumsTopicsQuery } from "../../../hooks/useForumsTopicsQuery";
 import { useForumTheme } from "../../../context/ForumThemeContext";
+import { cn } from "@/components/ui/utils";
 
 interface SuggestedTopicsProps {
   theme: string;
@@ -27,15 +28,15 @@ export const SuggestedTopics = ({ theme, categoryId, currentTopicId }: Suggested
 
   return (
     <div className="mt-10">
-      <h3 className={`mb-3 text-[19px] font-bold text-[#DDDDDD] dark:text-neutral-100`}>
-        建议话题
-      </h3>
+      <h3 className={cn("mb-3 text-[19px] font-bold", colors.titleColor)}>建议话题</h3>
       <div className="overflow-hidden">
         <div
-          className={`grid grid-cols-[auto_1fr_auto_auto_auto] gap-x-4 py-2 text-[15px] font-medium text-[#919191] dark:border-neutral-700`}
+          className={cn(
+            "grid grid-cols-[auto_1fr_auto_auto_auto] gap-x-4 border-b py-2 text-[15px] font-medium text-[#919191]",
+            colors.dividerColor,
+          )}
         >
-          <div className="w-8"></div> {/* Avatar Spacer */}
-          <div className="pl-2">话题</div>
+          <div className="col-span-2">话题</div>
           <div className="w-16 text-center">回复</div>
           <div className="w-16 text-center">浏览</div>
           <div className="w-16 text-center">活动</div>
@@ -44,7 +45,11 @@ export const SuggestedTopics = ({ theme, categoryId, currentTopicId }: Suggested
           <div
             key={topic.id}
             onClick={() => navigate(`/forum/topic/${topic.id}`)}
-            className={`grid grid-cols-[auto_1fr_auto_auto_auto] items-center gap-x-4 border-b border-[#e9e9e9] py-3 text-sm transition-colors dark:border-neutral-700 ${theme === "dark" ? "hover:bg-white/5" : "hover:bg-[#f9f9f9]"} cursor-pointer`}
+            className={cn(
+              "grid cursor-pointer grid-cols-[auto_1fr_auto_auto_auto] items-center gap-x-4 border-b py-3 text-sm transition-colors",
+              colors.dividerColor,
+              theme === "dark" ? "hover:bg-white/5" : "hover:bg-[#f9f9f9]",
+            )}
           >
             {/* Posters Column */}
             <div className="flex w-8 justify-center">
@@ -54,13 +59,11 @@ export const SuggestedTopics = ({ theme, categoryId, currentTopicId }: Suggested
                   `https://api.dicebear.com/7.x/avataaars/svg?seed=${topic.author?.username}`
                 }
                 alt="poster"
-                className="h-6 w-6 rounded-full"
+                className={`h-8 w-8 rounded-full border-2 ${colors.avatarBorder}`}
               />
             </div>
             <div className="min-w-0 pl-2">
-              <div
-                className={`truncate font-medium text-[#222] hover:underline dark:text-neutral-200`}
-              >
+              <div className={cn("truncate font-medium hover:underline", colors.titleColor)}>
                 {topic.title}
               </div>
               <div className="mt-1 flex items-center gap-1">

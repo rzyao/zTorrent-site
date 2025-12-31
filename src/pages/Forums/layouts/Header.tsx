@@ -27,9 +27,9 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
 
   return (
     <header
-      className={`shrink-0 ${colors.headerBg} border-b ${colors.borderColor} z-50 transition-colors duration-200`}
+      className={`sticky top-0 ${colors.headerBg} border-b ${colors.borderColor} z-50 transition-colors duration-200`}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1420px] px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
@@ -91,13 +91,6 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
             <button className={`rounded-lg p-2 ${colors.buttonHover} transition-colors`}>
               <User className={`h-5 w-5 ${colors.textSecondary}`} />
             </button>
-
-            <Link
-              to="/forum/create"
-              className={`hidden rounded-lg px-4 py-2 transition-colors sm:block ${colors.buttonPrimary}`}
-            >
-              发布话题
-            </Link>
           </div>
         </div>
 

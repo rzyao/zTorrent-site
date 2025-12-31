@@ -1,8 +1,8 @@
-import { MessageSquare, Eye, Pin, TrendingUp } from "lucide-react";
+import { Pin, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { useForumTheme } from "../context/ForumThemeContext";
 import { useForumsTopicsQuery, ExtendedApiTopic } from "../hooks/useForumsTopicsQuery";
-import { useNavigate } from "react-router-dom";
+import { ForumFilterBar } from "../components/ForumFilterBar";
 
 // UI 类型定义
 interface Participant {
@@ -30,8 +30,11 @@ interface UiTopic {
 }
 
 interface ForumListProps {
-  selectedCategory: string;
+  selectedCategory: string; // "all" or category ID (for API query)
+  categoryName?: string; // Category name (for UI display)
+  selectedTag?: string; // Tag name
   searchQuery: string;
+  sortBy?: "latest" | "hot"; // 排序方式
   onTopicClick: (id: string) => void;
 }
 
@@ -105,75 +108,43 @@ function transformTopic(apiTopic: ExtendedApiTopic): UiTopic {
   };
 }
 
-export function ForumList({ selectedCategory, searchQuery, onTopicClick }: ForumListProps) {
-  const [sortBy, setSortBy] = useState<"latest" | "popular" | "trending">("latest");
+export function ForumList({
+  selectedCategory,
+  categoryName,
+  selectedTag,
+  searchQuery,
+  sortBy = "latest",
+  onTopicClick,
+}: ForumListProps) {
   const { theme, colors } = useForumTheme();
-  const navigate = useNavigate();
+
+  // 将 sortBy 映射到 API 的 sort 参数
+  const apiSortBy = sortBy === "hot" ? "popular" : "latest";
 
   // 查询 API
   const { data, isLoading, isError, error } = useForumsTopicsQuery({
     categoryId: selectedCategory,
+    tag: selectedTag,
     search: searchQuery,
     page: 1, // 暂时固定第一页，后续可加分页组件
     limit: 20,
-    sortBy,
+    sortBy: apiSortBy as "latest" | "popular" | "trending",
   });
 
   const topics: UiTopic[] = data?.items?.map(transformTopic) || [];
 
   return (
-    <div className="space-y-4">
-      {/* 统一卡片容器：排序控件 + 话题列表 */}
-      <div className="overflow-hidden">
-        {/* Sort Controls */}
-        <div className={`border-b p-4 ${colors.dividerColor} transition-colors`}>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className={`font-semibold ${colors.textPrimary}`}>
-              {selectedCategory === "all" && "全部话题"}
-              {selectedCategory === "trending" && "热门话题"}
-              {selectedCategory === "new" && "最新发布"}
-              {selectedCategory === "tech" && "技术讨论"}
-              {selectedCategory === "design" && "设计创意"}
-              {selectedCategory === "gaming" && "游戏娱乐"}
-              {selectedCategory === "music" && "音乐分享"}
-              {selectedCategory === "learning" && "学习成长"}
-              {selectedCategory === "competition" && "竞赛活动"}
-              {![
-                "all",
-                "trending",
-                "new",
-                "tech",
-                "design",
-                "gaming",
-                "music",
-                "learning",
-                "competition",
-              ].includes(selectedCategory) && "话题列表"}
-            </h2>
-            <div className="flex gap-2">
-              {[
-                { id: "latest", label: "最新" },
-                { id: "popular", label: "最热" },
-                { id: "trending", label: "趋势" },
-              ].map((sort) => (
-                <button
-                  key={sort.id}
-                  onClick={() => setSortBy(sort.id as any)}
-                  className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm transition-colors ${
-                    sortBy === sort.id
-                      ? theme === "dark"
-                        ? "bg-amber-500/20 text-amber-400"
-                        : "bg-blue-100 text-blue-700"
-                      : `${colors.buttonSecondary}`
-                  }`}
-                >
-                  {sort.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+    <div className="space-y-0">
+      {/* 顶部筛选栏 */}
+      <ForumFilterBar
+        selectedCategory={selectedCategory}
+        categoryName={categoryName}
+        selectedTag={selectedTag}
+        sortBy={sortBy}
+      />
 
+      {/* 话题列表容器 */}
+      <div className="overflow-hidden">
         {/* Table Header (Desktop) */}
         <div
           className={`hidden items-center border-b px-4 py-3 md:flex ${colors.dividerColor} text-sm font-semibold ${colors.textMuted}`}
@@ -225,7 +196,7 @@ export function ForumList({ selectedCategory, searchQuery, onTopicClick }: Forum
             <div
               key={topic.id}
               onClick={() => onTopicClick(topic.id)}
-              className={`group flex items-start border-b px-4 py-4 ${colors.dividerColor} cursor-pointer gap-3 transition-all last:border-0 ${theme === "dark" ? "hover:bg-neutral-800/50" : "hover:bg-gray-50"}`}
+              className={`group flex items-center border-b px-4 py-4 ${colors.dividerColor} cursor-pointer gap-3 transition-all last:border-0 ${theme === "dark" ? "hover:bg-neutral-800/50" : "hover:bg-gray-50"}`}
             >
               {/* Left: Info (Flex-1) */}
               <div className="min-w-0 flex-1">

@@ -44,6 +44,7 @@ interface ExtendedApiTopic {
     name: string;
     slug: string;
     color?: string;
+    icon?: string;
   };
   author?: {
     id: string;
@@ -177,15 +178,16 @@ export function useTopicDetail(topicId: string | undefined) {
       id: String(thread.id),
       title: thread.title || "",
       category: thread.category?.name || "常规",
-      categoryColor: thread.category?.color || "bg-gray-200 text-gray-800",
+      categoryColor: thread.category?.color || "#999",
+      categoryIcon: thread.category?.icon,
       tags: thread.tags?.map((t) => t.name) || [],
-      createdAt: formatDate(thread.created_at),
+      createdAt: formatDate(thread.created_at) || "未知",
       views: thread.views || 0,
       replies: posts.length,
       participants: Array.from(participantsMap.values()).slice(0, 5),
       stats: {
-        created: formatDate(thread.created_at),
-        lastReply: formatDate(thread.last_reply_at || thread.updated_at),
+        created: formatDate(thread.created_at) || "未知",
+        lastReply: formatDate(thread.last_reply_at || thread.updated_at) || "刚刚",
         replies: posts.length,
         views: String(thread.views || 0),
         users: participantsMap.size,

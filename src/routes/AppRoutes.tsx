@@ -27,6 +27,15 @@ const CategoryPage = lazy(() =>
 const CreateTopicPage = lazy(() =>
   import("@/pages/Forums/pages/CreateTopicPage").then((m) => ({ default: m.CreateTopicPage })),
 );
+const CategoriesPage = lazy(() =>
+  import("@/pages/Forums/pages/CategoriesPage").then((m) => ({ default: m.CategoriesPage })),
+);
+const NewCategoryPage = lazy(() =>
+  import("@/pages/Forums/pages/NewCategoryPage").then((m) => ({ default: m.NewCategoryPage })),
+);
+const EditCategoryPage = lazy(() =>
+  import("@/pages/Forums/pages/EditCategoryPage").then((m) => ({ default: m.EditCategoryPage })),
+);
 const SubtitlesPage = lazy(() => import("@/pages/Subtitles/index.tsx"));
 const RankingPage = lazy(() => import("@/pages/RankingPage.tsx"));
 const EditMoviePage = lazy(() => import("@/pages/Edit/movies/index.tsx"));
@@ -213,16 +222,24 @@ export default function AppRoutes() {
         >
           {/* 论坛首页 */}
           <Route index element={<ForumHomePage />} />
-          {/* 热门话题 */}
-          <Route path="trending" element={<ForumHomePage />} />
-          {/* 最新发布 */}
+          {/* 热门话题（全局） */}
+          <Route path="hot" element={<ForumHomePage />} />
+          {/* 最新发布（全局） */}
           <Route path="latest" element={<ForumHomePage />} />
           {/* 话题详情 */}
           <Route path="topic/:topicId" element={<TopicDetail />} />
-          {/* 分类页面 */}
+          {/* 分类页面（默认排序） */}
           <Route path="category/:categoryId" element={<CategoryPage />} />
+          {/* 分类页面（带排序） */}
+          <Route path="category/:categoryId/:sortBy" element={<CategoryPage />} />
           {/* 标签页面 */}
           <Route path="tag/:tagName" element={<CategoryPage />} />
+          {/* 类别概览页 */}
+          <Route path="categories" element={<CategoriesPage />} />
+          {/* 新建类别 */}
+          <Route path="new-category" element={<NewCategoryPage />} />
+          {/* 编辑类别 */}
+          <Route path="category/:categoryId/edit" element={<EditCategoryPage />} />
           {/* 发布话题 */}
           <Route path="create" element={<CreateTopicPage />} />
         </Route>

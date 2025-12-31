@@ -11,6 +11,13 @@ export interface ThemeColors {
   textPrimary: string;
   textSecondary: string;
   textMuted: string;
+  usernameColor: string;
+  titleColor: string;
+  footerButtonText: string;
+  footerButtonBg: string;
+
+  // 头像
+  avatarBorder: string;
 
   // 组件
   cardBg: string;
@@ -32,6 +39,10 @@ export interface ThemeColors {
   accentColor: string;
   accentHover: string;
 
+  // 下拉菜单项
+  menuItemActive: string;
+  menuItemHover: string;
+
   // 特殊
   shadow: string;
 }
@@ -41,11 +52,17 @@ export const themeConfig: Record<Theme, ThemeColors> = {
     pageBg: "bg-gray-50",
     headerBg: "bg-white",
     borderColor: "border-gray-200",
-    dividerColor: "border-gray-100",
+    dividerColor: "border-gray-200",
 
     textPrimary: "text-gray-900",
     textSecondary: "text-gray-600",
     textMuted: "text-gray-500",
+    usernameColor: "text-[#222]",
+    titleColor: "text-gray-900",
+    footerButtonText: "text-[#222]",
+    footerButtonBg: "bg-neutral-200",
+
+    avatarBorder: "border-gray-200",
 
     cardBg: "bg-white",
     // 浅色模式下卡片hover一般不需要变色，或者变一点点
@@ -65,6 +82,9 @@ export const themeConfig: Record<Theme, ThemeColors> = {
     accentColor: "text-blue-600",
     accentHover: "hover:text-blue-600",
 
+    menuItemActive: "bg-blue-50 text-blue-600",
+    menuItemHover: "hover:bg-gray-100",
+
     shadow: "shadow-sm",
   },
   dark: {
@@ -78,6 +98,12 @@ export const themeConfig: Record<Theme, ThemeColors> = {
     textPrimary: "text-[#dadada]",
     textSecondary: "text-neutral-400",
     textMuted: "text-neutral-500",
+    usernameColor: "text-[#bdbdbd]",
+    titleColor: "text-[#DDDDDD]",
+    footerButtonText: "text-[#dedede]",
+    footerButtonBg: "bg-[#2C2C2c]",
+
+    avatarBorder: "border-[#184d65]",
 
     // 玻璃拟态
     cardBg: "bg-neutral-800/40 backdrop-blur-md",
@@ -97,6 +123,9 @@ export const themeConfig: Record<Theme, ThemeColors> = {
 
     accentColor: "text-amber-400",
     accentHover: "hover:text-amber-400",
+
+    menuItemActive: "bg-[#31566c] text-amber-500",
+    menuItemHover: "hover:bg-[#31566c]",
 
     shadow: "shadow-none",
   },

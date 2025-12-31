@@ -4,6 +4,7 @@ import { ForumTopic } from "@/api/models/ForumTopic";
 
 interface UseForumsTopicsQueryBaseProps {
   categoryId?: string;
+  tag?: string;
   search?: string;
   page?: number;
   limit?: number;
@@ -60,16 +61,16 @@ export interface ExtendedApiTopic extends Omit<ForumTopic, "tags"> {
 import { QueryTopicDto } from "@/api/models/QueryTopicDto";
 
 export function useForumsTopicsQuery(props: UseForumsTopicsQueryBaseProps) {
-  const { categoryId, search, page = 1, limit = 20, sortBy = "latest" } = props;
+  const { categoryId, tag, search, page = 1, limit = 20, sortBy = "latest" } = props;
 
   const query = useQuery({
-    queryKey: ["forums", "topics", { categoryId, search, page, limit, sortBy }],
+    queryKey: ["forums", "topics", { categoryId, tag, search, page, limit, sortBy }],
     queryFn: async () => {
       // 这里的 requestBody 需要匹配 QueryTopicDto 的结构
       const requestBody: QueryTopicDto = {
         page,
         limit,
-        search,
+        search: tag ? `#${tag} ${search || ""}`.trim() : search, // 临时方案：通过 search 传递 tag，假设后端支持 #tag 搜索或全文检索
       };
 
       if (categoryId && categoryId !== "all") {

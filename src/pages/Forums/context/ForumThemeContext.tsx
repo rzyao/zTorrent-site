@@ -21,6 +21,15 @@ export function ForumThemeProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // 同步更新 html 元素的 class，使 Tailwind 的 dark: 前缀生效
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
+
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
