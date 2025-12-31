@@ -85,22 +85,21 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     editorProps: {
       attributes: {
         class: cn(
-          "prose prose-invert max-w-none",
-          "min-h-[200px] w-full px-4 py-3",
-          "focus:outline-none",
-          "text-neutral-100",
+          "prose dark:prose-invert max-w-none",
+          "min-h-[200px] w-full px-4 py-3 focus:outline-none",
+          "text-gray-900 dark:text-neutral-100",
           // 标题样式
-          "prose-headings:text-white prose-headings:font-semibold",
+          "prose-headings:text-gray-900 prose-headings:font-semibold dark:prose-headings:text-white",
           "prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg",
           // 链接样式
-          "prose-a:text-sky-400 prose-a:no-underline hover:prose-a:underline",
+          "prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline dark:prose-a:text-sky-400",
           // 代码块样式
-          "prose-code:text-emerald-400 prose-code:bg-neutral-800 prose-code:rounded prose-code:px-1",
-          "prose-pre:bg-neutral-900 prose-pre:border prose-pre:border-neutral-700",
+          "prose-code:text-emerald-600 prose-code:bg-gray-100 prose-code:rounded prose-code:px-1 dark:prose-code:text-emerald-400 dark:prose-code:bg-neutral-800",
+          "prose-pre:bg-gray-50 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:bg-neutral-900 dark:prose-pre:border-neutral-700",
           // 引用块样式
-          "prose-blockquote:border-l-sky-500 prose-blockquote:text-neutral-300",
+          "prose-blockquote:border-l-blue-500 prose-blockquote:text-gray-600 dark:prose-blockquote:border-l-sky-500 dark:prose-blockquote:text-neutral-300",
           // 列表样式
-          "prose-li:marker:text-neutral-500",
+          "prose-li:marker:text-gray-400 dark:prose-li:marker:text-neutral-500",
         ),
       },
     },
@@ -113,7 +112,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   return (
     <div className={cn("rich-text-editor flex h-full flex-col", className)}>
       {/* 工具栏 */}
-      <div className="flex flex-wrap items-center gap-1 border-b border-neutral-700/50 bg-neutral-800/50 px-2 py-1.5">
+      <div className="flex flex-wrap items-center gap-1 border-b border-gray-200 bg-gray-50 px-2 py-1.5 dark:border-neutral-700/50 dark:bg-neutral-800/50">
         {/* 工具栏前缀 (如模式切换按钮) */}
         {toolbarPrefix}
 
@@ -233,7 +232,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       </div>
 
       {/* 编辑器内容区域 */}
-      <div className="flex-1 overflow-auto bg-[#1a1a1a]">
+      <div className="flex-1 overflow-auto bg-white dark:bg-[#1a1a1a]">
         <EditorContent editor={editor} className="h-full" />
       </div>
 
@@ -279,8 +278,8 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({
     className={cn(
       "rounded p-1.5 transition-colors",
       active
-        ? "bg-sky-500/20 text-sky-400"
-        : "text-neutral-400 hover:bg-neutral-700 hover:text-white",
+        ? "bg-blue-600/10 text-blue-600 dark:bg-sky-500/20 dark:text-sky-400"
+        : "text-gray-500 hover:bg-gray-200 hover:text-gray-900 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white",
       disabled && "cursor-not-allowed opacity-40",
     )}
     title={title}
@@ -290,6 +289,8 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({
 );
 
 // 工具栏分隔线
-const ToolbarDivider: React.FC = () => <div className="mx-1 h-5 w-px bg-neutral-700" />;
+const ToolbarDivider: React.FC = () => (
+  <div className="mx-1 h-5 w-px bg-gray-200 dark:bg-neutral-700" />
+);
 
 export default RichTextEditor;

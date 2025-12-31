@@ -1,5 +1,6 @@
 import React from "react";
-// import ReactMarkdown from "react-markdown";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { cn } from "@/components/ui/utils";
 import { useComposerStore } from "./ComposerStore";
 
@@ -26,11 +27,11 @@ export const ComposerPreview: React.FC<ComposerPreviewProps> = ({ className }) =
   return (
     <div
       className={cn(
-        "prose dark:prose-invert h-full max-w-none overflow-y-auto p-4 wrap-break-word",
+        "prose dark:prose-invert max-w-none overflow-y-auto p-4 wrap-break-word",
         className,
       )}
     >
-      <div className="whitespace-pre-wrap">{draft.body}</div>
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{draft.body}</ReactMarkdown>
     </div>
   );
 };

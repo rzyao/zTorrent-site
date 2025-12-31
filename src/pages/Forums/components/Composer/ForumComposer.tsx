@@ -149,12 +149,12 @@ export const ForumComposer: React.FC = () => {
       ref={composerRef}
       className={cn(
         // 基础样式 - 参考 Discourse #reply-control
-        "fixed right-0 bottom-0 left-0 z-50 mx-auto flex w-full flex-col rounded-t-lg border shadow-2xl ease-in-out",
+        "fixed right-0 bottom-0 left-0 z-50 mx-auto flex w-full flex-col rounded-t-lg border shadow-2xl",
         colors.listBg, // 背景色
         colors.textPrimary, // 文本色
         colors.borderColor, // 边框色
-        // 仅在非拖动时启用过渡动画，避免拖动卡顿。明确指定过渡属性以提升性能并匹配 Discourse
-        !isResizing && "transition-[height,max-width,transform] duration-200",
+        // 当处于调整大小时，必须禁用 transition，否则实时调整高度会有延迟感
+        !isResizing ? "transition-[height,max-width,transform] duration-200" : "transition-none",
         // 全屏模式 - 只改变高度，宽度跟随编辑器模式
         isFullscreen && "rounded-t-none",
         // 最小化模式
@@ -286,7 +286,8 @@ export const ForumComposer: React.FC = () => {
             {/* 预览面板 - Markdown 模式且 showPreview 为 true 时显示 */}
             <div
               className={cn(
-                "hidden h-full min-w-0 rounded-md border border-neutral-700/50 bg-neutral-900/50 transition-all duration-300 ease-in-out sm:block",
+                "hidden h-full min-w-0 rounded-md border transition-all duration-300 ease-in-out sm:block",
+                "border-gray-200 bg-white dark:border-neutral-700/50 dark:bg-neutral-900/50",
                 showPreview && !isRichText
                   ? "flex-1 opacity-100"
                   : "w-0 shrink-0 overflow-hidden opacity-0",

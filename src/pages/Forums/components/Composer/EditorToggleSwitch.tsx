@@ -61,7 +61,7 @@ export const EditorToggleSwitch: React.FC<EditorToggleSwitchProps> = ({
         className={cn(
           "composer-toggle-switch__slider relative inline-block rounded align-middle transition-colors duration-200",
           // 背景色
-          "bg-neutral-700 hover:bg-neutral-600",
+          "border border-gray-200 bg-white hover:bg-gray-50 dark:border-transparent dark:bg-neutral-700 dark:hover:bg-neutral-600",
           // 尺寸
           "h-[26px] w-[52px]",
         )}
@@ -73,9 +73,9 @@ export const EditorToggleSwitch: React.FC<EditorToggleSwitchProps> = ({
             // 尺寸: height = 26px - 4px = 22px, width 同
             "h-[22px] w-[22px]",
             // 背景色
-            "bg-sky-500/30",
+            "bg-blue-600/10 dark:bg-sky-500/30",
             // 阴影
-            "shadow-[0_1px_2px_1px_rgba(56,189,248,0.2)]",
+            "shadow-[0_1px_2px_1px_rgba(37,99,235,0.1)] dark:shadow-[0_1px_2px_1px_rgba(56,189,248,0.2)]",
             // 位置动画
             isRichText
               ? "translate-x-[26px]" // 右侧: 52px - 26px = 26px
@@ -87,7 +87,7 @@ export const EditorToggleSwitch: React.FC<EditorToggleSwitchProps> = ({
         <span
           className={cn(
             "composer-toggle-switch__left-icon absolute top-0 left-[2px] inline-flex h-full w-[22px] items-center justify-center transition-colors duration-200",
-            !isRichText ? "text-white" : "text-neutral-400",
+            !isRichText ? "text-blue-600 dark:text-white" : "text-gray-400 dark:text-neutral-400",
           )}
           aria-hidden="true"
         >
@@ -103,7 +103,7 @@ export const EditorToggleSwitch: React.FC<EditorToggleSwitchProps> = ({
         <span
           className={cn(
             "composer-toggle-switch__right-icon absolute top-0 right-[2px] inline-flex h-full w-[22px] items-center justify-center transition-colors duration-200",
-            isRichText ? "text-white" : "text-neutral-400",
+            isRichText ? "text-blue-600 dark:text-white" : "text-gray-400 dark:text-neutral-400",
           )}
           aria-hidden="true"
         >

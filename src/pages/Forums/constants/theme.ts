@@ -49,6 +49,10 @@ export interface ThemeColors {
   // 滚动条 (New)
   scrollbarMain: string;
   scrollbarSidebar: string;
+
+  // 导航/筛选状态
+  navItemActive: string; // 导航项激活态
+  navItemInactive: string; // 导航项非激活态
 }
 
 /**
@@ -107,6 +111,11 @@ export const FORUM_THEME: ThemeColors = {
   // 滚动条
   scrollbarMain: "scrollbar-main",
   scrollbarSidebar: "scrollbar-sidebar",
+
+  // 导航/筛选状态
+  navItemActive: "bg-blue-50 text-blue-600 dark:bg-amber-500/10 dark:text-amber-500",
+  navItemInactive:
+    "text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200",
 };
 
 // 保持向下兼容，但建议尽快迁移到 FORUM_THEME

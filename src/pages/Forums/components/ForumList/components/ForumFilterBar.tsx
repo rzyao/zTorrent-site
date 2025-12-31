@@ -92,9 +92,7 @@ export function ForumFilterBar({
   const getSortTabClass = (isActive: boolean) =>
     cn(
       "cursor-pointer rounded-md px-3 py-1.5 text-sm",
-      isActive
-        ? "bg-blue-50 text-blue-600 dark:bg-amber-500/10 dark:text-amber-500"
-        : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200",
+      isActive ? colors.navItemActive : colors.navItemInactive,
     );
 
   // 下拉菜单项样式 - 类别和标签通用
