@@ -167,6 +167,8 @@ export function TopicDetail({
                     postIndex={post.isSmallAction ? -1 : regularPostIndex}
                     isLast={index === topicData.posts.length - 1}
                     colors={colors}
+                    topicTitle={topicData.title}
+                    topicId={topicId}
                   />
                 );
               });

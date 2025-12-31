@@ -161,6 +161,31 @@ export function useTopicDetail(topicId: string | undefined) {
       Array.isArray(postsData) ? postsData : (postsData as any).items || []
     ) as ExtendedApiPost[];
 
+    // 只有当列表中没有 1 楼时才手动添加
+    // 防止 API 已经返回了 1 楼导致重复
+    const hasOP = posts.length > 0 && posts.some((p) => p.floor === 1);
+
+    if (!hasOP) {
+      // 构造 OP (1楼) - 基于 Topic 数据
+      const opPost: ExtendedApiPost = {
+        id: "topic-" + thread.id, // 前端标识为 Topic 主体
+        content: thread.content,
+        floor: 1,
+        isSystem: false,
+        created_at: thread.created_at,
+        like_count: 0, // 暂未从 Topic 获取点赞数
+        replies_count: thread.reply_count,
+        author: thread.author || {
+          id: "unknown",
+          username: "unknown",
+          avatar: undefined,
+        },
+      } as ExtendedApiPost;
+
+      // 将 OP 作为第一条数据 (1楼)
+      posts.unshift(opPost);
+    }
+
     // 提取参与者
     const participantsMap = new Map<string, Participant>();
     posts.forEach((post) => {

@@ -12,15 +12,18 @@ import {
 } from "lucide-react";
 import { PostData } from "../types";
 import { topicData } from "../constants"; // 引用全局数据
+import { marked } from "marked";
 
 interface PostProps {
   post: PostData;
   postIndex: number; // 1-based index in the posts array
   isLast: boolean;
   colors: any;
+  topicTitle?: string;
+  topicId?: string;
 }
 
-export function Post({ post, postIndex, isLast, colors }: PostProps) {
+export function Post({ post, postIndex, isLast, colors, topicTitle, topicId }: PostProps) {
   const isSmallAction = post.isSmallAction;
 
   if (isSmallAction) {
@@ -71,12 +74,10 @@ export function Post({ post, postIndex, isLast, colors }: PostProps) {
           </div>
         </div>
 
-        {/* Post Content */}
         <div
-          className={`prose dark:prose-invert max-w-none text-lg leading-normal ${colors.textPrimary}`}
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          className={`prose dark:prose-invert max-w-none text-lg leading-normal ${colors.textPrimary} [&_img]:my-4 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-lg [&_img]:shadow-md`}
+          dangerouslySetInnerHTML={{ __html: marked.parse(post.content) as string }}
         />
-
         {/* Post Actions Footer */}
         <div className="mt-4 flex items-center justify-end gap-4 select-none">
           <div className="flex items-center gap-1">
@@ -116,7 +117,8 @@ export function Post({ post, postIndex, isLast, colors }: PostProps) {
               import("../../../components/Composer/ComposerStore").then(({ useComposerStore }) => {
                 useComposerStore.getState().open("REPLY", {
                   replyToPostId: post.id,
-                  // We might need to fetch topicId from context or url if not passed
+                  replyToTitle: topicTitle,
+                  replyToTopicId: topicId,
                 });
               });
             }}

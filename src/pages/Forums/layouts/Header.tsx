@@ -73,7 +73,7 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
                   useComposerStore.getState().open("CREATE_TOPIC");
                 });
               }}
-              className={`hidden items-center gap-2 rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 sm:flex dark:bg-amber-600 dark:hover:bg-amber-700`}
+              className={`hidden items-center gap-2 rounded-lg bg-[#0088CC] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#007bb5] sm:flex`}
             >
               <MessageSquare className="h-4 w-4" />
               <span>新话题</span>

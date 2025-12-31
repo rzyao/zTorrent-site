@@ -62,8 +62,8 @@ export interface ThemeColors {
  */
 export const FORUM_THEME: ThemeColors = {
   // 基础布局
-  pageBg: "bg-gray-50 dark:bg-[#111111]",
   headerBg: "bg-white dark:bg-[#111111]",
+  pageBg: "bg-white dark:bg-[#222222]",
   borderColor: "border-gray-200 dark:border-neutral-700/50",
   dividerColor: "border-gray-200 dark:border-neutral-600/60",
 
@@ -92,7 +92,7 @@ export const FORUM_THEME: ThemeColors = {
   inputBg: "bg-white dark:bg-neutral-800",
   inputBorder: "border-gray-300 dark:border-neutral-700",
   buttonPrimary:
-    "bg-blue-600 hover:bg-blue-700 text-white dark:bg-amber-500 dark:hover:bg-amber-600",
+    "bg-[#0088CC] hover:bg-[#007bb5] text-white dark:bg-amber-500 dark:hover:bg-amber-600",
   buttonSecondary:
     "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-800 dark:text-white dark:hover:bg-neutral-700 dark:border dark:border-neutral-700",
   buttonHover: "hover:bg-gray-100 dark:hover:bg-neutral-800",

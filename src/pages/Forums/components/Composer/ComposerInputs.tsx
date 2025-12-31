@@ -21,7 +21,7 @@ import { useForumTheme } from "../../context/ForumThemeContext";
  * - 第二行：分类选择 + 标签选择
  */
 export const ComposerInputs: React.FC = () => {
-  const { colors } = useForumTheme();
+  const { colors, theme } = useForumTheme();
   const { draft, updateDraft } = useComposerStore();
 
   // 获取分类列表 (hook 返回的 data 直接是数组)
@@ -55,9 +55,9 @@ export const ComposerInputs: React.FC = () => {
           value={draft.title}
           onChange={(e) => updateDraft({ title: e.target.value })}
           className={cn(
-            "h-auto border-none bg-transparent px-0 text-lg font-medium shadow-none focus-visible:ring-0",
+            "h-auto rounded-md border border-gray-200 bg-transparent px-3 py-2 text-lg font-medium shadow-none focus-visible:ring-1 focus-visible:ring-[#0088CC] dark:border-neutral-700",
             colors.textPrimary,
-            "placeholder:text-neutral-500",
+            "placeholder:text-neutral-400 dark:placeholder:text-neutral-500",
           )}
           autoComplete="off"
         />
@@ -72,27 +72,32 @@ export const ComposerInputs: React.FC = () => {
             onValueChange={(val) => updateDraft({ categoryId: val })}
           >
             <SelectTrigger
-              className={cn(
-                "h-8 min-w-[150px] gap-2 text-sm",
-                colors.inputBorder,
-                colors.inputBg,
-                colors.textSecondary,
-                draft.categoryId && "border-transparent",
-              )}
+              className={cn("h-8 min-w-[150px] gap-2 text-sm")}
               style={{
+                border: draft.categoryId
+                  ? "1px solid transparent"
+                  : theme === "dark"
+                    ? "1px solid #525252"
+                    : "1px solid #9ca3af",
                 backgroundColor: draft.categoryId
-                  ? `#${categories.find((c) => c.slug === draft.categoryId)?.color || "333"}30`
-                  : undefined,
+                  ? `#${categories.find((c) => String((c as any).id) === draft.categoryId)?.color || "333"}30`
+                  : theme === "dark"
+                    ? "#262626"
+                    : "#ffffff",
+                color: theme === "dark" ? "#A6A6A6" : "#5F5F5F",
               }}
             >
-              <Hash className="h-3.5 w-3.5 text-neutral-400" />
+              <Hash
+                className="h-3.5 w-3.5"
+                style={{ color: theme === "dark" ? "#a3a3a3" : "#6b7280" }}
+              />
               <SelectValue placeholder="选择分类" />
             </SelectTrigger>
             <SelectContent className={cn(colors.borderColor, colors.inputBg)}>
               {categories.map((cat) => (
                 <SelectItem
                   key={cat.slug}
-                  value={cat.slug}
+                  value={String((cat as any).id)}
                   className={cn(
                     colors.textSecondary,
                     "focus:bg-gray-100 focus:text-gray-900 dark:focus:bg-neutral-700 dark:focus:text-white",
@@ -135,8 +140,18 @@ export const ComposerInputs: React.FC = () => {
 
           {/* 添加标签选择器 */}
           <Select onValueChange={handleTagToggle}>
-            <SelectTrigger className="h-7 w-auto min-w-[100px] gap-1 border-dashed border-neutral-600 bg-transparent px-2 text-xs text-neutral-400 hover:border-neutral-500 hover:text-neutral-300">
-              <Plus className="h-3 w-3" />
+            <SelectTrigger
+              className={cn("h-8 w-auto min-w-[120px] gap-1 border-dashed px-2 text-sm")}
+              style={{
+                border: theme === "dark" ? "1px dashed #525252" : "1px dashed #9ca3af",
+                backgroundColor: theme === "dark" ? "#262626" : "#ffffff",
+                color: theme === "dark" ? "#A6A6A6" : "#5F5F5F",
+              }}
+            >
+              <Plus
+                className="h-3 w-3"
+                style={{ color: theme === "dark" ? "#a3a3a3" : "#6b7280" }}
+              />
               <span>可选标签</span>
             </SelectTrigger>
             <SelectContent className="border-gray-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">

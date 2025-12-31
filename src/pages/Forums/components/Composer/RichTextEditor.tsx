@@ -245,7 +245,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           </Popover.Trigger>
           <Popover.Portal>
             <Popover.Content
-              className="z-[100] mt-2 shadow-xl outline-none"
+              className="z-100 mt-2 shadow-xl outline-none"
               align="start"
               sideOffset={5}
             >

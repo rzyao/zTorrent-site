@@ -1,4 +1,6 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useMemo } from "react";
+import { marked } from "marked";
+import TurndownService from "turndown";
 import { useComposerStore } from "./ComposerStore";
 import { EditorToggleSwitch } from "./EditorToggleSwitch";
 import { RichTextEditor } from "./RichTextEditor";
@@ -45,6 +47,36 @@ export const ComposerEditor: React.FC<ComposerEditorProps> = ({ className }) => 
     initialText: "",
   });
 
+  // 用于跟踪上一次的编辑器模式
+  const prevIsRichTextRef = useRef(isRichText);
+
+  // HTML → Markdown 转换器
+  const turndownService = useMemo(() => {
+    const service = new TurndownService({
+      headingStyle: "atx",
+      codeBlockStyle: "fenced",
+    });
+    // 添加代码块规则
+    service.addRule("fencedCodeBlock", {
+      filter: (node) => {
+        return (
+          node.nodeName === "PRE" &&
+          node.firstChild &&
+          (node.firstChild as Element).nodeName === "CODE"
+        );
+      },
+      replacement: (content, node) => {
+        const codeNode = (node as HTMLElement).querySelector("code");
+        const className = codeNode?.className || "";
+        const langMatch = className.match(/language-(\w+)/);
+        const lang = langMatch ? langMatch[1] : "";
+        const code = codeNode?.textContent || content;
+        return `\n\`\`\`${lang}\n${code}\n\`\`\`\n`;
+      },
+    });
+    return service;
+  }, []);
+
   // Ctrl+M 快捷键切换模式
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -56,6 +88,33 @@ export const ComposerEditor: React.FC<ComposerEditorProps> = ({ className }) => 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [toggleEditorMode]);
+
+  // 监听模式切换，进行格式转换
+  useEffect(() => {
+    const prevIsRichText = prevIsRichTextRef.current;
+    prevIsRichTextRef.current = isRichText;
+
+    // 如果模式没变化，不处理
+    if (prevIsRichText === isRichText) return;
+    // 空内容不转换
+    if (!draft.body.trim()) return;
+
+    if (isRichText) {
+      // Markdown → HTML（切换到富文本模式）
+      // 如果已经是 HTML，不转换
+      if (!draft.body.trim().startsWith("<")) {
+        const html = marked.parse(draft.body, { async: false }) as string;
+        updateDraft({ body: html });
+      }
+    } else {
+      // HTML → Markdown（切换到 Markdown 模式）
+      // 如果内容以 < 开头，说明是 HTML，需要转换
+      if (draft.body.trim().startsWith("<")) {
+        const markdown = turndownService.turndown(draft.body);
+        updateDraft({ body: markdown });
+      }
+    }
+  }, [isRichText, draft.body, updateDraft, turndownService]);
 
   // 标题处理逻辑 (Discourse 风格: 循环切换 H1-H6)
   const applyHeading = () => {
@@ -188,11 +247,30 @@ export const ComposerEditor: React.FC<ComposerEditorProps> = ({ className }) => 
 
       if (result?.data?.url) {
         const imageUrl = result.data.url;
+        // 获取文件名作为 alt 文本（去除扩展名）
+        const altText = file.name.replace(/\.[^/.]+$/, "") || "image";
+
         if (isRichText) {
-          // TODO: 虽然 RichTextEditor 没暴露实例，但我们可以先通过 draft 更新，
-          // 理想情况应通过 ref 调用 editor.chain().focus().setImage({ src: imageUrl }).run()
+          // 富文本模式：将图片 HTML 追加到内容中
+          const imgHtml = `<img src="${imageUrl}" alt="${altText}" />`;
+          updateDraft({ body: draft.body + imgHtml });
         } else {
-          insertText("![", `](${imageUrl})`);
+          // Markdown 模式：使用标准 Markdown 图片语法
+          const textarea = textareaRef.current;
+          if (textarea) {
+            const start = textarea.selectionStart;
+            const text = textarea.value;
+            const imageMarkdown = `\n![${altText}](${imageUrl})\n`;
+            const newText = text.substring(0, start) + imageMarkdown + text.substring(start);
+            updateDraft({ body: newText });
+
+            // 恢复光标位置到图片后
+            setTimeout(() => {
+              textarea.focus();
+              const newPos = start + imageMarkdown.length;
+              textarea.setSelectionRange(newPos, newPos);
+            }, 0);
+          }
         }
       }
       // 清空 input 方便下次上传同名文件
@@ -362,7 +440,15 @@ export const ComposerEditor: React.FC<ComposerEditorProps> = ({ className }) => 
         />
       ) : (
         <RichTextEditor
-          value={draft.body}
+          value={(() => {
+            // 将 Markdown 转换为 HTML 供 TipTap 使用
+            // 如果内容已经是 HTML（以 < 开头），则直接使用
+            if (draft.body.trim().startsWith("<")) {
+              return draft.body;
+            }
+            // 否则转换 Markdown 为 HTML
+            return marked.parse(draft.body, { async: false }) as string;
+          })()}
           onChange={(value) => updateDraft({ body: value })}
           placeholder="开始输入您的内容..."
           className="flex-1"

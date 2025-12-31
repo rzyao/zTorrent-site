@@ -8,7 +8,10 @@ import { Minimize2, Maximize2, X, ChevronsDown, ChevronsUp, Send } from "lucide-
 import { Button } from "@/components/ui/button";
 import { ForumsTopicsService, ForumsPostsService } from "@/api";
 import { toast } from "sonner";
+import { useNavigate, Link } from "react-router-dom";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useForumTheme } from "../../context/ForumThemeContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const ForumComposer: React.FC = () => {
   const {
@@ -27,6 +30,8 @@ export const ForumComposer: React.FC = () => {
   } = useComposerStore();
 
   const { colors } = useForumTheme(); // 获取主题变量
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [isResizing, setIsResizing] = useState(false);
   const composerRef = useRef<HTMLDivElement>(null);
@@ -47,7 +52,7 @@ export const ForumComposer: React.FC = () => {
       }
     };
 
-    const handleMouseUp = (e: MouseEvent) => {
+    const handleMouseUp = () => {
       setIsResizing(false);
 
       // 更新最终状态
@@ -57,6 +62,12 @@ export const ForumComposer: React.FC = () => {
         if (currentHeight) {
           setHeight(currentHeight);
         }
+        // 延迟恢复 transition，确保高度已更新
+        setTimeout(() => {
+          if (composerRef.current) {
+            composerRef.current.style.transition = "height 200ms, max-width 200ms, transform 200ms";
+          }
+        }, 50);
       }
 
       document.body.style.cursor = "default";
@@ -67,6 +78,10 @@ export const ForumComposer: React.FC = () => {
     };
 
     if (isResizing) {
+      // 立即禁用 transition 避免拖动卡顿
+      if (composerRef.current) {
+        composerRef.current.style.transition = "none";
+      }
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
       document.body.style.cursor = "ns-resize";
@@ -76,6 +91,10 @@ export const ForumComposer: React.FC = () => {
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      // 恢复 transition
+      if (composerRef.current) {
+        composerRef.current.style.transition = "";
+      }
     };
   }, [isResizing, setHeight]);
 
@@ -105,7 +124,7 @@ export const ForumComposer: React.FC = () => {
         if (topicId) {
           toast.success("话题创建成功");
           reset();
-          window.location.href = `/forum/topic/${topicId}`;
+          navigate(`/forum/topic/${topicId}`);
         }
       } else if (mode === "REPLY") {
         if (!draft.replyToTopicId) {
@@ -113,19 +132,33 @@ export const ForumComposer: React.FC = () => {
           return;
         }
 
+        // 过滤掉前端生成的临时 OP ID (topic-xxx)
+        const replyToId =
+          draft.replyToPostId && draft.replyToPostId.startsWith("topic-")
+            ? undefined
+            : draft.replyToPostId;
+
         const res = await ForumsPostsService.postsControllerCreate({
           topicId: draft.replyToTopicId,
           content: draft.body,
-          replyToId: draft.replyToPostId, // Fixed param name
+          replyToId: replyToId,
         });
 
         if (res.data) {
           toast.success("回复发布成功");
           reset();
+
           if (window.location.pathname.includes(`/forum/topic/${draft.replyToTopicId}`)) {
-            window.location.reload();
+            // 如果已经在该话题页面，刷新帖子列表和话题详情
+            await queryClient.invalidateQueries({
+              queryKey: ["forum", "posts", draft.replyToTopicId],
+            });
+            await queryClient.invalidateQueries({
+              queryKey: ["forum", "topic", draft.replyToTopicId],
+            });
           } else {
-            window.location.href = `/forum/topic/${draft.replyToTopicId}`;
+            // 否则跳转到该话题
+            navigate(`/forum/topic/${draft.replyToTopicId}`);
           }
         }
       }
@@ -149,12 +182,10 @@ export const ForumComposer: React.FC = () => {
       ref={composerRef}
       className={cn(
         // 基础样式 - 参考 Discourse #reply-control
-        "fixed right-0 bottom-0 left-0 z-50 mx-auto flex w-full flex-col rounded-t-lg border shadow-2xl",
+        "fixed right-0 bottom-0 left-0 z-50 mx-auto flex w-full flex-col rounded-t-lg border-x border-t shadow-2xl",
         colors.listBg, // 背景色
         colors.textPrimary, // 文本色
         colors.borderColor, // 边框色
-        // 当处于调整大小时，必须禁用 transition，否则实时调整高度会有延迟感
-        !isResizing ? "transition-[height,max-width,transform] duration-200" : "transition-none",
         // 全屏模式 - 只改变高度，宽度跟随编辑器模式
         isFullscreen && "rounded-t-none",
         // 最小化模式
@@ -183,18 +214,28 @@ export const ForumComposer: React.FC = () => {
       {/* Header */}
       <div
         className={cn(
-          "bg-muted/10 flex items-center justify-between border-b px-4 py-2",
-          isMinimized ? "cursor-pointer" : "",
+          "bg-muted/10 flex items-center justify-between px-4 py-1",
+          isMinimized ? "cursor-pointer" : "border-b border-gray-200 dark:border-neutral-700/50",
         )}
         onClick={isMinimized ? maximize : undefined}
       >
-        <div className="flex items-center gap-2 text-sm font-semibold">
-          <span>{isMinimized ? "正在编辑话题..." : isCreateTopic ? "创建新话题" : "回复话题"}</span>
+        <div className="text-md flex items-center gap-2 font-semibold">
+          <span>
+            {isMinimized ? "正在编辑话题..." : isCreateTopic ? "创建新话题" : "回复话题："}
+          </span>
           {/* Reply Context Info */}
-          {!isCreateTopic && !isMinimized && (
-            <span className="text-muted-foreground ml-2 text-xs font-normal">
-              正在回复 {draft.replyToPostId ? `#${draft.replyToPostId}` : "主题"}
-            </span>
+          {!isCreateTopic && !isMinimized && draft.replyToTopicId && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  to={`/forum/topic/${draft.replyToTopicId}`}
+                  className="text-sm font-normal text-sky-500 underline decoration-sky-500/30 underline-offset-2 hover:text-sky-600"
+                >
+                  {draft.replyToTitle || (draft.replyToPostId ? `#${draft.replyToPostId}` : "主题")}
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>点击查看话题</TooltipContent>
+            </Tooltip>
           )}
         </div>
 
@@ -224,16 +265,16 @@ export const ForumComposer: React.FC = () => {
               }
             }}
             className={cn(
-              "rounded p-1.5 transition-colors",
+              "cursor-pointer rounded p-1.5 transition-colors hover:text-[#0088CC]",
               colors.textSecondary,
               colors.listHover,
             )}
             title={isMinimized ? "恢复" : "最小化"}
           >
             {isMinimized ? (
-              <ChevronsUp className="h-4 w-4" />
+              <ChevronsUp className="h-5 w-5" />
             ) : (
-              <ChevronsDown className="h-4 w-4" />
+              <ChevronsDown className="h-5 w-5" />
             )}
           </button>
           <button
@@ -242,7 +283,7 @@ export const ForumComposer: React.FC = () => {
               maximize();
             }}
             className={cn(
-              "rounded p-1.5 transition-colors",
+              "cursor-pointer rounded p-1.5 transition-colors hover:text-[#0088CC]",
               colors.textSecondary,
               colors.listHover,
             )}
@@ -256,13 +297,13 @@ export const ForumComposer: React.FC = () => {
               close();
             }}
             className={cn(
-              "rounded p-1.5 transition-colors",
+              "cursor-pointer rounded p-1.5 transition-colors hover:text-red-400",
               colors.textSecondary,
               colors.listHover,
             )}
             title="关闭"
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5" />
           </button>
         </div>
       </div>
@@ -307,8 +348,11 @@ export const ForumComposer: React.FC = () => {
               <Button variant="ghost" onClick={() => close()}>
                 取消
               </Button>
-              <Button onClick={handleSubmit} className="gap-2">
-                <Send className="h-4 w-4" />
+              <Button
+                onClick={handleSubmit}
+                className="gap-2 bg-[#0088CC]! text-white! hover:bg-[#007bb5]!"
+              >
+                <Send className="h-5 w-5" />
                 发布 {isCreateTopic ? "话题" : "回复"}
               </Button>
             </div>

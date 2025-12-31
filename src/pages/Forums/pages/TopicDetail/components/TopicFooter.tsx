@@ -87,7 +87,10 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
               // Get topic ID from props if available
               const topicId = topicData?.id;
               import("../../../components/Composer/ComposerStore").then(({ useComposerStore }) => {
-                useComposerStore.getState().open("REPLY", { replyToTopicId: topicId });
+                useComposerStore.getState().open("REPLY", {
+                  replyToTopicId: topicId,
+                  replyToTitle: topicData?.title,
+                });
               });
             }}
             className="flex cursor-pointer items-center gap-2 rounded-full border border-transparent bg-[#0088CC] px-5 py-2 text-sm font-bold text-white select-none hover:border-white hover:bg-[#0088CC]"

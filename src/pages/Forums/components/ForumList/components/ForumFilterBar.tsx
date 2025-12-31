@@ -270,7 +270,7 @@ export function ForumFilterBar({
             });
           }}
           className={cn(
-            "flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600",
+            "flex items-center gap-2 rounded-lg bg-[#0088CC] px-4 py-2 text-sm font-medium text-white hover:bg-[#007bb5]",
           )}
         >
           <Plus className="h-4 w-4" />

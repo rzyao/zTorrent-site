@@ -11,6 +11,7 @@ export interface ComposerDraft {
   body: string;
   replyToPostId?: string;
   replyToTopicId?: string;
+  replyToTitle?: string;
 }
 
 interface ComposerState {
