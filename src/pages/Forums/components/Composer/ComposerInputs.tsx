@@ -75,10 +75,12 @@ export const ComposerInputs: React.FC = () => {
               className={cn("h-8 min-w-[150px] gap-2 text-sm")}
               style={{
                 border: draft.categoryId
-                  ? "1px solid transparent"
+                  ? theme === "dark"
+                    ? "1px solid #525252"
+                    : "1px solid #d1d5db"
                   : theme === "dark"
                     ? "1px solid #525252"
-                    : "1px solid #9ca3af",
+                    : "1px solid #d1d5db",
                 backgroundColor: draft.categoryId
                   ? `#${categories.find((c) => String((c as any).id) === draft.categoryId)?.color || "333"}30`
                   : theme === "dark"

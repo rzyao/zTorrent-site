@@ -66,7 +66,7 @@ export const useComposerStore = create<ComposerState>()(
       previousViewState: "NORMAL",
       composerHeight: 400, // Default height in px
       draft: DEFAULT_DRAFT,
-      isRichText: false, // 默认 Markdown 模式
+      isRichText: true, // 默认 富文本 模式
 
       open: (mode, initialData) => {
         set({

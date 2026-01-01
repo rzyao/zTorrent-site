@@ -9,12 +9,12 @@ const NAV_ITEMS = [{ id: "topics", name: "话题", icon: Home, path: "/forum/lat
  * 显示顶部的固定导航项（如：话题、最新等）
  */
 export function SidebarNav() {
-  const { colors } = useForumTheme();
+  const { colors, theme } = useForumTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
   return (
-    <nav className="space-y-1 py-1.5">
+    <nav className="py-1.5">
       {NAV_ITEMS.map((item) => {
         const Icon = item.icon;
         // 根据当前路径判断激活状态
@@ -23,7 +23,8 @@ export function SidebarNav() {
 
         let buttonClass: string;
         if (isActive) {
-          buttonClass = "bg-[#31566c] text-white";
+          buttonClass =
+            theme === "dark" ? "bg-[#31566c] text-white" : "bg-[#d1f0ff] text-[#0088CC]";
         } else {
           buttonClass = `${colors.textSecondary} ${colors.buttonHover}`;
         }

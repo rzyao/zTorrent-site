@@ -388,7 +388,7 @@ export function Post({
 
         <PostContent
           content={post.content}
-          className={`prose dark:prose-invert max-w-none text-lg leading-normal ${colors.textPrimary} [&_img]:my-4 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-lg [&_img]:shadow-md`}
+          className={`prose dark:prose-invert max-w-none text-base leading-normal ${colors.textPrimary} [&_img]:my-4 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-lg [&_img]:shadow-md`}
           onMouseUp={handleMouseUp}
           colors={colors}
         />

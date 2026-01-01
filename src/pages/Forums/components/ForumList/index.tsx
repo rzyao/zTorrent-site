@@ -1,5 +1,5 @@
-import { Pin, TrendingUp } from "lucide-react";
-import { useState } from "react";
+import { Pin, TrendingUp, Loader2 } from "lucide-react";
+import { useEffect, useRef, useCallback } from "react";
 import { useForumTheme } from "../../context/ForumThemeContext";
 import { useForumsTopicsQuery, ExtendedApiTopic } from "../../hooks/useForumsTopicsQuery";
 import { ForumFilterBar } from "./components/ForumFilterBar";
@@ -30,17 +30,14 @@ interface UiTopic {
 }
 
 interface ForumListProps {
-  selectedCategory: string; // "all" or category ID (for API query)
-  categoryName?: string; // Category name (for UI display)
-  selectedTag?: string; // Tag name
+  selectedCategory: string;
+  categoryName?: string;
+  selectedTag?: string;
   searchQuery: string;
-  sortBy?: "latest" | "hot"; // 排序方式
+  sortBy?: "latest" | "hot";
   onTopicClick: (id: string) => void;
 }
 
-/**
- * 格式化日期 (简化版)
- */
 function formatDate(dateStr: string | undefined): string {
   if (!dateStr) return "";
   const date = new Date(dateStr);
@@ -57,9 +54,6 @@ function formatDate(dateStr: string | undefined): string {
   return date.toLocaleDateString();
 }
 
-/**
- * 将 API 数据转换为 UI 数据
- */
 function transformTopic(apiTopic: ExtendedApiTopic): UiTopic {
   const author = apiTopic.author || { id: "unknown", username: "unknown", avatar: "" };
   const participants = (apiTopic.participants || []).map((p) => ({
@@ -117,26 +111,48 @@ export function ForumList({
   sortBy = "latest",
   onTopicClick,
 }: ForumListProps) {
-  const { theme, colors } = useForumTheme();
-
-  // 将 sortBy 映射到 API 的 sort 参数
+  const { colors } = useForumTheme();
   const apiSortBy = sortBy === "hot" ? "popular" : "latest";
 
-  // 查询 API
-  const { data, isLoading, isError, error } = useForumsTopicsQuery({
-    categoryId: selectedCategory,
-    tag: selectedTag,
-    search: searchQuery,
-    page: 1, // 暂时固定第一页，后续可加分页组件
-    limit: 20,
-    sortBy: apiSortBy as "latest" | "popular" | "trending",
-  });
+  const { allTopics, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useForumsTopicsQuery({
+      categoryId: selectedCategory,
+      tag: selectedTag,
+      search: searchQuery,
+      limit: 20,
+      sortBy: apiSortBy as "latest" | "popular" | "trending",
+    });
 
-  const topics: UiTopic[] = data?.items?.map(transformTopic) || [];
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const [target] = entries;
+      if (target.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage],
+  );
+
+  useEffect(() => {
+    const element = loadMoreRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(handleObserver, {
+      root: null,
+      rootMargin: "100px",
+      threshold: 0.1,
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [handleObserver]);
+
+  const topics: UiTopic[] = allTopics.map(transformTopic);
 
   return (
     <div className="space-y-0">
-      {/* 顶部筛选栏 */}
       <ForumFilterBar
         selectedCategory={selectedCategory}
         categoryName={categoryName}
@@ -144,16 +160,13 @@ export function ForumList({
         sortBy={sortBy}
       />
 
-      {/* 话题列表容器 */}
       <div className="overflow-hidden">
-        {/* Table Header (Desktop) */}
+        {/* Table Header */}
         <div
           className={`hidden items-center border-b px-4 py-3 md:flex ${colors.dividerColor} text-sm font-semibold ${colors.textMuted}`}
         >
           <div className="flex-1">话题</div>
-          {/* Middle Spacer for Avatar Group alignment - same width as avatar group (w-48) */}
           <div className="w-48 shrink-0"></div>
-          {/* Stats Header */}
           <div className="ml-4 flex shrink-0 items-center gap-5">
             <div className="w-14 text-center">回复</div>
             <div className="w-14 text-center">浏览</div>
@@ -172,7 +185,7 @@ export function ForumList({
         {/* Error State */}
         {isError && (
           <div className="p-12 text-center">
-            <p className="text-red-500">加载失败: {(error as any)?.message || "未知错误"}</p>
+            <p className="text-red-500">加载失败: {(error as Error)?.message || "未知错误"}</p>
             <button
               onClick={() => window.location.reload()}
               className="mt-4 rounded-md bg-blue-600 px-4 py-2 text-sm text-white"
@@ -199,11 +212,11 @@ export function ForumList({
               onClick={() => onTopicClick(topic.id)}
               className={`group flex items-center border-b px-4 py-4 ${colors.dividerColor} cursor-pointer gap-3 last:border-0 hover:bg-gray-50 dark:hover:bg-neutral-800/50`}
             >
-              {/* Left: Info (Flex-1) */}
+              {/* Left: Info */}
               <div className="min-w-0 flex-1">
                 <div className="mb-1 flex items-start gap-2">
                   {topic.isPinned && (
-                    <Pin className={`mt-0.5 h-4 w-4 shrink-0 text-blue-600 dark:text-amber-400`} />
+                    <Pin className="mt-0.5 h-4 w-4 shrink-0 text-blue-600 dark:text-amber-400" />
                   )}
                   {topic.isTrending && (
                     <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
@@ -214,16 +227,12 @@ export function ForumList({
                     {topic.title}
                   </h3>
                 </div>
-
-                {/* Tags + Author */}
                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span
-                    className={`rounded bg-gray-100 px-1.5 py-0.5 font-medium text-gray-600 dark:border dark:border-blue-500/30 dark:bg-blue-500/20 dark:text-blue-400`}
-                  >
+                  <span className="rounded bg-gray-100 px-1.5 py-0.5 font-medium text-gray-600 dark:border dark:border-blue-500/30 dark:bg-blue-500/20 dark:text-blue-400">
                     {topic.category}
                   </span>
                   {topic.tags.slice(0, 2).map((tag) => (
-                    <span key={tag} className={`${colors.textMuted}`}>
+                    <span key={tag} className={colors.textMuted}>
                       #{tag}
                     </span>
                   ))}
@@ -234,11 +243,10 @@ export function ForumList({
                 </div>
               </div>
 
-              {/* Middle: Avatar Group (Desktop Only) */}
+              {/* Middle: Avatar Group (Desktop) */}
               <div className="hidden h-8 w-48 shrink-0 items-center justify-end gap-1.5 md:flex">
-                {/* Slot 1: Author */}
                 <div
-                  className={`h-6 w-6 overflow-hidden rounded-full border border-white dark:border-neutral-700`}
+                  className="h-6 w-6 overflow-hidden rounded-full border border-white dark:border-neutral-700"
                   title={`楼主: ${topic.author.name}`}
                 >
                   <img
@@ -247,19 +255,17 @@ export function ForumList({
                     className="h-full w-full object-cover"
                   />
                 </div>
-                {/* Slots 2-4: Participants */}
                 {topic.participants.slice(0, 3).map((p) => (
                   <div
                     key={p.id}
-                    className={`h-6 w-6 overflow-hidden rounded-full border border-white dark:border-neutral-700`}
+                    className="h-6 w-6 overflow-hidden rounded-full border border-white dark:border-neutral-700"
                     title={`参与者: ${p.name}`}
                   >
                     <img src={p.avatar} alt={p.name} className="h-full w-full object-cover" />
                   </div>
                 ))}
-                {/* Slot 5: Last Replier */}
                 <div
-                  className={`h-6 w-6 overflow-hidden rounded-full border border-white dark:border-neutral-700`}
+                  className="h-6 w-6 overflow-hidden rounded-full border border-white dark:border-neutral-700"
                   title={`最新回复: ${topic.lastReplier.name}`}
                 >
                   <img
@@ -273,7 +279,7 @@ export function ForumList({
               {/* Right: Stats (Desktop) */}
               <div className="ml-4 hidden shrink-0 items-center gap-5 md:flex">
                 <div className="flex w-14 flex-col items-center">
-                  <span className={`text-sm font-medium text-blue-600 dark:text-amber-400`}>
+                  <span className="text-sm font-medium text-blue-600 dark:text-amber-400">
                     {topic.replies}
                   </span>
                 </div>
@@ -287,16 +293,29 @@ export function ForumList({
                 </div>
               </div>
 
-              {/* Mobile Stats (Right side - horizontal layout like linux.do) */}
+              {/* Mobile Stats */}
               <div className="flex shrink-0 items-center gap-2 md:hidden">
                 <img src={topic.lastReplier.avatar} alt="Last" className="h-6 w-6 rounded-full" />
-                <span className={`text-sm font-bold text-blue-600 dark:text-amber-400`}>
+                <span className="text-sm font-bold text-blue-600 dark:text-amber-400">
                   {topic.replies}
                 </span>
                 <span className="text-xs text-neutral-500">{topic.lastReplyTime}</span>
               </div>
             </div>
           ))}
+
+        {/* 无限滚动加载触发器 */}
+        <div ref={loadMoreRef} className="py-4">
+          {isFetchingNextPage && (
+            <div className="flex items-center justify-center gap-2 py-4">
+              <Loader2 className="h-5 w-5 animate-spin text-blue-600 dark:text-amber-400" />
+              <span className={colors.textMuted}>加载更多...</span>
+            </div>
+          )}
+          {!hasNextPage && topics.length > 0 && (
+            <div className={`py-4 text-center text-sm ${colors.textMuted}`}>— 已加载全部话题 —</div>
+          )}
+        </div>
       </div>
     </div>
   );

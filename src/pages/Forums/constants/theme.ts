@@ -95,7 +95,7 @@ export const FORUM_THEME: ThemeColors = {
     "bg-[#0088CC] hover:bg-[#007bb5] text-white dark:bg-amber-500 dark:hover:bg-amber-600",
   buttonSecondary:
     "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-800 dark:text-white dark:hover:bg-neutral-700 dark:border dark:border-neutral-700",
-  buttonHover: "hover:bg-gray-100 dark:hover:bg-neutral-800",
+  buttonHover: "hover:bg-gray-100 dark:hover:bg-[#333333]",
 
   // 强调色
   accentColor: "text-blue-600 dark:text-amber-400",

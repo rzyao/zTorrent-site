@@ -13,15 +13,14 @@ export const SuggestedTopics = ({ categoryId, currentTopicId }: SuggestedTopicsP
   const { colors } = useForumTheme();
 
   // 查询相关话题 (同分类)
-  // 注意：我们这里用 "replies_desc" 或 "latest" 来模拟推荐
-  const { data: topicsData } = useForumsTopicsQuery({
+  // 注意：我们这里用 "popular" 来模拟推荐
+  const { allTopics } = useForumsTopicsQuery({
     categoryId: categoryId || "all",
-    page: 1,
     limit: 5,
     sortBy: "popular", // 推荐一些热门的
   });
 
-  const topics = topicsData?.items?.filter((t) => t.id !== currentTopicId).slice(0, 5) || [];
+  const topics = allTopics.filter((t) => t.id !== currentTopicId).slice(0, 5);
 
   if (topics.length === 0) return null;
 
@@ -85,10 +84,10 @@ export const SuggestedTopics = ({ categoryId, currentTopicId }: SuggestedTopicsP
                   ))}
               </div>
             </div>
-            <div className={`w-16 text-center text-[#919191]`}>{topic.reply_count}</div>
+            <div className={`w-16 text-center text-[#919191]`}>{topic.replyCount}</div>
             <div className={`w-16 text-center text-[#919191]`}>{topic.views}</div>
             <div className={`w-16 text-center text-[#919191]`}>
-              {topic.last_reply_at ? new Date(topic.last_reply_at).toLocaleDateString() : ""}
+              {topic.lastReplyAt ? new Date(topic.lastReplyAt).toLocaleDateString() : ""}
             </div>
           </div>
         ))}

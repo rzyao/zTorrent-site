@@ -22,7 +22,7 @@ export function SidebarCategories({
   onEditClick,
   showEditButton = false,
 }: SidebarCategoriesProps) {
-  const { colors } = useForumTheme();
+  const { colors, theme } = useForumTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -57,7 +57,7 @@ export function SidebarCategories({
 
       {/* 可折叠的内容区域 */}
       <div
-        className={`space-y-0.5 overflow-hidden transition-all duration-200 ${
+        className={`overflow-hidden transition-all duration-200 ${
           isExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
@@ -68,7 +68,8 @@ export function SidebarCategories({
 
           let buttonClass: string;
           if (isActive) {
-            buttonClass = "bg-[#31566c] text-white";
+            buttonClass =
+              theme === "dark" ? "bg-[#31566c] text-white" : "bg-[#d1f0ff] text-[#0088CC]";
           } else {
             buttonClass = `${colors.textSecondary} ${colors.buttonHover}`;
           }

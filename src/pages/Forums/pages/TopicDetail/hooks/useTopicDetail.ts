@@ -34,13 +34,13 @@ interface ExtendedApiTopic {
   title: string;
   content: string;
   views: number;
-  reply_count: number;
-  is_pinned: boolean;
-  is_trending: boolean;
-  is_locked: boolean;
-  created_at: string;
-  updated_at: string;
-  last_reply_at: string;
+  replyCount: number;
+  isPinned: boolean;
+  isTrending: boolean;
+  isLocked: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lastReplyAt: string;
   category?: {
     id: string;
     name: string;
@@ -183,9 +183,9 @@ export function useTopicDetail(topicId: string | undefined) {
         content: thread.content,
         floor: 1,
         isSystem: false,
-        created_at: thread.created_at,
+        created_at: thread.createdAt,
         like_count: 0, // 暂未从 Topic 获取点赞数
-        replies_count: thread.reply_count,
+        replies_count: thread.replyCount,
         author: thread.author || {
           id: "unknown",
           username: "unknown",
@@ -217,13 +217,13 @@ export function useTopicDetail(topicId: string | undefined) {
       categoryColor: thread.category?.color || "#999",
       categoryIcon: thread.category?.icon,
       tags: thread.tags?.map((t) => t.name) || [],
-      createdAt: formatDate(thread.created_at) || "未知",
+      createdAt: formatDate(thread.createdAt) || "未知",
       views: thread.views || 0,
       replies: posts.length,
       participants: Array.from(participantsMap.values()).slice(0, 5),
       stats: {
-        created: formatDate(thread.created_at) || "未知",
-        lastReply: formatDate(thread.last_reply_at || thread.updated_at) || "刚刚",
+        created: formatDate(thread.createdAt) || "未知",
+        lastReply: formatDate(thread.lastReplyAt || thread.updatedAt) || "刚刚",
         replies: posts.length,
         views: String(thread.views || 0),
         users: participantsMap.size,
