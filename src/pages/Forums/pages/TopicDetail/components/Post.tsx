@@ -28,13 +28,34 @@ interface ContentSegment {
   quoteData?: QuoteData;
 }
 
+// BBCode [quote] parser
+function processBBCodeQuotes(text: string): string {
+  // Regex to match [quote="username, post:x, topic:y"]content[/quote]
+  // Also supports [quote=username]
+  return text.replace(
+    /\[quote="?([^",]+)(?:,\s*post:([^",]+))?(?:,\s*topic:([^",\]]+))?"?\]([\s\S]*?)\[\/quote\]/gi,
+    (match, username, postId, topicId, content) => {
+      const dataAttrs = [
+        `data-username="${username.trim()}"`,
+        postId ? `data-post-id="${postId.trim()}"` : "",
+        topicId ? `data-topic-id="${topicId.trim()}"` : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+      // Ensure content inside is processed as Markdown later, but wrapped in HTML
+      // We use a specific structure that parseContentWithQuotes can recognize
+      return `<blockquote ${dataAttrs}><p><strong>${username.trim()}:</strong></p>\n${content}\n</blockquote>`;
+    },
+  );
+}
+
 function parseContentWithQuotes(html: string): ContentSegment[] {
   const segments: ContentSegment[] = [];
 
   // 匹配 blockquote 标签
-  // 格式: <blockquote><p><strong>username</strong>:</p><p>content...</p></blockquote>
-  // 或简单格式: <blockquote><p><strong>username</strong>: content</p></blockquote>
-  const blockquoteRegex = /<blockquote>([\s\S]*?)<\/blockquote>/gi;
+  // 格式: <blockquote ...options>...</blockquote>
+  const blockquoteRegex = /<blockquote([^>]*)>([\s\S]*?)<\/blockquote>/gi;
 
   let lastIndex = 0;
   let match;
@@ -48,28 +69,44 @@ function parseContentWithQuotes(html: string): ContentSegment[] {
       });
     }
 
-    const blockquoteContent = match[1];
+    const attrs = match[1];
+    const blockquoteContent = match[2];
 
-    // 尝试解析用户名和内容
-    // 格式1: <p><strong>username</strong>:</p><p>content</p> (旧格式)
-    // 格式2: <p><strong>username</strong>: content</p> (旧格式)
-    // 格式3: <p>username:</p><p></p><p>content</p> (新格式)
-    // 格式4: <p>username:</p>... (新格式简化)
-    let usernameMatch = blockquoteContent.match(/<p>\s*<strong>@?([^<]+)<\/strong>:?\s*([\s\S]*)/i);
+    // 从属性中提取元数据
+    const topicIdMatch = attrs.match(/data-topic-id="([^"]+)"/);
+    const postIdMatch = attrs.match(/data-post-id="([^"]+)"/);
+    const usernameAttrMatch = attrs.match(/data-username="([^"]+)"/);
 
-    // 如果没匹配到 strong 格式，尝试匹配普通格式
-    if (!usernameMatch) {
-      usernameMatch = blockquoteContent.match(/<p>\s*@?([^:<]+):\s*<\/p>([\s\S]*)/i);
+    let username = usernameAttrMatch ? usernameAttrMatch[1] : "";
+    let content = blockquoteContent;
+
+    // 如果没有属性元数据（旧格式），尝试从内容解析
+    if (!username) {
+      let usernameMatch = blockquoteContent.match(
+        /<p>\s*<strong>@?([^<]+)<\/strong>:?\s*([\s\S]*)/i,
+      );
+      if (!usernameMatch) {
+        usernameMatch = blockquoteContent.match(/<p>\s*@?([^:<]+):\s*<\/p>([\s\S]*)/i);
+      }
+      if (usernameMatch) {
+        username = usernameMatch[1].trim();
+        content = usernameMatch[2];
+      }
+    } else {
+      // 如果是从 BBCode 转换来的，内容可能包含 <p><strong>username:</strong></p>，需要移除
+      content = content.replace(/<p>\s*<strong>[^<]+<\/strong>:?\s*<\/p>/i, "");
     }
 
-    if (usernameMatch) {
-      const username = usernameMatch[1].trim();
-      let content = usernameMatch[2];
-
-      // 清理 content 中的 HTML 标签
-      content = content.replace(/<\/?p>/gi, " ").trim();
+    if (username) {
+      // 清理 content 中的 HTML 标签，保留换行结构
+      content = content
+        .replace(/<\/p>/gi, "\n\n")
+        .replace(/<p[^>]*>/gi, "")
+        .replace(/<br\s*\/?>/gi, "\n")
+        .trim();
 
       // 尝试解析楼层号 (格式: username #floor)
+      // 只有在没有 postId 时才依赖这个作为 fallback
       const floorMatch = username.match(/(.+)\s*#(\d+)/);
 
       segments.push({
@@ -78,8 +115,10 @@ function parseContentWithQuotes(html: string): ContentSegment[] {
         quoteData: {
           username: floorMatch ? floorMatch[1].trim() : username,
           floor: floorMatch ? parseInt(floorMatch[2], 10) : undefined,
+          postId: postIdMatch ? postIdMatch[1] : undefined,
+          topicId: topicIdMatch ? topicIdMatch[1] : undefined,
           content: content,
-          isCrossTopic: false,
+          isCrossTopic: !!((topicIdMatch && topicIdMatch[1]) || (postIdMatch && postIdMatch[1])),
         },
       });
     } else {
@@ -117,7 +156,13 @@ const PostContent = memo(
     onMouseUp: () => void;
     colors?: any;
   }) => {
-    const html = useMemo(() => marked.parse(content) as string, [content]);
+    // 1. Process BBCode [quote] -> HTML <blockquote>
+    // 2. Parse Markdown -> HTML
+    const html = useMemo(() => {
+      const processed = processBBCodeQuotes(content);
+      return marked.parse(processed) as string;
+    }, [content]);
+
     const segments = useMemo(() => parseContentWithQuotes(html), [html]);
 
     // 处理跳转到原帖
@@ -212,17 +257,30 @@ export function Post({
     let quoteContent: string;
 
     if (composer.isRichText) {
-      // 富文本模式：使用 HTML blockquote
-      // 第一段落只包含 "username:" 格式，用于识别这是外部引用
+      // 富文本模式：使用 HTML blockquote，携带完整元数据
       const escapedText = selectionMenu.text
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/\n/g, "<br>");
-      quoteContent = `<blockquote><p><strong>${post.username}:</strong></p><p>${escapedText}</p></blockquote><p></p>`;
+
+      const topicIdAttr = topicId ? `data-topic-id="${topicId}"` : "";
+      const postIdAttr = post.id ? `data-post-id="${post.id}"` : "";
+
+      quoteContent = `<blockquote 
+        ${topicIdAttr}
+        ${postIdAttr}
+        data-username="${post.username}"
+      ><p><strong>${post.username}:</strong></p><p>${escapedText}</p></blockquote><p></p>`;
     } else {
-      // Markdown 模式：使用 [quote] 标签，参考 Discourse 格式
-      // 格式: [quote="username, post:floor, topic:topicId"]content[/quote]
-      quoteContent = `[quote="${post.username}, post:${postIndex}, topic:${topicId}"]\n${selectionMenu.text}\n[/quote]\n\n`;
+      // Markdown 模式：使用 [quote] 标签，携带完整元数据
+      // 格式: [quote="username, post:postId, topic:topicId"]content[/quote]
+      const parts = [`"${post.username}`];
+      if (post.id && String(post.id).trim() !== "") parts.push(`post:${post.id}`);
+      if (topicId && String(topicId).trim() !== "") parts.push(`topic:${topicId}`);
+
+      const meta = parts.join(", ") + '"';
+
+      quoteContent = `[quote=${meta}]\n${selectionMenu.text}\n[/quote]\n\n`;
     }
 
     // 创建引用信息

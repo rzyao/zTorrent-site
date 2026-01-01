@@ -169,7 +169,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       const normalizedContent = currentContent.replace(/\s+/g, " ").trim();
 
       if (normalizedValue !== normalizedContent) {
-        editor.commands.setContent(value, false);
+        editor.commands.setContent(value, { emitUpdate: false });
       }
     }
   }, [editor, value]);
@@ -337,17 +337,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                       type: "blockquote",
                       content: content,
                     })
-                    // 调整选区：根据调试，startPos + 2 会导致跳过第一个字符，
-                    // 这可能与 insertContent 在特定上下文（如嵌套引用）中的对节点合并/拆分处理有关。
-                    // 尝试改为 +1
+                    // 调整选区：+1 偏移量用于修正嵌套引用时的节点位置计算
                     .setTextSelection({
                       from: startPos + 1,
-                      // totalLength 是 2 (bq) + 2 (p) + len，所以 totalLength - 2 - 1?
-                      // 之前是 from + len = 41 + 11 = 52.
-                      // 现在是 40 + 11 = 51.
-                      // 如果 totalLength 是 15。 startPos(39) + 15 = 54.
-                      // 40 到 51 是 11 个字符。
-                      // 54 - 3 = 51.
                       to: startPos + totalLength - 3,
                     })
                     .run();

@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
-import { ChevronDown, ChevronUp, ArrowUpRight, MessageSquareQuote } from "lucide-react";
+import { ChevronDown, ChevronUp, ArrowUpRight, MessageSquareQuote, Loader2 } from "lucide-react";
 import { marked } from "marked";
 import { cn } from "@/components/ui/utils";
+import { ForumsPostsService } from "@/api/services/ForumsPostsService";
 
 export interface QuoteData {
   topicId?: string;
@@ -22,21 +23,52 @@ interface QuoteBlockProps {
 
 /**
  * 可展开/折叠的引用块组件
- * 支持同话题和跨话题引用
+ * 逻辑：
+ * 1. 未展开：显示完整的引用片段（保留样式和换行）
+ * 2. 展开：请求并显示原帖完整内容
  */
 export function QuoteBlock({ quote, onNavigate, colors }: QuoteBlockProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [fullPostContent, setFullPostContent] = useState<string | null>(null);
 
-  // 截取预览内容（折叠时显示）
-  const previewContent = useMemo(() => {
-    const plainText = quote.content.replace(/[#*`>]/g, "").trim();
-    return plainText.length > 100 ? plainText.substring(0, 100) + "..." : plainText;
-  }, [quote.content]);
-
-  // 完整内容 HTML
-  const fullContentHtml = useMemo(() => {
+  // 本地引用的 HTML (始终会被渲染，除非完全展开且已加载)
+  const localQuoteHtml = useMemo(() => {
     return marked.parse(quote.content) as string;
   }, [quote.content]);
+
+  // 远程完整内容的 HTML
+  const remoteFullHtml = useMemo(() => {
+    if (!fullPostContent) return null;
+    return marked.parse(fullPostContent) as string;
+  }, [fullPostContent]);
+
+  const handleExpand = async () => {
+    if (isExpanded) {
+      setIsExpanded(false);
+      return;
+    }
+
+    setIsExpanded(true);
+
+    // 如果还没有加载过完整内容，且有 postId，则去请求
+    if (!fullPostContent && quote.postId) {
+      setIsLoading(true);
+      try {
+        const { data: post } = await ForumsPostsService.postsControllerFindOne({
+          id: quote.postId,
+        });
+        if (post && post.content) {
+          setFullPostContent(post.content);
+        }
+      } catch (error) {
+        console.error("Failed to load full post:", error);
+        // 加载失败可以显示一个错误提示或者保持原样
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
 
   const handleNavigate = () => {
     if (quote.isCrossTopic && quote.topicId) {
@@ -56,6 +88,9 @@ export function QuoteBlock({ quote, onNavigate, colors }: QuoteBlockProps) {
     }
   };
 
+  // 是否可以展开（必须有 postId 才能请求）
+  const canExpand = !!quote.postId;
+
   return (
     <div
       className={cn(
@@ -64,14 +99,17 @@ export function QuoteBlock({ quote, onNavigate, colors }: QuoteBlockProps) {
       )}
     >
       {/* Quote Header */}
-      <div className="flex items-center gap-2 px-3 py-2">
+      <div className="flex items-center gap-2 bg-neutral-100/50 px-3 py-2 dark:bg-neutral-800">
         {/* 展开/折叠按钮 */}
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-1.5 text-sm text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
-        >
-          {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-        </button>
+        {canExpand && (
+          <button
+            onClick={handleExpand}
+            className="flex items-center gap-1.5 text-sm text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
+            title={isExpanded ? "收起" : "显示完整回复"}
+          >
+            {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </button>
+        )}
 
         {/* 引用图标或头像 */}
         {quote.isCrossTopic ? (
@@ -114,16 +152,34 @@ export function QuoteBlock({ quote, onNavigate, colors }: QuoteBlockProps) {
       </div>
 
       {/* Quote Content */}
-      <div className="px-3 pb-2">
-        {isExpanded ? (
-          <div
-            className="prose prose-sm dark:prose-invert max-w-none text-neutral-700 dark:text-neutral-300 [&>p]:mb-1 [&>p:last-child]:mb-0"
-            dangerouslySetInnerHTML={{ __html: fullContentHtml }}
-          />
+      <div className="px-3 pt-2 pb-2">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-4 text-neutral-500">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <span className="text-sm">正在加载原帖...</span>
+          </div>
+        ) : isExpanded && remoteFullHtml ? (
+          // 展开状态：显示远程完整内容
+          <div className="animate-in fade-in zoom-in-95 duration-200">
+            <div
+              className="prose prose-sm dark:prose-invert max-w-none text-neutral-700 dark:text-neutral-300 [&>p]:mb-2"
+              dangerouslySetInnerHTML={{ __html: remoteFullHtml }}
+            />
+            <div className="mt-2 border-t pt-1 text-center">
+              <button
+                onClick={() => setIsExpanded(false)}
+                className="text-xs text-neutral-400 hover:text-neutral-600"
+              >
+                收起
+              </button>
+            </div>
+          </div>
         ) : (
-          <p className="line-clamp-2 text-sm text-neutral-600 dark:text-neutral-400">
-            {previewContent}
-          </p>
+          // 未展开状态（默认）：显示本地引用片段（保留样式）
+          <div
+            className="prose prose-sm dark:prose-invert max-w-none text-neutral-600 dark:text-neutral-400 [&>p]:mb-1 [&>p:last-child]:mb-0"
+            dangerouslySetInnerHTML={{ __html: localQuoteHtml }}
+          />
         )}
       </div>
     </div>
