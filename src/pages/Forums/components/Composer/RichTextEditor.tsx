@@ -120,7 +120,59 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         ),
       },
     },
+    // 编辑器创建后，将光标移动到文档末尾的引用块外部
+    onCreate: ({ editor }) => {
+      // 使用 setTimeout 确保 DOM 更新后再移动光标
+      setTimeout(() => {
+        // 先移动到文档末尾
+        editor.commands.focus("end");
+
+        // 检查当前是否在 blockquote 内
+        if (editor.isActive("blockquote")) {
+          // 退出 blockquote，在其后添加新段落
+          editor
+            .chain()
+            .focus()
+            .setTextSelection(editor.state.doc.content.size) // 移动到最后
+            .liftEmptyBlock() // 尝试退出当前块
+            .run();
+
+          // 如果仍在 blockquote 中，插入一个新段落
+          if (editor.isActive("blockquote")) {
+            editor
+              .chain()
+              .focus()
+              .insertContentAt(editor.state.doc.content.size, { type: "paragraph" })
+              .focus("end")
+              .run();
+          }
+        }
+      }, 10);
+    },
   });
+
+  // 同步外部 value 变化到编辑器
+  // 当从 Markdown 切换到富文本时，或者点击外部引用按钮时，需要更新编辑器内容
+  React.useEffect(() => {
+    if (!editor) return;
+
+    // 如果编辑器已经聚焦，说明是用户正在操作（包括点击工具栏按钮），
+    // 此时编辑器本身就是内容的源头，不需要（也不应该）从外部同步 value，
+    // 否则会导致 selection 和 focus 丢失。
+    if (editor.isFocused) return;
+
+    const currentContent = editor.getHTML();
+    if (value !== currentContent) {
+      // 检查内容是否真的不同（避免不必要的更新和光标跳动）
+      // 移除空白差异比较
+      const normalizedValue = value.replace(/\s+/g, " ").trim();
+      const normalizedContent = currentContent.replace(/\s+/g, " ").trim();
+
+      if (normalizedValue !== normalizedContent) {
+        editor.commands.setContent(value, false);
+      }
+    }
+  }, [editor, value]);
 
   if (!editor) {
     return null;
@@ -219,7 +271,96 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         <ToolbarButton
           icon={<Quote className="h-4 w-4" />}
           title="引用块"
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          onClick={() => {
+            const { $from, $to } = editor.state.selection;
+            let externalQuoteDepth = -1;
+            let totalBlockquotes = 0;
+            let innerBlockquoteDepth = -1;
+
+            // 检查路径中的所有引用块
+            for (let d = $from.depth; d > 0; d--) {
+              const node = $from.node(d);
+              if (node.type.name === "blockquote") {
+                totalBlockquotes++;
+                if (innerBlockquoteDepth === -1) innerBlockquoteDepth = d;
+
+                // 检查是否为外部引用（带用户名格式）
+                if (node.firstChild && node.firstChild.type.name === "paragraph") {
+                  let paraText = "";
+                  node.firstChild.forEach((child) => {
+                    if (child.isText || child.type.name === "text") {
+                      paraText += child.text;
+                    }
+                  });
+                  if (/^[^:]+:\s*$/.test(paraText.trim())) {
+                    externalQuoteDepth = d;
+                  }
+                }
+              }
+            }
+
+            // 情况 1: 在外部引用内
+            if (externalQuoteDepth !== -1) {
+              // 如果我们在外部引用里的另一个引用内，说明是嵌套引用，现在点击应该是"取消"
+              if (totalBlockquotes > 1 && innerBlockquoteDepth > externalQuoteDepth) {
+                // 取消嵌套引用 (Lift)
+                const { from, to } = editor.state.selection;
+                editor.chain().focus().lift("blockquote").run();
+                // 尝试恢复选区（位置可能会有偏移，blockquote 开启/闭合 -1Each -> -2?
+                // 但 lift 会处理位置，通常不需要手动 set，除非失效）
+              } else {
+                // 在外部引用内，但还没嵌套：创建嵌套引用
+                const { from: selFrom, to: selTo } = editor.state.selection;
+                const isSelectionEmpty = selFrom === selTo;
+
+                if (!isSelectionEmpty) {
+                  const selectedText = editor.state.doc.textBetween(selFrom, selTo, "\n");
+                  const startPos = selFrom;
+
+                  // 处理多行文本：按换行符分割并创建段落
+                  const paragraphs = selectedText.split("\n");
+                  const content = paragraphs.map((text) => ({
+                    type: "paragraph",
+                    content: text ? [{ type: "text", text }] : [],
+                  }));
+
+                  // 计算插入内容的总长度
+                  // blockquote: start(1) + end(1) = 2
+                  // 每个段落: start(1) + end(1) + text.length = 2 + length
+                  const totalLength = 2 + paragraphs.reduce((acc, p) => acc + 2 + p.length, 0);
+
+                  editor
+                    .chain()
+                    .focus()
+                    .deleteSelection()
+                    .insertContent({
+                      type: "blockquote",
+                      content: content,
+                    })
+                    // 调整选区：根据调试，startPos + 2 会导致跳过第一个字符，
+                    // 这可能与 insertContent 在特定上下文（如嵌套引用）中的对节点合并/拆分处理有关。
+                    // 尝试改为 +1
+                    .setTextSelection({
+                      from: startPos + 1,
+                      // totalLength 是 2 (bq) + 2 (p) + len，所以 totalLength - 2 - 1?
+                      // 之前是 from + len = 41 + 11 = 52.
+                      // 现在是 40 + 11 = 51.
+                      // 如果 totalLength 是 15。 startPos(39) + 15 = 54.
+                      // 40 到 51 是 11 个字符。
+                      // 54 - 3 = 51.
+                      to: startPos + totalLength - 3,
+                    })
+                    .run();
+                } else {
+                  // 没选文字，在当前行创建引用块
+                  editor.chain().focus().toggleBlockquote().run();
+                }
+              }
+            } else {
+              // 情况 2: 不在外部引用内，使用标准 toggle
+              editor.chain().focus().toggleBlockquote().run();
+            }
+          }}
           active={editor.isActive("blockquote")}
         />
         <ToolbarButton
@@ -341,6 +482,48 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         .ProseMirror {
           min-height: 200px;
         }
+        /* 移除引用块的引号装饰 */
+        .ProseMirror blockquote {
+          font-style: normal;
+          background-color: #F9F9F9;
+          padding: 0.75rem 1rem;
+          border-radius: 0.375rem;
+        }
+        .dark .ProseMirror blockquote {
+          background-color: rgba(38, 38, 38, 0.5);
+        }
+        /* 外部引用样式 */
+        .ProseMirror blockquote.external-quote {
+          border-left-color: #3b82f6;
+        }
+        /* 隐藏外部引用标记 */
+        .ProseMirror .external-quote-marker {
+          display: none !important;
+        }
+        /* 嵌套引用块样式 - 更深的背景色 */
+        .ProseMirror blockquote blockquote {
+          background-color: #E8F4FC;
+          border-left-color: #3b82f6;
+          margin: 0.5rem 0;
+        }
+        .dark .ProseMirror blockquote blockquote {
+          background-color: rgba(59, 130, 246, 0.15);
+        }
+        /* 更深层的嵌套 */
+        .ProseMirror blockquote blockquote blockquote {
+          background-color: #D1E9FA;
+        }
+        .dark .ProseMirror blockquote blockquote blockquote {
+          background-color: rgba(59, 130, 246, 0.25);
+        }
+        .ProseMirror blockquote::before,
+        .ProseMirror blockquote::after {
+          content: none !important;
+        }
+        .ProseMirror blockquote p::before,
+        .ProseMirror blockquote p::after {
+          content: none !important;
+        }
       `}</style>
     </div>
   );
@@ -363,6 +546,8 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({
   disabled = false,
 }) => (
   <button
+    // 阻止 mousedown 默认行为，防止编辑器失去焦点和选择被清除
+    onMouseDown={(e) => e.preventDefault()}
     onClick={onClick}
     disabled={disabled}
     className={cn(

@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, memo } from "react";
+import { useState, useMemo, useCallback, memo, Fragment } from "react";
 import {
   ThumbsUp,
   Share2,
@@ -16,6 +16,93 @@ import { topicData } from "../constants"; // 引用全局数据
 import { marked } from "marked";
 import { SelectionPopover } from "./SelectionPopover";
 import { useComposerStore } from "../../../components/Composer/ComposerStore";
+import { QuoteBlock, QuoteData } from "./QuoteBlock";
+
+/**
+ * 解析 HTML 中的 blockquote，提取引用信息
+ * 返回分段内容：普通 HTML 和引用块交替
+ */
+interface ContentSegment {
+  type: "html" | "quote";
+  content: string;
+  quoteData?: QuoteData;
+}
+
+function parseContentWithQuotes(html: string): ContentSegment[] {
+  const segments: ContentSegment[] = [];
+
+  // 匹配 blockquote 标签
+  // 格式: <blockquote><p><strong>username</strong>:</p><p>content...</p></blockquote>
+  // 或简单格式: <blockquote><p><strong>username</strong>: content</p></blockquote>
+  const blockquoteRegex = /<blockquote>([\s\S]*?)<\/blockquote>/gi;
+
+  let lastIndex = 0;
+  let match;
+
+  while ((match = blockquoteRegex.exec(html)) !== null) {
+    // 添加 blockquote 之前的 HTML
+    if (match.index > lastIndex) {
+      segments.push({
+        type: "html",
+        content: html.substring(lastIndex, match.index),
+      });
+    }
+
+    const blockquoteContent = match[1];
+
+    // 尝试解析用户名和内容
+    // 格式1: <p><strong>username</strong>:</p><p>content</p> (旧格式)
+    // 格式2: <p><strong>username</strong>: content</p> (旧格式)
+    // 格式3: <p>username:</p><p></p><p>content</p> (新格式)
+    // 格式4: <p>username:</p>... (新格式简化)
+    let usernameMatch = blockquoteContent.match(/<p>\s*<strong>@?([^<]+)<\/strong>:?\s*([\s\S]*)/i);
+
+    // 如果没匹配到 strong 格式，尝试匹配普通格式
+    if (!usernameMatch) {
+      usernameMatch = blockquoteContent.match(/<p>\s*@?([^:<]+):\s*<\/p>([\s\S]*)/i);
+    }
+
+    if (usernameMatch) {
+      const username = usernameMatch[1].trim();
+      let content = usernameMatch[2];
+
+      // 清理 content 中的 HTML 标签
+      content = content.replace(/<\/?p>/gi, " ").trim();
+
+      // 尝试解析楼层号 (格式: username #floor)
+      const floorMatch = username.match(/(.+)\s*#(\d+)/);
+
+      segments.push({
+        type: "quote",
+        content: match[0], // 原始 HTML 作为 fallback
+        quoteData: {
+          username: floorMatch ? floorMatch[1].trim() : username,
+          floor: floorMatch ? parseInt(floorMatch[2], 10) : undefined,
+          content: content,
+          isCrossTopic: false,
+        },
+      });
+    } else {
+      // 无法解析，作为普通 blockquote 渲染
+      segments.push({
+        type: "html",
+        content: match[0],
+      });
+    }
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // 添加剩余内容
+  if (lastIndex < html.length) {
+    segments.push({
+      type: "html",
+      content: html.substring(lastIndex),
+    });
+  }
+
+  return segments;
+}
 
 // Memoized PostContent to prevent re-renders losing text selection
 const PostContent = memo(
@@ -23,14 +110,38 @@ const PostContent = memo(
     content,
     className,
     onMouseUp,
+    colors,
   }: {
     content: string;
     className: string;
     onMouseUp: () => void;
+    colors?: any;
   }) => {
     const html = useMemo(() => marked.parse(content) as string, [content]);
+    const segments = useMemo(() => parseContentWithQuotes(html), [html]);
+
+    // 处理跳转到原帖
+    const handleQuoteNavigate = useCallback((topicId: string, postId?: string) => {
+      // 跨话题跳转
+      window.location.href = `/forum/topic/${topicId}${postId ? `#post-${postId}` : ""}`;
+    }, []);
+
     return (
-      <div className={className} dangerouslySetInnerHTML={{ __html: html }} onMouseUp={onMouseUp} />
+      <div className={className} onMouseUp={onMouseUp}>
+        {segments.map((segment, index) => (
+          <Fragment key={index}>
+            {segment.type === "quote" && segment.quoteData ? (
+              <QuoteBlock
+                quote={segment.quoteData}
+                onNavigate={handleQuoteNavigate}
+                colors={colors}
+              />
+            ) : (
+              <div dangerouslySetInnerHTML={{ __html: segment.content }} />
+            )}
+          </Fragment>
+        ))}
+      </div>
     );
   },
 );
@@ -92,11 +203,27 @@ export function Post({
   const handleQuote = () => {
     if (!selectionMenu) return;
 
-    const quoteContent = `> **${post.username}**:\n> ${selectionMenu.text}\n\n`;
     const composer = useComposerStore.getState();
     const replyContextTitle = topicTitle
       ? `${topicTitle} (回复 #${postIndex} ${post.username})`
       : undefined;
+
+    // 根据编辑器模式生成不同的引用格式
+    let quoteContent: string;
+
+    if (composer.isRichText) {
+      // 富文本模式：使用 HTML blockquote
+      // 第一段落只包含 "username:" 格式，用于识别这是外部引用
+      const escapedText = selectionMenu.text
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\n/g, "<br>");
+      quoteContent = `<blockquote><p><strong>${post.username}:</strong></p><p>${escapedText}</p></blockquote><p></p>`;
+    } else {
+      // Markdown 模式：使用 [quote] 标签，参考 Discourse 格式
+      // 格式: [quote="username, post:floor, topic:topicId"]content[/quote]
+      quoteContent = `[quote="${post.username}, post:${postIndex}, topic:${topicId}"]\n${selectionMenu.text}\n[/quote]\n\n`;
+    }
 
     // 创建引用信息
     const quoteInfo = {
@@ -205,6 +332,7 @@ export function Post({
           content={post.content}
           className={`prose dark:prose-invert max-w-none text-lg leading-normal ${colors.textPrimary} [&_img]:my-4 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-lg [&_img]:shadow-md`}
           onMouseUp={handleMouseUp}
+          colors={colors}
         />
 
         {/* Selection Popover */}

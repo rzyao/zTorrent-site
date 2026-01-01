@@ -3,7 +3,7 @@ import logo from "@/assets/logo.svg";
 
 export function FullScreenLoader() {
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0a0a0a] text-white">
+    <div className="fixed inset-0 z-100 flex flex-col items-center justify-center bg-[#0a0a0a] text-white">
       {/* 背景光效 */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="-h-[500px] -w-[500px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500/10 blur-[100px]" />
@@ -53,7 +53,7 @@ export function FullScreenLoader() {
         >
           {/* 进度条动画 */}
           <motion.div
-            className="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500"
+            className="h-full bg-linear-to-r from-amber-500 via-orange-500 to-amber-500"
             initial={{ x: "-100%" }}
             animate={{ x: "100%" }}
             transition={{

@@ -74,6 +74,36 @@ export const ComposerEditor: React.FC<ComposerEditorProps> = ({ className }) => 
         return `\n\`\`\`${lang}\n${code}\n\`\`\`\n`;
       },
     });
+
+    // 添加外部引用块转换规则：将 blockquote (带 username: 格式) 转换为 [quote] 标签
+    service.addRule("externalQuote", {
+      filter: (node) => {
+        if (node.nodeName !== "BLOCKQUOTE") return false;
+        // 检查第一个 p 是否包含 "username:" 格式
+        const firstP = node.querySelector("p");
+        if (!firstP) return false;
+        const text = firstP.textContent?.trim() || "";
+        // 匹配 "username:" 格式（可能有 strong 标签包裹）
+        return /^[^:]+:$/.test(text);
+      },
+      replacement: (content, node) => {
+        const element = node as HTMLElement;
+        const firstP = element.querySelector("p");
+        const username = firstP?.textContent?.replace(/:$/, "").trim() || "unknown";
+
+        // 获取引用内容（除第一个段落外的所有内容）
+        const paragraphs = element.querySelectorAll("p");
+        let quoteContent = "";
+        for (let i = 1; i < paragraphs.length; i++) {
+          quoteContent += (paragraphs[i].textContent || "") + "\n";
+        }
+        quoteContent = quoteContent.trim();
+
+        // 生成 [quote] 格式，暂时没有 post 和 topic 信息时使用简化格式
+        return `\n[quote="${username}"]\n${quoteContent}\n[/quote]\n\n`;
+      },
+    });
+
     return service;
   }, []);
 
@@ -103,7 +133,55 @@ export const ComposerEditor: React.FC<ComposerEditorProps> = ({ className }) => 
       // Markdown → HTML（切换到富文本模式）
       // 如果已经是 HTML，不转换
       if (!draft.body.trim().startsWith("<")) {
-        const html = marked.parse(draft.body, { async: false }) as string;
+        // 预处理：将 [quote] 标签替换为占位符，避免 marked 处理
+        let processedBody = draft.body;
+
+        // 规范化换行符：将字面的 \\n 转换为实际换行符（如果存在）
+        processedBody = processedBody.replace(/\\n/g, "\n");
+
+        const quotePlaceholders: { placeholder: string; html: string }[] = [];
+        let placeholderIndex = 0;
+
+        // 匹配 [quote="username, post:x, topic:y"] 或 [quote="username"] 或 [quote]
+        // 使用更宽松的匹配模式
+        const quoteRegex = /\[quote(?:="([^"]*)")?\][\r\n]*([\s\S]*?)[\r\n]*\[\/quote\]/gi;
+
+        processedBody = processedBody.replace(quoteRegex, (_, attrs, content) => {
+          // 解析 username
+          let username = "引用";
+          if (attrs) {
+            // attrs 可能是 "username" 或 "username, post:x, topic:y"
+            const userMatch = attrs.match(/^([^,]+)/);
+            if (userMatch) {
+              username = userMatch[1].trim();
+            }
+          }
+          // 确保内容的换行被正确处理
+          const escapedContent = (content || "")
+            .trim()
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\n/g, "<br>");
+
+          // 使用 HTML 注释格式作为占位符，这样 marked 不会解析它
+          const placeholder = `<!--QUOTE_PH_${placeholderIndex++}-->`;
+          const html = `<blockquote><p><strong>${username}:</strong></p><p>${escapedContent}</p></blockquote>`;
+          quotePlaceholders.push({ placeholder, html });
+          return placeholder;
+        });
+
+        // 使用 marked 转换其他 Markdown 内容
+        let html = marked.parse(processedBody, { async: false }) as string;
+
+        // 将占位符替换回 HTML
+        quotePlaceholders.forEach(({ placeholder, html: quoteHtml }) => {
+          // 转义正则特殊字符
+          const escapedPlaceholder = placeholder.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          // 占位符可能被包裹在 <p> 标签中，需要处理
+          html = html.replace(new RegExp(`<p>${escapedPlaceholder}</p>`, "g"), quoteHtml);
+          html = html.replace(new RegExp(escapedPlaceholder, "g"), quoteHtml);
+        });
+
         updateDraft({ body: html });
       }
     } else {
@@ -363,7 +441,62 @@ export const ComposerEditor: React.FC<ComposerEditorProps> = ({ className }) => 
           <ToolbarButton
             icon={<Quote className="h-4 w-4" />}
             title="引用"
-            onClick={() => insertText("\n> ")}
+            onClick={() => {
+              const textarea = textareaRef.current;
+              if (!textarea) return;
+
+              const start = textarea.selectionStart;
+              const end = textarea.selectionEnd;
+              const text = textarea.value;
+              const selectedText = text.substring(start, end);
+
+              // 检查是否在 [quote] 标签内（外部引用）
+              const textBeforeCursor = text.substring(0, start);
+              const lastQuoteOpen = textBeforeCursor.lastIndexOf("[quote");
+              const lastQuoteClose = textBeforeCursor.lastIndexOf("[/quote]");
+              const isInExternalQuote = lastQuoteOpen > lastQuoteClose;
+
+              if (isInExternalQuote && selectedText) {
+                // 在外部引用内：创建嵌套引用
+                const newContent = "\n> " + selectedText.split("\n").join("\n> ") + "\n";
+                const newFullText = text.substring(0, start) + newContent + text.substring(end);
+                updateDraft({ body: newFullText });
+
+                setTimeout(() => {
+                  textarea.focus();
+                  // 选中新插入的嵌套引用内容
+                  textarea.setSelectionRange(start, start + newContent.length);
+                }, 0);
+              } else if (selectedText) {
+                // 选中文本时的智能 Toggle 逻辑
+                const lines = selectedText.split("\n");
+                // 检查是否所有非空行都以 > 开头
+                const isAllQuoted = lines.every((line) => !line.trim() || line.startsWith("> "));
+
+                let newContent: string;
+                if (isAllQuoted) {
+                  // 取消引用：移除每行开头的 "> "
+                  newContent = lines
+                    .map((line) => (line.startsWith("> ") ? line.substring(2) : line))
+                    .join("\n");
+                } else {
+                  // 添加引用：每行开头加 "> "
+                  newContent = lines.map((line) => `> ${line}`).join("\n");
+                }
+
+                const newFullText = text.substring(0, start) + newContent + text.substring(end);
+                updateDraft({ body: newFullText });
+
+                setTimeout(() => {
+                  textarea.focus();
+                  // 保持对转换后文本的选择
+                  textarea.setSelectionRange(start, start + newContent.length);
+                }, 0);
+              } else {
+                // 没有选中文本：正常添加引用符号
+                insertText("\n> ");
+              }
+            }}
           />
           <ToolbarButton
             icon={<Code className="h-4 w-4" />}
@@ -504,6 +637,8 @@ const ToolbarButton: React.FC<{
   const { colors } = useForumTheme();
   return (
     <button
+      // 阻止 mousedown 默认行为，防止 textarea 失去焦点和选择被清除
+      onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
       disabled={disabled}
       className={cn(
