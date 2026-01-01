@@ -16,6 +16,10 @@ export type ForumPost = {
      */
     isSystem: boolean;
     /**
+     * 引用此贴的回复列表 (楼中楼)，用于无限滚动模式下显示跨页的回复关系
+     */
+    incomingReplies?: Array<ForumPost>;
+    /**
      * 所属话题 ID
      */
     topicId: string;

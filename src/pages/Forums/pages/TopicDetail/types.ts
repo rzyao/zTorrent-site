@@ -34,6 +34,7 @@ export interface PostData {
     avatar?: string;
     content?: string;
   };
+  incomingReplies?: PostData[];
 }
 
 export interface Participant {

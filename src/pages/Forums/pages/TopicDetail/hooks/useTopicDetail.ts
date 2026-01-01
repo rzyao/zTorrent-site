@@ -27,6 +27,30 @@ interface ExtendedApiPost {
       avatar?: string;
     };
   } | null;
+  // 新增：后端显式返回的回复列表
+  incomingReplies?: Array<{
+    id: string;
+    floor: number;
+    content: string;
+    author: {
+      username: string;
+      nickname?: string;
+      avatar?: string;
+    };
+    created_at: string;
+  }>;
+  // 兼容 snake_case
+  incoming_replies?: Array<{
+    id: string;
+    floor: number;
+    content: string;
+    author: {
+      username: string;
+      nickname?: string;
+      avatar?: string;
+    };
+    created_at: string;
+  }>;
 }
 
 interface ExtendedApiTopic {
@@ -63,6 +87,8 @@ function transformPost(apiPost: ExtendedApiPost, index: number): PostData {
   const author = apiPost.author;
   const username = author?.username || "unknown";
 
+  const incomingReplies = apiPost.incomingReplies || apiPost.incoming_replies;
+
   return {
     id: String(apiPost.id),
     username: username,
@@ -97,6 +123,22 @@ function transformPost(apiPost: ExtendedApiPost, index: number): PostData {
           content: apiPost.replyTo.content,
         }
       : undefined,
+    // 直接使用后端返回的引用关系
+    incomingReplies: incomingReplies?.map((reply) => ({
+      id: reply.id,
+      username: reply.author.username,
+      name: reply.author.nickname || reply.author.username,
+      avatar:
+        reply.author.avatar ||
+        `https://api.dicebear.com/7.x/avataaars/svg?seed=${reply.author.username}`,
+      role: "user",
+      content: reply.content,
+      createdAt: formatDate(reply.created_at),
+      likes: 0,
+      avatarSize: 20,
+      isOp: false,
+      isSmallAction: false,
+    })),
   };
 }
 

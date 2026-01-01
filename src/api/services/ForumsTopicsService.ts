@@ -74,36 +74,6 @@ export class ForumsTopicsService {
         });
     }
     /**
-     * 获取话题详情 (路径参数)
-     * @param id
-     * @returns any 话题详情
-     * @throws ApiError
-     */
-    public static topicsControllerFindOneByParam(
-        id: string,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: ForumTopic;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/forums/topics/{id}',
-            path: {
-                'id': id,
-            },
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
      * 发布话题
      * @param requestBody
      * @returns any 发布成功
@@ -384,6 +354,36 @@ export class ForumsTopicsService {
             url: '/forums/topics/admin/delete',
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 获取话题详情 (路径参数)
+     * @param id
+     * @returns any 话题详情
+     * @throws ApiError
+     */
+    public static topicsControllerFindOneByParam(
+        id: string,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ForumTopic;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/topics/{id}',
+            path: {
+                'id': id,
+            },
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

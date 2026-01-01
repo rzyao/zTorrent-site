@@ -181,17 +181,6 @@ export function TopicDetail({
           {/* Left: Posts Stream */}
           <div className="min-w-0 flex-1">
             {(() => {
-              // Calculate incoming replies map
-              const incomingRepliesMap: Record<string, typeof topicData.posts> = {};
-              topicData.posts.forEach((p) => {
-                if (p.replyTo?.id) {
-                  if (!incomingRepliesMap[p.replyTo.id]) {
-                    incomingRepliesMap[p.replyTo.id] = [];
-                  }
-                  incomingRepliesMap[p.replyTo.id].push(p);
-                }
-              });
-
               let regularPostIndex = 0;
 
               return topicData.posts.map((post, index) => {
@@ -209,7 +198,8 @@ export function TopicDetail({
                     colors={colors}
                     topicTitle={topicData.title}
                     topicId={topicId}
-                    incomingReplies={incomingRepliesMap[post.id]}
+                    // 直接使用后端返回的引用关系，无需前端计算
+                    incomingReplies={post.incomingReplies}
                   />
                 );
               });
