@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForumTheme } from "../../context/ForumThemeContext";
 import { cn } from "@/components/ui/utils";
@@ -9,6 +9,7 @@ import { TopicHeader } from "./components/TopicHeader";
 import { TopicFooter } from "./components/TopicFooter";
 import { SuggestedTopics } from "./components/SuggestedTopics";
 import { useTopicDetail } from "./hooks/useTopicDetail";
+import { Loader2 } from "lucide-react";
 
 export function TopicDetail({
   topicId: propTopicId,
@@ -25,7 +26,8 @@ export function TopicDetail({
   const onBack = propOnBack || (() => navigate("/forum"));
 
   // 从 API 获取数据
-  const { topicData, isLoading, isError, error } = useTopicDetail(topicId);
+  const { topicData, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useTopicDetail(topicId);
 
   // 计算非系统操作的真正帖子 (在渲染时进行，避免 topicData 为 null 时报错)
   const regularPosts = topicData?.posts?.filter((p) => !p.isSmallAction) ?? [];
@@ -109,6 +111,33 @@ export function TopicDetail({
     }
   }, [topicId]);
 
+  // 无限滚动加载更多帖子
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const [target] = entries;
+      if (target.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage],
+  );
+
+  useEffect(() => {
+    const element = loadMoreRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(handleObserver, {
+      root: null,
+      rootMargin: "200px",
+      threshold: 0.1,
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [handleObserver]);
+
   // 话题不存在
   if (!topicId) {
     return <div className="flex h-64 items-center justify-center text-neutral-400">话题不存在</div>;
@@ -185,6 +214,21 @@ export function TopicDetail({
                 );
               });
             })()}
+
+            {/* 无限滚动加载更多帖子 */}
+            <div ref={loadMoreRef} className="py-4">
+              {isFetchingNextPage && (
+                <div className="flex items-center justify-center gap-2 py-4">
+                  <Loader2 className="h-5 w-5 animate-spin text-blue-600 dark:text-amber-400" />
+                  <span className={colors.textMuted}>加载更多回复...</span>
+                </div>
+              )}
+              {!hasNextPage && topicData.posts.length > 20 && (
+                <div className={`py-4 text-center text-sm ${colors.textMuted}`}>
+                  — 已加载全部回复 —
+                </div>
+              )}
+            </div>
 
             {/* Topic Footer: Map & Actions */}
             <TopicFooter topicData={topicData} />

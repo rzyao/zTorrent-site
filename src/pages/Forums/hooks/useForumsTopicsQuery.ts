@@ -102,8 +102,10 @@ export function useForumsTopicsQuery(props: UseForumsTopicsQueryBaseProps) {
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
+      // 根据 total 和 limit 计算总页数
+      const totalPages = Math.ceil(lastPage.total / lastPage.limit);
       // 如果当前页小于总页数，则返回下一页页码
-      if (lastPage.page < lastPage.totalPages) {
+      if (lastPage.page < totalPages) {
         return lastPage.page + 1;
       }
       return undefined; // 没有更多数据

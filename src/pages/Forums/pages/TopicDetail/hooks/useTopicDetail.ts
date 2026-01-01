@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { ForumsTopicsService, ForumsPostsService } from "@/api";
 import { TopicData, PostData, Participant } from "../types";
 
@@ -143,16 +143,24 @@ export function useTopicDetail(topicId: string | undefined) {
     enabled: !!topicId,
   });
 
-  // 获取帖子列表
-  const postsQuery = useQuery({
+  // 获取帖子列表 - 无限滚动
+  const postsQuery = useInfiniteQuery({
     queryKey: ["forum", "posts", topicId],
-    queryFn: async () => {
+    queryFn: async ({ pageParam = 1 }) => {
       const res = await ForumsPostsService.postsControllerFindAll({
         topicId: topicId!,
-        page: 1,
-        limit: 100, // 获取足够多的帖子
+        page: pageParam,
+        limit: 20,
       });
-      return res.data;
+      return res.data as { items: ExtendedApiPost[]; total: number; page: number; limit: number };
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const totalPages = Math.ceil(lastPage.total / lastPage.limit);
+      if (lastPage.page < totalPages) {
+        return lastPage.page + 1;
+      }
+      return undefined;
     },
     enabled: !!topicId,
   });
@@ -166,11 +174,11 @@ export function useTopicDetail(topicId: string | undefined) {
 
   if (threadQuery.data && postsQuery.data) {
     const thread = threadQuery.data;
-    const postsData = postsQuery.data;
-    // 适配分页/列表返回结构
-    const posts = (
-      Array.isArray(postsData) ? postsData : (postsData as any).items || []
-    ) as ExtendedApiPost[];
+    // 合并所有页面的帖子
+    const allPosts = postsQuery.data.pages.flatMap((page) => page.items || []) as ExtendedApiPost[];
+
+    // 创建可变的帖子数组
+    const posts: ExtendedApiPost[] = [...allPosts];
 
     // 只有当列表中没有 1 楼时才手动添加
     // 防止 API 已经返回了 1 楼导致重复
@@ -239,6 +247,10 @@ export function useTopicDetail(topicId: string | undefined) {
     isLoading,
     isError,
     error,
+    // 无限滚动相关
+    fetchNextPage: postsQuery.fetchNextPage,
+    hasNextPage: postsQuery.hasNextPage,
+    isFetchingNextPage: postsQuery.isFetchingNextPage,
     refetch: () => {
       threadQuery.refetch();
       postsQuery.refetch();
