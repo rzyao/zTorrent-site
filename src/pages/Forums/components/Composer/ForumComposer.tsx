@@ -12,6 +12,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useForumTheme } from "../../context/ForumThemeContext";
 import { useQueryClient } from "@tanstack/react-query";
+import { QuoteTargetPicker } from "./QuoteTargetPicker";
 
 export const ForumComposer: React.FC = () => {
   const {
@@ -237,6 +238,8 @@ export const ForumComposer: React.FC = () => {
               <TooltipContent>点击查看话题</TooltipContent>
             </Tooltip>
           )}
+          {/* Multi-Quote Picker - 引用了多个帖子时显示 */}
+          {!isCreateTopic && !isMinimized && draft.quotes.length > 1 && <QuoteTargetPicker />}
         </div>
 
         <div className="flex items-center gap-2">

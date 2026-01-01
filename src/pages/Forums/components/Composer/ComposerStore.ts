@@ -4,6 +4,13 @@ import { persist } from "zustand/middleware";
 export type ComposerMode = "CREATE_TOPIC" | "REPLY" | "EDIT";
 export type ComposerViewState = "NORMAL" | "MINIMIZED" | "FULLSCREEN";
 
+export interface QuoteInfo {
+  postId: string;
+  username: string;
+  floor: number;
+  content: string;
+}
+
 export interface ComposerDraft {
   title: string;
   categoryId: string;
@@ -12,6 +19,8 @@ export interface ComposerDraft {
   replyToPostId?: string;
   replyToTopicId?: string;
   replyToTitle?: string;
+  quotes: QuoteInfo[]; // 所有引用的帖子
+  selectedQuoteIndex: number; // 当前选中的回复目标索引 (-1 表示回复整个话题)
 }
 
 interface ComposerState {
@@ -34,6 +43,9 @@ interface ComposerState {
   updateDraft: (data: Partial<ComposerDraft>) => void;
   reset: () => void;
   toggleEditorMode: () => void; // 切换编辑器模式
+  appendContent: (content: string) => void;
+  addQuote: (quote: QuoteInfo) => void; // 添加引用
+  selectQuote: (index: number) => void; // 选择回复目标
 }
 
 const DEFAULT_DRAFT: ComposerDraft = {
@@ -41,6 +53,8 @@ const DEFAULT_DRAFT: ComposerDraft = {
   categoryId: "",
   tags: [],
   body: "",
+  quotes: [],
+  selectedQuoteIndex: -1,
 };
 
 export const useComposerStore = create<ComposerState>()(
@@ -95,6 +109,41 @@ export const useComposerStore = create<ComposerState>()(
       reset: () => set({ draft: DEFAULT_DRAFT, isOpen: false }),
 
       toggleEditorMode: () => set((state) => ({ isRichText: !state.isRichText })),
+      appendContent: (content) =>
+        set((state) => ({
+          draft: {
+            ...state.draft,
+            body: state.draft.body ? `${state.draft.body}\n${content}` : content,
+          },
+        })),
+      addQuote: (quote) =>
+        set((state) => {
+          // 检查是否已存在相同的引用
+          const exists = state.draft.quotes.some((q) => q.postId === quote.postId);
+          if (exists) return state;
+
+          const newQuotes = [...state.draft.quotes, quote];
+          return {
+            draft: {
+              ...state.draft,
+              quotes: newQuotes,
+              // 自动选中最新添加的引用作为回复目标
+              selectedQuoteIndex: newQuotes.length - 1,
+              replyToPostId: quote.postId,
+            },
+          };
+        }),
+      selectQuote: (index) =>
+        set((state) => {
+          const quote = state.draft.quotes[index];
+          return {
+            draft: {
+              ...state.draft,
+              selectedQuoteIndex: index,
+              replyToPostId: quote?.postId,
+            },
+          };
+        }),
     }),
     {
       name: "forum-composer-storage", // unique name for localStorage

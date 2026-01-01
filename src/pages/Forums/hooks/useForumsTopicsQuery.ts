@@ -27,13 +27,13 @@ export interface ExtendedApiTopic extends Omit<ForumTopic, "tags"> {
   title: string;
   content: string;
   views: number;
-  reply_count: number;
-  is_pinned: boolean;
-  is_trending: boolean;
-  is_locked: boolean;
-  created_at: string;
-  updated_at: string;
-  last_reply_at: string;
+  replyCount: number;
+  isPinned: boolean;
+  isTrending: boolean;
+  isLocked: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lastReplyAt: string;
   category?: {
     id: string;
     name: string;
@@ -51,7 +51,7 @@ export interface ExtendedApiTopic extends Omit<ForumTopic, "tags"> {
     username: string;
     avatar?: string;
   }>;
-  last_replier?: {
+  lastReplier?: {
     id: string;
     username: string;
     avatar?: string;

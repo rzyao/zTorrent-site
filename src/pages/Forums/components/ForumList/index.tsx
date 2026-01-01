@@ -50,6 +50,7 @@ function formatDate(dateStr: string | undefined): string {
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
 
+  if (diffMs < 0 || diffMins < 1) return "刚刚";
   if (diffMins < 60) return `${diffMins}分钟前`;
   if (diffHours < 24) return `${diffHours}小时前`;
   if (diffDays < 30) return `${diffDays}天前`;
@@ -67,7 +68,7 @@ function transformTopic(apiTopic: ExtendedApiTopic): UiTopic {
     avatar: p.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.username}`,
   }));
 
-  const lastReplierApi = apiTopic.last_replier;
+  const lastReplierApi = apiTopic.lastReplier;
   const lastReplier = lastReplierApi
     ? {
         id: lastReplierApi.id,
@@ -97,12 +98,12 @@ function transformTopic(apiTopic: ExtendedApiTopic): UiTopic {
       ? apiTopic.content.substring(0, 100).replace(/[#*`]/g, "") + "..."
       : "",
     views: apiTopic.views || 0,
-    replies: apiTopic.reply_count || 0,
+    replies: apiTopic.replyCount || 0,
     likes: 0,
-    isPinned: apiTopic.is_pinned,
-    isTrending: apiTopic.is_trending,
-    createdAt: formatDate(apiTopic.created_at),
-    lastReplyTime: formatDate(apiTopic.last_reply_at || apiTopic.updated_at),
+    isPinned: !!apiTopic.isPinned,
+    isTrending: !!apiTopic.isTrending,
+    createdAt: formatDate(apiTopic.createdAt),
+    lastReplyTime: formatDate(apiTopic.lastReplyAt || apiTopic.updatedAt),
     participants: participants.slice(0, 3),
     lastReplier: lastReplier,
   };

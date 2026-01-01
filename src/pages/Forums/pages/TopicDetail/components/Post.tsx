@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback, memo } from "react";
 import {
   ThumbsUp,
   Share2,
@@ -14,6 +14,27 @@ import {
 import { PostData } from "../types";
 import { topicData } from "../constants"; // 引用全局数据
 import { marked } from "marked";
+import { SelectionPopover } from "./SelectionPopover";
+import { useComposerStore } from "../../../components/Composer/ComposerStore";
+
+// Memoized PostContent to prevent re-renders losing text selection
+const PostContent = memo(
+  ({
+    content,
+    className,
+    onMouseUp,
+  }: {
+    content: string;
+    className: string;
+    onMouseUp: () => void;
+  }) => {
+    const html = useMemo(() => marked.parse(content) as string, [content]);
+    return (
+      <div className={className} dangerouslySetInnerHTML={{ __html: html }} onMouseUp={onMouseUp} />
+    );
+  },
+);
+PostContent.displayName = "PostContent";
 
 interface PostProps {
   post: PostData;
@@ -37,6 +58,76 @@ export function Post({
   const isSmallAction = post.isSmallAction;
   const [isReplyExpanded, setIsReplyExpanded] = useState(false);
   const [areIncomingRepliesExpanded, setAreIncomingRepliesExpanded] = useState(false);
+
+  // Selection Popover State
+  const [selectionMenu, setSelectionMenu] = useState<{ x: number; y: number; text: string } | null>(
+    null,
+  );
+
+  const handleMouseUp = useCallback(() => {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) {
+      setSelectionMenu(null);
+      return;
+    }
+
+    const text = selection.toString().trim();
+    if (!text) {
+      setSelectionMenu(null);
+      return;
+    }
+
+    // Ensure selection is within this post
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    // Show menu
+    setSelectionMenu({
+      x: rect.left + rect.width / 2,
+      y: rect.top, // Fixed positioning uses viewport coordinates
+      text,
+    });
+  }, []);
+
+  const handleQuote = () => {
+    if (!selectionMenu) return;
+
+    const quoteContent = `> **${post.username}**:\n> ${selectionMenu.text}\n\n`;
+    const composer = useComposerStore.getState();
+    const replyContextTitle = topicTitle
+      ? `${topicTitle} (回复 #${postIndex} ${post.username})`
+      : undefined;
+
+    // 创建引用信息
+    const quoteInfo = {
+      postId: post.id,
+      username: post.username,
+      floor: postIndex,
+      content: selectionMenu.text,
+    };
+
+    if (!composer.isOpen) {
+      composer.open("REPLY", {
+        replyToPostId: post.id,
+        replyToTitle: replyContextTitle,
+        replyToTopicId: topicId,
+        body: quoteContent,
+        quotes: [quoteInfo],
+        selectedQuoteIndex: 0,
+      });
+    } else {
+      composer.appendContent(quoteContent);
+      // 添加引用到列表
+      composer.addQuote(quoteInfo);
+      composer.updateDraft({
+        replyToTitle: replyContextTitle,
+      });
+    }
+
+    // Clear selection
+    setSelectionMenu(null);
+    window.getSelection()?.removeAllRanges();
+  };
 
   if (isSmallAction) {
     return (
@@ -110,10 +201,21 @@ export function Post({
           </div>
         )}
 
-        <div
+        <PostContent
+          content={post.content}
           className={`prose dark:prose-invert max-w-none text-lg leading-normal ${colors.textPrimary} [&_img]:my-4 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-lg [&_img]:shadow-md`}
-          dangerouslySetInnerHTML={{ __html: marked.parse(post.content) as string }}
+          onMouseUp={handleMouseUp}
         />
+
+        {/* Selection Popover */}
+        {selectionMenu && (
+          <SelectionPopover
+            x={selectionMenu.x}
+            y={selectionMenu.y}
+            onQuote={handleQuote}
+            onClose={() => setSelectionMenu(null)}
+          />
+        )}
         {/* Post Actions Footer */}
         <div className="mt-4 flex items-center justify-end gap-4 select-none">
           <div className="flex items-center gap-1">
