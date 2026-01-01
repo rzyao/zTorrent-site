@@ -152,7 +152,12 @@ export function useTopicDetail(topicId: string | undefined) {
         page: pageParam,
         limit: 20,
       });
-      return res.data as { items: ExtendedApiPost[]; total: number; page: number; limit: number };
+      return res.data as unknown as {
+        items: ExtendedApiPost[];
+        total: number;
+        page: number;
+        limit: number;
+      };
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
