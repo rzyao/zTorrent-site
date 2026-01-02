@@ -85,6 +85,7 @@ export function CategoryNav({
       {sortedList.map((c) => (
         <Button
           key={c.value}
+          variant={null}
           className={commonButtonClass(c.label === active || c.value === active)}
           onClick={() => handleItemClick(c)}
         >
