@@ -45,11 +45,20 @@ export function Post({
 
   return (
     <>
-      {isReplyExpanded && post.replyTo && (
-        <PostReplyContext replyTo={post.replyTo} colors={colors} />
+      {post.replyTo && (
+        <div
+          className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+            isReplyExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          }`}
+        >
+          <div className="overflow-hidden">
+            <PostReplyContext replyTo={post.replyTo} colors={colors} />
+          </div>
+        </div>
       )}
       <div
-        id={`post-${postIndex}`}
+        id={`post-${post.postNumber || postIndex}`}
+        data-post-number={post.postNumber}
         data-post-index={postIndex}
         data-post-db-id={post.id}
         className={`flex gap-3 py-3 ${!isLast ? `border-b ${colors.dividerColor}` : ""} group`}
@@ -74,7 +83,7 @@ export function Post({
 
           <PostContent
             content={post.content}
-            className={`prose dark:prose-invert max-w-none text-base leading-normal ${colors.textPrimary} [&_img]:my-4 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-lg [&_img]:shadow-md`}
+            className={`prose dark:prose-invert max-w-none text-base leading-normal ${colors.textPrimary} dark:[&_blockquote]:rounded dark:[&_blockquote]:bg-[#3d3d3d] dark:[&_blockquote]:p-2 [&_img]:my-4 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-lg [&_img]:shadow-md`}
             onMouseUp={handleMouseUp}
             colors={colors}
           />
@@ -103,6 +112,7 @@ export function Post({
             replies={incomingReplies}
             expanded={areIncomingRepliesExpanded}
             colors={colors}
+            onCollapse={() => setAreIncomingRepliesExpanded(false)}
           />
         </div>
       </div>

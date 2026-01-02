@@ -7,6 +7,7 @@ interface ExtendedApiPost {
   id: string;
   content: string;
   floor: number;
+  postNumber?: number; // 话题内楼层号
   isSystem: boolean;
   replies_count?: number;
   like_count?: number;
@@ -59,6 +60,8 @@ interface ExtendedApiTopic {
   content: string;
   views: number;
   replyCount: number;
+  postsCount?: number; // 新增：帖子总数
+  highestPostNumber?: number; // 新增：最高楼层号
   isPinned: boolean;
   isTrending: boolean;
   isLocked: boolean;
@@ -91,6 +94,7 @@ function transformPost(apiPost: ExtendedApiPost, index: number): PostData {
 
   return {
     id: String(apiPost.id),
+    postNumber: apiPost.postNumber || apiPost.floor, // 使用后端返回的话题内楼层号
     username: username,
     name: author?.nickname || username,
     avatar: author?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`,
@@ -173,8 +177,12 @@ function formatDate(dateStr: string | undefined): string {
 
 /**
  * 获取话题详情的 Hook
+ * @param topicId 话题 ID
+ * @param options.nearPost 可选，指定要加载的楼层号附近的帖子
  */
-export function useTopicDetail(topicId: string | undefined) {
+export function useTopicDetail(topicId: string | undefined, options?: { nearPost?: number }) {
+  const nearPost = options?.nearPost;
+
   // 获取主题详情
   const threadQuery = useQuery({
     queryKey: ["forum", "topic", topicId],
@@ -186,26 +194,41 @@ export function useTopicDetail(topicId: string | undefined) {
   });
 
   // 获取帖子列表 - 无限滚动
+  // 如果指定了 nearPost，计算包含该楼层的页码作为初始页
+  const PAGE_SIZE = 20;
+  const initialPage = nearPost ? Math.max(1, Math.ceil(nearPost / PAGE_SIZE)) : 1;
+
+  // queryKey 包含 nearPost 以在跳转时触发重新加载
   const postsQuery = useInfiniteQuery({
-    queryKey: ["forum", "posts", topicId],
-    queryFn: async ({ pageParam = 1 }) => {
+    queryKey: ["forum", "posts", topicId, nearPost ? `near-${nearPost}` : "default"],
+    queryFn: async ({ pageParam }) => {
       const res = await ForumsPostsService.postsControllerFindAll({
         topicId: topicId!,
         page: pageParam,
-        limit: 20,
+        limit: PAGE_SIZE,
+        nearPost: nearPost, // 传递 nearPost 参数给后端
       });
       return res.data as unknown as {
         items: ExtendedApiPost[];
         total: number;
         page: number;
         limit: number;
+        hasNext: boolean; // 后端返回的分页边界
+        hasPrevious: boolean;
       };
     },
-    initialPageParam: 1,
+    initialPageParam: initialPage,
     getNextPageParam: (lastPage) => {
-      const totalPages = Math.ceil(lastPage.total / lastPage.limit);
-      if (lastPage.page < totalPages) {
+      // 使用后端返回的 hasNext 字段
+      if (lastPage.hasNext) {
         return lastPage.page + 1;
+      }
+      return undefined;
+    },
+    // 支持向前加载，使用后端返回的 hasPrevious
+    getPreviousPageParam: (firstPage) => {
+      if (firstPage.hasPrevious) {
+        return firstPage.page - 1;
       }
       return undefined;
     },
@@ -224,8 +247,16 @@ export function useTopicDetail(topicId: string | undefined) {
     // 合并所有页面的帖子
     const allPosts = postsQuery.data.pages.flatMap((page) => page.items || []) as ExtendedApiPost[];
 
-    // 创建可变的帖子数组
-    const posts: ExtendedApiPost[] = [...allPosts];
+    // 去重：使用 Map 根据 ID 去重，保留最后出现的版本
+    const postsMap = new Map<string, ExtendedApiPost>();
+    allPosts.forEach((post) => {
+      postsMap.set(String(post.id), post);
+    });
+
+    // 按 floor 排序，确保楼层顺序正确
+    const posts: ExtendedApiPost[] = Array.from(postsMap.values()).sort(
+      (a, b) => a.floor - b.floor,
+    );
 
     // 只有当列表中没有 1 楼时才手动添加
     // 防止 API 已经返回了 1 楼导致重复
@@ -289,15 +320,30 @@ export function useTopicDetail(topicId: string | undefined) {
     };
   }
 
+  // 计算真实的帖子总数（用于时间轴）
+  // 优先使用 topic 的 postsCount/highestPostNumber，其次是 posts 的 total
+  const totalPostsCount =
+    threadQuery.data?.postsCount ??
+    threadQuery.data?.highestPostNumber ??
+    postsQuery.data?.pages?.[0]?.total ??
+    0;
+
   return {
     topicData,
     isLoading,
     isError,
     error,
-    // 无限滚动相关
+    // 话题真实帖子总数（用于时间轴）
+    totalPostsCount,
+    // 向下滚动
     fetchNextPage: postsQuery.fetchNextPage,
     hasNextPage: postsQuery.hasNextPage,
     isFetchingNextPage: postsQuery.isFetchingNextPage,
+    // 向上滚动
+    fetchPreviousPage: postsQuery.fetchPreviousPage,
+    hasPreviousPage: postsQuery.hasPreviousPage,
+    isFetchingPreviousPage: postsQuery.isFetchingPreviousPage,
+    // 刷新
     refetch: () => {
       threadQuery.refetch();
       postsQuery.refetch();

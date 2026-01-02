@@ -12,7 +12,13 @@ interface TimelineProps {
   className?: string;
   onChange?: (index: number) => void;
   onPercentageChange?: (percentage: number) => void;
+  topicId?: string;
+  topicTitle?: string;
 }
+
+import { Reply, Bell } from "lucide-react";
+import { useComposerStore } from "../../../components/Composer/ComposerStore";
+import { NotificationSelector } from "./NotificationSelector";
 
 const SCROLLER_HEIGHT = 60; // 滚动滑块高度
 const SCROLL_AREA_HEIGHT = 300; // 滚动区域总高度
@@ -27,6 +33,8 @@ export const Timeline = ({
   className,
   onChange,
   onPercentageChange,
+  topicId,
+  topicTitle,
 }: TimelineProps) => {
   const [percentage, setPercentage] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -136,6 +144,9 @@ export const Timeline = ({
     if (requestRef.current === null) {
       requestRef.current = requestAnimationFrame(animate);
     }
+
+    const newIndex = Math.round(newPercentage * (totalPosts - 1)) + 1;
+    onChange?.(newIndex);
   };
 
   // 模拟显示日期 - 根据进度变化
@@ -219,6 +230,25 @@ export const Timeline = ({
         }}
       >
         {lastPostedAt}
+      </div>
+
+      {/* 底部操作按钮 */}
+      <div className="mt-4 ml-10 flex items-center justify-center gap-3">
+        <button
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 text-[#0088CC] transition-colors hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+          onClick={() => {
+            if (topicId) {
+              useComposerStore.getState().open("REPLY", {
+                replyToTopicId: topicId,
+                replyToTitle: topicTitle,
+              });
+            }
+          }}
+          title="回复话题"
+        >
+          <Reply className="h-5 w-5" />
+        </button>
+        <NotificationSelector minimal />
       </div>
     </div>
   );
