@@ -20,7 +20,7 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
   const participants = topicData?.participants || [];
 
   return (
-    <div className="mt-8 mb-12">
+    <div className="mb-12">
       {/* Topic Map Summary */}
       <div className={cn("flex items-center gap-4 border-t py-4", colors.dividerColor)}>
         <div className="flex items-center gap-4 text-xs font-bold tracking-wide text-[#919191] uppercase">

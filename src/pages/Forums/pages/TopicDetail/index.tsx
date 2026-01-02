@@ -206,7 +206,7 @@ export function TopicDetail({
             })()}
 
             {/* 无限滚动加载更多帖子 */}
-            <div ref={loadMoreRef} className="py-4">
+            <div ref={loadMoreRef} className="h-px w-full">
               {isFetchingNextPage && (
                 <div className="flex items-center justify-center gap-2 py-4">
                   <Loader2 className="h-5 w-5 animate-spin text-blue-600 dark:text-amber-400" />
