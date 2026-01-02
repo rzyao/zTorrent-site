@@ -1,8 +1,10 @@
 import { Pin, TrendingUp, Loader2 } from "lucide-react";
 import { useEffect, useRef, useCallback } from "react";
+import NProgress from "nprogress";
 import { useForumTheme } from "../../context/ForumThemeContext";
 import { useForumsTopicsQuery, ExtendedApiTopic } from "../../hooks/useForumsTopicsQuery";
 import { ForumFilterBar } from "./components/ForumFilterBar";
+import { ForumListSkeleton } from "./components/ForumListSkeleton";
 
 // UI 类型定义
 interface Participant {
@@ -123,6 +125,15 @@ export function ForumList({
       sortBy: apiSortBy as "latest" | "popular" | "trending",
     });
 
+  // NProgress 联动：当 isLoading 或 isFetchingNextPage 为 true 时启动进度条
+  useEffect(() => {
+    if (isLoading || isFetchingNextPage) {
+      NProgress.start();
+    } else {
+      NProgress.done();
+    }
+  }, [isLoading, isFetchingNextPage]);
+
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const handleObserver = useCallback(
@@ -174,13 +185,8 @@ export function ForumList({
           </div>
         </div>
 
-        {/* Loading State */}
-        {isLoading && (
-          <div className="p-12 text-center">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-current border-t-transparent text-blue-600 dark:text-amber-400"></div>
-            <p className={`mt-4 ${colors.textMuted}`}>加载中...</p>
-          </div>
-        )}
+        {/* Loading State: 使用 Skeleton 替代转圈 */}
+        {isLoading && <ForumListSkeleton />}
 
         {/* Error State */}
         {isError && (

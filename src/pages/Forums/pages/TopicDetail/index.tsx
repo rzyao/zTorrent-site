@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import NProgress from "nprogress";
 import { useForumTheme } from "../../context/ForumThemeContext";
 import { cn } from "@/components/ui/utils";
 import { TopicDetailProps } from "./types";
@@ -10,6 +11,7 @@ import { TopicFooter } from "./components/TopicFooter";
 import { SuggestedTopics } from "./components/SuggestedTopics";
 import { useTopicDetail } from "./hooks/useTopicDetail";
 import { Loader2 } from "lucide-react";
+import { TopicDetailSkeleton } from "./components/TopicDetailSkeleton";
 
 export function TopicDetail({
   topicId: propTopicId,
@@ -44,6 +46,18 @@ export function TopicDetail({
     hasPreviousPage,
     isFetchingPreviousPage,
   } = useTopicDetail(topicId, { nearPost: targetPostNumber });
+
+  // NProgress 联动
+  useEffect(() => {
+    if (isLoading) {
+      NProgress.start();
+    } else {
+      NProgress.done();
+    }
+    return () => {
+      NProgress.done();
+    };
+  }, [isLoading]);
 
   // 计算当前加载的帖子中的非系统操作帖子
   const regularPosts = topicData?.posts?.filter((p) => !p.isSmallAction) ?? [];
@@ -269,11 +283,7 @@ export function TopicDetail({
 
   // 加载中状态
   if (isLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-      </div>
-    );
+    return <TopicDetailSkeleton />;
   }
 
   // 错误状态

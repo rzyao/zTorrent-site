@@ -1,10 +1,11 @@
 import { Outlet } from "react-router-dom";
-import { useState, useCallback } from "react";
+import { useState, useCallback, Suspense } from "react";
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
 import { MobileSidebarDrawer } from "./MobileSidebarDrawer";
 import { ForumThemeProvider, useForumTheme } from "../context/ForumThemeContext";
 import { ForumComposer } from "../components/Composer/ForumComposer";
+import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
 
 /**
  * 论坛布局内部组件
@@ -60,7 +61,9 @@ function ForumLayoutInner() {
 
             {/* 右侧内容区域: 使用全局滚动，左边距为侧栏宽度 */}
             <main className="min-w-0 flex-1 pt-[20px] pr-5 lg:ml-[280px]">
-              <Outlet context={{ selectedCategory, searchQuery }} />
+              <Suspense fallback={<RouteProgressBar />}>
+                <Outlet context={{ selectedCategory, searchQuery }} />
+              </Suspense>
             </main>
           </div>
         </div>

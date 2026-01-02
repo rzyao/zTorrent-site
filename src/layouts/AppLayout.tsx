@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, Suspense } from "react";
 import { useLocation } from "react-router-dom";
 import { Header } from "@/layouts/Header";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";
@@ -6,6 +6,7 @@ import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
 import { useNavigationState } from "@/hooks/useNavigationState";
 import GoBack from "@/components/GoBack";
 import GoForward from "@/components/GoForward";
+import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
 
 function FaviconInjector() {
   useDynamicFavicon();
@@ -37,7 +38,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <NavigationStateReset />
       <div className="min-h-screen bg-[#0F171E]">
         <Header />
-        <div>{children}</div>
+        <Suspense fallback={<RouteProgressBar />}>
+          <div>{children}</div>
+        </Suspense>
         {/* 前进/后退按钮：手机模式隐藏 */}
         <div className="hidden md:block">
           <GoBack />

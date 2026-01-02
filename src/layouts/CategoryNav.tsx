@@ -54,10 +54,7 @@ export function CategoryNav({
   const sortedList = [...items].sort((a, b) => {
     if (a.label === "全部") return -1;
     if (b.label === "全部") return 1;
-    return (
-      (a.sort ?? Number.POSITIVE_INFINITY) -
-      (b.sort ?? Number.POSITIVE_INFINITY)
-    );
+    return (a.sort ?? Number.POSITIVE_INFINITY) - (b.sort ?? Number.POSITIVE_INFINITY);
   });
 
   const handleItemClick = (item: CategoryNavItem) => {
@@ -71,34 +68,27 @@ export function CategoryNav({
   const commonButtonClass = (isActive: boolean) =>
     cn(
       inline ? "px-4 py-1.5" : "px-4 py-2",
-      cn(
-        "rounded-full whitespace-nowrap transition-all flex items-center gap-2",
-        triggerClassName
-      ),
+      cn("flex items-center gap-2 rounded-full whitespace-nowrap transition-all", triggerClassName),
       isActive
         ? cn(
-            "bg-linear-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300",
-            activeClassName
+            "border border-amber-500/50 bg-linear-to-r from-amber-500/20 to-orange-500/20 text-amber-300",
+            activeClassName,
           )
         : cn(
-            "bg-gray-800/80 text-neutral-300 hover:bg-gray-700 hover:text-amber-300 border border-transparent",
-            inactiveClassName
-          )
+            "border border-transparent bg-gray-800/80 text-neutral-300 hover:bg-gray-700 hover:text-amber-300",
+            inactiveClassName,
+          ),
     );
 
   const renderContent = (
-    <div className="flex gap-4 overflow-x-auto scrollbar-hide">
+    <div className="scrollbar-hide flex gap-4 overflow-x-auto">
       {sortedList.map((c) => (
         <Button
           key={c.value}
-          className={commonButtonClass(
-            c.label === active || c.value === active
-          )}
+          className={commonButtonClass(c.label === active || c.value === active)}
           onClick={() => handleItemClick(c)}
         >
-          {c.icon && (
-            <span className="w-4 h-4 flex items-center">{c.icon}</span>
-          )}
+          {c.icon && <span className="flex h-4 w-4 items-center">{c.icon}</span>}
           {c.label}
         </Button>
       ))}
@@ -107,12 +97,7 @@ export function CategoryNav({
 
   if (inline) {
     return (
-      <div
-        className={cn(
-          "flex items-center gap-4 overflow-x-auto scrollbar-hide",
-          className
-        )}
-      >
+      <div className={cn("scrollbar-hide flex items-center gap-4 overflow-x-auto", className)}>
         {renderContent.props.children}
       </div>
     );
@@ -121,8 +106,8 @@ export function CategoryNav({
   return (
     <div
       className={cn(
-        "sticky top-0 bg-[#0F171E] py-4 px-4 md:px-8 z-40 border-b border-gray-800",
-        className
+        "sticky top-0 z-40 border-b border-gray-800 bg-[#0F171E] px-4 py-4 md:px-8",
+        className,
       )}
     >
       {renderContent}
