@@ -28,6 +28,7 @@ export const ForumComposer: React.FC = () => {
     draft,
     reset,
     isRichText,
+    discardDraft, // 新增
   } = useComposerStore();
 
   const { colors } = useForumTheme(); // 获取主题变量
@@ -380,8 +381,8 @@ export const ForumComposer: React.FC = () => {
               <span className="text-green-600/80">Draft saved</span>
             </div>
             <div className="flex gap-2">
-              <Button variant="ghost" onClick={() => close()}>
-                取消
+              <Button variant="ghost" onClick={() => discardDraft()}>
+                舍弃
               </Button>
               <Button
                 onClick={handleSubmit}
