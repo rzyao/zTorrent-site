@@ -19,7 +19,11 @@ export function SidebarNav() {
         const Icon = item.icon;
         // 根据当前路径判断激活状态
         const isActive =
-          location.pathname === item.path || location.pathname.startsWith(item.path + "/");
+          location.pathname === "/forum" ||
+          location.pathname === "/forum/" ||
+          item.path === location.pathname ||
+          location.pathname.startsWith("/forum/latest") ||
+          location.pathname.startsWith("/forum/hot");
 
         let buttonClass: string;
         if (isActive) {

@@ -64,7 +64,8 @@ export function SidebarCategories({
         {categories.map((cat) => {
           // 使用路由路径判断激活状态
           const categoryPath = `/forum/category/${cat.id}`;
-          const isActive = location.pathname === categoryPath;
+          const isActive =
+            location.pathname === categoryPath || location.pathname.startsWith(categoryPath + "/");
 
           let buttonClass: string;
           if (isActive) {

@@ -62,7 +62,8 @@ export function SidebarTags({
       >
         {tags.map((tag) => {
           const tagPath = `/forum/tag/${tag.id}`;
-          const isActive = location.pathname === tagPath;
+          const isActive =
+            location.pathname === tagPath || location.pathname.startsWith(tagPath + "/");
 
           let buttonClass: string;
           if (isActive) {
