@@ -45,6 +45,35 @@ export class ForumsTopicsService {
         });
     }
     /**
+     * 搜索话题
+     * @param requestBody
+     * @returns any 话题搜索结果
+     * @throws ApiError
+     */
+    public static topicsControllerSearch(
+        requestBody: QueryTopicDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: TopicPaginatedResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/topics/search',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
      * 获取话题详情
      * @param requestBody
      * @returns any 话题详情

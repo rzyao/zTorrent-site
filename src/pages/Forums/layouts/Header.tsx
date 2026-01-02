@@ -1,7 +1,8 @@
 import { Search, MessageSquare, Bell, User, Menu, Sun, Moon } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useForumTheme } from "../context/ForumThemeContext";
+import { ForumsTopicsService, ForumTopic } from "@/api";
 
 interface HeaderProps {
   onSearch: (query: string) => void;
@@ -13,6 +14,43 @@ interface HeaderProps {
 export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProps) {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const { theme, toggleTheme, colors } = useForumTheme();
+
+  const [results, setResults] = useState<(ForumTopic & { id: string })[]>([]);
+  const [isFocused, setIsFocused] = useState(false);
+
+  // Debounced search effect with race condition handling
+  useEffect(() => {
+    let active = true; // 标记当前 effect 是否有效
+
+    const timer = setTimeout(async () => {
+      if (searchQuery.trim()) {
+        try {
+          const res = await ForumsTopicsService.topicsControllerSearch({
+            search: searchQuery,
+            page: 1,
+            limit: 5,
+          });
+
+          // 只有当 effect 仍然 active 时才更新状态
+          if (active && res.data?.items) {
+            setResults(res.data.items as unknown as (ForumTopic & { id: string })[]);
+          }
+        } catch (err) {
+          if (active) {
+            console.error("Search failed", err);
+            setResults([]);
+          }
+        }
+      } else {
+        if (active) setResults([]);
+      }
+    }, 500); // 500ms 防抖
+
+    return () => {
+      clearTimeout(timer);
+      active = false; // 清理时标记失效，丢弃未完成的请求结果
+    };
+  }, [searchQuery]);
 
   // 汉堡菜单点击处理
   const handleMenuClick = () => {
@@ -56,11 +94,47 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
               />
               <input
                 type="text"
-                placeholder="搜索话题、帖子..."
+                placeholder="搜索话题..."
                 value={searchQuery}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setTimeout(() => setIsFocused(false), 200)} // 延迟 blur 以便点击结果
                 onChange={(e) => onSearch(e.target.value)}
                 className={`focus:ring-opacity-50 w-full rounded-lg border py-2 pr-4 pl-10 focus:ring-2 focus:outline-none ${colors.inputBg} ${colors.inputBorder} ${colors.textPrimary} placeholder:text-gray-400 focus:ring-blue-500 dark:placeholder:text-neutral-500 dark:focus:ring-amber-500`}
               />
+
+              {/* Search Results Dropdown */}
+              {isFocused && results.length > 0 && searchQuery.trim() && (
+                <div
+                  className={`absolute top-full left-0 mt-2 w-full overflow-hidden rounded-lg border shadow-xl ${colors.listBg} ${colors.borderColor}`}
+                >
+                  <ul className="max-h-96 overflow-y-auto py-2">
+                    {results.map((topic) => (
+                      <li key={topic.id}>
+                        <Link
+                          to={`/forum/topic/${topic.id}`}
+                          className={`block px-4 py-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-neutral-800 ${colors.textPrimary}`}
+                          onClick={() => {
+                            onSearch(""); // 清空搜索以便下次
+                            setResults([]);
+                          }}
+                        >
+                          <div className="font-medium">{topic.title}</div>
+                          <div className={`mt-1 truncate text-xs ${colors.textSecondary}`}>
+                            {topic.content?.substring(0, 50)}...
+                          </div>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  {results.length >= 5 && (
+                    <div
+                      className={`border-t bg-gray-50 px-4 py-2 text-center text-xs text-gray-500 dark:border-neutral-700 dark:bg-neutral-900 ${colors.borderColor}`}
+                    >
+                      仅显示前 5 条结果
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
