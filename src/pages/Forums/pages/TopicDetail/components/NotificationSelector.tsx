@@ -44,7 +44,12 @@ const options: NotificationOption[] = [
   },
 ];
 
-export const NotificationSelector = () => {
+interface NotificationSelectorProps {
+  minimal?: boolean;
+  className?: string; // Allow overriding styles
+}
+
+export const NotificationSelector = ({ minimal, className }: NotificationSelectorProps) => {
   const { colors } = useForumTheme();
   const [level, setLevel] = useState<NotificationLevel>("normal");
   const [open, setOpen] = useState(false);
@@ -58,20 +63,33 @@ export const NotificationSelector = () => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button
-          className={cn(
-            "group flex cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-[15px] font-medium select-none hover:border-[#0088CC]",
-            colors.footerButtonBg,
-            colors.footerButtonText,
-          )}
-        >
-          <ActiveIcon
-            className={cn("h-4 w-4", level === "muted" ? "text-neutral-400" : "text-[#0088CC]")}
-            fill={isFilled ? "currentColor" : "none"}
-          />
-          <span>{currentOption.name}</span>
-          <ChevronDown className="h-4 w-4 text-[#0088CC] transition-transform group-data-[state=open]:rotate-180" />
-        </button>
+        {minimal ? (
+          <button
+            className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 text-[#0088CC] transition-colors hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700",
+              className,
+            )}
+            title={currentOption.name}
+          >
+            <ActiveIcon className="h-5 w-5" fill={isFilled ? "currentColor" : "none"} />
+          </button>
+        ) : (
+          <button
+            className={cn(
+              "group flex cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-[15px] font-medium select-none hover:border-[#0088CC]",
+              colors.footerButtonBg,
+              colors.footerButtonText,
+              className,
+            )}
+          >
+            <ActiveIcon
+              className={cn("h-4 w-4", level === "muted" ? "text-neutral-400" : "text-[#0088CC]")}
+              fill={isFilled ? "currentColor" : "none"}
+            />
+            <span>{currentOption.name}</span>
+            <ChevronDown className="h-4 w-4 text-[#0088CC] transition-transform group-data-[state=open]:rotate-180" />
+          </button>
+        )}
       </PopoverTrigger>
       <PopoverContent
         className={cn(

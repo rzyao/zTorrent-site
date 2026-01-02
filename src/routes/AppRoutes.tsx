@@ -231,6 +231,8 @@ export default function AppRoutes() {
           <Route path="latest" element={<ForumHomePage />} />
           {/* 话题详情 */}
           <Route path="topic/:topicId" element={<TopicDetail />} />
+          {/* 话题详情 - 带楼层号跳转 */}
+          <Route path="topic/:topicId/:postNumber" element={<TopicDetail />} />
           {/* 分类页面（默认排序） */}
           <Route path="category/:categoryId" element={<CategoryPage />} />
           {/* 分类页面（带排序） */}

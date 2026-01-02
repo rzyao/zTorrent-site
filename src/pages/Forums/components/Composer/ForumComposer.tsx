@@ -150,16 +150,48 @@ export const ForumComposer: React.FC = () => {
           reset();
 
           if (window.location.pathname.includes(`/forum/topic/${draft.replyToTopicId}`)) {
-            // 如果已经在该话题页面，刷新帖子列表和话题详情
+            // 获取新帖子的话题内楼层号
+            const responseData = res.data as any;
+            const newPostNumber = responseData.postNumber || responseData.post_number;
+
+            console.log("[ForumComposer] 回复成功，响应数据:", responseData);
+            console.log("[ForumComposer] 话题内楼层号:", newPostNumber);
+
+            // 先刷新所有该话题的帖子缓存（使用前缀匹配）
             await queryClient.invalidateQueries({
               queryKey: ["forum", "posts", draft.replyToTopicId],
+              exact: false, // 匹配所有以此为前缀的 queryKey
             });
             await queryClient.invalidateQueries({
               queryKey: ["forum", "topic", draft.replyToTopicId],
             });
+
+            if (newPostNumber) {
+              // Discourse 风格：通过路由跳转触发定位
+              setTimeout(() => {
+                navigate(`/forum/topic/${draft.replyToTopicId}/${newPostNumber}`, {
+                  replace: true,
+                });
+              }, 100);
+            } else {
+              // 如果后端没有返回 postNumber，滚动到底部
+              setTimeout(() => {
+                const scrollContainer = document.getElementById("forum-scroll-container");
+                if (scrollContainer) {
+                  scrollContainer.scrollTo({
+                    top: scrollContainer.scrollHeight,
+                    behavior: "smooth",
+                  });
+                }
+              }, 500);
+            }
           } else {
-            // 否则跳转到该话题
-            navigate(`/forum/topic/${draft.replyToTopicId}`);
+            // 不在当前话题页面：直接跳转到新帖子
+            const responseData = res.data as any;
+            const newPostNumber = responseData.postNumber || responseData.post_number;
+            navigate(
+              `/forum/topic/${draft.replyToTopicId}${newPostNumber ? `/${newPostNumber}` : ""}`,
+            );
           }
         }
       }

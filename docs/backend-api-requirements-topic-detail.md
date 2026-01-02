@@ -255,15 +255,6 @@ SSE: /api/forums/topics/{topicId}/events
 - **问题**: 当前是否支持 `nearPost` 参数？
 - **期望**: 如果不支持，评估实现难度
 
-### 5.4 已知 Bug (2026-01-02 发现)
-
-- **接口**: `POST /api/forums/topics/detail` (或 GET)
-- **状态码**: 401 Unauthorized
-- **影响**: 前端无法获取话题元数据（如总贴数），导致时间轴显示不准确（fallback 到当前加载数）。
-- **期望修复**:
-  1. 修复 401 权限问题，允许未登录/已登录用户正常访问。
-  2. 确保响应体包含 `postsCount` (总帖子数) 和 `highestPostNumber` (最大楼层号)。
-
 ---
 
 ## 6. 参考：Discourse API

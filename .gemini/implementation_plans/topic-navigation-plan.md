@@ -19,10 +19,10 @@
 **改动**:
 
 - [x] 已添加 `nearPost` 参数和 `initialPage` 计算
-- [x] 添加 `fetchPreviousPage` 支持向上滚动
-- [x] 添加 `hasPreviousPage` 状态
-- [x] 维护全局 `stream` (帖子 ID 列表) 用于位置计算 (通过 API 分页实现)
-- [x] 添加 `totalPostsCount` 用于时间轴（从 topic 获取）
+- [ ] 添加 `fetchPreviousPage` 支持向上滚动
+- [ ] 添加 `hasPreviousPage` 状态
+- [ ] 维护全局 `stream` (帖子 ID 列表) 用于位置计算
+- [ ] 添加 `totalPostsCount` 用于时间轴（从 topic 获取）
 
 ### 2. 更新 `TopicDetail` 组件
 
@@ -30,11 +30,11 @@
 
 **改动**:
 
-- [x] 向上滚动加载 (`fetchPreviousPage`)
-- [x] 向下滚动加载 (`fetchNextPage`) - 已有
-- [x] 滚动位置维护（向上加载后保持位置 - Scroll Anchoring）
-- [x] 时间轴进度计算（基于后端 `totalPostsCount`）
-- [x] 楼层跳转高亮效果
+- [ ] 向上滚动加载 (`fetchPreviousPage`)
+- [ ] 向下滚动加载 (`fetchNextPage`) - 已有
+- [ ] 滚动位置维护（向上加载后保持位置）
+- [ ] 时间轴进度计算（基于后端 `totalPostsCount`）
+- [ ] 楼层跳转高亮效果
 
 ### 3. 更新 `Timeline` 组件
 
@@ -42,17 +42,17 @@
 
 **改动**:
 
-- [x] 接收 `totalPostsCount` (后端总数) 而非前端列表长度
-- [x] 拖拽时调用 `onJumpToPost(postNumber)` (通过 onChange -> navigate)
-- [x] 点击"返回顶部"/"跳到底部"按钮触发路由跳转
+- [ ] 接收 `totalPostsCount` (后端总数) 而非前端列表长度
+- [ ] 拖拽时调用 `onJumpToPost(postNumber)` 而非百分比滚动
+- [ ] 点击"返回顶部"/"跳到底部"按钮触发路由跳转
 
 ### 4. 后端 API 依赖
 
 **确认后端支持**:
 
-- [x] GET `/posts?topicId=X&page=N` 返回 `{ items, total, page, limit }` (已生成需求文档)
-- [x] `total` 必须是话题的**真实总帖子数** (已生成需求文档)
-- [x] 考虑添加 `nearPost` 参数直接定位 (已生成需求文档)
+- [ ] GET `/posts?topicId=X&page=N` 返回 `{ items, total, page, limit }`
+- [ ] `total` 必须是话题的**真实总帖子数**
+- [ ] 考虑添加 `nearPost` 参数直接定位
 
 ---
 

@@ -15,6 +15,7 @@ export interface PostStats {
 
 export interface PostData {
   id: string;
+  postNumber?: number; // 话题内楼层号（后端返回）
   username: string;
   name: string;
   avatar: string;

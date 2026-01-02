@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp, ArrowUpRight, MessageSquareQuote, Loader2 } fro
 import { marked } from "marked";
 import { cn } from "@/components/ui/utils";
 import { ForumsPostsService } from "@/api/services/ForumsPostsService";
+import { scrollToPost } from "../utils/domUtils";
 
 export interface QuoteData {
   topicId?: string;
@@ -27,6 +28,38 @@ interface QuoteBlockProps {
  * 1. 未展开：显示完整的引用片段（保留样式和换行）
  * 2. 展开：请求并显示原帖完整内容
  */
+// 简单的颜色生成逻辑，模拟 Discourse 风格
+const DISCOURSE_COLORS = [
+  "#d32f2f",
+  "#c2185b",
+  "#7b1fa2",
+  "#512da8",
+  "#303f9f",
+  "#1976d2",
+  "#0288d1",
+  "#0097a7",
+  "#00796b",
+  "#388e3c",
+  "#689f38",
+  "#afb42b",
+  "#fbc02d",
+  "#ffa000",
+  "#f57c00",
+  "#e64a19",
+  "#5d4037",
+  "#616161",
+  "#455a64",
+];
+
+function getAvatarColor(username: string) {
+  let hash = 0;
+  for (let i = 0; i < username.length; i++) {
+    hash = username.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % DISCOURSE_COLORS.length;
+  return DISCOURSE_COLORS[index];
+}
+
 export function QuoteBlock({ quote, onNavigate, colors }: QuoteBlockProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -75,7 +108,7 @@ export function QuoteBlock({ quote, onNavigate, colors }: QuoteBlockProps) {
       // 跨话题：导航到其他话题
       onNavigate?.(quote.topicId, quote.postId);
     } else if (quote.floor) {
-      // 同话题：滚动到对应楼层
+      // 同话题：滚动到对应楼层 (通过楼层号)
       const postElement = document.getElementById(`post-${quote.floor}`);
       if (postElement) {
         postElement.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -85,6 +118,9 @@ export function QuoteBlock({ quote, onNavigate, colors }: QuoteBlockProps) {
           postElement.classList.remove("ring-2", "ring-amber-400");
         }, 2000);
       }
+    } else if (quote.postId) {
+      // 同话题：通过 postId 跳转
+      scrollToPost(quote.postId);
     }
   };
 
@@ -94,12 +130,12 @@ export function QuoteBlock({ quote, onNavigate, colors }: QuoteBlockProps) {
   return (
     <div
       className={cn(
-        "my-2 rounded-md border-l-4 bg-neutral-50 transition-all dark:bg-neutral-800/50",
+        "my-2 rounded-md border-l-4 bg-neutral-50 transition-all dark:bg-[#3d3d3d]",
         quote.isCrossTopic ? "border-blue-500" : "border-neutral-400 dark:border-neutral-600",
       )}
     >
       {/* Quote Header */}
-      <div className="flex items-center gap-2 bg-neutral-100/50 px-3 py-2 dark:bg-neutral-800">
+      <div className="flex items-center gap-2 bg-neutral-100/50 px-3 py-2 dark:bg-transparent">
         {/* 展开/折叠按钮 */}
         {canExpand && (
           <button
@@ -121,7 +157,12 @@ export function QuoteBlock({ quote, onNavigate, colors }: QuoteBlockProps) {
             className="h-5 w-5 rounded-full object-cover"
           />
         ) : (
-          <MessageSquareQuote className="h-4 w-4 text-neutral-400" />
+          <div
+            className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-white"
+            style={{ backgroundColor: getAvatarColor(quote.username) }}
+          >
+            {quote.username.charAt(0).toUpperCase()}
+          </div>
         )}
 
         {/* 跨话题标题 or 用户名 */}
@@ -134,7 +175,7 @@ export function QuoteBlock({ quote, onNavigate, colors }: QuoteBlockProps) {
               {quote.topicTitle}
             </button>
           ) : (
-            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+            <span className="truncate text-sm font-medium text-neutral-700 dark:text-neutral-300">
               {quote.username}
               {quote.floor && <span className="ml-1 text-xs text-neutral-500">#{quote.floor}</span>}
             </span>

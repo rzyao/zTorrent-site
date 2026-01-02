@@ -202,33 +202,45 @@ export function useTopicDetail(topicId: string | undefined, options?: { nearPost
   const postsQuery = useInfiniteQuery({
     queryKey: ["forum", "posts", topicId, nearPost ? `near-${nearPost}` : "default"],
     queryFn: async ({ pageParam }) => {
+      // 重要：nearPost 只在初始请求时使用
+      // 后续分页请求（向上/向下加载）不应传递 nearPost，否则后端会忽略 page 参数
+      const isInitialRequest = pageParam === initialPage;
+
       const res = await ForumsPostsService.postsControllerFindAll({
         topicId: topicId!,
         page: pageParam,
         limit: PAGE_SIZE,
-        nearPost: nearPost, // 传递 nearPost 参数给后端
+        nearPost: isInitialRequest ? nearPost : undefined, // 只在初始请求时传递
       });
-      return res.data as unknown as {
+      const data = res.data as unknown as {
         items: ExtendedApiPost[];
         total: number;
         page: number;
         limit: number;
-        hasNext: boolean; // 后端返回的分页边界
+        hasNext: boolean;
         hasPrevious: boolean;
+      };
+      // 关键修复：保存请求时的 pageParam 作为 requestedPage
+      // 因为后端返回的 page 字段可能不准确（始终返回固定值）
+      return {
+        ...data,
+        requestedPage: pageParam, // 前端追踪的真实页码
       };
     },
     initialPageParam: initialPage,
     getNextPageParam: (lastPage) => {
-      // 使用后端返回的 hasNext 字段
+      // 使用前端追踪的 requestedPage 而非后端返回的 page
       if (lastPage.hasNext) {
-        return lastPage.page + 1;
+        return lastPage.requestedPage + 1;
       }
       return undefined;
     },
-    // 支持向前加载，使用后端返回的 hasPrevious
+    // 支持向前加载
+    // 使用前端追踪的 requestedPage，彻底避免后端 page 字段错误导致的死循环
     getPreviousPageParam: (firstPage) => {
-      if (firstPage.hasPrevious) {
-        return firstPage.page - 1;
+      // 只有当 requestedPage > 1 时才能继续向前加载
+      if (firstPage.requestedPage > 1) {
+        return firstPage.requestedPage - 1;
       }
       return undefined;
     },
@@ -247,6 +259,19 @@ export function useTopicDetail(topicId: string | undefined, options?: { nearPost
     // 合并所有页面的帖子
     const allPosts = postsQuery.data.pages.flatMap((page) => page.items || []) as ExtendedApiPost[];
 
+    // 调试日志：输出 pages 信息
+    console.log("[useTopicDetail] Pages info:", {
+      pageCount: postsQuery.data.pages.length,
+      pagesDetails: postsQuery.data.pages.map((p, i) => ({
+        index: i,
+        requestedPage: p.requestedPage,
+        itemCount: p.items?.length,
+        firstFloor: p.items?.[0]?.floor,
+        lastFloor: p.items?.[p.items.length - 1]?.floor,
+      })),
+      totalPostsBeforeDedup: allPosts.length,
+    });
+
     // 去重：使用 Map 根据 ID 去重，保留最后出现的版本
     const postsMap = new Map<string, ExtendedApiPost>();
     allPosts.forEach((post) => {
@@ -257,6 +282,13 @@ export function useTopicDetail(topicId: string | undefined, options?: { nearPost
     const posts: ExtendedApiPost[] = Array.from(postsMap.values()).sort(
       (a, b) => a.floor - b.floor,
     );
+
+    // 调试日志：输出合并后的 posts 信息
+    console.log("[useTopicDetail] Merged posts:", {
+      totalPosts: posts.length,
+      firstFloor: posts[0]?.floor,
+      lastFloor: posts[posts.length - 1]?.floor,
+    });
 
     // 只有当列表中没有 1 楼时才手动添加
     // 防止 API 已经返回了 1 楼导致重复
@@ -321,12 +353,19 @@ export function useTopicDetail(topicId: string | undefined, options?: { nearPost
   }
 
   // 计算真实的帖子总数（用于时间轴）
-  // 优先使用 topic 的 postsCount/highestPostNumber，其次是 posts 的 total
+  // 使用 Math.max 获取最大合理值，因为后端 postsCount 可能返回错误的值
+  const postsTotal = postsQuery.data?.pages?.[0]?.total;
+  const highestPostNumber = threadQuery.data?.highestPostNumber;
+  const postsCount = threadQuery.data?.postsCount;
+
+  // 选择最大的值作为总数（更可靠）
   const totalPostsCount =
-    threadQuery.data?.postsCount ??
-    threadQuery.data?.highestPostNumber ??
-    postsQuery.data?.pages?.[0]?.total ??
-    0;
+    Math.max(
+      highestPostNumber ?? 0,
+      postsTotal ?? 0,
+      // postsCount 可能不准确，只在值合理时使用
+      postsCount && postsCount > 20 ? postsCount : 0,
+    ) || 0;
 
   return {
     topicData,

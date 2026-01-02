@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback, useLayoutEffect } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForumTheme } from "../../context/ForumThemeContext";
 import { cn } from "@/components/ui/utils";
@@ -21,13 +21,6 @@ export function TopicDetail({
   }>();
   const navigate = useNavigate();
   const { theme, colors } = useForumTheme();
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const loadMorePrevRef = useRef<HTMLDivElement>(null);
-
-  // 滚动位置锚定 Ref
-  const previousScrollHeightRef = useRef(0);
-  const previousScrollTopRef = useRef(0);
-
   const [currentPost, setCurrentPost] = useState(1);
   const [scrollPercentage, setScrollPercentage] = useState(0); // 新增：基于距离的百分比
   const [isProgrammaticScroll, setIsProgrammaticScroll] = useState(false);
@@ -101,8 +94,7 @@ export function TopicDetail({
 
   // Handle Timeline Change (用于点击跳转到特定帖子)
   const handleTimelineChange = (index: number) => {
-    // 导航到目标楼层，触发数据重新加载
-    navigate(`/forum/topic/${topicId}/${index}`);
+    setCurrentPost(index);
   };
 
   // 处理百分比滚动 (用于平滑拖拽)
@@ -148,22 +140,34 @@ export function TopicDetail({
       setScrollPercentage(pct);
 
       // 计算当前帖子的楼层号（使用 data-post-number 而非数组索引）
+      // 修正：找到视口中最靠近顶部的帖子（无论滚动方向）
       const posts = document.querySelectorAll("[data-post-number]");
       const headerOffset = 150;
 
-      for (let i = posts.length - 1; i >= 0; i--) {
+      let activePostNumber: number | null = null;
+
+      // 正向遍历，找到第一个 bottom > headerOffset 的帖子
+      // 这样无论向上还是向下滚动都能正确检测
+      for (let i = 0; i < posts.length; i++) {
         const post = posts[i];
         const rect = post.getBoundingClientRect();
-        if (rect.top < headerOffset) {
+        // 帖子的底部超过 headerOffset 表示帖子在视口中可见
+        if (rect.bottom > headerOffset) {
           const postNumberStr = post.getAttribute("data-post-number");
           if (postNumberStr) {
-            const postNumber = parseInt(postNumberStr, 10);
-            if (!isNaN(postNumber) && postNumber !== currentPost) {
-              setCurrentPost(postNumber);
-            }
-            break;
+            activePostNumber = parseInt(postNumberStr, 10);
           }
+          break;
         }
+      }
+
+      // 更新当前帖子（只在值变化时更新）
+      if (
+        activePostNumber !== null &&
+        !isNaN(activePostNumber) &&
+        activePostNumber !== currentPost
+      ) {
+        setCurrentPost(activePostNumber);
       }
     };
 
@@ -171,15 +175,15 @@ export function TopicDetail({
     return () => scrollContainer.removeEventListener("scroll", handleScroll);
   }, [isProgrammaticScroll, currentPost]);
 
-  // 页面加载时滚动到顶部
-  useEffect(() => {
-    const scrollContainer = document.getElementById("forum-scroll-container");
-    if (scrollContainer) {
-      scrollContainer.scrollTo(0, 0);
-    }
-  }, [topicId]);
+  // 注意：移除了加载时 scrollTo(0,0) 的逻辑
+  // 因为当从中间位置加载时（如 /150），我们不应该滚动到顶部
+  // 这会导致向上加载的 sentinel 立即可见，触发连续加载
 
   // 无限滚动加载更多帖子 - 向下
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  // 无限滚动加载更多帖子 - 向上
+  const loadMorePrevRef = useRef<HTMLDivElement>(null);
+
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
       const [target] = entries;
@@ -204,58 +208,59 @@ export function TopicDetail({
     return () => observer.disconnect();
   }, [handleObserver]);
 
-  // 向上滚动观察器
-  // 向上滚动观察器（仅触发加载）
+  // 向上滚动观察器 - 使用防抖避免连续触发
+  const isPrevLoadingRef = useRef(false);
+
+  const handlePrevObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const [target] = entries;
+      // 添加 isPrevLoadingRef 检查，避免在滚动位置调整期间再次触发
+      if (
+        target.isIntersecting &&
+        hasPreviousPage &&
+        !isFetchingPreviousPage &&
+        !isPrevLoadingRef.current
+      ) {
+        isPrevLoadingRef.current = true;
+
+        // 记住当前滚动位置，加载后恢复
+        const scrollContainer = document.getElementById("forum-scroll-container");
+        const prevScrollHeight = scrollContainer?.scrollHeight || 0;
+
+        fetchPreviousPage().then(() => {
+          // 使用双重 requestAnimationFrame 确保 DOM 完全更新
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              if (scrollContainer) {
+                const newScrollHeight = scrollContainer.scrollHeight;
+                const diff = newScrollHeight - prevScrollHeight;
+                scrollContainer.scrollTop += diff;
+              }
+              // 延迟重置标志，给滚动位置足够时间稳定
+              setTimeout(() => {
+                isPrevLoadingRef.current = false;
+              }, 300);
+            });
+          });
+        });
+      }
+    },
+    [fetchPreviousPage, hasPreviousPage, isFetchingPreviousPage],
+  );
+
   useEffect(() => {
     const element = loadMorePrevRef.current;
     if (!element) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasPreviousPage && !isFetchingPreviousPage) {
-          fetchPreviousPage();
-        }
-      },
-      {
-        root: null,
-        rootMargin: "200px",
-        threshold: 0.1,
-      },
-    );
+    const observer = new IntersectionObserver(handlePrevObserver, {
+      root: null,
+      rootMargin: "50px", // 减小 rootMargin，避免过早触发
+      threshold: 0.1,
+    });
 
     observer.observe(element);
     return () => observer.disconnect();
-  }, [hasPreviousPage, isFetchingPreviousPage, fetchPreviousPage]);
-
-  // 滚动锚定：记录状态
-  useEffect(() => {
-    if (isFetchingPreviousPage) {
-      const container = document.getElementById("forum-scroll-container");
-      if (container) {
-        previousScrollHeightRef.current = container.scrollHeight;
-        previousScrollTopRef.current = container.scrollTop;
-      }
-    }
-  }, [isFetchingPreviousPage]);
-
-  // 滚动锚定：恢复位置
-  useLayoutEffect(() => {
-    // 当加载完成（isFetchingPreviousPage 变为 false）且有记录时，调整滚动位置
-    if (!isFetchingPreviousPage && previousScrollHeightRef.current > 0) {
-      const container = document.getElementById("forum-scroll-container");
-      if (container) {
-        const newScrollHeight = container.scrollHeight;
-        const diff = newScrollHeight - previousScrollHeightRef.current;
-
-        // 只有当高度确实增加（说明由于向上加载插入了内容）时才调整
-        if (diff > 0) {
-          container.scrollTop = previousScrollTopRef.current + diff;
-        }
-        // 重置
-        previousScrollHeightRef.current = 0;
-      }
-    }
-  }, [isFetchingPreviousPage, topicData]); // 监听数据变化和状态结束
+  }, [handlePrevObserver]);
 
   // 话题不存在
   if (!topicId) {

@@ -5,11 +5,11 @@
 import type { ForumPost } from './ForumPost';
 export type PostPaginatedResponseDto = {
     /**
-     * 回复列表
+     * 回复列表（每个帖子包含 postNumber 字段）
      */
     items: Array<ForumPost>;
     /**
-     * 总记录数
+     * 话题内帖子总数
      */
     total: number;
     /**
@@ -21,8 +21,12 @@ export type PostPaginatedResponseDto = {
      */
     limit: number;
     /**
-     * 总页数
+     * 是否有下一页
      */
-    totalPages: number;
+    hasNext: boolean;
+    /**
+     * 是否有上一页（用于双向无限滚动）
+     */
+    hasPrevious: boolean;
 };
 

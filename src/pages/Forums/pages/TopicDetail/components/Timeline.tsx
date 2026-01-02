@@ -140,13 +140,19 @@ export const Timeline = ({
     let newPercentage = targetTop / availableH;
     newPercentage = Math.max(0, Math.min(1, newPercentage));
 
+    // 更新内部状态
     targetPercentage.current = newPercentage;
+    setPercentage(newPercentage);
+
+    // 通知父组件滚动页面
+    if (onPercentageChange) {
+      onPercentageChange(newPercentage);
+    }
+
+    // 动画更新滑块位置
     if (requestRef.current === null) {
       requestRef.current = requestAnimationFrame(animate);
     }
-
-    const newIndex = Math.round(newPercentage * (totalPosts - 1)) + 1;
-    onChange?.(newIndex);
   };
 
   // 模拟显示日期 - 根据进度变化
@@ -193,10 +199,10 @@ export const Timeline = ({
           )}
         ></div>
 
-        {/* 滑块 (Scroller) */}
+        {/* 滑块 (Scroller) - 容器不阻止点击事件 */}
         <div
           className={cn(
-            "absolute right-0 left-0 z-10 cursor-grab active:cursor-grabbing",
+            "pointer-events-none absolute right-0 left-0 z-10",
             "flex flex-col items-center justify-center",
             isDragging && "scale-105",
           )}
@@ -206,10 +212,15 @@ export const Timeline = ({
             // 简单防抖动
             transform: isDragging ? "none" : undefined,
           }}
-          onMouseDown={handleMouseDown}
         >
-          {/* 原点/Handle - 增加视觉高度 */}
-          <div className={cn("h-10 w-1.5 rounded-full shadow-sm", handleColor)}></div>
+          {/* 原点/Handle - 只有这个可拖拽 */}
+          <div
+            className={cn(
+              "pointer-events-auto h-10 w-1.5 cursor-grab rounded-full shadow-sm active:cursor-grabbing",
+              handleColor,
+            )}
+            onMouseDown={handleMouseDown}
+          ></div>
 
           {/* 悬浮信息 (Discourse 样式: 右侧显示 5/28) */}
           <div className="absolute top-1/2 left-[calc(50%+8px)] flex -translate-y-1/2 flex-col pl-2 whitespace-nowrap">

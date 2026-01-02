@@ -15,5 +15,9 @@ export type ListPostsByTopicDto = {
      * 话题唯一标识符
      */
     topicId: string;
+    /**
+     * 目标楼层号，返回包含该楼层的上下文页。若提供，将自动计算目标页码。
+     */
+    nearPost?: number;
 };
 
