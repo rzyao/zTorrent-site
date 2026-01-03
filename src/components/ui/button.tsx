@@ -17,12 +17,16 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
+        // 无样式变体 - 用于完全自定义背景的场景
+        none: "",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
         sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9 rounded-md",
+        // 无尺寸变体 - 用于完全自定义尺寸的场景
+        none: "",
       },
     },
     defaultVariants: {
@@ -49,8 +53,9 @@ function Button({
       data-slot="button"
       className={cn(
         buttonVariants({
-          variant,
-          size,
+          // 当 variant/size 为 null 时映射到 "none"，禁用默认样式
+          variant: variant === null ? "none" : variant,
+          size: size === null ? "none" : size,
           className,
         }),
       )}

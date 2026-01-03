@@ -138,6 +138,7 @@ export function Toolbar(props: ToolbarProps) {
             {/* 视图切换 */}
             <div className="flex overflow-hidden rounded-md border border-gray-700">
               <Button
+                variant={null}
                 onClick={() => onChangeViewMode("grid")}
                 className={`h-9 px-3 transition-colors ${
                   viewMode === "grid"
@@ -148,6 +149,7 @@ export function Toolbar(props: ToolbarProps) {
                 <Grid3x3 className="h-5 w-5" />
               </Button>
               <Button
+                variant={null}
                 onClick={() => onChangeViewMode("list")}
                 className={`h-9 px-3 transition-colors ${
                   viewMode === "list"
