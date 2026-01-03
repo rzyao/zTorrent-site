@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { User as UserIcon } from "lucide-react";
 import { PostData } from "../types";
 import { SelectionPopover } from "./SelectionPopover";
 import { usePostSelection } from "../hooks/usePostSelection";
@@ -8,6 +9,7 @@ import { PostHeader } from "./PostParts/PostHeader";
 import { PostFooter } from "./PostParts/PostFooter";
 import { IncomingReplies } from "./PostParts/IncomingReplies";
 import { PostSmallAction } from "./PostParts/PostSmallAction";
+import { UserCard } from "@/components/UserCard";
 
 interface PostProps {
   post: PostData;
@@ -43,6 +45,28 @@ export function Post({
     return <PostSmallAction post={post} />;
   }
 
+  // 构造 UserCard 数据 (Mock)
+  const mockUserCardData = {
+    id: post.id,
+    username: post.username,
+    name: post.name,
+    avatarUrl: post.avatar,
+    bannerUrl: post.role === "admin" ? "https://picsum.photos/seed/admin/600/200" : undefined,
+    joinedAt: "4天前",
+    lastSeenAt: "< 1分钟",
+    readTime: "25 分钟",
+    postCount: 42,
+    isAdmin: post.username === "admin" || post.role === "admin",
+    isModerator: post.role === "moderator",
+    bio:
+      post.username === "admin" ? "管理员账号，负责站点维护和管理。" : "这是一个活跃的社区成员。",
+    location: "Chongqing, China",
+    website: "https://example.com",
+    badges: [
+      { id: "basic", label: "基本用户", color: "bronze", icon: <UserIcon className="h-3 w-3" /> },
+    ],
+  };
+
   return (
     <>
       {post.replyTo && (
@@ -65,10 +89,18 @@ export function Post({
       >
         {/* 头像列 */}
         <div className="flex w-12 shrink-0 flex-col items-center pt-1">
-          <img
-            src={post.avatar}
-            alt={post.username}
-            className={`h-[45px] w-[45px] cursor-pointer rounded-full border-2 object-cover shadow-sm hover:opacity-90 ${colors.avatarBorder}`}
+          <UserCard
+            user={mockUserCardData}
+            align="start"
+            side="right"
+            className="flex items-center justify-center select-none"
+            trigger={
+              <img
+                src={post.avatar}
+                alt={post.username}
+                className={`h-[45px] w-[45px] cursor-pointer rounded-full border-2 object-cover shadow-sm hover:opacity-90 ${colors.avatarBorder}`}
+              />
+            }
           />
         </div>
 
