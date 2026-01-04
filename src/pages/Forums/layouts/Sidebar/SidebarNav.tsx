@@ -1,8 +1,11 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home } from "lucide-react";
+import { Home, Megaphone } from "lucide-react";
 import { useForumTheme } from "../../context/ForumThemeContext";
 
-const NAV_ITEMS = [{ id: "topics", name: "话题", icon: Home, path: "/forum/latest" }];
+const NAV_ITEMS = [
+  { id: "topics", name: "话题", icon: Home, path: "/forum/latest" },
+  { id: "announcements", name: "公告", icon: Megaphone, path: "/announcements" },
+];
 
 /**
  * 侧边栏导航组件
@@ -18,12 +21,14 @@ export function SidebarNav() {
       {NAV_ITEMS.map((item) => {
         const Icon = item.icon;
         // 根据当前路径判断激活状态
+
         const isActive =
-          location.pathname === "/forum" ||
-          location.pathname === "/forum/" ||
-          item.path === location.pathname ||
-          location.pathname.startsWith("/forum/latest") ||
-          location.pathname.startsWith("/forum/hot");
+          (item.id === "topics" &&
+            (location.pathname === "/forum" ||
+              location.pathname === "/forum/" ||
+              location.pathname.startsWith("/forum/latest") ||
+              location.pathname.startsWith("/forum/hot"))) ||
+          item.path === location.pathname;
 
         let buttonClass: string;
         if (isActive) {

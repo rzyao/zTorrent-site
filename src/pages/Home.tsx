@@ -401,7 +401,7 @@ export default function HomePage() {
               </h2>
             </div>
 
-            <div className="scrollbar-themed-dark max-h-[310px] space-y-2 overflow-y-auto">
+            <div className="max-h-[310px] space-y-2 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-700/50 hover:[&::-webkit-scrollbar-thumb]:bg-neutral-600 [&::-webkit-scrollbar-track]:bg-transparent">
               {announcements.map((announcement) => (
                 <div
                   key={announcement.id}

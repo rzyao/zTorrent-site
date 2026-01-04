@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { SeriesService } from "@/api/services/SeriesService";
+import { EpisodesService } from "@/api/services/EpisodesService";
 import type { EpisodeDetailResponseDto } from "@/api/models/EpisodeDetailResponseDto";
 import type { EpisodeSeriesDetailDto } from "@/api/models/EpisodeSeriesDetailDto";
 import type { EpisodeTorrentDetailDto } from "@/api/models/EpisodeTorrentDetailDto";
@@ -29,7 +28,7 @@ export function useEpisodeDetail(seriesId?: string, episodeId?: string) {
       setLoading(true);
       setError(null);
       try {
-        const resp = await SeriesService.seriesEpisodesControllerDetail({
+        const resp = await EpisodesService.episodesControllerDetail({
           id: episodeId,
         });
         const data = resp.data;
@@ -44,7 +43,7 @@ export function useEpisodeDetail(seriesId?: string, episodeId?: string) {
 
         // 获取所有分集列表
         if (data.seriesId) {
-          const epResp = await SeriesService.seriesEpisodesControllerList({
+          const epResp = await EpisodesService.episodesControllerList({
             seriesId: data.seriesId,
           });
           // 注意：如果 EpisodeDTO 缺少 ID，这里可能需要后端配合或检查实际返回数据
