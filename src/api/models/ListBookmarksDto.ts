@@ -2,10 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ListBanDaysDto = {
+export type ListBookmarksDto = {
+    /**
+     * 页码
+     */
     page?: number;
+    /**
+     * 每页数量
+     */
     limit?: number;
-    search?: string;
-    enabled?: boolean;
 };
 

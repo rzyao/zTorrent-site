@@ -20,7 +20,7 @@ export class PromotionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static promotionsControllerCreate(
+    public static promotionTypesControllerCreate(
         requestBody: CreatePromotionDto,
     ): CancelablePromise<{
         code?: number;
@@ -49,7 +49,7 @@ export class PromotionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static promotionsControllerUpdate(
+    public static promotionTypesControllerUpdate(
         requestBody: {
             id: string;
             data: UpdatePromotionDto;
@@ -81,7 +81,7 @@ export class PromotionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static promotionsControllerDelete(
+    public static promotionTypesControllerDelete(
         requestBody: PromotionIdDto,
     ): CancelablePromise<{
         code?: number;
@@ -112,7 +112,7 @@ export class PromotionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static promotionsControllerListPromotions(
+    public static promotionTypesControllerList(
         requestBody: ListPromotionsDto,
     ): CancelablePromise<{
         code?: number;
@@ -146,7 +146,7 @@ export class PromotionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static promotionsControllerAddTorrentPromotion(
+    public static promotionRelationsControllerAdd(
         requestBody: AddTorrentPromotionDto,
     ): CancelablePromise<{
         code?: number;
@@ -175,7 +175,7 @@ export class PromotionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static promotionsControllerUpdateTorrentPromotion(
+    public static promotionRelationsControllerUpdate(
         requestBody: {
             id: string;
             data: UpdateTorrentPromotionDto;
@@ -207,7 +207,7 @@ export class PromotionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static promotionsControllerDeleteTorrentPromotion(
+    public static promotionRelationsControllerDelete(
         requestBody: TorrentPromotionIdDto,
     ): CancelablePromise<{
         code?: number;
@@ -238,7 +238,7 @@ export class PromotionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static promotionsControllerListTorrentPromotions(
+    public static promotionRelationsControllerList(
         requestBody: ListTorrentPromotionsDto,
     ): CancelablePromise<{
         code?: number;

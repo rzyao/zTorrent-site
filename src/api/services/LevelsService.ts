@@ -23,7 +23,7 @@ export class LevelsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static levelsControllerCreate(
+    public static levelsCoreControllerCreate(
         requestBody: CreateLevelDto,
     ): CancelablePromise<{
         code?: number;
@@ -52,7 +52,7 @@ export class LevelsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static levelsControllerList(
+    public static levelsCoreControllerList(
         requestBody: ListLevelsRequestDto,
     ): CancelablePromise<{
         code?: number;
@@ -81,7 +81,7 @@ export class LevelsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static levelsControllerDetail(
+    public static levelsCoreControllerDetail(
         requestBody: LevelIdDto,
     ): CancelablePromise<{
         code?: number;
@@ -110,7 +110,7 @@ export class LevelsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static levelsControllerUpdate(
+    public static levelsCoreControllerUpdate(
         requestBody: UpdateLevelRequestDto,
     ): CancelablePromise<{
         code?: number;
@@ -139,7 +139,7 @@ export class LevelsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static levelsControllerRemove(
+    public static levelsCoreControllerRemove(
         requestBody: LevelIdDto,
     ): CancelablePromise<{
         code?: number;
@@ -168,7 +168,7 @@ export class LevelsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static levelsControllerSetPermissions(
+    public static levelsPermissionsControllerSetPermissions(
         requestBody: SetLevelPermissionsRequestDto,
     ): CancelablePromise<{
         code?: number;
@@ -197,7 +197,7 @@ export class LevelsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static levelsControllerListPermissions(
+    public static levelsPermissionsControllerListPermissions(
         requestBody: ListLevelPermissionsRequestDto,
     ): CancelablePromise<{
         code?: number;

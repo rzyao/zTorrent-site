@@ -81,8 +81,8 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
 
     // 并行请求：获取用户信息和聚合权限
     Promise.allSettled([
-      AuthService.authControllerProfilePost({}) as Promise<any>,
-      PermissionsService.permissionsControllerAggregateOfUser() as Promise<any>,
+      AuthService.authLoginControllerProfilePost({}) as Promise<any>,
+      PermissionsService.permissionsAssignmentControllerAggregateOfUser() as Promise<any>,
     ])
       .then((results) => {
         const profileRes = results[0];

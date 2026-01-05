@@ -28,7 +28,7 @@ export class AuthService {
      * @returns any 登录成功
      * @throws ApiError
      */
-    public static authControllerLogin(
+    public static authLoginControllerLogin(
         requestBody: LoginDto,
     ): CancelablePromise<{
         code?: number;
@@ -52,13 +52,44 @@ export class AuthService {
         });
     }
     /**
+     * 当前用户信息（POST）
+     * 返回 JWT 用户的基本信息、角色与权限集合
+     * @param requestBody
+     * @returns any 查询成功
+     * @throws ApiError
+     */
+    public static authLoginControllerProfilePost(
+        requestBody: EmptyObjectDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            user?: Record<string, any>;
+            roles?: Array<string>;
+            permissions?: Array<string>;
+            avatar?: string | null;
+            signature?: string | null;
+            location?: string | null;
+            bio?: string | null;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/auth/profile',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
      * 用户注册并登录
      * 注册新用户（校验重复），成功后返回访问令牌
      * @param requestBody
      * @returns any 注册成功并返回令牌
      * @throws ApiError
      */
-    public static authControllerRegister(
+    public static authRegistrationControllerRegister(
         requestBody: RegisterDto,
     ): CancelablePromise<{
         code?: number;
@@ -84,7 +115,7 @@ export class AuthService {
      * @returns any 验证码已发送（或已受限）
      * @throws ApiError
      */
-    public static authControllerRequestEmailCode(
+    public static authRegistrationControllerRequestEmailCode(
         requestBody: RequestEmailCodeDto,
     ): CancelablePromise<{
         code?: number;
@@ -107,7 +138,7 @@ export class AuthService {
      * @returns any 验证通过
      * @throws ApiError
      */
-    public static authControllerVerifyRegisterEmailCode(
+    public static authRegistrationControllerVerifyRegisterEmailCode(
         requestBody: VerifyEmailCodeDto,
     ): CancelablePromise<{
         code?: number;
@@ -129,7 +160,7 @@ export class AuthService {
      * @returns any 返回是否开放注册
      * @throws ApiError
      */
-    public static authControllerRegistrationEnabled(
+    public static authRegistrationControllerRegistrationEnabled(
         requestBody: EmptyObjectDto,
     ): CancelablePromise<{
         code?: number;
@@ -151,7 +182,7 @@ export class AuthService {
      * @returns any 返回邀请码是否有效
      * @throws ApiError
      */
-    public static authControllerVerifyInviteCode(
+    public static authRegistrationControllerVerifyInviteCode(
         requestBody: VerifyInviteCodeDto,
     ): CancelablePromise<{
         code?: number;
@@ -171,13 +202,6 @@ export class AuthService {
             url: '/auth/verify-invite-code',
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
         });
     }
     /**
@@ -186,7 +210,7 @@ export class AuthService {
      * @returns any 返回是否允许邀请注册
      * @throws ApiError
      */
-    public static authControllerInviteEnabled(
+    public static authRegistrationControllerInviteEnabled(
         requestBody: EmptyObjectDto,
     ): CancelablePromise<{
         code?: number;
@@ -209,7 +233,7 @@ export class AuthService {
      * @returns any 重置邮件已发送（或已受限）
      * @throws ApiError
      */
-    public static authControllerRequestPasswordReset(
+    public static authPasswordControllerRequestPasswordReset(
         requestBody: RequestPasswordResetDto,
     ): CancelablePromise<{
         code?: number;
@@ -232,7 +256,7 @@ export class AuthService {
      * @returns any 重置成功
      * @throws ApiError
      */
-    public static authControllerResetPassword(
+    public static authPasswordControllerResetPassword(
         requestBody: ResetPasswordDto,
     ): CancelablePromise<{
         code?: number;
@@ -255,7 +279,7 @@ export class AuthService {
      * @returns any 修改成功
      * @throws ApiError
      */
-    public static authControllerChangePassword(
+    public static authPasswordControllerChangePassword(
         requestBody: ChangePasswordDto,
     ): CancelablePromise<{
         code?: number;
@@ -278,37 +302,6 @@ export class AuthService {
                 404: `资源不存在`,
                 500: `服务器错误`,
             },
-        });
-    }
-    /**
-     * 当前用户信息（POST）
-     * 返回 JWT 用户的基本信息、角色与权限集合
-     * @param requestBody
-     * @returns any 查询成功
-     * @throws ApiError
-     */
-    public static authControllerProfilePost(
-        requestBody: EmptyObjectDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: {
-            user?: Record<string, any>;
-            roles?: Array<string>;
-            permissions?: Array<string>;
-            avatar?: string | null;
-            signature?: string | null;
-            location?: string | null;
-            bio?: string | null;
-        };
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/auth/profile',
-            body: requestBody,
-            mediaType: 'application/json',
         });
     }
 }

@@ -1,7 +1,10 @@
-import { Reply, Share2, Bookmark, Flag } from "lucide-react";
+import { Reply, Share2, Flag } from "lucide-react";
 import { TopicData } from "../types";
 import { NotificationSelector } from "./NotificationSelector";
 import { cn } from "@/components/ui/utils";
+import { BookmarkButton } from "../../../components/Interaction/BookmarkButton";
+import { ReportDialog } from "../../../components/Interaction/ReportDialog";
+import { LikeButton } from "../../../components/Interaction/LikeButton";
 
 import { useForumTheme } from "../../../context/ForumThemeContext";
 
@@ -62,26 +65,47 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
             <Share2 className="h-4 w-4 text-[#0088CC]" />
             <span>Share</span>
           </button>
-          <button
-            className={cn(
-              "hidden cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium select-none hover:border-[#0088CC] sm:flex",
-              colors.footerButtonBg,
-              colors.footerButtonText,
-            )}
-          >
-            <Bookmark className="h-4 w-4 text-[#0088CC]" />
-            <span>Bookmark</span>
-          </button>
-          <button
-            className={cn(
-              "hidden cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium select-none hover:border-[#0088CC] sm:flex",
-              colors.footerButtonBg,
-              colors.footerButtonText,
-            )}
-          >
-            <Flag className="h-4 w-4 text-[#0088CC]" />
-            <span>Flag</span>
-          </button>
+
+          {topicData?.id && (
+            <>
+              <LikeButton
+                type="topic"
+                targetId={topicData.id}
+                initialLiked={topicData.isLiked}
+                initialCount={topicData.stats.likes}
+                className={cn(
+                  "hidden h-auto rounded-full border border-transparent px-4 py-2 transition-all duration-200 hover:border-[#0088CC] sm:flex",
+                  colors.footerButtonBg,
+                  colors.footerButtonText,
+                )}
+              />
+              <BookmarkButton
+                topicId={topicData.id}
+                initialBookmarked={topicData.isBookmarked}
+                className={cn(
+                  "hidden border border-transparent px-4 py-2 hover:border-[#0088CC] sm:flex",
+                  colors.footerButtonBg,
+                  colors.footerButtonText,
+                )}
+              />
+              <ReportDialog
+                targetType="topic"
+                targetId={topicData.id}
+                trigger={
+                  <button
+                    className={cn(
+                      "hidden cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium select-none hover:border-[#0088CC] sm:flex",
+                      colors.footerButtonBg,
+                      colors.footerButtonText,
+                    )}
+                  >
+                    <Flag className="h-4 w-4 text-[#0088CC]" />
+                    <span>Flag</span>
+                  </button>
+                }
+              />
+            </>
+          )}
           <button
             onClick={() => {
               // Get topic ID from props if available

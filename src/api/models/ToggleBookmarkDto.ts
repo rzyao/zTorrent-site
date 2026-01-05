@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ListBanReasonDto = {
-    page?: number;
-    limit?: number;
-    search?: string;
-    enabled?: boolean;
+export type ToggleBookmarkDto = {
+    /**
+     * 话题 ID
+     */
+    topicId: string;
 };
 

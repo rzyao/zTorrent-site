@@ -2,22 +2,22 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { BanDaysIdDto } from '../models/BanDaysIdDto';
-import type { CreateBanDaysDto } from '../models/CreateBanDaysDto';
-import type { ListBanDaysDto } from '../models/ListBanDaysDto';
-import type { UpdateBanDaysDto } from '../models/UpdateBanDaysDto';
+import type { CreatePunishmentDictDto } from '../models/CreatePunishmentDictDto';
+import type { ListPunishmentDictDto } from '../models/ListPunishmentDictDto';
+import type { PunishmentDictIdDto } from '../models/PunishmentDictIdDto';
+import type { UpdatePunishmentDictDto } from '../models/UpdatePunishmentDictDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class BanDaysService {
+export class PunishmentDictsService {
     /**
-     * 创建封禁天数
+     * 创建处罚字典项
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static banDaysControllerCreate(
-        requestBody: CreateBanDaysDto,
+    public static punishmentDictsControllerCreate(
+        requestBody: CreatePunishmentDictDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -27,7 +27,7 @@ export class BanDaysService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/ban-days/create',
+            url: '/punishment-dicts/create',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -40,15 +40,15 @@ export class BanDaysService {
         });
     }
     /**
-     * 更新封禁天数
+     * 更新处罚字典项
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static banDaysControllerUpdate(
+    public static punishmentDictsControllerUpdate(
         requestBody: {
             id: string;
-            data: UpdateBanDaysDto;
+            data: UpdatePunishmentDictDto;
         },
     ): CancelablePromise<{
         code?: number;
@@ -59,7 +59,7 @@ export class BanDaysService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/ban-days/update',
+            url: '/punishment-dicts/update',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -72,13 +72,13 @@ export class BanDaysService {
         });
     }
     /**
-     * 删除封禁天数
+     * 删除处罚字典项
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static banDaysControllerDelete(
-        requestBody: BanDaysIdDto,
+    public static punishmentDictsControllerDelete(
+        requestBody: PunishmentDictIdDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -90,7 +90,7 @@ export class BanDaysService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/ban-days/delete',
+            url: '/punishment-dicts/delete',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -103,13 +103,13 @@ export class BanDaysService {
         });
     }
     /**
-     * 列出封禁天数列表
+     * 列出处罚字典项
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static banDaysControllerListBanDays(
-        requestBody: ListBanDaysDto,
+    public static punishmentDictsControllerList(
+        requestBody: ListPunishmentDictDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -124,7 +124,41 @@ export class BanDaysService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/ban-days/list',
+            url: '/punishment-dicts/list',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 获取处罚字典选项 (下拉菜单用)
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static punishmentDictsControllerOptions(
+        requestBody: {
+            category: 'BAN_DAYS' | 'BAN_REASON' | 'PUNISHMENT_TYPE' | 'UNBAN_REASON';
+        },
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Array<{
+            key?: string;
+            label?: string;
+        }>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/punishment-dicts/options',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

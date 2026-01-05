@@ -2,32 +2,33 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CreateUnbanReasonDto } from '../models/CreateUnbanReasonDto';
-import type { ListUnbanReasonDto } from '../models/ListUnbanReasonDto';
-import type { UnbanReasonIdDto } from '../models/UnbanReasonIdDto';
-import type { UpdateUnbanReasonDto } from '../models/UpdateUnbanReasonDto';
+import type { BookmarkResponseDto } from '../models/BookmarkResponseDto';
+import type { GetBookmarkStatusDto } from '../models/GetBookmarkStatusDto';
+import type { ListBookmarksDto } from '../models/ListBookmarksDto';
+import type { Object } from '../models/Object';
+import type { ToggleBookmarkDto } from '../models/ToggleBookmarkDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class UnbanReasonsService {
+export class ForumsBookmarksService {
     /**
-     * 创建解封原因
+     * 切换收藏状态
      * @param requestBody
-     * @returns any 成功
+     * @returns any 收藏状态
      * @throws ApiError
      */
-    public static unbanReasonControllerCreate(
-        requestBody: CreateUnbanReasonDto,
+    public static bookmarksControllerToggle(
+        requestBody: ToggleBookmarkDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: BookmarkResponseDto;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/unban-reasons/create',
+            url: '/forums/bookmarks/toggle',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -40,26 +41,23 @@ export class UnbanReasonsService {
         });
     }
     /**
-     * 更新解封原因
+     * 获取收藏状态
      * @param requestBody
-     * @returns any 成功
+     * @returns any 收藏状态
      * @throws ApiError
      */
-    public static unbanReasonControllerUpdate(
-        requestBody: {
-            id: string;
-            data: UpdateUnbanReasonDto;
-        },
+    public static bookmarksControllerGetStatus(
+        requestBody: GetBookmarkStatusDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: Record<string, any>;
+        data?: BookmarkResponseDto;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/unban-reasons/update',
+            url: '/forums/bookmarks/status',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -72,59 +70,23 @@ export class UnbanReasonsService {
         });
     }
     /**
-     * 删除解封原因
+     * 获取我的收藏列表
      * @param requestBody
-     * @returns any 成功
+     * @returns any 收藏分页列表
      * @throws ApiError
      */
-    public static unbanReasonControllerDelete(
-        requestBody: UnbanReasonIdDto,
+    public static bookmarksControllerList(
+        requestBody: ListBookmarksDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: {
-            success?: boolean;
-        };
+        data?: Object;
         path?: string;
         timestamp?: string;
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/unban-reasons/delete',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 列出解封原因列表
-     * @param requestBody
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static unbanReasonControllerListUnbanReasons(
-        requestBody: ListUnbanReasonDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: {
-            items?: Array<Record<string, any>>;
-            total?: number;
-            page?: number;
-            limit?: number;
-        };
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/unban-reasons/list',
+            url: '/forums/bookmarks/list',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

@@ -45,6 +45,7 @@ export function TopicDetail({
     fetchPreviousPage,
     hasPreviousPage,
     isFetchingPreviousPage,
+    updateTopic, // 使用新增的 updateTopic
   } = useTopicDetail(topicId, { nearPost: targetPostNumber });
 
   // NProgress 联动
@@ -385,6 +386,8 @@ export function TopicDetail({
             onPercentageChange={handlePercentageScroll}
             topicId={topicId}
             topicTitle={topicData.title}
+            topicStatus={topicData.status}
+            onTopicUpdate={updateTopic}
           />
         </div>
       </div>

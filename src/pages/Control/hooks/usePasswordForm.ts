@@ -1,17 +1,21 @@
-import { useState } from 'react';
-import { isValidPassword, passwordErrorMessage } from '@/utils/validation';
-import { getAuthService } from '@/api/lazy';
-import { ApiError } from '@/api/core/ApiError';
-import { customToast } from '@/hooks/useToast';
+import { useState } from "react";
+import { isValidPassword, passwordErrorMessage } from "@/utils/validation";
+import { getAuthService } from "@/api/lazy";
+import { ApiError } from "@/api/core/ApiError";
+import { customToast } from "@/hooks/useToast";
 
 // 密码表单状态与校验逻辑 Hook
 // 职责：管理当前/新/确认密码与错误信息，提供可更新与提交方法
 
 export function usePasswordForm() {
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [passwordErrors, setPasswordErrors] = useState<{ current?: string; new?: string; confirm?: string }>({});
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [passwordErrors, setPasswordErrors] = useState<{
+    current?: string;
+    new?: string;
+    confirm?: string;
+  }>({});
   const [updating, setUpdating] = useState(false);
 
   const canUpdatePassword = () => {
@@ -23,9 +27,9 @@ export function usePasswordForm() {
 
   const handleUpdatePassword = async () => {
     const errs: { current?: string; new?: string; confirm?: string } = {};
-    if (!currentPassword) errs.current = '请输入当前密码';
+    if (!currentPassword) errs.current = "请输入当前密码";
     if (!isValidPassword(newPassword)) errs.new = passwordErrorMessage();
-    if (confirmNewPassword !== newPassword) errs.confirm = '两次输入的密码不一致';
+    if (confirmNewPassword !== newPassword) errs.confirm = "两次输入的密码不一致";
     setPasswordErrors(errs);
     if (Object.keys(errs).length > 0) return;
 
@@ -33,25 +37,25 @@ export function usePasswordForm() {
     setUpdating(true);
     try {
       const AuthService = await getAuthService();
-      const res = await AuthService.authControllerChangePassword({
+      const res = await AuthService.authPasswordControllerChangePassword({
         currentPassword,
         newPassword,
         confirmNewPassword,
       });
       if (res?.code === 0 || res?.data?.ok) {
-        customToast.success('密码修改成功');
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmNewPassword('');
+        customToast.success("密码修改成功");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
         setPasswordErrors({});
       } else {
-        const msg = res?.message || '密码修改失败';
+        const msg = res?.message || "密码修改失败";
         customToast.error(msg);
       }
     } catch (err: any) {
       if (err instanceof ApiError) {
         const body = err.body || {};
-        const msg: string = body?.message || '请求失败';
+        const msg: string = body?.message || "请求失败";
         const code = body?.code;
         const serverErrs: { current?: string; new?: string; confirm?: string } = {};
         if (code === 40001 || /不一致|确认/.test(msg)) serverErrs.confirm = msg;
@@ -60,7 +64,7 @@ export function usePasswordForm() {
         setPasswordErrors(serverErrs);
         if (!serverErrs.current && !serverErrs.new && !serverErrs.confirm) customToast.error(msg);
       } else {
-        customToast.error('网络或未知错误');
+        customToast.error("网络或未知错误");
       }
     } finally {
       setUpdating(false);

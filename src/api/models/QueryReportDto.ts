@@ -11,5 +11,19 @@ export type QueryReportDto = {
      * 每页数量
      */
     limit?: number;
+    /**
+     * 状态筛选 (可选)
+     */
+    status?: QueryReportDto.status;
 };
+export namespace QueryReportDto {
+    /**
+     * 状态筛选 (可选)
+     */
+    export enum status {
+        PENDING = 'pending',
+        RESOLVED = 'resolved',
+        REJECTED = 'rejected',
+    }
+}
 

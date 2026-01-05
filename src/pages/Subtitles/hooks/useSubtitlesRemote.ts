@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { SubtitlesService } from '../../../api/services/SubtitlesService';
-import { TorrentsService } from '../../../api/services/TorrentsService';
-import type { FilterLanguage, SortBy, Subtitle, TorrentOption, UploadForm } from '../types';
-import type { ListSubtitlesDto } from '../../../api/models/ListSubtitlesDto';
-import type { UploadSubtitleDto } from '../../../api/models/UploadSubtitleDto';
-import type { GetSubtitleDto } from '../../../api/models/GetSubtitleDto';
-import { OpenAPI } from '../../../api/core/OpenAPI';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { SubtitlesService } from "../../../api/services/SubtitlesService";
+import type { FilterLanguage, SortBy, Subtitle, TorrentOption, UploadForm } from "../types";
+import type { ListSubtitlesDto } from "../../../api/models/ListSubtitlesDto";
+import type { UploadSubtitleDto } from "../../../api/models/UploadSubtitleDto";
+import type { GetSubtitleDto } from "../../../api/models/GetSubtitleDto";
+import { OpenAPI } from "../../../api/core/OpenAPI";
 
 export interface SubtitlesStats {
   totalSubtitles: number;
@@ -16,7 +15,7 @@ export interface SubtitlesStats {
 
 function unwrap<T>(resp: any): T {
   if (!resp) return resp as T;
-  if (typeof resp === 'object' && 'data' in resp && resp.data != null) return resp.data as T;
+  if (typeof resp === "object" && "data" in resp && resp.data != null) return resp.data as T;
   return resp as T;
 }
 
@@ -32,24 +31,38 @@ export function useSubtitlesRemote(params: {
   const [limit, setLimit] = useState(params.limit ?? 20);
 
   const [items, setItems] = useState<Subtitle[]>([]);
-  const [pagination, setPagination] = useState<{ total: number; page: number; limit: number; totalPages: number } | null>(null);
+  const [pagination, setPagination] = useState<{
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const listParams: ListSubtitlesDto = useMemo(() => ({
-    search: searchQuery || undefined,
-    language: filterLanguage as ListSubtitlesDto.language,
-    sortBy: sortBy as ListSubtitlesDto.sortBy,
-    page,
-    limit,
-  }), [searchQuery, filterLanguage, sortBy, page, limit]);
+  const listParams: ListSubtitlesDto = useMemo(
+    () => ({
+      search: searchQuery || undefined,
+      language: filterLanguage as ListSubtitlesDto.language,
+      sortBy: sortBy as ListSubtitlesDto.sortBy,
+      page,
+      limit,
+    }),
+    [searchQuery, filterLanguage, sortBy, page, limit],
+  );
 
   const fetchList = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const resp = await SubtitlesService.subtitlesControllerList(listParams);
-      const body = unwrap<{ data: Subtitle[]; pagination: { total: number; page: number; limit: number; totalPages: number } } | Subtitle[]>(resp);
+      const body = unwrap<
+        | {
+            data: Subtitle[];
+            pagination: { total: number; page: number; limit: number; totalPages: number };
+          }
+        | Subtitle[]
+      >(resp);
       if (Array.isArray(body)) {
         setItems(body);
         setPagination({ total: body.length, page, limit, totalPages: 1 });
@@ -58,7 +71,7 @@ export function useSubtitlesRemote(params: {
         setPagination(body.pagination);
       }
     } catch (e: any) {
-      setError(e?.message || '加载失败');
+      setError(e?.message || "加载失败");
     } finally {
       setLoading(false);
     }
@@ -89,7 +102,7 @@ export function useSubtitlesRemote(params: {
   const fetchOptions = useCallback(async () => {
     setOptionsLoading(true);
     try {
-      const resp = await TorrentsService.torrentsOptionsControllerOptions();
+      const resp = await SubtitlesService.subtitlesTorrentsControllerOptions();
       const body = unwrap<{ data: TorrentOption[] } | TorrentOption[]>(resp);
       setTorrentOptions(Array.isArray(body) ? body : body.data);
     } finally {
@@ -137,21 +150,22 @@ export function useSubtitlesRemote(params: {
   const download = useCallback(async (id: string, filename?: string) => {
     const base = OpenAPI.BASE;
     const tokenValue = OpenAPI.TOKEN;
-    const token = typeof tokenValue === 'function' 
-      ? await tokenValue({ method: 'POST', url: '' } as any) 
-      : tokenValue;
+    const token =
+      typeof tokenValue === "function"
+        ? await tokenValue({ method: "POST", url: "" } as any)
+        : tokenValue;
     const resp = await fetch(`${base}/api/subtitles/download`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/octet-stream',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        "Content-Type": "application/json",
+        Accept: "application/octet-stream",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify({ id }),
     });
     const blob = await resp.blob();
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = filename || `subtitle-${id}`;
     document.body.appendChild(a);

@@ -26,7 +26,7 @@ export class EpisodesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static episodesControllerList(
+    public static episodeBaseControllerList(
         requestBody: ListEpisodesDto,
     ): CancelablePromise<{
         code?: number;
@@ -55,7 +55,7 @@ export class EpisodesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static episodesControllerDetail(
+    public static episodeBaseControllerDetail(
         requestBody: GetEpisodeDetailDto,
     ): CancelablePromise<{
         code?: number;
@@ -84,7 +84,7 @@ export class EpisodesService {
      * @returns any 已创建
      * @throws ApiError
      */
-    public static episodesControllerCreate(
+    public static episodeBaseControllerCreate(
         requestBody: CreateEpisodeDto,
     ): CancelablePromise<{
         code?: number;
@@ -113,7 +113,7 @@ export class EpisodesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static episodesControllerUpdate(
+    public static episodeBaseControllerUpdate(
         requestBody: UpdateEpisodeDto,
     ): CancelablePromise<{
         code?: number;
@@ -142,7 +142,7 @@ export class EpisodesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static episodesControllerDelete(
+    public static episodeBaseControllerDelete(
         requestBody: DeleteEpisodeDto,
     ): CancelablePromise<{
         code?: number;

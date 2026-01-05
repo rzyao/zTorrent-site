@@ -107,14 +107,14 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
       try {
         const AuthService = await getAuthService();
         if (code) {
-          const res: any = await AuthService.authControllerVerifyInviteCode({
+          const res: any = await AuthService.authRegistrationControllerVerifyInviteCode({
             inviteCode: code!,
             email: emailParam || "",
           });
           const valid = res?.data?.valid === true;
           setGateMode(valid ? "normal" : "invalid_code");
         } else {
-          const status: any = await AuthService.authControllerRegistrationEnabled();
+          const status: any = await AuthService.authRegistrationControllerRegistrationEnabled();
           const open = status?.data?.registrationEnabled === true;
           setGateMode(open ? "normal" : "invite_only");
         }
@@ -162,7 +162,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
       // 修复：此处此前直接调用未定义的 AuthService，导致 TS 报错
       // 通过统一的懒加载入口获取服务实例，避免未定义并保持与上文一致的调用方式
       const AuthService = await getAuthService();
-      const res: any = await AuthService.authControllerVerifyRegisterEmailCode({
+      const res: any = await AuthService.authRegistrationControllerVerifyRegisterEmailCode({
         email: formData.email,
         code: formData.emailCode,
       });

@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type UpdateBanDaysDto = {
-    label?: string;
-    description?: string;
-    enabled?: boolean;
-    sort?: number;
+export type PunishmentDictIdDto = {
+    /**
+     * 字典项 ID
+     */
+    id: string;
 };
 

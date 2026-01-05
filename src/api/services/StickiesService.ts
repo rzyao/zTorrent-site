@@ -20,7 +20,7 @@ export class StickiesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static stickiesControllerCreate(
+    public static stickyTypesControllerCreate(
         requestBody: CreateStickyDto,
     ): CancelablePromise<{
         code?: number;
@@ -49,7 +49,7 @@ export class StickiesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static stickiesControllerUpdate(
+    public static stickyTypesControllerUpdate(
         requestBody: {
             id: string;
             data: UpdateStickyDto;
@@ -81,7 +81,7 @@ export class StickiesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static stickiesControllerDelete(
+    public static stickyTypesControllerDelete(
         requestBody: StickyIdDto,
     ): CancelablePromise<{
         code?: number;
@@ -112,7 +112,7 @@ export class StickiesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static stickiesControllerListStickyTypes(
+    public static stickyTypesControllerList(
         requestBody: ListStickiesDto,
     ): CancelablePromise<{
         code?: number;
@@ -146,7 +146,7 @@ export class StickiesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static stickiesControllerAddTorrentSticky(
+    public static stickyRelationsControllerAdd(
         requestBody: AddTorrentStickyDto,
     ): CancelablePromise<{
         code?: number;
@@ -175,7 +175,7 @@ export class StickiesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static stickiesControllerUpdateTorrentSticky(
+    public static stickyRelationsControllerUpdate(
         requestBody: {
             id: string;
             data: UpdateTorrentStickyDto;
@@ -207,7 +207,7 @@ export class StickiesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static stickiesControllerDeleteTorrentSticky(
+    public static stickyRelationsControllerDelete(
         requestBody: TorrentStickyIdDto,
     ): CancelablePromise<{
         code?: number;
@@ -238,7 +238,7 @@ export class StickiesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static stickiesControllerListTorrentStickies(
+    public static stickyRelationsControllerList(
         requestBody: ListTorrentStickiesDto,
     ): CancelablePromise<{
         code?: number;

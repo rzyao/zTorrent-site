@@ -1,9 +1,10 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, Megaphone } from "lucide-react";
+import { Home, Megaphone, Bookmark } from "lucide-react";
 import { useForumTheme } from "../../context/ForumThemeContext";
 
 const NAV_ITEMS = [
   { id: "topics", name: "话题", icon: Home, path: "/forum/latest" },
+  { id: "bookmarks", name: "我的收藏", icon: Bookmark, path: "/forum/bookmarks" },
   { id: "announcements", name: "公告", icon: Megaphone, path: "/announcements" },
 ];
 
@@ -28,6 +29,7 @@ export function SidebarNav() {
               location.pathname === "/forum/" ||
               location.pathname.startsWith("/forum/latest") ||
               location.pathname.startsWith("/forum/hot"))) ||
+          (item.id === "bookmarks" && location.pathname.startsWith("/forum/bookmarks")) ||
           item.path === location.pathname;
 
         let buttonClass: string;

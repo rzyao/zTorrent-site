@@ -23,7 +23,7 @@ export function useAuth() {
 
       try {
         const AuthService = await getAuthService();
-        const response = await AuthService.authControllerLogin({
+        const response = await AuthService.authLoginControllerLogin({
           username,
           password,
           idleLogout30m: autoLogout,
@@ -70,7 +70,7 @@ export function useAuth() {
       const inviteCodeParam = params.get("inviteCode") || "";
       const type = inviteCodeParam ? "invite" : "open";
       const AuthService = await getAuthService();
-      const response = await AuthService.authControllerRegister({
+      const response = await AuthService.authRegistrationControllerRegister({
         email,
         username,
         password,
@@ -107,7 +107,7 @@ export function useAuth() {
 
     try {
       const AuthService = await getAuthService();
-      const response = await AuthService.authControllerRequestEmailCode({ email });
+      const response = await AuthService.authRegistrationControllerRequestEmailCode({ email });
       const body = (response as any)?.code !== undefined ? response : (response as any)?.data;
       return body?.data ?? body;
     } catch (err: any) {

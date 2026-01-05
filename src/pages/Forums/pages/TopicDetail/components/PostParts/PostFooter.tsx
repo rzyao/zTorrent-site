@@ -1,6 +1,9 @@
-import { Heart, Link as LinkIcon, Bookmark, Flag, Reply } from "lucide-react";
+import { Link as LinkIcon, Reply } from "lucide-react";
 import { PostData } from "../../types";
 import { useComposerStore } from "../../../../components/Composer/ComposerStore";
+import { LikeButton } from "../../../../components/Interaction/LikeButton";
+import { BookmarkButton } from "../../../../components/Interaction/BookmarkButton";
+import { ReportDialog } from "../../../../components/Interaction/ReportDialog";
 
 interface PostFooterProps {
   post: PostData;
@@ -43,31 +46,35 @@ export function PostFooter({
       {/* 右侧：操作按钮 + 回复 */}
       <div className="ml-auto flex items-center gap-4">
         <div className="flex items-center gap-1">
-          <button
-            className={`flex cursor-pointer items-center gap-1.5 rounded-full p-2 text-[#A6A6A6] hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
-            title="点赞"
-          >
-            <Heart className="h-5 w-5" />
-            {post.likes > 0 && <span className="text-sm font-normal">{post.likes}</span>}
-          </button>
+          {/* 点赞 */}
+          <LikeButton
+            type={post.isOp ? "topic" : "post"}
+            targetId={post.isOp && topicId ? topicId : post.id}
+            initialLiked={post.isLiked}
+            initialCount={post.likes}
+          />
+
           <button
             className={`flex cursor-pointer items-center justify-center rounded-full p-2 text-[#A6A6A6] hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
             title="分享链接"
           >
             <LinkIcon className="h-5 w-5" />
           </button>
-          <button
-            className={`flex cursor-pointer items-center justify-center rounded-full p-2 text-[#A6A6A6] hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
-            title="收藏"
-          >
-            <Bookmark className="h-5 w-5" />
-          </button>
-          <button
-            className={`hidden cursor-pointer items-center justify-center rounded-full p-2 text-[#A6A6A6] group-hover:flex hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
-            title="举报"
-          >
-            <Flag className="h-5 w-5" />
-          </button>
+
+          {/* 收藏 (仅对主题帖显示，或话题全局显示) */}
+          {post.isOp && topicId && (
+            <BookmarkButton
+              topicId={topicId}
+              initialBookmarked={false} // 需要从话题数据获取，暂时传 false
+              iconOnly
+            />
+          )}
+
+          {/* 举报 */}
+          <ReportDialog
+            targetType={post.isOp ? "topic" : "post"}
+            targetId={post.isOp && topicId ? topicId : post.id}
+          />
         </div>
 
         {/* 帖子主回复按钮 */}

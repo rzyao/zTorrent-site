@@ -14,11 +14,18 @@ interface TimelineProps {
   onPercentageChange?: (percentage: number) => void;
   topicId?: string;
   topicTitle?: string;
+  topicStatus?: {
+    isLocked: boolean;
+    isPinned: boolean;
+    isArchived: boolean;
+  };
+  onTopicUpdate?: () => void;
 }
 
 import { Reply, Bell } from "lucide-react";
 import { useComposerStore } from "../../../components/Composer/ComposerStore";
 import { NotificationSelector } from "./NotificationSelector";
+import { TopicAdminMenu } from "./TopicAdminMenu";
 
 const SCROLLER_HEIGHT = 60; // 滚动滑块高度
 const SCROLL_AREA_HEIGHT = 300; // 滚动区域总高度
@@ -35,6 +42,8 @@ export const Timeline = ({
   onPercentageChange,
   topicId,
   topicTitle,
+  topicStatus,
+  onTopicUpdate,
 }: TimelineProps) => {
   const [percentage, setPercentage] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -171,6 +180,13 @@ export const Timeline = ({
 
   return (
     <div className={cn("sticky top-20 ml-8 hidden w-[140px] shrink-0 lg:block", className)}>
+      {/* 话题管理菜单 (仅管理员可见) - 放在时间轴顶部 */}
+      {topicId && topicStatus && onTopicUpdate && (
+        <div className="mb-4 ml-10 flex justify-center">
+          <TopicAdminMenu topicId={topicId} status={topicStatus} onUpdate={onTopicUpdate} />
+        </div>
+      )}
+
       {/* 顶部日期 (跳转到第一条) */}
       <div
         className="mb-2 ml-10 cursor-pointer text-center text-[13px] text-[#919191]"

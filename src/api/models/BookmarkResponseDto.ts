@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type UpdateUnbanReasonDto = {
-    label?: string;
-    description?: string;
-    enabled?: boolean;
-    sort?: number;
+export type BookmarkResponseDto = {
+    /**
+     * 是否已收藏
+     */
+    bookmarked: boolean;
 };
 

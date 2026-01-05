@@ -32,6 +32,18 @@ export type ForumTopic = {
      */
     isLocked: boolean;
     /**
+     * 全局置顶
+     */
+    isGlobalPinned: boolean;
+    /**
+     * 全站横幅
+     */
+    isBanner: boolean;
+    /**
+     * 是否归档
+     */
+    isArchived: boolean;
+    /**
      * 最后回复时间
      */
     lastReplyAt: string;

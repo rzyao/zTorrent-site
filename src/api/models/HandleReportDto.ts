@@ -15,6 +15,14 @@ export type HandleReportDto = {
      * 处理备注
      */
     handlerNote?: string;
+    /**
+     * 是否删除被举报的内容 (话题/回复)
+     */
+    deleteContent?: boolean;
+    /**
+     * 是否锁定相关话题 (仅当删除回复时)
+     */
+    lockTopic?: boolean;
 };
 export namespace HandleReportDto {
     /**

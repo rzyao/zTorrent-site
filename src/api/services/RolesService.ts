@@ -169,7 +169,7 @@ export class RolesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static rolesControllerSetRolePermissions(
+    public static rolesAclControllerSetRolePermissions(
         requestBody: SetRolePermissionsDto,
     ): CancelablePromise<{
         code?: number;
@@ -198,7 +198,7 @@ export class RolesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static rolesControllerAssignRoles(
+    public static rolesAclControllerAssignRoles(
         requestBody: AssignRolesDto,
     ): CancelablePromise<{
         code?: number;
@@ -227,7 +227,7 @@ export class RolesService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static rolesControllerRolePermissions(
+    public static rolesAclControllerRolePermissions(
         requestBody: RoleIdDto,
     ): CancelablePromise<{
         code?: number;

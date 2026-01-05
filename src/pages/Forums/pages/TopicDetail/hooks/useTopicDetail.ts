@@ -11,6 +11,8 @@ interface ExtendedApiPost {
   isSystem: boolean;
   replies_count?: number;
   like_count?: number;
+  isLiked?: boolean; // 新增
+  is_liked?: boolean; // 适配 snake_case
   created_at: string;
   author?: {
     id: string;
@@ -65,6 +67,13 @@ interface ExtendedApiTopic {
   isPinned: boolean;
   isTrending: boolean;
   isLocked: boolean;
+  isArchived: boolean;
+  isGlobalPinned: boolean;
+  isBanner: boolean;
+  isLiked?: boolean; // 新增
+  isBookmarked?: boolean; // 新增
+  is_liked?: boolean; // 兼容 snake_case
+  is_bookmarked?: boolean; // 兼容 snake_case
   createdAt: string;
   updatedAt: string;
   lastReplyAt: string;
@@ -102,6 +111,7 @@ function transformPost(apiPost: ExtendedApiPost, index: number): PostData {
     content: apiPost.content || "",
     createdAt: formatDate(apiPost.created_at),
     likes: apiPost.like_count || 0,
+    isLiked: apiPost.isLiked ?? apiPost.is_liked ?? false,
     avatarSize: 45,
     isOp: index === 0,
     isSmallAction: apiPost.isSystem || false,
@@ -297,12 +307,13 @@ export function useTopicDetail(topicId: string | undefined, options?: { nearPost
     if (!hasOP) {
       // 构造 OP (1楼) - 基于 Topic 数据
       const opPost: ExtendedApiPost = {
-        id: "topic-" + thread.id, // 前端标识为 Topic 主体
+        id: String(thread.id), // 重要：移除 "topic-" 前缀，直接使用 thread.id 的字符串形式
         content: thread.content,
         floor: 1,
         isSystem: false,
         created_at: thread.createdAt,
-        like_count: 0, // 暂未从 Topic 获取点赞数
+        like_count: thread.isLiked ? 1 : 0, // 初始根据状态设置，后续由 API 同步
+        isLiked: thread.isLiked ?? thread.is_liked ?? false,
         replies_count: thread.replyCount,
         author: thread.author || {
           id: "unknown",
@@ -338,6 +349,8 @@ export function useTopicDetail(topicId: string | undefined, options?: { nearPost
       createdAt: formatDate(thread.createdAt) || "未知",
       views: thread.views || 0,
       replies: posts.length,
+      isLiked: thread.isLiked ?? thread.is_liked ?? false,
+      isBookmarked: thread.isBookmarked ?? thread.is_bookmarked ?? false,
       participants: Array.from(participantsMap.values()).slice(0, 5),
       stats: {
         created: formatDate(thread.createdAt) || "未知",
@@ -349,6 +362,14 @@ export function useTopicDetail(topicId: string | undefined, options?: { nearPost
         links: 0,
       },
       posts: posts.map((post, index) => transformPost(post, index)),
+      status: {
+        isLocked: thread.isLocked,
+        isPinned: thread.isPinned,
+        isArchived: thread.isArchived,
+        isGlobalPinned: thread.isGlobalPinned,
+        isBanner: thread.isBanner,
+        isTrending: thread.isTrending,
+      },
     };
   }
 
@@ -387,5 +408,7 @@ export function useTopicDetail(topicId: string | undefined, options?: { nearPost
       threadQuery.refetch();
       postsQuery.refetch();
     },
+    // 将 refetch 暴露为 updateTopic
+    updateTopic: () => threadQuery.refetch(),
   };
 }

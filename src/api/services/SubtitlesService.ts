@@ -117,4 +117,15 @@ export class SubtitlesService {
             url: '/subtitles/stats',
         });
     }
+    /**
+     * 获取用于字幕上传的种子可选列表
+     * @returns any
+     * @throws ApiError
+     */
+    public static subtitlesTorrentsControllerOptions(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/subtitles/torrents/options',
+        });
+    }
 }

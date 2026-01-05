@@ -23,6 +23,7 @@ export interface PostData {
   content: string;
   createdAt: string;
   likes: number;
+  isLiked?: boolean; // 新增：当前用户是否点赞
   avatarSize: number;
   isOp?: boolean;
   isSmallAction?: boolean;
@@ -53,9 +54,19 @@ export interface TopicData {
   createdAt: string;
   views: number;
   replies: number;
+  isLiked?: boolean; // 新增：当前用户是否点赞
+  isBookmarked?: boolean; // 新增：当前用户是否收藏
   participants: Participant[];
   stats: PostStats;
   posts: PostData[];
+  status?: {
+    isLocked: boolean;
+    isPinned: boolean;
+    isArchived: boolean;
+    isGlobalPinned?: boolean;
+    isBanner?: boolean;
+    isTrending?: boolean;
+  };
 }
 
 export interface SuggestedTopic {

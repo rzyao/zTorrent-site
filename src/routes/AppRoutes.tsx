@@ -1,8 +1,12 @@
 import { Routes, Route, Navigate, useNavigate, useParams, Outlet } from "react-router-dom";
-import { useAccess } from "@/context/AccessContext.tsx";
 import { lazy, Suspense } from "react";
 import { FullScreenLoader } from "@/components/ui/FullScreenLoader";
 import AppLayout from "../layouts/AppLayout.tsx";
+
+// 导入模块化路由
+import { ForumRoutes } from "./forumRoutes";
+import { AdminRoutes } from "./adminRoutes";
+import { AuthRoute, PermissionRoute } from "./guards";
 
 const LoginPage = lazy(() => import("@/pages/Login.tsx"));
 const Register = lazy(() => import("@/pages/Register.tsx"));
@@ -11,34 +15,6 @@ const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPassword.tsx"));
 const HomePage = lazy(() => import("@/pages/Home.tsx"));
 const AdultPage = lazy(() => import("@/pages/Adult/index.tsx"));
 const TorrentsPage = lazy(() => import("@/pages/TorrentsList/index.tsx"));
-// 论坛布局与页面 (独立路由系统)
-const ForumLayout = lazy(() =>
-  import("@/pages/Forums/layouts/ForumLayout").then((m) => ({ default: m.ForumLayout })),
-);
-const ForumHomePage = lazy(() =>
-  import("@/pages/Forums/pages/ForumHomePage").then((m) => ({ default: m.ForumHomePage })),
-);
-const TopicDetail = lazy(() =>
-  import("@/pages/Forums/pages/TopicDetail/index").then((m) => ({ default: m.TopicDetail })),
-);
-const CategoryPage = lazy(() =>
-  import("@/pages/Forums/pages/CategoryPage/index").then((m) => ({ default: m.CategoryPage })),
-);
-const CreateTopicPage = lazy(() =>
-  import("@/pages/Forums/pages/CreateTopicPage").then((m) => ({ default: m.CreateTopicPage })),
-);
-const CategoriesPage = lazy(() =>
-  import("@/pages/Forums/pages/CategoriesPage").then((m) => ({ default: m.CategoriesPage })),
-);
-const NewCategoryPage = lazy(() =>
-  import("@/pages/Forums/pages/NewCategoryPage").then((m) => ({ default: m.NewCategoryPage })),
-);
-const EditCategoryPage = lazy(() =>
-  import("@/pages/Forums/pages/EditCategoryPage").then((m) => ({ default: m.EditCategoryPage })),
-);
-const TagsPage = lazy(() =>
-  import("@/pages/Forums/pages/TagsPage").then((m) => ({ default: m.TagsPage })),
-);
 const SubtitlesPage = lazy(() => import("@/pages/Subtitles/index.tsx"));
 const RankingPage = lazy(() => import("@/pages/RankingPage.tsx"));
 const EditMoviePage = lazy(() => import("@/pages/Edit/movies/index.tsx"));
@@ -50,8 +26,6 @@ const ControlPage = lazy(() => import("@/pages/Control/index.tsx"));
 const RequestsPage = lazy(() => import("@/pages/Requests/index.tsx"));
 const RulesPage = lazy(() => import("@/pages/Rules/index.tsx"));
 const StaffPage = lazy(() => import("@/pages/Staff/index.tsx"));
-const TicketsPage = lazy(() => import("@/pages/Tickets/TicketsPage.tsx"));
-const ReviewPage = lazy(() => import("@/pages/Review/index.tsx"));
 const BonusPage = lazy(() => import("@/pages/Bonus/index.tsx"));
 const InvitePage = lazy(() => import("@/pages/Invite/InvitePage.tsx"));
 const MoviesPage = lazy(() => import("@/pages/Movies/index.tsx"));
@@ -68,7 +42,6 @@ const GroupsPage = lazy(() => import("@/pages/Groups/GroupsPage.tsx"));
 const CandidatesPage = lazy(() => import("@/pages/Candidates/index.tsx"));
 const TutorialsPage = lazy(() => import("@/pages/Tutorials/index.tsx"));
 const SeedingPage = lazy(() => import("@/pages/SeedingPage.tsx"));
-
 const DeadTorrentsPage = lazy(() => import("@/pages/DeadTorrents/index.tsx"));
 const GamesPage = lazy(() => import("@/pages/Games/index.tsx"));
 const MagicFarmPage = lazy(() => import("@/pages/MagicFarm/index.tsx"));
@@ -109,102 +82,7 @@ function ForgotPasswordPageWrapper() {
   return <ForgotPasswordPage onBack={() => navigate("/login")} />;
 }
 
-/**
- * 基础登录态守卫：仅判断是否已登录
- * 现有项目默认使用该守卫保护需要登录的页面
- */
-function AuthRoute({ children }: { children: React.ReactNode }) {
-  const isLoggedIn = !!localStorage.getItem("accessToken");
-  if (!isLoggedIn) return <Navigate to="/login" replace />;
-  return <>{children}</>;
-}
-
-/**
- * 用户权限数据（来自后端 /auth/profile）结构
- */
-// 统一从 AccessContext 获取权限数据
-
-/**
- * 基于后端权限字符的高级路由守卫
- * 用法示例：
- * <PermissionRoute requiredPermissions={["upload"]}>
- *   <AppLayout><UploadTorrentPage /></AppLayout>
- * </PermissionRoute>
- *
- * 校验策略：
- * - 先检查是否已登录
- * - 拉取用户 roles/permissions 后进行匹配
- * - 默认 matchAll=true：必须全部满足；设为 false 时只需满足其中任意一个
- * - 任一校验失败时，重定向到 /home（也可按需改为提示页）
- */
-function PermissionRoute({
-  children,
-  requiredPermissions,
-  requiredRoles,
-  matchAll = true,
-  combine = "AND",
-  name,
-}: {
-  children: React.ReactNode;
-  requiredPermissions?: string[];
-  requiredRoles?: string[];
-  matchAll?: boolean;
-  combine?: "AND" | "OR";
-  name?: string;
-}) {
-  const isLoggedIn = !!localStorage.getItem("accessToken");
-  if (!isLoggedIn) return <Navigate to="/login" replace />;
-
-  const { access, loading } = useAccess();
-  if (loading) return <div style={{ padding: 24, color: "#ccc" }}>加载中…</div>;
-
-  // 检查角色与权限是否满足要求
-  const hasRequired = () => {
-    const hasRoles =
-      !requiredRoles || requiredRoles.length === 0
-        ? true
-        : matchAll
-          ? requiredRoles.every((r) => access.roles.includes(r))
-          : requiredRoles.some((r) => access.roles.includes(r));
-
-    const hasPerms =
-      !requiredPermissions || requiredPermissions.length === 0
-        ? true
-        : matchAll
-          ? requiredPermissions.every((p) => access.permissions.includes(p))
-          : requiredPermissions.some((p) => access.permissions.includes(p));
-
-    return hasRoles && hasPerms;
-  };
-
-  const hasAnyRequired = () => {
-    const rolesOk = !requiredRoles || requiredRoles.length === 0 ? true : hasRequired();
-    const permsOk = !requiredPermissions || requiredPermissions.length === 0 ? true : hasRequired();
-    if (combine === "OR") {
-      const hasRoles =
-        !requiredRoles || requiredRoles.length === 0
-          ? false
-          : matchAll
-            ? requiredRoles.every((r) => access.roles.includes(r))
-            : requiredRoles.some((r) => access.roles.includes(r));
-      const hasPerms =
-        !requiredPermissions || requiredPermissions.length === 0
-          ? false
-          : matchAll
-            ? requiredPermissions.every((p) => access.permissions.includes(p))
-            : requiredPermissions.some((p) => access.permissions.includes(p));
-      return hasRoles || hasPerms;
-    }
-    return hasRequired();
-  };
-
-  if (access.username === "admin") return <>{children}</>;
-  if (!hasAnyRequired()) return <Navigate to="/home" replace />;
-  return <>{children}</>;
-}
-
 export default function AppRoutes() {
-  const navigate = useNavigate();
   return (
     <Suspense fallback={<FullScreenLoader />}>
       <Routes>
@@ -214,44 +92,13 @@ export default function AppRoutes() {
         <Route path="/forgot-password" element={<ForgotPasswordPageWrapper />} />
         <Route path="/" element={<Navigate to="/home" replace />} />
 
-        {/* 独立页面：论坛 (脱离全局布局，使用自己的布局系统) */}
-        <Route
-          path="/forum"
-          element={
-            <AuthRoute>
-              <ForumLayout />
-            </AuthRoute>
-          }
-        >
-          {/* 论坛首页 */}
-          <Route index element={<ForumHomePage />} />
-          {/* 热门话题（全局） */}
-          <Route path="hot" element={<ForumHomePage />} />
-          {/* 最新发布（全局） */}
-          <Route path="latest" element={<ForumHomePage />} />
-          {/* 话题详情 */}
-          <Route path="topic/:topicId" element={<TopicDetail />} />
-          {/* 话题详情 - 带楼层号跳转 */}
-          <Route path="topic/:topicId/:postNumber" element={<TopicDetail />} />
-          {/* 分类页面（默认排序） */}
-          <Route path="category/:categoryId" element={<CategoryPage />} />
-          {/* 分类页面（带排序） */}
-          <Route path="category/:categoryId/:sortBy" element={<CategoryPage />} />
-          {/* 标签页面 */}
-          <Route path="tag/:tagName" element={<CategoryPage />} />
-          {/* 类别概览页 */}
-          <Route path="categories" element={<CategoriesPage />} />
-          {/* 标签概览页 */}
-          <Route path="tags" element={<TagsPage />} />
-          {/* 新建类别 */}
-          <Route path="new-category" element={<NewCategoryPage />} />
-          {/* 编辑类别 */}
-          <Route path="category/:categoryId/edit" element={<EditCategoryPage />} />
-          {/* 发布话题 */}
-          <Route path="create" element={<CreateTopicPage />} />
-        </Route>
+        {/* 论坛模块路由 (独立布局) */}
+        {ForumRoutes()}
 
-        {/* 受保护路由统一持久布局：AuthRoute + AppLayout 持久化，内部通过 Outlet 渲染子页面 */}
+        {/* 管理后台模块路由 (独立布局) */}
+        {AdminRoutes()}
+
+        {/* 受保护路由统一持久布局：AuthRoute + AppLayout */}
         <Route
           element={
             <AuthRoute>
@@ -261,8 +108,7 @@ export default function AppRoutes() {
             </AuthRoute>
           }
         >
-          {/* ==================== 浏览型页面：仅需登录，无需细粒度权限 ==================== */}
-          {/* 首页与基础浏览 */}
+          {/* ==================== 浏览型页面：仅需登录 ==================== */}
           <Route path="/home" element={<HomePage />} />
           <Route path="/torrents" element={<TorrentsPage />} />
           <Route path="/torrent/:id" element={<TorrentDetailPage />} />
@@ -284,7 +130,7 @@ export default function AppRoutes() {
           <Route path="/tutorials" element={<TutorialsPage />} />
           <Route path="/announcements" element={<AnnouncementsPage />} />
 
-          {/* ==================== 权限控制页面：需要细粒度权限 ==================== */}
+          {/* ==================== 权限控制页面 ==================== */}
           {/* 成人区 */}
           <Route
             path="/adult"
@@ -337,24 +183,6 @@ export default function AppRoutes() {
               </PermissionRoute>
             }
           />
-          {/* 审核 */}
-          <Route
-            path="/review"
-            element={
-              <PermissionRoute requiredPermissions={["review"]} name="审核">
-                <ReviewPage />
-              </PermissionRoute>
-            }
-          />
-          {/* 工单 */}
-          <Route
-            path="/tickets"
-            element={
-              <PermissionRoute requiredPermissions={["tickets"]} name="工单">
-                <TicketsPage />
-              </PermissionRoute>
-            }
-          />
 
           {/* 求种与悬赏 */}
           <Route path="/requests" element={<RequestsPage />} />
@@ -362,7 +190,6 @@ export default function AppRoutes() {
           {/* 魔力值与邀请 */}
           <Route path="/invite" element={<InvitePage />} />
           <Route path="/bonus" element={<BonusPage />} />
-          <Route path="/torrent-history" element={<TorrentRecordPage />} />
           <Route path="/torrent-history" element={<TorrentRecordPage />} />
 
           {/* 消息与工单 */}
@@ -382,7 +209,6 @@ export default function AppRoutes() {
 
           {/* 管理功能 */}
           <Route path="/groups" element={<GroupsPage />} />
-          {/* 候选 */}
           <Route path="/candidates" element={<CandidatesPage />} />
 
           {/* 控制 */}
@@ -397,6 +223,7 @@ export default function AppRoutes() {
     </Suspense>
   );
 }
+
 function PlaylistDetailPageWrapper() {
   const navigate = useNavigate();
   const params = useParams();

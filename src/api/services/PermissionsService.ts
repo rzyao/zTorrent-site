@@ -28,7 +28,7 @@ export class PermissionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerAll(
+    public static permissionsCoreControllerAll(
         requestBody: EmptyObjectDto,
     ): CancelablePromise<{
         code?: number;
@@ -50,7 +50,7 @@ export class PermissionsService {
      * @returns any 已创建
      * @throws ApiError
      */
-    public static permissionsControllerCreate(
+    public static permissionsCoreControllerCreate(
         requestBody: CreatePermissionDto,
     ): CancelablePromise<{
         code?: number;
@@ -80,7 +80,7 @@ export class PermissionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerBatchCreate(
+    public static permissionsCoreControllerBatchCreate(
         requestBody: BatchCreatePermissionsDto,
     ): CancelablePromise<{
         code?: number;
@@ -109,7 +109,7 @@ export class PermissionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerListPermissions(
+    public static permissionsCoreControllerListPermissions(
         requestBody: ListPermissionsDto,
     ): CancelablePromise<{
         code?: number;
@@ -138,7 +138,7 @@ export class PermissionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerListPermissionsTree(
+    public static permissionsCoreControllerListPermissionsTree(
         requestBody: ListPermissionsDto,
     ): CancelablePromise<{
         code?: number;
@@ -167,7 +167,7 @@ export class PermissionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerDetail(
+    public static permissionsCoreControllerDetail(
         requestBody: PermissionIdDto,
     ): CancelablePromise<{
         code?: number;
@@ -196,7 +196,7 @@ export class PermissionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerUpdate(
+    public static permissionsCoreControllerUpdate(
         requestBody: UpdatePermissionRequestDto,
     ): CancelablePromise<{
         code?: number;
@@ -225,7 +225,7 @@ export class PermissionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerRemove(
+    public static permissionsCoreControllerRemove(
         requestBody: PermissionIdDto,
     ): CancelablePromise<{
         code?: number;
@@ -254,7 +254,7 @@ export class PermissionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerAssign(
+    public static permissionsAssignmentControllerAssign(
         requestBody: AssignPermissionsDto,
     ): CancelablePromise<{
         code?: number;
@@ -278,13 +278,37 @@ export class PermissionsService {
         });
     }
     /**
+     * 聚合并返回当前用户的权限键集合
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static permissionsAssignmentControllerAggregateOfUser(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: AggregatePermissionsResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/permissions/aggregate-of-user',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
      * 查询权限树
      * 按可选 scope/type 筛选并返回权限树结构
      * @param requestBody
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerTree(
+    public static permissionsTreeControllerTree(
         requestBody: PermissionTreeRequestDto,
     ): CancelablePromise<{
         code?: number;
@@ -313,7 +337,7 @@ export class PermissionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerTreeOfUser(): CancelablePromise<{
+    public static permissionsTreeControllerTreeOfUser(): CancelablePromise<{
         code?: number;
         message?: string;
         data?: Array<PermissionTreeNodeDto>;
@@ -338,7 +362,7 @@ export class PermissionsService {
      * @returns any 成功
      * @throws ApiError
      */
-    public static permissionsControllerCheck(
+    public static permissionsTreeControllerCheck(
         requestBody: CheckPermissionsRequestDto,
     ): CancelablePromise<{
         code?: number;
@@ -352,30 +376,6 @@ export class PermissionsService {
             url: '/permissions/check',
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 聚合并返回当前用户的权限键集合
-     * @returns any 成功
-     * @throws ApiError
-     */
-    public static permissionsControllerAggregateOfUser(): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: AggregatePermissionsResponseDto;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/permissions/aggregate-of-user',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

@@ -197,8 +197,8 @@ export const ForumComposer: React.FC = () => {
         }
       }
     } catch (error: any) {
-      console.error(error);
-      toast.error(error.message || "发布失败");
+      // 错误提示已由 Axios 拦截器统一处理，此处仅记录日志
+      console.error("[ForumComposer] 发布失败:", error);
     }
   };
 

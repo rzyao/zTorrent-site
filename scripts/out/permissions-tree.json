@@ -105,15 +105,27 @@
       ]
     },
     {
-      "path": "/review",
+      "path": "/admin",
+      "permission": "reports",
+      "name": "举报管理",
+      "buttons": []
+    },
+    {
+      "path": "/admin/review",
       "permission": "review",
       "name": "审核",
       "buttons": []
     },
     {
-      "path": "/tickets",
+      "path": "/admin/tickets",
       "permission": "tickets",
       "name": "工单",
+      "buttons": []
+    },
+    {
+      "path": "/admin",
+      "permission": "reports",
+      "name": "举报管理",
       "buttons": []
     },
     {
@@ -130,58 +142,6 @@
         {
           "label": "保存影片",
           "permission": "movie:update",
-          "apis": []
-        }
-      ]
-    },
-    {
-      "path": "/edit/playlist",
-      "permission": "edit:playlist",
-      "name": "编辑播放列表",
-      "buttons": [
-        {
-          "label": "编辑片单",
-          "permission": "playlist:update",
-          "apis": []
-        },
-        {
-          "label": "删除片单",
-          "permission": "playlist:delete",
-          "apis": []
-        },
-        {
-          "label": "添加影片",
-          "permission": "playlist:item.add",
-          "apis": []
-        },
-        {
-          "label": "添加影片",
-          "permission": "playlist:item.add",
-          "apis": []
-        },
-        {
-          "label": "添加影片",
-          "permission": "playlist:item.add",
-          "apis": []
-        },
-        {
-          "label": "上移",
-          "permission": "playlist:order.update",
-          "apis": []
-        },
-        {
-          "label": "下移",
-          "permission": "playlist:order.update",
-          "apis": []
-        },
-        {
-          "label": "移除影片",
-          "permission": "playlist:item.remove",
-          "apis": []
-        },
-        {
-          "label": "保存片单",
-          "permission": "playlist:update",
           "apis": []
         }
       ]

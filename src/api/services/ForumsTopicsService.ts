@@ -306,6 +306,146 @@ export class ForumsTopicsService {
         });
     }
     /**
+     * 切换全局置顶 (管理员)
+     * @param requestBody
+     * @returns any 操作成功
+     * @throws ApiError
+     */
+    public static topicsControllerToggleGlobalPin(
+        requestBody: IdParamDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ForumTopic;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/topics/admin/toggle-global-pin',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 设置为横幅 (管理员)
+     * @param requestBody
+     * @returns any 操作成功
+     * @throws ApiError
+     */
+    public static topicsControllerSetBanner(
+        requestBody: IdParamDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ForumTopic;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/topics/admin/set-banner',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 取消横幅 (管理员)
+     * @param requestBody
+     * @returns any 操作成功
+     * @throws ApiError
+     */
+    public static topicsControllerClearBanner(
+        requestBody: IdParamDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ForumTopic;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/topics/admin/clear-banner',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 获取当前横幅
+     * @returns any 横幅话题 (若无则返回 null)
+     * @throws ApiError
+     */
+    public static topicsControllerGetBanner(): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ForumTopic;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/topics/get-banner',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 切换归档状态 (管理员)
+     * @param requestBody
+     * @returns any 操作成功
+     * @throws ApiError
+     */
+    public static topicsControllerToggleArchive(
+        requestBody: IdParamDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ForumTopic;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/topics/admin/toggle-archive',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
      * 移动话题到其他分类 (管理员)
      * @param requestBody
      * @returns any 移动成功
