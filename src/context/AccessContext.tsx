@@ -2,6 +2,25 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { getAuthService, getPermissionsService } from "../api/lazy";
 
 /**
+ * 从 JWT token 解析用户名（Fallback 机制）
+ * 当后端 API 不可用时，从本地存储的 token 中提取用户名
+ */
+function parseUsernameFromToken(token: string | null): string {
+  if (!token) return "";
+  try {
+    // JWT token 格式: header.payload.signature
+    const base64Payload = token.split(".")[1];
+    if (!base64Payload) return "";
+    // 解码 Base64 URL 编码的 payload
+    const payload = JSON.parse(atob(base64Payload.replace(/-/g, "+").replace(/_/g, "/")));
+    // 兼容不同的 payload 结构：username / sub / name
+    return payload.username || payload.sub || payload.name || "";
+  } catch {
+    return "";
+  }
+}
+
+/**
  * 用户访问权限类型定义
  * @property roles 用户角色列表
  * @property permissions 用户权限列表
@@ -107,6 +126,10 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
           // 确保头像为非空字符串
           avatar = typeof rawAvatar === "string" && rawAvatar.trim().length > 0 ? rawAvatar : null;
         } else {
+          // Profile API 失败时，尝试从 JWT token 解析用户名（仅用于 UI 显示）
+          // 注意：权限控制由后端动态路由 API 负责，此处解析仅为显示用途
+          username = parseUsernameFromToken(token);
+          console.warn("[AccessContext] Profile API 失败，使用 token 解析用户名:", username);
           setError((profileRes as any)?.reason?.message || "获取用户信息失败");
         }
 

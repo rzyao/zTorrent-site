@@ -76,7 +76,27 @@ export function PermissionRoute({
     return hasRequired();
   };
 
-  if (access.username === "admin") return <>{children}</>;
-  if (!hasAnyRequired()) return <Navigate to="/home" replace />;
+  console.log("[PermissionRoute] 权限检查", {
+    name,
+    username: access.username,
+    isAdmin: access.username === "admin",
+    requiredPermissions,
+    requiredRoles,
+    userPermissions: access.permissions,
+    userRoles: access.roles,
+  });
+
+  // admin 用户直接放行
+  if (access.username === "admin") {
+    console.log("[PermissionRoute] admin 用户直接放行");
+    return <>{children}</>;
+  }
+
+  if (!hasAnyRequired()) {
+    console.log("[PermissionRoute] 权限不足，重定向到首页");
+    return <Navigate to="/home" replace />;
+  }
+
+  console.log("[PermissionRoute] 权限验证通过");
   return <>{children}</>;
 }

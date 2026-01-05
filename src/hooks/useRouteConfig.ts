@@ -1,0 +1,63 @@
+/**
+ * 路由配置 Hook
+ * 从后端获取用户可访问的路由配置
+ * 严格依赖后端 API，无静态兜底
+ */
+import { useQuery } from "@tanstack/react-query";
+import { RouteConfig } from "@/types/routeConfig";
+import { PlatformRoutesService } from "@/api/services/PlatformRoutesService";
+import { RouteTreeNodeDto } from "@/api/models/RouteTreeNodeDto";
+
+/**
+ * 将 API 返回的 DTO 转换为前端使用的 RouteConfig
+ */
+function mapDtoToConfig(dto: RouteTreeNodeDto): RouteConfig {
+  return {
+    id: dto.id,
+    path: dto.path,
+    // 强制转换为 string，因为生成的类型可能是 Record<string, any> 但运行时应为 string
+    component: (dto.component as unknown as string) || "",
+    layout: (dto.layout as unknown as RouteConfig["layout"]) || "none",
+    name: (dto.name as unknown as string) || undefined,
+    permissions: dto.permissions,
+    index: dto.index,
+    redirect: (dto.redirect as unknown as string) || undefined,
+    isVisible: dto.isVisible,
+    children: dto.children?.map(mapDtoToConfig),
+  };
+}
+
+/**
+ * 获取路由配置
+ * 完全依赖后端 API
+ */
+export function useRouteConfig() {
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["routeConfig"],
+    queryFn: async (): Promise<RouteConfig[]> => {
+      console.log("[useRouteConfig] 开始获取动态路由配置...");
+      const response = await PlatformRoutesService.routesControllerGetUserRoutes();
+
+      // 检查响应
+      if (!response || !response.data || !Array.isArray(response.data.routes)) {
+        throw new Error("[useRouteConfig] API 返回数据格式无效");
+      }
+
+      const apiRoutes = response.data.routes.map(mapDtoToConfig);
+      console.log("[useRouteConfig] 成功获取路由配置:", apiRoutes.length, "个根节点");
+
+      return apiRoutes;
+    },
+    staleTime: 5 * 60 * 1000, // 5 分钟缓存
+    retry: 1,
+    // 确保用户已登录，否则不请求
+    enabled: !!localStorage.getItem("accessToken"),
+  });
+
+  return {
+    routes: data || [],
+    isLoading,
+    error,
+    refetch,
+  };
+}
