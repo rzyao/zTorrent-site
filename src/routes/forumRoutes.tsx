@@ -8,34 +8,34 @@ import { AuthRoute } from "./guards";
 
 // 论坛布局与页面懒加载
 const ForumLayout = lazy(() =>
-  import("@/pages/Forums/layouts/ForumLayout").then((m) => ({ default: m.ForumLayout })),
+  import("@/modules/forum/layouts/ForumLayout").then((m) => ({ default: m.ForumLayout })),
 );
 const ForumHomePage = lazy(() =>
-  import("@/pages/Forums/pages/ForumHomePage").then((m) => ({ default: m.ForumHomePage })),
+  import("@/modules/forum/pages/ForumHomePage").then((m) => ({ default: m.ForumHomePage })),
 );
 const TopicDetail = lazy(() =>
-  import("@/pages/Forums/pages/TopicDetail/index").then((m) => ({ default: m.TopicDetail })),
+  import("@/modules/forum/pages/TopicDetail/index").then((m) => ({ default: m.TopicDetail })),
 );
 const CategoryPage = lazy(() =>
-  import("@/pages/Forums/pages/CategoryPage/index").then((m) => ({ default: m.CategoryPage })),
+  import("@/modules/forum/pages/CategoryPage/index").then((m) => ({ default: m.CategoryPage })),
 );
 const CreateTopicPage = lazy(() =>
-  import("@/pages/Forums/pages/CreateTopicPage").then((m) => ({ default: m.CreateTopicPage })),
+  import("@/modules/forum/pages/CreateTopicPage").then((m) => ({ default: m.CreateTopicPage })),
 );
 const CategoriesPage = lazy(() =>
-  import("@/pages/Forums/pages/CategoriesPage").then((m) => ({ default: m.CategoriesPage })),
+  import("@/modules/forum/pages/CategoriesPage").then((m) => ({ default: m.CategoriesPage })),
 );
 const NewCategoryPage = lazy(() =>
-  import("@/pages/Forums/pages/NewCategoryPage").then((m) => ({ default: m.NewCategoryPage })),
+  import("@/modules/forum/pages/NewCategoryPage").then((m) => ({ default: m.NewCategoryPage })),
 );
 const EditCategoryPage = lazy(() =>
-  import("@/pages/Forums/pages/EditCategoryPage").then((m) => ({ default: m.EditCategoryPage })),
+  import("@/modules/forum/pages/EditCategoryPage").then((m) => ({ default: m.EditCategoryPage })),
 );
 const TagsPage = lazy(() =>
-  import("@/pages/Forums/pages/TagsPage").then((m) => ({ default: m.TagsPage })),
+  import("@/modules/forum/pages/TagsPage").then((m) => ({ default: m.TagsPage })),
 );
 const BookmarksPage = lazy(() =>
-  import("@/pages/Forums/pages/BookmarksPage").then((m) => ({ default: m.BookmarksPage })),
+  import("@/modules/forum/pages/BookmarksPage").then((m) => ({ default: m.BookmarksPage })),
 );
 
 /**

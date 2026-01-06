@@ -74,40 +74,40 @@ export const componentRegistry: Record<string, LazyComponent> = {
   // ==================== 后台管理 ====================
   ReportsPage: lazy(() => import("@/pages/Reports")),
   // 路由管理
-  RouteManagePage: lazy(() => import("@/pages/admin/RouteManage")),
+  RouteManagePage: lazy(() => import("@/modules/admin/pages/RouteManage")),
   ReviewPage: lazy(() => import("@/pages/Review")),
   TicketsPage: lazy(() => import("@/pages/Tickets/TicketsPage")),
 
   // ==================== 论坛模块 ====================
   ForumLayout: lazy(() =>
-    import("@/pages/Forums/layouts/ForumLayout").then((m) => ({ default: m.ForumLayout })),
+    import("@/modules/forum/layouts/ForumLayout").then((m) => ({ default: m.ForumLayout })),
   ),
   ForumHomePage: lazy(() =>
-    import("@/pages/Forums/pages/ForumHomePage").then((m) => ({ default: m.ForumHomePage })),
+    import("@/modules/forum/pages/ForumHomePage").then((m) => ({ default: m.ForumHomePage })),
   ),
   TopicDetail: lazy(() =>
-    import("@/pages/Forums/pages/TopicDetail").then((m) => ({ default: m.TopicDetail })),
+    import("@/modules/forum/pages/TopicDetail").then((m) => ({ default: m.TopicDetail })),
   ),
   CategoryPage: lazy(() =>
-    import("@/pages/Forums/pages/CategoryPage").then((m) => ({ default: m.CategoryPage })),
+    import("@/modules/forum/pages/CategoryPage").then((m) => ({ default: m.CategoryPage })),
   ),
   CreateTopicPage: lazy(() =>
-    import("@/pages/Forums/pages/CreateTopicPage").then((m) => ({ default: m.CreateTopicPage })),
+    import("@/modules/forum/pages/CreateTopicPage").then((m) => ({ default: m.CreateTopicPage })),
   ),
   CategoriesPage: lazy(() =>
-    import("@/pages/Forums/pages/CategoriesPage").then((m) => ({ default: m.CategoriesPage })),
+    import("@/modules/forum/pages/CategoriesPage").then((m) => ({ default: m.CategoriesPage })),
   ),
   NewCategoryPage: lazy(() =>
-    import("@/pages/Forums/pages/NewCategoryPage").then((m) => ({ default: m.NewCategoryPage })),
+    import("@/modules/forum/pages/NewCategoryPage").then((m) => ({ default: m.NewCategoryPage })),
   ),
   EditCategoryPage: lazy(() =>
-    import("@/pages/Forums/pages/EditCategoryPage").then((m) => ({ default: m.EditCategoryPage })),
+    import("@/modules/forum/pages/EditCategoryPage").then((m) => ({ default: m.EditCategoryPage })),
   ),
   TagsPage: lazy(() =>
-    import("@/pages/Forums/pages/TagsPage").then((m) => ({ default: m.TagsPage })),
+    import("@/modules/forum/pages/TagsPage").then((m) => ({ default: m.TagsPage })),
   ),
   BookmarksPage: lazy(() =>
-    import("@/pages/Forums/pages/BookmarksPage").then((m) => ({ default: m.BookmarksPage })),
+    import("@/modules/forum/pages/BookmarksPage").then((m) => ({ default: m.BookmarksPage })),
   ),
 };
 

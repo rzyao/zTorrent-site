@@ -12,7 +12,7 @@ import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
 import { GlobalLoaderTrigger } from "@/components/ui/GlobalLoader";
 import { useGlobalLoader } from "@/stores/globalLoaderStore";
 import AppLayout from "@/layouts/AppLayout";
-import { AdminLayout } from "@/pages/admin/layouts/AdminLayout";
+import { AdminLayout } from "@/modules/admin/layouts/AdminLayout";
 
 /**
  * 根据布局类型获取布局组件

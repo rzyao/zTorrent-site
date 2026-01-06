@@ -5,7 +5,7 @@
 import { Route, Navigate } from "react-router-dom";
 import { lazy } from "react";
 import { AuthRoute, PermissionRoute } from "./guards";
-import { AdminLayout } from "@/pages/admin/layouts/AdminLayout";
+import { AdminLayout } from "@/modules/admin/layouts/AdminLayout";
 
 // 后台页面懒加载
 const ReportsPage = lazy(() => import("@/pages/Reports/index.tsx"));
