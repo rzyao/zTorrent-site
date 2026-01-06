@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, Film, Heart, Star, Eye, Calendar, Clock, Play } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import type { PlaylistDetail, PlaylistFilm } from "@/pages/PlaylistDetail/types";
+import type { PlaylistDetail, PlaylistFilm } from "@/modules/app/pages/PlaylistDetail/types";
 
 // ===================================
 // Props & Types

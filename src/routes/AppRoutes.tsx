@@ -8,9 +8,9 @@ import { FullScreenLoader } from "@/components/ui/FullScreenLoader";
 import { DynamicRoutes } from "./DynamicRoutes";
 
 // 公开页面（无需登录）
-const LoginPage = lazy(() => import("@/pages/Login"));
-const Register = lazy(() => import("@/pages/Register"));
-const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPassword"));
+const LoginPage = lazy(() => import("@/modules/app/pages/Login"));
+const Register = lazy(() => import("@/modules/app/pages/Register"));
+const ForgotPasswordPage = lazy(() => import("@/modules/app/pages/ForgotPassword"));
 
 /**
  * 登录页面包装器

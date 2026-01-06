@@ -8,9 +8,9 @@ import { AuthRoute, PermissionRoute } from "./guards";
 import { AdminLayout } from "@/modules/admin/layouts/AdminLayout";
 
 // 后台页面懒加载
-const ReportsPage = lazy(() => import("@/pages/Reports/index.tsx"));
-const ReviewPage = lazy(() => import("@/pages/Review/index.tsx"));
-const TicketsPage = lazy(() => import("@/pages/Tickets/TicketsPage.tsx"));
+const ReportsPage = lazy(() => import("@/modules/app/pages/Reports/index.tsx"));
+const ReviewPage = lazy(() => import("@/modules/app/pages/Review/index.tsx"));
+const TicketsPage = lazy(() => import("@/modules/app/pages/Tickets/TicketsPage.tsx"));
 
 /**
  * 管理后台路由组件

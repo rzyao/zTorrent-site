@@ -19,12 +19,12 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 // 注意：ImageWithFallback 路径需要根据实际引用调整，假设是通用的
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
-import { processDescription } from "@/pages/TorrentDetail/utils/processDescription";
+import { processDescription } from "@/modules/app/pages/TorrentDetail/utils/processDescription";
 import { formatDateTime } from "@/utils/format";
 
 // 复用 TorrentDetail 的类型定义，
 // 如果 types.ts 路径不同请自行调整引用
-import { TorrentData, FileItem, Comment } from "@/pages/TorrentDetail/types";
+import { TorrentData, FileItem, Comment } from "@/modules/app/pages/TorrentDetail/types";
 
 // ============================================
 // Types
@@ -48,7 +48,7 @@ export interface TorrentDetailBodyProps {
 // 为了本次 Task，我们暂时内联一份简化版，或者如果原文件导出复用，则引用它。
 // 考虑到原 FileListItem 比较简单，这里为了方便直接嵌入同款逻辑，
 // 或者最佳实践是引用原组件。假设我们引用原组件：
-// import { FileListItem } from "@/pages/TorrentDetail/components/FileListItem";
+// import { FileListItem } from "@/modules/app/pages/TorrentDetail/components/FileListItem";
 // 但原组件import路径是相对的。我们还是在这里重新定义一个局部组件或把原组件移动到通用目录。
 // 为了稳健，先把 FileListItem 逻辑在这里实现一遍，或者建议下一步移动原组件。
 // 这里采用内联实现以保证 Task 1 独立完成。

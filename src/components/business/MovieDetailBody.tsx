@@ -31,7 +31,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TorrentTable } from "@/components/TorrentTable";
 
 // 引用 MovieDetail types (若路径不同请调整)
-import type { FilmDetail, CommentItem, TorrentItem, AwardItem } from "@/pages/MovieDetail/types";
+import type { FilmDetail, CommentItem, TorrentItem, AwardItem } from "@/modules/app/pages/MovieDetail/types";
 
 // ===================================
 // Props Definition

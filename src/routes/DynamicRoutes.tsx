@@ -11,7 +11,7 @@ import { AuthRoute } from "./guards";
 import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
 import { GlobalLoaderTrigger } from "@/components/ui/GlobalLoader";
 import { useGlobalLoader } from "@/stores/globalLoaderStore";
-import AppLayout from "@/layouts/AppLayout";
+import AppLayout from "@/modules/app/layouts/AppLayout";
 import { AdminLayout } from "@/modules/admin/layouts/AdminLayout";
 
 /**

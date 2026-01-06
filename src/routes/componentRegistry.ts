@@ -14,69 +14,69 @@ type LazyComponent = LazyExoticComponent<ComponentType<any>>;
  */
 export const componentRegistry: Record<string, LazyComponent> = {
   // ==================== 公共页面 ====================
-  HomePage: lazy(() => import("@/pages/Home")),
-  TorrentsPage: lazy(() => import("@/pages/TorrentsList")),
-  TorrentDetailPage: lazy(() => import("@/pages/TorrentDetail")),
-  SubtitlesPage: lazy(() => import("@/pages/Subtitles")),
-  RankingPage: lazy(() => import("@/pages/RankingPage")),
+  HomePage: lazy(() => import("@/modules/app/pages/Home")),
+  TorrentsPage: lazy(() => import("@/modules/app/pages/TorrentsList")),
+  TorrentDetailPage: lazy(() => import("@/modules/app/pages/TorrentDetail")),
+  SubtitlesPage: lazy(() => import("@/modules/app/pages/Subtitles")),
+  RankingPage: lazy(() => import("@/modules/app/pages/RankingPage")),
 
   // ==================== 电影与剧集 ====================
-  MoviesPage: lazy(() => import("@/pages/Movies")),
-  MovieDetailPage: lazy(() => import("@/pages/MovieDetail")),
-  SeriesPage: lazy(() => import("@/pages/Series")),
-  SeriesDetailPage: lazy(() => import("@/pages/SeriesDetail")),
-  EpisodeDetailPage: lazy(() => import("@/pages/EpisodeDetail")),
-  PlaylistsPage: lazy(() => import("@/pages/Playlists")),
-  PlaylistDetailPage: lazy(() => import("@/pages/PlaylistDetail")),
+  MoviesPage: lazy(() => import("@/modules/app/pages/Movies")),
+  MovieDetailPage: lazy(() => import("@/modules/app/pages/MovieDetail")),
+  SeriesPage: lazy(() => import("@/modules/app/pages/Series")),
+  SeriesDetailPage: lazy(() => import("@/modules/app/pages/SeriesDetail")),
+  EpisodeDetailPage: lazy(() => import("@/modules/app/pages/EpisodeDetail")),
+  PlaylistsPage: lazy(() => import("@/modules/app/pages/Playlists")),
+  PlaylistDetailPage: lazy(() => import("@/modules/app/pages/PlaylistDetail")),
 
   // ==================== 编辑页面 ====================
-  EditMoviePage: lazy(() => import("@/pages/Edit/movies")),
-  EditSeriesPage: lazy(() => import("@/pages/Edit/series")),
-  EditPlaylistPage: lazy(() => import("@/pages/Edit/playlists")),
+  EditMoviePage: lazy(() => import("@/modules/app/pages/Edit/movies")),
+  EditSeriesPage: lazy(() => import("@/modules/app/pages/Edit/series")),
+  EditPlaylistPage: lazy(() => import("@/modules/app/pages/Edit/playlists")),
 
   // ==================== 上传与发布 ====================
-  UploadTorrentPage: lazy(() => import("@/pages/UploadTorrent")),
+  UploadTorrentPage: lazy(() => import("@/modules/app/pages/UploadTorrent")),
 
   // ==================== 用户中心 ====================
-  MessagesPage: lazy(() => import("@/pages/Messages")),
-  FavoritesPage: lazy(() => import("@/pages/Favorites")),
-  BonusPage: lazy(() => import("@/pages/Bonus")),
-  InvitePage: lazy(() => import("@/pages/Invite/InvitePage")),
-  TorrentRecordPage: lazy(() => import("@/pages/TorrentRecord")),
+  MessagesPage: lazy(() => import("@/modules/app/pages/Messages")),
+  FavoritesPage: lazy(() => import("@/modules/app/pages/Favorites")),
+  BonusPage: lazy(() => import("@/modules/app/pages/Bonus")),
+  InvitePage: lazy(() => import("@/modules/app/pages/Invite/InvitePage")),
+  TorrentRecordPage: lazy(() => import("@/modules/app/pages/TorrentRecord")),
 
   // ==================== 站点信息 ====================
-  RulesPage: lazy(() => import("@/pages/Rules")),
-  StaffPage: lazy(() => import("@/pages/Staff")),
-  TutorialsPage: lazy(() => import("@/pages/Tutorials")),
-  AnnouncementsPage: lazy(() => import("@/pages/Announcements")),
+  RulesPage: lazy(() => import("@/modules/app/pages/Rules")),
+  StaffPage: lazy(() => import("@/modules/app/pages/Staff")),
+  TutorialsPage: lazy(() => import("@/modules/app/pages/Tutorials")),
+  AnnouncementsPage: lazy(() => import("@/modules/app/pages/Announcements")),
 
   // ==================== 高级功能 ====================
-  RSSPage: lazy(() => import("@/pages/RSSPage")),
-  SeedingPage: lazy(() => import("@/pages/SeedingPage")),
-  DeadTorrentsPage: lazy(() => import("@/pages/DeadTorrents")),
-  GroupsPage: lazy(() => import("@/pages/Groups/GroupsPage")),
-  CandidatesPage: lazy(() => import("@/pages/Candidates")),
-  RequestsPage: lazy(() => import("@/pages/Requests")),
+  RSSPage: lazy(() => import("@/modules/app/pages/RSSPage")),
+  SeedingPage: lazy(() => import("@/modules/app/pages/SeedingPage")),
+  DeadTorrentsPage: lazy(() => import("@/modules/app/pages/DeadTorrents")),
+  GroupsPage: lazy(() => import("@/modules/app/pages/Groups/GroupsPage")),
+  CandidatesPage: lazy(() => import("@/modules/app/pages/Candidates")),
+  RequestsPage: lazy(() => import("@/modules/app/pages/Requests")),
 
   // ==================== 娱乐功能 ====================
-  GamesPage: lazy(() => import("@/pages/Games")),
-  MagicFarmPage: lazy(() => import("@/pages/MagicFarm")),
-  MusicPage: lazy(() => import("@/pages/Music")),
-  PlayerPage: lazy(() => import("@/pages/PlayerPage")),
+  GamesPage: lazy(() => import("@/modules/app/pages/Games")),
+  MagicFarmPage: lazy(() => import("@/modules/app/pages/MagicFarm")),
+  MusicPage: lazy(() => import("@/modules/app/pages/Music")),
+  PlayerPage: lazy(() => import("@/modules/app/pages/PlayerPage")),
 
   // ==================== 成人区 ====================
-  AdultPage: lazy(() => import("@/pages/Adult")),
+  AdultPage: lazy(() => import("@/modules/app/pages/Adult")),
 
   // ==================== 管理功能 ====================
-  ControlPage: lazy(() => import("@/pages/Control")),
-  DesignPage: lazy(() => import("@/pages/design")),
+  ControlPage: lazy(() => import("@/modules/app/pages/Control")),
+  DesignPage: lazy(() => import("@/modules/app/pages/design")),
 
   // ==================== 后台管理 ====================
-  ReportsPage: lazy(() => import("@/pages/Reports")),
+  ReportsPage: lazy(() => import("@/modules/app/pages/Reports")),
   // 路由管理
   RouteManagePage: lazy(() => import("@/modules/admin/pages/RouteManage")),
-  ReviewPage: lazy(() => import("@/pages/Review")),
-  TicketsPage: lazy(() => import("@/pages/Tickets/TicketsPage")),
+  ReviewPage: lazy(() => import("@/modules/app/pages/Review")),
+  TicketsPage: lazy(() => import("@/modules/app/pages/Tickets/TicketsPage")),
 
   // ==================== 论坛模块 ====================
   ForumLayout: lazy(() =>
