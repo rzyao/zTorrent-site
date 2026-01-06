@@ -2,16 +2,17 @@
  * 动态路由渲染器
  * 根据后端配置动态生成路由
  */
-import { Suspense, createElement } from "react";
+import { Suspense, createElement, useEffect } from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { RouteConfig } from "@/types/routeConfig";
 import { useRouteConfig } from "@/hooks/useRouteConfig";
-import { componentRegistry, hasComponent, getComponent } from "./componentRegistry";
+import { getComponent } from "./componentRegistry";
 import { AuthRoute } from "./guards";
-import { FullScreenLoader } from "@/components/ui/FullScreenLoader";
 import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
+import { GlobalLoaderTrigger } from "@/components/ui/GlobalLoader";
+import { useGlobalLoader } from "@/stores/globalLoaderStore";
 import AppLayout from "@/layouts/AppLayout";
-import { AdminLayout } from "@/layouts/AdminLayout";
+import { AdminLayout } from "@/pages/admin/layouts/AdminLayout";
 
 /**
  * 根据布局类型获取布局组件
@@ -23,7 +24,6 @@ function getLayoutWrapper(layout: string | undefined) {
     case "admin":
       return AdminLayout;
     case "forum":
-      // ForumLayout 通过 componentRegistry 动态加载
       return null;
     case "none":
     default:
@@ -35,37 +35,24 @@ function getLayoutWrapper(layout: string | undefined) {
  * 渲染单个路由配置
  */
 function renderRoute(config: RouteConfig, parentPath: string = ""): React.ReactNode {
-  const { id, path, component, permissions, children, index, redirect, name } = config;
-
-  // 构建完整路径（用于调试）
+  const { id, path, component, children, index, redirect } = config;
   const fullPath = index ? parentPath : path.startsWith("/") ? path : `${parentPath}/${path}`;
 
-  // 处理重定向
   if (redirect) {
     return <Route key={id} path={path} element={<Navigate to={redirect} replace />} />;
   }
 
-  // 获取组件
   const LazyComponent = component ? getComponent(component) : null;
-
-  // 构建元素
   let element: React.ReactNode;
 
   if (LazyComponent) {
     element = <Suspense fallback={<RouteProgressBar />}>{createElement(LazyComponent)}</Suspense>;
   } else if (children && children.length > 0) {
-    // 父级路由，使用 Outlet
     element = <Outlet />;
   } else {
-    // 空组件（占位）
     element = <div className="p-8 text-white">页面开发中...</div>;
   }
 
-  // 注意：权限控制由后端动态路由 API 负责
-  // 后端 /routes/user 接口只返回当前用户有权访问的路由
-  // 前端无需做二次权限验证
-
-  // 渲染子路由
   if (children && children.length > 0) {
     return (
       <Route key={id} path={path} element={element}>
@@ -74,12 +61,10 @@ function renderRoute(config: RouteConfig, parentPath: string = ""): React.ReactN
     );
   }
 
-  // 索引路由
   if (index) {
     return <Route key={id} index element={element} />;
   }
 
-  // 普通路由
   return <Route key={id} path={path} element={element} />;
 }
 
@@ -88,11 +73,9 @@ function renderRoute(config: RouteConfig, parentPath: string = ""): React.ReactN
  */
 function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
   const { id, path, layout, children, component } = config;
-
-  // 获取布局组件
   const LayoutComponent = getLayoutWrapper(layout);
 
-  // 论坛布局特殊处理：使用 componentRegistry 中的 ForumLayout
+  // 论坛布局：使用全局加载器触发器
   if (layout === "forum" && component) {
     const ForumLayoutComponent = getComponent(component);
     if (ForumLayoutComponent) {
@@ -102,9 +85,11 @@ function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
           path={path}
           element={
             <AuthRoute>
-              <Suspense fallback={<RouteProgressBar />}>
-                {createElement(ForumLayoutComponent)}
-              </Suspense>
+              <div className="min-h-screen bg-[#0a0a0a]">
+                <Suspense fallback={<GlobalLoaderTrigger />}>
+                  {createElement(ForumLayoutComponent)}
+                </Suspense>
+              </div>
             </AuthRoute>
           }
         >
@@ -115,7 +100,6 @@ function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
   }
 
   // Admin 布局
-  // 权限控制由后端动态路由 API 负责，前端只检查登录状态
   if (layout === "admin") {
     return (
       <Route
@@ -133,7 +117,7 @@ function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
     );
   }
 
-  // App 布局（默认）
+  // App 布局
   if (LayoutComponent) {
     return (
       <Route
@@ -151,8 +135,22 @@ function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
     );
   }
 
-  // 无布局
   return children?.map((child) => renderRoute(child, path));
+}
+
+/**
+ * 路由加载指示器组件
+ * 在路由配置加载期间显示全局加载器
+ */
+function RouteConfigLoader() {
+  const { startLoading, finishLoading } = useGlobalLoader();
+
+  useEffect(() => {
+    startLoading();
+    return () => finishLoading();
+  }, [startLoading, finishLoading]);
+
+  return null;
 }
 
 /**
@@ -161,23 +159,19 @@ function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
 export function DynamicRoutes() {
   const { routes, isLoading } = useRouteConfig();
 
+  // 路由配置加载中 - 显示加载器
   if (isLoading) {
-    return <FullScreenLoader />;
+    return <RouteConfigLoader />;
   }
 
   return (
     <Routes>
       {routes.map((config) => renderLayoutRoutes(config))}
-
-      {/* 未匹配路由重定向 */}
       <Route path="*" element={<NotFoundRedirect />} />
     </Routes>
   );
 }
 
-/**
- * 404 重定向
- */
 function NotFoundRedirect() {
   const isLoggedIn = !!localStorage.getItem("accessToken");
   return <Navigate to={isLoggedIn ? "/home" : "/login"} replace />;

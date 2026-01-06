@@ -41,7 +41,7 @@ function findParent(
     if (node.id === targetId) return parent;
     if (node.children) {
       const found = findParent(node.children, targetId, node);
-      if (found !== undefined) return found;
+      if (found !== null) return found;
     }
   }
   return null;
@@ -206,33 +206,50 @@ export default function RouteManagePage() {
   );
 
   return (
-    <div className="bg-background flex h-[calc(100vh-64px)] flex-col gap-4 p-6">
+    <div className="gap-antd-md flex h-[calc(100vh-112px)] flex-col">
+      {/* 头部区域 */}
       <div className="flex shrink-0 items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">路由管理</h1>
-          <p className="text-muted-foreground text-sm">可视化的动态路由配置中心</p>
+          <h1 className="text-antd-xl text-antd-text font-semibold tracking-tight">路由管理</h1>
+          <p className="text-antd-sm text-antd-text-description">可视化的动态路由配置中心</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => refetch()}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-antd-border text-antd-text hover:bg-antd-border-secondary"
+            onClick={() => refetch()}
+          >
             <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
             刷新
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setIsImportOpen(true)}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-antd-border text-antd-text hover:bg-antd-border-secondary"
+            onClick={() => setIsImportOpen(true)}
+          >
             <Upload className="mr-2 h-4 w-4" />
             批量导入
           </Button>
-          <Button size="sm" disabled>
+          <Button
+            size="sm"
+            className="bg-antd-primary hover:bg-antd-primary-hover text-white"
+            disabled
+          >
             <Plus className="mr-2 h-4 w-4" />
             新建 (WIP)
           </Button>
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1 gap-4">
-        <div className="flex w-1/3 min-w-[300px] flex-col gap-2">
+      {/* 主体区域 */}
+      <div className="gap-antd-lg flex min-h-0 flex-1">
+        {/* 左侧树结构 */}
+        <div className="flex w-1/3 min-w-[320px] flex-col gap-2">
           {isLoading ? (
-            <div className="flex flex-1 items-center justify-center rounded-lg border">
-              <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
+            <div className="rounded-antd border-antd-border-secondary bg-antd-bg-container flex flex-1 items-center justify-center border">
+              <Loader2 className="text-antd-primary h-8 w-8 animate-spin" />
             </div>
           ) : (
             <RouteTree
@@ -243,7 +260,9 @@ export default function RouteManagePage() {
             />
           )}
         </div>
-        <div className="min-w-[400px] flex-1">
+
+        {/* 右侧详情面板 */}
+        <div className="min-w-[420px] flex-1">
           <DetailsPanel
             node={selectedNode}
             onSave={updateMutation.mutate}
@@ -253,18 +272,23 @@ export default function RouteManagePage() {
         </div>
       </div>
 
+      {/* 弹窗组件 */}
       <ImportDialog open={isImportOpen} onOpenChange={setIsImportOpen} />
 
       <AlertDialog open={!!nodeToDelete} onOpenChange={(open) => !open && setNodeToDelete(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="rounded-antd-lg border-antd-border-secondary bg-antd-bg-container">
           <AlertDialogHeader>
-            <AlertDialogTitle>确认删除此路由？</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-antd-lg text-antd-text font-semibold">
+              确认删除此路由？
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-antd text-antd-text-description">
               此操作将永久删除该路由节点及其子节点，无法撤销。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-antd border-antd-border text-antd-text hover:bg-antd-border-secondary">
+              取消
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 if (nodeToDelete) {
@@ -272,7 +296,7 @@ export default function RouteManagePage() {
                   setNodeToDelete(null);
                 }
               }}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="rounded-antd bg-antd-error hover:bg-antd-error/90 text-white"
             >
               确认删除
             </AlertDialogAction>

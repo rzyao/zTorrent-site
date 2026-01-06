@@ -1,18 +1,23 @@
 import { motion } from "framer-motion";
 import logo from "@/assets/logo.svg";
 
-export function FullScreenLoader() {
+interface FullScreenLoaderProps {
+  /** 是否跳过入场动画（用于 Suspense fallback，避免二次动画）*/
+  skipEntrance?: boolean;
+}
+
+export function FullScreenLoader({ skipEntrance = false }: FullScreenLoaderProps) {
   return (
     <div className="fixed inset-0 z-100 flex flex-col items-center justify-center bg-[#0a0a0a] text-white">
       {/* 背景光效 */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="-h-[500px] -w-[500px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500/10 blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500/10 blur-[100px]" />
       </div>
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={skipEntrance ? false : { opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        transition={{ duration: skipEntrance ? 0 : 0.5, ease: "easeOut" }}
         className="relative z-10 flex flex-col items-center"
       >
         {/* Logo 动画 */}
@@ -36,9 +41,9 @@ export function FullScreenLoader() {
 
         {/* 标题 */}
         <motion.h1
-          initial={{ opacity: 0, y: 10 }}
+          initial={skipEntrance ? false : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
+          transition={{ delay: skipEntrance ? 0 : 0.2, duration: skipEntrance ? 0 : 0.5 }}
           className="mt-8 bg-linear-to-r from-neutral-100 to-neutral-400 bg-clip-text text-2xl font-bold tracking-[0.25em] text-transparent md:text-3xl"
         >
           GuoYuan
@@ -46,9 +51,9 @@ export function FullScreenLoader() {
 
         {/* 进度条容器 */}
         <motion.div
-          initial={{ opacity: 0, width: 0 }}
+          initial={skipEntrance ? { opacity: 1, width: "12rem" } : { opacity: 0, width: 0 }}
           animate={{ opacity: 1, width: "12rem" }}
-          transition={{ delay: 0.4, duration: 0.5 }}
+          transition={{ delay: skipEntrance ? 0 : 0.4, duration: skipEntrance ? 0 : 0.5 }}
           className="mt-8 h-1 overflow-hidden rounded-full bg-neutral-800"
         >
           {/* 进度条动画 */}
@@ -64,11 +69,11 @@ export function FullScreenLoader() {
           />
         </motion.div>
 
-        {/* 加载文字 (可选) */}
+        {/* 加载文字 */}
         <motion.p
-          initial={{ opacity: 0 }}
+          initial={skipEntrance ? { opacity: 0.5 } : { opacity: 0 }}
           animate={{ opacity: 0.5 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: skipEntrance ? 0 : 0.6 }}
           className="mt-4 text-xs font-light tracking-widest text-neutral-500 uppercase"
         >
           LOADING RESOURCES
