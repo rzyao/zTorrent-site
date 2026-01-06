@@ -1,21 +1,9 @@
 import { RouteTreeNodeDto } from "@/api/models/RouteTreeNodeDto";
-import { RouteTreeNode } from "./RouteTreeNode";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import {
-  DndContext,
-  DragEndEvent,
-  DragMoveEvent,
-  DragOverEvent,
-  DragOverlay,
-  DragStartEvent,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  MeasuringStrategy,
-  pointerWithin,
-} from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { useCallback, useMemo, useRef } from "react";
+import { Tree, NodeRendererProps, TreeApi, NodeApi } from "react-arborist";
+import { cn } from "@/components/ui/utils";
+import { ChevronRight, ChevronDown, Layout, FileCode, EyeOff, GripVertical } from "lucide-react";
 
 interface RouteTreeProps {
   data: RouteTreeNodeDto[];
@@ -24,173 +12,223 @@ interface RouteTreeProps {
   onDragEnd?: (activeId: string, targetId: string, position: "before" | "after" | "inside") => void;
 }
 
-function flattenTree(nodes: RouteTreeNodeDto[], expandedKeys: Set<string>): RouteTreeNodeDto[] {
-  const result: RouteTreeNodeDto[] = [];
-  const traverse = (nodeList: RouteTreeNodeDto[]) => {
-    const sorted = [...nodeList].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-    for (const node of sorted) {
-      result.push(node);
-      if (node.children && node.children.length > 0 && expandedKeys.has(node.id)) {
-        traverse(node.children);
-      }
-    }
-  };
-  traverse(nodes);
-  return result;
+// 将 RouteTreeNodeDto 转换为 react-arborist 所需的数据结构
+interface ArboristNode {
+  id: string;
+  name: string;
+  children?: ArboristNode[];
+  routeData: RouteTreeNodeDto; // 原始路由数据
 }
 
-function findNodeWithLevel(
-  nodes: RouteTreeNodeDto[],
-  id: string,
-  level = 0,
-): { node: RouteTreeNodeDto; level: number } | null {
-  for (const node of nodes) {
-    if (node.id === id) return { node, level };
-    if (node.children) {
-      const found = findNodeWithLevel(node.children, id, level + 1);
-      if (found) return found;
-    }
+// 转换函数：RouteTreeNodeDto[] -> ArboristNode[]
+// 注意：所有节点都需要 children 数组（空数组表示叶子节点），否则无法作为拖拽挂载目标
+function convertToArboristData(nodes: RouteTreeNodeDto[]): ArboristNode[] {
+  const sorted = [...nodes].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+  return sorted.map((node) => ({
+    id: node.id,
+    name: getDisplayName(node),
+    children: node.children && node.children.length > 0 ? convertToArboristData(node.children) : [],
+    routeData: node,
+  }));
+}
+
+// 获取显示名称
+function getDisplayName(node: RouteTreeNodeDto): string {
+  if (typeof node.name === "string") return node.name;
+  if (node.name && typeof node.name === "object") {
+    // 如果是带语言的对象，尝试获取 zh/en/default
+    const nameObj = node.name as Record<string, string>;
+    return nameObj.zh || nameObj.en || nameObj.default || node.id;
   }
-  return null;
+  return node.id;
+}
+
+// 自定义节点渲染器
+function RouteNode({ node, style, dragHandle }: NodeRendererProps<ArboristNode>) {
+  const routeData = node.data.routeData;
+  // 判断是否有实际子节点（空数组不算）
+  const hasChildren = !!node.children && node.children.length > 0;
+  const isVisible = routeData.isVisible !== false;
+
+  return (
+    <div
+      style={style}
+      className={cn(
+        "group flex cursor-pointer items-center rounded-md px-2 py-1.5 text-sm transition-colors select-none",
+        node.isSelected
+          ? "bg-primary/10 text-primary font-medium"
+          : "hover:bg-accent hover:text-accent-foreground text-muted-foreground",
+        node.state.willReceiveDrop && "bg-blue-500/20 ring-2 ring-blue-500/50",
+      )}
+      onClick={(e) => {
+        e.stopPropagation();
+        node.select();
+      }}
+    >
+      {/* 拖拽手柄 */}
+      <div
+        ref={dragHandle}
+        className="mr-1 flex h-4 w-4 shrink-0 cursor-grab items-center justify-center rounded opacity-0 transition-opacity group-hover:opacity-50 hover:opacity-100"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <GripVertical className="h-3.5 w-3.5" />
+      </div>
+
+      {/* 展开/折叠箭头 */}
+      <div
+        className="mr-1 flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded hover:bg-black/10 dark:hover:bg-white/10"
+        onClick={(e) => {
+          e.stopPropagation();
+          node.toggle();
+        }}
+        style={{ visibility: hasChildren ? "visible" : "hidden" }}
+      >
+        {node.isOpen ? (
+          <ChevronDown className="h-3.5 w-3.5" />
+        ) : (
+          <ChevronRight className="h-3.5 w-3.5" />
+        )}
+      </div>
+
+      {/* 图标 */}
+      <div className="mr-2 opacity-70">
+        {hasChildren ? <Layout className="h-4 w-4" /> : <FileCode className="h-4 w-4" />}
+      </div>
+
+      {/* 名称 */}
+      <span className="flex-1 truncate">{node.data.name}</span>
+
+      {/* 状态指示器 */}
+      <div className="ml-2 flex items-center gap-1.5 opacity-70">
+        {!isVisible && <EyeOff className="h-3 w-3 text-amber-500" />}
+      </div>
+    </div>
+  );
 }
 
 export function RouteTree({ data, selectedId, onSelect, onDragEnd }: RouteTreeProps) {
-  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
-  const [activeNode, setActiveNode] = useState<RouteTreeNodeDto | null>(null);
-  const [overId, setOverId] = useState<string | null>(null);
-  const [dropPosition, setDropPosition] = useState<"before" | "after" | "inside" | null>(null);
-  const mouseYRef = useRef<number>(0);
+  const treeRef = useRef<TreeApi<ArboristNode>>(null);
 
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseYRef.current = e.clientY;
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  // 转换数据格式
+  const arboristData = useMemo(() => convertToArboristData(data), [data]);
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
+  // 处理节点选择
+  const handleSelect = useCallback(
+    (nodes: NodeApi<ArboristNode>[]) => {
+      if (nodes.length > 0) {
+        const selected = nodes[0];
+        onSelect(selected.data.routeData);
+      }
+    },
+    [onSelect],
+  );
 
-  useEffect(() => {
-    if (data.length > 0 && expandedKeys.size === 0) {
-      const keys = new Set<string>();
-      data.forEach((node) => keys.add(node.id));
-      setExpandedKeys(keys);
-    }
-  }, [data]);
+  // 处理拖拽完成 - 调用外部回调
+  const handleMove = useCallback(
+    (args: {
+      dragIds: string[];
+      parentId: string | null;
+      index: number;
+      parentNode: NodeApi<ArboristNode> | null;
+      dragNodes: NodeApi<ArboristNode>[];
+    }) => {
+      if (!onDragEnd || args.dragIds.length === 0) return;
 
-  const handleToggleExpand = useCallback((id: string) => {
-    setExpandedKeys((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-  }, []);
+      const dragId = args.dragIds[0];
+      const parentNode = args.parentNode;
 
-  const flattenedNodes = useMemo(() => flattenTree(data, expandedKeys), [data, expandedKeys]);
-  const flattenedIds = useMemo(() => flattenedNodes.map((n) => n.id), [flattenedNodes]);
+      // 如果有父节点，说明是移动到某个节点内
+      if (parentNode) {
+        const siblings = parentNode.children || [];
+        const targetIndex = Math.min(args.index, siblings.length);
 
-  const handleDragStart = (event: DragStartEvent) => {
-    const found = findNodeWithLevel(data, event.active.id as string);
-    if (found) setActiveNode(found.node);
-  };
+        if (targetIndex === 0) {
+          // 插入到第一个位置 - after 第一个兄弟或 inside 父节点
+          if (siblings.length > 0 && siblings[0].id !== dragId) {
+            onDragEnd(dragId, siblings[0].id, "before");
+          } else {
+            onDragEnd(dragId, parentNode.id, "inside");
+          }
+        } else if (targetIndex >= siblings.length) {
+          // 插入到最后一个位置
+          const lastSibling = siblings[siblings.length - 1];
+          if (lastSibling && lastSibling.id !== dragId) {
+            onDragEnd(dragId, lastSibling.id, "after");
+          } else {
+            onDragEnd(dragId, parentNode.id, "inside");
+          }
+        } else {
+          // 插入到中间位置
+          const targetSibling = siblings[targetIndex];
+          if (targetSibling && targetSibling.id !== dragId) {
+            onDragEnd(dragId, targetSibling.id, "before");
+          }
+        }
+      } else {
+        // 移动到根级别
+        const rootNodes = treeRef.current?.root.children || [];
+        const targetIndex = Math.min(args.index, rootNodes.length);
 
-  const handleDragMove = (event: DragMoveEvent) => {
-    const { over } = event;
-    if (!over) {
-      setOverId(null);
-      setDropPosition(null);
-      return;
-    }
-    setOverId(over.id as string);
-    const overRect = over.rect;
-    if (overRect) {
-      const ratio = (mouseYRef.current - overRect.top) / overRect.height;
-      setDropPosition(ratio < 0.3 ? "before" : ratio > 0.7 ? "after" : "inside");
-    }
-  };
+        if (targetIndex === 0 && rootNodes.length > 0) {
+          const firstRoot = rootNodes[0];
+          if (firstRoot.id !== dragId) {
+            onDragEnd(dragId, firstRoot.id, "before");
+          }
+        } else if (rootNodes.length > 0) {
+          const targetNode = rootNodes[Math.min(targetIndex, rootNodes.length - 1)];
+          if (targetNode && targetNode.id !== dragId) {
+            onDragEnd(dragId, targetNode.id, "after");
+          }
+        }
+      }
+    },
+    [onDragEnd],
+  );
 
-  const handleDragOver = (event: DragOverEvent) => {
-    if (!event.over || event.active.id === event.over.id) {
-      setOverId(null);
-      setDropPosition(null);
-    }
-  };
+  // 判断是否可以放置 - 防止循环嵌套
+  const disableDrop = useCallback(
+    (args: {
+      parentNode: NodeApi<ArboristNode>;
+      dragNodes: NodeApi<ArboristNode>[];
+      index: number;
+    }) => {
+      // 检查是否尝试将节点拖到自己的后代中
+      const dragNode = args.dragNodes[0];
+      if (!dragNode) return false;
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const currentOverId = overId;
-    const currentDropPosition = dropPosition;
-    setActiveNode(null);
-    setOverId(null);
-    setDropPosition(null);
-    if (!event.over || event.active.id === event.over.id) return;
-    if (onDragEnd && currentDropPosition && currentOverId) {
-      onDragEnd(event.active.id as string, currentOverId, currentDropPosition);
-    }
-  };
-
-  const renderNodes = (nodes: RouteTreeNodeDto[], level = 0) => {
-    if (!nodes || nodes.length === 0) return null;
-    const sortedNodes = [...nodes].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-    return sortedNodes.map((node) => {
-      const hasChildren = !!node.children && node.children.length > 0;
-      const isExpanded = expandedKeys.has(node.id);
-      const isDropTarget = overId === node.id;
-      return (
-        <div key={node.id}>
-          <RouteTreeNode
-            node={node}
-            level={level}
-            isSelected={selectedId === node.id}
-            isExpanded={isExpanded}
-            hasChildren={hasChildren}
-            onSelect={onSelect}
-            onToggleExpand={handleToggleExpand}
-            isDropTarget={isDropTarget}
-            dropPosition={isDropTarget ? dropPosition : null}
-          />
-          {hasChildren && isExpanded && (
-            <div className="animate-in slide-in-from-top-1 duration-200">
-              {renderNodes(node.children!, level + 1)}
-            </div>
-          )}
-        </div>
-      );
-    });
-  };
+      // isAncestorOf 方法会检查当前节点是否是目标节点的祖先
+      return dragNode.isAncestorOf(args.parentNode);
+    },
+    [],
+  );
 
   return (
-    <div className="bg-card bg-opacity-50 h-full rounded-lg border">
-      <div className="bg-muted/30 border-b p-3">
+    <div className="bg-card bg-opacity-50 flex h-full flex-col rounded-lg border">
+      <div className="bg-muted/30 shrink-0 border-b p-3">
         <h3 className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
           站点路由树 ({data.length})
         </h3>
-        <p className="text-muted-foreground/60 mt-1 text-xs">拖到边缘排序，拖到中央挂载</p>
+        <p className="text-muted-foreground/60 mt-1 text-xs">拖拽节点进行排序和嵌套</p>
       </div>
-      <ScrollArea className="h-[calc(100%-56px)] p-2">
+      <ScrollArea className="flex-1 p-2">
         {data.length === 0 ? (
           <div className="text-muted-foreground p-4 text-center text-sm">暂无数据</div>
         ) : (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={pointerWithin}
-            onDragStart={handleDragStart}
-            onDragMove={handleDragMove}
-            onDragOver={handleDragOver}
-            onDragEnd={handleDragEnd}
-            measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
+          <Tree<ArboristNode>
+            ref={treeRef}
+            data={arboristData}
+            width="100%"
+            height={600}
+            indent={24}
+            rowHeight={36}
+            openByDefault
+            selection={selectedId || undefined}
+            onSelect={handleSelect}
+            onMove={handleMove}
+            disableDrop={disableDrop}
           >
-            <SortableContext items={flattenedIds} strategy={verticalListSortingStrategy}>
-              <div className="space-y-0.5 pb-10">{renderNodes(data)}</div>
-            </SortableContext>
-            <DragOverlay>
-              {activeNode && (
-                <div className="bg-card rounded-md border px-3 py-1.5 text-sm shadow-lg">
-                  {typeof activeNode.name === "string" ? activeNode.name : activeNode.id}
-                </div>
-              )}
-            </DragOverlay>
-          </DndContext>
+            {RouteNode}
+          </Tree>
         )}
       </ScrollArea>
     </div>

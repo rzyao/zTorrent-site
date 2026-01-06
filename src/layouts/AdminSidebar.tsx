@@ -39,7 +39,8 @@ export function AdminSidebar() {
   const { routes } = useRouteConfig();
 
   // 从路由配置中提取 /admin 的子路由
-  const adminRoute = routes.find((r) => r.path === "/admin");
+  // 注意：API 返回的 path 可能是 "admin" 或 "/admin"
+  const adminRoute = routes.find((r) => r.path === "/admin" || r.path === "admin");
   const adminChildren = adminRoute?.children || [];
 
   // 过滤出可见的子路由
