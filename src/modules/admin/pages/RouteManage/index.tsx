@@ -138,6 +138,9 @@ function RouteManageContent() {
         redirect: node.redirect,
         parentId: undefined,
         routeKey: node.id,
+        // 新增字段
+        isEnabled: (node as any).isEnabled,
+        openInNewTab: (node as any).openInNewTab,
       };
       await PlatformAdminRoutesService.adminRoutesControllerUpdate(payload);
     },

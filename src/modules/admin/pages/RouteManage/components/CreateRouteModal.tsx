@@ -62,6 +62,7 @@ export function CreateRouteModal({
         isVisible: values.isVisible ?? true,
         isEnabled: values.isEnabled ?? true,
         isIndex: values.isIndex ?? false,
+        openInNewTab: values.openInNewTab ?? false,
         permissions: values.permissions || [],
       };
 
@@ -102,6 +103,7 @@ export function CreateRouteModal({
           isVisible: true,
           isEnabled: true,
           isIndex: false,
+          openInNewTab: false,
           sortOrder: 0,
         }}
       >
@@ -208,6 +210,16 @@ export function CreateRouteModal({
               valuePropName="checked"
               className="mb-0"
               tooltip="是否为默认子路由"
+            >
+              <Switch />
+            </Form.Item>
+
+            <Form.Item
+              label="新签页"
+              name="openInNewTab"
+              valuePropName="checked"
+              className="mb-0"
+              tooltip="在新标签页中打开链接"
             >
               <Switch />
             </Form.Item>
