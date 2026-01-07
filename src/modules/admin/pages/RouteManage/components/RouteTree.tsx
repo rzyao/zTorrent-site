@@ -176,12 +176,21 @@ function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProp
     [nodeMap],
   );
 
-  // 简化的标题渲染 - 只显示文本，不显示图标
+  // 标题渲染 - 显示禁用/隐藏状态
   const titleRender = useCallback((node: RouteTreeDataNode) => {
+    const isDisabled = (node.routeData as any).isEnabled === false;
     const isHidden = node.routeData.isVisible === false;
-    if (isHidden) {
-      return <span style={{ color: "#faad14" }}>{node.title as string} (隐藏)</span>;
+
+    // 优先显示禁用状态
+    if (isDisabled) {
+      return <span style={{ color: "#ff4d4f" }}>{node.title as string} (已禁用)</span>;
     }
+
+    // 其次显示隐藏状态
+    if (isHidden) {
+      return <span style={{ color: "#faad14" }}>{node.title as string} (已隐藏)</span>;
+    }
+
     return node.title as string;
   }, []);
 

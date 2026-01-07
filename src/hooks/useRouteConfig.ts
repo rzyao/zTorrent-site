@@ -15,14 +15,16 @@ function mapDtoToConfig(dto: RouteTreeNodeDto): RouteConfig {
   return {
     id: dto.id,
     path: dto.path,
-    // 强制转换为 string，因为生成的类型可能是 Record<string, any> 但运行时应为 string
+    // 强制转换为 string,因为生成的类型可能是 Record<string, any> 但运行时应为 string
     component: (dto.component as unknown as string) || "",
     layout: (dto.layout as unknown as RouteConfig["layout"]) || "none",
     name: (dto.name as unknown as string) || undefined,
     permissions: dto.permissions,
     index: dto.index,
     redirect: (dto.redirect as unknown as string) || undefined,
+    openInNewTab: (dto as any).openInNewTab || false,
     isVisible: dto.isVisible,
+    isEnabled: (dto as any).isEnabled !== false, // 默认为 true
     children: dto.children?.map(mapDtoToConfig),
   };
 }

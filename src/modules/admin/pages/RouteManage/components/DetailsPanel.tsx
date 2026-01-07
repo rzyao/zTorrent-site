@@ -87,6 +87,7 @@ export const DetailsPanel = memo(function DetailsPanel({
           layout: node.layout || "none",
           permissions: node.permissions || [],
           isVisible: node.isVisible !== false,
+          isEnabled: (node as any).isEnabled !== false,
           openInNewTab: (node as any).openInNewTab || false,
         });
       } else {
@@ -123,6 +124,7 @@ export const DetailsPanel = memo(function DetailsPanel({
         layout: displayNode.layout || "none",
         permissions: displayNode.permissions || [],
         isVisible: displayNode.isVisible !== false,
+        isEnabled: (displayNode as any).isEnabled !== false,
         openInNewTab: (displayNode as any).openInNewTab || false,
       });
     }
@@ -235,6 +237,15 @@ export const DetailsPanel = memo(function DetailsPanel({
                 >
                   <Switch checkedChildren="是" unCheckedChildren="否" />
                 </Form.Item>
+
+                <Form.Item
+                  label="是否启用"
+                  name="isEnabled"
+                  valuePropName="checked"
+                  tooltip="控制路由是否加载到路由表,禁用后该路由将无法访问"
+                >
+                  <Switch checkedChildren="启用" unCheckedChildren="禁用" />
+                </Form.Item>
               </div>
             </div>
 
@@ -278,7 +289,12 @@ export const DetailsPanel = memo(function DetailsPanel({
                   <Select mode="tags" placeholder="输入权限Key" />
                 </Form.Item>
 
-                <Form.Item label="侧边栏是否显示" name="isVisible" valuePropName="checked">
+                <Form.Item
+                  label="侧边栏是否显示"
+                  name="isVisible"
+                  valuePropName="checked"
+                  tooltip="控制路由是否在侧边栏菜单中显示,不影响路由访问"
+                >
                   <Switch checkedChildren="显示" unCheckedChildren="隐藏" />
                 </Form.Item>
               </div>

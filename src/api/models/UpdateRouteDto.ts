@@ -52,6 +52,10 @@ export type UpdateRouteDto = {
      */
     isIndex?: boolean;
     /**
+     * 是否在新标签页打开
+     */
+    openInNewTab?: boolean;
+    /**
      * 所需权限列表 (完整替换)
      */
     permissions?: Array<string>;

@@ -34,6 +34,8 @@ export interface RouteConfig {
   openInNewTab?: boolean;
   /** 是否在菜单中可见 */
   isVisible?: boolean;
+  /** 是否启用(加载到路由表) */
+  isEnabled?: boolean;
 }
 
 /**

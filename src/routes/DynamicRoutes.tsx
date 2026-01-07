@@ -35,7 +35,13 @@ function getLayoutWrapper(layout: string | undefined) {
  * 渲染单个路由配置
  */
 function renderRoute(config: RouteConfig, parentPath: string = ""): React.ReactNode {
-  const { id, path, component, children, index, redirect, openInNewTab } = config;
+  const { id, path, component, children, index, redirect, openInNewTab, isEnabled } = config;
+
+  // 如果路由未启用,不渲染
+  if (isEnabled === false) {
+    return null;
+  }
+
   const fullPath = index ? parentPath : path.startsWith("/") ? path : `${parentPath}/${path}`;
 
   // 处理重定向
@@ -69,9 +75,11 @@ function renderRoute(config: RouteConfig, parentPath: string = ""): React.ReactN
   }
 
   if (children && children.length > 0) {
+    // 过滤掉未启用的子路由
+    const enabledChildren = children.filter((child) => child.isEnabled !== false);
     return (
       <Route key={id} path={path} element={element}>
-        {children.map((child) => renderRoute(child, fullPath))}
+        {enabledChildren.map((child) => renderRoute(child, fullPath))}
       </Route>
     );
   }
@@ -87,10 +95,19 @@ function renderRoute(config: RouteConfig, parentPath: string = ""): React.ReactN
  * 渲染带布局的路由组
  */
 function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
-  const { id, path, layout, children, component } = config;
+  const { id, path, layout, children, component, isEnabled } = config;
+
+  // 如果路由未启用,不渲染
+  if (isEnabled === false) {
+    return null;
+  }
+
   const LayoutComponent = getLayoutWrapper(layout);
 
-  // 论坛布局：使用全局加载器触发器
+  // 过滤掉未启用的子路由
+  const enabledChildren = children?.filter((child) => child.isEnabled !== false);
+
+  // 论坛布局:使用全局加载器触发器
   if (layout === "forum" && component) {
     const ForumLayoutComponent = getComponent(component);
     if (ForumLayoutComponent) {
@@ -108,7 +125,7 @@ function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
             </AuthRoute>
           }
         >
-          {children?.map((child) => renderRoute(child, path))}
+          {enabledChildren?.map((child) => renderRoute(child, path))}
         </Route>
       );
     }
@@ -128,12 +145,12 @@ function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
           </AuthRoute>
         }
       >
-        {children?.map((child) => renderRoute(child, path))}
+        {enabledChildren?.map((child) => renderRoute(child, path))}
       </Route>
     );
   }
 
-  return children?.map((child) => renderRoute(child, path));
+  return enabledChildren?.map((child) => renderRoute(child, path));
 }
 
 /**

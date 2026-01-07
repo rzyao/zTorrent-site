@@ -41,6 +41,10 @@ export type CreateRouteWithChildrenDto = {
      */
     isIndex?: boolean;
     /**
+     * 是否在新标签页打开
+     */
+    openInNewTab?: boolean;
+    /**
      * 所需权限列表
      */
     permissions?: Array<string>;

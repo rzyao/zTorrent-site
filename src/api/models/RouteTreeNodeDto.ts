@@ -28,6 +28,10 @@ export type RouteTreeNodeDto = {
      */
     index?: boolean;
     /**
+     * 是否在新标签页打开
+     */
+    openInNewTab?: boolean;
+    /**
      * 重定向路径
      */
     redirect?: Record<string, any>;
