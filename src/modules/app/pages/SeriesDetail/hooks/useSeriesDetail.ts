@@ -37,7 +37,7 @@ export function useSeriesDetail(seriesId?: string) {
         setSeries(data);
 
         // 获取分集列表
-        const epResp = await EpisodesService.episodesControllerList({
+        const epResp = await EpisodesService.episodeBaseControllerList({
           seriesId: seriesId,
         });
         setEpisodes((epResp.data?.items as any as EpisodeListItem[]) || []);

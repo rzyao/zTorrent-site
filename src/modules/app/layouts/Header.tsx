@@ -60,7 +60,7 @@ export function Header() {
               {showMobileMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
 
-            <NavLink to="/home" className="flex items-center gap-2">
+            <NavLink to="/app/home" className="flex items-center gap-2">
               <img src={Logo} alt="Logo" className="h-7 md:h-9" />
               <span className="text-xl text-white md:text-2xl">{title || ""}</span>
             </NavLink>
@@ -91,7 +91,7 @@ export function Header() {
               {canBonus && (
                 <div
                   className="flex cursor-pointer items-center gap-1 text-yellow-400"
-                  onClick={() => navigate("/bonus")}
+                  onClick={() => navigate("/app/bonus")}
                 >
                   <Sparkles className="h-4 w-4" />
                   <span>{formatBonusPoints(userSummary?.bonusPoints)}</span>
@@ -103,7 +103,7 @@ export function Header() {
               variant="ghost"
               size="icon"
               className="relative rounded-none text-white hover:bg-white/10"
-              onClick={() => navigate("/messages?tab=system")}
+              onClick={() => navigate("/app/messages?tab=system")}
             >
               <Bell className="h-5 w-5" />
               {userSummary && userSummary.unreadNotifications > 0 && (
@@ -114,7 +114,7 @@ export function Header() {
               variant="ghost"
               size="icon"
               className="relative rounded-none text-white hover:bg-white/10"
-              onClick={() => navigate("/messages?tab=inbox")}
+              onClick={() => navigate("/app/messages?tab=inbox")}
             >
               <Mail className="h-5 w-5" />
               {userSummary && userSummary.unreadInbox > 0 && (

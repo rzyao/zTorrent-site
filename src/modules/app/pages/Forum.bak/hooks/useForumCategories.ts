@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect } from 'react';
 import { IForumCategory } from '../types';
 import { unwrapResponse, extractErrorMessage } from '../utils';
@@ -27,3 +28,4 @@ export function useForumCategories() {
 
   return { categories, loading, error };
 }
+

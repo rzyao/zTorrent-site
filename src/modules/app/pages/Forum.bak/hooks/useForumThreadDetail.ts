@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect } from 'react';
 import { IForumThread } from '../types';
 import { unwrapResponse, extractErrorMessage } from '../utils';
@@ -132,3 +133,4 @@ export function useForumThreadDetail(
 
   return { selectedThread, setSelectedThread, threadDetail, error };
 }
+

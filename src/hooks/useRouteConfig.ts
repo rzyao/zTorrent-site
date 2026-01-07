@@ -46,6 +46,23 @@ export function useRouteConfig() {
       const apiRoutes = response.data.routes.map(mapDtoToConfig);
       console.log("[useRouteConfig] 成功获取路由配置:", apiRoutes.length, "个根节点");
 
+      // 临时修复：如果后端没返回 admin 节点，手动补全一个兜底节点
+      // 这样可以确保 /admin 路径被匹配到，进而加载 Admin 模块
+      if (
+        !apiRoutes.some((r) => r.layout === "admin" || r.path === "admin" || r.path === "/admin")
+      ) {
+        console.warn("[useRouteConfig] 检测到后端未返回 Admin 路由，正在应用本地兜底配置...");
+        apiRoutes.push({
+          id: "admin_fallback",
+          path: "admin",
+          component: "AdminDashboard",
+          layout: "admin" as any,
+          name: "管理后台",
+          isVisible: true,
+          children: [], // 菜单项会由 useBasicLayout 进一步处理
+        });
+      }
+
       return apiRoutes;
     },
     staleTime: 5 * 60 * 1000, // 5 分钟缓存

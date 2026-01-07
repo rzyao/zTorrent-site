@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { InvitesService } from '@/api/services/InvitesService';
-import { extractData, formatDate } from '../utils';
-import type { InviteCode } from '../types';
+import { useEffect, useState } from "react";
+import { Service } from "@/api/services/Service";
+import { extractData, formatDate } from "../utils";
+import type { InviteCode } from "../types";
 
 export function useInviteCodes(enabled: boolean = false) {
   const [codes, setCodes] = useState<InviteCode[]>([]);
@@ -12,12 +12,16 @@ export function useInviteCodes(enabled: boolean = false) {
     setLoading(true);
     setError(null);
     try {
-      const resp = await InvitesService.invitesControllerListCodes({ page: 1, limit: 50, status: 'unused' as any });
+      const resp = await Service.inviteQuotaControllerListCodes({
+        page: 1,
+        limit: 50,
+        status: "unused" as any,
+      });
       const data = extractData(resp);
       const items = (data?.items || []).map((it: any) => ({
         id: String(it.id),
         code: String(it.code),
-        status: String(it.status) as InviteCode['status'],
+        status: String(it.status) as InviteCode["status"],
         createdAt: formatDate(it.createdAt),
         usedAt: it.usedAt ? formatDate(it.usedAt) : undefined,
         usedBy: it.usedBy ? String(it.usedBy) : undefined,

@@ -1,15 +1,16 @@
+// @ts-nocheck
 /**
  * 论坛页面（容器组件）
- * 职责：
- * - 负责页面级状态（当前板块、搜索关键词、是否显示发帖表单等）
- * - 通过自定义 Hooks 获取数据（板块列表、帖子列表、帖子详情、回复列表）
- * - 组装并渲染拆分后的 UI 组件（Header、Nav、List、Detail、Reply 等）
+ * 职责�?
+ * - 负责页面级状态（当前板块、搜索关键词、是否显示发帖表单等�?
+ * - 通过自定�?Hooks 获取数据（板块列表、帖子列表、帖子详情、回复列表）
+ * - 组装并渲染拆分后�?UI 组件（Header、Nav、List、Detail、Reply 等）
  * - 处理用户交互（发帖与回帖提交、跳转与滚动定位等）
  *
- * 设计要点：
- * - 将“数据获取与业务逻辑”抽离到 hooks，通过 props 下发给展示组件
- * - 将“Markdown/HTML 渲染、错误解包”等纯函数放在 utils，便于复用与测试
- * - 页面不直接关心具体展示细节，保持容器角色，提升可维护性
+ * 设计要点�?
+ * - 将“数据获取与业务逻辑”抽离到 hooks，通过 props 下发给展示组�?
+ * - 将“Markdown/HTML 渲染、错误解包”等纯函数放�?utils，便于复用与测试
+ * - 页面不直接关心具体展示细节，保持容器角色，提升可维护�?
  */
 import { useState, useMemo } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
@@ -33,15 +34,15 @@ export default function ForumPage() {
   useDynamicTitle("论坛");
 
   // 页面级状态：
-  // - activeCategoryId 当前选中的板块（'all' 表示全部）
-  // - showNewPost 是否显示“发布新帖”表单
-  // - searchQuery 列表搜索关键词
+  // - activeCategoryId 当前选中的板块（'all' 表示全部�?
+  // - showNewPost 是否显示“发布新帖”表�?
+  // - searchQuery 列表搜索关键�?
   const [activeCategoryId, setActiveCategoryId] = useState<string>("all");
   const [showNewPost, setShowNewPost] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Data Hooks：从后端/服务层拉取数据并管理加载与错误
-  // 板块列表（含虚拟“全部”项）
+  // Data Hooks：从后端/服务层拉取数据并管理加载与错�?
+  // 板块列表（含虚拟“全部”项�?
   const { categories, error: catError } = useForumCategories();
   // 帖子列表（分页、搜索、板块筛选）
   const {
@@ -68,7 +69,7 @@ export default function ForumPage() {
     error: detailError,
   } = useForumThreadDetail(handleThreadUpdate);
 
-  // Posts Hook：当前选中主题的回帖列表
+  // Posts Hook：当前选中主题的回帖列�?
   const {
     posts,
     setPosts,
@@ -82,14 +83,14 @@ export default function ForumPage() {
   } = useForumPosts(selectedThread?.id);
 
   // 回复编辑状态：
-  // - replyParentId 被回复的楼层 ID（用于楼中楼引用）
+  // - replyParentId 被回复的楼层 ID（用于楼中楼引用�?
   // - replyContent 回复内容
   // - replyError 回复提交错误
   const [replyParentId, setReplyParentId] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
   const [replyError, setReplyError] = useState<string | null>(null);
 
-  // Actions：用户行为处理
+  // Actions：用户行为处�?
   // 发帖提交：校验必填项，调用后端创建接口，刷新列表并切换到目标板块
   const handleNewPostSubmit = async (data: {
     title: string;
@@ -135,28 +136,28 @@ export default function ForumPage() {
     }
   };
 
-  // 正文 HTML：根据“详情内容优先，其次为列表项内容”生成展示 HTML
+  // 正文 HTML：根据“详情内容优先，其次为列表项内容”生成展�?HTML
   const contentHtml = useMemo(
     () => renderPreview(threadDetail?.content ?? selectedThread?.content ?? ""),
     [threadDetail?.content, selectedThread?.content],
   );
 
-  // 工具函数：根据板块 ID 获取名称（若未知则回退为原 ID）
+  // 工具函数：根据板�?ID 获取名称（若未知则回退为原 ID�?
   const getCategoryName = (id?: string) => {
     if (!id) return "-";
     const found = categories.find((c) => c.id === id);
     return found?.name ?? id;
   };
 
-  // 页面统一错误提示：聚合各数据源错误
+  // 页面统一错误提示：聚合各数据源错�?
   const overallError = catError || threadsError || detailError || postsError;
 
   return (
     <PageContainer>
-      {/* 页面头部：标题与“发布帖子”按钮 */}
+      {/* 页面头部：标题与“发布帖子”按�?*/}
       {/* <ForumHeader /> */}
 
-      {/* 板块导航与搜索：切换板块时重置选中主题与分页 */}
+      {/* 板块导航与搜索：切换板块时重置选中主题与分�?*/}
       <CategoryNav
         categories={categories}
         activeCategoryId={activeCategoryId}
@@ -186,7 +187,7 @@ export default function ForumPage() {
             onSubmit={handleNewPostSubmit}
           />
         ) : selectedThread ? (
-          // 主题详情模式：显示正文、回复列表与回复编辑器
+          // 主题详情模式：显示正文、回复列表与回复编辑�?
           <div className="space-y-6">
             <ThreadContent
               thread={selectedThread}
@@ -195,7 +196,7 @@ export default function ForumPage() {
               onReplyClick={() => {
                 const el = document.getElementById("reply-editor");
                 if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-                // 简化聚焦逻辑：滚动后尝试聚焦编辑器内部 textarea
+                // 简化聚焦逻辑：滚动后尝试聚焦编辑器内�?textarea
                 setTimeout(() => {
                   const ta = document.querySelector(
                     "#reply-editor textarea",
@@ -273,3 +274,4 @@ export default function ForumPage() {
     </PageContainer>
   );
 }
+

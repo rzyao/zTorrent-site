@@ -2,11 +2,11 @@ import { useState } from "react";
 import Logo from "@/assets/logo.svg";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { Eye, EyeOff, User, Lock, LogIn, Clock } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Checkbox } from "../components/ui/checkbox";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { useAuth } from "../hooks/useApi";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+import { useAuth } from "@/hooks/useApi";
 import { toast } from "sonner";
 
 interface LoginPageProps {

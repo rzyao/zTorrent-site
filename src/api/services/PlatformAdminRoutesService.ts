@@ -6,7 +6,6 @@ import type { BindRoutePermissionsDto } from '../models/BindRoutePermissionsDto'
 import type { CreateRouteDto } from '../models/CreateRouteDto';
 import type { CreateRouteResponseDto } from '../models/CreateRouteResponseDto';
 import type { DeleteRouteDto } from '../models/DeleteRouteDto';
-import type { ImportRoutesDto } from '../models/ImportRoutesDto';
 import type { Object } from '../models/Object';
 import type { RouteTreeNodeDto } from '../models/RouteTreeNodeDto';
 import type { SortRoutesDto } from '../models/SortRoutesDto';
@@ -173,35 +172,6 @@ export class PlatformAdminRoutesService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/admin/routes/bind-permissions',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `参数错误`,
-                401: `未认证`,
-                403: `禁止访问或账号禁用`,
-                404: `资源不存在`,
-                500: `服务器错误`,
-            },
-        });
-    }
-    /**
-     * 批量导入路由
-     * @param requestBody
-     * @returns any 导入成功
-     * @throws ApiError
-     */
-    public static adminRoutesControllerImport(
-        requestBody: ImportRoutesDto,
-    ): CancelablePromise<{
-        code?: number;
-        message?: string;
-        data?: Object;
-        path?: string;
-        timestamp?: string;
-    }> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/admin/routes/import',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

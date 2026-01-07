@@ -1,11 +1,11 @@
 // 下载器页面 - 业务逻辑自定义 Hook
 // 说明：集中管理状态与事件处理，UI 组件仅负责渲染。这样做到关注点分离、易于测试与维护。
 
-import { useState, useEffect, useCallback } from 'react';
-import { Downloader, DownloaderForm, DownloadPath, DownloaderType } from '../types';
-import { DownloadersService } from '../../../api/services/DownloadersService';
-import { CreateDownloaderDto } from '../../../api/models/CreateDownloaderDto';
-import { UpdateDownloaderDto } from '../../../api/models/UpdateDownloaderDto';
+import { useState, useEffect, useCallback } from "react";
+import { Downloader, DownloaderForm, DownloadPath, DownloaderType } from "../types";
+import { DownloadersService } from "@/api/services/DownloadersService";
+import { CreateDownloaderDto } from "@/api/models/CreateDownloaderDto";
+import { UpdateDownloaderDto } from "@/api/models/UpdateDownloaderDto";
 
 export function useDownloaderManager() {
   // 下载器列表数据源
@@ -22,12 +22,12 @@ export function useDownloaderManager() {
 
   // 表单与辅助状态（与 UI 表单组件解耦）
   const [formData, setFormData] = useState<DownloaderForm>({
-    name: '',
-    type: 'qBittorrent',
-    host: '',
+    name: "",
+    type: "qBittorrent",
+    host: "",
     port: 8080,
-    username: '',
-    password: '',
+    username: "",
+    password: "",
     ssl: false,
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -48,7 +48,7 @@ export function useDownloaderManager() {
         setDownloaders(res.data as unknown as Downloader[]);
       }
     } catch (error) {
-      console.error('Failed to fetch downloaders:', error);
+      console.error("Failed to fetch downloaders:", error);
     } finally {
       setLoading(false);
     }
@@ -73,8 +73,8 @@ export function useDownloaderManager() {
       setShowAddModal(false);
       resetForm();
     } catch (error) {
-      console.error('Failed to create downloader:', error);
-      alert('添加失败，请检查输入或重试');
+      console.error("Failed to create downloader:", error);
+      alert("添加失败，请检查输入或重试");
     }
   };
 
@@ -95,8 +95,8 @@ export function useDownloaderManager() {
       setSelectedDownloader(null);
       resetForm();
     } catch (error) {
-      console.error('Failed to update downloader:', error);
-      alert('更新失败，请重试');
+      console.error("Failed to update downloader:", error);
+      alert("更新失败，请重试");
     }
   };
 
@@ -105,10 +105,10 @@ export function useDownloaderManager() {
     try {
       await DownloadersService.downloadersControllerDelete({ id });
       // 乐观更新或重新拉取
-      setDownloaders(prev => prev.filter(d => d.id !== id));
+      setDownloaders((prev) => prev.filter((d) => d.id !== id));
     } catch (error) {
-      console.error('Failed to delete downloader:', error);
-      alert('删除失败，请重试');
+      console.error("Failed to delete downloader:", error);
+      alert("删除失败，请重试");
       // 如果失败，最好重新拉取一次以保持同步
       fetchDownloaders();
     }
@@ -120,16 +120,16 @@ export function useDownloaderManager() {
       const res = await DownloadersService.downloadersControllerTest({ id });
       if (res.data) {
         const updated = res.data as unknown as Downloader;
-        setDownloaders(prev => prev.map(d => (d.id === id ? updated : d)));
+        setDownloaders((prev) => prev.map((d) => (d.id === id ? updated : d)));
         // 如果当前正好选中了这个下载器（例如在详情页），也更新选中状态
         if (selectedDownloader?.id === id) {
           setSelectedDownloader(updated);
         }
       }
     } catch (error) {
-      console.error('Connection test failed:', error);
+      console.error("Connection test failed:", error);
       // 可以更新状态为 error
-      setDownloaders(prev => prev.map(d => (d.id === id ? { ...d, status: 'error' } : d)));
+      setDownloaders((prev) => prev.map((d) => (d.id === id ? { ...d, status: "error" } : d)));
     }
   };
 
@@ -152,12 +152,14 @@ export function useDownloaderManager() {
         const tags = res.data;
         const updatedDownloader = { ...selectedDownloader, tags };
 
-        setDownloaders(prev => prev.map(d => (d.id === selectedDownloader.id ? updatedDownloader : d)));
+        setDownloaders((prev) =>
+          prev.map((d) => (d.id === selectedDownloader.id ? updatedDownloader : d)),
+        );
         setSelectedDownloader(updatedDownloader);
         setExpandedTags(true);
       }
     } catch (error) {
-      console.error('Failed to fetch tags:', error);
+      console.error("Failed to fetch tags:", error);
     } finally {
       setFetchingTags(false);
     }
@@ -168,17 +170,21 @@ export function useDownloaderManager() {
     if (!selectedDownloader) return;
     try {
       setFetchingPaths(true);
-      const res = await DownloadersService.downloadersControllerPaths({ id: selectedDownloader.id });
+      const res = await DownloadersService.downloadersControllerPaths({
+        id: selectedDownloader.id,
+      });
       if (res.data) {
         const paths = res.data as DownloadPath[];
         const updatedDownloader = { ...selectedDownloader, downloadPaths: paths };
 
-        setDownloaders(prev => prev.map(d => (d.id === selectedDownloader.id ? updatedDownloader : d)));
+        setDownloaders((prev) =>
+          prev.map((d) => (d.id === selectedDownloader.id ? updatedDownloader : d)),
+        );
         setSelectedDownloader(updatedDownloader);
         setExpandedPaths(true);
       }
     } catch (error) {
-      console.error('Failed to fetch paths:', error);
+      console.error("Failed to fetch paths:", error);
     } finally {
       setFetchingPaths(false);
     }
@@ -192,19 +198,20 @@ export function useDownloaderManager() {
       // 通过索引删除标签
       await DownloadersService.downloadersControllerDeleteTag({
         id: selectedDownloader.id,
-        index: tagIndex
+        index: tagIndex,
       });
 
       // 成功后手动更新本地状态
       const updatedTags = selectedDownloader.tags.filter((_, i) => i !== tagIndex);
       const updatedDownloader = { ...selectedDownloader, tags: updatedTags };
 
-      setDownloaders(prev => prev.map(d => (d.id === selectedDownloader.id ? updatedDownloader : d)));
+      setDownloaders((prev) =>
+        prev.map((d) => (d.id === selectedDownloader.id ? updatedDownloader : d)),
+      );
       setSelectedDownloader(updatedDownloader);
-
     } catch (error) {
-      console.error('Failed to delete tag:', error);
-      alert('删除标签失败');
+      console.error("Failed to delete tag:", error);
+      alert("删除标签失败");
     }
   };
 
@@ -215,24 +222,33 @@ export function useDownloaderManager() {
     try {
       await DownloadersService.downloadersControllerDeletePath({
         id: selectedDownloader.id,
-        index: pathIndex
+        index: pathIndex,
       });
 
       const updatedPaths = selectedDownloader.downloadPaths.filter((_, i) => i !== pathIndex);
       const updatedDownloader = { ...selectedDownloader, downloadPaths: updatedPaths };
 
-      setDownloaders(prev => prev.map(d => (d.id === selectedDownloader.id ? updatedDownloader : d)));
+      setDownloaders((prev) =>
+        prev.map((d) => (d.id === selectedDownloader.id ? updatedDownloader : d)),
+      );
       setSelectedDownloader(updatedDownloader);
-
     } catch (error) {
-      console.error('Failed to delete path:', error);
-      alert('删除路径失败');
+      console.error("Failed to delete path:", error);
+      alert("删除路径失败");
     }
   };
 
   // 重置表单数据（用于关闭弹窗后清理状态）
   const resetForm = () => {
-    setFormData({ name: '', type: 'qBittorrent', host: '', port: 8080, username: '', password: '', ssl: false });
+    setFormData({
+      name: "",
+      type: "qBittorrent",
+      host: "",
+      port: 8080,
+      username: "",
+      password: "",
+      ssl: false,
+    });
     setShowPassword(false);
   };
 

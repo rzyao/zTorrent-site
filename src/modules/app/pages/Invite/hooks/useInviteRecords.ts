@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { InvitesService } from '@/api/services/InvitesService';
-import { extractData, formatDate } from '../utils';
-import type { SentInvite } from '../types';
+import { useEffect, useState } from "react";
+import { Service } from "@/api/services/Service";
+import { extractData, formatDate } from "../utils";
+import type { SentInvite } from "../types";
 
 export function useInviteRecords(enabled: boolean = false) {
   const [records, setRecords] = useState<SentInvite[]>([]);
@@ -12,14 +12,14 @@ export function useInviteRecords(enabled: boolean = false) {
     setLoading(true);
     setError(null);
     try {
-      const resp = await InvitesService.invitesControllerListRecords({ page: 1, limit: 50 });
+      const resp = await Service.inviteRecordControllerListRecords({ page: 1, limit: 50 });
       const data = extractData(resp);
       const items = (data?.items || []).map((it: any) => ({
         id: String(it.id),
         code: String(it.code),
-        recipientName: String(it.recipientName || ''),
-        recipientEmail: String(it.recipientEmail || ''),
-        status: String(it.status) as SentInvite['status'],
+        recipientName: String(it.recipientName || ""),
+        recipientEmail: String(it.recipientEmail || ""),
+        status: String(it.status) as SentInvite["status"],
         sentAt: formatDate(it.sentAt),
         registeredAt: it.registeredAt ? formatDate(it.registeredAt) : undefined,
         expiresAt: formatDate(it.expiresAt),

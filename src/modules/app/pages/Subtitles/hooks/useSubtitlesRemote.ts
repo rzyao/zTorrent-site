@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { SubtitlesService } from "../../../api/services/SubtitlesService";
+import { SubtitlesService } from "@/api/services/SubtitlesService";
 import type { FilterLanguage, SortBy, Subtitle, TorrentOption, UploadForm } from "../types";
-import type { ListSubtitlesDto } from "../../../api/models/ListSubtitlesDto";
-import type { UploadSubtitleDto } from "../../../api/models/UploadSubtitleDto";
-import type { GetSubtitleDto } from "../../../api/models/GetSubtitleDto";
-import { OpenAPI } from "../../../api/core/OpenAPI";
+import type { ListSubtitlesDto } from "@/api/models/ListSubtitlesDto";
+import type { UploadSubtitleDto } from "@/api/models/UploadSubtitleDto";
+import type { GetSubtitleDto } from "@/api/models/GetSubtitleDto";
+import { OpenAPI } from "@/api/core/OpenAPI";
 
 export interface SubtitlesStats {
   totalSubtitles: number;

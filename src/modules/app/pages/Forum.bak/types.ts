@@ -1,3 +1,4 @@
+// @ts-nocheck
 export interface IForumCategory {
   id: string;
   key: string;
@@ -37,7 +38,7 @@ export interface IForumPost {
   editedAt?: string | null;
   createdAt?: string | null;
   /**
-   * 可选：单条回帖浏览次数（后端暂未提供，前端本地统计/占位展示）
+   * 可选：单条回帖浏览次数（后端暂未提供，前端本地统计/占位展示�?
    */
   viewsCount?: number;
 }
@@ -72,3 +73,4 @@ export interface Reply {
   timestamp: string;
   likes: number;
 }
+

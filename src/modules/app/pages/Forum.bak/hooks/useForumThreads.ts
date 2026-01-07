@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect, useCallback } from 'react';
 import { IForumThread } from '../types';
 import { unwrapResponse, extractErrorMessage } from '../utils';
@@ -42,3 +43,4 @@ export function useForumThreads({ categoryId, searchQuery }: UseForumThreadsProp
 
   return { threads, setThreads, total, page, setPage, limit, setLimit, loading, error, refresh: fetchThreads };
 }
+

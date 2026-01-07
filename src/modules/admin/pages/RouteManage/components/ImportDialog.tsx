@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Editor from "@monaco-editor/react";
 import { Upload, FileJson, AlertTriangle } from "lucide-react";
 import { customToast } from "@/hooks/useToast";
-import { PlatformAdminRoutesService } from "@/api/services/PlatformAdminRoutesService";
+import { PlatformRoutesService } from "@/api/services/PlatformRoutesService";
 import { useQueryClient } from "@tanstack/react-query";
 import { ImportRoutesDto } from "@/api/models/ImportRoutesDto";
 
@@ -49,7 +49,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
       if (Array.isArray(parsed)) payload = { items: parsed };
       else if (parsed.items || parsed.routes) payload = parsed;
       else throw new Error("JSON 结构不符合要求");
-      await PlatformAdminRoutesService.adminRoutesControllerImport(payload);
+      await PlatformRoutesService.routesControllerImport(payload);
       customToast.success("批量导入成功");
       queryClient.invalidateQueries({ queryKey: ["adminRouteTree"] });
       queryClient.invalidateQueries({ queryKey: ["routeConfig"] });

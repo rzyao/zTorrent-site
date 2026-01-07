@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { memo } from 'react';
 
 export const ContentPreview = memo(function ContentPreview({ html }: { html: string }) {
@@ -17,3 +18,4 @@ export const ReplyContent = memo(function ReplyContent({ html }: { html: string 
     />
   );
 });
+

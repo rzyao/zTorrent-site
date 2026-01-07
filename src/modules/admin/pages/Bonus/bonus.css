@@ -1,0 +1,524 @@
+/* --- Original Styles from bonus.html --- */
+.bonus-page-container {
+  --primary-color: #6366f1;
+  --bg-color: #f1f5f9;
+  --card-bg: #ffffff;
+  --text-color: #334155;
+  --border-color: #e2e8f0;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* 顶部操作栏 */
+.bonus-page-container .top-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  border-bottom: 2px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+}
+
+.bonus-page-container .action-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.bonus-page-container .page-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.bonus-page-container .change-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid #fbbf24;
+}
+
+.bonus-page-container .action-bar-right {
+  display: flex;
+  gap: 10px;
+}
+
+.bonus-page-container .container {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 0;
+  max-width: none;
+  width: auto;
+  align-items: start;
+  box-sizing: border-box;
+  padding: 0;
+  background: transparent;
+}
+
+/* 右侧列：用户场景模拟 + 收益结算清单 上下排列 */
+.bonus-page-container .col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.bonus-page-container .col-config {
+  box-sizing: border-box;
+}
+
+/* 收益结算取消sticky，避免在单列内定位问题 */
+.bonus-page-container .col-results .card {
+  position: relative;
+  top: 0;
+}
+
+/* 收益结算清单内三个模块横向排列 */
+.bonus-page-container .col-results .card {
+  display: flex;
+  flex-direction: column;
+}
+
+.bonus-page-container .col-results .card h2 {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.bonus-page-container .results-row {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.bonus-page-container .results-row .result-box {
+  flex: 1;
+  min-width: 200px;
+  margin-bottom: 0;
+}
+
+/* 用户场景模拟内四个模块横向排列 */
+.bonus-page-container .scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.bonus-page-container .scenario-module {
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.bonus-page-container .scenario-module h3 {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bonus-page-container .scenario-module .form-group {
+  margin-bottom: 10px;
+}
+
+.bonus-page-container .scenario-module .form-group:last-child {
+  margin-bottom: 0;
+}
+
+/* scenario-module 内的 label 样式 - 防止换行 */
+.bonus-page-container .scenario-module label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.bonus-page-container .scenario-module label > span {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.bonus-page-container .scenario-module input[type="number"] {
+  width: 60px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1200px) {
+  .bonus-page-container .scenario-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .bonus-page-container .scenario-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .bonus-page-container .results-row {
+    flex-direction: column;
+  }
+  
+  .bonus-page-container .results-row .result-box {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 992px) {
+  .bonus-page-container .container {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}
+
+.bonus-page-container .card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 0;
+}
+
+
+.bonus-page-container h2 {
+  margin-top: 0;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 10px;
+  font-size: 1.1rem;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bonus-page-container .form-group {
+  margin-bottom: 15px;
+}
+
+.bonus-page-container label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #475569;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+/* 交易市场系数字段行 - label、input、备注独立排列 */
+.bonus-page-container .market-field-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  width: max-content;
+  min-width: 100%;
+}
+
+.bonus-page-container .market-field-row label {
+  margin-bottom: 0;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.bonus-page-container .market-field-row input[type="number"] {
+  flex-shrink: 0;
+}
+
+.bonus-page-container .market-field-row .inline-note {
+  flex-shrink: 0;
+}
+
+/* 标签文字保持固定宽度 */
+.bonus-page-container label > span:first-of-type:not(.inline-note) {
+  flex-shrink: 0;
+}
+
+.bonus-page-container .input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+
+.bonus-page-container input[type="number"] {
+  width: 70px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  text-align: right;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #334155;
+  flex-shrink: 0;
+}
+
+.bonus-page-container .info-tip {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-top: 3px;
+}
+
+.bonus-page-container .info-note {
+  font-size: 0.75rem;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-top: 5px;
+  border-left: 3px solid #cbd5e1;
+}
+
+/* 行内备注样式 - 位于最右侧 */
+.bonus-page-container .inline-note {
+  font-size: 0.75rem;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border-left: 3px solid #cbd5e1;
+  font-weight: 400;
+  margin-left: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 分数样式 - 横线上下显示 */
+.bonus-page-container .fraction {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  margin: 0 4px;
+}
+
+.bonus-page-container .fraction .numerator {
+  border-bottom: 1px solid currentColor;
+  padding: 0 4px 2px;
+  line-height: 1.2;
+}
+
+.bonus-page-container .fraction .denominator {
+  padding: 2px 4px 0;
+  line-height: 1.2;
+}
+
+.bonus-page-container .formula-box {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  padding: 10px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #475569;
+  margin-bottom: 15px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.bonus-page-container .formula-highlight {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.bonus-page-container .result-box {
+  background-color: #f8fafc;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border-left: 5px solid transparent;
+  text-align: center;
+}
+
+.bonus-page-container .result-box.rent {
+  border-left-color: var(--warning-color);
+  background-color: #fffbeb;
+}
+
+.bonus-page-container .result-box.sales {
+  border-left-color: var(--success-color);
+  background-color: #f0fdf4;
+}
+
+.bonus-page-container .result-box.cost {
+  border-left-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.bonus-page-container .result-title {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.bonus-page-container .result-value {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.bonus-page-container .result-detail {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 0.85rem;
+  color: #475569;
+  text-align: left;
+}
+
+.bonus-page-container .detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.bonus-page-container .real-formula {
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #334155;
+  text-align: left;
+  word-break: break-all;
+  line-height: 1.6;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.bonus-page-container .col-config h2 {
+  border-color: #6366f1;
+}
+
+.bonus-page-container .col-scenario h2 {
+  border-color: #ec4899;
+}
+
+.bonus-page-container .col-results h2 {
+  border-color: #10b981;
+}
+
+.bonus-page-container .form-group.changed label {
+  color: #ef4444;
+}
+
+.bonus-page-container .form-group.changed input[type="number"] {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15);
+}
+
+
+
+.bonus-page-container .diff-box {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin: 10px 0 15px;
+}
+
+.bonus-page-container .diff-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.bonus-page-container .diff-name {
+  font-weight: 600;
+}
+
+.bonus-page-container .diff-values .old {
+  color: #64748b;
+}
+
+.bonus-page-container .diff-values .new {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.bonus-page-container .diff-values .arrow {
+  margin: 0 6px;
+  color: #94a3b8;
+}
+
+.bonus-page-container .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: #6366f1;
+  border: 1px solid #4f46e5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bonus-page-container .btn:hover:not(:disabled) {
+  background: #4f46e5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bonus-page-container .btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.bonus-page-container .btn.btn-changed {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+.bonus-page-container .btn-secondary {
+  background: #64748b;
+  border-color: #475569;
+}
+
+.bonus-page-container .btn-secondary:hover:not(:disabled) {
+  background: #475569;
+}
+
+.bonus-page-container .btn-primary {
+  background: #6366f1;
+  border-color: #4f46e5;
+}
+
+.bonus-page-container .btn-primary:hover:not(:disabled) {
+  background: #4f46e5;
+}

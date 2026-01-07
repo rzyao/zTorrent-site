@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { User, Clock, Eye, X, Flame, ThumbsUp, Reply } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -82,3 +83,4 @@ export function ThreadContent({ thread, threadDetail, onClose, onReplyClick, con
     </div>
   );
 }
+

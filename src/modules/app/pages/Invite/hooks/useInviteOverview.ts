@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { InvitesService } from '@/api/services/InvitesService';
-import { getBonusOverview } from '@/api/custom/bonus';
-import { extractData } from '../utils';
+import { useEffect, useState } from "react";
+import { Service } from "@/api/services/Service";
+import { getBonusOverview } from "@/api/custom/bonus";
+import { extractData } from "../utils";
 
 export interface InviteOverview {
   totalInvites: number;
@@ -12,7 +12,13 @@ export interface InviteOverview {
 }
 
 export function useInviteOverview(enabled: boolean = true) {
-  const [overview, setOverview] = useState<InviteOverview>({ totalInvites: 0, usedInvites: 0, remainingInvites: 0, invitedUsers: 0, magicPoints: 0 });
+  const [overview, setOverview] = useState<InviteOverview>({
+    totalInvites: 0,
+    usedInvites: 0,
+    remainingInvites: 0,
+    invitedUsers: 0,
+    magicPoints: 0,
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -20,10 +26,13 @@ export function useInviteOverview(enabled: boolean = true) {
     setLoading(true);
     setError(null);
     try {
-      const resp = await InvitesService.invitesControllerOverview({});
+      const resp = await Service.inviteStatsControllerOverview({});
       const data = extractData(resp);
       const bonus = await getBonusOverview();
-      const mp = typeof (bonus as any)?.balance === 'string' ? parseFloat((bonus as any).balance) : Number((bonus as any)?.balance || 0);
+      const mp =
+        typeof (bonus as any)?.balance === "string"
+          ? parseFloat((bonus as any).balance)
+          : Number((bonus as any)?.balance || 0);
       setOverview({
         totalInvites: Number(data?.totalInvites || 0),
         usedInvites: Number(data?.usedInvites || 0),

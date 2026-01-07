@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useReviewAction } from "./useReviewMutations";
 import { extractErrorMessage } from "../utils";
 import type { ReviewItem } from "../types";
+import { ReviewDto } from "@/api/models/ReviewDto";
 import { toast } from "sonner";
 
 /** 审核操作 Hook */
@@ -33,7 +34,7 @@ export function useReviewActions() {
       await mutation.mutateAsync({
         id: selectedItem.id,
         type: selectedItem.type,
-        action: actionType,
+        action: actionType === "approve" ? ReviewDto.action.APPROVE : ReviewDto.action.REJECT,
         note: actionNotes.trim(),
       });
       toast.success(actionType === "approve" ? "审核通过" : "审核驳回");

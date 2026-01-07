@@ -1,0 +1,226 @@
+/* KeepAliveTabs 独立样式文件 */
+/* 未选中：分割线样式 | 选中：蓝色边框 + 曲线融入 */
+
+/* 确保内容区占满高度 */
+/* KeepAliveTabs 仅作为导航栏，隐藏 Antd 自带的内容区域 */
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-content-holder {
+  display: none !important;
+}
+
+/* 修复 Flexbox 高度约束：min-height: 0 打破默认的 auto 约束 */
+.keep-alive-tabs-container > .ant-tabs {
+  min-height: 0;
+}
+
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-content-holder > .ant-tabs-content {
+  height: 100%;
+}
+
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane {
+  height: 100%;
+}
+
+/* TabBar 样式 */
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav {
+  margin-bottom: 0 !important;
+  border-bottom: 0 !important;
+  padding-left: 12px; /* 为最左侧 Tab 的左下角曲线留出空间 */
+}
+
+/* Tab 列表使用 Flex 布局，实现 Chrome 风格的自适应压缩 */
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-nav-wrap {
+  overflow: hidden !important;
+  flex: 1;
+  min-width: 0; /* 允许压缩 */
+}
+
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-nav-list {
+  overflow: hidden !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  max-width: 100%;
+}
+
+/* 隐藏默认的左右滚动按钮 */
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-nav-operations {
+  display: none !important;
+}
+
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav::before {
+  border-bottom: 1px solid #e0e0e0 !important;
+}
+
+/* 未选中的 Tab：Chrome 风格自适应宽度 */
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-tab {
+  background: #fff !important;
+  border: none !important;
+  border-radius: 6px 6px 0 0 !important;
+  margin: 0 !important;
+  margin-bottom: 1px !important;
+  padding: 8px 8px !important;
+  transition: background 0.2s, flex 0.2s, width 0.2s;
+  position: relative;
+  z-index: 1;
+  /* Chrome 风格自适应：优先显示完整内容，空间不足时压缩 */
+  flex: 0 1 auto !important;
+  max-width: 200px;
+  min-width: 36px !important; /* 保证至少能看到 icon 或首字母 */
+  overflow: visible; /* 允许分割线显示 */
+}
+
+/* Tab 按钮文字 - Chrome 风格渐变消失 */
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-tab .ant-tabs-tab-btn {
+  margin-left: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  /* 渐变消失效果：只在边缘处渐变 */
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 20px), transparent 100%);
+  mask-image: linear-gradient(to right, black calc(100% - 20px), transparent 100%);
+}
+
+/* Tab 内部使用 flex 布局 */
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-tab {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* 未选中 Tab 的 wrapper - Chrome 风格 */
+.keep-alive-tabs-container .tab-outer-wrapper {
+  position: relative;
+  flex: 0 1 auto !important;
+  max-width: 200px;
+  /* Chrome 风格短分割线 - 使用渐变边框 */
+  border-right: 2px solid transparent;
+  border-image: linear-gradient(to bottom, transparent 25%, #d8d8d8 25%, #d8d8d8 75%, transparent 75%) 1;
+}
+
+/* 最后一个 wrapper 不显示分割线 */
+.keep-alive-tabs-container .tab-outer-wrapper:last-child {
+  border-right: none;
+}
+
+/* 选中 Tab 及其相邻的 wrapper 不显示分割线 */
+.keep-alive-tabs-container .tab-outer-wrapper-active {
+  border-right: none;
+}
+
+/* 选中 Tab 前一个的分割线也隐藏 */
+.keep-alive-tabs-container .tab-outer-wrapper:has(+ .tab-outer-wrapper-active) {
+  border-right: none;
+}
+
+
+
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-tab:hover {
+  background: #fafafa !important;
+}
+
+/* 选中的 Tab：蓝色边框 + 曲线融入 + 不压缩 */
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-tab-active {
+  background: #fcfcfc !important;
+  border: 1px solid #d0d0d0 !important;
+  border-bottom: none !important;
+  z-index: 2;
+  /* 选中 Tab 宽度由内容决定 */
+  flex: none !important;
+  width: auto !important;
+  min-width: auto !important;
+  max-width: none !important;
+  margin-bottom: 0px;
+}
+
+/* 选中 Tab 的文字：不渐变，不扩展 */
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn {
+  -webkit-mask-image: none;
+  mask-image: none;
+  flex: none; /* 不扩展，只占用内容宽度 */
+}
+
+/* 选中 Tab 左下角曲线 */
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-tab-active::before {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: -8px;
+  width: 8px;
+  height: 8px;
+  background: transparent;
+  border-bottom-right-radius: 8px;
+  box-shadow: 2px 2px 0 2px #fcfcfc;
+  border-right: 1px solid #d0d0d0;
+  border-bottom: 1px solid #d0d0d0;
+}
+
+/* 选中 Tab 右下角曲线（重新利用 ::after，因为选中 Tab 的分割线已隐藏） */
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-tab-active::after {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  bottom: -1px;
+  right: -8px;
+  width: 8px;
+  height: 8px;
+  background: transparent;
+  border-bottom-left-radius: 8px;
+  box-shadow: -2px 2px 0 2px #fcfcfc;
+  border-left: 1px solid #d0d0d0;
+  border-bottom: 1px solid #d0d0d0;
+  transform: none;
+  top: auto;
+}
+
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn {
+  position: relative;
+  color: #1677ff !important;
+  font-weight: 500;
+}
+
+
+/* 覆盖下方边框线的伪元素 - 仅选中状态 */
+.keep-alive-tabs-container .tab-outer-wrapper-active::before {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: #ffffff;
+  z-index: 10;
+}
+
+/* 选中 Tab 的 wrapper：宽度由内容决定，允许曲线溢出 */
+.keep-alive-tabs-container .tab-outer-wrapper-active {
+  flex: none !important;
+  width: auto !important;
+  min-width: auto !important;
+  max-width: none !important;
+  overflow: visible !important;
+  margin-right: 8px; /* 为右下角曲线预留空间 */
+  margin-left: 8px; /* 为左下角曲线预留空间 */
+  z-index: 2;
+}
+
+/* 关闭按钮样式 - 不可压缩 */
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-tab .ant-tabs-tab-remove {
+  margin-left: 0px;
+  padding-left: 12px;
+  padding-right: 10px;
+  font-size: 10px;
+  color: #999;
+  flex-shrink: 0; /* 不压缩 */
+}
+
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-tab .ant-tabs-tab-remove:hover {
+  color: #333;
+}
+
+/* 选中 Tab 的关闭按钮 */
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-remove {
+  color: #1677ff;
+}
+
+.keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-remove:hover {
+  color: #0958d9;
+}

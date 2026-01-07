@@ -265,11 +265,7 @@ async function fetchAndRegisterApiPermissions(baseUrl: string): Promise<void> {
  */
 async function parseAppRoutes(): Promise<void> {
   // 需要扫描的路由文件列表
-  const routeFiles = [
-    "src/routes/AppRoutes.tsx",
-    "src/routes/forumRoutes.tsx",
-    "src/routes/adminRoutes.tsx",
-  ];
+  const routeFiles = ["src/routes/AppRoutes.tsx", "src/routes/forumRoutes.tsx"];
 
   for (const routeFile of routeFiles) {
     try {

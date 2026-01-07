@@ -1,20 +1,15 @@
 import { NavLink } from "react-router-dom";
-import { useNavigation } from "@/hooks/useNavigation";
-import { useAccess } from "@/context/AccessContext";
-import { filterNavigationTree } from "@/utils/navigation";
+import { useRouteNavigation } from "@/hooks/useRouteNavigation";
 
 interface MobileNavProps {
   onClose: () => void;
 }
 
 export function MobileNav({ onClose }: MobileNavProps) {
-  const { mobile, isLoading } = useNavigation();
-  const { access, loading: accessLoading } = useAccess();
+  const { mobile, isLoading } = useRouteNavigation();
 
-  const loading = isLoading || accessLoading;
-
-  // Filter items using recursive utility
-  const visibleItems = filterNavigationTree(mobile, access, loading);
+  // 直接使用已过滤的导航项
+  const visibleItems = mobile;
 
   if (isLoading) {
     return (

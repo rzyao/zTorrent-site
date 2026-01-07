@@ -28,7 +28,7 @@ export function useEpisodeDetail(seriesId?: string, episodeId?: string) {
       setLoading(true);
       setError(null);
       try {
-        const resp = await EpisodesService.episodesControllerDetail({
+        const resp = await EpisodesService.episodeBaseControllerDetail({
           id: episodeId,
         });
         const data = resp.data;
@@ -43,7 +43,7 @@ export function useEpisodeDetail(seriesId?: string, episodeId?: string) {
 
         // 获取所有分集列表
         if (data.seriesId) {
-          const epResp = await EpisodesService.episodesControllerList({
+          const epResp = await EpisodesService.episodeBaseControllerList({
             seriesId: data.seriesId,
           });
           // 注意：如果 EpisodeDTO 缺少 ID，这里可能需要后端配合或检查实际返回数据

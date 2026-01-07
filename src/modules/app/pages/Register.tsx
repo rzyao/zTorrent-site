@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { Mail, Lock, UserPlus, ArrowLeft, User, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "../components/ui/input";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { useAuth } from "../hooks/useApi";
-import { isValidPassword, passwordErrorMessage } from "../utils/validation";
+import { Input } from "@/components/ui/input";
+import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+import { useAuth } from "@/hooks/useApi";
+import { isValidPassword, passwordErrorMessage } from "@/utils/validation";
 import { toast } from "sonner";
-import { getAuthService } from "../api/lazy";
+import { getAuthService } from "@/api/lazy";
 
 interface RegisterProps {
   onBack: () => void;

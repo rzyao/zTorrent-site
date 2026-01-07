@@ -12,7 +12,7 @@ import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
 import { GlobalLoaderTrigger } from "@/components/ui/GlobalLoader";
 import { useGlobalLoader } from "@/stores/globalLoaderStore";
 import AppLayout from "@/modules/app/layouts/AppLayout";
-import { AdminLayout } from "@/modules/admin/layouts/AdminLayout";
+import BasicLayout from "@/modules/admin/layouts";
 
 /**
  * 根据布局类型获取布局组件
@@ -22,7 +22,7 @@ function getLayoutWrapper(layout: string | undefined) {
     case "app":
       return AppLayout;
     case "admin":
-      return AdminLayout;
+      return BasicLayout;
     case "forum":
       return null;
     case "none":
@@ -99,29 +99,12 @@ function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
     }
   }
 
-  // Admin 布局
-  if (layout === "admin") {
-    return (
-      <Route
-        key={id}
-        path={path}
-        element={
-          <AuthRoute>
-            <AdminLayout />
-          </AuthRoute>
-        }
-      >
-        {children?.map((child) => renderRoute(child, path))}
-        <Route index element={<Navigate to={`${path}/routes`} replace />} />
-      </Route>
-    );
-  }
-
-  // App 布局
+  // App 布局或其他通用布局
   if (LayoutComponent) {
     return (
       <Route
         key={id}
+        path={path}
         element={
           <AuthRoute>
             <LayoutComponent>
@@ -130,7 +113,7 @@ function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
           </AuthRoute>
         }
       >
-        {children?.map((child) => renderRoute(child, ""))}
+        {children?.map((child) => renderRoute(child, path))}
       </Route>
     );
   }
@@ -139,29 +122,38 @@ function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
 }
 
 /**
- * 路由加载指示器组件
- * 在路由配置加载期间显示全局加载器
+ * 动态路由 Hook
+ * 返回路由元素数组，供 AppRoutes 直接渲染
  */
-function RouteConfigLoader() {
-  const { startLoading, finishLoading } = useGlobalLoader();
+export function useDynamicRouteElements() {
+  const { routes, isLoading } = useRouteConfig();
 
-  useEffect(() => {
-    startLoading();
-    return () => finishLoading();
-  }, [startLoading, finishLoading]);
+  const routeElements = routes.map((config) => renderLayoutRoutes(config));
 
-  return null;
+  return {
+    routeElements,
+    isLoading,
+  };
 }
 
 /**
- * 动态路由组件
+ * 动态路由组件（保留兼容性）
+ * @deprecated 使用 useDynamicRouteElements hook 代替
  */
 export function DynamicRoutes() {
   const { routes, isLoading } = useRouteConfig();
+  const { startLoading, finishLoading } = useGlobalLoader();
 
-  // 路由配置加载中 - 显示加载器
+  useEffect(() => {
+    if (isLoading) {
+      startLoading();
+    } else {
+      finishLoading();
+    }
+  }, [isLoading, startLoading, finishLoading]);
+
   if (isLoading) {
-    return <RouteConfigLoader />;
+    return null;
   }
 
   return (
@@ -174,5 +166,5 @@ export function DynamicRoutes() {
 
 function NotFoundRedirect() {
   const isLoggedIn = !!localStorage.getItem("accessToken");
-  return <Navigate to={isLoggedIn ? "/home" : "/login"} replace />;
+  return <Navigate to={isLoggedIn ? "/app/home" : "/login"} replace />;
 }

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { IForumCategory } from "../../types";
 import { IForumPartition } from "../../constants";
 import { BoardRow } from "./BoardRow";
@@ -41,3 +42,4 @@ export function PartitionGroup({ partition, categories, onBoardClick }: Partitio
     </div>
   );
 }
+

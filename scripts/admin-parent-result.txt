@@ -1,0 +1,22 @@
+查询 ID = 796378453871038464 的路由...
+
+找到路由:
+  id: 796378453871038464
+  created_at: Tue Jan 06 2026 14:03:41 GMT+0800 (中国标准时间)
+  updated_at: Tue Jan 06 2026 15:47:13 GMT+0800 (中国标准时间)
+  deleted_at: null
+  route_key: admin-users-permissions
+  path: permissions
+  component: null
+  layout: app
+  name: 权限管理
+  parent_id: 796378453770375168
+  redirect: null
+  sort_order: 30
+  is_visible: true
+  is_enabled: true
+  is_index: false
+
+查询所有 layout = 'admin' 的路由...
+结果 (1 条):
+  796378452902154240 | admin | 后台权限 | layout: admin | parent: 796378453871038464

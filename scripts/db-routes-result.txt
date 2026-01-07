@@ -1,0 +1,145 @@
+数据库连接成功
+
+routes 表字段:
+  - id
+  - created_at
+  - updated_at
+  - deleted_at
+  - route_key
+  - path
+  - component
+  - layout
+  - name
+  - parent_id
+  - redirect
+  - sort_order
+  - is_visible
+  - is_enabled
+  - is_index
+
+根节点 (3 条):
+  796432658509991936 | app | 前台
+  796432660166742016 | forum | 论坛
+  796432660594561024 | admin | 管理后台
+
+admin 相关路由 (2 条):
+  796432660594561024 | admin | 管理后台 | parent: null
+  796432661664108544 | admin | 后台权限 | parent: 796432661601193984
+
+总路由数量: 112
+
+所有路由 (前 200 条):
+  app                  | 前台              | layout: app      | comp: null                      | parent: null
+  home                 | 首页              | layout: app      | comp: HomePage                  | parent: 796432658509991936
+  torrents             | 种子列表            | layout: app      | comp: TorrentsPage              | parent: 796432658509991936
+  torrent/:id          | 种子详情            | layout: app      | comp: TorrentDetailPage         | parent: 796432658509991936
+  subtitles            | 字幕              | layout: app      | comp: SubtitlesPage             | parent: 796432658509991936
+  ranking              | 排行榜             | layout: app      | comp: RankingPage               | parent: 796432658509991936
+  movies               | 电影              | layout: app      | comp: MoviesPage                | parent: 796432658509991936
+  movie/:id            | 电影详情            | layout: app      | comp: MovieDetailPage           | parent: 796432658509991936
+  series               | 剧集              | layout: app      | comp: SeriesPage                | parent: 796432658509991936
+  series/:id           | 剧集详情            | layout: app      | comp: SeriesDetailPage          | parent: 796432658509991936
+  episodes/:id         | 分集详情            | layout: app      | comp: EpisodeDetailPage         | parent: 796432658509991936
+  playlists            | 片单              | layout: app      | comp: PlaylistsPage             | parent: 796432658509991936
+  playlist/:id         | 片单详情            | layout: app      | comp: PlaylistDetailPage        | parent: 796432658509991936
+  rules                | 规则              | layout: app      | comp: RulesPage                 | parent: 796432658509991936
+  staff                | 管理组             | layout: app      | comp: StaffPage                 | parent: 796432658509991936
+  tutorials            | 使用教程            | layout: app      | comp: TutorialsPage             | parent: 796432658509991936
+  announcements        | 公告              | layout: app      | comp: AnnouncementsPage         | parent: 796432658509991936
+  adult                | 成人区             | layout: app      | comp: AdultPage                 | parent: 796432658509991936
+  adult/:category      | 成人区分类           | layout: app      | comp: AdultPage                 | parent: 796432658509991936
+  upload               | 上传              | layout: app      | comp: UploadTorrentPage         | parent: 796432658509991936
+  edit/movie           | 编辑电影            | layout: app      | comp: EditMoviePage             | parent: 796432658509991936
+  edit/series          | 编辑剧集            | layout: app      | comp: EditSeriesPage            | parent: 796432658509991936
+  edit/playlist        | 编辑片单            | layout: app      | comp: EditPlaylistPage          | parent: 796432658509991936
+  requests             | 求种              | layout: app      | comp: RequestsPage              | parent: 796432658509991936
+  invite               | 邀请              | layout: app      | comp: InvitePage                | parent: 796432658509991936
+  bonus                | 魔力值             | layout: app      | comp: BonusPage                 | parent: 796432658509991936
+  torrent-history      | 记录              | layout: app      | comp: TorrentRecordPage         | parent: 796432658509991936
+  messages             | 消息              | layout: app      | comp: MessagesPage              | parent: 796432658509991936
+  favorites            | 收藏              | layout: app      | comp: FavoritesPage             | parent: 796432658509991936
+  rss                  | RSS订阅           | layout: app      | comp: RSSPage                   | parent: 796432658509991936
+  seeding              | 保种列表            | layout: app      | comp: SeedingPage               | parent: 796432658509991936
+  dead-torrents        | 断种大厅            | layout: app      | comp: DeadTorrentsPage          | parent: 796432658509991936
+  games                | 小游戏             | layout: app      | comp: GamesPage                 | parent: 796432658509991936
+  magicfarm            | 魔法农场            | layout: app      | comp: MagicFarmPage             | parent: 796432658509991936
+  music                | 音乐              | layout: app      | comp: MusicPage                 | parent: 796432658509991936
+  player               | 播放器             | layout: app      | comp: PlayerPage                | parent: 796432658509991936
+  groups               | 制作组             | layout: app      | comp: GroupsPage                | parent: 796432658509991936
+  candidates           | 候选              | layout: app      | comp: CandidatesPage            | parent: 796432658509991936
+  control              | 控制              | layout: app      | comp: ControlPage               | parent: 796432658509991936
+  design               | 设计              | layout: app      | comp: DesignPage                | parent: 796432658509991936
+  forum                | 论坛              | layout: forum    | comp: ForumLayout               | parent: null
+                       | 论坛首页            | layout: forum    | comp: ForumHomePage             | parent: 796432660166742016
+  hot                  | 热门话题            | layout: forum    | comp: ForumHomePage             | parent: 796432660166742016
+  latest               | 最新发布            | layout: forum    | comp: ForumHomePage             | parent: 796432660166742016
+  topic/:topicId       | 话题详情            | layout: forum    | comp: TopicDetail               | parent: 796432660166742016
+  topic/:topicId/:postNumber | 话题详情            | layout: forum    | comp: TopicDetail               | parent: 796432660166742016
+  category/:categoryId | 分类              | layout: forum    | comp: CategoryPage              | parent: 796432660166742016
+  category/:categoryId/:sortBy | 分类              | layout: forum    | comp: CategoryPage              | parent: 796432660166742016
+  tag/:tagName         | 标签              | layout: forum    | comp: CategoryPage              | parent: 796432660166742016
+  categories           | 类别概览            | layout: forum    | comp: CategoriesPage            | parent: 796432660166742016
+  tags                 | 标签概览            | layout: forum    | comp: TagsPage                  | parent: 796432660166742016
+  new-category         | 新建类别            | layout: forum    | comp: NewCategoryPage           | parent: 796432660166742016
+  category/:categoryId/edit | 编辑类别            | layout: forum    | comp: EditCategoryPage          | parent: 796432660166742016
+  create               | 发布话题            | layout: forum    | comp: CreateTopicPage           | parent: 796432660166742016
+  bookmarks            | 我的收藏            | layout: forum    | comp: BookmarksPage             | parent: 796432660166742016
+  admin                | 管理后台            | layout: admin    | comp: AdminDashboard            | parent: null
+                       | 仪表盘             | layout: admin    | comp: AdminDashboard            | parent: 796432660594561024
+  system               | 系统设置            | layout: admin    | comp: AdminSystemSettings       | parent: 796432660594561024
+  recommendation-config | 推荐配置            | layout: admin    | comp: AdminRecommendationConfig | parent: 796432660594561024
+  navigation           | 导航管理            | layout: admin    | comp: null                      | parent: 796432660594561024
+  desktop              | 桌面端导航           | layout: admin    | comp: AdminDesktopNavigation    | parent: 796432660712001536
+  mobile               | 移动端导航           | layout: admin    | comp: AdminMobileNavigation     | parent: 796432660712001536
+  categories           | 分类管理            | layout: admin    | comp: null                      | parent: 796432660594561024
+  torrent              | 种子分类            | layout: admin    | comp: AdminTorrentCategories    | parent: 796432660808470528
+  movie                | 电影分类            | layout: admin    | comp: AdminMovieCategories      | parent: 796432660808470528
+  series               | 剧集分类            | layout: admin    | comp: AdminSeriesCategories     | parent: 796432660808470528
+  playlist             | 播放列表分类          | layout: admin    | comp: AdminPlaylistCategories   | parent: 796432660808470528
+  adult                | 成人分类            | layout: admin    | comp: null                      | parent: 796432660808470528
+  torrent              | 种子              | layout: admin    | comp: AdminAdultTorrentCategories | parent: 796432660904939520
+  movie                | 电影              | layout: admin    | comp: AdminAdultMovieCategories | parent: 796432660904939520
+  series               | 剧集              | layout: admin    | comp: AdminAdultSeriesCategories | parent: 796432660904939520
+  playlist             | 播放列表            | layout: admin    | comp: AdminAdultPlaylistCategories | parent: 796432660904939520
+  torrents             | 种子管理            | layout: admin    | comp: null                      | parent: 796432660594561024
+                       | 种子列表            | layout: admin    | comp: AdminTorrents             | parent: 796432661060128768
+  records              | 下载记录            | layout: admin    | comp: AdminTorrentRecords       | parent: 796432661060128768
+  records/:id          | 下载记录            | layout: admin    | comp: AdminTorrentRecords       | parent: 796432661060128768
+  user-records         | 用户下载记录          | layout: admin    | comp: AdminUserDownloadRecords  | parent: 796432661060128768
+  user-records/:id     | 用户下载记录          | layout: admin    | comp: AdminUserDownloadRecords  | parent: 796432661060128768
+  movies               | 影片管理            | layout: admin    | comp: AdminFilms                | parent: 796432660594561024
+  movies/:id           | 影片详情            | layout: admin    | comp: AdminFilmDetail           | parent: 796432660594561024
+  playlists            | 播放列表管理          | layout: admin    | comp: AdminPlaylists            | parent: 796432660594561024
+  playlists/:id        | 播放列表详情          | layout: admin    | comp: AdminPlaylistDetail       | parent: 796432660594561024
+  users                | 用户管理            | layout: admin    | comp: null                      | parent: 796432660594561024
+                       | 用户列表            | layout: admin    | comp: AdminUsers                | parent: 796432661500530688
+  punishments          | 处罚记录            | layout: admin    | comp: AdminPunishmentRecords    | parent: 796432661500530688
+  roles                | 角色管理            | layout: admin    | comp: AdminRoles                | parent: 796432661500530688
+  permissions          | 权限管理            | layout: admin    | comp: null                      | parent: 796432661500530688
+  web                  | 前台权限            | layout: admin    | comp: AdminWebPermissions       | parent: 796432661601193984
+  admin                | 后台权限            | layout: admin    | comp: AdminAdminPermissions     | parent: 796432661601193984
+  levels               | 等级管理            | layout: admin    | comp: AdminLevels               | parent: 796432661500530688
+  dictionary           | 字典管理            | layout: admin    | comp: null                      | parent: 796432660594561024
+  punishment-types     | 处罚类型            | layout: admin    | comp: AdminPunishmentTypes      | parent: 796432661735411712
+  ban-reasons          | 封禁原因            | layout: admin    | comp: AdminBanReasons           | parent: 796432661735411712
+  unban-reasons        | 解封原因            | layout: admin    | comp: AdminUnbanReasons         | parent: 796432661735411712
+  ban-days             | 封禁天数            | layout: admin    | comp: AdminBanDays              | parent: 796432661735411712
+  store                | 商城管理            | layout: admin    | comp: null                      | parent: 796432660594561024
+  items                | 商品管理            | layout: admin    | comp: AdminStoreItems           | parent: 796432661836075008
+  orders               | 订单管理            | layout: admin    | comp: AdminStoreOrders          | parent: 796432661836075008
+  bonus                | 魔力管理            | layout: admin    | comp: null                      | parent: 796432660594561024
+  balances             | 余额查询            | layout: admin    | comp: AdminBonusBalances        | parent: 796432661953515520
+  ledger               | 账本记录            | layout: admin    | comp: AdminBonusLedger          | parent: 796432661953515520
+  batch-adjust         | 批量调整            | layout: admin    | comp: AdminBonusBatchAdjust     | parent: 796432661953515520
+  rules                | 规则配置            | layout: admin    | comp: AdminBonusRules           | parent: 796432661953515520
+  adjust               | 手动调整            | layout: admin    | comp: AdminBonusAdjustments     | parent: 796432661953515520
+  invites              | 邀请管理            | layout: admin    | comp: null                      | parent: 796432660594561024
+  list                 | 邀请列表            | layout: admin    | comp: AdminInvitesList          | parent: 796432662175813632
+  quota                | 配额管理            | layout: admin    | comp: AdminInviteQuotaList      | parent: 796432662175813632
+  statistics           | 邀请统计            | layout: admin    | comp: AdminInvitesStatistics    | parent: 796432662175813632
+  send                 | 发送邀请            | layout: admin    | comp: AdminSendInvite           | parent: 796432662175813632
+  tickets              | 工单管理            | layout: admin    | comp: AdminTicketsList          | parent: 796432660594561024
+  tickets/:id          | 工单详情            | layout: admin    | comp: AdminTicketDetail         | parent: 796432660594561024
+  routes               | 路由管理            | layout: admin    | comp: RouteManagePage           | parent: 796432660594561024
+
+数据库连接已关闭
