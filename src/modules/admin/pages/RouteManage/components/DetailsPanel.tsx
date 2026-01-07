@@ -12,17 +12,11 @@ import {
   Empty,
   Skeleton,
 } from "antd";
-import {
-  SaveOutlined,
-  ReloadOutlined,
-  DeleteOutlined,
-  InfoCircleOutlined,
-} from "@ant-design/icons";
+import { SaveOutlined, ReloadOutlined, DeleteOutlined } from "@ant-design/icons";
 import { RouteTreeNodeDto } from "@/api/models/RouteTreeNodeDto";
 import { componentRegistry } from "@/routes/componentRegistry";
 
 const { Text, Title } = Typography;
-const { Option } = Select;
 
 interface DetailsPanelProps {
   node: RouteTreeNodeDto | null;
@@ -273,14 +267,8 @@ export const DetailsPanel = memo(function DetailsPanel({
                   <Select mode="tags" placeholder="输入权限Key" />
                 </Form.Item>
 
-                <Form.Item label="菜单可见性" name="isVisible" valuePropName="checked">
-                  <div className="flex items-center justify-between rounded-lg border border-[rgba(5,5,5,0.06)] bg-[rgba(5,5,5,0.02)] p-3">
-                    <div className="flex items-center gap-2">
-                      <InfoCircleOutlined className="text-gray-400" />
-                      <span className="text-sm">侧边栏是否显示</span>
-                    </div>
-                    <Switch />
-                  </div>
+                <Form.Item label="侧边栏是否显示" name="isVisible" valuePropName="checked">
+                  <Switch checkedChildren="显示" unCheckedChildren="隐藏" />
                 </Form.Item>
               </div>
             </div>
