@@ -13,16 +13,73 @@ import logoSvgContent from "@/assets/logo.svg?raw";
 import logoUrlPath from "@/assets/logo.svg";
 import { setMessageInstance } from "@/modules/admin/utils/globalMessage";
 import { SECTION_NAME_MAP } from "../constants";
-import { RAW_MENU_ITEMS, MENU_ICONS, type RawMenuItem } from "../constants/menuConfig";
+import { MENU_ICONS } from "../constants/menuConfig";
+import { useRouteConfig } from "@/hooks/useRouteConfig";
 import type { MenuProps } from "antd";
+import type { RouteConfig } from "@/types/routeConfig";
 
 type MenuItem = Required<MenuProps>["items"][number];
+
+// Admin 模块的基础路径前缀
+const ADMIN_BASE_PATH = "/admin";
+
+/**
+ * 从动态路由配置中提取 Admin 模块的子路由
+ */
+function findAdminRoutes(routes: RouteConfig[]): RouteConfig[] {
+  for (const route of routes) {
+    if (route.layout === "admin" || route.path === "admin") {
+      return route.children || [];
+    }
+  }
+  return [];
+}
+
+/**
+ * 将动态路由配置转换为菜单项格式
+ */
+interface DynamicMenuItem {
+  key: string;
+  label: string;
+  path?: string;
+  permissions?: string[];
+  children?: DynamicMenuItem[];
+}
+
+function routeToMenuItem(route: RouteConfig, parentPath: string = ""): DynamicMenuItem | null {
+  // 只有 isVisible 的路由才显示在菜单中
+  if (route.isVisible === false) {
+    return null;
+  }
+
+  // 构建相对路径（用于菜单配置）
+  const relativePath = route.index
+    ? parentPath || "/"
+    : parentPath
+      ? `${parentPath}/${route.path}`
+      : `/${route.path}`;
+
+  const children = route.children
+    ?.map((child) => routeToMenuItem(child, relativePath))
+    .filter((item): item is DynamicMenuItem => item !== null);
+
+  return {
+    key: route.id,
+    label: route.name || route.path,
+    path: relativePath,
+    permissions: route.permissions,
+    children: children && children.length > 0 ? children : undefined,
+  };
+}
 
 export function useBasicLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { message } = App.useApp();
   const [refreshKey, setRefreshKey] = React.useState(0);
+
+  // 从动态路由获取配置
+  const { routes: dynamicRoutes } = useRouteConfig();
 
   // 注入 message 实例到全局工具
   React.useEffect(() => {
@@ -39,26 +96,29 @@ export function useBasicLayout() {
   const [collapsed, setCollapsed] = React.useState(false);
 
   const path = location.pathname;
-  // 移除 routes 导入，改为使用 RAW_MENU_ITEMS 计算
-  const selectedKey = React.useMemo(() => {
-    const findMatch = (items: RawMenuItem[]): string | undefined => {
-      for (const item of items) {
-        if (item.children) {
-          const childMatch = findMatch(item.children);
-          if (childMatch) return childMatch;
-        }
-        // 简单的前缀匹配，优先匹配更长的路径（如果需要更复杂的逻辑，可以后续优化）
-        // 注意：这里假设 menuConfig 中的 path 不包含参数占位符，且是有效的前缀
-        if (item.path && (path === item.path || path.startsWith(item.path + "/"))) {
-          return item.key;
-        }
-      }
-      return undefined;
-    };
 
-    // 为了找到“最佳”匹配（最长路径），最好先拍平再排序
-    const flattenItems = (items: RawMenuItem[]): RawMenuItem[] => {
-      let res: RawMenuItem[] = [];
+  // 将当前路径转换为相对路径（移除 /admin 前缀）用于菜单匹配
+  const relativePath = React.useMemo(() => {
+    if (path.startsWith(ADMIN_BASE_PATH)) {
+      const rel = path.slice(ADMIN_BASE_PATH.length);
+      return rel === "" ? "/" : rel;
+    }
+    return path;
+  }, [path]);
+
+  // 从动态路由中提取 Admin 菜单配置
+  const dynamicMenuItems = React.useMemo((): DynamicMenuItem[] => {
+    const adminRoutes = findAdminRoutes(dynamicRoutes);
+    return adminRoutes
+      .map((route) => routeToMenuItem(route, ""))
+      .filter((item): item is DynamicMenuItem => item !== null);
+  }, [dynamicRoutes]);
+
+  // 计算选中的菜单项 key
+  const selectedKey = React.useMemo(() => {
+    // 拍平所有菜单项
+    const flattenItems = (items: DynamicMenuItem[]): DynamicMenuItem[] => {
+      let res: DynamicMenuItem[] = [];
       for (const item of items) {
         if (item.path) res.push(item);
         if (item.children) res = res.concat(flattenItems(item.children));
@@ -66,15 +126,17 @@ export function useBasicLayout() {
       return res;
     };
 
-    const all = flattenItems(RAW_MENU_ITEMS);
+    const all = flattenItems(dynamicMenuItems);
     // 降序排列，确保匹配到最长路径
     all.sort((a, b) => (b.path?.length || 0) - (a.path?.length || 0));
 
+    // 使用相对路径进行匹配
     const matched = all.find(
-      (item) => item.path && (path === item.path || path.startsWith(item.path + "/")),
+      (item) =>
+        item.path && (relativePath === item.path || relativePath.startsWith(item.path + "/")),
     );
-    return matched ? matched.key : "dashboard";
-  }, [path]);
+    return matched ? matched.key : "";
+  }, [relativePath, dynamicMenuItems]);
 
   const matchedKey = Object.keys(SECTION_NAME_MAP).find((k) => path.startsWith(k)) || "/";
   const sectionName = SECTION_NAME_MAP[matchedKey];
@@ -171,41 +233,26 @@ export function useBasicLayout() {
     };
   }, []);
 
-  // 菜单权限映射（从 RAW_MENU_ITEMS 提取）
-  const menuPerms = React.useMemo(() => {
-    const collect = (items: RawMenuItem[], acc: Record<string, string | undefined> = {}) => {
-      for (const item of items) {
-        if (item.key && item.perm) acc[item.key] = item.perm;
-        if (item.children && item.children.length) collect(item.children, acc);
-      }
-      return acc;
-    };
-    return collect(RAW_MENU_ITEMS);
-  }, []);
-
   /**
    * 构建 Ant Design Menu 的 items 数组
-   * 优化点：
-   * 1. 使用静态的 RAW_MENU_ITEMS 配置，避免每次渲染创建新对象
-   * 2. 使用 onClick 导航代替 <Link> 组件，减少 React 元素开销
-   * 3. icon 从预创建的 MENU_ICONS 映射获取，避免重复实例化
+   * 从动态路由配置生成，支持权限过滤
    */
   const menuItems = React.useMemo(() => {
     const isSuperAdmin = username === "admin";
 
     // 权限检查函数
-    const can = (menuKey?: string, fallbackPerm?: string): boolean => {
-      const required = menuPerms[menuKey || ""] ?? fallbackPerm;
-      return isSuperAdmin || !required || permissions.includes(required);
+    const can = (itemPermissions?: string[]): boolean => {
+      if (isSuperAdmin) return true;
+      if (!itemPermissions || itemPermissions.length === 0) return true;
+      return itemPermissions.some((perm) => permissions.includes(perm));
     };
 
     /**
-     * 将原始菜单配置转换为 Ant Design Menu 需要的格式
-     * 使用 onClick 代替 <Link>，提升渲染性能
+     * 将动态菜单配置转换为 Ant Design Menu 需要的格式
      */
-    const transformItems = (items: RawMenuItem[]): MenuItem[] => {
+    const transformItems = (items: DynamicMenuItem[]): MenuItem[] => {
       return items
-        .filter((item) => can(item.key, item.perm))
+        .filter((item) => can(item.permissions))
         .map((item): MenuItem => {
           const hasChildren = item.children && item.children.length > 0;
           const filteredChildren = hasChildren ? transformItems(item.children!) : undefined;
@@ -215,20 +262,27 @@ export function useBasicLayout() {
             return null;
           }
 
+          // 构建实际导航路径：菜单配置的 path 是相对路径，需要加上 /admin 前缀
+          const fullPath = item.path
+            ? item.path === "/"
+              ? ADMIN_BASE_PATH
+              : `${ADMIN_BASE_PATH}${item.path}`
+            : undefined;
+
           return {
             key: item.key,
-            icon: MENU_ICONS[item.key],
+            icon: MENU_ICONS[item.key] || MENU_ICONS[item.label] || null,
             label: item.label,
             children: filteredChildren,
             // 只有叶子节点（无子菜单且有 path）才添加点击事件
-            onClick: !hasChildren && item.path ? () => navigate(item.path!) : undefined,
+            onClick: !hasChildren && fullPath ? () => navigate(fullPath) : undefined,
           };
         })
         .filter((item): item is MenuItem => item !== null);
     };
 
-    return transformItems(RAW_MENU_ITEMS);
-  }, [permissions, username, menuPerms, navigate]);
+    return transformItems(dynamicMenuItems);
+  }, [permissions, username, dynamicMenuItems, navigate]);
 
   return {
     site,

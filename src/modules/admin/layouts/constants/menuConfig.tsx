@@ -28,22 +28,41 @@ export interface RawMenuItem {
 
 /**
  * 菜单图标映射（静态，只创建一次）
- * 原因：将图标实例化移到模块顶层，避免每次渲染都创建新的 React 元素
+ * 支持多种 key 格式：路由 path、中文名称等
  */
 export const MENU_ICONS: Record<string, React.ReactNode> = {
+  // 按路径匹配
   dashboard: <HomeOutlined />,
   system: <SettingOutlined />,
   "recommendation-config": <LayoutOutlined />,
-  "navigation-settings": <MenuOutlined />,
+  navigation: <MenuOutlined />,
   categories: <TagsOutlined />,
   torrents: <CloudDownloadOutlined />,
-  content: <AppstoreOutlined />,
+  movies: <AppstoreOutlined />,
+  playlists: <AppstoreOutlined />,
   store: <AppstoreOutlined />,
   bonus: <AppstoreOutlined />,
   users: <TeamOutlined />,
   dictionary: <BookOutlined />,
   invites: <SafetyCertificateOutlined />,
   tickets: <ToolOutlined />,
+  routes: <MenuOutlined />,
+  // 按中文名称匹配（后端动态路由使用）
+  仪表盘: <HomeOutlined />,
+  系统设置: <SettingOutlined />,
+  推荐配置: <LayoutOutlined />,
+  导航管理: <MenuOutlined />,
+  分类管理: <TagsOutlined />,
+  种子管理: <CloudDownloadOutlined />,
+  影片管理: <AppstoreOutlined />,
+  播放列表管理: <AppstoreOutlined />,
+  商城管理: <AppstoreOutlined />,
+  魔力管理: <AppstoreOutlined />,
+  用户管理: <TeamOutlined />,
+  字典管理: <BookOutlined />,
+  邀请管理: <SafetyCertificateOutlined />,
+  工单管理: <ToolOutlined />,
+  路由管理: <MenuOutlined />,
 };
 
 /**
