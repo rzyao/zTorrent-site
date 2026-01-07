@@ -1,6 +1,6 @@
 import React from "react";
 import { App } from "antd";
-import { useLocation, useNavigate, matchRoutes } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthService } from "@/api/services/AuthService";
 import { SettingsService } from "@/api/services/SettingsService";
 import {
@@ -11,8 +11,6 @@ import {
 } from "@/modules/admin/utils/tabTitle";
 import logoSvgContent from "@/assets/logo.svg?raw";
 import logoUrlPath from "@/assets/logo.svg";
-import { routes } from "@/modules/admin/router/routes";
-import type { AppRouteObject } from "@/modules/admin/router/routes";
 import { setMessageInstance } from "@/modules/admin/utils/globalMessage";
 import { SECTION_NAME_MAP } from "../constants";
 import { RAW_MENU_ITEMS, MENU_ICONS, type RawMenuItem } from "../constants/menuConfig";
@@ -41,17 +39,42 @@ export function useBasicLayout() {
   const [collapsed, setCollapsed] = React.useState(false);
 
   const path = location.pathname;
-  const matches = matchRoutes(routes as any, location);
-
+  // 移除 routes 导入，改为使用 RAW_MENU_ITEMS 计算
   const selectedKey = React.useMemo(() => {
-    if (!matches || matches.length === 0) return "dashboard";
-    for (let i = matches.length - 1; i >= 0; i--) {
-      const r = matches[i].route as AppRouteObject;
-      const key = r.meta?.menuKey;
-      if (key) return key;
-    }
-    return "dashboard";
-  }, [matches]);
+    const findMatch = (items: RawMenuItem[]): string | undefined => {
+      for (const item of items) {
+        if (item.children) {
+          const childMatch = findMatch(item.children);
+          if (childMatch) return childMatch;
+        }
+        // 简单的前缀匹配，优先匹配更长的路径（如果需要更复杂的逻辑，可以后续优化）
+        // 注意：这里假设 menuConfig 中的 path 不包含参数占位符，且是有效的前缀
+        if (item.path && (path === item.path || path.startsWith(item.path + "/"))) {
+          return item.key;
+        }
+      }
+      return undefined;
+    };
+
+    // 为了找到“最佳”匹配（最长路径），最好先拍平再排序
+    const flattenItems = (items: RawMenuItem[]): RawMenuItem[] => {
+      let res: RawMenuItem[] = [];
+      for (const item of items) {
+        if (item.path) res.push(item);
+        if (item.children) res = res.concat(flattenItems(item.children));
+      }
+      return res;
+    };
+
+    const all = flattenItems(RAW_MENU_ITEMS);
+    // 降序排列，确保匹配到最长路径
+    all.sort((a, b) => (b.path?.length || 0) - (a.path?.length || 0));
+
+    const matched = all.find(
+      (item) => item.path && (path === item.path || path.startsWith(item.path + "/")),
+    );
+    return matched ? matched.key : "dashboard";
+  }, [path]);
 
   const matchedKey = Object.keys(SECTION_NAME_MAP).find((k) => path.startsWith(k)) || "/";
   const sectionName = SECTION_NAME_MAP[matchedKey];
@@ -148,18 +171,16 @@ export function useBasicLayout() {
     };
   }, []);
 
-  // 菜单权限映射（从路由配置中提取）
+  // 菜单权限映射（从 RAW_MENU_ITEMS 提取）
   const menuPerms = React.useMemo(() => {
-    const collect = (routeList: AppRouteObject[], acc: Record<string, string | undefined> = {}) => {
-      for (const r of routeList) {
-        const key = r.meta?.menuKey;
-        const perm = r.meta?.perm;
-        if (key && perm) acc[key] = perm;
-        if (r.children && r.children.length) collect(r.children as AppRouteObject[], acc);
+    const collect = (items: RawMenuItem[], acc: Record<string, string | undefined> = {}) => {
+      for (const item of items) {
+        if (item.key && item.perm) acc[item.key] = item.perm;
+        if (item.children && item.children.length) collect(item.children, acc);
       }
       return acc;
     };
-    return collect(routes as AppRouteObject[]);
+    return collect(RAW_MENU_ITEMS);
   }, []);
 
   /**
