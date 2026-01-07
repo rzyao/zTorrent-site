@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
+import "@/modules/admin/styles/admin-theme.css";
 import { AdminSidebar } from "./AdminSidebar";
 import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";

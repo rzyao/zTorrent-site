@@ -1,19 +1,28 @@
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
+import { memo, useMemo, useCallback, startTransition, useState, useEffect } from "react";
 import {
+  Form,
+  Input,
   Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Switch,
+  Button,
+  Typography,
+  Space,
+  Tag,
+  theme,
+  Empty,
+  Skeleton,
+} from "antd";
+import {
+  SaveOutlined,
+  ReloadOutlined,
+  DeleteOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
 import { RouteTreeNodeDto } from "@/api/models/RouteTreeNodeDto";
 import { componentRegistry } from "@/routes/componentRegistry";
-import { useEffect, useState } from "react";
-import { Save, RotateCcw, Trash2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+
+const { Text, Title } = Typography;
+const { Option } = Select;
 
 interface DetailsPanelProps {
   node: RouteTreeNodeDto | null;
@@ -22,189 +31,282 @@ interface DetailsPanelProps {
   isSaving?: boolean;
 }
 
-export function DetailsPanel({ node, onSave, onDelete, isSaving }: DetailsPanelProps) {
-  const [formData, setFormData] = useState<RouteTreeNodeDto | null>(null);
-  const [componentList] = useState(Object.keys(componentRegistry).sort());
+// 组件选项常量
+const COMPONENT_OPTIONS = Object.keys(componentRegistry).sort();
 
+// 布局选项常量
+const LAYOUT_OPTIONS = [
+  { value: "none", label: "无布局 (None)" },
+  { value: "app", label: "前台布局 (AppLayout)" },
+  { value: "forum", label: "论坛布局 (ForumLayout)" },
+  { value: "admin", label: "后台布局 (AdminLayout)" },
+];
+
+// 空状态组件
+const EmptyState = memo(function EmptyState() {
+  const { token } = theme.useToken();
+  return (
+    <div
+      style={{
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: token.colorBgContainer,
+        border: `1px dashed ${token.colorBorderSecondary}`,
+        borderRadius: token.borderRadiusLG,
+      }}
+    >
+      <Empty description="请在左侧选择一个路由节点" />
+    </div>
+  );
+});
+
+// 主组件
+export const DetailsPanel = memo(function DetailsPanel({
+  node,
+  onSave,
+  onDelete,
+  isSaving,
+}: DetailsPanelProps) {
+  const [form] = Form.useForm();
+  const { token } = theme.useToken();
+
+  // 延迟渲染状态 - 防止切换节点时的卡顿
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [displayNode, setDisplayNode] = useState<RouteTreeNodeDto | null>(null);
+
+  // 节点切换时的处理 - 简化逻辑,移除双重延迟
   useEffect(() => {
-    setFormData(node);
-  }, [node]);
+    if (node?.id !== displayNode?.id) {
+      setIsTransitioning(true);
+      setDisplayNode(node);
 
-  if (!node || !formData) {
-    return (
-      <div className="border-antd-border-secondary bg-antd-bg-container/50 flex h-full items-center justify-center rounded-md border border-dashed">
-        <div className="text-center">
-          <p className="text-antd-text-description text-sm">请在左侧选择一个路由节点</p>
-          <p className="text-antd-text-placeholder mt-1 text-xs">或点击顶部"新建"按钮</p>
-        </div>
-      </div>
-    );
+      if (node) {
+        // 直接同步更新表单,使用 Skeleton 过渡即可
+        form.setFieldsValue({
+          id: node.id,
+          path: node.path,
+          name: typeof node.name === "string" ? node.name : node.id,
+          redirect: node.redirect || "",
+          component: node.component || undefined,
+          layout: node.layout || "none",
+          permissions: node.permissions || [],
+          isVisible: node.isVisible !== false,
+        });
+      } else {
+        form.resetFields();
+      }
+
+      // 短暂延迟后隐藏骨架屏,给用户视觉反馈
+      const timer = setTimeout(() => setIsTransitioning(false), 100);
+      return () => clearTimeout(timer);
+    }
+  }, [node?.id, form]);
+
+  const handleFinish = useCallback(
+    (values: any) => {
+      if (!displayNode) return;
+      const updatedNode: RouteTreeNodeDto = {
+        ...displayNode,
+        ...values,
+        permissions: Array.isArray(values.permissions) ? values.permissions : [],
+      };
+      onSave(updatedNode);
+    },
+    [displayNode, onSave],
+  );
+
+  const handleReset = useCallback(() => {
+    if (displayNode) {
+      form.setFieldsValue({
+        id: displayNode.id,
+        path: displayNode.path,
+        name: typeof displayNode.name === "string" ? displayNode.name : displayNode.id,
+        redirect: displayNode.redirect || "",
+        component: displayNode.component || undefined,
+        layout: displayNode.layout || "none",
+        permissions: displayNode.permissions || [],
+        isVisible: displayNode.isVisible !== false,
+      });
+    }
+  }, [form, displayNode]);
+
+  const handleDelete = useCallback(() => {
+    if (displayNode) {
+      onDelete(displayNode.id);
+    }
+  }, [onDelete, displayNode]);
+
+  const handleSubmit = useCallback(() => {
+    form.submit();
+  }, [form]);
+
+  // 无节点时显示空状态
+  if (!node) {
+    return <EmptyState />;
   }
 
-  const handleChange = (field: keyof RouteTreeNodeDto, value: any) => {
-    setFormData((prev) => (prev ? { ...prev, [field]: value } : null));
-  };
-
-  const handlePermissionsChange = (value: string) => {
-    const perms = value
-      .split(",")
-      .map((p) => p.trim())
-      .filter(Boolean);
-    handleChange("permissions", perms);
-  };
-
-  const getStringValue = (val: any): string => {
-    if (typeof val === "string") return val;
-    if (val && typeof val === "object") return JSON.stringify(val);
-    return "";
-  };
-
-  const displayName = getStringValue(formData.name) || formData.id;
-  const isHidden = formData.isVisible === false;
+  const displayName = displayNode
+    ? typeof displayNode.name === "string"
+      ? displayNode.name
+      : displayNode.id
+    : "";
 
   return (
-    <div className="border-antd-border-secondary bg-antd-bg-container flex h-full flex-col overflow-hidden rounded-md border shadow-sm">
-      <div className="border-antd-border-secondary flex items-center justify-between border-b px-6 py-4">
+    <div
+      style={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: token.colorBgContainer,
+        borderRadius: token.borderRadiusLG,
+        border: `1px solid ${token.colorBorderSecondary}`,
+        boxShadow: token.boxShadowTertiary,
+        overflow: "hidden",
+      }}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-[rgba(5,5,5,0.06)] px-6 py-4">
         <div>
-          <h2 className="text-antd-text flex items-center gap-2 text-base font-semibold">
-            {displayName}
-            {isHidden && (
-              <Badge
-                color="red"
-                border="red"
-                className="text-antd-error bg-transparent font-normal"
-              >
-                已隐藏
-              </Badge>
-            )}
-          </h2>
-          <p className="text-antd-text-description mt-1 font-mono text-xs">{formData.id}</p>
+          <Space align="center">
+            <Title level={4} style={{ margin: 0 }}>
+              {displayName || <Skeleton.Input active size="small" style={{ width: 100 }} />}
+            </Title>
+            {displayNode?.isVisible === false && <Tag color="error">已隐藏</Tag>}
+          </Space>
+          <div className="mt-1">
+            <Text type="secondary" code>
+              {displayNode?.id || "..."}
+            </Text>
+          </div>
         </div>
         <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => onDelete(formData.id)}
-          className="text-antd-text-description hover:bg-antd-error/10 hover:text-antd-error"
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+          danger
+          type="text"
+          icon={<DeleteOutlined />}
+          onClick={handleDelete}
+          disabled={!displayNode}
+        />
       </div>
 
-      <div className="flex-1 space-y-6 overflow-y-auto p-6">
-        <div className="grid grid-cols-2 gap-6">
+      {/* Form Content */}
+      <div className="flex-1 overflow-y-auto p-6">
+        {isTransitioning ? (
           <div className="space-y-4">
-            <h3 className="text-antd-text-description text-xs font-medium">基础配置</h3>
-            <div className="space-y-2">
-              <Label className="text-antd-text text-xs">ID (唯一标识)</Label>
-              <Input
-                value={formData.id}
-                disabled
-                className="bg-antd-bg-layout border-antd-border-secondary"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-antd-text text-xs">路径 Path</Label>
-              <Input
-                value={formData.path}
-                onChange={(e) => handleChange("path", e.target.value)}
-                placeholder="/admin/users"
-                className="border-antd-border"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-antd-text text-xs">显示名称 Name</Label>
-              <Input
-                value={getStringValue(formData.name)}
-                onChange={(e) => handleChange("name", e.target.value)}
-                placeholder="用户管理"
-                className="border-antd-border"
-              />
-            </div>
+            <Skeleton active paragraph={{ rows: 4 }} />
+            <Skeleton active paragraph={{ rows: 3 }} />
           </div>
-
-          <div className="space-y-4">
-            <h3 className="text-antd-text-description text-xs font-medium">渲染配置</h3>
-            <div className="space-y-2">
-              <Label className="text-antd-text text-xs">渲染组件 Component</Label>
-              <Input
-                list="component-options"
-                value={getStringValue(formData.component)}
-                onChange={(e) => handleChange("component", e.target.value)}
-                placeholder="选择或输入组件名"
-                className="border-antd-border"
-              />
-              <datalist id="component-options">
-                {componentList.map((c) => (
-                  <option key={c} value={c} />
-                ))}
-              </datalist>
-            </div>
-            <div className="space-y-2">
-              <Label className="text-antd-text text-xs">所属布局 Layout</Label>
-              <Select
-                value={formData.layout || "none"}
-                onValueChange={(val) => handleChange("layout", val as RouteTreeNodeDto.layout)}
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleFinish}
+            // 关闭表单验证触发，减少渲染
+            validateTrigger={[]}
+          >
+            {/* Basic Config Section */}
+            <div className="mb-6">
+              <Text
+                type="secondary"
+                strong
+                style={{ fontSize: "12px", textTransform: "uppercase" }}
               >
-                <SelectTrigger className="border-antd-border text-antd-text">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="border-antd-border-secondary bg-antd-bg-container">
-                  <SelectItem value="none">无布局 (None)</SelectItem>
-                  <SelectItem value="app">前台布局 (AppLayout)</SelectItem>
-                  <SelectItem value="forum">论坛布局 (ForumLayout)</SelectItem>
-                  <SelectItem value="admin">后台布局 (AdminLayout)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
+                基础配置
+              </Text>
+              <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4">
+                <Form.Item label="ID (唯一标识)" name="id">
+                  <Input disabled />
+                </Form.Item>
 
-        <div className="border-antd-border-secondary space-y-4 border-t pt-6">
-          <h3 className="text-antd-text-description text-xs font-medium">访问控制</h3>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label className="text-antd-text text-xs">访问权限</Label>
-              <Input
-                value={formData.permissions?.join(", ") || ""}
-                onChange={(e) => handlePermissionsChange(e.target.value)}
-                placeholder="perm:read, perm:write"
-                className="border-antd-border"
-              />
-            </div>
-            <div className="border-antd-border-secondary bg-antd-bg-layout/20 flex items-center justify-between rounded-md border p-4">
-              <div>
-                <Label className="text-antd-text text-sm">菜单可见性</Label>
-                <p className="text-antd-text-description text-xs">控制此路由是否在侧边栏中展示</p>
+                <Form.Item label="路径 Path" name="path">
+                  <Input placeholder="/admin/users" />
+                </Form.Item>
+
+                <Form.Item label="显示名称 Name" name="name">
+                  <Input placeholder="用户管理" />
+                </Form.Item>
+
+                <Form.Item label="重定向 Redirect" name="redirect">
+                  <Input placeholder="可选: /admin/users/list" />
+                </Form.Item>
               </div>
-              <Switch
-                checked={formData.isVisible !== false}
-                onCheckedChange={(checked) => handleChange("isVisible", checked)}
-                className="data-[state=checked]:bg-antd-primary"
-              />
             </div>
-          </div>
-        </div>
+
+            {/* Render Config Section */}
+            <div className="mb-6 border-t border-[rgba(5,5,5,0.06)] pt-6">
+              <Text
+                type="secondary"
+                strong
+                style={{ fontSize: "12px", textTransform: "uppercase" }}
+              >
+                渲染配置
+              </Text>
+              <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4">
+                <Form.Item label="渲染组件 Component" name="component">
+                  <Select
+                    showSearch
+                    placeholder="选择组件"
+                    optionFilterProp="label"
+                    options={COMPONENT_OPTIONS.map((c) => ({ value: c, label: c }))}
+                    allowClear
+                  />
+                </Form.Item>
+
+                <Form.Item label="所属布局 Layout" name="layout">
+                  <Select options={LAYOUT_OPTIONS} />
+                </Form.Item>
+              </div>
+            </div>
+
+            {/* Access Control Section */}
+            <div className="mb-6 border-t border-[rgba(5,5,5,0.06)] pt-6">
+              <Text
+                type="secondary"
+                strong
+                style={{ fontSize: "12px", textTransform: "uppercase" }}
+              >
+                访问控制
+              </Text>
+              <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4">
+                <Form.Item label="访问权限 Permissions" name="permissions">
+                  <Select mode="tags" placeholder="输入权限Key" />
+                </Form.Item>
+
+                <Form.Item label="菜单可见性" name="isVisible" valuePropName="checked">
+                  <div className="flex items-center justify-between rounded-lg border border-[rgba(5,5,5,0.06)] bg-[rgba(5,5,5,0.02)] p-3">
+                    <div className="flex items-center gap-2">
+                      <InfoCircleOutlined className="text-gray-400" />
+                      <span className="text-sm">侧边栏是否显示</span>
+                    </div>
+                    <Switch />
+                  </div>
+                </Form.Item>
+              </div>
+            </div>
+          </Form>
+        )}
       </div>
 
-      <div className="border-antd-border-secondary bg-antd-bg-layout/10 flex justify-end gap-3 border-t px-6 py-4">
+      {/* Footer Actions */}
+      <div className="flex justify-end gap-3 border-t border-[rgba(5,5,5,0.06)] bg-[rgba(5,5,5,0.02)] px-6 py-4">
         <Button
-          variant="outline"
-          onClick={() => setFormData(node)}
-          disabled={isSaving}
-          className="border-antd-border text-antd-text"
+          icon={<ReloadOutlined />}
+          onClick={handleReset}
+          disabled={isSaving || isTransitioning}
         >
-          <RotateCcw className="mr-2 h-4 w-4" />
           重置
         </Button>
         <Button
-          onClick={() => onSave(formData)}
-          disabled={isSaving}
-          className="bg-antd-primary hover:bg-antd-primary-hover text-white"
+          type="primary"
+          icon={<SaveOutlined />}
+          onClick={handleSubmit}
+          loading={isSaving}
+          disabled={isTransitioning}
         >
-          <Save className="mr-2 h-4 w-4" />
-          {isSaving ? "保存中..." : "保存变更"}
+          保存变更
         </Button>
       </div>
     </div>
   );
-}
+});
