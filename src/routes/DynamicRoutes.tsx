@@ -35,11 +35,26 @@ function getLayoutWrapper(layout: string | undefined) {
  * 渲染单个路由配置
  */
 function renderRoute(config: RouteConfig, parentPath: string = ""): React.ReactNode {
-  const { id, path, component, children, index, redirect } = config;
+  const { id, path, component, children, index, redirect, openInNewTab } = config;
   const fullPath = index ? parentPath : path.startsWith("/") ? path : `${parentPath}/${path}`;
 
+  // 处理重定向
   if (redirect) {
-    return <Route key={id} path={path} element={<Navigate to={redirect} replace />} />;
+    if (openInNewTab) {
+      // 新标签页打开:创建一个组件执行 window.open
+      const NewTabRedirect = () => {
+        useEffect(() => {
+          window.open(redirect, "_blank", "noopener,noreferrer");
+          // 重定向后返回上一页或首页
+          window.history.back();
+        }, []);
+        return <div className="p-8 text-white">正在新标签页打开...</div>;
+      };
+      return <Route key={id} path={path} element={<NewTabRedirect />} />;
+    } else {
+      // 当前页面重定向
+      return <Route key={id} path={path} element={<Navigate to={redirect} replace />} />;
+    }
   }
 
   const LazyComponent = component ? getComponent(component) : null;

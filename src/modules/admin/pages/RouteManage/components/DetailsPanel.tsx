@@ -87,6 +87,7 @@ export const DetailsPanel = memo(function DetailsPanel({
           layout: node.layout || "none",
           permissions: node.permissions || [],
           isVisible: node.isVisible !== false,
+          openInNewTab: (node as any).openInNewTab || false,
         });
       } else {
         form.resetFields();
@@ -122,6 +123,7 @@ export const DetailsPanel = memo(function DetailsPanel({
         layout: displayNode.layout || "none",
         permissions: displayNode.permissions || [],
         isVisible: displayNode.isVisible !== false,
+        openInNewTab: (displayNode as any).openInNewTab || false,
       });
     }
   }, [form, displayNode]);
@@ -223,6 +225,15 @@ export const DetailsPanel = memo(function DetailsPanel({
 
                 <Form.Item label="重定向 Redirect" name="redirect">
                   <Input placeholder="可选: /admin/users/list" />
+                </Form.Item>
+
+                <Form.Item
+                  label="新标签页打开"
+                  name="openInNewTab"
+                  valuePropName="checked"
+                  tooltip="仅在设置了重定向时生效,勾选后将在新标签页打开重定向链接"
+                >
+                  <Switch checkedChildren="是" unCheckedChildren="否" />
                 </Form.Item>
               </div>
             </div>

@@ -30,6 +30,8 @@ export interface RouteConfig {
   index?: boolean;
   /** 重定向目标 */
   redirect?: string;
+  /** 重定向是否在新标签页打开 */
+  openInNewTab?: boolean;
   /** 是否在菜单中可见 */
   isVisible?: boolean;
 }
