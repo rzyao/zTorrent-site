@@ -197,6 +197,14 @@ export function DynamicRoutes() {
 }
 
 function NotFoundRedirect() {
-  const isLoggedIn = !!localStorage.getItem("accessToken");
-  return <Navigate to={isLoggedIn ? "/app/home" : "/login"} replace />;
+  // 显示 404 页面而非重定向
+  return (
+    <Suspense fallback={<RouteProgressBar />}>
+      <NotFoundPage />
+    </Suspense>
+  );
 }
+
+// 懒加载 404 页面
+import { lazy } from "react";
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));

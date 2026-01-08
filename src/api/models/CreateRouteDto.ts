@@ -52,6 +52,10 @@ export type CreateRouteDto = {
      */
     openInNewTab?: boolean;
     /**
+     * 图标名称
+     */
+    icon?: string;
+    /**
      * 所需权限列表
      */
     permissions?: Array<string>;

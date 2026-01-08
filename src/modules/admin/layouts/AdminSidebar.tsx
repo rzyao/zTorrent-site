@@ -1,54 +1,9 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import {
-  LayoutDashboard,
-  ShieldCheck,
-  Ticket,
-  Flag,
-  Route,
-  Settings,
-  Users,
-  LucideIcon,
-  Home,
-  Navigation,
-  Tags,
-  Sprout,
-  LayoutGrid,
-  ShoppingBag,
-  Sparkles,
-  BookOpen,
-  Mail,
-  Wrench,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/components/ui/utils";
 import { useRouteConfig } from "@/hooks/useRouteConfig";
-
-// 图标映射：根据路由路径分配图标
-const ICON_MAP: Record<string, LucideIcon> = {
-  dashboard: Home,
-  home: Home,
-  routes: Navigation,
-  review: ShieldCheck,
-  tickets: Wrench,
-  reports: Flag,
-  users: Users,
-  settings: Settings,
-  categories: Tags,
-  seeds: Sprout,
-  content: LayoutGrid,
-  shop: ShoppingBag,
-  magic: Sparkles,
-  dictionary: BookOpen,
-  invite: Mail,
-};
-
-function getIconForPath(path: string): LucideIcon {
-  const key = path.split("/").pop() || "";
-  return ICON_MAP[key] || LayoutDashboard;
-}
+import DynamicIcon from "@/components/DynamicIcon";
 
 export function AdminSidebar() {
   const { routes } = useRouteConfig();
@@ -91,7 +46,7 @@ export function AdminSidebar() {
         <div className="space-y-1">
           {visibleRoutes.length > 0 ? (
             visibleRoutes.map((item) => {
-              const Icon = getIconForPath(item.path);
+              const iconName = (item as any).icon as string | undefined;
               const href = item.path.startsWith("/") ? item.path : `/admin/${item.path}`;
               const hasChildren = item.children && item.children.length > 0;
               const isExpanded = expandedMenus.has(item.id);
@@ -108,7 +63,9 @@ export function AdminSidebar() {
                       )}
                     >
                       <div className="flex items-center gap-3">
-                        <Icon className="h-[18px] w-[18px] text-gray-400" />
+                        {iconName && (
+                          <DynamicIcon iconName={iconName} size={18} className="text-gray-400" />
+                        )}
                         {!collapsed && <span>{item.name || item.path}</span>}
                       </div>
                       {!collapsed && (
@@ -129,20 +86,28 @@ export function AdminSidebar() {
                             const childHref = child.path.startsWith("/")
                               ? child.path
                               : `${href}/${child.path}`;
+                            const childIcon = (child as any).icon as string | undefined;
                             return (
                               <NavLink
                                 key={child.id}
                                 to={childHref}
                                 className={({ isActive }) =>
                                   cn(
-                                    "block rounded-lg px-3 py-2 text-sm transition-colors",
+                                    "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
                                     isActive
                                       ? "bg-violet-50 font-medium text-violet-600"
                                       : "text-gray-500 hover:bg-gray-50 hover:text-gray-700",
                                   )
                                 }
                               >
-                                {child.name || child.path}
+                                {childIcon && (
+                                  <DynamicIcon
+                                    iconName={childIcon}
+                                    size={16}
+                                    className="text-gray-400"
+                                  />
+                                )}
+                                <span>{child.name || child.path}</span>
                               </NavLink>
                             );
                           })}
@@ -165,9 +130,9 @@ export function AdminSidebar() {
                     )
                   }
                 >
-                  <Icon
-                    className={cn("h-[18px] w-[18px]", "text-gray-400 group-hover:text-gray-600")}
-                  />
+                  {iconName && (
+                    <DynamicIcon iconName={iconName} size={18} className="text-gray-400" />
+                  )}
                   {!collapsed && <span>{item.name || item.path}</span>}
                 </NavLink>
               );

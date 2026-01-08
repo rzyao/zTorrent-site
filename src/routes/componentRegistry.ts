@@ -73,8 +73,6 @@ export const componentRegistry: Record<string, LazyComponent> = {
 
   // ==================== 后台管理 ====================
   ReportsPage: lazy(() => import("@/modules/app/pages/Reports")),
-  // 路由管理
-  RouteManagePage: lazy(() => import("@/modules/admin/pages/RouteManage")),
   ReviewPage: lazy(() => import("@/modules/app/pages/Review")),
   TicketsPage: lazy(() => import("@/modules/app/pages/Tickets/TicketsPage")),
 
@@ -110,94 +108,122 @@ export const componentRegistry: Record<string, LazyComponent> = {
     import("@/modules/forum/pages/BookmarksPage").then((m) => ({ default: m.BookmarksPage })),
   ),
 
-  // ==================== Admin 模块页面 ====================
+  // ==================== Admin 模块 - 核心概览 ====================
   AdminDashboard: lazy(() => import("@/modules/admin/pages/Dashboard")),
-  AdminSystemSettings: lazy(() => import("@/modules/admin/pages/SystemSettings")),
-  AdminRecommendationConfig: lazy(() => import("@/modules/admin/pages/RecommendationConfig")),
 
-  // Admin 导航管理
+  // ==================== Admin 模块 - 站点内容 (content) ====================
+  // 种子管理
+  AdminTorrents: lazy(() => import("@/modules/admin/pages/content/torrents/Index")),
+  AdminTorrentRecords: lazy(
+    () => import("@/modules/admin/pages/content/torrents/TorrentRecordsByTorrent"),
+  ),
+  AdminUserDownloadRecords: lazy(
+    () => import("@/modules/admin/pages/content/torrents/UserDownloadRecords"),
+  ),
+  // 影视库
+  AdminFilms: lazy(() => import("@/modules/admin/pages/content/media/films/Films")),
+  AdminFilmDetail: lazy(() => import("@/modules/admin/pages/content/media/films/FilmDetail")),
+  AdminPlaylists: lazy(() => import("@/modules/admin/pages/content/media/playlists/Playlists")),
+  AdminPlaylistDetail: lazy(
+    () => import("@/modules/admin/pages/content/media/playlists/PlaylistDetail"),
+  ),
+  // 分类配置
+  AdminTorrentCategories: lazy(
+    () => import("@/modules/admin/pages/content/categories/TorrentCategories"),
+  ),
+  AdminMovieCategories: lazy(
+    () => import("@/modules/admin/pages/content/categories/MovieCategories"),
+  ),
+  AdminSeriesCategories: lazy(
+    () => import("@/modules/admin/pages/content/categories/SeriesCategories"),
+  ),
+  AdminPlaylistCategories: lazy(
+    () => import("@/modules/admin/pages/content/categories/PlaylistCategories"),
+  ),
+  AdminAdultTorrentCategories: lazy(
+    () => import("@/modules/admin/pages/content/categories/AdultTorrentCategories"),
+  ),
+  AdminAdultMovieCategories: lazy(
+    () => import("@/modules/admin/pages/content/categories/AdultMovieCategories"),
+  ),
+  AdminAdultSeriesCategories: lazy(
+    () => import("@/modules/admin/pages/content/categories/AdultSeriesCategories"),
+  ),
+  AdminAdultPlaylistCategories: lazy(
+    () => import("@/modules/admin/pages/content/categories/AdultPlaylistCategories"),
+  ),
+
+  // ==================== Admin 模块 - 用户与安全 (users-security) ====================
+  // 用户管理
+  AdminUsers: lazy(() => import("@/modules/admin/pages/users-security/users/list/UsersList")),
+  AdminPunishmentRecords: lazy(
+    () => import("@/modules/admin/pages/users-security/users/punishments"),
+  ),
+  AdminLevels: lazy(() => import("@/modules/admin/pages/users-security/users/levels")),
+  // 权限中心
+  AdminRoles: lazy(() => import("@/modules/admin/pages/users-security/permissions/roles")),
+  AdminWebPermissions: lazy(() =>
+    import("@/modules/admin/pages/users-security/permissions/perms").then((m) => ({
+      default: m.WebPermissions,
+    })),
+  ),
+  AdminAdminPermissions: lazy(() =>
+    import("@/modules/admin/pages/users-security/permissions/perms").then((m) => ({
+      default: m.AdminPermissions,
+    })),
+  ),
+
+  // ==================== Admin 模块 - 社区运营 (operations) ====================
+  // 互动管理
+  AdminTicketsList: lazy(
+    () => import("@/modules/admin/pages/operations/interaction/tickets/TicketsList"),
+  ),
+  AdminTicketDetail: lazy(
+    () => import("@/modules/admin/pages/operations/interaction/tickets/TicketDetail"),
+  ),
+  AdminRecommendationConfig: lazy(
+    () => import("@/modules/admin/pages/operations/interaction/recommendation"),
+  ),
+  // 邀请系统
+  AdminInvitesList: lazy(() => import("@/modules/admin/pages/operations/invites/InvitesList")),
+  AdminInviteQuotaList: lazy(() => import("@/modules/admin/pages/operations/invites/InviteQuota")),
+  AdminInvitesStatistics: lazy(() => import("@/modules/admin/pages/operations/invites/Statistics")),
+  AdminSendInvite: lazy(() => import("@/modules/admin/pages/operations/invites/SendInvite")),
+  // 导航管理
   AdminDesktopNavigation: lazy(() =>
-    import("@/modules/admin/pages/Navigation/exports").then((m) => ({
+    import("@/modules/admin/pages/operations/navigation/exports").then((m) => ({
       default: m.DesktopNavigation,
     })),
   ),
   AdminMobileNavigation: lazy(() =>
-    import("@/modules/admin/pages/Navigation/exports").then((m) => ({
+    import("@/modules/admin/pages/operations/navigation/exports").then((m) => ({
       default: m.MobileNavigation,
     })),
   ),
 
-  // Admin 分类管理
-  AdminTorrentCategories: lazy(() => import("@/modules/admin/pages/Categories/TorrentCategories")),
-  AdminMovieCategories: lazy(() => import("@/modules/admin/pages/Categories/MovieCategories")),
-  AdminSeriesCategories: lazy(() => import("@/modules/admin/pages/Categories/SeriesCategories")),
-  AdminPlaylistCategories: lazy(
-    () => import("@/modules/admin/pages/Categories/PlaylistCategories"),
-  ),
-  AdminAdultTorrentCategories: lazy(
-    () => import("@/modules/admin/pages/Categories/AdultTorrentCategories"),
-  ),
-  AdminAdultMovieCategories: lazy(
-    () => import("@/modules/admin/pages/Categories/AdultMovieCategories"),
-  ),
-  AdminAdultSeriesCategories: lazy(
-    () => import("@/modules/admin/pages/Categories/AdultSeriesCategories"),
-  ),
-  AdminAdultPlaylistCategories: lazy(
-    () => import("@/modules/admin/pages/Categories/AdultPlaylistCategories"),
-  ),
+  // ==================== Admin 模块 - 经济系统 (economy) ====================
+  // 魔力值中心
+  AdminBonusBalances: lazy(() => import("@/modules/admin/pages/economy/bonus/Balances")),
+  AdminBonusLedger: lazy(() => import("@/modules/admin/pages/economy/bonus/Ledger")),
+  AdminBonusBatchAdjust: lazy(() => import("@/modules/admin/pages/economy/bonus/BatchAdjust")),
+  AdminBonusRules: lazy(() => import("@/modules/admin/pages/economy/bonus/Rules")),
+  AdminBonusAdjustments: lazy(() => import("@/modules/admin/pages/economy/bonus/Adjustments")),
+  // 商城管理
+  AdminStoreItems: lazy(() => import("@/modules/admin/pages/economy/store/Items")),
+  AdminStoreOrders: lazy(() => import("@/modules/admin/pages/economy/store/Orders")),
 
-  // Admin 种子管理
-  AdminTorrents: lazy(() => import("@/modules/admin/pages/Torrents/Index")),
-  AdminTorrentRecords: lazy(() => import("@/modules/admin/pages/Torrents/TorrentRecordsByTorrent")),
-  AdminUserDownloadRecords: lazy(
-    () => import("@/modules/admin/pages/Torrents/UserDownloadRecords"),
+  // ==================== Admin 模块 - 系统配置 (system) ====================
+  // 基础设置
+  AdminSystemSettings: lazy(() => import("@/modules/admin/pages/system/settings")),
+  // 路由管理
+  RouteManagePage: lazy(() => import("@/modules/admin/pages/system/routes")),
+  // 字典管理
+  AdminPunishmentTypes: lazy(
+    () => import("@/modules/admin/pages/system/dictionary/PunishmentTypes"),
   ),
-
-  // Admin 影片管理
-  AdminFilms: lazy(() => import("@/modules/admin/pages/Films/Films")),
-  AdminFilmDetail: lazy(() => import("@/modules/admin/pages/Films/FilmDetail")),
-  AdminPlaylists: lazy(() => import("@/modules/admin/pages/Playlists/Playlists")),
-  AdminPlaylistDetail: lazy(() => import("@/modules/admin/pages/Playlists/PlaylistDetail")),
-
-  // Admin 用户管理
-  AdminUsers: lazy(() => import("@/modules/admin/pages/Users")),
-  AdminPunishmentRecords: lazy(() => import("@/modules/admin/pages/PunishmentRecords")),
-  AdminRoles: lazy(() => import("@/modules/admin/pages/Roles")),
-  AdminWebPermissions: lazy(() =>
-    import("@/modules/admin/pages/PermissionsPage").then((m) => ({ default: m.WebPermissions })),
-  ),
-  AdminAdminPermissions: lazy(() =>
-    import("@/modules/admin/pages/PermissionsPage").then((m) => ({ default: m.AdminPermissions })),
-  ),
-  AdminLevels: lazy(() => import("@/modules/admin/pages/Levels")),
-
-  // Admin 字典管理
-  AdminPunishmentTypes: lazy(() => import("@/modules/admin/pages/Dictionary/PunishmentTypes")),
-  AdminBanReasons: lazy(() => import("@/modules/admin/pages/Dictionary/BanReasons")),
-  AdminUnbanReasons: lazy(() => import("@/modules/admin/pages/Dictionary/UnbanReasons")),
-  AdminBanDays: lazy(() => import("@/modules/admin/pages/Dictionary/BanDays")),
-
-  // Admin 商城管理
-  AdminStoreItems: lazy(() => import("@/modules/admin/pages/Store/Items")),
-  AdminStoreOrders: lazy(() => import("@/modules/admin/pages/Store/Orders")),
-
-  // Admin 魔力管理
-  AdminBonusBalances: lazy(() => import("@/modules/admin/pages/Bonus/Balances")),
-  AdminBonusLedger: lazy(() => import("@/modules/admin/pages/Bonus/Ledger")),
-  AdminBonusBatchAdjust: lazy(() => import("@/modules/admin/pages/Bonus/BatchAdjust")),
-  AdminBonusRules: lazy(() => import("@/modules/admin/pages/Bonus/Rules")),
-  AdminBonusAdjustments: lazy(() => import("@/modules/admin/pages/Bonus/Adjustments")),
-
-  // Admin 邀请管理
-  AdminInvitesList: lazy(() => import("@/modules/admin/pages/Invites/InvitesList")),
-  AdminInviteQuotaList: lazy(() => import("@/modules/admin/pages/Invites/InviteQuotaList")),
-  AdminInvitesStatistics: lazy(() => import("@/modules/admin/pages/Invites/InvitesStatistics")),
-  AdminSendInvite: lazy(() => import("@/modules/admin/pages/Invites/SendInvite")),
-
-  // Admin 工单管理
-  AdminTicketsList: lazy(() => import("@/modules/admin/pages/Tickets/TicketsList")),
-  AdminTicketDetail: lazy(() => import("@/modules/admin/pages/Tickets/TicketDetail")),
+  AdminBanReasons: lazy(() => import("@/modules/admin/pages/system/dictionary/BanReasons")),
+  AdminUnbanReasons: lazy(() => import("@/modules/admin/pages/system/dictionary/UnbanReasons")),
+  AdminBanDays: lazy(() => import("@/modules/admin/pages/system/dictionary/BanDays")),
 };
 
 /**

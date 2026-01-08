@@ -13,8 +13,8 @@ import logoSvgContent from "@/assets/logo.svg?raw";
 import logoUrlPath from "@/assets/logo.svg";
 import { setMessageInstance } from "@/modules/admin/utils/globalMessage";
 import { SECTION_NAME_MAP } from "../constants";
-import { MENU_ICONS } from "../constants/menuConfig";
 import { useRouteConfig } from "@/hooks/useRouteConfig";
+import DynamicIcon from "@/components/DynamicIcon";
 import type { MenuProps } from "antd";
 import type { RouteConfig } from "@/types/routeConfig";
 
@@ -43,6 +43,7 @@ interface DynamicMenuItem {
   label: string;
   path?: string;
   permissions?: string[];
+  icon?: string; // 动态图标名称
   children?: DynamicMenuItem[];
 }
 
@@ -68,6 +69,7 @@ function routeToMenuItem(route: RouteConfig, parentPath: string = ""): DynamicMe
     label: route.name || route.path,
     path: relativePath,
     permissions: route.permissions,
+    icon: route.icon, // 传递动态图标
     children: children && children.length > 0 ? children : undefined,
   };
 }
@@ -271,7 +273,7 @@ export function useBasicLayout() {
 
           return {
             key: item.key,
-            icon: MENU_ICONS[item.key] || MENU_ICONS[item.label] || null,
+            icon: item.icon ? <DynamicIcon iconName={item.icon} size={16} /> : null,
             label: item.label,
             children: filteredChildren,
             // 只有叶子节点（无子菜单且有 path）才添加点击事件

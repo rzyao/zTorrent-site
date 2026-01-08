@@ -80,7 +80,7 @@ export default function AdvancedQueryBuilder({
   }, [fieldOptions]);
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%" }}>
       <Space style={{ width: "100%", justifyContent: "space-between" }}>
         <div>逻辑组合：</div>
         <Select
@@ -310,6 +310,6 @@ export default function AdvancedQueryBuilder({
       <div style={{ color: "#888" }}>
         说明：可组合多字段与规则进行筛选；常用搜索框仅用于用户名或邮箱模糊查询，复杂查询请在此添加条件并选择逻辑（AND/OR）。
       </div>
-    </Space>
+    </div>
   );
 }

@@ -36,6 +36,8 @@ export interface RouteConfig {
   isVisible?: boolean;
   /** 是否启用(加载到路由表) */
   isEnabled?: boolean;
+  /** 图标名称 (Lucide:Home 或 Antd:DashboardOutlined) */
+  icon?: string;
 }
 
 /**

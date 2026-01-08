@@ -97,7 +97,10 @@ export default function AppRoutes() {
   );
 }
 
+// 懒加载 404 页面
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
+
 function NotFoundRedirect() {
-  const isLoggedIn = !!localStorage.getItem("accessToken");
-  return <Navigate to={isLoggedIn ? "/app/home" : "/login"} replace />;
+  // 显示 404 页面而非重定向
+  return <NotFoundPage />;
 }

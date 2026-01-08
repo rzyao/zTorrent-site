@@ -40,9 +40,17 @@ export type RouteTreeNodeDto = {
      */
     sortOrder?: number;
     /**
+     * 图标名称
+     */
+    icon?: Record<string, any>;
+    /**
      * 是否可见（用于菜单渲染判断）
      */
     isVisible?: boolean;
+    /**
+     * 是否启用
+     */
+    isEnabled?: boolean;
     /**
      * 所需权限列表
      */

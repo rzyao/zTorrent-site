@@ -25,6 +25,7 @@ function mapDtoToConfig(dto: RouteTreeNodeDto): RouteConfig {
     openInNewTab: (dto as any).openInNewTab || false,
     isVisible: dto.isVisible,
     isEnabled: (dto as any).isEnabled !== false, // 默认为 true
+    icon: (dto as any).icon || undefined,
     children: dto.children?.map(mapDtoToConfig),
   };
 }

@@ -12,11 +12,7 @@ interface PageContainerProps {
  * 用于包裹页面内容，提供统一的边距、背景色和全屏高度布局。
  * 默认占满父容器剩余空间。
  */
-const PageContainer: React.FC<PageContainerProps> = ({
-  children,
-  style,
-  className,
-}) => {
+const PageContainer: React.FC<PageContainerProps> = ({ children, style, className }) => {
   return (
     <div
       className={"page-container " + className}
@@ -26,7 +22,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
-        background: "#f3f3f3",
+        background: "#fafafa",
         ...style,
       }}
     >

@@ -56,6 +56,10 @@ export type UpdateRouteDto = {
      */
     openInNewTab?: boolean;
     /**
+     * 图标名称
+     */
+    icon?: Record<string, any>;
+    /**
      * 所需权限列表 (完整替换)
      */
     permissions?: Array<string>;
