@@ -190,16 +190,6 @@ export const componentRegistry: Record<string, LazyComponent> = {
   AdminInvitesStatistics: lazy(() => import("@/modules/admin/pages/operations/invites/Statistics")),
   AdminSendInvite: lazy(() => import("@/modules/admin/pages/operations/invites/SendInvite")),
   // 导航管理
-  AdminDesktopNavigation: lazy(() =>
-    import("@/modules/admin/pages/operations/navigation/exports").then((m) => ({
-      default: m.DesktopNavigation,
-    })),
-  ),
-  AdminMobileNavigation: lazy(() =>
-    import("@/modules/admin/pages/operations/navigation/exports").then((m) => ({
-      default: m.MobileNavigation,
-    })),
-  ),
 
   // ==================== Admin 模块 - 经济系统 (economy) ====================
   // 魔力值中心

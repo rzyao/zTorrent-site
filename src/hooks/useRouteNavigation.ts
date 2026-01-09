@@ -5,7 +5,23 @@
 import { useMemo } from "react";
 import { useRouteConfig } from "./useRouteConfig";
 import { RouteConfig } from "@/types/routeConfig";
-import { NavigationItem } from "@/types/navigation";
+/**
+ * 局部导航项类型定义（从路由转换而来）
+ */
+export interface NavigationItem {
+  id: string;
+  label: string;
+  path: string;
+  icon?: string;
+  platform: "desktop" | "mobile";
+  parentId?: string | null;
+  sortOrder: number;
+  isVisible: boolean;
+  target?: "_self" | "_blank";
+  permissions?: string[];
+  children?: NavigationItem[];
+}
+
 import { useAccess } from "@/context/AccessContext";
 
 /**

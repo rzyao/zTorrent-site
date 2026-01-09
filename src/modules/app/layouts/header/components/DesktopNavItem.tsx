@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
-import { NavigationItem } from "@/types/navigation";
+import { NavigationItem } from "@/hooks/useRouteNavigation";
 
 interface DesktopNavItemProps {
   item: NavigationItem;
