@@ -24,10 +24,19 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
     if (collapsed) return;
 
     visibleRoutes.forEach((item) => {
-      const href = item.path.startsWith("/") ? item.path : `/admin/${item.path}`;
+      // 规范化父路径
+      const parentPath = item.path.startsWith("/") ? item.path : `/admin/${item.path}`;
+      const normalizedParentPath = parentPath.replace(/\/+/g, "/");
+
       const isParentOfActive = item.children?.some((child) => {
-        const childHref = child.path.startsWith("/") ? child.path : `${href}/${child.path}`;
-        return location.pathname === childHref || location.pathname.startsWith(childHref + "/");
+        const childPath = child.path.startsWith("/")
+          ? child.path
+          : `${normalizedParentPath}/${child.path}`;
+        const normalizedChildPath = childPath.replace(/\/+/g, "/");
+        return (
+          location.pathname === normalizedChildPath ||
+          location.pathname.startsWith(normalizedChildPath + "/")
+        );
       });
 
       if (isParentOfActive) {
@@ -74,20 +83,21 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
           {visibleRoutes.length > 0 ? (
             visibleRoutes.map((item) => {
               const iconName = (item as any).icon as string | undefined;
-              const href = item.path.startsWith("/") ? item.path : `/admin/${item.path}`;
+              const href = (item.path.startsWith("/") ? item.path : `/admin/${item.path}`).replace(
+                /\/+/g,
+                "/",
+              );
               const hasChildren = item.children && item.children.length > 0;
               const isExpanded = expandedMenus.has(item.id);
 
               // 带子菜单的项目
               if (hasChildren) {
-                // 检查子路由是否激活
+                // 检查子路由是否激活 (精确匹配)
                 const isParentActive = item.children?.some((child) => {
-                  const childHref = child.path.startsWith("/")
-                    ? child.path
-                    : `${href}/${child.path}`;
-                  return (
-                    location.pathname === childHref || location.pathname.startsWith(childHref + "/")
-                  );
+                  const childHref = (
+                    child.path.startsWith("/") ? child.path : `${href}/${child.path}`
+                  ).replace(/\/+/g, "/");
+                  return location.pathname === childHref;
                 });
 
                 return (
@@ -96,29 +106,28 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
                       onClick={() => toggleMenu(item.id)}
                       className={cn(
                         "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-gray-50",
-                        isParentActive ? "bg-primary-bg text-primary font-medium" : "text-gray-600",
                         collapsed && "justify-center px-2",
                       )}
+                      style={{ color: isParentActive ? "#1677ff" : "#4b5563" }}
                     >
                       <div className="flex items-center gap-3">
                         {iconName && (
                           <DynamicIcon
                             iconName={iconName}
                             size={18}
-                            className={cn(
-                              "transition-colors",
-                              isParentActive ? "text-primary" : "text-gray-400",
-                            )}
+                            style={{ color: isParentActive ? "#1677ff" : "#9ca3af" }}
                           />
                         )}
-                        {!collapsed && <span>{item.name || item.path}</span>}
+                        {!collapsed && (
+                          <span style={{ color: isParentActive ? "#1677ff" : "#4b5563" }}>
+                            {item.name || item.path}
+                          </span>
+                        )}
                       </div>
                       {!collapsed && (
                         <ChevronDown
-                          className={cn(
-                            "h-4 w-4 text-gray-400 transition-transform",
-                            isExpanded && "rotate-180",
-                          )}
+                          className={cn("h-4 w-4 transition-transform", isExpanded && "rotate-180")}
+                          style={{ color: isParentActive ? "#1677ff" : "#9ca3af" }}
                         />
                       )}
                     </button>
@@ -131,26 +140,26 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
                             const childHref = child.path.startsWith("/")
                               ? child.path
                               : `${href}/${child.path}`;
+                            const normalizedChildHref = childHref.replace(/\/+/g, "/");
                             const childIcon = (child as any).icon as string | undefined;
+                            // 精确匹配当前路径
+                            const isChildActive = location.pathname === normalizedChildHref;
                             return (
                               <NavLink
                                 key={child.id}
-                                to={childHref}
+                                to={normalizedChildHref}
                                 end
-                                className={({ isActive }) =>
-                                  cn(
-                                    "flex items-center gap-2 rounded-lg px-3 py-2 text-sm no-underline transition-colors",
-                                    isActive
-                                      ? "bg-primary-bg text-primary font-medium"
-                                      : "text-gray-500 hover:bg-gray-50 hover:text-gray-700",
-                                  )
-                                }
+                                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm no-underline transition-colors hover:bg-gray-50"
+                                style={{
+                                  color: isChildActive ? "#1677ff" : "#6b7280",
+                                  fontWeight: isChildActive ? 500 : 400,
+                                }}
                               >
                                 {childIcon && (
                                   <DynamicIcon
                                     iconName={childIcon}
                                     size={16}
-                                    className="text-gray-400"
+                                    style={{ color: isChildActive ? "#1677ff" : "#9ca3af" }}
                                   />
                                 )}
                                 <span>{child.name || child.path}</span>
@@ -163,28 +172,24 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
                 );
               }
 
-              // 普通菜单项
+              // 普通菜单项（无子菜单）
+              // 精确匹配当前路径
+              const isItemActive = location.pathname === href;
               return (
                 <NavLink
                   key={item.id}
                   to={href}
                   end
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium no-underline transition-colors",
-                      isActive ? "bg-primary-bg text-primary" : "text-gray-600 hover:bg-gray-50",
-                      collapsed && "justify-center px-2",
-                    )
-                  }
+                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium no-underline transition-colors hover:bg-gray-50"
+                  style={{
+                    color: isItemActive ? "#1677ff" : "#4b5563",
+                  }}
                 >
                   {iconName && (
                     <DynamicIcon
                       iconName={iconName}
                       size={18}
-                      className={cn(
-                        "transition-colors",
-                        location.pathname === href ? "text-primary" : "text-gray-400",
-                      )}
+                      style={{ color: isItemActive ? "#1677ff" : "#9ca3af" }}
                     />
                   )}
                   {!collapsed && <span>{item.name || item.path}</span>}

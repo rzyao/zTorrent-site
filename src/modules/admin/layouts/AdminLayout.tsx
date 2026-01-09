@@ -28,7 +28,7 @@ export function AdminLayout() {
       <App>
         <SiteConfigProvider>
           <FaviconInjector />
-          <div className="flex h-screen w-full overflow-hidden bg-gray-50">
+          <div className="admin-layout flex h-screen w-full overflow-hidden bg-gray-50">
             {/* 侧边栏 */}
             <AdminSidebar collapsed={collapsed} onCollapse={setCollapsed} />
 

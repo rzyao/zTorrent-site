@@ -7,9 +7,7 @@
 
 @theme inline {
   /* ============== 颜色系统 ============== */
-  /* Primary 颜色 (供 text-primary, bg-primary-bg 等使用) */
-  --color-primary: #1677ff;
-  --color-primary-bg: #e6f4ff;
+  /* 使用 antd- 前缀命名，避免覆盖全局 primary 颜色 */
   
   --color-antd-primary: var(--antd-primary);
   --color-antd-primary-hover: var(--antd-primary-hover);
@@ -36,7 +34,7 @@
   --radius-antd-lg: var(--antd-radius-lg);
 }
 
-:root {
+.admin-layout {
   /* ============== Ant Design Tokens ============== */
   --antd-primary: #1677ff;
   --antd-primary-hover: #4096ff;
@@ -88,8 +86,8 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
-/* 覆盖全局 page-container 限制 */
-.page-container {
+/* 仅在 Admin 模块内覆盖全局 page-container 限制 */
+.admin-layout .page-container {
   max-width: none !important;
   margin: 0 !important;
   padding: 0 !important;

@@ -12,7 +12,7 @@
  * 此处定义的变量作为降级方案和 Admin 模块专用覆盖。
  */
 
-:root {
+.admin-layout {
   /* ============== 间距 (Spacing) ============== */
   --antd-spacing-xs: 8px;
   --antd-spacing-sm: 12px;
@@ -405,7 +405,7 @@
    移除全局 max-width 限制，让内容占满屏幕宽度
    ============================================================ */
 
-.page-container {
+.admin-layout .page-container {
   max-width: none;        /* 移除最大宽度限制 */
   margin-left: 0;         /* 移除自动居中的 margin */
   margin-right: 0;
