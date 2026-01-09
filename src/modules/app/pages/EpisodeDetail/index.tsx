@@ -1,6 +1,6 @@
-import { useParams, useNavigate } from "react-router-dom";
+﻿import { useParams, useNavigate } from "react-router-dom";
 import { useEpisodeDetail } from "./hooks/useEpisodeDetail";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/modules/app/components/ui/button";
 import {
   ArrowLeft,
   Play,
@@ -12,15 +12,15 @@ import {
   Star,
   MessageSquare,
 } from "lucide-react";
-import { PageContainer } from "@/components/PageContainer";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
-import { Badge } from "@/components/ui/badge";
+import { PageContainer } from "@/modules/app/components/PageContainer";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
+import { Badge } from "@/modules/app/components/ui/badge";
 import { formatSize } from "@/utils/format";
 import { formatDate } from "@/modules/app/pages/Invite/utils";
 import { LoadingState, ErrorState } from "@/modules/app/pages/Series/components/States";
-import { useTorrentDownload } from "@/utils/useTorrentDownload";
-import { useDownloaders } from "@/context/DownloadersContext";
-import { DownloadToDownloaderModal } from "@/components/DownloadToDownloaderModal";
+import { useTorrentDownload } from "@/modules/app/hooks/useTorrentDownload";
+import { useDownloaders } from "@/modules/app/context/DownloadersContext";
+import { DownloadToDownloaderModal } from "@/modules/app/components/DownloadToDownloaderModal";
 import { useState } from "react";
 
 export default function EpisodeDetailPage() {

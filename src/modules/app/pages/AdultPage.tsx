@@ -1,5 +1,5 @@
-import { FeaturedTorrent } from "@/components/FeaturedTorrent";
-import { TorrentRow } from "@/components/TorrentRow";
+﻿import { FeaturedTorrent } from "@/modules/app/components/FeaturedTorrent";
+import { TorrentRow } from "@/modules/app/components/TorrentRow";
 import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";

@@ -1,5 +1,5 @@
-import { X, Star, Trash2, Check } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+﻿import { X, Star, Trash2, Check } from 'lucide-react';
+import { Button } from '@/modules/app/components/ui/button';
 import type { MessageType, Message } from '../types/types';
 
 /**

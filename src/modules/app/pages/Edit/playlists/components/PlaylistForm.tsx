@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
+﻿import { Button } from "@/modules/app/components/ui/button";
 import { AccessControl } from "@/components/AccessControl";
-import { Label } from "@/components/ui/label";
+import { Label } from "@/modules/app/components/ui/label";
 
 import {
   Edit,
@@ -20,7 +20,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/modules/app/components/ui/select";
 import { useState, useEffect } from "react";
 
 interface EditFormState {

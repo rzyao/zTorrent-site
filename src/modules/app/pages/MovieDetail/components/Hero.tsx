@@ -1,9 +1,9 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+﻿import { Badge } from "@/modules/app/components/ui/badge";
+import { Button } from "@/modules/app/components/ui/button";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import { Star, Calendar, Clock, Film as FilmIcon, Bookmark, Heart, Share2 } from "lucide-react";
 import type { FilmDetail } from "../types";
-import { useFavorite } from "@/hooks/useFavorite";
+import { useFavorite } from "@/modules/app/hooks/useFavorite";
 import { FavoriteActionDto } from "@/api";
 
 /**

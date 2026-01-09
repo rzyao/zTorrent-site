@@ -1,4 +1,4 @@
-// 添加下载器弹窗
+﻿// 添加下载器弹窗
 // 说明：拆分出纯 UI 表单组件，通过 props 接收与修改表单值、关闭/提交事件；组件自身不持有业务状态。
 // 使用 Portal 渲染到 body，使遮罩层全屏且弹窗在屏幕中央。
 
@@ -19,7 +19,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/modules/app/components/ui/select";
 import { DownloaderForm, DownloaderType } from "../types";
 
 interface Props {

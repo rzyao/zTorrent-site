@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { Send, Users } from "lucide-react";
 import { InviteHeader } from "./components/Header";
@@ -12,8 +12,8 @@ import { SendInviteModal } from "./components/SendInviteModal";
 import { PurchaseConfirmModal } from "./components/PurchaseConfirmModal";
 import type { InviteCode } from "./types";
 import { Service } from "@/api/services/Service";
-import { usePurchase } from "@/hooks/usePurchase";
-import { PurchaseSuccessModal } from "@/components/purchase/PurchaseSuccessModal";
+import { usePurchase } from "@/modules/app/hooks/usePurchase";
+import { PurchaseSuccessModal } from "@/modules/app/components/purchase/PurchaseSuccessModal";
 import { useInviteOverview } from "./hooks/useInviteOverview";
 import { useInviteCodes } from "./hooks/useInviteCodes";
 import { useInviteRecords } from "./hooks/useInviteRecords";

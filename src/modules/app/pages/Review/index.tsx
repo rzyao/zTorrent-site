@@ -1,4 +1,4 @@
-import { Clock, Check, X, Shield } from "lucide-react";
+﻿import { Clock, Check, X, Shield } from "lucide-react";
 import { useReviewData } from "./hooks/useReviewData";
 import { useReviewActions } from "./hooks/useReviewActions";
 import { useReviewHistory } from "./hooks/useReviewHistory";
@@ -8,7 +8,7 @@ import { ReviewTable } from "./components/ReviewTable";
 import { DetailDrawer } from "./components/DetailDrawer";
 import { ActionModal } from "./components/ActionModal";
 import { HistoryModal } from "./components/HistoryModal";
-import { PageContainer } from "@/components/PageContainer";
+import { PageContainer } from "@/modules/app/components/PageContainer";
 
 export default function ReviewPage() {
   const data = useReviewData();

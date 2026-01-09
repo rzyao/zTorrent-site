@@ -1,7 +1,7 @@
-import { Calendar, Mail } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+﻿import { Calendar, Mail } from 'lucide-react';
+import { Badge } from '@/modules/app/components/ui/badge';
+import { Button } from '@/modules/app/components/ui/button';
+import { Separator } from '@/modules/app/components/ui/separator';
 import type { StaffMember, RoleConfig } from '../types';
 import { getStatusConfig } from '../hooks/useStatusConfig';
 

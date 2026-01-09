@@ -1,5 +1,5 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
+﻿import React from "react";
+import { Button } from "@/modules/app/components/ui/button";
 import { Link } from "react-router-dom";
 import {
   Plus,

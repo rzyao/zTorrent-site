@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { FavoriteActionDto } from "@/api";
 import { useParams } from "react-router-dom";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
-import { PageContainer } from "@/components/PageContainer";
+import { PageContainer } from "@/modules/app/components/PageContainer";
 import { Hero } from "./components/Hero";
 import { Stills } from "./components/Stills";
 import { TorrentTabs } from "./components/TorrentTabs";
@@ -12,7 +12,7 @@ import { RelatedSidebar } from "./components/RelatedSidebar";
 import { AwardsSidebar } from "./components/AwardsSidebar";
 import { Lightbox } from "./components/Lightbox";
 import { useFilmDetail } from "./hooks/useFilmDetail";
-import { DetailPageSkeleton } from "@/components/skeletons/DetailPageSkeleton";
+import { DetailPageSkeleton } from "@/modules/app/components/skeletons/DetailPageSkeleton";
 
 interface FilmDetailPageProps {
   filmId?: string;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import {
   ArrowLeft,
   AlertCircle,
@@ -8,17 +8,17 @@ import {
   Info,
   Paperclip,
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/modules/app/components/ui/badge';
+import { Button } from '@/modules/app/components/ui/button';
+import { Input } from '@/modules/app/components/ui/input';
+import { Textarea } from '@/modules/app/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/modules/app/components/ui/select';
 import { useTickets } from '@/modules/app/pages/Tickets/hooks/useTickets';
 
 interface CreateTicketViewProps {

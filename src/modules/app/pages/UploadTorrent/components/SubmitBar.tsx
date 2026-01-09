@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import { Button } from '@/components/ui/button';
+﻿import React, { memo } from 'react';
+import { Button } from '@/modules/app/components/ui/button';
 import { AccessControl } from '@/components/AccessControl';
 import { Info, Upload } from 'lucide-react';
 

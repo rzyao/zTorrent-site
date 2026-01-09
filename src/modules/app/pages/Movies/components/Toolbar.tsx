@@ -1,6 +1,6 @@
-import { ResponsiveSortSelect } from "@/components/ResponsiveSortSelect";
+﻿import { ResponsiveSortSelect } from "@/modules/app/components/ResponsiveSortSelect";
 import { CategoryNav } from "@/modules/app/layouts/CategoryNav";
-import { SearchInput } from "@/components/SearchInput";
+import { SearchInput } from "@/modules/app/components/SearchInput";
 import type { GenreOption, SortKey } from "../types";
 
 interface ToolbarProps {

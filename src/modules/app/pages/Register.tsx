@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { Mail, Lock, UserPlus, ArrowLeft, User, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+import { Button } from "@/modules/app/components/ui/button";
+import { Input } from "@/modules/app/components/ui/input";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import { useAuth } from "@/hooks/useApi";
 import { isValidPassword, passwordErrorMessage } from "@/utils/validation";
 import { toast } from "sonner";

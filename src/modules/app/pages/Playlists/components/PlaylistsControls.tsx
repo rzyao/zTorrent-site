@@ -1,7 +1,7 @@
-import { List, Heart, Film, Plus } from "lucide-react";
-import { ResponsiveSortSelect } from "@/components/ResponsiveSortSelect";
+﻿import { List, Heart, Film, Plus } from "lucide-react";
+import { ResponsiveSortSelect } from "@/modules/app/components/ResponsiveSortSelect";
 import { CategoryNav, type CategoryNavItem } from "@/modules/app/layouts/CategoryNav";
-import { SearchInput } from "@/components/SearchInput";
+import { SearchInput } from "@/modules/app/components/SearchInput";
 
 interface Props {
   activeTab: "all" | "mine" | "following";

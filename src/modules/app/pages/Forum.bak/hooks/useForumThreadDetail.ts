@@ -1,7 +1,7 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { useState, useEffect } from 'react';
 import { IForumThread } from '../types';
-import { unwrapResponse, extractErrorMessage } from '../utils';
+import { unwrapResponse, extractErrorMessage } from '.@/utils/cn';
 import { VIEW_TTL_MS } from '../constants';
 import { getOpenAPI, getRequest } from '@/api/lazy';
 

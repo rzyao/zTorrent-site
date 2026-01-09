@@ -1,11 +1,11 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import Logo from "@/assets/logo.svg";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { Eye, EyeOff, User, Lock, LogIn, Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+import { Button } from "@/modules/app/components/ui/button";
+import { Input } from "@/modules/app/components/ui/input";
+import { Checkbox } from "@/modules/app/components/ui/checkbox";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import { useAuth } from "@/hooks/useApi";
 import { toast } from "sonner";
 

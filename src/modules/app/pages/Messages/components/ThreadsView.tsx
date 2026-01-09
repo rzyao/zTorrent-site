@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+﻿import { useEffect } from 'react';
+import { Button } from '@/modules/app/components/ui/button';
 import type { IMessage, IThreadSummary } from '../types/types';
 
 /**

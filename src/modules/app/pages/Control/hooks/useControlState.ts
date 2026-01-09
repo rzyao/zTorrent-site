@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { useDictionaryLabels } from '@/hooks/useDictionary';
 import { getProfile } from '@/api/custom/auth';
 import { getUsersService, getOpenAPI } from '@/api/lazy';
 import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
-import { useAsyncAction } from '@/hooks/useAsyncAction';
+import { useAsyncAction } from '@/modules/app/hooks/useAsyncAction';
 import type { UpdateUserPreferencesDto } from '@/api/models/UpdateUserPreferencesDto';
 import type { UpdateUserPrivacyDto } from '@/api/models/UpdateUserPrivacyDto';
 import type {

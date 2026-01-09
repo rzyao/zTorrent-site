@@ -1,9 +1,9 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { useState } from 'react';
 import { Plus, X, Send } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/modules/app/components/ui/button';
 import { AccessControl } from '@/components/AccessControl';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/modules/app/components/ui/select';
 import { RichTextEditor } from '../RichTextEditor';
 
 interface CreateThreadFormProps {
@@ -26,7 +26,7 @@ export function CreateThreadForm({ categories, initialCategoryId, onCancel, onSu
       const c = content.trim();
 
       if (!catId) { setError('请先选择板块'); return; }
-      if (!t || !c) { setError('标题与内容不能为�?); return; }
+      if (!t || !c) { setError('标题与内容不能为�?); return; }
       
       setError(null);
       setSubmitting(true);
@@ -99,7 +99,7 @@ export function CreateThreadForm({ categories, initialCategoryId, onCancel, onSu
           <RichTextEditor
             value={content}
             onChange={setContent}
-            placeholder="输入帖子内容，支持Markdown格式和图�?.."
+            placeholder="输入帖子内容，支持Markdown格式和图�?.."
             minHeight="300px"
           />
         </div>
@@ -111,14 +111,14 @@ export function CreateThreadForm({ categories, initialCategoryId, onCancel, onSu
           >
             取消
           </Button>
-          {/* 发布新帖按钮：需要论坛发帖权�?*/}
+          {/* 发布新帖按钮：需要论坛发帖权�?*/}
           <AccessControl
             requiredPermissions={['forum:thread.create']}
             name="发布新帖"
             fallback={
               <Button disabled className="bg-neutral-700 text-neutral-400">
                 <Send className="w-4 h-4 mr-2" />
-                {submitting ? '发布�?..' : '发布'}
+                {submitting ? '发布�?..' : '发布'}
               </Button>
             }
           >
@@ -128,7 +128,7 @@ export function CreateThreadForm({ categories, initialCategoryId, onCancel, onSu
               disabled={submitting}
             >
               <Send className="w-4 h-4 mr-2" />
-              {submitting ? '发布�?..' : '发布'}
+              {submitting ? '发布�?..' : '发布'}
             </Button>
           </AccessControl>
         </div>

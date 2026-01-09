@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/modules/app/components/ui/dialog";
 import {
   Download,
   Upload,
@@ -18,18 +18,18 @@ import {
   ChevronDown,
   XIcon,
 } from "lucide-react";
-import ActionBtn from "@/components/ActionBtn";
-import { PageContainer } from "@/components/PageContainer";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+import ActionBtn from "@/modules/app/components/ActionBtn";
+import { PageContainer } from "@/modules/app/components/PageContainer";
+import { Button } from "@/modules/app/components/ui/button";
+import { Badge } from "@/modules/app/components/ui/badge";
+import { Separator } from "@/modules/app/components/ui/separator";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import { useParams } from "react-router-dom";
 import { TorrentsSearchService } from "@/api/services/TorrentsSearchService";
 import { DownloadsService } from "@/api/services/DownloadsService";
 import { FavoriteActionDto } from "@/api";
-import { useFavorite } from "@/hooks/useFavorite";
-import { useTorrentDownload } from "@/utils/useTorrentDownload";
+import { useFavorite } from "@/modules/app/hooks/useFavorite";
+import { useTorrentDownload } from "@/modules/app/hooks/useTorrentDownload";
 import { formatSize } from "@/utils/format";
 import {
   Carousel,
@@ -38,7 +38,7 @@ import {
   CarouselNext,
   CarouselPrevious,
   type CarouselApi,
-} from "@/components/ui/carousel";
+} from "@/modules/app/components/ui/carousel";
 // 引入项目已封装的 Context Menu 组件，用于在详情弹窗中右键显示菜单
 import {
   ContextMenu,
@@ -49,13 +49,13 @@ import {
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
-} from "@/components/ui/context-menu";
-import { DownloadToDownloaderModal } from "@/components/DownloadToDownloaderModal";
+} from "@/modules/app/components/ui/context-menu";
+import { DownloadToDownloaderModal } from "@/modules/app/components/DownloadToDownloaderModal";
 
-import { useDownloaders } from "@/context/DownloadersContext";
+import { useDownloaders } from "@/modules/app/context/DownloadersContext";
 import { DownloadersService } from "@/api/services/DownloadersService";
 import { customToast } from "@/hooks/useToast";
-import { useSourceTracker } from "@/hooks/useSourceTracker";
+import { useSourceTracker } from "@/modules/app/hooks/useSourceTracker";
 
 import {
   DescriptionData,
@@ -66,7 +66,7 @@ import {
   RelatedTorrent,
   EnglishMovieInfo,
 } from "./types";
-import { processDescription } from "./utils/processDescription";
+import { processDescription } from "@/utils/cn/processDescription";
 import { FileListItem } from "./components/FileListItem";
 
 export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps) {

@@ -1,16 +1,16 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { FavoriteActionDto } from "@/api";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { PageContainer } from "@/components/PageContainer";
+import { Button } from "@/modules/app/components/ui/button";
+import { PageContainer } from "@/modules/app/components/PageContainer";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { useSeriesDetail } from "./hooks/useSeriesDetail";
 import { Hero } from "./components/Hero";
 import { InfoBar } from "./components/InfoBar";
 import { EpisodeList } from "./components/EpisodeList";
 import type { EpisodeItem } from "./types";
-import { DetailPageSkeleton } from "@/components/skeletons/DetailPageSkeleton";
+import { DetailPageSkeleton } from "@/modules/app/components/skeletons/DetailPageSkeleton";
 
 /**
  * 剧集详情页

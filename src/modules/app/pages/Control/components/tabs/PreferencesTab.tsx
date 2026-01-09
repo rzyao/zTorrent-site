@@ -1,12 +1,12 @@
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
+﻿import { Separator } from "@/modules/app/components/ui/separator";
+import { Switch } from "@/modules/app/components/ui/switch";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/modules/app/components/ui/select";
 import { Palette, Globe, Monitor } from "lucide-react";
 import type { PreferencesData, KeyLabelOption } from "../../types";
 

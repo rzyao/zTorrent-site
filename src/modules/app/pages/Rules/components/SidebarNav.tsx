@@ -1,8 +1,8 @@
-import React from 'react';
+﻿import React from 'react';
 import { Plus, FileText, MessageCircle, Heart } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
+import { Separator } from '@/modules/app/components/ui/separator';
 import type { RuleSection } from '../types';
-import { getIconBySection } from '../utils';
+import { getIconBySection } from '.@/utils/cn';
 
 /**
  * 左侧章节导航

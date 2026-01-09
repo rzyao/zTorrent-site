@@ -1,7 +1,7 @@
-import { HardDrive, Users, Eye, MessageCircle, Star, Clock, ThumbsUp, ThumbsDown, CheckCheck, Ban, ArrowRight, Plus } from 'lucide-react';
+﻿import { HardDrive, Users, Eye, MessageCircle, Star, Clock, ThumbsUp, ThumbsDown, CheckCheck, Ban, ArrowRight, Plus } from 'lucide-react';
 import type { Candidate } from '../types';
 import { StatusBadge } from './StatusBadge';
-import { getTimeRemaining, getVotePercentage } from '../utils';
+import { getTimeRemaining, getVotePercentage } from '.@/utils/cn';
 
 export function CandidateCard({
   candidate,

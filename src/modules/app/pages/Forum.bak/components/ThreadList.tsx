@@ -1,8 +1,8 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { MessageSquare, Eye, MessageCircle } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/modules/app/components/ui/badge';
 import { IForumThread } from '../types';
-import { parseHighlight } from '../utils';
+import { parseHighlight } from '.@/utils/cn';
 
 interface ThreadListProps {
   threads: IForumThread[];
@@ -17,10 +17,10 @@ export function ThreadList({ threads, onThreadSelect, getCategoryName }: ThreadL
       <div className="bg-neutral-700/30 px-6 py-3 border-b border-neutral-700/50">
         <div className="grid grid-cols-12 gap-4 text-sm text-neutral-400">
           <div className="col-span-6">标题</div>
-          <div className="col-span-2 text-center hidden md:block">作�?/div>
+          <div className="col-span-2 text-center hidden md:block">作�?/div>
           <div className="col-span-1 text-center hidden lg:block">回复</div>
           <div className="col-span-1 text-center hidden lg:block">查看</div>
-          <div className="col-span-2 text-center hidden md:block">最后回�?/div>
+          <div className="col-span-2 text-center hidden md:block">最后回�?/div>
         </div>
       </div>
 
@@ -41,7 +41,7 @@ export function ThreadList({ threads, onThreadSelect, getCategoryName }: ThreadL
                 className="px-6 py-4 cursor-pointer transition-all hover:bg-neutral-700/20"
               >
                 <div className="grid grid-cols-12 gap-4 items-center">
-                  {/* 标题�?*/}
+                  {/* 标题�?*/}
                   <div className="col-span-12 md:col-span-6">
                     <div className="flex items-start gap-2 mb-2">
                       <div className="flex-1 min-w-0">
@@ -68,7 +68,7 @@ export function ThreadList({ threads, onThreadSelect, getCategoryName }: ThreadL
                     </div>
                   </div>
 
-                  {/* 回复�?*/}
+                  {/* 回复�?*/}
                   <div className="col-span-1 text-center hidden lg:block">
                     <div className="flex flex-col items-center gap-1">
                       <MessageCircle className="w-4 h-4 text-neutral-400" />
@@ -76,7 +76,7 @@ export function ThreadList({ threads, onThreadSelect, getCategoryName }: ThreadL
                     </div>
                   </div>
 
-                  {/* 查看�?*/}
+                  {/* 查看�?*/}
                   <div className="col-span-1 text-center hidden lg:block">
                     <div className="flex flex-col items-center gap-1">
                       <Eye className="w-4 h-4 text-neutral-400" />
@@ -84,7 +84,7 @@ export function ThreadList({ threads, onThreadSelect, getCategoryName }: ThreadL
                     </div>
                   </div>
 
-                  {/* 最后回�?*/}
+                  {/* 最后回�?*/}
                   <div className="col-span-2 text-center hidden md:block">
                     <span className="text-neutral-400 text-xs">{post.lastPostAt || ''}</span>
                   </div>

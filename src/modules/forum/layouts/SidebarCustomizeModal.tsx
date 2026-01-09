@@ -1,6 +1,6 @@
-import { Search, RotateCcw } from "lucide-react";
+﻿import { Search, RotateCcw } from "lucide-react";
 import { useState, useMemo } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/modules/forum/components/ui/dialog";
 import { useForumTheme } from "../context/ForumThemeContext";
 
 interface SidebarCustomizeItem {

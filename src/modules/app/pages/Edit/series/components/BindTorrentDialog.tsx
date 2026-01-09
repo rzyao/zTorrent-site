@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+﻿import { useState, useEffect, useCallback, useRef } from "react";
+import { Button } from "@/modules/app/components/ui/button";
+import { Input } from "@/modules/app/components/ui/input";
 import { formatSize } from "@/utils/format";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/modules/app/components/ui/dialog";
 import { Link, Search, Loader2, Check } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/modules/app/components/ui/badge";
 
 interface BindTorrentDialogProps {
   isOpen: boolean;

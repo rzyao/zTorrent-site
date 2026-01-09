@@ -1,6 +1,6 @@
-import React, { memo } from 'react';
+﻿import React, { memo } from 'react';
 import { Film, Info } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
+import { Separator } from '@/modules/app/components/ui/separator';
 import {
   Select,
   SelectContent,
@@ -8,8 +8,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { MediaInfoResult } from '@/types/UploadTorrentPage';
+} from '@/modules/app/components/ui/select';
+import { MediaInfoResult } from '@/modules/app/types/UploadTorrentPage';
 
 /**
  * QualityInfo

@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Undo2 } from "lucide-react";
 import { useForumTheme } from "../context/ForumThemeContext";
-import { ColorPicker } from "@/components/ui/color-picker";
-import { IconPicker } from "@/components/ui/icon-picker";
-import { useAsyncAction } from "@/hooks/useAsyncAction";
+import { ColorPicker } from "@/modules/forum/components/ui/color-picker";
+import { IconPicker } from "@/modules/forum/components/ui/icon-picker";
+import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
 import { ForumsCategoriesService, type CreateCategoryDto } from "@/api";
 
 // 将中文转为 slug（简化版，实际可能需要 pinyin 库）

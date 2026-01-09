@@ -1,7 +1,7 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { Tv, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/modules/app/components/ui/button";
 import { useEditSeries } from "@/modules/app/pages/Edit/series/hooks/useEditSeries";
 import { SeriesList } from "@/modules/app/pages/Edit/series/components/SeriesList";
 import { StatsPanel } from "@/modules/app/pages/Edit/series/components/StatsPanel";

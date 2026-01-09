@@ -1,10 +1,10 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FavoriteActionDto } from "@/api";
-import { useFavorite } from "@/hooks/useFavorite";
+import { useFavorite } from "@/modules/app/hooks/useFavorite";
 import { Film, Bell, UserPlus, Heart, Share2, Tv, Clock } from "lucide-react";
-import ActionBtn from "@/components/ActionBtn";
-import { cn } from "@/components/ui/utils";
+import ActionBtn from "@/modules/app/components/ActionBtn";
+import { cn } from "@/utils/cn";
 import type { EpisodeItem, SeriesDetail } from "../types";
 
 interface InfoBarProps {

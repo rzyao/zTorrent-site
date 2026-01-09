@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
+﻿import { Button } from "@/modules/app/components/ui/button";
 import { AccessControl } from "@/components/AccessControl";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/modules/app/components/ui/badge";
+import { Separator } from "@/modules/app/components/ui/separator";
 import {
   Edit,
   Trash2,

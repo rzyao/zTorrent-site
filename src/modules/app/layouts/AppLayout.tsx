@@ -1,13 +1,13 @@
-import { useEffect, useRef, Suspense } from "react";
+﻿import { useEffect, useRef, Suspense } from "react";
 import "@/modules/app/styles/app.css";
 import { useLocation } from "react-router-dom";
 import { Header } from "@/modules/app/layouts/Header";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";
 import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
 import { useNavigationState } from "@/hooks/useNavigationState";
-import GoBack from "@/components/GoBack";
-import GoForward from "@/components/GoForward";
-import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
+import GoBack from "@/modules/app/components/GoBack";
+import GoForward from "@/modules/app/components/GoForward";
+import { RouteProgressBar } from "@/modules/app/components/ui/RouteProgressBar";
 
 function FaviconInjector() {
   useDynamicFavicon();

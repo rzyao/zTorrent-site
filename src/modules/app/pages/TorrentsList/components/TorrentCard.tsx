@@ -1,11 +1,11 @@
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+﻿import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import { Download, Upload, Star, CloudDownload, HardDrive } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/modules/app/components/ui/button";
+import { Badge } from "@/modules/app/components/ui/badge";
 import { memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatSize } from "@/utils/format";
-import { cn } from "@/components/ui/utils";
+import { cn } from "@/utils/cn";
 
 interface TorrentCardProps {
   id: string | number;

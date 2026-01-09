@@ -1,6 +1,6 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { Send } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/modules/app/components/ui/button';
 import { RichTextEditor } from '../RichTextEditor';
 
 interface ReplyEditorProps {
@@ -41,7 +41,7 @@ export function ReplyEditor({
       <RichTextEditor
         value={content}
         onChange={onChange}
-        placeholder="写下你的回复，支持Markdown格式和图�?.."
+        placeholder="写下你的回复，支持Markdown格式和图�?.."
         minHeight="150px"
       />
       <div className="flex justify-end mt-4">
@@ -51,11 +51,11 @@ export function ReplyEditor({
           onClick={onSubmit}
         >
           <Send className="w-4 h-4 mr-2" />
-          发送回�?
+          发送回�?
         </Button>
       </div>
       {isLocked && (
-        <p className="text-red-400 text-sm mt-2">该主题已锁定，禁止回�?/p>
+        <p className="text-red-400 text-sm mt-2">该主题已锁定，禁止回�?/p>
       )}
       {error && (
          <p className="text-red-400 text-sm mt-2">{error}</p>

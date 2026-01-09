@@ -1,5 +1,5 @@
-import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
+﻿import { Separator } from '@/modules/app/components/ui/separator';
+import { Switch } from '@/modules/app/components/ui/switch';
 import { Eye, Mail } from 'lucide-react';
 import type { PrivacyData } from '../../types';
 

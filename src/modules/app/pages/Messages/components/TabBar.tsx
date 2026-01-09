@@ -1,5 +1,5 @@
-import { Bell, Inbox, Send, Star, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+﻿import { Bell, Inbox, Send, Star, User } from 'lucide-react';
+import { Button } from '@/modules/app/components/ui/button';
 import type { MessageType } from '../types/types';
 
 /**

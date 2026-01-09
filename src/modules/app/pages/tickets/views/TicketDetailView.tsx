@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   Send,
@@ -16,17 +16,17 @@ import {
   Info,
   Users,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/modules/app/components/ui/badge";
+import { Button } from "@/modules/app/components/ui/button";
+import { Textarea } from "@/modules/app/components/ui/textarea";
+import { Separator } from "@/modules/app/components/ui/separator";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/modules/app/components/ui/select";
 import { useTickets } from "@/modules/app/pages/Tickets/hooks/useTickets";
 
 interface TicketDetailViewProps {

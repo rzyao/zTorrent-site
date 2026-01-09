@@ -1,7 +1,7 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Bookmark } from "lucide-react";
 import { ForumsBookmarksService } from "@/api";
-import { cn } from "@/components/ui/utils";
+import { cn } from "@/utils/cn";
 import { toast } from "sonner";
 
 interface BookmarkButtonProps {

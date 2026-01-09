@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
-import { useTorrentDownload } from "@/utils/useTorrentDownload";
+﻿import { useState, useEffect } from "react";
+import { useTorrentDownload } from "@/modules/app/hooks/useTorrentDownload";
 import { Toolbar } from "@/modules/app/pages/TorrentsList/components/Toolbar";
 import { GridView } from "@/modules/app/pages/TorrentsList/components/GridView";
 import { ListView } from "@/modules/app/pages/TorrentsList/components/ListView";
 import { PaginationBar } from "@/modules/app/pages/TorrentsList/components/PaginationBar";
 import { useTorrentsList } from "@/modules/app/pages/TorrentsList/hooks/useTorrentsList";
-import { useDownloaders } from "@/context/DownloadersContext";
-import { DownloadToDownloaderModal } from "@/components/DownloadToDownloaderModal";
+import { useDownloaders } from "@/modules/app/context/DownloadersContext";
+import { DownloadToDownloaderModal } from "@/modules/app/components/DownloadToDownloaderModal";
 import type { Torrent, ViewMode } from "@/modules/app/pages/TorrentsList/types";
-import { usePreferenceStore } from "@/stores/preferenceStore";
-import { TorrentGridSkeleton } from "@/components/skeletons/TorrentGridSkeleton";
+import { usePreferenceStore } from "@/modules/app/stores/preferenceStore";
+import { TorrentGridSkeleton } from "@/modules/app/components/skeletons/TorrentGridSkeleton";
 
 /**
  * TorrentsPage（容器组件）

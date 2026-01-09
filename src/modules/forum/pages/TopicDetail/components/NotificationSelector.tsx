@@ -1,7 +1,7 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Bell, BellOff, BellRing, ChevronDown } from "lucide-react";
-import { cn } from "@/components/ui/utils";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/utils/cn";
+import { Popover, PopoverContent, PopoverTrigger } from "@/modules/forum/components/ui/popover";
 
 import { useForumTheme } from "../../../context/ForumThemeContext";
 

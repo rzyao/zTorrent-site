@@ -1,7 +1,7 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { useState, useEffect, useCallback } from 'react';
 import { IForumThread } from '../types';
-import { unwrapResponse, extractErrorMessage } from '../utils';
+import { unwrapResponse, extractErrorMessage } from '.@/utils/cn';
 
 interface UseForumThreadsProps {
   categoryId: string;

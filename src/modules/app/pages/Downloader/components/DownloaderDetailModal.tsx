@@ -1,4 +1,4 @@
-// 下载器详情弹窗
+﻿// 下载器详情弹窗
 // 说明：展示分类与下载路径，支持异步获取与删除分类；保持纯展示层，由父级控制数据与动作。
 // 使用 Portal 渲染到 body，使遮罩层全屏且弹窗在屏幕中央。
 
@@ -19,7 +19,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Downloader } from "../types";
-import { formatBytes, getTypeColor } from "../utils";
+import { formatBytes, getTypeColor } from ".@/utils/cn";
 
 interface Props {
   open: boolean;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import type { Candidate } from './types';
 import { CandidatesHeader } from './components/Header';
 import { ProcessCard } from './components/ProcessCard';
@@ -6,7 +6,7 @@ import { FilterTabs } from './components/FilterTabs';
 import { CandidateCard } from './components/CandidateCard';
 import { CandidateDetailModal } from './components/CandidateDetailModal';
 import { CreateCandidateModal } from './components/CreateCandidateModal';
-import { getVotePercentage } from './utils';
+import { getVotePercentage } from '@/utils/cn';
 
 
 export default function CandidatesPage() {

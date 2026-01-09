@@ -1,4 +1,4 @@
-import {
+﻿import {
   BarChart3,
   TrendingUp,
   TrendingDown,
@@ -8,7 +8,7 @@ import {
   Users,
   MessageCircle,
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/modules/app/components/ui/badge';
 import { useEffect, useState } from 'react';
 import { useTickets } from '@/modules/app/pages/Tickets/hooks/useTickets';
 

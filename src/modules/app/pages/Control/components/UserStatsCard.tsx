@@ -1,5 +1,5 @@
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+﻿import { Badge } from '@/modules/app/components/ui/badge';
+import { Separator } from '@/modules/app/components/ui/separator';
 
 interface UserStatsCardProps {
   avatar: string;

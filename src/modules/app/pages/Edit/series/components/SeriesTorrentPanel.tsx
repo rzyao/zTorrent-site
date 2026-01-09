@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+﻿import { Button } from "@/modules/app/components/ui/button";
 import { Trash2, Link } from "lucide-react";
 import { formatSize } from "@/utils/format";
 import type { SeriesTorrent } from "../types";

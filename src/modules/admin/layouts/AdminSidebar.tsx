@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/components/ui/utils";
+import { cn } from "@/utils/cn";
 import { useRouteConfig } from "@/hooks/useRouteConfig";
-import DynamicIcon from "@/components/DynamicIcon";
+import DynamicIcon from "@/modules/admin/components/DynamicIcon";
 
 interface AdminSidebarProps {
   collapsed: boolean;

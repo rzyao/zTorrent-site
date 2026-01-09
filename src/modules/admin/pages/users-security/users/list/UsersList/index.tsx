@@ -1,7 +1,7 @@
-import React from "react";
+﻿import React from "react";
 import { Search } from "lucide-react";
 import { useUsersLogic, handleDeleteUser } from "@/modules/admin/shared/users/hooks/useUsersLogic";
-import { DataTable, Column } from "@/modules/admin/components/ui/data-table";
+import { DataTable, Column } from "@/modules/app/components/ui/data-table";
 import { Button } from "@/modules/admin/components/ui/button";
 import { Input } from "@/modules/admin/components/ui/input";
 import { AdvancedSearchModal } from "@/modules/admin/shared/users/components/AdvancedSearchModal";

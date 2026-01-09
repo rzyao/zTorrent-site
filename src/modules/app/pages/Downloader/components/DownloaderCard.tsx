@@ -1,4 +1,4 @@
-// 单个下载器卡片组件
+﻿// 单个下载器卡片组件
 // 说明：负责渲染下载器的基本信息、统计信息与操作按钮，不持有业务状态。
 
 import { Downloader } from "../types";
@@ -21,7 +21,7 @@ import {
   getStatusText,
   getTypeColor,
   getTypeIcon,
-} from "../utils";
+} from ".@/utils/cn";
 
 interface Props {
   downloader: Downloader;

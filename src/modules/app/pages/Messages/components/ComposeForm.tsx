@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { Button } from '@/components/ui/button';
+﻿import { useRef } from 'react';
+import { Button } from '@/modules/app/components/ui/button';
 
 /**
  * 新消息撰写表单

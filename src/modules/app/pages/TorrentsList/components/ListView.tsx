@@ -1,4 +1,4 @@
-import {
+﻿import {
   Download,
   Upload,
   Star,
@@ -6,9 +6,9 @@ import {
   HardDrive,
   Calendar,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/modules/app/components/ui/button";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
+import { Badge } from "@/modules/app/components/ui/badge";
 import { formatSize } from "@/utils/format";
 import type { Torrent } from "../types";
 import { formatDate } from "@/modules/app/pages/Invite/utils";

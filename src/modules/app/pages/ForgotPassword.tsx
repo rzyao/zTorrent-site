@@ -1,10 +1,10 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { isValidPassword, passwordErrorMessage } from "@/utils/validation";
 import { Mail, Lock, ArrowLeft, Clock, CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+import { Button } from "@/modules/app/components/ui/button";
+import { Input } from "@/modules/app/components/ui/input";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 
 interface ForgotPasswordPageProps {
   onBack: () => void;

@@ -1,7 +1,7 @@
-import { memo, useMemo, useCallback, Fragment } from "react";
+﻿import { memo, useMemo, useCallback, Fragment } from "react";
 import { marked } from "marked";
 import { QuoteBlock } from "../QuoteBlock";
-import { processBBCodeQuotes, parseContentWithQuotes } from "../../utils/quoteParser";
+import { processBBCodeQuotes, parseContentWithQuotes } from "../.@/utils/cn/quoteParser";
 
 export const PostContent = memo(
   ({

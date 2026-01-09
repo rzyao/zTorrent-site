@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/components/ui/utils";
+﻿import { Badge } from "@/modules/app/components/ui/badge";
+import { cn } from "@/utils/cn";
 import { X } from "lucide-react";
 
 /**

@@ -1,4 +1,4 @@
-import {
+﻿import {
   Settings,
   User,
   Shield,
@@ -7,15 +7,15 @@ import {
   Save,
   Download,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/modules/app/components/ui/button";
+import { Separator } from "@/modules/app/components/ui/separator";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/modules/app/components/ui/select";
 import { SidebarNav } from "./components/SidebarNav";
 import { UserStatsCard } from "./components/UserStatsCard";
 import { ProfileTab } from "./components/tabs/ProfileTab";

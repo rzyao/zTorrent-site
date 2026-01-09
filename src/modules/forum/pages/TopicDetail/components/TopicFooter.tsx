@@ -1,7 +1,7 @@
-import { Reply, Share2, Flag } from "lucide-react";
+﻿import { Reply, Share2, Flag } from "lucide-react";
 import { TopicData } from "../types";
 import { NotificationSelector } from "./NotificationSelector";
-import { cn } from "@/components/ui/utils";
+import { cn } from "@/utils/cn";
 import { BookmarkButton } from "../../../components/Interaction/BookmarkButton";
 import { ReportDialog } from "../../../components/Interaction/ReportDialog";
 import { LikeButton } from "../../../components/Interaction/LikeButton";

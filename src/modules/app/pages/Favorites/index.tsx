@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Service,
@@ -7,10 +7,10 @@ import {
   FavoriteListDto,
   FavoriteTargetType,
 } from "@/api";
-import { FavoriteButton } from "@/components/common/FavoriteButton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FavoriteButton } from "@/modules/app/components/FavoriteButton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/modules/app/components/ui/tabs";
 import { Loader2, Film, Music, List, Tv, File } from "lucide-react";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import { Link } from "react-router-dom";
 
 const TABS = [

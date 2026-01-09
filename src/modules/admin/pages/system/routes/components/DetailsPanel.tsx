@@ -1,4 +1,4 @@
-import { memo, useMemo, useCallback, startTransition, useState, useEffect } from "react";
+﻿import { memo, useMemo, useCallback, startTransition, useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -15,7 +15,7 @@ import {
 import { SaveOutlined, ReloadOutlined, DeleteOutlined } from "@ant-design/icons";
 import { RouteTreeNodeDto } from "@/api/models/RouteTreeNodeDto";
 import { componentRegistry } from "@/routes/componentRegistry";
-import DynamicIcon from "@/components/DynamicIcon";
+import DynamicIcon from "@/modules/admin/components/DynamicIcon";
 
 const { Text, Title } = Typography;
 

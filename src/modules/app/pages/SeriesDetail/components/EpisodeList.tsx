@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import { cn } from "@/components/ui/utils";
+﻿import { useNavigate } from "react-router-dom";
+import { cn } from "@/utils/cn";
 import { Tv, Calendar, Clock, Star, Play, ChevronRight } from "lucide-react";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import type { EpisodeItem } from "../types";
 
 interface EpisodeListProps {

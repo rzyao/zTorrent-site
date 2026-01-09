@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import {
   Plus,
   Clock,
@@ -15,16 +15,16 @@ import {
   Info,
   ChevronDown,
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Badge } from '@/modules/app/components/ui/badge';
+import { Button } from '@/modules/app/components/ui/button';
+import { Input } from '@/modules/app/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/modules/app/components/ui/select';
 import { TicketDetailView } from './TicketDetailView';
 import { CreateTicketView } from './CreateTicketView';
 import { useTickets } from '@/modules/app/pages/Tickets/hooks/useTickets';

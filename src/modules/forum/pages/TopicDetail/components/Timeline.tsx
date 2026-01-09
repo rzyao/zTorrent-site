@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+﻿import { useState, useRef, useEffect, useCallback } from "react";
 
-import { cn } from "@/components/ui/utils";
+import { cn } from "@/utils/cn";
 
 interface TimelineProps {
   totalPosts?: number;

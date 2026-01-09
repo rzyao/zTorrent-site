@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import {
   HelpCircle,
   ChevronDown,
@@ -11,8 +11,8 @@ import {
   Shield,
   Zap,
 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { Input } from '@/modules/app/components/ui/input';
+import { Badge } from '@/modules/app/components/ui/badge';
 
 export function TicketFAQView() {
   const [searchQuery, setSearchQuery] = useState('');

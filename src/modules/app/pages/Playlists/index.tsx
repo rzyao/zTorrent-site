@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import { Clock } from "lucide-react";
 import { Playlist } from "@/modules/app/pages/Playlists/types";
 import { usePlaylists } from "@/modules/app/pages/Playlists/hooks/usePlaylists";
 import { PlaylistCard } from "@/modules/app/pages/Playlists/components/PlaylistCard";
 import { PlaylistsControls } from "@/modules/app/pages/Playlists/components/PlaylistsControls";
 import { EmptyState } from "@/modules/app/pages/Playlists/components/EmptyState";
-import { PageContainer } from "@/components/PageContainer";
+import { PageContainer } from "@/modules/app/components/PageContainer";
 
 export default function PlaylistsPage() {
   const navigate = useNavigate();

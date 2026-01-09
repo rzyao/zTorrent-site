@@ -1,5 +1,5 @@
-import { Star, BookmarkPlus, Users, Clock, Eye, Film } from "lucide-react";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+﻿import { Star, BookmarkPlus, Users, Clock, Eye, Film } from "lucide-react";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import type { MovieCardData } from "../types";
 
 interface MovieCardProps {

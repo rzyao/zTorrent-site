@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+﻿import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/modules/app/components/ui/dialog';
 import { Sparkles, Copy, Mail, Loader2 } from 'lucide-react';
 import type { StoreItem } from '@/api/custom/store';
 import { MailService } from '@/api/services/MailService';

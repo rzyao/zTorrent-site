@@ -1,5 +1,5 @@
-import { AlertCircle, CheckCircle, XCircle, Inbox } from "lucide-react";
-import { cn } from "@/components/ui/utils";
+﻿import { AlertCircle, CheckCircle, XCircle, Inbox } from "lucide-react";
+import { cn } from "@/utils/cn";
 
 interface StatsCardProps {
   label: string;

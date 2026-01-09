@@ -1,10 +1,10 @@
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+﻿import { Button } from '@/modules/app/components/ui/button';
+import { Separator } from '@/modules/app/components/ui/separator';
 import { User } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { useUserProfile } from '@/hooks/useApi';
 import type { ProfileData } from '../../types';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/modules/app/components/ui/select';
 
 interface ProfileTabProps {
   profileData: ProfileData;

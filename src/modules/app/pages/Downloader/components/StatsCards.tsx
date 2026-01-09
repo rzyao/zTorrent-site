@@ -1,9 +1,9 @@
-// 统计卡片组件
+﻿// 统计卡片组件
 // 说明：展示下载器数量、在线数量、总上/下载速度，纯展示逻辑。
 
 import { ArrowDown, ArrowUp, CheckCircle, Server } from 'lucide-react';
 import { Downloader } from '../types';
-import { formatSpeed } from '../utils';
+import { formatSpeed } from '.@/utils/cn';
 
 export function StatsCards({ downloaders }: { downloaders: Downloader[] }) {
   const online = downloaders.filter(d => d.status === 'connected');

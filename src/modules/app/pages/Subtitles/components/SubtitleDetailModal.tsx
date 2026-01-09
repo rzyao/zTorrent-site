@@ -1,6 +1,6 @@
-import { Award, Calendar, CheckCircle, Download, Flag, Link, MessageSquare, Star, ThumbsUp, Upload, User, X } from 'lucide-react';
+﻿import { Award, Calendar, CheckCircle, Download, Flag, Link, MessageSquare, Star, ThumbsUp, Upload, User, X } from 'lucide-react';
 import type { Subtitle } from '../types';
-import { getLanguageFlag } from '../utils';
+import { getLanguageFlag } from '.@/utils/cn';
 
 export function SubtitleDetailModal({
   open,

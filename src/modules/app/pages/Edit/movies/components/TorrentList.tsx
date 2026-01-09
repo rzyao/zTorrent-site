@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+﻿import { Badge } from "@/modules/app/components/ui/badge";
+import { Button } from "@/modules/app/components/ui/button";
 import { Upload as UploadIcon, Download, Trash2 } from "lucide-react";
 import { formatSize, formatDate } from "@/utils/format";
 import type { Torrent } from "@/modules/app/pages/Edit/movies/types";

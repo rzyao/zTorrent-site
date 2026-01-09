@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 路由守卫组件
  * 提供 AuthRoute 和 PermissionRoute 供各路由模块使用
  */

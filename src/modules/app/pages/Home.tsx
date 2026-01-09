@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import {
   Film,
   Tv,
@@ -34,12 +34,12 @@ import {
   Sparkles,
   User,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { PageContainer } from "@/components/PageContainer";
+import { Badge } from "@/modules/app/components/ui/badge";
+import { Button } from "@/modules/app/components/ui/button";
+import { Input } from "@/modules/app/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/modules/app/components/ui/avatar";
+import { Separator } from "@/modules/app/components/ui/separator";
+import { PageContainer } from "@/modules/app/components/PageContainer";
 
 interface HotTorrent {
   id: number;

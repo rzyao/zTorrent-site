@@ -1,7 +1,7 @@
-import React, { memo } from "react";
+﻿import React, { memo } from "react";
 import { FileText } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/modules/app/components/ui/separator";
+import { Checkbox } from "@/modules/app/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -9,8 +9,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { CategoryTree } from "@/types/UploadTorrentPage";
+} from "@/modules/app/components/ui/select";
+import { CategoryTree } from "@/modules/app/types/UploadTorrentPage";
 
 /**
  * BasicInfo

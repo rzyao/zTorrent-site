@@ -1,13 +1,13 @@
-import { MoreHorizontal, AlertTriangle } from "lucide-react";
+﻿import { MoreHorizontal, AlertTriangle } from "lucide-react";
 import { ForumReport } from "@/api/models/ForumReport";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/modules/app/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
+} from "@/modules/app/components/ui/dropdown-menu";
+import { Badge } from "@/modules/app/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/modules/app/components/ui/table";
 
 interface ReportListProps {
   items: ForumReport[];

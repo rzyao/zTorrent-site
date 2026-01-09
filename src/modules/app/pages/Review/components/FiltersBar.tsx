@@ -1,11 +1,11 @@
-import { Search, Filter, ChevronDown, Film, List, Package } from "lucide-react";
+﻿import { Search, Filter, ChevronDown, Film, List, Package } from "lucide-react";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/modules/app/components/ui/select";
 import type { ReviewStatus, ReviewType, ReviewStats } from "../types";
 
 interface Props {

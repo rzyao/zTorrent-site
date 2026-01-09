@@ -1,5 +1,5 @@
-import { Search, Globe, Lock, Users, ListVideo } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+﻿import { Search, Globe, Lock, Users, ListVideo } from "lucide-react";
+import { Badge } from "@/modules/app/components/ui/badge";
 import type { Playlist } from "@/modules/app/pages/Edit/playlists/types";
 import {
   APPROVAL_STATUS_LABELS,

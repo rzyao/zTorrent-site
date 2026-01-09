@@ -1,6 +1,6 @@
-import { X, Clock, FileText, Sparkles, CheckCircle } from 'lucide-react';
+﻿import { X, Clock, FileText, Sparkles, CheckCircle } from 'lucide-react';
 import type { Tutorial } from '../types';
-import { getDifficultyText } from '../utils';
+import { getDifficultyText } from '.@/utils/cn';
 
 interface TutorialDetailModalProps {
   tutorial: Tutorial;

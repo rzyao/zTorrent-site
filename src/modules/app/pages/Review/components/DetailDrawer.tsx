@@ -1,9 +1,9 @@
-import { X, Check, RotateCcw, ExternalLink, ShieldCheck, AlertTriangle } from "lucide-react";
+﻿import { X, Check, RotateCcw, ExternalLink, ShieldCheck, AlertTriangle } from "lucide-react";
 import { ReviewItem } from "../types";
 import { useReviewItemDetail } from "../hooks/useReviewItemDetail";
-import { TorrentDetailBody } from "@/components/business/TorrentDetailBody";
-import { MovieDetailBody } from "@/components/business/MovieDetailBody";
-import { PlaylistDetailBody } from "@/components/business/PlaylistDetailBody";
+import { TorrentDetailBody } from "@/modules/app/components/business/TorrentDetailBody";
+import { MovieDetailBody } from "@/modules/app/components/business/MovieDetailBody";
+import { PlaylistDetailBody } from "@/modules/app/components/business/PlaylistDetailBody";
 
 // ============================================
 // Props

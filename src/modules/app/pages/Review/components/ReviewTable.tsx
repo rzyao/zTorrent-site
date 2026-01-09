@@ -1,4 +1,4 @@
-import { formatDateTime } from "@/utils/format";
+﻿import { formatDateTime } from "@/utils/format";
 import {
   Film,
   List,
@@ -11,7 +11,7 @@ import {
   Star,
 } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
-import { getVisibilityLabel, getTypeLabel } from "../utils";
+import { getVisibilityLabel, getTypeLabel } from ".@/utils/cn";
 import type { ReviewItem } from "../types";
 
 function TypeIcon({ type }: { type: "movie" | "series" | "playlist" | "torrent" }) {

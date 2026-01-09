@@ -1,5 +1,5 @@
-import { Mail } from 'lucide-react';
-import { getStatusColor, getStatusText, getStatusIcon } from '../utils';
+﻿import { Mail } from 'lucide-react';
+import { getStatusColor, getStatusText, getStatusIcon } from '.@/utils/cn';
 import type { SentInvite } from '../types';
 
 export function RecordsTable({ records }: { records: SentInvite[] }) {

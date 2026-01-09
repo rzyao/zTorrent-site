@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+﻿import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -9,8 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/modules/forum/components/ui/dialog";
+import { Button } from "@/modules/forum/components/ui/button";
 import {
   Form,
   FormControl,
@@ -18,8 +18,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "@/modules/forum/components/ui/form";
+import { Input } from "@/modules/forum/components/ui/input";
 import { toast } from "sonner";
 import { useEffect } from "react";
 

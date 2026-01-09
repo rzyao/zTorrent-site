@@ -1,7 +1,7 @@
-import { useParams, useNavigate } from "react-router-dom";
+﻿import { useParams, useNavigate } from "react-router-dom";
 import { CategoryNav } from "@/modules/app/layouts/CategoryNav";
-import { FeaturedTorrent } from "@/components/FeaturedTorrent";
-import { TorrentRow } from "@/components/TorrentRow";
+import { FeaturedTorrent } from "@/modules/app/components/FeaturedTorrent";
+import { TorrentRow } from "@/modules/app/components/TorrentRow";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 
 /**

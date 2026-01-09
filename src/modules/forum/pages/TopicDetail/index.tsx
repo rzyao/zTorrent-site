@@ -1,8 +1,8 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+﻿import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import NProgress from "nprogress";
 import { useForumTheme } from "../../context/ForumThemeContext";
-import { cn } from "@/components/ui/utils";
+import { cn } from "@/utils/cn";
 import { TopicDetailProps } from "./types";
 import { Post } from "./components/Post";
 import { Timeline } from "./components/Timeline";

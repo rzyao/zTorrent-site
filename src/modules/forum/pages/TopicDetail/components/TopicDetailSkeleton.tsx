@@ -1,5 +1,5 @@
-import { useForumTheme } from "../../../context/ForumThemeContext";
-import { cn } from "@/components/ui/utils";
+﻿import { useForumTheme } from "../../../context/ForumThemeContext";
+import { cn } from "@/utils/cn";
 
 export function TopicDetailSkeleton() {
   const { colors } = useForumTheme();

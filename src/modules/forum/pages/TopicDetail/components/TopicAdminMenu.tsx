@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Wrench,
@@ -21,8 +21,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/components/ui/utils";
+} from "@/modules/forum/components/ui/dropdown-menu";
+import { cn } from "@/utils/cn";
 
 interface TopicAdminMenuProps {
   topicId: string;

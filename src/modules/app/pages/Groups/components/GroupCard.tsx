@@ -1,11 +1,11 @@
-/**
+﻿/**
  * 普通制作组卡片组件（小卡片样式）。
  * 保持与原 UI 一致，纯展示组件，通过 props 传入数据。
  */
 import React from 'react';
 import { Crown } from 'lucide-react';
 import type { Group } from '../types';
-import { getIconComponent, getLevelBadge, getLevelColor } from '../utils';
+import { getIconComponent, getLevelBadge, getLevelColor } from '.@/utils/cn';
 
 interface GroupCardProps {
   group: Group;

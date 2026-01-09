@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+﻿import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import {
   Dialog,
@@ -6,12 +6,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/modules/app/components/ui/dialog";
+import { Button } from "@/modules/app/components/ui/button";
 import { AccessControl } from "@/components/AccessControl";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/modules/app/components/ui/input";
+import { Label } from "@/modules/app/components/ui/label";
+import { Textarea } from "@/modules/app/components/ui/textarea";
 import { Calendar, Clock, Film } from "lucide-react";
 import type { Episode, EpisodeFormState } from "../types";
 

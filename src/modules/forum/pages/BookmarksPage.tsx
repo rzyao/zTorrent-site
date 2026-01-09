@@ -1,9 +1,9 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ForumsBookmarksService } from "@/api";
 import { useForumTheme } from "../context/ForumThemeContext";
 import { Loader2, Bookmark, User, Clock, MessageSquare, Eye } from "lucide-react";
-import { cn } from "@/components/ui/utils";
+import { cn } from "@/utils/cn";
 
 /**
  * 我的收藏页面

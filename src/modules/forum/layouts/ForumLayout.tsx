@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+﻿import { Outlet } from "react-router-dom";
 import "@/modules/forum/styles/forum.css";
 import { useState, useCallback, Suspense } from "react";
 import { Header } from "./Header";
@@ -6,7 +6,7 @@ import { Sidebar } from "./Sidebar";
 import { MobileSidebarDrawer } from "./MobileSidebarDrawer";
 import { ForumThemeProvider, useForumTheme } from "../context/ForumThemeContext";
 import { ForumComposer } from "../components/Composer/ForumComposer";
-import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
+import { RouteProgressBar } from "@/modules/forum/components/ui/RouteProgressBar";
 
 /**
  * 论坛布局内部组件

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Service } from "@/api/services/Service";
-import { extractData, formatDate } from "../utils";
+import { extractData, formatDate } from ".@/utils/cn";
 import type { SentInvite } from "../types";
 
 export function useInviteRecords(enabled: boolean = false) {

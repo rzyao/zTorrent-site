@@ -1,6 +1,6 @@
-import React, { memo } from 'react';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+﻿import React, { memo } from 'react';
+import { Label } from '@/modules/app/components/ui/label';
+import { Switch } from '@/modules/app/components/ui/switch';
 
 /**
  * PublishOptions

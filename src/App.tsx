@@ -1,13 +1,13 @@
-import { BrowserRouter } from "react-router-dom";
+﻿import { BrowserRouter } from "react-router-dom";
 import { useEffect } from "react";
-import { AppToaster } from "./components/ui/sonner";
+import { AppToaster } from "@/modules/app/components/ui/sonner";
 import AppRoutes from "./routes/AppRoutes";
 import { AccessProvider } from "@/context/AccessContext";
-import { UserSummaryProvider } from "@/context/UserSummaryContext";
-import { DownloadersProvider } from "@/context/DownloadersContext";
+import { UserSummaryProvider } from "@/modules/app/context/UserSummaryContext";
+import { DownloadersProvider } from "@/modules/app/context/DownloadersContext";
 import { useDictionaryStore } from "./stores/dictionaryStore";
 import { usePreferenceCategoriesStore } from "./stores/preferenceCategoriesStore";
-import { GlobalLoader } from "./components/ui/GlobalLoader";
+import { GlobalLoader } from "@/modules/app/components/ui/GlobalLoader";
 
 // 全局认证事件
 declare global {

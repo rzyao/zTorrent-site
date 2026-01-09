@@ -1,4 +1,4 @@
-// 编辑下载器弹窗
+﻿// 编辑下载器弹窗
 // 说明：与添加弹窗结构一致，但标题与提交按钮不同；通过 props 接收数据与事件。
 // 使用 Portal 渲染到 body，使遮罩层全屏且弹窗在屏幕中央。
 
@@ -10,7 +10,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/modules/app/components/ui/select";
 import { DownloaderForm, DownloaderType } from "../types";
 
 interface Props {

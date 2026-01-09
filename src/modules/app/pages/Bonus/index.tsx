@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import type { StoreItem } from '@/api/custom/store';
 import { getBonusBalance } from '@/api/custom/bonus';
 import { getProfile } from '@/api/custom/auth';
-import { usePurchase } from '@/hooks/usePurchase';
-import { PurchaseSuccessModal } from '@/components/purchase/PurchaseSuccessModal';
+import { usePurchase } from '@/modules/app/hooks/usePurchase';
+import { PurchaseSuccessModal } from '@/modules/app/components/purchase/PurchaseSuccessModal';
 import { BonusHeader } from './components/Header';
 import { OverviewCards } from './components/OverviewCards';
 import { EarnMethods } from './components/EarnMethods';

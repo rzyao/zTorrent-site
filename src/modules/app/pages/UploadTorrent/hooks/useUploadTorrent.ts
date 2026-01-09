@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ImagesService } from '@/api/services/ImagesService';
 import { PtGenService } from '@/api/services/PtGenService';
 import { TorrentsUploadService } from '@/api/services/TorrentsUploadService';
 import { customToast } from '@/hooks/useToast';
-import { categoryTree, parseMediaInfo } from '@/types/UploadTorrentPage';
-import { useUploadStore } from '@/stores/uploadStore';
-import { extractDataFromHash, mapDataToForm } from '@/utils/hashParser';
+import { categoryTree, parseMediaInfo } from '@/modules/app/types/UploadTorrentPage';
+import { useUploadStore } from '@/modules/app/stores/uploadStore';
+import { extractDataFromHash, mapDataToForm } from '@/modules/app/utils/hashParser';
 import { extractErrorMessage } from '@/utils/errorMessage';
-import { extractInfoBytes } from '@/utils/torrentParser';
+import { extractInfoBytes } from '@/modules/app/utils/torrentParser';
 import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
 
 /**

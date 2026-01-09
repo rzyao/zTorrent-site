@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+﻿import { Button } from '@/modules/app/components/ui/button';
 import { Video, X, Upload as UploadIcon, Download } from 'lucide-react';
 import { formatSize } from '@/utils/format';
 

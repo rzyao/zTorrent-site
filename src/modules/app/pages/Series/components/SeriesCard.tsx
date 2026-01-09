@@ -1,5 +1,5 @@
-import { Star, BookmarkPlus, Tv, Eye, Play } from "lucide-react";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+﻿import { Star, BookmarkPlus, Tv, Eye, Play } from "lucide-react";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import type { SeriesCardData, SeriesStatus } from "../types";
 
 interface SeriesCardProps {

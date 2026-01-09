@@ -1,8 +1,8 @@
-import React, { memo } from 'react';
+﻿import React, { memo } from 'react';
 import { Link2, Download } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/modules/app/components/ui/separator';
+import { Button } from '@/modules/app/components/ui/button';
+import { Checkbox } from '@/modules/app/components/ui/checkbox';
 import {
   Select,
   SelectContent,
@@ -10,7 +10,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/modules/app/components/ui/select';
 
 /**
  * ExtendedInfo

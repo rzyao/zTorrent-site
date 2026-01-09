@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
+﻿import { Button } from '@/modules/app/components/ui/button';
+import { Separator } from '@/modules/app/components/ui/separator';
+import { Switch } from '@/modules/app/components/ui/switch';
 import { Shield, Lock, Smartphone, Bell, Monitor, Key } from 'lucide-react';
 import type { SecurityData } from '../../types';
 

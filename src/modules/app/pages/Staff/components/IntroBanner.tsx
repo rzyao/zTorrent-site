@@ -1,5 +1,5 @@
-import { Shield, CheckCircle2, MessageCircle, Award } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+﻿import { Shield, CheckCircle2, MessageCircle, Award } from 'lucide-react';
+import { Badge } from '@/modules/app/components/ui/badge';
 
 export function IntroBanner() {
   return (

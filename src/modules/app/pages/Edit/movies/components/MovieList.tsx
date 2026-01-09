@@ -1,5 +1,5 @@
-import { Search } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+﻿import { Search } from "lucide-react";
+import { Badge } from "@/modules/app/components/ui/badge";
 import type { Movie } from "@/modules/app/pages/Edit/movies/types";
 
 interface MovieListProps {

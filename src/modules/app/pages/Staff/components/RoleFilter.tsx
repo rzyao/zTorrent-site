@@ -1,5 +1,5 @@
-import { Users } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+﻿import { Users } from 'lucide-react';
+import { Badge } from '@/modules/app/components/ui/badge';
 import type { RoleConfig, RoleStats } from '../types';
 
 interface RoleFilterProps {

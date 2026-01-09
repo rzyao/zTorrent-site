@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+﻿import { Badge } from "@/modules/app/components/ui/badge";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import { Star, Upload } from "lucide-react";
 import type { RelatedItem } from "../types";
 

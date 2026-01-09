@@ -1,11 +1,11 @@
-import {
+﻿import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+} from "@/modules/app/components/ui/carousel";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import { Eye } from "lucide-react";
 
 /**

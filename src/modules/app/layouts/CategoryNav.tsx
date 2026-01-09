@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
+﻿import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/components/ui/utils";
+import { Button } from "@/modules/app/components/ui/button";
+import { cn } from "@/utils/cn";
 
 export interface CategoryNavItem {
   label: string;

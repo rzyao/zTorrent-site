@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import { useForumsTopicsQuery } from "../../../hooks/useForumsTopicsQuery";
 import { useForumTheme } from "../../../context/ForumThemeContext";
-import { cn } from "@/components/ui/utils";
+import { cn } from "@/utils/cn";
 
 interface SuggestedTopicsProps {
   categoryId?: string;

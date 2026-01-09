@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+﻿import { Button } from "@/modules/app/components/ui/button";
+import { Badge } from "@/modules/app/components/ui/badge";
+import { Separator } from "@/modules/app/components/ui/separator";
 import {
   Edit,
   Trash2,

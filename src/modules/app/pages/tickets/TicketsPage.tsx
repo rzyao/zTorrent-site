@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { TicketsHeader } from "@/modules/app/pages/Tickets/components/TicketsHeader";
 import { TicketsTabs } from "@/modules/app/pages/Tickets/components/TicketsTabs";
 import type { TabType } from "@/modules/app/pages/Tickets/types";
@@ -7,7 +7,7 @@ import { TicketManagementView } from "@/modules/app/pages/Tickets/views/TicketMa
 import { MyTodosView } from "@/modules/app/pages/Tickets/views/MyTodosView";
 import { TicketStatsView } from "@/modules/app/pages/Tickets/views/TicketStatsView";
 import { TicketFAQView } from "@/modules/app/pages/Tickets/views/TicketFAQView";
-import { PageContainer } from "@/components/PageContainer";
+import { PageContainer } from "@/modules/app/components/PageContainer";
 
 export default function TicketsPage() {
   const [activeTab, setActiveTab] = useState<TabType>("myTickets");

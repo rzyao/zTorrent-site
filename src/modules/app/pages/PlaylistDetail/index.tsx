@@ -1,16 +1,16 @@
-import { useState } from "react";
-import { useFavorite } from "@/hooks/useFavorite";
+﻿import { useState } from "react";
+import { useFavorite } from "@/modules/app/hooks/useFavorite";
 import { FavoriteActionDto } from "@/api";
 import { useNavigate } from "react-router-dom";
 import { Bell, UserPlus, Heart, Share2 } from "lucide-react";
-import ActionBtn from "@/components/ActionBtn";
-import { cn } from "@/components/ui/utils";
+import ActionBtn from "@/modules/app/components/ActionBtn";
+import { cn } from "@/utils/cn";
 import { Hero } from "@/modules/app/pages/PlaylistDetail/components/Hero";
 import { Toolbar } from "@/modules/app/pages/PlaylistDetail/components/Toolbar";
 import { GridView } from "@/modules/app/pages/PlaylistDetail/components/GridView";
 import { ListView } from "@/modules/app/pages/PlaylistDetail/components/ListView";
 import { usePlaylistDetail } from "@/modules/app/pages/PlaylistDetail/hooks/usePlaylistDetail";
-import { PageContainer } from "@/components/PageContainer";
+import { PageContainer } from "@/modules/app/components/PageContainer";
 
 interface PlaylistDetailPageProps {
   playlistId: string;

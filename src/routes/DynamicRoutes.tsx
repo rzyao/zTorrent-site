@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 动态路由渲染器
  * 根据后端配置动态生成路由
  */
@@ -8,8 +8,8 @@ import { RouteConfig } from "@/types/routeConfig";
 import { useRouteConfig } from "@/hooks/useRouteConfig";
 import { getComponent } from "./componentRegistry";
 import { AuthRoute } from "./guards";
-import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
-import { GlobalLoaderTrigger } from "@/components/ui/GlobalLoader";
+import { RouteProgressBar } from "@/modules/app/components/ui/RouteProgressBar";
+import { GlobalLoaderTrigger } from "@/modules/app/components/ui/GlobalLoader";
 import { useGlobalLoader } from "@/stores/globalLoaderStore";
 import AppLayout from "@/modules/app/layouts/AppLayout";
 import { AdminLayout } from "@/modules/admin/layouts/AdminLayout";
@@ -207,4 +207,4 @@ function NotFoundRedirect() {
 
 // 懒加载 404 页面
 import { lazy } from "react";
-const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
+const NotFoundPage = lazy(() => import("@/modules/app/pages/NotFoundPage"));

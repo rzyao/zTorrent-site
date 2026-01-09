@@ -1,11 +1,11 @@
-import React from "react";
+﻿import React from "react";
 import { SidebarNav } from "./components/SidebarNav";
 import { RulesHeader } from "./components/Header";
 import { ImportantNotice } from "./components/ImportantNotice";
 import { SectionCard } from "./components/SectionCard";
 import { FooterNote } from "./components/FooterNote";
 import { useRules } from "./hooks/useRules";
-import { PageContainer } from "@/components/PageContainer";
+import { PageContainer } from "@/modules/app/components/PageContainer";
 
 /**
  * 规则页容器

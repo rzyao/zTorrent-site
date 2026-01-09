@@ -1,5 +1,5 @@
-import { TrendingUp, Mail } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+﻿import { TrendingUp, Mail } from 'lucide-react';
+import { Button } from '@/modules/app/components/ui/button';
 
 export function RecruitmentSection() {
   return (

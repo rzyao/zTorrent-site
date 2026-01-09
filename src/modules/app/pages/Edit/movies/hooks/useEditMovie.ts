@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useFilms } from '@/hooks/useFilms';
+﻿import { useEffect, useState } from 'react';
+import { useFilms } from '@/modules/app/hooks/useFilms';
 import { TorrentsSearchService } from '@/api/services/TorrentsSearchService';
 import { MoviesService } from '@/api/services/MoviesService';
 import { MoviesTorrentsService } from '@/api/services/MoviesTorrentsService';

@@ -1,6 +1,6 @@
-import { getIconByName } from "@/components/ui/icon-picker";
+﻿import { getIconByName } from "@/modules/forum/components/ui/icon-picker";
 import { useForumTheme } from "../../../context/ForumThemeContext";
-import { cn } from "@/components/ui/utils";
+import { cn } from "@/utils/cn";
 
 interface CategoryHeaderProps {
   category: {

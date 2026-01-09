@@ -1,10 +1,10 @@
-import { Suspense, useState } from "react";
+﻿import { Suspense, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { ConfigProvider, App } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
 import "@/modules/admin/styles/admin.css";
 import { AdminSidebar } from "./AdminSidebar";
-import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
+import { RouteProgressBar } from "@/modules/app/components/ui/RouteProgressBar";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";
 import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
 

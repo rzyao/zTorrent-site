@@ -1,7 +1,7 @@
-import { X, Clock, FileText, ThumbsUp, ThumbsDown, CheckCheck, Ban, ArrowRight, Info } from 'lucide-react';
+﻿import { X, Clock, FileText, ThumbsUp, ThumbsDown, CheckCheck, Ban, ArrowRight, Info } from 'lucide-react';
 import type { Candidate } from '../types';
 import { StatusBadge } from './StatusBadge';
-import { getTimeRemaining, getVotePercentage } from '../utils';
+import { getTimeRemaining, getVotePercentage } from '.@/utils/cn';
 
 export function CandidateDetailModal({
   candidate,

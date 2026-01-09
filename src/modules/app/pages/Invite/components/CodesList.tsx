@@ -1,5 +1,5 @@
-import { Eye, EyeOff, Copy, Check, Calendar, Clock, Send } from 'lucide-react';
-import { getStatusColor, getStatusText } from '../utils';
+﻿import { Eye, EyeOff, Copy, Check, Calendar, Clock, Send } from 'lucide-react';
+import { getStatusColor, getStatusText } from '.@/utils/cn';
 import type { InviteCode } from '../types';
 
 export function CodesList({

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 导航设置页面逻辑 Hook
  * 管理所有状态和业务逻辑
  */
@@ -9,7 +9,7 @@ import { BatchUpdateNavigationDto } from "@/api/models/BatchUpdateNavigationDto"
 import { CreateNavigationItemDto } from "@/api/models/CreateNavigationItemDto";
 import type { NavigationItem } from "@/types/navigation";
 import { mockNavigationData } from "@/modules/admin/mocks/navigationData";
-import { buildTree, flattenTree, loopTree, updateTreeNode } from "../utils";
+import { buildTree, flattenTree, loopTree, updateTreeNode } from ".@/utils/cn";
 import type { PlatformType } from "../constants";
 import type { ItemFormValues } from "../components/ItemFormModal";
 

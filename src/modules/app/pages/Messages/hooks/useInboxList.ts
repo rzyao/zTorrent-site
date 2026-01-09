@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { OpenAPI } from '@/api/core/OpenAPI';
 import { request as __request } from '@/api/core/request';
 import { toast } from 'sonner';
-import { unwrapResponse, extractErrorMessage } from '../utils/utils';
+import { unwrapResponse, extractErrorMessage } from '.@/utils/cn/utils';
 import type { IMessage, Message } from '../types/types';
 
 export function useInboxList() {

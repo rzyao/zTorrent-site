@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { User as UserIcon } from "lucide-react";
 import { PostData } from "../types";
 import { SelectionPopover } from "./SelectionPopover";
@@ -9,7 +9,7 @@ import { PostHeader } from "./PostParts/PostHeader";
 import { PostFooter } from "./PostParts/PostFooter";
 import { IncomingReplies } from "./PostParts/IncomingReplies";
 import { PostSmallAction } from "./PostParts/PostSmallAction";
-import { UserCard } from "@/components/UserCard";
+import { UserCard } from "@/modules/app/components/UserCard";
 
 interface PostProps {
   post: PostData;

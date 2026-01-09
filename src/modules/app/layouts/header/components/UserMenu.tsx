@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+﻿import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   LogOut,
@@ -10,9 +10,9 @@ import {
   Upload,
   UserPlus,
 } from "lucide-react";
-import { UserAvatar } from "@/components/UserAvatar";
+import { UserAvatar } from "@/modules/app/components/UserAvatar";
 import { useAccess } from "@/context/AccessContext";
-import { useUserSummary } from "@/context/UserSummaryContext";
+import { useUserSummary } from "@/modules/app/context/UserSummaryContext";
 import { canAccess } from "@/utils/access";
 
 // 格式化字节数为人类可读格式

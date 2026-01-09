@@ -1,10 +1,10 @@
-/**
+﻿/**
  * 应用路由入口
  * 使用动态路由系统
  */
 import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { FullScreenLoader } from "@/components/ui/FullScreenLoader";
+import { FullScreenLoader } from "@/modules/app/components/ui/FullScreenLoader";
 import { useDynamicRouteElements } from "./DynamicRoutes";
 import { useGlobalLoader } from "@/stores/globalLoaderStore";
 
@@ -98,7 +98,7 @@ export default function AppRoutes() {
 }
 
 // 懒加载 404 页面
-const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
+const NotFoundPage = lazy(() => import("@/modules/app/pages/NotFoundPage"));
 
 function NotFoundRedirect() {
   // 显示 404 页面而非重定向

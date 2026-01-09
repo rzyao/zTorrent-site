@@ -1,7 +1,7 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { IForumPost } from '../types';
-import { unwrapResponse, extractErrorMessage } from '../utils';
+import { unwrapResponse, extractErrorMessage } from '.@/utils/cn';
 
 export function useForumPosts(threadId?: string) {
   const [posts, setPosts] = useState<IForumPost[]>([]);

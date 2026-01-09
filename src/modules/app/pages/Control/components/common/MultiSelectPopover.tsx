@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { Checkbox } from '@/components/ui/checkbox';
+﻿import { Button } from '@/modules/app/components/ui/button';
+import { Popover, PopoverTrigger, PopoverContent } from '@/modules/app/components/ui/popover';
+import { Checkbox } from '@/modules/app/components/ui/checkbox';
 
 interface MultiSelectPopoverProps<T> {
   label: string;

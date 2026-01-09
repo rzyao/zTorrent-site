@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Flag } from "lucide-react";
 import { ForumsReportsService } from "@/api";
 import {
@@ -9,9 +9,9 @@ import {
   DialogDescription,
   DialogFooter,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/components/ui/utils";
+} from "@/modules/forum/components/ui/dialog";
+import { Button } from "@/modules/forum/components/ui/button";
+import { cn } from "@/utils/cn";
 import { toast } from "sonner";
 import { CreateReportDto } from "@/api/models/CreateReportDto";
 

@@ -1,10 +1,10 @@
-import type { MovieCardData } from "./types";
+﻿import type { MovieCardData } from "./types";
 import { useMoviesPage } from "./hooks/useMoviesPage";
 import { Toolbar } from "./components/Toolbar";
 import { MovieGrid } from "./components/MovieGrid";
 import { LoadingState, ErrorState } from "./components/States";
-import { PageContainer } from "@/components/PageContainer";
-import { GridSkeleton } from "@/components/skeletons/GridSkeleton";
+import { PageContainer } from "@/modules/app/components/PageContainer";
+import { GridSkeleton } from "@/modules/app/components/skeletons/GridSkeleton";
 
 export default function MoviesPage() {
   const {

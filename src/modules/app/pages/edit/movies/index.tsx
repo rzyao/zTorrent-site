@@ -1,6 +1,6 @@
-import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+﻿import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { Film, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/modules/app/components/ui/button";
 import { useEditMovie } from "@/modules/app/pages/Edit/movies/hooks/useEditMovie";
 import { MovieList } from "@/modules/app/pages/Edit/movies/components/MovieList";
 import { StatsPanel } from "@/modules/app/pages/Edit/movies/components/StatsPanel";

@@ -1,5 +1,5 @@
-import { TopicData } from "../types";
-import { getIconByName } from "@/components/ui/icon-picker";
+﻿import { TopicData } from "../types";
+import { getIconByName } from "@/modules/forum/components/ui/icon-picker";
 import { Square } from "lucide-react";
 
 import { useForumTheme } from "../../../context/ForumThemeContext";

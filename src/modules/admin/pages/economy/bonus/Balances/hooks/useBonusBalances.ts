@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BonusAdminService } from "@/api/services/BonusAdminService";
-import { useAsyncAction } from "@/hooks/useAsyncAction";
+import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
 import type { UserBonusBalance } from "../types/bonus";
 
 export function useBonusBalances(form: any) {

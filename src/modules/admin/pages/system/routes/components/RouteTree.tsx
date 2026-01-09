@@ -1,4 +1,4 @@
-import {
+﻿import {
   useMemo,
   useCallback,
   Key,
@@ -11,7 +11,7 @@ import {
 import { Tree, Typography, Empty, theme } from "antd";
 import type { TreeProps, TreeDataNode } from "antd";
 import { RouteTreeNodeDto } from "@/api/models/RouteTreeNodeDto";
-import DynamicIcon from "@/components/DynamicIcon";
+import DynamicIcon from "@/modules/admin/components/DynamicIcon";
 
 const { Text, Title } = Typography;
 

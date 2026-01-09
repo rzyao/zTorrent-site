@@ -1,4 +1,4 @@
-import { Separator } from '@/components/ui/separator';
+﻿import { Separator } from '@/modules/app/components/ui/separator';
 import type { Playlist } from '@/modules/app/pages/Edit/playlists/types';
 
 interface StatsPanelProps {

@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { App } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthService } from "@/api/services/AuthService";
@@ -14,7 +14,7 @@ import logoUrlPath from "@/assets/logo.svg";
 import { setMessageInstance } from "@/modules/admin/utils/globalMessage";
 import { SECTION_NAME_MAP } from "../constants";
 import { useRouteConfig } from "@/hooks/useRouteConfig";
-import DynamicIcon from "@/components/DynamicIcon";
+import DynamicIcon from "@/modules/admin/components/DynamicIcon";
 import type { MenuProps } from "antd";
 import type { RouteConfig } from "@/types/routeConfig";
 

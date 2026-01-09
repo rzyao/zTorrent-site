@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useFilms } from "@/hooks/useFilms"; // 复用 create/update (如果 SeriesService 完全独立，应封装 useSeries)
+﻿import { useEffect, useState } from "react";
+import { useFilms } from "@/modules/app/hooks/useFilms"; // 复用 create/update (如果 SeriesService 完全独立，应封装 useSeries)
 import { SeriesService } from "@/api/services/SeriesService";
 import { EpisodesService } from "@/api/services/EpisodesService";
 import {
@@ -7,7 +7,7 @@ import {
   parseDurationToMinutes,
   validateSeriesForm,
   mapBackendSeriesToLocal,
-} from "../utils"; // Use relative path
+} from ".@/utils/cn"; // Use relative path
 
 import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
 import { PtGenService } from "@/api/services/PtGenService";

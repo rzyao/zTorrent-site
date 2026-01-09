@@ -1,16 +1,16 @@
-import React from "react";
+﻿import React from "react";
 import { useComposerStore } from "./ComposerStore";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/modules/forum/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/modules/forum/components/ui/select";
 import { useForumsCategories } from "../../hooks/useForumsCategories";
 import { useForumsTagsQuery } from "../../hooks/useForumsTagsQuery";
-import { cn } from "@/components/ui/utils";
+import { cn } from "@/utils/cn";
 import { Hash, Tag, Plus, X } from "lucide-react";
 import { useForumTheme } from "../../context/ForumThemeContext";
 

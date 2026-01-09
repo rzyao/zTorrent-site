@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@/modules/forum/components/ui/dialog";
+import { Button } from "@/modules/forum/components/ui/button";
+import { Input } from "@/modules/forum/components/ui/input";
+import { Label } from "@/modules/forum/components/ui/label";
 
 interface LinkModalProps {
   isOpen: boolean;

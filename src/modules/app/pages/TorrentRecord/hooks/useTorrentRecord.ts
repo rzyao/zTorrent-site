@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+﻿import { useQuery } from '@tanstack/react-query';
 import { TorrentsRecordService } from '@/api/services/TorrentsRecordService';
 import { TorrentStatus, Torrent, TorrentStats } from '../types';
-import { transformTorrentData, transformStatsData } from '../utils';
+import { transformTorrentData, transformStatsData } from '.@/utils/cn';
 
 interface UseTorrentRecordProps {
   /** 当前激活的标签页 */

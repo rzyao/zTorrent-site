@@ -1,5 +1,5 @@
-import React from "react";
-import { cn } from "@/components/ui/utils";
+﻿import React from "react";
+import { cn } from "@/utils/cn";
 
 interface EditorToggleSwitchProps {
   /** 当前是否为富文本模式 (true = 富文本, false = Markdown) */

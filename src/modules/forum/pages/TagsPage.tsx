@@ -1,9 +1,9 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Plus, Search, Hash } from "lucide-react";
 import { useForumsTagsQuery } from "../hooks/useForumsTagsQuery";
 import { CreateTagModal } from "../components/CreateTagModal";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/modules/forum/components/ui/input";
+import { Button } from "@/modules/forum/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useForumTheme } from "../context/ForumThemeContext";
 

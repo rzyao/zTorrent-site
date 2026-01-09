@@ -1,4 +1,4 @@
-import { Download, Plus } from 'lucide-react';
+﻿import { Download, Plus } from 'lucide-react';
 import { useDownloaderManager } from '../../../Downloader/hooks/useDownloaderManager';
 import { StatsCards } from '../../../Downloader/components/StatsCards';
 import { DownloaderCard } from '../../../Downloader/components/DownloaderCard';
@@ -6,7 +6,7 @@ import { EmptyState } from '../../../Downloader/components/EmptyState';
 import { AddDownloaderModal } from '../../../Downloader/components/AddDownloaderModal';
 import { EditDownloaderModal } from '../../../Downloader/components/EditDownloaderModal';
 import { DownloaderDetailModal } from '../../../Downloader/components/DownloaderDetailModal';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/modules/app/components/ui/button';
 
 export function DownloaderTab() {
     const {

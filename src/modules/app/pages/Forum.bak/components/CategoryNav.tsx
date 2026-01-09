@@ -1,6 +1,6 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { MessageSquare, Search, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/modules/app/components/ui/button";
 
 interface CategoryNavProps {
   categories: Array<{ id: string; name: string }>;
@@ -39,7 +39,7 @@ export function CategoryNav({
           ))}
         </div>
 
-        {/* 搜索�?*/}
+        {/* 搜索�?*/}
         <div className="flex gap-4">
           <div className="relative w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />

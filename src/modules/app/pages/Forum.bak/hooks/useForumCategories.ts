@@ -1,7 +1,7 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { useState, useEffect } from 'react';
 import { IForumCategory } from '../types';
-import { unwrapResponse, extractErrorMessage } from '../utils';
+import { unwrapResponse, extractErrorMessage } from '.@/utils/cn';
 
 export function useForumCategories() {
   const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);

@@ -1,9 +1,9 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Avatar } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+﻿import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/modules/app/components/ui/tabs";
+import { Button } from "@/modules/app/components/ui/button";
+import { Avatar } from "@/modules/app/components/ui/avatar";
+import { Badge } from "@/modules/app/components/ui/badge";
 import { MessageSquare, Star, ThumbsUp } from "lucide-react";
-import { TorrentTable } from "@/components/TorrentTable";
+import { TorrentTable } from "@/modules/app/components/TorrentTable";
 import type { CommentItem, TorrentItem } from "../types";
 
 /**

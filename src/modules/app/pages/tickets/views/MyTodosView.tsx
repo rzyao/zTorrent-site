@@ -1,4 +1,4 @@
-import {
+﻿import {
   ListTodo,
   Clock,
   AlertCircle,
@@ -10,8 +10,8 @@ import {
   MessageCircle,
   CheckCircle2,
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@/modules/app/components/ui/badge';
+import { Button } from '@/modules/app/components/ui/button';
 import { useEffect, useMemo, useState } from 'react';
 import { useTickets } from '@/modules/app/pages/Tickets/hooks/useTickets';
 

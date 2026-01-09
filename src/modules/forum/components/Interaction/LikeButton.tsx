@@ -1,7 +1,7 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Heart } from "lucide-react";
 import { ForumsLikesService } from "@/api";
-import { cn } from "@/components/ui/utils";
+import { cn } from "@/utils/cn";
 import { toast } from "sonner";
 
 interface LikeButtonProps {

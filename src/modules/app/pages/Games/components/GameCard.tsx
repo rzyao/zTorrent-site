@@ -1,6 +1,6 @@
-import type { Game } from '../types';
+﻿import type { Game } from '../types';
 import { Award } from 'lucide-react';
-import { getDifficultyColor, getDifficultyText } from '../utils';
+import { getDifficultyColor, getDifficultyText } from '.@/utils/cn';
 
 export function GameCard({ game, onClick }: { game: Game; onClick: (g: Game) => void }) {
   return (

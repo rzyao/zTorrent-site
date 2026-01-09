@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { toast } from "sonner";
 import { ForumReport } from "@/api/models/ForumReport";
 import { ForumsReportsService } from "@/api";
@@ -9,9 +9,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/modules/app/components/ui/dialog";
+import { Button } from "@/modules/app/components/ui/button";
+import { Textarea } from "@/modules/app/components/ui/textarea";
 
 interface ReportActionDialogProps {
   report: ForumReport | null;

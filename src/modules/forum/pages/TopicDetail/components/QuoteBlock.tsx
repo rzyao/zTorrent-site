@@ -1,9 +1,9 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo } from "react";
 import { ChevronDown, ChevronUp, ArrowUpRight, MessageSquareQuote, Loader2 } from "lucide-react";
 import { marked } from "marked";
-import { cn } from "@/components/ui/utils";
+import { cn } from "@/utils/cn";
 import { ForumsPostsService } from "@/api/services/ForumsPostsService";
-import { scrollToPost } from "../utils/domUtils";
+import { scrollToPost } from ".@/utils/cn/domUtils";
 
 export interface QuoteData {
   topicId?: string;

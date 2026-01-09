@@ -1,6 +1,6 @@
-import { ChevronRight, Clock } from 'lucide-react';
+﻿import { ChevronRight, Clock } from 'lucide-react';
 import type { Tutorial } from '../types';
-import { getDifficultyColor, getDifficultyText } from '../utils';
+import { getDifficultyColor, getDifficultyText } from '.@/utils/cn';
 
 interface TutorialsListProps {
   tutorials: Tutorial[];

@@ -1,12 +1,12 @@
-import { Bell, Mail, Upload, Download, ChartSpline, Sparkles, Menu, X } from "lucide-react";
+﻿import { Bell, Mail, Upload, Download, ChartSpline, Sparkles, Menu, X } from "lucide-react";
 import Logo from "@/assets/logo.svg";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/modules/app/components/ui/button";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAccess } from "@/context/AccessContext";
 import { canAccess } from "@/utils/access";
 import { useSiteConfig } from "@/context/SiteConfigContext";
-import { useUserSummary } from "@/context/UserSummaryContext";
+import { useUserSummary } from "@/modules/app/context/UserSummaryContext";
 import { DesktopNav } from "./header/DesktopNav";
 import { MobileNav } from "./header/MobileNav";
 import { UserMenu } from "./header/components/UserMenu";

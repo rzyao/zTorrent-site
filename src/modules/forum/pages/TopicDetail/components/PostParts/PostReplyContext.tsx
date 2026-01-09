@@ -1,6 +1,6 @@
-import { Reply, ArrowUp } from "lucide-react";
+﻿import { Reply, ArrowUp } from "lucide-react";
 import { marked } from "marked";
-import { scrollToPost } from "../../utils/domUtils";
+import { scrollToPost } from "../.@/utils/cn/domUtils";
 
 interface ReplyToData {
   id: string;

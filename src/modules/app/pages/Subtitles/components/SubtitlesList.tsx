@@ -1,6 +1,6 @@
-import { ArrowDown, ArrowUp, CheckCircle, Download, FileText, Star, Upload, User, Calendar } from 'lucide-react';
+﻿import { ArrowDown, ArrowUp, CheckCircle, Download, FileText, Star, Upload, User, Calendar } from 'lucide-react';
 import type { Subtitle } from '../types';
-import { getLanguageFlag } from '../utils';
+import { getLanguageFlag } from '.@/utils/cn';
 
 export function SubtitlesList({ subtitles, onSelect }: { subtitles: Subtitle[]; onSelect: (s: Subtitle) => void }) {
   return (

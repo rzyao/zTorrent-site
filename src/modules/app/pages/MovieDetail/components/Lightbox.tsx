@@ -1,13 +1,13 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+﻿import { Dialog, DialogContent } from "@/modules/app/components/ui/dialog";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel";
-import { Button } from "@/components/ui/button";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+} from "@/modules/app/components/ui/carousel";
+import { Button } from "@/modules/app/components/ui/button";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import { X } from "lucide-react";
 
 /**

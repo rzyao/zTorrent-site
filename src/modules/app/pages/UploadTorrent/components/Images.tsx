@@ -1,8 +1,8 @@
-import React, { memo } from 'react';
+﻿import React, { memo } from 'react';
 import { Image as ImageIcon, Plus, X } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
+import { Separator } from '@/modules/app/components/ui/separator';
+import { Button } from '@/modules/app/components/ui/button';
+import { ImageWithFallback } from '@/modules/app/components/figma/ImageWithFallback';
 
 /**
  * Images

@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { usePlaylists } from '@/hooks/usePlaylists';
+﻿import { useEffect, useRef, useState } from 'react';
+import { usePlaylists } from '@/modules/app/hooks/usePlaylists';
 import { ImagesService } from '@/api/services/ImagesService';
 import { customToast } from '@/hooks/useToast';
 import type { Playlist, Movie, Visibility, PlaylistType } from '@/modules/app/pages/Edit/playlists/types';

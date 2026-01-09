@@ -1,8 +1,8 @@
-import { ArrowUpDown, Grid3x3, List, SlidersHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { SearchInput } from "@/components/SearchInput";
+﻿import { ArrowUpDown, Grid3x3, List, SlidersHorizontal } from "lucide-react";
+import { Button } from "@/modules/app/components/ui/button";
+import { SearchInput } from "@/modules/app/components/SearchInput";
 import { CategoryNav } from "@/modules/app/layouts/CategoryNav";
-import { NativeSelect } from "@/components/ui/native-select";
+import { NativeSelect } from "@/modules/app/components/ui/native-select";
 import type { CategoryItem, SortOption, ViewMode } from "../types";
 
 interface ToolbarProps {

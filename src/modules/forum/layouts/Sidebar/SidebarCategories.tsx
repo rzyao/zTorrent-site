@@ -1,7 +1,7 @@
-import { useNavigate, useLocation } from "react-router-dom";
+﻿import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronDown, Pencil, LayoutGrid, Square } from "lucide-react";
 import { useForumTheme } from "../../context/ForumThemeContext";
-import { getIconByName } from "@/components/ui/icon-picker";
+import { getIconByName } from "@/modules/forum/components/ui/icon-picker";
 import { ExtendedForumCategory } from "./types";
 
 interface SidebarCategoriesProps {

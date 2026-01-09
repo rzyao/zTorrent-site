@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   ChevronsUpDown,
@@ -9,9 +9,9 @@ import {
   Square,
   Wrench,
 } from "lucide-react";
-import { cn } from "@/components/ui/utils";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/utils/cn";
+import { Button } from "@/modules/forum/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/modules/forum/components/ui/popover";
 import {
   Command,
   CommandEmpty,
@@ -20,11 +20,11 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@/components/ui/command";
+} from "@/modules/forum/components/ui/command";
 import { useForumsCategories } from "../../../hooks/useForumsCategories";
 import { useForumsTagsQuery } from "../../../hooks/useForumsTagsQuery";
 import { useForumTheme } from "../../../context/ForumThemeContext";
-import { getIconByName } from "@/components/ui/icon-picker";
+import { getIconByName } from "@/modules/forum/components/ui/icon-picker";
 
 interface ForumFilterBarProps {
   selectedCategory: string; // "all" or category ID

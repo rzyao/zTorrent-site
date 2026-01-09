@@ -1,8 +1,8 @@
-import { useNavigate } from "react-router-dom";
-import { cn } from "@/components/ui/utils";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+﻿import { useNavigate } from "react-router-dom";
+import { cn } from "@/utils/cn";
+import { Button } from "@/modules/app/components/ui/button";
+import { Badge } from "@/modules/app/components/ui/badge";
+import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import {
   ArrowLeft,
   Play,

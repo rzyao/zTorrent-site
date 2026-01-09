@@ -1,8 +1,8 @@
-import React from 'react';
+﻿import React from 'react';
 import { ChevronDown, ChevronUp, Trash2, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
+import { Separator } from '@/modules/app/components/ui/separator';
 import type { RuleContent, RuleSection } from '../types';
-import { getIconBySection } from '../utils';
+import { getIconBySection } from '.@/utils/cn';
 
 /**
  * 单个章节卡片组件

@@ -1,9 +1,9 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { User, Clock, Eye, X, Flame, ThumbsUp, Reply } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/modules/app/components/ui/button';
+import { Badge } from '@/modules/app/components/ui/badge';
 import { IForumThread } from '../types';
-import { parseHighlight } from '../utils';
+import { parseHighlight } from '.@/utils/cn';
 import { ContentPreview } from './ContentPreview';
 
 interface ThreadContentProps {

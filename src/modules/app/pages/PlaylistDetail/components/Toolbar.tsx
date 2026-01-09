@@ -1,5 +1,5 @@
-import { Grid, List as ListIcon, Film } from "lucide-react";
-import { NativeSelect } from "@/components/ui/native-select";
+﻿import { Grid, List as ListIcon, Film } from "lucide-react";
+import { NativeSelect } from "@/modules/app/components/ui/native-select";
 
 interface ToolbarProps {
   sortBy: "order" | "rating" | "year";

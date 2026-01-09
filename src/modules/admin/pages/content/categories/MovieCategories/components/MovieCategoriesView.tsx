@@ -1,8 +1,8 @@
-import React from "react";
+﻿import React from "react";
 import { Plus, Edit2, Trash2, ChevronRight, ChevronDown } from "lucide-react";
 import { useMovieCategories } from "../hooks/useMovieCategories";
 import { MovieCategoryDialog } from "./MovieCategoryDialog";
-import { DataTable, Column } from "@/modules/admin/components/ui/data-table";
+import { DataTable, Column } from "@/modules/app/components/ui/data-table";
 import { Button } from "@/modules/admin/components/ui/button";
 import { Switch } from "@/modules/admin/components/ui/switch";
 import { formatDate } from "@/modules/admin/utils/formatDate";

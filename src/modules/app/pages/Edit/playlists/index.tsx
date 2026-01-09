@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+﻿import { useEffect, useState, useRef } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import {
   ListVideo,
@@ -18,8 +18,8 @@ import {
   Eye,
   Film,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/modules/app/components/ui/badge";
+import { Button } from "@/modules/app/components/ui/button";
 import { useEditPlaylist } from "@/modules/app/pages/Edit/playlists/hooks/useEditPlaylist";
 
 // 新增：拆分后的无状态子组件与自定义 Hook（本次页面仅先接入组件，Hook 后续步骤可接入）
