@@ -84,10 +84,10 @@ export function MovieCategoriesView() {
       width: 300,
       render: (_, record) => {
         const isExpanded = expandedKeys.has(record.id);
-        const paddingLeft = (record._level || 0) * 24 + 16;
+        const levelPadding = (record._level || 0) * 24;
 
         return (
-          <div className="flex items-center gap-2" style={{ paddingLeft }}>
+          <div className="flex items-center gap-2" style={{ marginLeft: levelPadding }}>
             {record._hasChildren ? (
               <button
                 onClick={() => toggleExpand(record.id)}

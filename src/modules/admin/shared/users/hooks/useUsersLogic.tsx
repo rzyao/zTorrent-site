@@ -15,10 +15,10 @@ import type { UserIdDto } from "@/api/models/UserIdDto";
 import type { UserDto } from "@/api/models/UserDto";
 import { STATUS_OPTIONS, VIP_LEVEL_OPTIONS } from "@/modules/admin/shared/users/constants";
 import type { AdvRule } from "@/modules/admin/shared/users/types";
+import { toast } from "sonner";
 
 export const useUsersLogic = () => {
   const { scrollY, tableContainerRef } = useAutoTableScroll(60);
-  const { modal, message } = App.useApp();
   const navigate = useNavigate();
 
   // State
@@ -28,7 +28,7 @@ export const useUsersLogic = () => {
   const [data, setData] = useState<UserDto[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const pageOffsetRef = useRef(0);
 
   useEffect(() => {
@@ -48,6 +48,7 @@ export const useUsersLogic = () => {
   }, []);
 
   // Modals & Forms State
+  const [createOpen, setCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editForm] = Form.useForm<UpdateUserBodyDto>();
   const [banOpen, setBanOpen] = useState(false);
@@ -74,6 +75,10 @@ export const useUsersLogic = () => {
   const [advRules, setAdvRules] = useState<AdvRule[]>([]);
   const [advLogic, setAdvLogic] = useState<"AND" | "OR">("AND");
   const [levelOptions, setLevelOptions] = useState<{ label: string; value: string }[]>([]);
+
+  // Delete Confirm
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | undefined>(undefined);
 
   // Load Dictionaries
   const loadBanDictionaries = useCallback(async () => {
@@ -102,11 +107,11 @@ export const useUsersLogic = () => {
         .sort((a: any, b: any) => a.value - b.value);
       setBanTimeOptions(timeOpts);
     } catch (e: any) {
-      message.error(e?.message || "加载封禁字典失败");
+      toast.error(e?.message || "加载封禁字典失败");
     } finally {
       setBanDictLoading(false);
     }
-  }, [message]);
+  }, []);
 
   const loadPunishTypes = useCallback(async () => {
     setPunishTypesLoading(true);
@@ -120,11 +125,11 @@ export const useUsersLogic = () => {
       }));
       setPunishTypeOptions(opts);
     } catch (e: any) {
-      message.error(e?.message || "加载处罚类型失败");
+      toast.error(e?.message || "加载处罚类型失败");
     } finally {
       setPunishTypesLoading(false);
     }
-  }, [message]);
+  }, []);
 
   // Fetch List
   const fetchListRef = useRef<null | (() => Promise<void>)>(null);
@@ -204,7 +209,7 @@ export const useUsersLogic = () => {
             : 0,
       );
     } catch (e: any) {
-      message.error(e?.message || "加载用户列表失败");
+      toast.error(e?.message || "加载用户列表失败");
     } finally {
       setLoading(false);
     }
@@ -332,54 +337,18 @@ export const useUsersLogic = () => {
     );
   }, []);
 
-  // Handlers for Actions
-  const openRolesModal = useCallback(
-    (record: any) => {
-      const list: string[] = Array.isArray(record?.roles)
-        ? record.roles
-        : record?.roles
-          ? [record.roles]
-          : [];
-      modal.info({
-        title: "角色",
-        width: 520,
-        content: (
-          <Space size={4} wrap>
-            {list.length ? list.map((x) => <Tag key={x}>{x}</Tag>) : <Tag>未设置</Tag>}
-          </Space>
-        ),
-      });
-    },
-    [modal],
-  );
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailData, setDetailData] = useState<any>(null);
 
-  const openPermissionsModal = useCallback(
-    (record: any) => {
-      const list: string[] = Array.isArray(record?.permissions)
-        ? record.permissions
-        : record?.permissions
-          ? [record.permissions]
-          : [];
-      modal.info({
-        title: "权限",
-        width: 520,
-        content: (
-          <Space size={4} wrap>
-            {list.length ? (
-              list.map((x) => (
-                <Tag key={x} color="purple">
-                  {x}
-                </Tag>
-              ))
-            ) : (
-              <Tag>未设置</Tag>
-            )}
-          </Space>
-        ),
-      });
-    },
-    [modal],
-  );
+  const openRolesModal = useCallback((record: any) => {
+    setDetailData({ title: "角色列表", type: "roles", record });
+    setDetailOpen(true);
+  }, []);
+
+  const openPermissionsModal = useCallback((record: any) => {
+    setDetailData({ title: "权限列表", type: "permissions", record });
+    setDetailOpen(true);
+  }, []);
 
   const userActions = useMemo<MenuProps["items"]>(() => {
     const items: MenuProps["items"] = [];
@@ -413,11 +382,8 @@ export const useUsersLogic = () => {
               id,
             } as UserIdDto);
             const data = (resp as any)?.data ?? resp;
-            modal.info({
-              title: "用户详情",
-              width: 720,
-              content: renderDetailContent(data),
-            });
+            setDetailData({ title: "用户详情", type: "info", record: data });
+            setDetailOpen(true);
             break;
           }
           case "downloads": {
@@ -462,28 +428,16 @@ export const useUsersLogic = () => {
           }
           case "delete": {
             if (!can("admin/users/delete")) {
-              message.warning("无删除权限");
+              toast.info("无删除权限");
               return;
             }
-            modal.confirm({
-              title: "确认删除该用户？",
-              okText: "删除",
-              okButtonProps: { danger: true },
-              onOk: async () => {
-                try {
-                  await UsersService.usersControllerRemove({ id } as UserIdDto);
-                  message.success("删除成功");
-                  fetchListRef.current?.();
-                } catch (e: any) {
-                  message.error(e?.message || "删除失败");
-                }
-              },
-            });
+            setDeleteTargetId(id);
+            setDeleteConfirmOpen(true);
             break;
           }
           case "ban": {
             if (!can("admin/users/ban")) {
-              message.warning("无封禁权限");
+              toast.info("无封禁权限");
               return;
             }
             setBanTargetId(uid);
@@ -502,7 +456,7 @@ export const useUsersLogic = () => {
             break;
         }
       } catch (e: any) {
-        message.error(e?.message || "操作失败");
+        toast.error(e?.message || "操作失败");
       }
     },
     [
@@ -512,8 +466,6 @@ export const useUsersLogic = () => {
       editForm,
       loadBanDictionaries,
       loadPunishTypes,
-      message,
-      modal,
       navigate,
       renderDetailContent,
     ],
@@ -714,5 +666,25 @@ export const useUsersLogic = () => {
     assignForm,
     rolesOptions,
     rolesLoading,
+    deleteConfirmOpen,
+    setDeleteConfirmOpen,
+    deleteTargetId,
+    setDeleteTargetId,
+    detailOpen,
+    setDetailOpen,
+    detailData,
+    renderDetailContent,
+    createOpen,
+    setCreateOpen,
   };
+};
+
+export const handleDeleteUser = async (id: string, fetchList: () => void) => {
+  try {
+    await UsersService.usersControllerRemove({ id } as UserIdDto);
+    toast.success("删除成功");
+    fetchList();
+  } catch (e: any) {
+    toast.error(e?.message || "删除失败");
+  }
 };

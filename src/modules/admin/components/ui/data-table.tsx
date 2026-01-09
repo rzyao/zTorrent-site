@@ -42,6 +42,7 @@ export interface DataTableProps<T> {
     current: number;
     pageSize: number;
     total: number;
+    pageSizeOptions?: number[];
     onChange?: (page: number, pageSize: number) => void;
   };
   /** 空数据提示文案 */
@@ -57,10 +58,17 @@ interface PaginationProps {
   current: number;
   pageSize: number;
   total: number;
+  pageSizeOptions?: number[];
   onChange?: (page: number, pageSize: number) => void;
 }
 
-function Pagination({ current, pageSize, total, onChange }: PaginationProps) {
+function Pagination({
+  current,
+  pageSize,
+  total,
+  pageSizeOptions = [10, 20, 50, 100],
+  onChange,
+}: PaginationProps) {
   const totalPages = Math.ceil(total / pageSize);
   const startItem = (current - 1) * pageSize + 1;
   const endItem = Math.min(current * pageSize, total);
@@ -104,7 +112,7 @@ function Pagination({ current, pageSize, total, onChange }: PaginationProps) {
   if (total === 0) return null;
 
   return (
-    <div className="flex items-center justify-between border-t border-gray-100 bg-white px-4 py-3">
+    <div className="flex items-center justify-between border-t border-gray-100 bg-white px-6 py-3">
       {/* 左侧：显示条目信息 */}
       <div className="text-sm text-neutral-500">
         共 <span className="font-medium text-neutral-700">{total}</span> 条， 当前显示 {startItem}-
@@ -112,53 +120,74 @@ function Pagination({ current, pageSize, total, onChange }: PaginationProps) {
       </div>
 
       {/* 右侧：分页控制 */}
-      <div className="flex items-center gap-1">
-        {/* 首页 */}
-        <Button
-          variant="text"
-          size="sm"
-          onClick={() => handlePageChange(1)}
-          disabled={current === 1}
-          className="h-8 w-8 p-0"
-        >
-          <ChevronsLeft className="h-4 w-4" />
-        </Button>
+      <div className="flex items-center gap-4">
+        {/* 每页条数选择 */}
+        <div className="flex items-center gap-2">
+          <span className="text-sm whitespace-nowrap text-neutral-500">每页</span>
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              const newSize = Number(e.target.value);
+              onChange?.(1, newSize);
+            }}
+            className="focus:border-antd-primary focus:ring-antd-primary h-8 rounded-md border border-gray-200 bg-white px-2 py-1 text-sm text-neutral-700 transition-all focus:ring-1 focus:outline-none"
+          >
+            {pageSizeOptions.map((v) => (
+              <option key={v} value={v}>
+                {v} 条
+              </option>
+            ))}
+          </select>
+        </div>
 
-        {/* 上一页 */}
-        <Button
-          variant="text"
-          size="sm"
-          onClick={() => handlePageChange(current - 1)}
-          disabled={current === 1}
-          className="h-8 w-8 p-0"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-1">
+          {/* 首页 */}
+          <Button
+            variant="text"
+            size="sm"
+            onClick={() => handlePageChange(1)}
+            disabled={current === 1}
+            className="h-8 w-8 p-0"
+          >
+            <ChevronsLeft className="h-4 w-4" />
+          </Button>
 
-        {/* 页码 */}
-        <div className="flex items-center gap-1">{renderPageNumbers()}</div>
+          {/* 上一页 */}
+          <Button
+            variant="text"
+            size="sm"
+            onClick={() => handlePageChange(current - 1)}
+            disabled={current === 1}
+            className="h-8 w-8 p-0"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
 
-        {/* 下一页 */}
-        <Button
-          variant="text"
-          size="sm"
-          onClick={() => handlePageChange(current + 1)}
-          disabled={current === totalPages}
-          className="h-8 w-8 p-0"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
+          {/* 页码 */}
+          <div className="flex items-center gap-1">{renderPageNumbers()}</div>
 
-        {/* 末页 */}
-        <Button
-          variant="text"
-          size="sm"
-          onClick={() => handlePageChange(totalPages)}
-          disabled={current === totalPages}
-          className="h-8 w-8 p-0"
-        >
-          <ChevronsRight className="h-4 w-4" />
-        </Button>
+          {/* 下一页 */}
+          <Button
+            variant="text"
+            size="sm"
+            onClick={() => handlePageChange(current + 1)}
+            disabled={current === totalPages}
+            className="h-8 w-8 p-0"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+
+          {/* 末页 */}
+          <Button
+            variant="text"
+            size="sm"
+            onClick={() => handlePageChange(totalPages)}
+            disabled={current === totalPages}
+            className="h-8 w-8 p-0"
+          >
+            <ChevronsRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -198,28 +227,29 @@ export function DataTable<T extends Record<string, any>>({
   return (
     <div
       className={cn(
-        "flex flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm",
+        "flex flex-col overflow-hidden rounded-lg border border-gray-100 bg-white pt-1",
         className,
       )}
     >
       {/* ============== 操作栏 (Toolbar) ============== */}
       {(toolbarLeft || toolbarRight) && (
-        <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
+        <div className="flex shrink-0 items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2">{toolbarLeft}</div>
           <div className="flex items-center gap-2">{toolbarRight}</div>
         </div>
       )}
 
-      {/* ============== 表格主体 (Table) ============== */}
-      <div className="flex-1 overflow-auto">
-        <Table>
+      {/* ============== 表格表头 (Header) - 固定不滚动 ============== */}
+      <div className="mx-6 shrink-0 overflow-hidden bg-[#FAFAFA]">
+        <Table className="table-fixed border-b border-gray-100">
           <TableHeader>
-            <TableRow>
+            <TableRow className="border-0 hover:bg-transparent">
               {columns.map((column) => (
                 <TableHead
                   key={column.key}
-                  style={{ width: column.width }}
+                  style={{ width: column.width, minWidth: column.width }}
                   className={cn(
+                    "border-0 bg-[#FAFAFA]",
                     column.align === "center" && "text-center",
                     column.align === "right" && "text-right",
                   )}
@@ -229,6 +259,12 @@ export function DataTable<T extends Record<string, any>>({
               ))}
             </TableRow>
           </TableHeader>
+        </Table>
+      </div>
+
+      {/* ============== 表格表体 (Body) - 独立滚动 ============== */}
+      <div className="table-scrollbar mx-6 flex-1 overflow-auto">
+        <Table className="table-fixed">
           <TableBody>
             {loading && dataSource.length === 0 ? (
               <TableRow>
@@ -238,7 +274,7 @@ export function DataTable<T extends Record<string, any>>({
               </TableRow>
             ) : dataSource.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-32 text-center text-neutral-400">
+                <TableCell colSpan={columns.length} className="h-32 text-center text-neutral-500">
                   {emptyText}
                 </TableCell>
               </TableRow>
@@ -247,7 +283,8 @@ export function DataTable<T extends Record<string, any>>({
                 <TableRow key={getRowKey(record, index)}>
                   {columns.map((column) => (
                     <TableCell
-                      key={column.key}
+                      key={`${getRowKey(record, index)}-${column.key}`}
+                      style={{ width: column.width, minWidth: column.width }}
                       className={cn(
                         column.align === "center" && "text-center",
                         column.align === "right" && "text-right",
@@ -269,6 +306,7 @@ export function DataTable<T extends Record<string, any>>({
           current={pagination.current}
           pageSize={pagination.pageSize}
           total={pagination.total}
+          pageSizeOptions={pagination.pageSizeOptions}
           onChange={pagination.onChange}
         />
       )}

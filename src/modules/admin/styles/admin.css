@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Admin 模块专用 Tailwind CSS 主题配置
+   基于 Ant Design 6.0 Design Tokens
+   ============================================================ */
+
+@theme inline {
+  /* ============== 颜色系统 ============== */
+  --color-antd-primary: var(--antd-primary);
+  --color-antd-primary-hover: var(--antd-primary-hover);
+  --color-antd-primary-active: var(--antd-primary-active);
+  --color-antd-primary-bg: var(--antd-primary-bg);
+  --color-antd-success: var(--antd-success);
+  --color-antd-warning: var(--antd-warning);
+  --color-antd-error: var(--antd-error);
+  --color-antd-text: var(--antd-text);
+  --color-antd-text-secondary: var(--antd-text-secondary);
+  --color-antd-border: var(--antd-border);
+  --color-antd-bg-container: var(--antd-bg-container);
+  --color-antd-bg-layout: var(--antd-bg-layout);
+
+  /* ============== 间距系统 ============== */
+  --spacing-antd-xs: var(--antd-spacing-xs);
+  --spacing-antd-sm: var(--antd-spacing-sm);
+  --spacing-antd-md: var(--antd-spacing-md);
+  --spacing-antd-lg: var(--antd-spacing-lg);
+
+  /* ============== 圆角系统 ============== */
+  --radius-antd: var(--antd-radius);
+  --radius-antd-sm: var(--antd-radius-sm);
+  --radius-antd-lg: var(--antd-radius-lg);
+}
+
+:root {
+  /* ============== Ant Design Tokens ============== */
+  --antd-primary: #1677ff;
+  --antd-primary-hover: #4096ff;
+  --antd-primary-active: #0958d9;
+  --antd-primary-bg: #e6f4ff;
+
+  --antd-success: #52c41a;
+  --antd-warning: #faad14;
+  --antd-error: #ff4d4f;
+
+  --antd-text: rgba(0, 0, 0, 0.88);
+  --antd-text-secondary: rgba(0, 0, 0, 0.65);
+  --antd-text-description: rgba(0, 0, 0, 0.45);
+  --antd-text-placeholder: rgba(0, 0, 0, 0.25);
+  --antd-text-disabled: rgba(0, 0, 0, 0.25);
+
+  --antd-border: #d9d9d9;
+  --antd-border-secondary: #f0f0f0;
+
+  --antd-bg-container: #ffffff;
+  --antd-bg-layout: #f5f5f5;
+
+  --antd-spacing-xs: 8px;
+  --antd-spacing-sm: 12px;
+  --antd-spacing-md: 16px;
+  --antd-spacing-lg: 24px;
+
+  --antd-radius: 6px;
+  --antd-radius-sm: 4px;
+  --antd-radius-lg: 8px;
+
+  --antd-font-sm: 14px;
+  --antd-font-md: 16px;
+  --antd-font-xl: 24px;
+}
+
+/* ============== Admin 专用工具类 ============== */
+
+.admin-page {
+  padding: var(--antd-spacing-lg);
+  background: var(--antd-bg-layout);
+  min-height: calc(100vh - 64px);
+}
+
+.admin-card {
+  background: var(--antd-bg-container);
+  border: 1px solid var(--antd-border-secondary);
+  border-radius: var(--antd-radius-lg);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+/* 覆盖全局 page-container 限制 */
+.page-container {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Ant Design 组件微调 */
+.ant-layout {
+  background: var(--antd-bg-layout) !important;
+}
+
+/* 自定义滚动条 */
+.admin-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.admin-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.admin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}

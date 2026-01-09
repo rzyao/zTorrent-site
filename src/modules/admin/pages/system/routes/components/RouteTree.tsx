@@ -1,4 +1,13 @@
-import { useMemo, useCallback, Key, useState, memo, startTransition } from "react";
+import {
+  useMemo,
+  useCallback,
+  Key,
+  useState,
+  memo,
+  startTransition,
+  useRef,
+  useEffect,
+} from "react";
 import { Tree, Typography, Empty, theme } from "antd";
 import type { TreeProps, TreeDataNode } from "antd";
 import { RouteTreeNodeDto } from "@/api/models/RouteTreeNodeDto";
@@ -122,6 +131,25 @@ const TreeHeader = memo(function TreeHeader({
 // 主组件
 function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProps) {
   const { token } = theme.useToken();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [treeHeight, setTreeHeight] = useState(600);
+
+  // 监听容器高度变化
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) {
+        // 减去安全余量防止溢出
+        setTreeHeight(entry.contentRect.height - 20);
+      }
+    });
+
+    observer.observe(containerRef.current);
+
+    return () => observer.disconnect();
+  }, []);
 
   // 受控展开状态
   const [expandedKeys, setExpandedKeys] = useState<Key[]>(() => collectAllKeys(data));
@@ -212,7 +240,7 @@ function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProp
 
   if (data.length === 0) {
     return (
-      <div className="flex h-full flex-col">
+      <div className="flex min-h-0 flex-1 flex-col">
         <TreeHeader
           count={0}
           borderColor={token.colorBorderSecondary}
@@ -226,13 +254,13 @@ function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProp
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <TreeHeader
         count={data.length}
         borderColor={token.colorBorderSecondary}
         bgColor={token.colorBgContainer}
       />
-      <div className="flex-1 p-2">
+      <div className="min-h-0 flex-1 overflow-hidden p-2" ref={containerRef}>
         <Tree<RouteTreeDataNode>
           expandedKeys={expandedKeys}
           onExpand={handleExpand}
@@ -247,7 +275,7 @@ function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProp
           style={{ background: "transparent" }}
           // 启用虚拟滚动,提升大型树性能
           virtual
-          height={600}
+          height={treeHeight}
         />
       </div>
     </div>

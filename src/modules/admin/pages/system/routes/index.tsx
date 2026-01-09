@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, memo } from "react";
+import { AdminPageContainer } from "@/modules/admin/components/AdminPageContainer";
 import { RouteTreeNodeDto } from "@/api/models/RouteTreeNodeDto";
 import { PlatformAdminRoutesService } from "@/api/services/PlatformAdminRoutesService";
 import { RouteTree } from "./components/RouteTree";
@@ -406,7 +407,7 @@ function RouteManageContent() {
   ];
 
   return (
-    <div className="flex h-[calc(100vh-6rem)] flex-col gap-4">
+    <div className="flex min-h-0 flex-1 flex-col gap-4">
       <PageHeader
         isLoading={isLoading}
         onRefresh={handleRefresh}
@@ -441,7 +442,10 @@ function RouteManageContent() {
       </div>
 
       <div className="flex min-h-0 flex-1 gap-6">
-        <div className="flex w-1/3 min-w-[320px] flex-col" style={treeContainerStyle}>
+        <div
+          className="flex min-h-0 w-1/3 min-w-[320px] flex-col self-stretch"
+          style={treeContainerStyle}
+        >
           {isLoading ? (
             <Flex justify="center" align="center" className="flex-1">
               <Spin size="large" />
@@ -457,7 +461,7 @@ function RouteManageContent() {
           )}
         </div>
 
-        <div className="min-w-[420px] flex-1">
+        <div className="min-h-0 min-w-[420px] flex-1 self-stretch">
           <DetailsPanel
             node={selectedNode}
             onSave={handleSave}
@@ -482,8 +486,10 @@ function RouteManageContent() {
 // Wrapper for Antd Context
 export default function RouteManagePage() {
   return (
-    <App>
-      <RouteManageContent />
-    </App>
+    <AdminPageContainer>
+      <App className="flex min-h-0 flex-1 flex-col">
+        <RouteManageContent />
+      </App>
+    </AdminPageContainer>
   );
 }

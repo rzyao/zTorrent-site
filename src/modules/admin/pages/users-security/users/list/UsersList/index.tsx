@@ -1,16 +1,19 @@
 import React from "react";
-import { useUsersLogic } from "@/modules/admin/shared/users/hooks/useUsersLogic";
-import { SearchBar } from "@/modules/admin/shared/users/components/SearchBar";
-import { UsersTable } from "@/modules/admin/shared/users/components/UsersTable";
+import { Search } from "lucide-react";
+import { useUsersLogic, handleDeleteUser } from "@/modules/admin/shared/users/hooks/useUsersLogic";
+import { DataTable, Column } from "@/modules/admin/components/ui/data-table";
+import { Button } from "@/modules/admin/components/ui/button";
+import { Input } from "@/modules/admin/components/ui/input";
 import { AdvancedSearchModal } from "@/modules/admin/shared/users/components/AdvancedSearchModal";
 import { EditUserModal } from "@/modules/admin/shared/users/components/EditUserModal";
 import { BanUserModal } from "@/modules/admin/shared/users/components/BanUserModal";
 import { AssignRolesModal } from "@/modules/admin/shared/users/components/AssignRolesModal";
+import { Modal, ConfirmModal } from "@/modules/admin/components/ui/modal";
+import { Tag } from "@/modules/admin/components/ui/tag";
+import type { UserDto } from "@/api/models/UserDto";
 
 const UsersPage: React.FC = () => {
   const {
-    scrollY,
-    tableContainerRef,
     searchText,
     setSearchText,
     setQuery,
@@ -21,9 +24,7 @@ const UsersPage: React.FC = () => {
     pageSize,
     setPage,
     setPageSize,
-    expandCacheRef,
-    columns,
-    fetchList,
+    columns, // 现有列配置包含 antd 渲染逻辑，我们通过 DataTable 适配
     can,
     advOpen,
     setAdvOpen,
@@ -51,37 +52,87 @@ const UsersPage: React.FC = () => {
     assignForm,
     rolesOptions,
     rolesLoading,
+    detailOpen,
+    setDetailOpen,
+    detailData,
+    renderDetailContent,
+    deleteConfirmOpen,
+    setDeleteConfirmOpen,
+    deleteTargetId,
+    setDeleteTargetId,
+    fetchList,
   } = useUsersLogic();
 
-  return (
-    <div className="min-h-full space-y-4 bg-gray-50/50 p-4">
-      {/* 统一的卡片容器：操作栏 + 表格 */}
-      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-        <SearchBar
-          searchText={searchText}
-          setSearchText={setSearchText}
-          setQuery={setQuery}
-          setAdvOpen={setAdvOpen}
-          setAdvRules={setAdvRules}
-          setAdvLogic={setAdvLogic}
-          fetchList={fetchList}
-          can={can}
-        />
+  // 将 antd 的 columns 转换为 DataTable 的 Column 格式
+  const adaptedColumns: Column<UserDto>[] = React.useMemo(() => {
+    return columns.map((col: any, idx: number) => ({
+      key: col.key || col.dataIndex || `col-${idx}`,
+      title: col.title,
+      width: col.width,
+      align: col.align,
+      render: (value: any, record: UserDto, index: number) => {
+        if (col.render) {
+          return col.render(value, record, index);
+        }
+        return value ?? "-";
+      },
+      dataIndex: col.dataIndex as keyof UserDto,
+    }));
+  }, [columns]);
 
-        <UsersTable
-          loading={loading}
-          data={data}
-          total={total}
-          page={page}
-          pageSize={pageSize}
-          setPage={setPage}
-          setPageSize={setPageSize}
-          scrollY={scrollY}
-          tableContainerRef={tableContainerRef}
-          expandCacheRef={expandCacheRef}
-          columns={columns}
-        />
-      </div>
+  return (
+    <div className="flex flex-1 flex-col gap-4 overflow-hidden">
+      <DataTable
+        columns={adaptedColumns}
+        dataSource={data}
+        rowKey="id"
+        loading={loading}
+        toolbarLeft={
+          <div className="flex items-center gap-2">
+            <div className="relative w-80">
+              <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-neutral-500" />
+              <Input
+                placeholder="搜索用户名称或邮箱"
+                className="pl-9"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setQuery(searchText);
+                  }
+                }}
+              />
+            </div>
+            <Button className="h-8 shadow-none" onClick={() => setQuery(searchText)}>
+              搜索
+            </Button>
+            <Button variant="default" className="h-8 shadow-none" onClick={() => setAdvOpen(true)}>
+              高级搜索
+            </Button>
+            <Button
+              variant="dashed"
+              className="h-8 shadow-none"
+              onClick={() => {
+                setAdvRules([]);
+                setAdvLogic("AND");
+                fetchList();
+              }}
+            >
+              清空
+            </Button>
+          </div>
+        }
+        pagination={{
+          current: page,
+          pageSize: pageSize,
+          total: total,
+          onChange: (p, ps) => {
+            setPage(p);
+            setPageSize(ps);
+          },
+        }}
+        className="flex-1"
+      />
 
       <AdvancedSearchModal
         advOpen={advOpen}
@@ -123,6 +174,62 @@ const UsersPage: React.FC = () => {
         rolesOptions={rolesOptions}
         rolesLoading={rolesLoading}
         fetchList={fetchList}
+      />
+
+      {/* 使用项目标准的 Modal 组件 */}
+      <Modal
+        open={detailOpen}
+        onClose={() => setDetailOpen(false)}
+        title={detailData?.title}
+        footer={null}
+        width={720}
+      >
+        <div className="max-h-[70vh] overflow-auto">
+          {detailData?.type === "info" && renderDetailContent(detailData.record)}
+          {detailData?.type === "roles" && (
+            <div className="flex flex-wrap gap-2">
+              {Array.isArray(detailData.record.roles) && detailData.record.roles.length > 0 ? (
+                detailData.record.roles.map((role: string) => (
+                  <Tag key={role} variant="primary">
+                    {role}
+                  </Tag>
+                ))
+              ) : (
+                <Tag variant="default">未设置</Tag>
+              )}
+            </div>
+          )}
+          {detailData?.type === "permissions" && (
+            <div className="flex flex-wrap gap-2">
+              {Array.isArray(detailData.record.permissions) &&
+              detailData.record.permissions.length > 0 ? (
+                detailData.record.permissions.map((perm: string) => (
+                  <Tag key={perm} variant="purple">
+                    {perm}
+                  </Tag>
+                ))
+              ) : (
+                <Tag variant="default">未设置</Tag>
+              )}
+            </div>
+          )}
+        </div>
+      </Modal>
+
+      {/* 删除确认弹窗 */}
+      <ConfirmModal
+        open={deleteConfirmOpen}
+        onCancel={() => setDeleteConfirmOpen(false)}
+        onOk={async () => {
+          if (deleteTargetId) {
+            await handleDeleteUser(deleteTargetId, fetchList);
+            setDeleteConfirmOpen(false);
+          }
+        }}
+        title="确认删除"
+        content="确定要删除该用户吗？此操作不可撤销。"
+        okText="确定删除"
+        okButtonProps={{ variant: "danger" }}
       />
     </div>
   );

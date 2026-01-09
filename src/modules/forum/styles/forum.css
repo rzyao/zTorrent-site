@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.5rem;
+}
+
+/* 论坛主体区域滚动条 (Discourse 风格) */
+.scrollbar-main {
+  scrollbar-width: auto;
+  scrollbar-color: #919191 transparent;
+}
+
+.scrollbar-main::-webkit-scrollbar {
+  width: 12px;
+}
+
+.scrollbar-main::-webkit-scrollbar-thumb {
+  background-color: #919191;
+  border-radius: 10px;
+  border: 3px solid #ffffff;
+  background-clip: content-box;
+}
+
+.dark .scrollbar-main {
+  scrollbar-color: #a6a6a6 transparent;
+}
+
+.dark .scrollbar-main::-webkit-scrollbar-thumb {
+  background-color: #a6a6a6;
+  border: 3px solid #0f171e;
+}
+
+/* 论坛侧边栏专用滚动条 */
+.scrollbar-sidebar {
+  scrollbar-width: auto;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
+}
+
+.scrollbar-sidebar:hover {
+  scrollbar-color: #ced4da transparent;
+}
+
+.dark .scrollbar-sidebar:hover {
+  scrollbar-color: #313131 transparent;
+}
+
+.scrollbar-sidebar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollbar-sidebar::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 6px;
+}
+
+.scrollbar-sidebar:hover::-webkit-scrollbar-thumb {
+  background-color: #ced4da;
+}
+
+/* Simplebar 自定义样式 */
+.forum-scrollbar .simplebar-scrollbar::before {
+  background-color: rgba(150, 150, 150, 0.6);
+  border-radius: 4px;
+  width: 12px;
+}
+
+.dark .forum-scrollbar .simplebar-scrollbar::before {
+  background-color: rgba(100, 100, 100, 0.6);
+}

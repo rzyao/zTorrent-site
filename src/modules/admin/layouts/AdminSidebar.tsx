@@ -1,18 +1,45 @@
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/components/ui/utils";
 import { useRouteConfig } from "@/hooks/useRouteConfig";
 import DynamicIcon from "@/components/DynamicIcon";
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  collapsed: boolean;
+  onCollapse: (collapsed: boolean) => void;
+}
+
+export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
   const { routes } = useRouteConfig();
-  const [collapsed, setCollapsed] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
+  const location = useLocation();
 
   const adminRoute = routes.find((r) => r.path === "/admin" || r.path === "admin");
   const adminChildren = adminRoute?.children || [];
   const visibleRoutes = adminChildren.filter((r) => r.isVisible !== false);
+
+  // 自动展开逻辑：当路径变化时，确保父菜单是展开状态
+  useEffect(() => {
+    if (collapsed) return;
+
+    visibleRoutes.forEach((item) => {
+      const href = item.path.startsWith("/") ? item.path : `/admin/${item.path}`;
+      const isParentOfActive = item.children?.some((child) => {
+        const childHref = child.path.startsWith("/") ? child.path : `${href}/${child.path}`;
+        return location.pathname === childHref || location.pathname.startsWith(childHref + "/");
+      });
+
+      if (isParentOfActive) {
+        setExpandedMenus((prev) => {
+          if (prev.has(item.id)) return prev;
+          const next = new Set(prev);
+          next.add(item.id);
+          return next;
+        });
+      }
+    });
+  }, [location.pathname, collapsed, visibleRoutes]);
 
   const toggleMenu = (id: string) => {
     setExpandedMenus((prev) => {
@@ -53,18 +80,36 @@ export function AdminSidebar() {
 
               // 带子菜单的项目
               if (hasChildren) {
+                // 检查子路由是否激活
+                const isParentActive = item.children?.some((child) => {
+                  const childHref = child.path.startsWith("/")
+                    ? child.path
+                    : `${href}/${child.path}`;
+                  return (
+                    location.pathname === childHref || location.pathname.startsWith(childHref + "/")
+                  );
+                });
+
                 return (
                   <div key={item.id}>
                     <button
                       onClick={() => toggleMenu(item.id)}
                       className={cn(
-                        "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50",
+                        "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-gray-50",
+                        isParentActive ? "bg-primary-bg text-primary font-medium" : "text-gray-600",
                         collapsed && "justify-center px-2",
                       )}
                     >
                       <div className="flex items-center gap-3">
                         {iconName && (
-                          <DynamicIcon iconName={iconName} size={18} className="text-gray-400" />
+                          <DynamicIcon
+                            iconName={iconName}
+                            size={18}
+                            className={cn(
+                              "transition-colors",
+                              isParentActive ? "text-primary" : "text-gray-400",
+                            )}
+                          />
                         )}
                         {!collapsed && <span>{item.name || item.path}</span>}
                       </div>
@@ -91,11 +136,12 @@ export function AdminSidebar() {
                               <NavLink
                                 key={child.id}
                                 to={childHref}
+                                end
                                 className={({ isActive }) =>
                                   cn(
-                                    "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
+                                    "flex items-center gap-2 rounded-lg px-3 py-2 text-sm no-underline transition-colors",
                                     isActive
-                                      ? "bg-violet-50 font-medium text-violet-600"
+                                      ? "bg-primary-bg text-primary font-medium"
                                       : "text-gray-500 hover:bg-gray-50 hover:text-gray-700",
                                   )
                                 }
@@ -122,16 +168,24 @@ export function AdminSidebar() {
                 <NavLink
                   key={item.id}
                   to={href}
+                  end
                   className={({ isActive }) =>
                     cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                      isActive ? "bg-violet-50 text-violet-600" : "text-gray-600 hover:bg-gray-50",
+                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium no-underline transition-colors",
+                      isActive ? "bg-primary-bg text-primary" : "text-gray-600 hover:bg-gray-50",
                       collapsed && "justify-center px-2",
                     )
                   }
                 >
                   {iconName && (
-                    <DynamicIcon iconName={iconName} size={18} className="text-gray-400" />
+                    <DynamicIcon
+                      iconName={iconName}
+                      size={18}
+                      className={cn(
+                        "transition-colors",
+                        location.pathname === href ? "text-primary" : "text-gray-400",
+                      )}
+                    />
                   )}
                   {!collapsed && <span>{item.name || item.path}</span>}
                 </NavLink>
@@ -146,7 +200,7 @@ export function AdminSidebar() {
       {/* 底部折叠按钮 */}
       <div className="shrink-0 border-t border-gray-100 p-3">
         <button
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={() => onCollapse(!collapsed)}
           className="flex w-full items-center justify-center rounded-lg py-2 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600"
         >
           {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}

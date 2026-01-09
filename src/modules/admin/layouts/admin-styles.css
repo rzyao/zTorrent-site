@@ -77,7 +77,8 @@
 
   /* ============== 阴影 (Shadow) ============== */
   --antd-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  --antd-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.02);
+  --antd-shadow-sm:
+    0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.02);
   --antd-shadow-lg: 0 6px 16px rgba(0, 0, 0, 0.08), 0 0 8px rgba(0, 0, 0, 0.04);
 }
 
@@ -308,4 +309,108 @@
 .ant-menu-inline .ant-menu-submenu-title:hover,
 .ant-menu-inline .ant-menu-item-selected {
   transition: background-color 0.15s ease !important;
+}
+/* ============================================================
+   滚动条样式 (Scrollbar Styles)
+   参考 Ant Design 5.x Table 组件滚动条设计
+   特性：细长、圆角、hover 显示、平滑过渡
+   ============================================================ */
+
+/* 基础滚动条样式 */
+.admin-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.admin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.admin-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background 0.3s ease;
+}
+
+.admin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.35);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.admin-scrollbar::-webkit-scrollbar-thumb:active {
+  background: rgba(0, 0, 0, 0.45);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.admin-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* 表格专用滚动条 - 更窄更精致 */
+.table-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.table-scrollbar::-webkit-scrollbar-track {
+  background: #fafafa;
+  border-radius: 3px;
+}
+
+.table-scrollbar::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.table-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.table-scrollbar::-webkit-scrollbar-thumb:active {
+  background: #787878;
+}
+
+/* 隐藏滚动条但保持滚动功能（hover 时显示） */
+.scrollbar-on-hover::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.scrollbar-on-hover:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.scrollbar-on-hover:hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* 兼容 Firefox */
+.admin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+
+.table-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #fafafa;
+}
+
+/* ============================================================
+   Admin 模块 Page Container 覆盖
+   移除全局 max-width 限制，让内容占满屏幕宽度
+   ============================================================ */
+
+.page-container {
+  max-width: none;        /* 移除最大宽度限制 */
+  margin-left: 0;         /* 移除自动居中的 margin */
+  margin-right: 0;
+  padding-top: 0;         /* 移除垂直 padding（由 AdminLayout 控制） */
+  padding-bottom: 0;
+  padding-left: 0;        /* 移除水平 padding（由 DataTable 等组件自行控制） */
+  padding-right: 0;
 }

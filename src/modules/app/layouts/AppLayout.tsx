@@ -1,4 +1,5 @@
 import { useEffect, useRef, Suspense } from "react";
+import "@/modules/app/styles/app.css";
 import { useLocation } from "react-router-dom";
 import { Header } from "@/modules/app/layouts/Header";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";

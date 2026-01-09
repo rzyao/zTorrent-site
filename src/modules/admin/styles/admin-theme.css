@@ -305,3 +305,39 @@
   margin-bottom: 4px;
   display: block;
 }
+/* ============================================================ 
+   Dashboard 度量卡片样式
+   ============================================================ */
+.metric-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--antd-shadow-lg);
+}
+
+.metric-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  font-size: 20px;
+}
+
+.metric-icon.success {
+  background-color: var(--antd-success-bg);
+  color: var(--antd-success);
+}
+
+.metric-icon.info {
+  background-color: var(--antd-primary-bg);
+  color: var(--antd-primary);
+}
+
+.metric-icon.warning {
+  background-color: var(--antd-warning-bg);
+  color: var(--antd-warning);
+}

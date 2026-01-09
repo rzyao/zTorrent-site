@@ -12,7 +12,7 @@ import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
 import { GlobalLoaderTrigger } from "@/components/ui/GlobalLoader";
 import { useGlobalLoader } from "@/stores/globalLoaderStore";
 import AppLayout from "@/modules/app/layouts/AppLayout";
-import BasicLayout from "@/modules/admin/layouts";
+import { AdminLayout } from "@/modules/admin/layouts/AdminLayout";
 
 /**
  * 根据布局类型获取布局组件
@@ -22,7 +22,7 @@ function getLayoutWrapper(layout: string | undefined) {
     case "app":
       return AppLayout;
     case "admin":
-      return BasicLayout;
+      return AdminLayout;
     case "forum":
       return null;
     case "none":

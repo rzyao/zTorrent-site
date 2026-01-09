@@ -1,6 +1,8 @@
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { Outlet } from "react-router-dom";
-import "@/modules/admin/styles/admin-theme.css";
+import { ConfigProvider, App } from "antd";
+import { motion, AnimatePresence } from "framer-motion";
+import "@/modules/admin/styles/admin.css";
 import { AdminSidebar } from "./AdminSidebar";
 import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";
@@ -12,23 +14,51 @@ function FaviconInjector() {
 }
 
 export function AdminLayout() {
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
-    <SiteConfigProvider>
-      <FaviconInjector />
-      {/* 整体浅灰色背景，与白色侧边栏形成对比 */}
-      <div className="flex min-h-screen flex-col bg-gray-50">
-        <div className="flex flex-1">
-          <AdminSidebar />
-          {/* 主内容区域：动态适配侧边栏宽度 */}
-          <main className="min-w-0 flex-1 bg-gray-50 transition-all duration-300 md:pl-64">
-            <div className="h-full p-6">
-              <Suspense fallback={<RouteProgressBar />}>
-                <Outlet />
-              </Suspense>
-            </div>
-          </main>
-        </div>
-      </div>
-    </SiteConfigProvider>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#1677ff",
+          borderRadius: 6,
+        },
+      }}
+    >
+      <App>
+        <SiteConfigProvider>
+          <FaviconInjector />
+          <div className="flex h-screen w-full overflow-hidden bg-gray-50">
+            {/* 侧边栏 */}
+            <AdminSidebar collapsed={collapsed} onCollapse={setCollapsed} />
+
+            {/* 主内容区域 */}
+            <motion.main
+              initial={false}
+              animate={{ paddingLeft: collapsed ? 64 : 256 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="flex min-h-0 min-w-0 flex-1 flex-col"
+            >
+              {/* 顶部简单的 Header (可选，如果需要可以后续丰富) */}
+              <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-100 bg-white px-6">
+                <div className="text-sm font-medium text-gray-500">后台管理系统</div>
+                <div className="flex items-center gap-4">
+                  {/* 这里可以放通知、搜索、用户头像等 */}
+                  <div className="h-8 w-8 rounded-full bg-gray-200" />
+                </div>
+              </header>
+
+              <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-6">
+                <AnimatePresence mode="wait">
+                  <Suspense fallback={<RouteProgressBar />}>
+                    <Outlet />
+                  </Suspense>
+                </AnimatePresence>
+              </div>
+            </motion.main>
+          </div>
+        </SiteConfigProvider>
+      </App>
+    </ConfigProvider>
   );
 }
