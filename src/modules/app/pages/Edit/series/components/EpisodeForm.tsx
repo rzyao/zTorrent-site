@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/modules/app/components/ui/dialog";
 import { Button } from "@/modules/app/components/ui/button";
-import { AccessControl } from "@/components/AccessControl";
+import { AccessControl } from "@/permissions/AccessControl";
 import { Input } from "@/modules/app/components/ui/input";
 import { Label } from "@/modules/app/components/ui/label";
 import { Textarea } from "@/modules/app/components/ui/textarea";

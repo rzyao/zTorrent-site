@@ -1,7 +1,7 @@
 ﻿import { ArrowDown, ChevronUp } from "lucide-react";
 import { marked } from "marked";
 import { PostData } from "../../types";
-import { scrollToPost } from "../.@/utils/cn/domUtils";
+import { scrollToPost } from "../../utils/domUtils";
 
 interface IncomingRepliesProps {
   replies?: PostData[];

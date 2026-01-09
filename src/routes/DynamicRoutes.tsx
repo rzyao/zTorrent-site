@@ -15,6 +15,20 @@ import AppLayout from "@/modules/app/layouts/AppLayout";
 import { AdminLayout } from "@/modules/admin/layouts/AdminLayout";
 
 /**
+ * 新标签页重定向组件
+ */
+function NewTabRedirect({ url }: { url: string }) {
+  useEffect(() => {
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+      // 重定向后返回上一页或首页
+      window.history.back();
+    }
+  }, [url]);
+  return <div className="p-8 text-white">正在新标签页打开...</div>;
+}
+
+/**
  * 根据布局类型获取布局组件
  */
 function getLayoutWrapper(layout: string | undefined) {
@@ -48,15 +62,7 @@ function renderRoute(config: RouteConfig, parentPath: string = ""): React.ReactN
   if (redirect) {
     if (openInNewTab) {
       // 新标签页打开:创建一个组件执行 window.open
-      const NewTabRedirect = () => {
-        useEffect(() => {
-          window.open(redirect, "_blank", "noopener,noreferrer");
-          // 重定向后返回上一页或首页
-          window.history.back();
-        }, []);
-        return <div className="p-8 text-white">正在新标签页打开...</div>;
-      };
-      return <Route key={id} path={path} element={<NewTabRedirect />} />;
+      return <Route key={id} path={path} element={<NewTabRedirect url={redirect} />} />;
     } else {
       // 当前页面重定向
       return <Route key={id} path={path} element={<Navigate to={redirect} replace />} />;

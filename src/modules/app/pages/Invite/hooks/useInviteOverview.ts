@@ -1,7 +1,7 @@
 ﻿import { useEffect, useState } from "react";
 import { Service } from "@/api/services/Service";
 import { getBonusOverview } from "@/api/custom/bonus";
-import { extractData } from ".@/utils/cn";
+import { extractData } from "../utils";
 
 export interface InviteOverview {
   totalInvites: number;

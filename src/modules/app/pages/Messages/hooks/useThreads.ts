@@ -1,8 +1,8 @@
-﻿import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import { MessagesService } from '@/api/services/MessagesService';
-import { unwrapResponse, extractErrorMessage } from '.@/utils/cn/utils';
-import type { IThreadSummary, IMessage } from '../types/types';
+﻿import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { MessagesService } from "@/api/services/MessagesService";
+import { unwrapResponse, extractErrorMessage } from "../utils/utils";
+import type { IThreadSummary, IMessage } from "../types/types";
 
 export function useThreads() {
   const [threadsPage, setThreadsPage] = useState(1);
@@ -15,8 +15,16 @@ export function useThreads() {
 
   const loadThreads = async () => {
     try {
-      const resp = await MessagesService.messagesControllerThreads({ page: threadsPage, limit: threadsLimit });
-      const data = unwrapResponse<{ items: IThreadSummary[]; total: number; page: number; limit: number }>(resp);
+      const resp = await MessagesService.messagesControllerThreads({
+        page: threadsPage,
+        limit: threadsLimit,
+      });
+      const data = unwrapResponse<{
+        items: IThreadSummary[];
+        total: number;
+        page: number;
+        limit: number;
+      }>(resp);
       setThreadSummaries(Array.isArray(data?.items) ? data.items : []);
     } catch (err: any) {
       toast.error(extractErrorMessage(err));
@@ -25,8 +33,17 @@ export function useThreads() {
 
   const loadThreadMessages = async (peerUserId: string) => {
     try {
-      const resp = await MessagesService.messagesControllerListMessages({ peerUserId, page: timelinePage, limit: timelineLimit });
-      const data = unwrapResponse<{ items: IMessage[]; total: number; page: number; limit: number }>(resp);
+      const resp = await MessagesService.messagesControllerListMessages({
+        peerUserId,
+        page: timelinePage,
+        limit: timelineLimit,
+      });
+      const data = unwrapResponse<{
+        items: IMessage[];
+        total: number;
+        page: number;
+        limit: number;
+      }>(resp);
       setThreadMessages(Array.isArray(data?.items) ? data.items : []);
       await MessagesService.messagesControllerMarkRead({ peerUserId });
     } catch (err: any) {
@@ -59,4 +76,3 @@ export function useThreads() {
     clearThreadMessages,
   } as const;
 }
-

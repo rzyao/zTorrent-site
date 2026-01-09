@@ -4,7 +4,7 @@ import { MoviesReviewService } from "@/api/services/MoviesReviewService";
 import { SeriesService } from "@/api/services/SeriesService";
 import { PlaylistsReviewService } from "@/api/services/PlaylistsReviewService";
 import { EpisodesService } from "@/api/services/EpisodesService";
-import { unwrapResponse } from ".@/utils/cn";
+import { unwrapResponse } from "../utils";
 import type { ReviewType } from "../types";
 
 import { ReviewDto } from "@/api/models/ReviewDto";

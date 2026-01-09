@@ -2,7 +2,7 @@
 import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
 import { Badge } from "@/modules/app/components/ui/badge";
 import { Shield, Edit3, Save, X } from "lucide-react";
-import { AccessControl } from "@/components/AccessControl";
+import { AccessControl } from "@/permissions/AccessControl";
 /**
  * 顶部重要提示模块
  *

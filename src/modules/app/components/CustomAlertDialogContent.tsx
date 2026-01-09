@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { CSSTransition } from 'react-transition-group';
-import { cn } from "./ui/utils";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { CSSTransition } from "react-transition-group";
+import { cn } from "@/utils/cn";
 
 interface CustomAlertDialogContentProps {
   children: React.ReactNode;
@@ -10,11 +10,11 @@ interface CustomAlertDialogContentProps {
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
 }
 
-const CustomAlertDialogContent: React.FC<CustomAlertDialogContentProps> = ({ 
-  children, 
+const CustomAlertDialogContent: React.FC<CustomAlertDialogContentProps> = ({
+  children,
   className,
   onPointerDownOutside,
-  onEscapeKeyDown
+  onEscapeKeyDown,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -24,19 +24,19 @@ const CustomAlertDialogContent: React.FC<CustomAlertDialogContentProps> = ({
     // 组件挂载后立即显示动画
     setIsMounted(true);
     const timer = setTimeout(() => setIsOpen(true), 10);
-    
+
     // 监听ESC键
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onEscapeKeyDown?.(e);
       }
     };
-    
-    document.addEventListener('keydown', handleEscape);
-    
+
+    document.addEventListener("keydown", handleEscape);
+
     return () => {
       clearTimeout(timer);
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [onEscapeKeyDown]);
 
@@ -63,12 +63,9 @@ const CustomAlertDialogContent: React.FC<CustomAlertDialogContentProps> = ({
         unmountOnExit={true}
         appear={true}
       >
-        <div 
-          className="fixed inset-0 z-40 bg-black/50"
-          onClick={handleClose}
-        />
+        <div className="fixed inset-0 z-40 bg-black/50" onClick={handleClose} />
       </CSSTransition>
-      
+
       {/* 内容层 */}
       <CSSTransition
         nodeRef={nodeRef}
@@ -83,8 +80,8 @@ const CustomAlertDialogContent: React.FC<CustomAlertDialogContentProps> = ({
           ref={nodeRef}
           className={cn(
             "fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg",
-            "w-[calc(100vw-100px)] h-[calc(100vh-100px)] max-w-[calc(100vw-100px)] max-h-[calc(100vh-100px)]",
-            "bg-[#0F171E] border-gray-800 overflow-auto",
+            "h-[calc(100vh-100px)] max-h-[calc(100vh-100px)] w-[calc(100vw-100px)] max-w-[calc(100vw-100px)]",
+            "overflow-auto border-gray-800 bg-[#0F171E]",
             className,
           )}
           onClick={(e) => e.stopPropagation()}
@@ -93,7 +90,7 @@ const CustomAlertDialogContent: React.FC<CustomAlertDialogContentProps> = ({
         </div>
       </CSSTransition>
     </>,
-    document.body
+    document.body,
   );
 };
 

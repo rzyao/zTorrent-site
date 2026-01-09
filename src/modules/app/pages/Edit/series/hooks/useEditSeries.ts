@@ -7,7 +7,7 @@ import {
   parseDurationToMinutes,
   validateSeriesForm,
   mapBackendSeriesToLocal,
-} from ".@/utils/cn"; // Use relative path
+} from "../utils"; // Use relative path
 
 import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
 import { PtGenService } from "@/api/services/PtGenService";

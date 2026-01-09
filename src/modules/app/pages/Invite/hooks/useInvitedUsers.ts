@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState } from "react";
 import { Service } from "@/api/services/Service";
-import { extractData, formatDate, formatBytesToTB, formatRatio } from ".@/utils/cn";
+import { extractData, formatDate, formatBytesToTB, formatRatio } from "../utils";
 import type { InvitedUser } from "../types";
 
 export function useInvitedUsers(enabled: boolean = false) {

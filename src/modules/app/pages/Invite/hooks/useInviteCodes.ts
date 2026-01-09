@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState } from "react";
 import { Service } from "@/api/services/Service";
-import { extractData, formatDate } from ".@/utils/cn";
+import { extractData, formatDate } from "../utils";
 import type { InviteCode } from "../types";
 
 export function useInviteCodes(enabled: boolean = false) {

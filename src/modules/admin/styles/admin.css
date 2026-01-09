@@ -7,6 +7,10 @@
 
 @theme inline {
   /* ============== 颜色系统 ============== */
+  /* Primary 颜色 (供 text-primary, bg-primary-bg 等使用) */
+  --color-primary: #1677ff;
+  --color-primary-bg: #e6f4ff;
+  
   --color-antd-primary: var(--antd-primary);
   --color-antd-primary-hover: var(--antd-primary-hover);
   --color-antd-primary-active: var(--antd-primary-active);

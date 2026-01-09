@@ -11,7 +11,7 @@ import {
   Star,
 } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
-import { getVisibilityLabel, getTypeLabel } from ".@/utils/cn";
+import { getVisibilityLabel, getTypeLabel } from "../utils";
 import type { ReviewItem } from "../types";
 
 function TypeIcon({ type }: { type: "movie" | "series" | "playlist" | "torrent" }) {

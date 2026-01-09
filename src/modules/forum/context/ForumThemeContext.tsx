@@ -37,11 +37,11 @@ export function ForumThemeProvider({ children }: { children: ReactNode }) {
   }, [theme]);
 
   const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    // 立即操作 DOM 保证感知速度
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-    setTheme(newTheme);
-    localStorage.setItem(THEME_STORAGE_KEY, newTheme);
+    setTheme((prev) => {
+      const newTheme = prev === "light" ? "dark" : "light";
+      localStorage.setItem(THEME_STORAGE_KEY, newTheme);
+      return newTheme;
+    });
   };
 
   const value = {

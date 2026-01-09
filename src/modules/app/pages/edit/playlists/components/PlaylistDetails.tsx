@@ -1,5 +1,5 @@
 ﻿import { Button } from "@/modules/app/components/ui/button";
-import { AccessControl } from "@/components/AccessControl";
+import { AccessControl } from "@/permissions/AccessControl";
 import { Badge } from "@/modules/app/components/ui/badge";
 import { Separator } from "@/modules/app/components/ui/separator";
 import {

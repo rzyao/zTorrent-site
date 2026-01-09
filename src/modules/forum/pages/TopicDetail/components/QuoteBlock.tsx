@@ -3,7 +3,7 @@ import { ChevronDown, ChevronUp, ArrowUpRight, MessageSquareQuote, Loader2 } fro
 import { marked } from "marked";
 import { cn } from "@/utils/cn";
 import { ForumsPostsService } from "@/api/services/ForumsPostsService";
-import { scrollToPost } from ".@/utils/cn/domUtils";
+import { scrollToPost } from "../utils/domUtils";
 
 export interface QuoteData {
   topicId?: string;

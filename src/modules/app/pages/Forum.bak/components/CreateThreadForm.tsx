@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Plus, X, Send } from 'lucide-react';
 import { Button } from '@/modules/app/components/ui/button';
-import { AccessControl } from '@/components/AccessControl';
+import { AccessControl } from '@/permissions/AccessControl';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/modules/app/components/ui/select';
 import { RichTextEditor } from '../RichTextEditor';
 

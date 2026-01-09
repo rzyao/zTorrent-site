@@ -1,6 +1,6 @@
 ﻿import { useEffect, useRef, useState } from "react";
 import { Button } from "@/modules/app/components/ui/button";
-import { AccessControl } from "@/components/AccessControl";
+import { AccessControl } from "@/permissions/AccessControl";
 import { Checkbox } from "@/modules/app/components/ui/checkbox";
 import { Edit, X, Image as ImageIcon, Save } from "lucide-react";
 import type { SeriesFormState } from "@/modules/app/pages/Edit/series/types";

@@ -234,7 +234,7 @@ export function ForumList({
                   </h3>
                 </div>
                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="rounded bg-gray-100 px-1.5 py-0.5 font-medium text-gray-600 dark:border dark:border-blue-500/30 dark:bg-blue-500/20 dark:text-blue-400">
+                  <span className="rounded border border-gray-200 bg-gray-100 px-1.5 py-0.5 font-medium text-gray-600 dark:border-blue-500/30 dark:bg-blue-500/20 dark:text-blue-400">
                     {topic.category}
                   </span>
                   {topic.tags.slice(0, 2).map((tag) => (

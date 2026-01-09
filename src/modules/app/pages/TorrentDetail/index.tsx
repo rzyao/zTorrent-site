@@ -66,7 +66,7 @@ import {
   RelatedTorrent,
   EnglishMovieInfo,
 } from "./types";
-import { processDescription } from "@/utils/cn/processDescription";
+import { processDescription } from "./utils/processDescription";
 import { FileListItem } from "./components/FileListItem";
 
 export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps) {

@@ -1,9 +1,9 @@
-﻿import { useEffect, useMemo, useState } from 'react';
-import { OpenAPI } from '@/api/core/OpenAPI';
-import { request as __request } from '@/api/core/request';
-import { toast } from 'sonner';
-import { unwrapResponse, extractErrorMessage } from '.@/utils/cn/utils';
-import type { INotification, Message } from '../types/types';
+﻿import { useEffect, useMemo, useState } from "react";
+import { OpenAPI } from "@/api/core/OpenAPI";
+import { request as __request } from "@/api/core/request";
+import { toast } from "sonner";
+import { unwrapResponse, extractErrorMessage } from "../utils/utils";
+import type { INotification, Message } from "../types/types";
 
 export function useNotifications() {
   const [page, setPage] = useState(1);
@@ -13,12 +13,17 @@ export function useNotifications() {
   const load = async () => {
     try {
       const resp = await __request(OpenAPI, {
-        method: 'POST',
-        url: '/messages/notifications/list',
+        method: "POST",
+        url: "/messages/notifications/list",
         body: { page, limit },
-        mediaType: 'application/json',
+        mediaType: "application/json",
       });
-      const data = unwrapResponse<{ items: INotification[]; total: number; page: number; limit: number }>(resp);
+      const data = unwrapResponse<{
+        items: INotification[];
+        total: number;
+        page: number;
+        limit: number;
+      }>(resp);
       setItems(Array.isArray(data?.items) ? data.items : []);
     } catch (err: any) {
       toast.error(extractErrorMessage(err));
@@ -31,21 +36,26 @@ export function useNotifications() {
   }, [page, limit]);
 
   const messagesUi = useMemo<Message[]>(() => {
-    return (items || []).map(n => ({
+    return (items || []).map((n) => ({
       id: n.id,
-      from: '系统通知',
+      from: "系统通知",
       subject: n.title,
       content: n.content,
       timestamp: new Date(n.createdAt).toLocaleString(),
       read: !!n.readAt,
-      type: 'system',
+      type: "system",
     }));
   }, [items]);
 
   const markRead = async (ids: string[]) => {
     try {
-      await __request(OpenAPI, { method: 'POST', url: '/messages/notifications/read/mark', body: { ids }, mediaType: 'application/json' });
-      toast.success('已标记为已读');
+      await __request(OpenAPI, {
+        method: "POST",
+        url: "/messages/notifications/read/mark",
+        body: { ids },
+        mediaType: "application/json",
+      });
+      toast.success("已标记为已读");
       await load();
     } catch (err: any) {
       toast.error(extractErrorMessage(err));
@@ -54,8 +64,13 @@ export function useNotifications() {
 
   const remove = async (id: string) => {
     try {
-      await __request(OpenAPI, { method: 'POST', url: '/messages/notifications/delete', body: { id }, mediaType: 'application/json' });
-      toast.success('通知已删除');
+      await __request(OpenAPI, {
+        method: "POST",
+        url: "/messages/notifications/delete",
+        body: { id },
+        mediaType: "application/json",
+      });
+      toast.success("通知已删除");
       await load();
     } catch (err: any) {
       toast.error(extractErrorMessage(err));
@@ -74,4 +89,3 @@ export function useNotifications() {
     remove,
   } as const;
 }
-

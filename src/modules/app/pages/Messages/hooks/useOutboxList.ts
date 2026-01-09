@@ -1,9 +1,9 @@
-﻿import { useEffect, useMemo, useState } from 'react';
-import { OpenAPI } from '@/api/core/OpenAPI';
-import { request as __request } from '@/api/core/request';
-import { toast } from 'sonner';
-import { unwrapResponse, extractErrorMessage } from '.@/utils/cn/utils';
-import type { IMessage, Message } from '../types/types';
+﻿import { useEffect, useMemo, useState } from "react";
+import { OpenAPI } from "@/api/core/OpenAPI";
+import { request as __request } from "@/api/core/request";
+import { toast } from "sonner";
+import { unwrapResponse, extractErrorMessage } from "../utils/utils";
+import type { IMessage, Message } from "../types/types";
 
 export function useOutboxList() {
   const [page, setPage] = useState(1);
@@ -14,12 +14,17 @@ export function useOutboxList() {
   const load = async () => {
     try {
       const resp = await __request(OpenAPI, {
-        method: 'POST',
-        url: '/messages/outbox',
+        method: "POST",
+        url: "/messages/outbox",
         body: { page, limit, onlyFavorites },
-        mediaType: 'application/json',
+        mediaType: "application/json",
       });
-      const data = unwrapResponse<{ items: IMessage[]; total: number; page: number; limit: number }>(resp);
+      const data = unwrapResponse<{
+        items: IMessage[];
+        total: number;
+        page: number;
+        limit: number;
+      }>(resp);
       setItems(Array.isArray(data?.items) ? data.items : []);
     } catch (err: any) {
       toast.error(extractErrorMessage(err));
@@ -32,21 +37,26 @@ export function useOutboxList() {
   }, [page, limit, onlyFavorites]);
 
   const messagesUi = useMemo<Message[]>(() => {
-    return (items || []).map(m => ({
+    return (items || []).map((m) => ({
       id: m.id,
-      from: '我',
+      from: "我",
       subject: m.content.slice(0, 32),
       content: m.content,
       timestamp: new Date(m.createdAt).toLocaleString(),
       read: !!m.readAt,
-      type: 'user',
+      type: "user",
     }));
   }, [items]);
 
   const favorite = async (id: string) => {
     try {
-      await __request(OpenAPI, { method: 'POST', url: '/messages/favorite', body: { id }, mediaType: 'application/json' });
-      toast.success('已收藏');
+      await __request(OpenAPI, {
+        method: "POST",
+        url: "/messages/favorite",
+        body: { id },
+        mediaType: "application/json",
+      });
+      toast.success("已收藏");
       await load();
     } catch (err: any) {
       toast.error(extractErrorMessage(err));
@@ -55,8 +65,13 @@ export function useOutboxList() {
 
   const unfavorite = async (id: string) => {
     try {
-      await __request(OpenAPI, { method: 'POST', url: '/messages/unfavorite', body: { id }, mediaType: 'application/json' });
-      toast.success('已取消收藏');
+      await __request(OpenAPI, {
+        method: "POST",
+        url: "/messages/unfavorite",
+        body: { id },
+        mediaType: "application/json",
+      });
+      toast.success("已取消收藏");
       await load();
     } catch (err: any) {
       toast.error(extractErrorMessage(err));
@@ -65,8 +80,13 @@ export function useOutboxList() {
 
   const markRead = async (id: string) => {
     try {
-      await __request(OpenAPI, { method: 'POST', url: '/messages/read/mark', body: { id }, mediaType: 'application/json' });
-      toast.success('已标记为已读');
+      await __request(OpenAPI, {
+        method: "POST",
+        url: "/messages/read/mark",
+        body: { id },
+        mediaType: "application/json",
+      });
+      toast.success("已标记为已读");
       await load();
     } catch (err: any) {
       toast.error(extractErrorMessage(err));
@@ -88,4 +108,3 @@ export function useOutboxList() {
     markRead,
   } as const;
 }
-

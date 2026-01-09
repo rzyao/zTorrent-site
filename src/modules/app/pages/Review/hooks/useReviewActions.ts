@@ -1,6 +1,6 @@
 ﻿import { useState } from "react";
 import { useReviewAction } from "./useReviewMutations";
-import { extractErrorMessage } from ".@/utils/cn";
+import { extractErrorMessage } from "../utils";
 import type { ReviewItem } from "../types";
 import { ReviewDto } from "@/api/models/ReviewDto";
 import { toast } from "sonner";

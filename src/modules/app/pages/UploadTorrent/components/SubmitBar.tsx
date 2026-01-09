@@ -1,6 +1,6 @@
 ﻿import React, { memo } from 'react';
 import { Button } from '@/modules/app/components/ui/button';
-import { AccessControl } from '@/components/AccessControl';
+import { AccessControl } from '@/permissions/AccessControl';
 import { Info, Upload } from 'lucide-react';
 
 /**
