@@ -2,8 +2,10 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/utils/cn";
-import { useRouteConfig, RouteItem } from "@/hooks/useRouteConfig";
+import { useRouteConfig } from "@/hooks/useRouteConfig";
+import { RouteConfig } from "@/types/routeConfig";
 import DynamicIcon from "@/modules/admin/components/DynamicIcon";
+import logoSvg from "@/assets/logo.svg";
 
 interface AdminSidebarProps {
   collapsed: boolean;
@@ -11,7 +13,7 @@ interface AdminSidebarProps {
 }
 
 interface MenuItemProps {
-  item: RouteItem;
+  item: RouteConfig;
   parentPath: string;
   depth: number;
   collapsed: boolean;
@@ -23,7 +25,7 @@ interface MenuItemProps {
 /**
  * 递归检查当前路径是否在某个菜单项或其子孙项中
  */
-function isPathActiveInTree(item: RouteItem, parentPath: string, currentPath: string): boolean {
+function isPathActiveInTree(item: RouteConfig, parentPath: string, currentPath: string): boolean {
   const itemPath = item.path.startsWith("/") ? item.path : `${parentPath}/${item.path}`;
   const normalizedPath = itemPath.replace(/\/+/g, "/");
 
@@ -76,21 +78,21 @@ function MenuItem({
         <button
           onClick={() => toggleMenu(item.id)}
           className={cn(
-            "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-gray-50",
-            isActive || isParentActive ? "text-admin-primary" : "text-gray-600",
+            "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-gray-50",
+            isActive || isParentActive ? "text-admin-primary" : "text-gray-900",
             collapsed && "justify-center px-2",
           )}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 whitespace-nowrap">
             {iconName && (
               <DynamicIcon
                 iconName={iconName}
                 size={depth === 0 ? 18 : 16}
-                className={isActive || isParentActive ? "text-admin-primary" : "text-gray-400"}
+                className={isActive || isParentActive ? "text-admin-primary" : "text-gray-600"}
               />
             )}
             {!collapsed && (
-              <span className={isActive || isParentActive ? "text-admin-primary" : "text-gray-600"}>
+              <span className={isActive || isParentActive ? "text-admin-primary" : "text-gray-900"}>
                 {item.name || item.path}
               </span>
             )}
@@ -135,8 +137,8 @@ function MenuItem({
         to={href}
         end
         className={cn(
-          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm no-underline transition-colors hover:bg-gray-50",
-          isActive ? "text-admin-primary font-medium" : "text-gray-500",
+          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm whitespace-nowrap no-underline transition-colors hover:bg-gray-50",
+          isActive ? "text-admin-primary" : "text-gray-900",
           collapsed && "justify-center px-2",
         )}
       >
@@ -144,7 +146,7 @@ function MenuItem({
           <DynamicIcon
             iconName={iconName}
             size={depth === 0 ? 18 : 16}
-            className={isActive ? "text-admin-primary" : "text-gray-400"}
+            className={isActive ? "text-admin-primary" : "text-gray-600"}
           />
         )}
         {!collapsed && <span>{item.name || item.path}</span>}
@@ -168,7 +170,7 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
   const findExpandedIds = useMemo(() => {
     const result: string[] = [];
 
-    function traverse(items: RouteItem[], parentPath: string): boolean {
+    function traverse(items: RouteConfig[], parentPath: string): boolean {
       for (const item of items) {
         const itemPath = item.path.startsWith("/") ? item.path : `${parentPath}/${item.path}`;
         const normalizedPath = itemPath.replace(/\/+/g, "/");
@@ -228,19 +230,19 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
         collapsed ? "w-16" : "w-64",
       )}
     >
-      {/* 顶部品牌区域 */}
-      <div className="flex h-16 shrink-0 items-center gap-3 border-b border-gray-100 px-4">
-        {/* 使用橘子 emoji 作为 Logo 占位 */}
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-linear-to-br from-orange-400 to-orange-500 text-xl shadow-sm">
-          🍊
-        </div>
+      {/* 顶部品牌区域 - 高度与右侧 header 一致 */}
+      <div className="flex h-[49px] shrink-0 items-center gap-3 border-b border-gray-100 px-4">
+        {/* 使用真实 Logo */}
+        <img src={logoSvg} alt="GuoYuan" className="h-8 w-8" />
         {!collapsed && (
           <span className="text-lg font-semibold tracking-tight text-gray-800">GuoYuan</span>
         )}
       </div>
 
       {/* 菜单区域 */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
+      <nav
+        className={cn("flex-1 overflow-x-hidden overflow-y-auto py-4", collapsed ? "px-2" : "px-3")}
+      >
         <div className="space-y-1">
           {visibleRoutes.length > 0 ? (
             visibleRoutes.map((item) => (
@@ -261,11 +263,11 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
         </div>
       </nav>
 
-      {/* 底部折叠按钮 */}
-      <div className="shrink-0 border-t border-gray-100 p-3">
+      {/* 底部折叠按钮 - 高度与顶部一致 */}
+      <div className="flex h-[49px] shrink-0 items-center justify-center border-t border-gray-100">
         <button
           onClick={() => onCollapse(!collapsed)}
-          className="flex w-full items-center justify-center rounded-lg py-2 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600"
+          className="flex items-center justify-center rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600"
         >
           {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
         </button>

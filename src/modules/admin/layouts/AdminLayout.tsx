@@ -1,5 +1,5 @@
-﻿import { Suspense, useState } from "react";
-import { Outlet } from "react-router-dom";
+﻿import { Suspense, useState, useCallback } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import { ConfigProvider, App } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
 import "@/modules/admin/styles/admin.css";
@@ -7,6 +7,9 @@ import { AdminSidebar } from "./AdminSidebar";
 import { RouteProgressBar } from "@/modules/app/components/ui/RouteProgressBar";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";
 import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
+import { useKeepAliveTabs } from "./KeepAlive/useKeepAliveTabs";
+import KeepAliveTabs from "./KeepAlive/KeepAliveTabs";
+import KeepAliveContent from "./KeepAlive/KeepAliveContent";
 
 function FaviconInjector() {
   useDynamicFavicon();
@@ -15,6 +18,22 @@ function FaviconInjector() {
 
 export function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const navigate = useNavigate();
+
+  // KeepAlive 标签页状态管理
+  const { items, activeKey, onEdit, handleTabClick } = useKeepAliveTabs();
+
+  // 刷新当前页面
+  const handleRefresh = useCallback(() => {
+    setRefreshKey((prev) => prev + 1);
+  }, []);
+
+  // 退出登录
+  const handleLogout = useCallback(() => {
+    // TODO: 实现真正的退出登录逻辑
+    navigate("/app/login");
+  }, [navigate]);
 
   return (
     <ConfigProvider
@@ -39,19 +58,22 @@ export function AdminLayout() {
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="flex min-h-0 min-w-0 flex-1 flex-col"
             >
-              {/* 顶部简单的 Header (可选，如果需要可以后续丰富) */}
-              <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-100 bg-white px-6">
-                <div className="text-sm font-medium text-gray-500">后台管理系统</div>
-                <div className="flex items-center gap-4">
-                  {/* 这里可以放通知、搜索、用户头像等 */}
-                  <div className="h-8 w-8 rounded-full bg-gray-200" />
-                </div>
-              </header>
+              {/* 顶部标签页导航 */}
+              <KeepAliveTabs
+                items={items}
+                activeKey={activeKey}
+                onEdit={onEdit}
+                onTabClick={handleTabClick}
+                handleRefresh={handleRefresh}
+                handleLogout={handleLogout}
+              />
 
-              <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-6">
+              <div className="flex min-h-0 flex-1 flex-col overflow-auto">
                 <AnimatePresence mode="wait">
                   <Suspense fallback={<RouteProgressBar />}>
-                    <Outlet />
+                    <KeepAliveContent items={items} activeKey={activeKey}>
+                      <Outlet />
+                    </KeepAliveContent>
                   </Suspense>
                 </AnimatePresence>
               </div>

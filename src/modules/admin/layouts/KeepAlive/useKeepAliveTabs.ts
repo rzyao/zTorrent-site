@@ -63,9 +63,15 @@ export const useKeepAliveTabs = (menuItems?: any[]) => {
     setActiveKey(path);
 
     setItems((prev) => {
-      const existing = prev.find((item) => item.key === path);
-      if (existing) {
-        return prev;
+      const existingIndex = prev.findIndex((item) => item.key === path);
+      if (existingIndex !== -1) {
+        // 更新已存在标签的 children，确保内容是最新的
+        const updated = [...prev];
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          children: outlet,
+        };
+        return updated;
       }
 
       return [
@@ -78,7 +84,7 @@ export const useKeepAliveTabs = (menuItems?: any[]) => {
         },
       ];
     });
-  }, [location.pathname]);
+  }, [location.pathname, outlet]);
 
   // Update titles when menuItems load
   useEffect(() => {
@@ -87,7 +93,7 @@ export const useKeepAliveTabs = (menuItems?: any[]) => {
       prev.map((item) => ({
         ...item,
         label: getPageTitle(item.key),
-      }))
+      })),
     );
   }, [menuItems]);
 
@@ -119,7 +125,7 @@ export const useKeepAliveTabs = (menuItems?: any[]) => {
 
   const onEdit = (
     targetKey: React.MouseEvent | React.KeyboardEvent | string,
-    action: "add" | "remove"
+    action: "add" | "remove",
   ) => {
     if (action === "remove") {
       removeTab(targetKey as string);

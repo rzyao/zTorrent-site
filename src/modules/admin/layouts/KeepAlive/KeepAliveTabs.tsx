@@ -42,11 +42,10 @@ const KeepAliveTabs: React.FC<KeepAliveTabsProps> = ({
 
   return (
     <div
-      className="keep-alive-tabs-container"
+      className="keep-alive-tabs-container shrink-0"
       style={{
         display: "flex",
         flexDirection: "column",
-        height: "100%",
       }}
     >
       <Tabs

@@ -2,7 +2,7 @@
  * 动态路由渲染器
  * 根据后端配置动态生成路由
  */
-import { Suspense, createElement, useEffect } from "react";
+import React, { Suspense, createElement, useEffect } from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { RouteConfig } from "@/types/routeConfig";
 import { useRouteConfig } from "@/hooks/useRouteConfig";
@@ -83,15 +83,37 @@ function renderRoute(config: RouteConfig, parentPath: string = ""): React.ReactN
   if (children && children.length > 0) {
     // 过滤掉未启用的子路由
     const enabledChildren = children.filter((child) => child.isEnabled !== false);
-    return (
+    const mainRoute = (
       <Route key={id} path={path} element={element}>
         {enabledChildren.map((child) => renderRoute(child, fullPath))}
       </Route>
     );
+
+    // 如果父路由也是 index，则额外渲染一个索引路由
+    if (index) {
+      return (
+        <React.Fragment key={`${id}-group`}>
+          <Route key={`${id}-index`} index element={element} />
+          {mainRoute}
+        </React.Fragment>
+      );
+    }
+
+    return mainRoute;
   }
 
   if (index) {
-    return <Route key={id} index element={element} />;
+    const indexRoute = <Route key={`${id}-index`} index element={element} />;
+    // 如果指定了 path 且不为空，则同时渲染路径路由，解决如 /admin/users/list 访问不到的问题
+    if (path && path !== "") {
+      return (
+        <React.Fragment key={`${id}-group`}>
+          {indexRoute}
+          <Route key={id} path={path} element={element} />
+        </React.Fragment>
+      );
+    }
+    return indexRoute;
   }
 
   return <Route key={id} path={path} element={element} />;

@@ -24,7 +24,6 @@
 .keep-alive-tabs-container > .ant-tabs > .ant-tabs-nav {
   margin-bottom: 0 !important;
   border-bottom: 0 !important;
-  padding-left: 12px; /* 为最左侧 Tab 的左下角曲线留出空间 */
 }
 
 /* Tab 列表使用 Flex 布局，实现 Chrome 风格的自适应压缩 */
