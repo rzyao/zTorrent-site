@@ -96,10 +96,21 @@
   color: #1677ff !important;
 }
 
-/* 自定义滚动条 */
+/* ============================================================
+   滚动条样式 (Scrollbar Styles)
+   参考 Ant Design 5.x Table 组件滚动条设计
+   特性：细长、圆角、hover 显示、平滑过渡
+   ============================================================ */
+
+/* 基础滚动条样式 */
 .admin-scrollbar::-webkit-scrollbar {
   width: 8px;
   height: 8px;
+}
+
+.admin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
 }
 
 .admin-scrollbar::-webkit-scrollbar-thumb {
@@ -107,8 +118,70 @@
   border-radius: 4px;
   border: 2px solid transparent;
   background-clip: content-box;
+  transition: background 0.3s ease;
 }
 
 .admin-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.35);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.admin-scrollbar::-webkit-scrollbar-thumb:active {
+  background: rgba(0, 0, 0, 0.45);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.admin-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* 表格专用滚动条 - 更窄更精致 */
+.table-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.table-scrollbar::-webkit-scrollbar-track {
+  background: #fafafa;
+  border-radius: 3px;
+}
+
+.table-scrollbar::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.table-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.table-scrollbar::-webkit-scrollbar-thumb:active {
+  background: #787878;
+}
+
+/* 隐藏滚动条但保持滚动功能（hover 时显示） */
+.scrollbar-on-hover::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.scrollbar-on-hover:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.scrollbar-on-hover:hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* 兼容 Firefox */
+.admin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+
+.table-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #fafafa;
 }
