@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { App, Card, Space, Typography, Table, Tag, Input, Pagination, Tabs, Button } from "antd";
 import { useParams } from "react-router-dom";
 import { TorrentsRecordService } from "@/api/services/TorrentsRecordService";
@@ -165,7 +165,7 @@ export default function UserDownloadRecordsPage() {
   ];
 
   return (
-    <Space direction="vertical" size="large" style={{ width: "100%" }}>
+    <Space orientation="vertical" size="large" style={{ width: "100%" }}>
       <Card>
         <Space style={{ width: "100%", justifyContent: "space-between" }}>
           <Space>

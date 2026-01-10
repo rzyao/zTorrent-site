@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import {
   App,
   Button,
@@ -150,7 +150,7 @@ export default function TicketDetail() {
   };
 
   return (
-    <Space direction="vertical" size={12} style={{ width: "100%" }}>
+    <Space orientation="vertical" size={12} style={{ width: "100%" }}>
       <Card
         loading={loading}
         title={`工单详情 #${id}`}
@@ -191,7 +191,7 @@ export default function TicketDetail() {
           dataSource={replies}
           renderItem={(it: any) => (
             <List.Item>
-              <Space direction="vertical" style={{ width: "100%" }}>
+              <Space orientation="vertical" style={{ width: "100%" }}>
                 <div>{it?.content}</div>
                 {/* 附件列表（如有） */}
                 {Array.isArray(it?.attachments) && it.attachments.length > 0 ? (

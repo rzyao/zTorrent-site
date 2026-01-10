@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { App, Button, Card, Form, Input, Modal, Select, Space, Statistic, Table, Tag } from "antd";
 import { formatDate } from "@/modules/admin/utils/formatDate";
 import { PlusOutlined } from "@ant-design/icons";
@@ -177,7 +177,7 @@ export default function TicketsList() {
   ];
 
   return (
-    <Space direction="vertical" size={12} style={{ width: "100%" }}>
+    <Space orientation="vertical" size={12} style={{ width: "100%" }}>
       {/* 顶部统计卡片：展示各状态工单数量 */}
       <Space wrap>
         <Card>

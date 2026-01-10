@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Modal, Space, Typography, Tabs } from "antd";
 import PermissionTree from "@/modules/admin/pages/users-security/permissions/perms/PermissionTree";
 import type { Role } from "../types";
@@ -40,7 +40,7 @@ export const PermissionAssignModal: React.FC<PermissionAssignModalProps> = ({
     <Modal
       open={isPermissionModalOpen && !!selectedRole}
       title={
-        <Space direction="vertical" size={4}>
+        <Space orientation="vertical" size={4}>
           <Typography.Text>分配权限</Typography.Text>
           {selectedRole && (
             <Typography.Text type="secondary">

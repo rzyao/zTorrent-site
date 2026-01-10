@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Modal, Space, Typography, Tabs, App } from "antd";
 import PermissionTree from "@/modules/admin/pages/users-security/permissions/perms/PermissionTree";
 import { LevelsService } from "@/api/services/LevelsService";
@@ -36,7 +36,7 @@ export const PermissionAssignModal: React.FC<PermissionAssignModalProps> = ({
     <Modal
       open={permOpen && !!permTarget}
       title={
-        <Space direction="vertical" size={4}>
+        <Space orientation="vertical" size={4}>
           <Typography.Text>分配权限</Typography.Text>
           {permTarget && (
             <Typography.Text type="secondary">

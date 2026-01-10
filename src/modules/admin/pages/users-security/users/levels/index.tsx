@@ -1,4 +1,4 @@
-import { Space } from "antd";
+﻿import { Space } from "antd";
 import { useLevelManagement } from "./hooks/useLevelManagement";
 import { LevelSearch } from "./components/LevelSearch";
 import { LevelTable } from "./components/LevelTable";
@@ -47,7 +47,7 @@ export default function LevelsPage() {
 
   return (
     <div style={{ height: "100%", overflowY: "auto" }}>
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+      <Space orientation="vertical" size="large" style={{ width: "100%" }}>
         <LevelSearch
           searchKey={searchKey}
           setSearchKey={setSearchKey}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import {
   App,
   Button,
@@ -144,7 +144,7 @@ export default function PlaylistDetail() {
   }
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <Space orientation="vertical" style={{ width: "100%" }} size="large">
       <Card
         loading={loading}
         title={`片单详情：${detail?.title || id}`}
