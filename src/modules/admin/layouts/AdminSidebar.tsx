@@ -1,13 +1,156 @@
-﻿import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect, useMemo } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/utils/cn";
-import { useRouteConfig } from "@/hooks/useRouteConfig";
+import { useRouteConfig, RouteItem } from "@/hooks/useRouteConfig";
 import DynamicIcon from "@/modules/admin/components/DynamicIcon";
 
 interface AdminSidebarProps {
   collapsed: boolean;
   onCollapse: (collapsed: boolean) => void;
+}
+
+interface MenuItemProps {
+  item: RouteItem;
+  parentPath: string;
+  depth: number;
+  collapsed: boolean;
+  expandedMenus: Set<string>;
+  toggleMenu: (id: string) => void;
+  location: ReturnType<typeof useLocation>;
+}
+
+/**
+ * 递归检查当前路径是否在某个菜单项或其子孙项中
+ */
+function isPathActiveInTree(item: RouteItem, parentPath: string, currentPath: string): boolean {
+  const itemPath = item.path.startsWith("/") ? item.path : `${parentPath}/${item.path}`;
+  const normalizedPath = itemPath.replace(/\/+/g, "/");
+
+  // 精确匹配当前项
+  if (currentPath === normalizedPath) {
+    return true;
+  }
+
+  // 递归检查子项
+  if (item.children && item.children.length > 0) {
+    return item.children.some((child) => isPathActiveInTree(child, normalizedPath, currentPath));
+  }
+
+  return false;
+}
+
+/**
+ * 递归菜单项组件 - 支持无限嵌套
+ */
+function MenuItem({
+  item,
+  parentPath,
+  depth,
+  collapsed,
+  expandedMenus,
+  toggleMenu,
+  location,
+}: MenuItemProps) {
+  const iconName = (item as any).icon as string | undefined;
+  const href = (item.path.startsWith("/") ? item.path : `${parentPath}/${item.path}`).replace(
+    /\/+/g,
+    "/",
+  );
+  const hasChildren =
+    item.children && item.children.filter((c) => c.isVisible !== false).length > 0;
+  const isExpanded = expandedMenus.has(item.id);
+
+  // 检查当前项或其子孙项是否激活
+  const isActive = location.pathname === href;
+  const isChildActive = hasChildren && isPathActiveInTree(item, parentPath, location.pathname);
+  const isParentActive = isChildActive && !isActive;
+
+  // 缩进样式（根据深度调整）
+  const indentClass = depth > 0 ? "ml-4 border-l border-gray-100 pl-4" : "";
+
+  // 带子菜单的项目
+  if (hasChildren) {
+    return (
+      <div className={cn(depth > 0 && "mt-1", indentClass)}>
+        <button
+          onClick={() => toggleMenu(item.id)}
+          className={cn(
+            "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-gray-50",
+            isActive || isParentActive ? "text-admin-primary" : "text-gray-600",
+            collapsed && "justify-center px-2",
+          )}
+        >
+          <div className="flex items-center gap-3">
+            {iconName && (
+              <DynamicIcon
+                iconName={iconName}
+                size={depth === 0 ? 18 : 16}
+                className={isActive || isParentActive ? "text-admin-primary" : "text-gray-400"}
+              />
+            )}
+            {!collapsed && (
+              <span className={isActive || isParentActive ? "text-admin-primary" : "text-gray-600"}>
+                {item.name || item.path}
+              </span>
+            )}
+          </div>
+          {!collapsed && (
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 transition-transform",
+                isActive || isParentActive ? "text-admin-primary" : "text-gray-400",
+                isExpanded && "rotate-180",
+              )}
+            />
+          )}
+        </button>
+        {/* 递归渲染子菜单 */}
+        {isExpanded && !collapsed && (
+          <div className="mt-1 space-y-1">
+            {item.children
+              ?.filter((c) => c.isVisible !== false)
+              .map((child) => (
+                <MenuItem
+                  key={child.id}
+                  item={child}
+                  parentPath={href}
+                  depth={depth + 1}
+                  collapsed={collapsed}
+                  expandedMenus={expandedMenus}
+                  toggleMenu={toggleMenu}
+                  location={location}
+                />
+              ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // 普通菜单项（无子菜单）
+  return (
+    <div className={cn(depth > 0 && "mt-1", indentClass)}>
+      <NavLink
+        to={href}
+        end
+        className={cn(
+          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm no-underline transition-colors hover:bg-gray-50",
+          isActive ? "text-admin-primary font-medium" : "text-gray-500",
+          collapsed && "justify-center px-2",
+        )}
+      >
+        {iconName && (
+          <DynamicIcon
+            iconName={iconName}
+            size={depth === 0 ? 18 : 16}
+            className={isActive ? "text-admin-primary" : "text-gray-400"}
+          />
+        )}
+        {!collapsed && <span>{item.name || item.path}</span>}
+      </NavLink>
+    </div>
+  );
 }
 
 export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
@@ -19,36 +162,55 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
   const adminChildren = adminRoute?.children || [];
   const visibleRoutes = adminChildren.filter((r) => r.isVisible !== false);
 
-  // 自动展开逻辑：当路径变化时，确保父菜单是展开状态
+  /**
+   * 递归查找需要展开的菜单 ID 列表
+   */
+  const findExpandedIds = useMemo(() => {
+    const result: string[] = [];
+
+    function traverse(items: RouteItem[], parentPath: string): boolean {
+      for (const item of items) {
+        const itemPath = item.path.startsWith("/") ? item.path : `${parentPath}/${item.path}`;
+        const normalizedPath = itemPath.replace(/\/+/g, "/");
+
+        if (item.children && item.children.length > 0) {
+          const childActive = traverse(item.children, normalizedPath);
+          if (childActive) {
+            result.push(item.id);
+            return true;
+          }
+        }
+
+        if (
+          location.pathname === normalizedPath ||
+          location.pathname.startsWith(normalizedPath + "/")
+        ) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    traverse(visibleRoutes, "/admin");
+    return result;
+  }, [location.pathname, visibleRoutes]);
+
+  // 自动展开逻辑：当路径变化时，确保所有祖先菜单都是展开状态
   useEffect(() => {
     if (collapsed) return;
 
-    visibleRoutes.forEach((item) => {
-      // 规范化父路径
-      const parentPath = item.path.startsWith("/") ? item.path : `/admin/${item.path}`;
-      const normalizedParentPath = parentPath.replace(/\/+/g, "/");
-
-      const isParentOfActive = item.children?.some((child) => {
-        const childPath = child.path.startsWith("/")
-          ? child.path
-          : `${normalizedParentPath}/${child.path}`;
-        const normalizedChildPath = childPath.replace(/\/+/g, "/");
-        return (
-          location.pathname === normalizedChildPath ||
-          location.pathname.startsWith(normalizedChildPath + "/")
-        );
-      });
-
-      if (isParentOfActive) {
-        setExpandedMenus((prev) => {
-          if (prev.has(item.id)) return prev;
-          const next = new Set(prev);
-          next.add(item.id);
-          return next;
-        });
+    setExpandedMenus((prev) => {
+      const next = new Set(prev);
+      let changed = false;
+      for (const id of findExpandedIds) {
+        if (!next.has(id)) {
+          next.add(id);
+          changed = true;
+        }
       }
+      return changed ? next : prev;
     });
-  }, [location.pathname, collapsed, visibleRoutes]);
+  }, [findExpandedIds, collapsed]);
 
   const toggleMenu = (id: string) => {
     setExpandedMenus((prev) => {
@@ -81,128 +243,18 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
       <nav className="flex-1 overflow-y-auto px-3 py-4">
         <div className="space-y-1">
           {visibleRoutes.length > 0 ? (
-            visibleRoutes.map((item) => {
-              const iconName = (item as any).icon as string | undefined;
-              const href = (item.path.startsWith("/") ? item.path : `/admin/${item.path}`).replace(
-                /\/+/g,
-                "/",
-              );
-              const hasChildren = item.children && item.children.length > 0;
-              const isExpanded = expandedMenus.has(item.id);
-
-              // 带子菜单的项目
-              if (hasChildren) {
-                // 检查子路由是否激活 (精确匹配)
-                const isParentActive = item.children?.some((child) => {
-                  const childHref = (
-                    child.path.startsWith("/") ? child.path : `${href}/${child.path}`
-                  ).replace(/\/+/g, "/");
-                  return location.pathname === childHref;
-                });
-
-                return (
-                  <div key={item.id}>
-                    <button
-                      onClick={() => toggleMenu(item.id)}
-                      className={cn(
-                        "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-gray-50",
-                        isParentActive ? "text-admin-primary" : "text-gray-600",
-                        collapsed && "justify-center px-2",
-                      )}
-                    >
-                      <div className="flex items-center gap-3">
-                        {iconName && (
-                          <DynamicIcon
-                            iconName={iconName}
-                            size={18}
-                            className={isParentActive ? "text-admin-primary" : "text-gray-400"}
-                          />
-                        )}
-                        {!collapsed && (
-                          <span className={isParentActive ? "text-admin-primary" : "text-gray-600"}>
-                            {item.name || item.path}
-                          </span>
-                        )}
-                      </div>
-                      {!collapsed && (
-                        <ChevronDown
-                          className={cn(
-                            "h-4 w-4 transition-transform",
-                            isParentActive ? "text-admin-primary" : "text-gray-400",
-                            isExpanded && "rotate-180",
-                          )}
-                        />
-                      )}
-                    </button>
-                    {/* 子菜单 */}
-                    {isExpanded && !collapsed && (
-                      <div className="mt-1 ml-4 space-y-1 border-l border-gray-100 pl-4">
-                        {item.children
-                          ?.filter((c) => c.isVisible !== false)
-                          .map((child) => {
-                            const childHref = child.path.startsWith("/")
-                              ? child.path
-                              : `${href}/${child.path}`;
-                            const normalizedChildHref = childHref.replace(/\/+/g, "/");
-                            const childIcon = (child as any).icon as string | undefined;
-                            // 精确匹配当前路径
-                            const isChildActive = location.pathname === normalizedChildHref;
-                            return (
-                              <NavLink
-                                key={child.id}
-                                to={normalizedChildHref}
-                                end
-                                className={cn(
-                                  "flex items-center gap-2 rounded-lg px-3 py-2 text-sm no-underline transition-colors hover:bg-gray-50",
-                                  isChildActive
-                                    ? "text-admin-primary font-medium"
-                                    : "text-gray-500",
-                                )}
-                              >
-                                {childIcon && (
-                                  <DynamicIcon
-                                    iconName={childIcon}
-                                    size={16}
-                                    className={
-                                      isChildActive ? "text-admin-primary" : "text-gray-400"
-                                    }
-                                  />
-                                )}
-                                <span>{child.name || child.path}</span>
-                              </NavLink>
-                            );
-                          })}
-                      </div>
-                    )}
-                  </div>
-                );
-              }
-
-              // 普通菜单项（无子菜单）
-              // 精确匹配当前路径
-              const isItemActive = location.pathname === href;
-              return (
-                <NavLink
-                  key={item.id}
-                  to={href}
-                  end
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium no-underline transition-colors hover:bg-gray-50",
-                    isItemActive ? "text-admin-primary" : "text-gray-600",
-                    collapsed && "justify-center px-2",
-                  )}
-                >
-                  {iconName && (
-                    <DynamicIcon
-                      iconName={iconName}
-                      size={18}
-                      className={isItemActive ? "text-admin-primary" : "text-gray-400"}
-                    />
-                  )}
-                  {!collapsed && <span>{item.name || item.path}</span>}
-                </NavLink>
-              );
-            })
+            visibleRoutes.map((item) => (
+              <MenuItem
+                key={item.id}
+                item={item}
+                parentPath="/admin"
+                depth={0}
+                collapsed={collapsed}
+                expandedMenus={expandedMenus}
+                toggleMenu={toggleMenu}
+                location={location}
+              />
+            ))
           ) : (
             <div className="px-3 py-2 text-sm text-gray-400">加载中...</div>
           )}

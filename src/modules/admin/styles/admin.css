@@ -87,6 +87,15 @@
   background: var(--antd-bg-layout) !important;
 }
 
+/* 分页组件选中页码颜色 */
+.admin-layout .ant-pagination-item-active {
+  border-color: #1677ff !important;
+}
+
+.admin-layout .ant-pagination-item-active a {
+  color: #1677ff !important;
+}
+
 /* 自定义滚动条 */
 .admin-scrollbar::-webkit-scrollbar {
   width: 8px;

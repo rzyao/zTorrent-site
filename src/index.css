@@ -69,6 +69,11 @@
   --color-admin-success: #52c41a;
   --color-admin-warning: #faad14;
   --color-admin-error: #ff4d4f;
+
+  /* Admin 模块 Ant Design 风格工具类（bg-antd-primary 等）*/
+  --color-antd-primary: #1677ff;
+  --color-antd-primary-hover: #4096ff;
+  --color-antd-primary-active: #0958d9;
 }
 
 /* ============================================================
