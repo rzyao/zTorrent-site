@@ -106,28 +106,31 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
                       onClick={() => toggleMenu(item.id)}
                       className={cn(
                         "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-gray-50",
+                        isParentActive ? "text-admin-primary" : "text-gray-600",
                         collapsed && "justify-center px-2",
                       )}
-                      style={{ color: isParentActive ? "#1677ff" : "#4b5563" }}
                     >
                       <div className="flex items-center gap-3">
                         {iconName && (
                           <DynamicIcon
                             iconName={iconName}
                             size={18}
-                            style={{ color: isParentActive ? "#1677ff" : "#9ca3af" }}
+                            className={isParentActive ? "text-admin-primary" : "text-gray-400"}
                           />
                         )}
                         {!collapsed && (
-                          <span style={{ color: isParentActive ? "#1677ff" : "#4b5563" }}>
+                          <span className={isParentActive ? "text-admin-primary" : "text-gray-600"}>
                             {item.name || item.path}
                           </span>
                         )}
                       </div>
                       {!collapsed && (
                         <ChevronDown
-                          className={cn("h-4 w-4 transition-transform", isExpanded && "rotate-180")}
-                          style={{ color: isParentActive ? "#1677ff" : "#9ca3af" }}
+                          className={cn(
+                            "h-4 w-4 transition-transform",
+                            isParentActive ? "text-admin-primary" : "text-gray-400",
+                            isExpanded && "rotate-180",
+                          )}
                         />
                       )}
                     </button>
@@ -149,17 +152,20 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
                                 key={child.id}
                                 to={normalizedChildHref}
                                 end
-                                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm no-underline transition-colors hover:bg-gray-50"
-                                style={{
-                                  color: isChildActive ? "#1677ff" : "#6b7280",
-                                  fontWeight: isChildActive ? 500 : 400,
-                                }}
+                                className={cn(
+                                  "flex items-center gap-2 rounded-lg px-3 py-2 text-sm no-underline transition-colors hover:bg-gray-50",
+                                  isChildActive
+                                    ? "text-admin-primary font-medium"
+                                    : "text-gray-500",
+                                )}
                               >
                                 {childIcon && (
                                   <DynamicIcon
                                     iconName={childIcon}
                                     size={16}
-                                    style={{ color: isChildActive ? "#1677ff" : "#9ca3af" }}
+                                    className={
+                                      isChildActive ? "text-admin-primary" : "text-gray-400"
+                                    }
                                   />
                                 )}
                                 <span>{child.name || child.path}</span>
@@ -180,16 +186,17 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
                   key={item.id}
                   to={href}
                   end
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium no-underline transition-colors hover:bg-gray-50"
-                  style={{
-                    color: isItemActive ? "#1677ff" : "#4b5563",
-                  }}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium no-underline transition-colors hover:bg-gray-50",
+                    isItemActive ? "text-admin-primary" : "text-gray-600",
+                    collapsed && "justify-center px-2",
+                  )}
                 >
                   {iconName && (
                     <DynamicIcon
                       iconName={iconName}
                       size={18}
-                      style={{ color: isItemActive ? "#1677ff" : "#9ca3af" }}
+                      className={isItemActive ? "text-admin-primary" : "text-gray-400"}
                     />
                   )}
                   {!collapsed && <span>{item.name || item.path}</span>}

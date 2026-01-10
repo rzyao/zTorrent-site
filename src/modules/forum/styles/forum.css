@@ -1,18 +1,7 @@
-@import "tailwindcss";
-
-@custom-variant dark (&:is(.dark *));
-@variant dark (&:where(.dark, .dark *));
-
-@theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-}
-
-:root {
-  --radius: 0.5rem;
-}
+/* ============================================================
+   Forum 模块专用样式
+   注意：不要在此处导入 tailwindcss，全局 index.css 已导入
+   ============================================================ */
 
 /* 论坛主体区域滚动条 (Discourse 风格) */
 .scrollbar-main {
