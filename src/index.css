@@ -74,6 +74,13 @@
   --color-antd-primary: #1677ff;
   --color-antd-primary-hover: #4096ff;
   --color-antd-primary-active: #0958d9;
+
+  /* 语义化颜色 */
+  --color-error: #ff4d4f;
+  --color-error-hover: #ff7875;
+  --color-error-active: #d9363e;
+  --color-success: #52c41a;
+  --color-warning: #faad14;
 }
 
 /* ============================================================

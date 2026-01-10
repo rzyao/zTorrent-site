@@ -79,9 +79,9 @@ export default function CategoriesView({ kind, genre }: CategoriesViewProps) {
           value={enabledFilter}
           onChange={setEnabledFilter}
           options={[
-            { label: "状�? 全部", value: undefined },
-            { label: "状�? 启用", value: true },
-            { label: "状�? 禁用", value: false },
+            { label: "状态 全部", value: undefined },
+            { label: "状态 启用", value: true },
+            { label: "状态 禁用", value: false },
           ]}
         />
 

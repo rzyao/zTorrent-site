@@ -209,11 +209,11 @@ export const componentRegistry: Record<string, LazyComponent> = {
   RouteManagePage: lazy(() => import("@/modules/admin/pages/system/routes")),
   // 字典管理
   AdminPunishmentTypes: lazy(
-    () => import("@/modules/admin/pages/system/dictionary/PunishmentTypes"),
+    () => import("@/modules/admin/pages/system/dictionary/punishment-types"),
   ),
-  AdminBanReasons: lazy(() => import("@/modules/admin/pages/system/dictionary/BanReasons")),
-  AdminUnbanReasons: lazy(() => import("@/modules/admin/pages/system/dictionary/UnbanReasons")),
-  AdminBanDays: lazy(() => import("@/modules/admin/pages/system/dictionary/BanDays")),
+  AdminBanReasons: lazy(() => import("@/modules/admin/pages/system/dictionary/ban-reasons")),
+  AdminUnbanReasons: lazy(() => import("@/modules/admin/pages/system/dictionary/unban-reasons")),
+  AdminBanDays: lazy(() => import("@/modules/admin/pages/system/dictionary/ban-days")),
 };
 
 /**

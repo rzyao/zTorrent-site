@@ -56,6 +56,8 @@ description: 自动生成或重构 Admin 模块的列表页面，遵循逻辑抽
         <description>在 `src/modules/admin/pages/` 下创建入口并注册路由。</description>
         <action>
             1. 实现 `Index.tsx`：注入 `use[Module]Logic`，通过 `DataTable` 渲染列表。
+               **注意**：页面组件使用 Fragment (`<>...</>`) 作为根容器，
+               严禁再包裹 `AdminPageContainer`，内边距由外层 Admin 布局 (`AdminLayout`) 统一提供。
             2. 更新 `src/routes/componentRegistry.ts`，确保导入路径正确。
         </action>
     </step>
@@ -84,5 +86,8 @@ description: 自动生成或重构 Admin 模块的列表页面，遵循逻辑抽
     </rule>
     <rule id="turbo_mode">
         所有的只读查看 (view_file)、目录创建 (mkdir)、简单的文件改名 (mv) 命令必须设置 `SafeToAutoRun: true`。
+    </rule>
+    <rule id="no_page_container" priority="HIGH">
+        页面组件 (Index.tsx) 严禁使用 `AdminPageContainer` 包裹。外层 Admin 布局已统一设置内边距 (`p-6`)，页面组件应直接使用 Fragment 或 `div` 作为根元素，避免重复内边距。
     </rule>
 </rules>

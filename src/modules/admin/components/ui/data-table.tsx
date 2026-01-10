@@ -3,6 +3,7 @@ import { cn } from "@/utils/cn";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table";
 import { Button } from "./button";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 
 // ============================================================
 // DataTable 高级表格组件
@@ -97,8 +98,10 @@ function Pagination({
           key={i}
           onClick={() => handlePageChange(i)}
           className={cn(
-            "flex h-8 min-w-8 items-center justify-center rounded-md px-3 text-sm transition-colors",
-            i === current ? "bg-antd-primary text-white" : "text-neutral-600 hover:bg-gray-100",
+            "flex h-8 min-w-[2rem] items-center justify-center rounded-md border text-sm transition-all",
+            i === current
+              ? "border-antd-primary text-antd-primary bg-white font-medium"
+              : "hover:border-antd-primary hover:text-antd-primary border-gray-200 bg-white text-neutral-600",
           )}
         >
           {i}
@@ -121,25 +124,6 @@ function Pagination({
 
       {/* 右侧：分页控制 */}
       <div className="flex items-center gap-4">
-        {/* 每页条数选择 */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm whitespace-nowrap text-neutral-500">每页</span>
-          <select
-            value={pageSize}
-            onChange={(e) => {
-              const newSize = Number(e.target.value);
-              onChange?.(1, newSize);
-            }}
-            className="focus:border-antd-primary focus:ring-antd-primary h-8 rounded-md border border-gray-200 bg-white px-2 py-1 text-sm text-neutral-700 transition-all focus:ring-1 focus:outline-none"
-          >
-            {pageSizeOptions.map((v) => (
-              <option key={v} value={v}>
-                {v} 条
-              </option>
-            ))}
-          </select>
-        </div>
-
         <div className="flex items-center gap-1">
           {/* 首页 */}
           <Button
@@ -147,7 +131,7 @@ function Pagination({
             size="sm"
             onClick={() => handlePageChange(1)}
             disabled={current === 1}
-            className="h-8 w-8 p-0"
+            className="hover:text-antd-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
           >
             <ChevronsLeft className="h-4 w-4" />
           </Button>
@@ -158,7 +142,7 @@ function Pagination({
             size="sm"
             onClick={() => handlePageChange(current - 1)}
             disabled={current === 1}
-            className="h-8 w-8 p-0"
+            className="hover:text-antd-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -172,7 +156,7 @@ function Pagination({
             size="sm"
             onClick={() => handlePageChange(current + 1)}
             disabled={current === totalPages}
-            className="h-8 w-8 p-0"
+            className="hover:text-antd-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -183,10 +167,32 @@ function Pagination({
             size="sm"
             onClick={() => handlePageChange(totalPages)}
             disabled={current === totalPages}
-            className="h-8 w-8 p-0"
+            className="hover:text-antd-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
           >
             <ChevronsRight className="h-4 w-4" />
           </Button>
+        </div>
+
+        {/* 每页条数选择 */}
+        <div className="flex items-center gap-2">
+          <Select
+            value={String(pageSize)}
+            onValueChange={(value) => {
+              const newSize = Number(value);
+              onChange?.(1, newSize);
+            }}
+          >
+            <SelectTrigger className="h-8 w-[110px]">
+              <SelectValue placeholder={`${pageSize} 条/页`} />
+            </SelectTrigger>
+            <SelectContent>
+              {pageSizeOptions.map((v) => (
+                <SelectItem key={v} value={String(v)}>
+                  {v} 条/页
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>

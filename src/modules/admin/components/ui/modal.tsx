@@ -158,7 +158,12 @@ export function Modal({
               : "top-[100px] left-1/2 -translate-x-1/2",
             className,
           )}
-          style={{ width: widthStyle, maxWidth: "calc(100vw - 32px)" }}
+          style={{
+            width: widthStyle,
+            maxWidth: "calc(100vw - 32px)",
+            fontFamily:
+              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+          }}
           onPointerDownOutside={(e) => {
             if (!maskClosable) {
               e.preventDefault();
@@ -213,7 +218,7 @@ export interface ConfirmModalProps extends Omit<ModalProps, "children"> {
  */
 export function ConfirmModal({
   content,
-  okButtonProps = { variant: "danger" },
+  okButtonProps = { variant: "primary", danger: true },
   ...props
 }: ConfirmModalProps) {
   return (

@@ -36,7 +36,31 @@ const REPLACEMENTS = [
     pattern: /bg-gradient-to-([a-z]+)/g,
     replacement: 'bg-linear-to-$1'
   },
-  // 7. 
+  // 7. Ring: ring-[2px] -> ring-2
+  {
+    pattern: /ring-\[(\d+)px\]/g,
+    replacement: 'ring-$1'
+  },
+  // 8. Data Boolean: data-[disabled] -> data-disabled
+  {
+    pattern: /data-\[([a-z]+)\](?=:)/g,
+    replacement: 'data-$1'
+  },
+  // 9. Arbitrary Variables: -[var(--name)] -> -(--name)
+  {
+    pattern: /-\[var\((--[^)]+)\)\]/g,
+    replacement: '-($1)'
+  },
+  // 10. Specific: min-w-[8rem] -> min-w-32
+  {
+    pattern: /min-w-\[8rem\]/g,
+    replacement: 'min-w-32'
+  },
+  // 11. Specific Color: bg-[#e6f4ff] -> bg-admin-primary-bg
+  {
+    pattern: /bg-\[#e6f4ff\]/g,
+    replacement: 'bg-admin-primary-bg'
+  }
 ];
 
 // --- 核心逻辑 ---
