@@ -1,4 +1,4 @@
-import React from "react";
+ï»¿import React from "react";
 import { Plus, Edit2, Trash2, ChevronRight, ChevronDown } from "lucide-react";
 import { useMovieCategories } from "../hooks/useMovieCategories";
 import { MovieCategoryDialog } from "./MovieCategoryDialog";
@@ -16,8 +16,8 @@ interface CategoryItem {
   enabled?: boolean;
   createdAt?: string;
   children?: CategoryItem[];
-  _level?: number; // ÓÃÓÚ±ê¼Ç²ã¼¶
-  _hasChildren?: boolean; // ÓÃÓÚ±ê¼ÇÊÇ·ñÓĞ×ÓÏî
+  _level?: number; // ç”¨äºæ ‡è®°å±‚çº§
+  _hasChildren?: boolean; // ç”¨äºæ ‡è®°æ˜¯å¦æœ‰å­é¡¹
 }
 
 export function MovieCategoriesView() {
@@ -48,7 +48,7 @@ export function MovieCategoriesView() {
     setExpandedKeys(newKeys);
   };
 
-  // ½«Ê÷ĞÎÊı¾İ±âÆ½»¯£¬Í¬Ê±±£Áô²ã¼¶ĞÅÏ¢
+  // å°†æ ‘å½¢æ•°æ®æ‰å¹³åŒ–ï¼ŒåŒæ—¶ä¿ç•™å±‚çº§ä¿¡æ¯
   const flattenData = React.useMemo(() => {
     const result: CategoryItem[] = [];
 
@@ -65,7 +65,7 @@ export function MovieCategoriesView() {
           _hasChildren: hasChildren,
         });
 
-        // ½öµ±Õ¹¿ªÊ±²ÅÌí¼Ó×ÓÏî
+        // ä»…å½“å±•å¼€æ—¶æ‰æ·»åŠ å­é¡¹
         if (hasChildren && isExpanded) {
           flatten(children, level + 1);
         }
@@ -76,11 +76,11 @@ export function MovieCategoriesView() {
     return result;
   }, [data, expandedKeys]);
 
-  // ¶¨ÒåÁĞÅäÖÃ
+  // å®šä¹‰åˆ—é…ç½®
   const columns: Column<CategoryItem>[] = [
     {
       key: "label",
-      title: "Ãû³Æ",
+      title: "åç§°",
       width: 300,
       render: (_, record) => {
         const isExpanded = expandedKeys.has(record.id);
@@ -119,27 +119,27 @@ export function MovieCategoriesView() {
     },
     {
       key: "sort",
-      title: "ÅÅĞò",
+      title: "æ’åº",
       dataIndex: "sort",
       render: (value) => value ?? 0,
     },
     {
       key: "enabled",
-      title: "×´Ì¬",
+      title: "çŠ¶æ€",
       render: (_, record) => (
         <Switch checked={!!record.enabled} onCheckedChange={() => toggleEnabled(record)} />
       ),
     },
     {
       key: "createdAt",
-      title: "´´½¨Ê±¼ä",
+      title: "åˆ›å»ºæ—¶é—´",
       render: (_, record) => (
         <span className="text-neutral-500">{formatDate(record.createdAt)}</span>
       ),
     },
     {
       key: "actions",
-      title: "²Ù×÷",
+      title: "æ“ä½œ",
       width: 180,
       render: (_, record) => (
         <div className="flex items-center gap-1">
@@ -153,7 +153,7 @@ export function MovieCategoriesView() {
             }}
           >
             <Edit2 className="mr-1 h-3.5 w-3.5" />
-            ±à¼­
+            ç¼–è¾‘
           </Button>
           <Button
             variant="text"
@@ -162,7 +162,7 @@ export function MovieCategoriesView() {
             onClick={() => handleRemove(record.id)}
           >
             <Trash2 className="mr-1 h-3.5 w-3.5" />
-            É¾³ı
+            åˆ é™¤
           </Button>
         </div>
       ),
@@ -176,14 +176,14 @@ export function MovieCategoriesView() {
         dataSource={flattenData}
         rowKey="id"
         loading={loading}
-        toolbarLeft={<h2 className="text-lg font-semibold text-neutral-900">µçÓ°·ÖÀà</h2>}
+        toolbarLeft={<h2 className="text-lg font-semibold text-neutral-900">ç”µå½±åˆ†ç±»</h2>}
         toolbarRight={
           <Button variant="primary" onClick={() => setIsCreateOpen(true)}>
             <Plus className="mr-1.5 h-4 w-4" />
-            ĞÂ½¨·ÖÀà
+            æ–°å»ºåˆ†ç±»
           </Button>
         }
-        emptyText="ÔİÎŞÊı¾İ"
+        emptyText="æš‚æ— æ•°æ®"
         className="h-full"
       />
 
@@ -191,7 +191,7 @@ export function MovieCategoriesView() {
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
         onSubmit={handleCreate}
-        title="ĞÂ½¨·ÖÀà"
+        title="æ–°å»ºåˆ†ç±»"
         loading={loading}
       />
 
@@ -200,7 +200,7 @@ export function MovieCategoriesView() {
         onOpenChange={setIsEditOpen}
         initialValues={editingItem}
         onSubmit={handleEdit}
-        title="±à¼­·ÖÀà"
+        title="ç¼–è¾‘åˆ†ç±»"
         loading={loading}
       />
     </>

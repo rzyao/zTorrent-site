@@ -14,13 +14,13 @@ import {
 } from "@ant-design/icons";
 
 /**
- * 菜单项原始配置接�?
+ * 菜单项原始配置接口
  * 将路径和标签分离，避免在组件内部创建 React 元素
  */
 export interface RawMenuItem {
   key: string;
   label: string;
-  path?: string; // 可点击的菜单项需�?path
+  path?: string; // 可点击的菜单项需要 path
   perm?: string;
   icon?: React.ReactNode;
   children?: RawMenuItem[];
@@ -28,10 +28,10 @@ export interface RawMenuItem {
 
 /**
  * 菜单图标映射（静态，只创建一次）
- * 支持多种 key 格式：路�?path、中文名称等
+ * 支持多种 key 格式：路由 path、中文名称等
  */
 export const MENU_ICONS: Record<string, React.ReactNode> = {
-  // 按路径匹�?
+  // 按路径匹配
   dashboard: <HomeOutlined />,
   system: <SettingOutlined />,
   "recommendation-config": <LayoutOutlined />,
@@ -48,7 +48,7 @@ export const MENU_ICONS: Record<string, React.ReactNode> = {
   tickets: <ToolOutlined />,
   routes: <MenuOutlined />,
   // 按中文名称匹配（后端动态路由使用）
-  仪表�? <HomeOutlined />,
+  仪表盘: <HomeOutlined />,
   系统设置: <SettingOutlined />,
   推荐配置: <LayoutOutlined />,
   导航管理: <MenuOutlined />,
@@ -60,7 +60,7 @@ export const MENU_ICONS: Record<string, React.ReactNode> = {
   魔力管理: <AppstoreOutlined />,
   用户管理: <TeamOutlined />,
   字典管理: <BookOutlined />,
-  邀请管�? <SafetyCertificateOutlined />,
+  邀请管理: <SafetyCertificateOutlined />,
   工单管理: <ToolOutlined />,
   路由管理: <MenuOutlined />,
 };
@@ -68,9 +68,9 @@ export const MENU_ICONS: Record<string, React.ReactNode> = {
 /**
  * 原始菜单配置（静态数据）
  * 优化点：
- * 1. 不包�?React 元素（如 <Link>），只保留纯数据
- * 2. icon 通过 key �?MENU_ICONS 映射获取
- * 3. 渲染时再动态生�?onClick 导航
+ * 1. 不包含 React 元素（如 <Link>），只保留纯数据
+ * 2. icon 通过 key 从 MENU_ICONS 映射获取
+ * 3. 渲染时再动态生成 onClick 导航
  */
 export const RAW_MENU_ITEMS: RawMenuItem[] = [
   {
@@ -381,30 +381,30 @@ export const RAW_MENU_ITEMS: RawMenuItem[] = [
   },
   {
     key: "invites",
-    label: "邀请管�?,
+    label: "邀请管理",
     perm: "manage-invites",
     children: [
       {
         key: "invites-list",
-        label: "邀请记�?,
+        label: "邀请记录",
         path: "/invites/list",
         perm: "manage-invites",
       },
       {
         key: "invites-quota",
-        label: "邀请名�?,
+        label: "邀请名额",
         path: "/invites/quota",
         perm: "manage-invites",
       },
       {
         key: "invites-statistics",
-        label: "邀请统�?,
+        label: "邀请统计",
         path: "/invites/statistics",
         perm: "manage-invites",
       },
       {
         key: "invites-send",
-        label: "发送邀�?,
+        label: "发送邀请",
         path: "/invites/send",
         perm: "send-official-invite",
       },

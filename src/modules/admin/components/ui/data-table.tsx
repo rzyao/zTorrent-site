@@ -1,43 +1,43 @@
-import * as React from "react";
+ï»¿import * as React from "react";
 import { cn } from "@/utils/cn";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table";
 import { Button } from "./button";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 // ============================================================
-// DataTable ¸ß¼¶±í¸ñ×é¼ş
-// °üº¬£º²Ù×÷À¸ (Toolbar)¡¢±í¸ñÖ÷Ìå (Table)¡¢·ÖÒ³À¸ (Pagination)
+// DataTable é«˜çº§è¡¨æ ¼ç»„ä»¶
+// åŒ…å«ï¼šæ“ä½œæ  (Toolbar)ã€è¡¨æ ¼ä¸»ä½“ (Table)ã€åˆ†é¡µæ  (Pagination)
 // ============================================================
 
 export interface Column<T> {
-  /** ÁĞ±êÊ¶·û */
+  /** åˆ—æ ‡è¯†ç¬¦ */
   key: string;
-  /** ÁĞ±êÌâ */
+  /** åˆ—æ ‡é¢˜ */
   title: React.ReactNode;
-  /** ÁĞ¿í¶È */
+  /** åˆ—å®½åº¦ */
   width?: string | number;
-  /** äÖÈ¾º¯Êı */
+  /** æ¸²æŸ“å‡½æ•° */
   render?: (value: any, record: T, index: number) => React.ReactNode;
-  /** Êı¾İ×Ö¶ÎÃû */
+  /** æ•°æ®å­—æ®µå */
   dataIndex?: keyof T;
-  /** ¶ÔÆë·½Ê½ */
+  /** å¯¹é½æ–¹å¼ */
   align?: "left" | "center" | "right";
 }
 
 export interface DataTableProps<T> {
-  /** ÁĞÅäÖÃ */
+  /** åˆ—é…ç½® */
   columns: Column<T>[];
-  /** Êı¾İÔ´ */
+  /** æ•°æ®æº */
   dataSource: T[];
-  /** ĞĞÎ¨Ò»±êÊ¶×Ö¶Î */
+  /** è¡Œå”¯ä¸€æ ‡è¯†å­—æ®µ */
   rowKey: keyof T | ((record: T) => string);
-  /** ÊÇ·ñ¼ÓÔØÖĞ */
+  /** æ˜¯å¦åŠ è½½ä¸­ */
   loading?: boolean;
-  /** ²Ù×÷À¸×ó²àÄÚÈİ */
+  /** æ“ä½œæ å·¦ä¾§å†…å®¹ */
   toolbarLeft?: React.ReactNode;
-  /** ²Ù×÷À¸ÓÒ²àÄÚÈİ */
+  /** æ“ä½œæ å³ä¾§å†…å®¹ */
   toolbarRight?: React.ReactNode;
-  /** ·ÖÒ³ÅäÖÃ */
+  /** åˆ†é¡µé…ç½® */
   pagination?: {
     current: number;
     pageSize: number;
@@ -45,14 +45,14 @@ export interface DataTableProps<T> {
     pageSizeOptions?: number[];
     onChange?: (page: number, pageSize: number) => void;
   };
-  /** ¿ÕÊı¾İÌáÊ¾ÎÄ°¸ */
+  /** ç©ºæ•°æ®æç¤ºæ–‡æ¡ˆ */
   emptyText?: string;
-  /** ×Ô¶¨ÒåÀàÃû */
+  /** è‡ªå®šä¹‰ç±»å */
   className?: string;
 }
 
 // ============================================================
-// ·ÖÒ³×é¼ş
+// åˆ†é¡µç»„ä»¶
 // ============================================================
 interface PaginationProps {
   current: number;
@@ -79,14 +79,14 @@ function Pagination({
     }
   };
 
-  // Éú³ÉÒ³Âë°´Å¥
+  // ç”Ÿæˆé¡µç æŒ‰é’®
   const renderPageNumbers = () => {
     const pages: React.ReactNode[] = [];
     const maxVisiblePages = 5;
     let startPage = Math.max(1, current - Math.floor(maxVisiblePages / 2));
     let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
-    // µ÷ÕûÆğÊ¼Ò³
+    // è°ƒæ•´èµ·å§‹é¡µ
     if (endPage - startPage + 1 < maxVisiblePages) {
       startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
@@ -113,17 +113,17 @@ function Pagination({
 
   return (
     <div className="flex items-center justify-between border-t border-gray-100 bg-white px-6 py-3">
-      {/* ×ó²à£ºÏÔÊ¾ÌõÄ¿ĞÅÏ¢ */}
+      {/* å·¦ä¾§ï¼šæ˜¾ç¤ºæ¡ç›®ä¿¡æ¯ */}
       <div className="text-sm text-neutral-500">
-        ¹² <span className="font-medium text-neutral-700">{total}</span> Ìõ£¬ µ±Ç°ÏÔÊ¾ {startItem}-
-        {endItem} Ìõ
+        å…± <span className="font-medium text-neutral-700">{total}</span> æ¡ï¼Œ å½“å‰æ˜¾ç¤º {startItem}-
+        {endItem} æ¡
       </div>
 
-      {/* ÓÒ²à£º·ÖÒ³¿ØÖÆ */}
+      {/* å³ä¾§ï¼šåˆ†é¡µæ§åˆ¶ */}
       <div className="flex items-center gap-4">
-        {/* Ã¿Ò³ÌõÊıÑ¡Ôñ */}
+        {/* æ¯é¡µæ¡æ•°é€‰æ‹© */}
         <div className="flex items-center gap-2">
-          <span className="text-sm whitespace-nowrap text-neutral-500">Ã¿Ò³</span>
+          <span className="text-sm whitespace-nowrap text-neutral-500">æ¯é¡µ</span>
           <select
             value={pageSize}
             onChange={(e) => {
@@ -134,14 +134,14 @@ function Pagination({
           >
             {pageSizeOptions.map((v) => (
               <option key={v} value={v}>
-                {v} Ìõ
+                {v} æ¡
               </option>
             ))}
           </select>
         </div>
 
         <div className="flex items-center gap-1">
-          {/* Ê×Ò³ */}
+          {/* é¦–é¡µ */}
           <Button
             variant="text"
             size="sm"
@@ -152,7 +152,7 @@ function Pagination({
             <ChevronsLeft className="h-4 w-4" />
           </Button>
 
-          {/* ÉÏÒ»Ò³ */}
+          {/* ä¸Šä¸€é¡µ */}
           <Button
             variant="text"
             size="sm"
@@ -163,10 +163,10 @@ function Pagination({
             <ChevronLeft className="h-4 w-4" />
           </Button>
 
-          {/* Ò³Âë */}
+          {/* é¡µç  */}
           <div className="flex items-center gap-1">{renderPageNumbers()}</div>
 
-          {/* ÏÂÒ»Ò³ */}
+          {/* ä¸‹ä¸€é¡µ */}
           <Button
             variant="text"
             size="sm"
@@ -177,7 +177,7 @@ function Pagination({
             <ChevronRight className="h-4 w-4" />
           </Button>
 
-          {/* Ä©Ò³ */}
+          {/* æœ«é¡µ */}
           <Button
             variant="text"
             size="sm"
@@ -194,7 +194,7 @@ function Pagination({
 }
 
 // ============================================================
-// DataTable Ö÷×é¼ş
+// DataTable ä¸»ç»„ä»¶
 // ============================================================
 export function DataTable<T extends Record<string, any>>({
   columns,
@@ -204,10 +204,10 @@ export function DataTable<T extends Record<string, any>>({
   toolbarLeft,
   toolbarRight,
   pagination,
-  emptyText = "ÔİÎŞÊı¾İ",
+  emptyText = "æš‚æ— æ•°æ®",
   className,
 }: DataTableProps<T>) {
-  // »ñÈ¡ĞĞµÄÎ¨Ò»±êÊ¶
+  // è·å–è¡Œçš„å”¯ä¸€æ ‡è¯†
   const getRowKey = (record: T, index: number): string => {
     if (typeof rowKey === "function") {
       return rowKey(record);
@@ -215,7 +215,7 @@ export function DataTable<T extends Record<string, any>>({
     return String(record[rowKey] ?? index);
   };
 
-  // »ñÈ¡µ¥Ôª¸ñµÄÖµ
+  // è·å–å•å…ƒæ ¼çš„å€¼
   const getCellValue = (record: T, column: Column<T>, index: number) => {
     const value = column.dataIndex ? record[column.dataIndex] : undefined;
     if (column.render) {
@@ -231,7 +231,7 @@ export function DataTable<T extends Record<string, any>>({
         className,
       )}
     >
-      {/* ============== ²Ù×÷À¸ (Toolbar) ============== */}
+      {/* ============== æ“ä½œæ  (Toolbar) ============== */}
       {(toolbarLeft || toolbarRight) && (
         <div className="flex shrink-0 items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2">{toolbarLeft}</div>
@@ -239,7 +239,7 @@ export function DataTable<T extends Record<string, any>>({
         </div>
       )}
 
-      {/* ============== ±í¸ñ±íÍ· (Header) - ¹Ì¶¨²»¹ö¶¯ ============== */}
+      {/* ============== è¡¨æ ¼è¡¨å¤´ (Header) - å›ºå®šä¸æ»šåŠ¨ ============== */}
       <div className="mx-6 shrink-0 overflow-hidden bg-[#FAFAFA]">
         <Table className="table-fixed border-b border-gray-100">
           <TableHeader>
@@ -262,14 +262,14 @@ export function DataTable<T extends Record<string, any>>({
         </Table>
       </div>
 
-      {/* ============== ±í¸ñ±íÌå (Body) - ¶ÀÁ¢¹ö¶¯ ============== */}
+      {/* ============== è¡¨æ ¼è¡¨ä½“ (Body) - ç‹¬ç«‹æ»šåŠ¨ ============== */}
       <div className="table-scrollbar mx-6 flex-1 overflow-auto">
         <Table className="table-fixed">
           <TableBody>
             {loading && dataSource.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-32 text-center text-neutral-400">
-                  ¼ÓÔØÖĞ...
+                  åŠ è½½ä¸­...
                 </TableCell>
               </TableRow>
             ) : dataSource.length === 0 ? (
@@ -300,7 +300,7 @@ export function DataTable<T extends Record<string, any>>({
         </Table>
       </div>
 
-      {/* ============== ·ÖÒ³À¸ (Pagination) ============== */}
+      {/* ============== åˆ†é¡µæ  (Pagination) ============== */}
       {pagination && (
         <Pagination
           current={pagination.current}

@@ -17,23 +17,23 @@ export default function InviteQuotaPage() {
         <Form.Item name="userId" label="用户ID">
           <Input allowClear placeholder="用户ID" className="w-48" />
         </Form.Item>
-        <Form.Item name="permanentOnly" label="仅永�?>
+        <Form.Item name="permanentOnly" label="仅永久">
           <Select
             allowClear
             className="w-32"
             options={[
-              { label: "�?, value: true },
-              { label: "�?, value: false },
+              { label: "是", value: true },
+              { label: "否", value: false },
             ]}
           />
         </Form.Item>
-        <Form.Item name="activeOnly" label="仅活�?>
+        <Form.Item name="activeOnly" label="仅活跃">
           <Select
             allowClear
             className="w-32"
             options={[
-              { label: "�?, value: true },
-              { label: "�?, value: false },
+              { label: "是", value: true },
+              { label: "否", value: false },
             ]}
           />
         </Form.Item>
@@ -81,7 +81,7 @@ export default function InviteQuotaPage() {
             render: (v: string) => formatDate(v),
           },
           {
-            title: "消耗时�?,
+            title: "消耗时间",
             dataIndex: "consumedAt",
             width: 180,
             render: (v: string) => formatDate(v),

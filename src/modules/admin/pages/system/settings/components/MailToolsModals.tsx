@@ -77,14 +77,14 @@ export const MailToolsModals: React.FC<MailToolsModalsProps> = ({
         </pre>
       </Modal>
 
-      {/* 诊断性发送弹�?*/}
+      {/* 诊断性发送弹窗 */}
       <Modal
         open={sendDiagOpen}
         onCancel={onCloseSendDiag}
         onOk={() => sendDiagForm.submit()}
         confirmLoading={sendDiagLoading}
-        title="发送测试邮�?
-        okText="发�?
+        title="发送测试邮件"
+        okText="发送"
         width={720}
       >
         {selectedGroup === "mail" && (
@@ -98,19 +98,19 @@ export const MailToolsModals: React.FC<MailToolsModalsProps> = ({
             }}
           >
             <Tag color={mailInfo.enabled ? "green" : "red"}>
-              {mailInfo.enabled ? "已启�? : "未启�?}
+              {mailInfo.enabled ? "已启用" : "未启用"}
             </Tag>
             <Typography.Text>
               发件人：
               <Typography.Text code>{mailInfo.fromPreview}</Typography.Text>
             </Typography.Text>
             <Typography.Text>
-              SMTP�?
+              SMTP：
               <Typography.Text code>{mailInfo.smtpPreview}</Typography.Text>
             </Typography.Text>
             {(!mailInfo.enabled || mailInfo.missing.email) && (
               <Typography.Text type="danger">
-                当前发件配置不可用，可能导致发送失�?
+                当前发件配置不可用，可能导致发送失败
               </Typography.Text>
             )}
           </div>
@@ -122,13 +122,13 @@ export const MailToolsModals: React.FC<MailToolsModalsProps> = ({
           initialValues={{ subject: "SMTP 诊断测试" }}
         >
           <Form.Item
-            label="收件�?
+            label="收件人"
             name="to"
             rules={[
               { required: true, message: "请输入收件人邮箱" },
               {
                 pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "邮箱格式不正�?,
+                message: "邮箱格式不正确",
               },
             ]}
           >
@@ -138,7 +138,7 @@ export const MailToolsModals: React.FC<MailToolsModalsProps> = ({
             <Input placeholder="SMTP 诊断测试" />
           </Form.Item>
           <Form.Item label="文本正文" name="text">
-            <Input.TextArea rows={4} placeholder="纯文本正文，可留�? />
+            <Input.TextArea rows={4} placeholder="纯文本正文，可留空" />
           </Form.Item>
           <Form.Item
             label="HTML 正文"
@@ -149,7 +149,7 @@ export const MailToolsModals: React.FC<MailToolsModalsProps> = ({
                   const text = sendDiagForm.getFieldValue("text");
                   if (!value && !text)
                     return Promise.reject(
-                      new Error("文本正文�?HTML 正文至少填写一�?)
+                      new Error("文本正文与 HTML 正文至少填写一项")
                     );
                   return Promise.resolve();
                 },
@@ -164,7 +164,7 @@ export const MailToolsModals: React.FC<MailToolsModalsProps> = ({
         </Form>
         {sendDiagResult && (
           <div style={{ marginTop: 12 }}>
-            <Typography.Text type="secondary">原始返回结果�?/Typography.Text>
+            <Typography.Text type="secondary">原始返回结果：</Typography.Text>
             <pre
               style={{
                 maxHeight: 320,
@@ -180,19 +180,19 @@ export const MailToolsModals: React.FC<MailToolsModalsProps> = ({
         )}
       </Modal>
 
-      {/* SMTP 连通性报告弹�?*/}
+      {/* SMTP 连通性报告弹窗 */}
       <Modal
         open={!!mailVerifyReport}
         onCancel={onCloseVerifyReport}
         footer={null}
-        title="SMTP 连通性报�?
+        title="SMTP 连通性报告"
       >
         {mailVerifyReport?.ok ? (
-          <Result status="success" title="SMTP 连通性正�? />
+          <Result status="success" title="SMTP 连通性正常" />
         ) : (
           <Result
             status="error"
-            title="SMTP 连通性失�?
+            title="SMTP 连通性失败"
             subTitle={
               mailVerifyReport?.error?.message ||
               "请检查主机、端口、账号、密码、TLS/SSL 设置"

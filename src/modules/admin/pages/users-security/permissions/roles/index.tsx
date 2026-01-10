@@ -41,7 +41,7 @@ export default function RoleManagement() {
 
   return (
     <div style={{ height: "100%", overflowY: "auto" }}>
-      <Space orientation="vertical" size="large" style={{ width: "100%" }}>
+      <Space direction="vertical" size="large" style={{ width: "100%" }}>
         <RoleSearch
           searchText={searchText}
           setSearchText={setSearchText}

@@ -43,7 +43,7 @@ export const RevokePunishmentModal: React.FC<RevokePunishmentModalProps> = ({
         revokeReason: values.reason, // DTO expects 'revokeReason'
         revokeDetailReason: values.detailReason, // DTO expects 'revokeDetailReason'
       };
-      // 说明：后端API方法名为 punishmentsControllerRevoke�?punishments/revoke�?
+      // 说明：后端API方法名为 punishmentsControllerRevoke（/punishments/revoke）
       await PunishmentsService.punishmentsControllerRevoke(req);
       message.success("撤销成功");
       setRevokeOpen(false);
@@ -88,7 +88,7 @@ export const RevokePunishmentModal: React.FC<RevokePunishmentModalProps> = ({
             placeholder="请选择撤销原因"
           />
         </Form.Item>
-        <Form.Item name="detailReason" label="撤销说明 (可�?">
+        <Form.Item name="detailReason" label="撤销说明 (可选)">
           <Input.TextArea rows={3} placeholder="请输入撤销说明" />
         </Form.Item>
       </Form>

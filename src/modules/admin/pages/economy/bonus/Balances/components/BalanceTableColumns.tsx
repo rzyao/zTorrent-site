@@ -16,7 +16,7 @@ export const getBalanceColumns = ({
   onFreeze,
   onUnfreeze,
 }: GetColumnsProps): ColumnsType<UserBonusBalance> => [
-  { title: "用户�?, dataIndex: "username", width: 160 },
+  { title: "用户名", dataIndex: "username", width: 160 },
   {
     title: "可用魔力",
     dataIndex: "balance",
@@ -33,7 +33,7 @@ export const getBalanceColumns = ({
     title: "冻结",
     dataIndex: "isFrozen",
     width: 120,
-    render: (f: 0 | 1) => (f ? <Tag color="red">已冻�?/Tag> : <Tag color="green">正常</Tag>),
+    render: (f: 0 | 1) => (f ? <Tag color="red">已冻结</Tag> : <Tag color="green">正常</Tag>),
   },
   { title: "更新时间", dataIndex: "updatedAt", width: 200, render: (v: string) => formatDate(v) },
   {

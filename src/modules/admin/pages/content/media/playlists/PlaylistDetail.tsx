@@ -80,7 +80,7 @@ export default function PlaylistDetail() {
         itemId: filmId,
         itemType: RemoveItemFromPlaylistDto.itemType.MOVIE,
       });
-      msg.success("已移除影�?);
+      msg.success("已移除影片");
       loadDetail();
     } catch (e: any) {
       msg.error(e?.message || "移除失败");
@@ -101,7 +101,7 @@ export default function PlaylistDetail() {
       }));
       await PlaylistsItemsService.playlistItemsControllerReorderItems({ playlistId: id!, order });
       setReorderOpen(false);
-      msg.success("已更新排�?);
+      msg.success("已更新排序");
       loadDetail();
     } catch (e: any) {
       msg.error(e?.message || "更新排序失败");
@@ -124,7 +124,7 @@ export default function PlaylistDetail() {
       const resp: any = await PlaylistsInteractionService.playlistInteractionControllerIncViews({
         id: id!,
       });
-      msg.success(`浏览�?{resp?.data?.views ?? ""}`);
+      msg.success(`浏览：${resp?.data?.views ?? ""}`);
       loadDetail();
     } catch {
       msg.error("浏览统计失败");
@@ -136,7 +136,7 @@ export default function PlaylistDetail() {
       const resp: any = await PlaylistsInteractionService.playlistInteractionControllerLike({
         id: id!,
       });
-      msg.success(`点赞�?{resp?.data?.likes ?? ""}`);
+      msg.success(`点赞：${resp?.data?.likes ?? ""}`);
       loadDetail();
     } catch {
       msg.error("点赞失败");
@@ -144,10 +144,10 @@ export default function PlaylistDetail() {
   }
 
   return (
-    <Space orientation="vertical" style={{ width: "100%" }} size="large">
+    <Space direction="vertical" style={{ width: "100%" }} size="large">
       <Card
         loading={loading}
-        title={`片单详情�?{detail?.title || id}`}
+        title={`片单详情：${detail?.title || id}`}
         extra={
           <Space>
             <Button onClick={incViews}>浏览+1</Button>
@@ -169,13 +169,13 @@ export default function PlaylistDetail() {
         <Descriptions bordered column={2} size="small">
           <Descriptions.Item label="ID">{detail?.id}</Descriptions.Item>
           <Descriptions.Item label="类型">{detail?.type}</Descriptions.Item>
-          <Descriptions.Item label="可见�?>{detail?.visibility}</Descriptions.Item>
+          <Descriptions.Item label="可见性">{detail?.visibility}</Descriptions.Item>
           <Descriptions.Item label="启用">{String(detail?.enabled)}</Descriptions.Item>
           <Descriptions.Item label="排序">{detail?.sort}</Descriptions.Item>
           <Descriptions.Item label="封面">{detail?.coverUrl}</Descriptions.Item>
           <Descriptions.Item label="浏览">{detail?.views}</Descriptions.Item>
           <Descriptions.Item label="点赞">{detail?.likes}</Descriptions.Item>
-          <Descriptions.Item label="审核状�?>{detail?.approvalStatus}</Descriptions.Item>
+          <Descriptions.Item label="审核状态">{detail?.approvalStatus}</Descriptions.Item>
           <Descriptions.Item label="通过时间">{detail?.approvedAt}</Descriptions.Item>
           <Descriptions.Item label="描述" span={2}>
             {detail?.description}
@@ -183,7 +183,7 @@ export default function PlaylistDetail() {
         </Descriptions>
       </Card>
 
-      <Card title="片单内影�?>
+      <Card title="片单内影片">
         <Space style={{ marginBottom: 12 }}>
           <Button
             type="primary"
@@ -197,7 +197,7 @@ export default function PlaylistDetail() {
         </Space>
         <Table
           bordered
-          // 为片单影片列表开启边框，便于管理排序与可见�?
+          // 为片单影片列表开启边框，便于管理排序与可见性
           rowKey={(r) => (r as any)?.filmId || (r as any)?.id}
           dataSource={movies}
           pagination={false}
@@ -235,9 +235,9 @@ export default function PlaylistDetail() {
         />
       </Card>
 
-      {/* 添加影片到片�?*/}
+      {/* 添加影片到片单 */}
       <Modal
-        title="添加影片到片�?
+        title="添加影片到片单"
         open={addOpen}
         onCancel={() => setAddOpen(false)}
         onOk={addFilm}
@@ -258,7 +258,7 @@ export default function PlaylistDetail() {
         </Form>
       </Modal>
 
-      {/* 排序调整：基�?filmId 更新 sort */}
+      {/* 排序调整：基于 filmId 更新 sort */}
       <Modal
         title="更新排序"
         open={reorderOpen}
@@ -271,7 +271,7 @@ export default function PlaylistDetail() {
           <Form.Item name="filmId" label="影片ID" rules={[{ required: true }]}>
             <Input disabled />
           </Form.Item>
-          <Form.Item name="sort" label="排序" rules={[{ required: true, message: "请输入排序�? }]}>
+          <Form.Item name="sort" label="排序" rules={[{ required: true, message: "请输入排序值" }]}>
             <InputNumber style={{ width: 160 }} />
           </Form.Item>
         </Form>

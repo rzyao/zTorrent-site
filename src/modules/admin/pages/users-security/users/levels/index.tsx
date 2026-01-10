@@ -47,7 +47,7 @@ export default function LevelsPage() {
 
   return (
     <div style={{ height: "100%", overflowY: "auto" }}>
-      <Space orientation="vertical" size="large" style={{ width: "100%" }}>
+      <Space direction="vertical" size="large" style={{ width: "100%" }}>
         <LevelSearch
           searchKey={searchKey}
           setSearchKey={setSearchKey}

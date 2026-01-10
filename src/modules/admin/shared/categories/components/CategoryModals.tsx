@@ -59,13 +59,13 @@ export function CategoryModals({
                   label="键后缀 (父类: ${createKeyPrefix})"
                   rules={[{ required: true }]}
                 >
-                  <Input placeholder="�?action �?classic" />
+                  <Input placeholder="如 action 或 classic" />
                 </Form.Item>
               </Col>
             ) : (
               <Col span={24}>
-                <Form.Item name="key" label="唯一�? rules={[{ required: true }]}>
-                  <Input placeholder="�?movies" />
+                <Form.Item name="key" label="唯一键" rules={[{ required: true }]}>
+                  <Input placeholder="如 movies" />
                 </Form.Item>
               </Col>
             )}
@@ -88,7 +88,7 @@ export function CategoryModals({
               <Form.Item name="genre" label="分区" rules={[{ required: true }]}>
                 <Select
                   options={[
-                    { label: "普�?, value: UpdateCategoryDto.genre.GENERAL },
+                    { label: "普通", value: UpdateCategoryDto.genre.GENERAL },
                     { label: "成人", value: UpdateCategoryDto.genre.ADULT },
                   ]}
                 />
@@ -124,7 +124,7 @@ export function CategoryModals({
         <Form form={editForm} layout="vertical">
           <Row gutter={12}>
             <Col span={24}>
-              <Form.Item label="唯一�?>
+              <Form.Item label="唯一键">
                 <Input value={editing?.key} disabled />
               </Form.Item>
             </Col>
@@ -147,7 +147,7 @@ export function CategoryModals({
               <Form.Item name="genre" label="分区">
                 <Select
                   options={[
-                    { label: "普�?, value: UpdateCategoryDto.genre.GENERAL },
+                    { label: "普通", value: UpdateCategoryDto.genre.GENERAL },
                     { label: "成人", value: UpdateCategoryDto.genre.ADULT },
                   ]}
                 />

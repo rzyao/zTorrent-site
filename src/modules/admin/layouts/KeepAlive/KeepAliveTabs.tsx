@@ -35,7 +35,7 @@ const KeepAliveTabs: React.FC<KeepAliveTabsProps> = ({
       </Button>
       <Avatar size="small" icon={<UserOutlined />} />
       <Button type="text" size="small" onClick={handleLogout}>
-        退出登�?
+        退出登录
       </Button>
     </Space>
   );
@@ -61,7 +61,7 @@ const KeepAliveTabs: React.FC<KeepAliveTabsProps> = ({
           display: "flex",
           flexDirection: "column",
         }}
-        // 只传�?key �?label，不传�?children，确保只渲染 Tab �?
+        // 只传递 key 和 label，不传递 children，确保只渲染 Tab 栏
         items={items.map((item) => ({
           key: item.key,
           label: item.label,

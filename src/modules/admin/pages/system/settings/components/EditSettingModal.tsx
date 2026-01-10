@@ -57,7 +57,7 @@ export const EditSettingModal: React.FC<EditSettingModalProps> = ({
       onCancel={onCancel}
       onOk={() => form.submit()}
       confirmLoading={confirmLoading}
-      title="编辑配置�?
+      title="编辑配置项"
       okText="保存"
       width={720}
     >
@@ -78,7 +78,7 @@ export const EditSettingModal: React.FC<EditSettingModalProps> = ({
             { required: true, message: "请输入键名后缀" },
             {
               pattern: /^[A-Za-z][\w\-.]*$/,
-              message: "后缀需以字母开头，仅包含字�?数字/下划�?�?连字�?,
+              message: "后缀需以字母开头，仅包含字母/数字/下划线/点/连字符",
             },
           ]}
         >
@@ -117,7 +117,7 @@ export const EditSettingModal: React.FC<EditSettingModalProps> = ({
         <Form.Item label="可运行时修改" name="mutable" valuePropName="checked">
           <Switch />
         </Form.Item>
-        <Form.Item label="排序�? name="sort">
+        <Form.Item label="排序值" name="sort">
           <InputNumber style={{ width: 200 }} />
         </Form.Item>
       </Form>

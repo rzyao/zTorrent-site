@@ -11,7 +11,7 @@ export default function InvitesStatisticsPage() {
         title={
           <Space>
             <BarChartOutlined />
-            邀请统�?
+            邀请统计
           </Space>
         }
         className="border-none shadow-sm"
@@ -31,7 +31,7 @@ export default function InvitesStatisticsPage() {
             />
           </Form.Item>
           <Form.Item name="issuerId" label="发起人ID">
-            <Input allowClear placeholder="可�? className="w-40" />
+            <Input allowClear placeholder="可选" className="w-40" />
           </Form.Item>
           <Form.Item>
             <Space>
@@ -54,9 +54,9 @@ export default function InvitesStatisticsPage() {
         columns={[
           { title: "统计周期", dataIndex: "time", width: 160 },
           { title: "总量", dataIndex: "total", width: 100, className: "font-bold" },
-          { title: "未使�?, dataIndex: "unused", width: 100 },
-          { title: "已接�?, dataIndex: "accepted", width: 100, className: "text-green-600" },
-          { title: "已过�?, dataIndex: "expired", width: 100, className: "text-orange-500" },
+          { title: "未使用", dataIndex: "unused", width: 100 },
+          { title: "已接受", dataIndex: "accepted", width: 100, className: "text-green-600" },
+          { title: "已过期", dataIndex: "expired", width: 100, className: "text-orange-500" },
           { title: "已撤销", dataIndex: "revoked", width: 100, className: "text-red-500" },
         ]}
       />

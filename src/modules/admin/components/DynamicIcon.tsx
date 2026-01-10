@@ -3,20 +3,20 @@ import * as LucideIcons from "lucide-react";
 import * as AntdIcons from "@ant-design/icons";
 
 interface DynamicIconProps {
-  /** 图标名称，格式为 "Prefix:Name"，如 "Lucide:Home" �?"Antd:DashboardOutlined" */
+  /** 图标名称，格式为 "Prefix:Name"，如 "Lucide:Home" 或 "Antd:DashboardOutlined" */
   iconName?: string | null;
-  /** 自定�?className */
+  /** 自定义 className */
   className?: string;
   /** 图标尺寸 (仅对 Lucide 有效) */
   size?: number;
-  /** 自定义样�?*/
+  /** 自定义样式 */
   style?: React.CSSProperties;
 }
 
 /**
- * 动态图标组�?
+ * 动态图标组件
  *
- * 根据 "Prefix:Name" 格式的图标名称，自动�?Lucide �?Ant Design 图标库中加载对应图标�?
+ * 根据 "Prefix:Name" 格式的图标名称，自动从 Lucide 或 Ant Design 图标库中加载对应图标。
  *
  * @example
  * <DynamicIcon iconName="Lucide:Home" />

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+ï»¿import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -16,8 +16,8 @@ import { Textarea } from "@/modules/admin/components/ui/textarea";
 import { UpdateCategoryDto } from "@/api/models/UpdateCategoryDto";
 
 const categorySchema = z.object({
-  label: z.string().min(1, "Ãû³Æ²»ÄÜÎª¿Õ"),
-  key: z.string().min(1, "Key²»ÄÜÎª¿Õ"),
+  label: z.string().min(1, "åç§°ä¸èƒ½ä¸ºç©º"),
+  key: z.string().min(1, "Keyä¸èƒ½ä¸ºç©º"),
   description: z.string().optional(),
   sort: z.number().default(0),
   enabled: z.boolean().default(true),
@@ -89,27 +89,27 @@ export function MovieCategoryDialog({
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="label">Ãû³Æ</Label>
-            <Input id="label" {...register("label")} placeholder="·ÖÀàÏÔÊ¾Ãû³Æ" />
+            <Label htmlFor="label">åç§°</Label>
+            <Input id="label" {...register("label")} placeholder="åˆ†ç±»æ˜¾ç¤ºåç§°" />
             {errors.label && <span className="text-error text-xs">{errors.label.message}</span>}
           </div>
           <div className="grid gap-2">
             <Label htmlFor="key">Key</Label>
-            <Input id="key" {...register("key")} placeholder="Î¨Ò»±êÊ¶·û" />
+            <Input id="key" {...register("key")} placeholder="å”¯ä¸€æ ‡è¯†ç¬¦" />
             {errors.key && <span className="text-error text-xs">{errors.key.message}</span>}
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="description">ÃèÊö</Label>
+            <Label htmlFor="description">æè¿°</Label>
             <Textarea
               id="description"
               {...register("description")}
-              placeholder="¿ÉÑ¡ÃèÊöĞÅÏ¢"
+              placeholder="å¯é€‰æè¿°ä¿¡æ¯"
               rows={3}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="sort">ÅÅĞò</Label>
+              <Label htmlFor="sort">æ’åº</Label>
               <Input id="sort" type="number" {...register("sort", { valueAsNumber: true })} />
             </div>
             <div className="flex items-center gap-2 pt-6">
@@ -118,15 +118,15 @@ export function MovieCategoryDialog({
                 checked={enabled}
                 onCheckedChange={(checked) => setValue("enabled", checked)}
               />
-              <Label htmlFor="enabled">ÆôÓÃ</Label>
+              <Label htmlFor="enabled">å¯ç”¨</Label>
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="default" onClick={() => onOpenChange(false)}>
-              È¡Ïû
+              å–æ¶ˆ
             </Button>
             <Button type="submit" variant="primary" loading={loading}>
-              È·¶¨
+              ç¡®å®š
             </Button>
           </div>
         </form>

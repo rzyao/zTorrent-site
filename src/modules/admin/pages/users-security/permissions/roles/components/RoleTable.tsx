@@ -37,7 +37,7 @@ export const RoleTable: React.FC<RoleTableProps> = ({
       render: (text: string) => <Typography.Text>{text}</Typography.Text>,
     },
     {
-      title: "角色�?,
+      title: "角色键",
       dataIndex: "key",
       key: "key",
       render: (k: string) => <Typography.Text code>{k || "-"}</Typography.Text>,
@@ -52,7 +52,7 @@ export const RoleTable: React.FC<RoleTableProps> = ({
       title: "权限数量",
       dataIndex: "permissions_count",
       key: "permissions_count",
-      render: (count: number) => <Tag color="blue">{count ?? 0} 项权�?/Tag>,
+      render: (count: number) => <Tag color="blue">{count ?? 0} 项权限</Tag>,
     },
     {
       title: "创建时间",
@@ -90,7 +90,7 @@ export const RoleTable: React.FC<RoleTableProps> = ({
         loading={loading}
         pagination={{ current: page, pageSize, total, onChange: setPage }}
         locale={{
-          emptyText: searchText ? "没有找到匹配的角�? : "暂无角色，点击上方按钮添�?,
+          emptyText: searchText ? "没有找到匹配的角色" : "暂无角色，点击上方按钮添加",
         }}
       />
     </Card>

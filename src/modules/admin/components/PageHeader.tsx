@@ -22,8 +22,8 @@ export default function PageHeader() {
   ]
   return (
     <div style={{ marginBottom: 16 }}>
-      {/* 移除页面左上角的标题 Title，避免与各页面的局部标题重复显示�?
-          如需显示当前页面名称，可通过面包屑的最后一项体现，无需额外标题�?*/}
+      {/* 移除页面左上角的标题 Title，避免与各页面的局部标题重复显示。
+          如需显示当前页面名称，可通过面包屑的最后一项体现，无需额外标题。 */}
       <Breadcrumb items={items} />
     </div>
   )

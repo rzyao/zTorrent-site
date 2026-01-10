@@ -39,7 +39,7 @@ export default function BonusBatchAdjustPage() {
     const content = await file.text();
     const parsed = parseCsv(content);
     setItems(parsed);
-    message.success(`已解�?${parsed.length} 行`);
+    message.success(`已解析 ${parsed.length} 行`);
     return false;
   }
 
@@ -48,7 +48,7 @@ export default function BonusBatchAdjustPage() {
       const arr: BatchItem[] = JSON.parse(text);
       if (Array.isArray(arr)) {
         setItems(arr);
-        message.success(`已解�?JSON ${arr.length} 行`);
+        message.success(`已解析 JSON ${arr.length} 行`);
       } else {
         message.error("JSON 根必须是数组");
       }
@@ -59,7 +59,7 @@ export default function BonusBatchAdjustPage() {
 
   async function handleSubmit() {
     if (!items.length) {
-      message.warning("请先解析 CSV 或粘�?JSON");
+      message.warning("请先解析 CSV 或粘贴 JSON");
       return;
     }
     setLoading(true);
@@ -69,7 +69,7 @@ export default function BonusBatchAdjustPage() {
       setResults((data.results || []) as ResultItem[]);
       const ok = data.okCount || 0;
       const fail = data.failCount || 0;
-      message.success(`批量完成：成�?${ok}，失�?${fail}`);
+      message.success(`批量完成：成功 ${ok}，失败 ${fail}`);
     } catch {
       message.error("批量调账失败");
     } finally {
@@ -79,7 +79,7 @@ export default function BonusBatchAdjustPage() {
 
   const colsItems: ColumnsType<BatchItem> = [
     { title: "用户ID", dataIndex: "userId", width: 160 },
-    { title: "变动�?, dataIndex: "delta", width: 140 },
+    { title: "变动值", dataIndex: "delta", width: 140 },
     { title: "原因", dataIndex: "reason", width: 200 },
     { title: "externalRef", dataIndex: "externalRef", width: 220 },
   ];
@@ -87,7 +87,7 @@ export default function BonusBatchAdjustPage() {
   const colsResults: ColumnsType<ResultItem> = [
     { title: "用户ID", dataIndex: "userId", width: 160 },
     { title: "结果", dataIndex: "ok", width: 120, render: (v: boolean) => (v ? "成功" : "失败") },
-    { title: "变动�?, dataIndex: "delta", width: 140 },
+    { title: "变动值", dataIndex: "delta", width: 140 },
     { title: "错误", dataIndex: "error" },
   ];
 
@@ -95,20 +95,20 @@ export default function BonusBatchAdjustPage() {
     <div>
       <Space style={{ marginBottom: 12 }}>
         <Upload beforeUpload={handleParseCsv} accept=".csv">
-          <Button>上传并解�?CSV</Button>
+          <Button>上传并解析 CSV</Button>
         </Upload>
         <Button type="primary" onClick={handleSubmit} loading={loading}>
           提交批量调账
         </Button>
       </Space>
       <div style={{ marginBottom: 8, color: "#888" }}>
-        建议为每条记录提供唯一 externalRef 以避免重复执行；冻结账户将拒绝负向记账�?
+        建议为每条记录提供唯一 externalRef 以避免重复执行；冻结账户将拒绝负向记账。
       </div>
 
       <Space align="start" style={{ gap: 24 }}>
         <div style={{ width: 520 }}>
           <div style={{ marginBottom: 8 }}>
-            或：粘贴 JSON 数组（每行包�?userId/delta/reason/externalRef?�?
+            或：粘贴 JSON 数组（每行包含 userId/delta/reason/externalRef?）
           </div>
           <Input.TextArea
             rows={10}
@@ -131,7 +131,7 @@ export default function BonusBatchAdjustPage() {
         </div>
 
         <div style={{ flex: 1 }}>
-          <div style={{ marginBottom: 8 }}>待提交项目（解析结果�?/div>
+          <div style={{ marginBottom: 8 }}>待提交项目（解析结果）</div>
           <Table
             bordered
             rowKey={(r) => `${r.userId}-${r.delta}-${r.reason}`}

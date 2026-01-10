@@ -10,7 +10,7 @@ import type { LevelItem } from "../types";
 export const useLevelManagement = () => {
   const { message, modal } = App.useApp();
 
-  // 列表与查询状�?
+  // 列表与查询状态
   const [levels, setLevels] = useState<LevelItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchKey, setSearchKey] = useState("");
@@ -19,7 +19,7 @@ export const useLevelManagement = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  // 页面内按钮权限显隐：读取本地缓存的权限集合（admin 用户放行�?
+  // 页面内按钮权限显隐：读取本地缓存的权限集合（admin 用户放行）
   const can = (perm: string): boolean => {
     try {
       const raw = localStorage.getItem("permissions");
@@ -145,7 +145,7 @@ export const useLevelManagement = () => {
 
   const confirmDelete = (id: string) => {
     modal.confirm({
-      title: "确定要删除这个等级吗�?,
+      title: "确定要删除这个等级吗？",
       okText: "删除",
       okType: "danger",
       cancelText: "取消",
@@ -165,7 +165,7 @@ export const useLevelManagement = () => {
     setPermTarget(lvl);
     setPermOpen(true);
     try {
-      // 加载权限树（Admin/Web），并建�?id<->key 双向映射
+      // 加载权限树（Admin/Web），并建立 id<->key 双向映射
       const [respAdmin, respWeb] = await Promise.all([
         PermissionsService.permissionsCoreControllerListPermissionsTree({
           scope: ListPermissionsDto.scope.ADMIN,

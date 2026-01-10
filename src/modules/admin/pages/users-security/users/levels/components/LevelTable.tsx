@@ -39,7 +39,7 @@ export const LevelTable: React.FC<LevelTableProps> = ({
 }) => {
   const columns = [
     {
-      title: "等级�?,
+      title: "等级键",
       dataIndex: "key",
       key: "key",
       render: (k: string) => <Typography.Text code>{k}</Typography.Text>,
@@ -52,7 +52,7 @@ export const LevelTable: React.FC<LevelTableProps> = ({
       render: (r: number) => r ?? "-",
     },
     {
-      title: "状�?,
+      title: "状态",
       dataIndex: "isActive",
       key: "isActive",
       render: (v: boolean) => <Tag color={v ? "green" : "red"}>{v ? "启用" : "停用"}</Tag>,
@@ -114,7 +114,7 @@ export const LevelTable: React.FC<LevelTableProps> = ({
         loading={loading}
         pagination={false}
         locale={{
-          emptyText: searchKey || searchLabel ? "没有找到匹配的等�? : "暂无等级，点击上方按钮添�?,
+          emptyText: searchKey || searchLabel ? "没有找到匹配的等级" : "暂无等级，点击上方按钮添加",
         }}
       />
       <div style={{ height: 12 }} />

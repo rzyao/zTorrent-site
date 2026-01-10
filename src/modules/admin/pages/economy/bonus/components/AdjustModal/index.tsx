@@ -39,7 +39,7 @@ export function AdjustModal(props: {
       props.onClose();
       props.onDone?.();
     } catch {
-      /* 验证失败或请求异�?*/
+      /* 验证失败或请求异常 */
     }
   }
 
@@ -56,14 +56,14 @@ export function AdjustModal(props: {
         <Form.Item label="用户ID" name="userId" rules={[{ required: true }]}>
           <Input placeholder="目标用户ID" />
         </Form.Item>
-        <Form.Item label="变动�? name="delta" rules={[{ required: true }]}>
+        <Form.Item label="变动值" name="delta" rules={[{ required: true }]}>
           <Input placeholder="字符串大整数，负数为扣减" />
         </Form.Item>
         <Form.Item label="原因" name="reason" rules={[{ required: true }]}>
           <Input placeholder="必填，用于审计与业务场景标识" />
         </Form.Item>
-        <Form.Item label="幂等�?externalRef" name="externalRef" tooltip="建议填写以避免重复执�?>
-          <Input placeholder="可选，唯一�? />
+        <Form.Item label="幂等键 externalRef" name="externalRef" tooltip="建议填写以避免重复执行">
+          <Input placeholder="可选，唯一键" />
         </Form.Item>
         <Form.Item label="关联ID correlationId" name="correlationId">
           <Input placeholder="可选，用于业务配对" />
@@ -72,15 +72,15 @@ export function AdjustModal(props: {
           <Input placeholder="可选，例如 ORDER/TICKET" />
         </Form.Item>
         <Form.Item label="引用ID refId" name="refId">
-          <Input placeholder="可�? />
+          <Input placeholder="可选" />
         </Form.Item>
         <Form.Item
-          label="冻结状�?
-          help={props.isFrozen === 1 ? "冻结账户仅允许正向入�? : "当前为正常状�?}
+          label="冻结状态"
+          help={props.isFrozen === 1 ? "冻结账户仅允许正向入账" : "当前为正常状态"}
         >
           <Radio.Group value={props.isFrozen === 1 ? 1 : 0} disabled>
             <Radio value={0}>正常</Radio>
-            <Radio value={1}>已冻�?/Radio>
+            <Radio value={1}>已冻结</Radio>
           </Radio.Group>
         </Form.Item>
       </Form>

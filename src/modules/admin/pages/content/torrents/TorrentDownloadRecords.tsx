@@ -65,7 +65,7 @@ export default function TorrentDownloadRecordsPage() {
 
   const columns = [
     {
-      title: "用户�?,
+      title: "用户名",
       dataIndex: "username",
       key: "username",
       render: (_: any, it: any) => String(it.username || it.user?.username || it.userName || "-"),
@@ -78,7 +78,7 @@ export default function TorrentDownloadRecordsPage() {
         String(it.title || it.torrentTitle || it.name || it.torrentName || "-"),
     },
     {
-      title: "状�?,
+      title: "状态",
       dataIndex: "status",
       key: "status",
       render: (_: any, it: any) => {
@@ -129,7 +129,7 @@ export default function TorrentDownloadRecordsPage() {
       render: (_: any, it: any) => String(it.speed || it.downloadSpeed || it.uploadSpeed || "-"),
     },
     {
-      title: "客户�?,
+      title: "客户端",
       dataIndex: "client",
       key: "client",
       render: (_: any, it: any) => String(it.client || it.clientName || "-"),
@@ -149,7 +149,7 @@ export default function TorrentDownloadRecordsPage() {
   ];
 
   return (
-    <Space orientation="vertical" size="large" style={{ width: "100%" }}>
+    <Space direction="vertical" size="large" style={{ width: "100%" }}>
       <Card>
         <Space style={{ width: "100%", justifyContent: "space-between" }}>
           <Space>
@@ -196,11 +196,11 @@ export default function TorrentDownloadRecordsPage() {
           setPage(1);
         }}
         items={[
-          { key: "published", label: "已发�? },
-          { key: "seeding", label: "做种�? },
-          { key: "downloading", label: "下载�? },
-          { key: "completed", label: "已完�? },
-          { key: "incomplete", label: "未完�? },
+          { key: "published", label: "已发布" },
+          { key: "seeding", label: "做种中" },
+          { key: "downloading", label: "下载中" },
+          { key: "completed", label: "已完成" },
+          { key: "incomplete", label: "未完成" },
         ]}
       />
 

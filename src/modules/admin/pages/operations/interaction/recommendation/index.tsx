@@ -34,7 +34,7 @@ export default function RecommendationConfigPage() {
     handleSubmit,
   } = useRecommendationConfig();
 
-  // 表格列定�?
+  // 表格列定义
   const columns: ProColumns<RecommendationConfigDto>[] = [
     {
       title: "标题",
@@ -49,7 +49,7 @@ export default function RecommendationConfigPage() {
       width: 200,
       render: (_, record) => {
         const tabs = (record as any).tabs ?? [];
-        if (tabs.length === 0) return <Tag>未关�?/Tag>;
+        if (tabs.length === 0) return <Tag>未关联</Tag>;
         return (
           <Space size={4} wrap>
             {tabs.map((t: RecommendationTabDto) => (
@@ -89,7 +89,7 @@ export default function RecommendationConfigPage() {
       width: 60,
     },
     {
-      title: "状�?,
+      title: "状态",
       dataIndex: "enabled",
       width: 80,
       render: (_, record) => (
@@ -119,7 +119,7 @@ export default function RecommendationConfigPage() {
         <Popconfirm
           key="delete"
           title="确认删除该配置？"
-          description="删除后前端将不再显示该板�?
+          description="删除后前端将不再显示该板块"
           onConfirm={() => handleDelete(record.id)}
         >
           <a style={{ color: "red" }}>删除</a>
@@ -143,14 +143,14 @@ export default function RecommendationConfigPage() {
             reload: true,
             setting: true,
           }}
-          // 通过 cardProps 控制内部卡片样式，防�?ProCard 动态修改导致的跳动
+          // 通过 cardProps 控制内部卡片样式，防止 ProCard 动态修改导致的跳动
           cardProps={{
             bodyStyle: {
               display: "flex",
               flexDirection: "column",
               flex: 1,
               minHeight: 0,
-              padding: 16, // 固定 padding，阻�?ProCard 动态修�?
+              padding: 16, // 固定 padding，阻止 ProCard 动态修改
             },
           }}
           toolBarRender={() => [
@@ -160,7 +160,7 @@ export default function RecommendationConfigPage() {
           ]}
           request={fetchConfigs}
           columns={columns}
-          scroll={{ x: 1000, y: 9999 }} // y 设置大值启用滚动，实际高度�?CSS flex 控制
+          scroll={{ x: 1000, y: 9999 }} // y 设置大值启用滚动，实际高度由 CSS flex 控制
           pagination={{ pageSize: 20 }}
         />
       </div>
@@ -185,18 +185,18 @@ export default function RecommendationConfigPage() {
         <ProFormText
           name="title"
           label="板块标题"
-          placeholder="例如：本周最�?
-          rules={[{ required: true, message: "请输入显示标�? }]}
+          placeholder="例如：本周最热"
+          rules={[{ required: true, message: "请输入显示标题" }]}
         />
 
         <ProFormSelect
           name="tabIds"
           label="关联 Tab"
-          placeholder="选择要展示此板块�?Tab"
+          placeholder="选择要展示此板块的 Tab"
           mode="multiple"
           options={tabOptions}
-          rules={[{ required: true, message: "请至少选择一�?Tab" }]}
-          tooltip="此板块将展示在选中的所�?Tab �?
+          rules={[{ required: true, message: "请至少选择一个 Tab" }]}
+          tooltip="此板块将展示在选中的所有 Tab 下"
         />
 
         <ProFormSelect
@@ -209,8 +209,8 @@ export default function RecommendationConfigPage() {
 
         <ProFormDigit
           name="timeRange"
-          label="时间范围(�?"
-          tooltip="0 表示不限制时间范�?
+          label="时间范围(天)"
+          tooltip="0 表示不限制时间范围"
           min={0}
           fieldProps={{ precision: 0 }}
         />
@@ -229,19 +229,19 @@ export default function RecommendationConfigPage() {
           min={1}
           max={100}
           fieldProps={{ precision: 0 }}
-          rules={[{ required: true, message: "请输入展示数�? }]}
+          rules={[{ required: true, message: "请输入展示数量" }]}
         />
 
         <ProFormDigit
           name="sort"
           label="排序权重"
-          tooltip="数字越大越靠�?
+          tooltip="数字越大越靠前"
           fieldProps={{ precision: 0 }}
         />
 
         <ProFormSwitch
           name="enabled"
-          label="启用状�?
+          label="启用状态"
           checkedChildren="启用"
           unCheckedChildren="禁用"
         />

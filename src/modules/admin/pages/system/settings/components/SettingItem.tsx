@@ -34,12 +34,12 @@ export const SettingItem: React.FC<SettingItemProps> = ({
         },
         hourlyMax: {
           type: "number",
-          description: "每小时最大请求次�?,
+          description: "每小时最大请求次数",
           value: -1,
         },
         dailyMax: {
           type: "number",
-          description: "每天最大请求次�?,
+          description: "每天最大请求次数",
           value: -1,
         },
         throwOnLimit: {
@@ -87,7 +87,7 @@ export const SettingItem: React.FC<SettingItemProps> = ({
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           <div>
             <Typography.Text>
-              {raw.intervalSec?.description || "�?IP 最短间隔（秒）"}
+              {raw.intervalSec?.description || "同 IP 最短间隔（秒）"}
             </Typography.Text>
             <InputNumber
               value={Number(cfg.intervalSec)}
@@ -96,11 +96,11 @@ export const SettingItem: React.FC<SettingItemProps> = ({
               style={{ width: "100%" }}
             />
             <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-              �?-1 表示无限�?
+              填 -1 表示无限制
             </Typography.Text>
           </div>
           <div>
-            <Typography.Text>{raw.hourlyMax?.description || "每小时最大请求次�?}</Typography.Text>
+            <Typography.Text>{raw.hourlyMax?.description || "每小时最大请求次数"}</Typography.Text>
             <InputNumber
               value={Number(cfg.hourlyMax)}
               onChange={(v) => update({ hourlyMax: Number(v ?? -1) })}
@@ -108,11 +108,11 @@ export const SettingItem: React.FC<SettingItemProps> = ({
               style={{ width: "100%" }}
             />
             <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-              �?-1 表示无限�?
+              填 -1 表示无限制
             </Typography.Text>
           </div>
           <div>
-            <Typography.Text>{raw.dailyMax?.description || "每天最大请求次�?}</Typography.Text>
+            <Typography.Text>{raw.dailyMax?.description || "每天最大请求次数"}</Typography.Text>
             <InputNumber
               value={Number(cfg.dailyMax)}
               onChange={(v) => update({ dailyMax: Number(v ?? -1) })}
@@ -120,7 +120,7 @@ export const SettingItem: React.FC<SettingItemProps> = ({
               style={{ width: "100%" }}
             />
             <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-              �?-1 表示无限�?
+              填 -1 表示无限制
             </Typography.Text>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -261,7 +261,7 @@ export const SettingItem: React.FC<SettingItemProps> = ({
           <div style={{ width: "100%" }}>{renderValueInput()}</div>
           {!setting.mutable && (
             <Typography.Text type="danger" style={{ display: "block", marginTop: 8 }}>
-              此配置为系统核心参数，不允许运行时修�?
+              此配置为系统核心参数，不允许运行时修改
             </Typography.Text>
           )}
           {setting.updated_at && (

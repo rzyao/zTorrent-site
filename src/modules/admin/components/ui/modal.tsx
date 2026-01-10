@@ -1,66 +1,66 @@
-import * as React from "react";
+ï»¿import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { Button } from "./button";
 
 /**
- * Modal ×é¼ş Props
- * Ä£·Â Ant Design Modal µÄ API Éè¼Æ
+ * Modal ç»„ä»¶ Props
+ * æ¨¡ä»¿ Ant Design Modal çš„ API è®¾è®¡
  */
 export interface ModalProps {
-  /** ÊÇ·ñÏÔÊ¾ Modal */
+  /** æ˜¯å¦æ˜¾ç¤º Modal */
   open?: boolean;
-  /** ¹Ø±Õ»Øµ÷ */
+  /** å…³é—­å›è°ƒ */
   onClose?: () => void;
-  /** µã»÷È·¶¨°´Å¥»Øµ÷ */
+  /** ç‚¹å‡»ç¡®å®šæŒ‰é’®å›è°ƒ */
   onOk?: () => void | Promise<void>;
-  /** µã»÷È¡Ïû°´Å¥»Øµ÷ */
+  /** ç‚¹å‡»å–æ¶ˆæŒ‰é’®å›è°ƒ */
   onCancel?: () => void;
-  /** Modal ±êÌâ */
+  /** Modal æ ‡é¢˜ */
   title?: React.ReactNode;
-  /** Modal ¿í¶È */
+  /** Modal å®½åº¦ */
   width?: number | string;
-  /** È·¶¨°´Å¥ÎÄ×Ö */
+  /** ç¡®å®šæŒ‰é’®æ–‡å­— */
   okText?: string;
-  /** È¡Ïû°´Å¥ÎÄ×Ö */
+  /** å–æ¶ˆæŒ‰é’®æ–‡å­— */
   cancelText?: string;
-  /** È·¶¨°´Å¥ Props */
+  /** ç¡®å®šæŒ‰é’® Props */
   okButtonProps?: React.ComponentProps<typeof Button>;
-  /** È¡Ïû°´Å¥ Props */
+  /** å–æ¶ˆæŒ‰é’® Props */
   cancelButtonProps?: React.ComponentProps<typeof Button>;
-  /** ÊÇ·ñÏÔÊ¾µ×²¿°´Å¥Çø */
+  /** æ˜¯å¦æ˜¾ç¤ºåº•éƒ¨æŒ‰é’®åŒº */
   footer?: React.ReactNode | null;
-  /** ÊÇ·ñÏÔÊ¾¹Ø±ÕÍ¼±ê */
+  /** æ˜¯å¦æ˜¾ç¤ºå…³é—­å›¾æ ‡ */
   closable?: boolean;
-  /** µã»÷ÕÚÕÖÊÇ·ñ¹Ø±Õ */
+  /** ç‚¹å‡»é®ç½©æ˜¯å¦å…³é—­ */
   maskClosable?: boolean;
-  /** È·¶¨°´Å¥ loading ×´Ì¬ */
+  /** ç¡®å®šæŒ‰é’® loading çŠ¶æ€ */
   confirmLoading?: boolean;
-  /** ÊÇ·ñ¾ÓÖĞÏÔÊ¾ */
+  /** æ˜¯å¦å±…ä¸­æ˜¾ç¤º */
   centered?: boolean;
-  /** ×Ô¶¨ÒåÀàÃû */
+  /** è‡ªå®šä¹‰ç±»å */
   className?: string;
-  /** ×ÓÄÚÈİ */
+  /** å­å†…å®¹ */
   children?: React.ReactNode;
 }
 
 /**
- * Modal ×é¼ş
+ * Modal ç»„ä»¶
  *
- * »ùÓÚ Radix UI Dialog ÊµÏÖ£¬API Éè¼ÆÄ£·Â Ant Design Modal¡£
- * Ìá¹©Í³Ò»µÄµ¯´°ÑùÊ½ºÍ½»»¥ÌåÑé¡£
+ * åŸºäº Radix UI Dialog å®ç°ï¼ŒAPI è®¾è®¡æ¨¡ä»¿ Ant Design Modalã€‚
+ * æä¾›ç»Ÿä¸€çš„å¼¹çª—æ ·å¼å’Œäº¤äº’ä½“éªŒã€‚
  *
  * @example
  * ```tsx
  * <Modal
  *   open={visible}
- *   title="È·ÈÏÉ¾³ı"
+ *   title="ç¡®è®¤åˆ é™¤"
  *   onOk={handleDelete}
  *   onCancel={() => setVisible(false)}
  *   okButtonProps={{ variant: "danger" }}
  * >
- *   È·¶¨ÒªÉ¾³ı¸Ã¼ÇÂ¼Âğ£¿
+ *   ç¡®å®šè¦åˆ é™¤è¯¥è®°å½•å—ï¼Ÿ
  * </Modal>
  * ```
  */
@@ -71,8 +71,8 @@ export function Modal({
   onCancel,
   title,
   width = 520,
-  okText = "È·¶¨",
-  cancelText = "È¡Ïû",
+  okText = "ç¡®å®š",
+  cancelText = "å–æ¶ˆ",
   okButtonProps,
   cancelButtonProps,
   footer,
@@ -83,7 +83,7 @@ export function Modal({
   className,
   children,
 }: ModalProps) {
-  // ´¦Àí¹Ø±ÕÂß¼­
+  // å¤„ç†å…³é—­é€»è¾‘
   const handleOpenChange = React.useCallback(
     (isOpen: boolean) => {
       if (!isOpen) {
@@ -94,33 +94,33 @@ export function Modal({
     [onClose, onCancel],
   );
 
-  // ´¦ÀíÈ·¶¨°´Å¥µã»÷
+  // å¤„ç†ç¡®å®šæŒ‰é’®ç‚¹å‡»
   const handleOk = React.useCallback(async () => {
     await onOk?.();
   }, [onOk]);
 
-  // ´¦ÀíÈ¡Ïû°´Å¥µã»÷
+  // å¤„ç†å–æ¶ˆæŒ‰é’®ç‚¹å‡»
   const handleCancel = React.useCallback(() => {
     onCancel?.();
     onClose?.();
   }, [onCancel, onClose]);
 
-  // ¼ÆËã¿í¶ÈÑùÊ½
+  // è®¡ç®—å®½åº¦æ ·å¼
   const widthStyle = typeof width === "number" ? `${width}px` : width;
 
-  // äÖÈ¾µ×²¿°´Å¥Çø
+  // æ¸²æŸ“åº•éƒ¨æŒ‰é’®åŒº
   const renderFooter = () => {
-    // Èç¹û footer Îª null£¬²»äÖÈ¾
+    // å¦‚æœ footer ä¸º nullï¼Œä¸æ¸²æŸ“
     if (footer === null) {
       return null;
     }
 
-    // Èç¹ûÌá¹©ÁË×Ô¶¨Òå footer
+    // å¦‚æœæä¾›äº†è‡ªå®šä¹‰ footer
     if (footer !== undefined) {
       return <div className="mt-6 flex justify-end gap-2">{footer}</div>;
     }
 
-    // Ä¬ÈÏµ×²¿°´Å¥
+    // é»˜è®¤åº•éƒ¨æŒ‰é’®
     return (
       <div className="mt-6 flex justify-end gap-2">
         <Button variant="default" onClick={handleCancel} {...cancelButtonProps}>
@@ -136,7 +136,7 @@ export function Modal({
   return (
     <DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
       <DialogPrimitive.Portal>
-        {/* ÕÚÕÖ²ã */}
+        {/* é®ç½©å±‚ */}
         <DialogPrimitive.Overlay
           className={cn(
             "fixed inset-0 z-50 bg-black/45",
@@ -146,7 +146,7 @@ export function Modal({
           onClick={maskClosable ? handleCancel : undefined}
         />
 
-        {/* ÄÚÈİÇø */}
+        {/* å†…å®¹åŒº */}
         <DialogPrimitive.Content
           className={cn(
             "fixed z-50 rounded-lg border border-gray-100 bg-white shadow-lg",
@@ -165,7 +165,7 @@ export function Modal({
             }
           }}
         >
-          {/* Í·²¿ÇøÓò */}
+          {/* å¤´éƒ¨åŒºåŸŸ */}
           {(title || closable) && (
             <div className="flex items-start justify-between px-6 pt-5 pb-0">
               {title && (
@@ -178,7 +178,7 @@ export function Modal({
                 <DialogPrimitive.Close asChild>
                   <button
                     className="rounded-sm p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-                    aria-label="¹Ø±Õ"
+                    aria-label="å…³é—­"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -187,10 +187,10 @@ export function Modal({
             </div>
           )}
 
-          {/* ÄÚÈİÇøÓò */}
+          {/* å†…å®¹åŒºåŸŸ */}
           <div className="px-6 py-4">{children}</div>
 
-          {/* µ×²¿°´Å¥Çø */}
+          {/* åº•éƒ¨æŒ‰é’®åŒº */}
           {renderFooter() && <div className="px-6 pb-4">{renderFooter()}</div>}
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
@@ -199,17 +199,17 @@ export function Modal({
 }
 
 /**
- * È·ÈÏ¶Ô»°¿ò¿ì½İ·½·¨µÄ Props
+ * ç¡®è®¤å¯¹è¯æ¡†å¿«æ·æ–¹æ³•çš„ Props
  */
 export interface ConfirmModalProps extends Omit<ModalProps, "children"> {
-  /** È·ÈÏÄÚÈİ */
+  /** ç¡®è®¤å†…å®¹ */
   content?: React.ReactNode;
 }
 
 /**
- * Modal.confirm ¾²Ì¬·½·¨µÄÅäÖÃ
- * ×¢Òâ£ºÓÉÓÚ React 18+ µÄÏŞÖÆ£¬¾²Ì¬·½·¨ĞèÒªÍ¨¹ı Context ÊµÏÖ
- * ÕâÀïÌá¹©Ò»¸ö¼ò»¯µÄ×é¼şĞÎÊ½
+ * Modal.confirm é™æ€æ–¹æ³•çš„é…ç½®
+ * æ³¨æ„ï¼šç”±äº React 18+ çš„é™åˆ¶ï¼Œé™æ€æ–¹æ³•éœ€è¦é€šè¿‡ Context å®ç°
+ * è¿™é‡Œæä¾›ä¸€ä¸ªç®€åŒ–çš„ç»„ä»¶å½¢å¼
  */
 export function ConfirmModal({
   content,
@@ -223,7 +223,7 @@ export function ConfirmModal({
   );
 }
 
-// µ¼³öµ×²ã Radix ×é¼ş¹©¸ß¼¶¶¨ÖÆÊ¹ÓÃ
+// å¯¼å‡ºåº•å±‚ Radix ç»„ä»¶ä¾›é«˜çº§å®šåˆ¶ä½¿ç”¨
 export const ModalRoot = DialogPrimitive.Root;
 export const ModalTrigger = DialogPrimitive.Trigger;
 export const ModalClose = DialogPrimitive.Close;

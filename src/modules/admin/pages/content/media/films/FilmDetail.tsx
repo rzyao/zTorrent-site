@@ -62,17 +62,17 @@ export default function FilmDetail() {
   const [editForm] = Form.useForm<{ id: string; data: any }>();
   const [saving, setSaving] = useState(false);
 
-  // 分类选项列表 (硬编�?
+  // 分类选项列表 (硬编码)
   const [categoryOptions] = useState<{ label: string; value: string }[]>([
     { label: "动作", value: "Action" },
     { label: "喜剧", value: "Comedy" },
     { label: "剧情", value: "Drama" },
     { label: "科幻", value: "Sci-Fi" },
     { label: "惊悚", value: "Thriller" },
-    { label: "恐�?, value: "Horror" },
+    { label: "恐怖", value: "Horror" },
     { label: "爱情", value: "Romance" },
     { label: "动画", value: "Animation" },
-    { label: "纪录�?, value: "Documentary" },
+    { label: "纪录片", value: "Documentary" },
   ]);
 
   async function loadDetail() {
@@ -158,10 +158,10 @@ export default function FilmDetail() {
   }
 
   return (
-    <Space orientation="vertical" style={{ width: "100%" }} size="large">
+    <Space direction="vertical" style={{ width: "100%" }} size="large">
       <Card
         loading={loading}
-        title={`影片详情�?{detail?.title || id}`}
+        title={`影片详情：${detail?.title || id}`}
         extra={
           <Space>
             <Button onClick={() => navigate("/films")}>返回列表</Button>
@@ -185,7 +185,7 @@ export default function FilmDetail() {
           </Descriptions.Item>
           <Descriptions.Item label="排序">{detail?.sort}</Descriptions.Item>
           <Descriptions.Item label="流派">{detail?.genres?.join(", ")}</Descriptions.Item>
-          <Descriptions.Item label="演职�?>{detail?.cast?.join(", ")}</Descriptions.Item>
+          <Descriptions.Item label="演职员">{detail?.cast?.join(", ")}</Descriptions.Item>
           <Descriptions.Item label="IMDb">{detail?.imdbLink}</Descriptions.Item>
           <Descriptions.Item label="豆瓣">{detail?.doubanLink}</Descriptions.Item>
           <Descriptions.Item label="描述" span={2}>
@@ -197,11 +197,11 @@ export default function FilmDetail() {
       <Card title="关联种子">
         <Alert
           message="提示"
-          description="种子管理功能正在升级适配中，暂不可用�?
+          description="种子管理功能正在升级适配中，暂不可用。"
           type="info"
           showIcon
         />
-        {/* 原有种子列表表格代码已移除，�?API 支持后再恢复 */}
+        {/* 原有种子列表表格代码已移除，待 API 支持后再恢复 */}
       </Card>
 
       <Modal
@@ -224,7 +224,7 @@ export default function FilmDetail() {
                 <Form.Item
                   name={["data", "title"]}
                   label="标题"
-                  rules={[{ required: true, message: "请输入标�? }]}
+                  rules={[{ required: true, message: "请输入标题" }]}
                 >
                   <Input />
                 </Form.Item>
@@ -266,10 +266,10 @@ export default function FilmDetail() {
                   </Form.Item>
                 </Space>
                 <Form.Item name={["data", "genres"]} label="流派ID（数组）">
-                  <Select mode="tags" tokenSeparators={[","]} placeholder="输入ID后回�? />
+                  <Select mode="tags" tokenSeparators={[","]} placeholder="输入ID后回车" />
                 </Form.Item>
-                <Form.Item name={["data", "cast"]} label="演职员（数组�?>
-                  <Select mode="tags" tokenSeparators={[","]} placeholder="输入名称后回�? />
+                <Form.Item name={["data", "cast"]} label="演职员（数组）">
+                  <Select mode="tags" tokenSeparators={[","]} placeholder="输入名称后回车" />
                 </Form.Item>
               </>
             )}

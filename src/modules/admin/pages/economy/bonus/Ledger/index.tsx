@@ -81,7 +81,7 @@ export default function BonusLedgerPage() {
   async function handleReverse(record: any) {
     modal.confirm({
       title: "确认冲正该流水？",
-      content: `流水ID: ${(record as any)?.id || ""}，金�? ${record.delta}，原�? ${record.reason}`,
+      content: `流水ID: ${(record as any)?.id || ""}，金额: ${record.delta}，原因: ${record.reason}`,
       onOk: async () => {
         try {
           const adminUserId = localStorage.getItem("userId") || "0";
@@ -90,7 +90,7 @@ export default function BonusLedgerPage() {
             adminUserId,
             reason: "admin_reverse",
           });
-          message.success("已冲�?);
+          message.success("已冲正");
           loadList();
         } catch {
           message.error("冲正失败或已存在配对记录");
@@ -100,7 +100,7 @@ export default function BonusLedgerPage() {
   }
 
   async function handleExport() {
-    /* 暂时注释掉，因为 API 中缺少导出方�?
+    /* 暂时注释掉，因为 API 中缺少导出方法
     try {
       const resp = await (BonusAdminService as any).bonusControllerExportLedger(query);
       const data = resp?.data || {};
@@ -122,14 +122,14 @@ export default function BonusLedgerPage() {
 
   const columns: ColumnsType<UserBonusLedger & { id?: string | number }> = [
     { title: "时间", dataIndex: "createdAt", width: 200, render: (s: string) => formatDate(s) },
-    { title: "用户�?, dataIndex: "username", width: 160 },
+    { title: "用户名", dataIndex: "username", width: 160 },
     { title: "类型", dataIndex: "type", width: 160 },
     { title: "原因", dataIndex: "reason", width: 200 },
-    { title: "变动�?, dataIndex: "delta", width: 140 },
-    { title: "余额(�?", dataIndex: "balanceAfter", width: 160 },
+    { title: "变动值", dataIndex: "delta", width: 140 },
+    { title: "余额(后)", dataIndex: "balanceAfter", width: 160 },
     { title: "引用类型", dataIndex: "refType", width: 140 },
     { title: "引用ID", dataIndex: "refId", width: 140 },
-    { title: "幂等�?, dataIndex: "externalRef", width: 220 },
+    { title: "幂等键", dataIndex: "externalRef", width: 220 },
     { title: "关联ID", dataIndex: "correlationId", width: 220 },
     {
       title: "操作",
@@ -163,7 +163,7 @@ export default function BonusLedgerPage() {
           <Form.Item label="原因" name="reason">
             <Input style={{ width: 180 }} />
           </Form.Item>
-          <Form.Item label="幂等�? name="externalRef">
+          <Form.Item label="幂等键" name="externalRef">
             <Input style={{ width: 220 }} />
           </Form.Item>
           <Form.Item label="关联ID" name="correlationId">
@@ -191,8 +191,8 @@ export default function BonusLedgerPage() {
         </Form>
       </Space>
       <div style={{ marginBottom: 8, color: "#888" }}>
-        提示：导出最�?10,000 条；已被冲正的流水会显示为类�?
-        ADMIN_REVERSE，重复冲正将直接返回已有配对记录�?
+        提示：导出最多 10,000 条；已被冲正的流水会显示为类型
+        ADMIN_REVERSE，重复冲正将直接返回已有配对记录。
       </div>
 
       <Table

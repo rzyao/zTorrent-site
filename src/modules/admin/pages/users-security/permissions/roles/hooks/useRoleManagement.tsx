@@ -20,14 +20,14 @@ export const useRoleManagement = () => {
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
 
-  // 分页状�?
+  // 分页状态
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  // 表单实例，配�?Modal+Form 实现校验与提交流�?
+  // 表单实例，配合 Modal+Form 实现校验与提交流程
   const [form] = Form.useForm();
-  // 仍保�?keys 映射与权�?key 映射逻辑（用于权限分配）
+  // 仍保留 keys 映射与权限 key 映射逻辑（用于权限分配）
   const [roleKeys, setRoleKeys] = useState<Record<string, string>>({});
   const [permissionIdToKey, setPermissionIdToKey] = useState<Record<string, string>>({});
   const [selectedAdminIds, setSelectedAdminIds] = useState<string[]>([]);
@@ -157,7 +157,7 @@ export const useRoleManagement = () => {
   const handleAdd = () => {
     setEditingRole(null);
     // 打开弹窗前重置表单字段，并要求用户手动输入角色键 key
-    // 原因：key 作为后端唯一标识，应显式由管理员确定，避免自动生成造成语义不清或冲�?
+    // 原因：key 作为后端唯一标识，应显式由管理员确定，避免自动生成造成语义不清或冲突
     form.setFieldsValue({ key: "", name: "", description: "" });
     setIsModalOpen(true);
   };
@@ -190,7 +190,7 @@ export const useRoleManagement = () => {
   // 删除前确认：包装确认流程，避免误操作
   const confirmDelete = (id: string) => {
     modal.confirm({
-      title: "确定要删除这个角色吗�?,
+      title: "确定要删除这个角色吗？",
       okText: "删除",
       okType: "danger",
       cancelText: "取消",
@@ -198,8 +198,8 @@ export const useRoleManagement = () => {
     });
   };
 
-  // 表单提交：使�?antd Form �?onFinish，统一校验与提交流�?
-  // 支持在添加角色时显式输入 key；编辑时不允许修�?key，仅更新名称与描�?
+  // 表单提交：使用 antd Form 的 onFinish，统一校验与提交流程
+  // 支持在添加角色时显式输入 key；编辑时不允许修改 key，仅更新名称与描述
   const handleSubmit = async (values: { key?: string; name: string; description: string }) => {
     setLoading(true);
 
@@ -211,7 +211,7 @@ export const useRoleManagement = () => {
         });
         message.success("保存成功");
       } else {
-        // 使用用户输入�?key 创建角色；增加基础校验与规范化
+        // 使用用户输入的 key 创建角色；增加基础校验与规范化
         const rawKey = (values.key || "").trim();
         const key = rawKey.toLowerCase();
         await RolesService.rolesControllerCreate({
@@ -231,7 +231,7 @@ export const useRoleManagement = () => {
     }
   };
 
-  // 取消自动生成 key，改为由用户在创建时明确输入（见 Form.Item[name="key"])�?
+  // 取消自动生成 key，改为由用户在创建时明确输入（见 Form.Item[name="key"])。
 
   const handleAssignPermissions = async (role: Role) => {
     setSelectedRole(role);

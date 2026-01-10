@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+ï»¿import React, { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -19,12 +19,12 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
   const adminChildren = adminRoute?.children || [];
   const visibleRoutes = adminChildren.filter((r) => r.isVisible !== false);
 
-  // ×Ô¶¯Õ¹¿ªÂß¼­£ºµ±Â·¾¶±ä»¯Ê±£¬È·±£¸¸²Ëµ¥ÊÇÕ¹¿ª×´Ì¬
+  // è‡ªåŠ¨å±•å¼€é€»è¾‘ï¼šå½“è·¯å¾„å˜åŒ–æ—¶ï¼Œç¡®ä¿çˆ¶èœå•æ˜¯å±•å¼€çŠ¶æ€
   useEffect(() => {
     if (collapsed) return;
 
     visibleRoutes.forEach((item) => {
-      // ¹æ·¶»¯¸¸Â·¾¶
+      // è§„èŒƒåŒ–çˆ¶è·¯å¾„
       const parentPath = item.path.startsWith("/") ? item.path : `/admin/${item.path}`;
       const normalizedParentPath = parentPath.replace(/\/+/g, "/");
 
@@ -66,18 +66,18 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
         collapsed ? "w-16" : "w-64",
       )}
     >
-      {/* ¶¥²¿Æ·ÅÆÇøÓò */}
+      {/* é¡¶éƒ¨å“ç‰ŒåŒºåŸŸ */}
       <div className="flex h-16 shrink-0 items-center gap-3 border-b border-gray-100 px-4">
-        {/* Ê¹ÓÃéÙ×Ó emoji ×÷Îª Logo Õ¼Î» */}
+        {/* ä½¿ç”¨æ©˜å­ emoji ä½œä¸º Logo å ä½ */}
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-linear-to-br from-orange-400 to-orange-500 text-xl shadow-sm">
-          ??
+          ğŸŠ
         </div>
         {!collapsed && (
           <span className="text-lg font-semibold tracking-tight text-gray-800">GuoYuan</span>
         )}
       </div>
 
-      {/* ²Ëµ¥ÇøÓò */}
+      {/* èœå•åŒºåŸŸ */}
       <nav className="flex-1 overflow-y-auto px-3 py-4">
         <div className="space-y-1">
           {visibleRoutes.length > 0 ? (
@@ -90,9 +90,9 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
               const hasChildren = item.children && item.children.length > 0;
               const isExpanded = expandedMenus.has(item.id);
 
-              // ´ø×Ó²Ëµ¥µÄÏîÄ¿
+              // å¸¦å­èœå•çš„é¡¹ç›®
               if (hasChildren) {
-                // ¼ì²é×ÓÂ·ÓÉÊÇ·ñ¼¤»î (¾«È·Æ¥Åä)
+                // æ£€æŸ¥å­è·¯ç”±æ˜¯å¦æ¿€æ´» (ç²¾ç¡®åŒ¹é…)
                 const isParentActive = item.children?.some((child) => {
                   const childHref = (
                     child.path.startsWith("/") ? child.path : `${href}/${child.path}`
@@ -134,7 +134,7 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
                         />
                       )}
                     </button>
-                    {/* ×Ó²Ëµ¥ */}
+                    {/* å­èœå• */}
                     {isExpanded && !collapsed && (
                       <div className="mt-1 ml-4 space-y-1 border-l border-gray-100 pl-4">
                         {item.children
@@ -145,7 +145,7 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
                               : `${href}/${child.path}`;
                             const normalizedChildHref = childHref.replace(/\/+/g, "/");
                             const childIcon = (child as any).icon as string | undefined;
-                            // ¾«È·Æ¥Åäµ±Ç°Â·¾¶
+                            // ç²¾ç¡®åŒ¹é…å½“å‰è·¯å¾„
                             const isChildActive = location.pathname === normalizedChildHref;
                             return (
                               <NavLink
@@ -178,8 +178,8 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
                 );
               }
 
-              // ÆÕÍ¨²Ëµ¥Ïî£¨ÎŞ×Ó²Ëµ¥£©
-              // ¾«È·Æ¥Åäµ±Ç°Â·¾¶
+              // æ™®é€šèœå•é¡¹ï¼ˆæ— å­èœå•ï¼‰
+              // ç²¾ç¡®åŒ¹é…å½“å‰è·¯å¾„
               const isItemActive = location.pathname === href;
               return (
                 <NavLink
@@ -204,12 +204,12 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
               );
             })
           ) : (
-            <div className="px-3 py-2 text-sm text-gray-400">¼ÓÔØÖĞ...</div>
+            <div className="px-3 py-2 text-sm text-gray-400">åŠ è½½ä¸­...</div>
           )}
         </div>
       </nav>
 
-      {/* µ×²¿ÕÛµş°´Å¥ */}
+      {/* åº•éƒ¨æŠ˜å æŒ‰é’® */}
       <div className="shrink-0 border-t border-gray-100 p-3">
         <button
           onClick={() => onCollapse(!collapsed)}

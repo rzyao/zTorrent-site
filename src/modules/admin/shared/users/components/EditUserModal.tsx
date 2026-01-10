@@ -71,7 +71,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({
         <Form.Item label="邮箱" name="email">
           <Input placeholder="更新邮箱" />
         </Form.Item>
-        <Form.Item label="新密�? name="password">
+        <Form.Item label="新密码" name="password">
           <Input.Password placeholder="不修改可留空" />
         </Form.Item>
       </Form>

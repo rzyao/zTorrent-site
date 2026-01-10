@@ -14,15 +14,15 @@ export function AdjustmentForm({ onAdjust, loading }: AdjustmentFormProps) {
     try {
       const values = await form.validateFields();
       modal.confirm({
-        title: "确认执行人工调账�?,
-        content: `用户 ${values.userId}，金�?${values.amount}，类�?${values.type}，原�?${values.reason}`,
+        title: "确认执行人工调账？",
+        content: `用户 ${values.userId}，金额 ${values.amount}，类型 ${values.type}，原因 ${values.reason}`,
         onOk: async () => {
           await onAdjust(values);
           form.resetFields();
         },
       });
     } catch (err) {
-      // 这里的错误通常是表单校验失败，不需要额外处�?
+      // 这里的错误通常是表单校验失败，不需要额外处理
     }
   };
 
@@ -38,15 +38,15 @@ export function AdjustmentForm({ onAdjust, loading }: AdjustmentFormProps) {
         <Select
           className="w-[140px]"
           options={[
-            { label: "credit(�?", value: "credit" },
-            { label: "debit(�?", value: "debit" },
+            { label: "credit(加)", value: "credit" },
+            { label: "debit(减)", value: "debit" },
           ]}
         />
       </Form.Item>
       <Form.Item name="reason" label="原因" rules={[{ required: true, min: 2 }]}>
         <Input className="w-[240px]" placeholder="填写原因以便审计" />
       </Form.Item>
-      <Form.Item name="ref" label="引用" tooltip="关联单据/工单�?可�?">
+      <Form.Item name="ref" label="引用" tooltip="关联单据/工单号(可选)">
         <Input className="w-[200px]" />
       </Form.Item>
       <Form.Item>

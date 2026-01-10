@@ -1,4 +1,4 @@
-import { Suspense, useState } from "react";
+ï»¿import { Suspense, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { ConfigProvider, App } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,21 +29,21 @@ export function AdminLayout() {
         <SiteConfigProvider>
           <FaviconInjector />
           <div className="admin-layout flex h-screen w-full overflow-hidden bg-gray-50">
-            {/* ²à±ßÀ¸ */}
+            {/* ä¾§è¾¹æ  */}
             <AdminSidebar collapsed={collapsed} onCollapse={setCollapsed} />
 
-            {/* Ö÷ÄÚÈİÇøÓò */}
+            {/* ä¸»å†…å®¹åŒºåŸŸ */}
             <motion.main
               initial={false}
               animate={{ paddingLeft: collapsed ? 64 : 256 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="flex min-h-0 min-w-0 flex-1 flex-col"
             >
-              {/* ¶¥²¿¼òµ¥µÄ Header (¿ÉÑ¡£¬Èç¹ûĞèÒª¿ÉÒÔºóĞø·á¸») */}
+              {/* é¡¶éƒ¨ç®€å•çš„ Header (å¯é€‰ï¼Œå¦‚æœéœ€è¦å¯ä»¥åç»­ä¸°å¯Œ) */}
               <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-100 bg-white px-6">
-                <div className="text-sm font-medium text-gray-500">ºóÌ¨¹ÜÀíÏµÍ³</div>
+                <div className="text-sm font-medium text-gray-500">åå°ç®¡ç†ç³»ç»Ÿ</div>
                 <div className="flex items-center gap-4">
-                  {/* ÕâÀï¿ÉÒÔ·ÅÍ¨Öª¡¢ËÑË÷¡¢ÓÃ»§Í·ÏñµÈ */}
+                  {/* è¿™é‡Œå¯ä»¥æ”¾é€šçŸ¥ã€æœç´¢ã€ç”¨æˆ·å¤´åƒç­‰ */}
                   <div className="h-8 w-8 rounded-full bg-gray-200" />
                 </div>
               </header>

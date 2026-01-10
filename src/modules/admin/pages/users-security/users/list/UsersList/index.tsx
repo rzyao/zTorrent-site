@@ -1,4 +1,4 @@
-import React from "react";
+ï»¿import React from "react";
 import { Search } from "lucide-react";
 import { useUsersLogic, handleDeleteUser } from "@/modules/admin/shared/users/hooks/useUsersLogic";
 import { DataTable, Column } from "@/modules/admin/components/ui/data-table";
@@ -24,7 +24,7 @@ const UsersPage: React.FC = () => {
     pageSize,
     setPage,
     setPageSize,
-    columns, // ÏÖÓĞÁĞÅäÖÃ°üº¬ antd äÖÈ¾Âß¼­£¬ÎÒÃÇÍ¨¹ı DataTable ÊÊÅä
+    columns, // ç°æœ‰åˆ—é…ç½®åŒ…å« antd æ¸²æŸ“é€»è¾‘ï¼Œæˆ‘ä»¬é€šè¿‡ DataTable é€‚é…
     can,
     advOpen,
     setAdvOpen,
@@ -63,7 +63,7 @@ const UsersPage: React.FC = () => {
     fetchList,
   } = useUsersLogic();
 
-  // ½« antd µÄ columns ×ª»»Îª DataTable µÄ Column ¸ñÊ½
+  // å°† antd çš„ columns è½¬æ¢ä¸º DataTable çš„ Column æ ¼å¼
   const adaptedColumns: Column<UserDto>[] = React.useMemo(() => {
     return columns.map((col: any, idx: number) => ({
       key: col.key || col.dataIndex || `col-${idx}`,
@@ -92,7 +92,7 @@ const UsersPage: React.FC = () => {
             <div className="relative w-80">
               <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-neutral-500" />
               <Input
-                placeholder="ËÑË÷ÓÃ»§Ãû³Æ»òÓÊÏä"
+                placeholder="æœç´¢ç”¨æˆ·åç§°æˆ–é‚®ç®±"
                 className="pl-9"
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
@@ -104,10 +104,10 @@ const UsersPage: React.FC = () => {
               />
             </div>
             <Button className="h-8 shadow-none" onClick={() => setQuery(searchText)}>
-              ËÑË÷
+              æœç´¢
             </Button>
             <Button variant="default" className="h-8 shadow-none" onClick={() => setAdvOpen(true)}>
-              ¸ß¼¶ËÑË÷
+              é«˜çº§æœç´¢
             </Button>
             <Button
               variant="dashed"
@@ -118,7 +118,7 @@ const UsersPage: React.FC = () => {
                 fetchList();
               }}
             >
-              Çå¿Õ
+              æ¸…ç©º
             </Button>
           </div>
         }
@@ -176,7 +176,7 @@ const UsersPage: React.FC = () => {
         fetchList={fetchList}
       />
 
-      {/* Ê¹ÓÃÏîÄ¿±ê×¼µÄ Modal ×é¼ş */}
+      {/* ä½¿ç”¨é¡¹ç›®æ ‡å‡†çš„ Modal ç»„ä»¶ */}
       <Modal
         open={detailOpen}
         onClose={() => setDetailOpen(false)}
@@ -195,7 +195,7 @@ const UsersPage: React.FC = () => {
                   </Tag>
                 ))
               ) : (
-                <Tag variant="default">Î´ÉèÖÃ</Tag>
+                <Tag variant="default">æœªè®¾ç½®</Tag>
               )}
             </div>
           )}
@@ -209,14 +209,14 @@ const UsersPage: React.FC = () => {
                   </Tag>
                 ))
               ) : (
-                <Tag variant="default">Î´ÉèÖÃ</Tag>
+                <Tag variant="default">æœªè®¾ç½®</Tag>
               )}
             </div>
           )}
         </div>
       </Modal>
 
-      {/* É¾³ıÈ·ÈÏµ¯´° */}
+      {/* åˆ é™¤ç¡®è®¤å¼¹çª— */}
       <ConfirmModal
         open={deleteConfirmOpen}
         onCancel={() => setDeleteConfirmOpen(false)}
@@ -226,9 +226,9 @@ const UsersPage: React.FC = () => {
             setDeleteConfirmOpen(false);
           }
         }}
-        title="È·ÈÏÉ¾³ı"
-        content="È·¶¨ÒªÉ¾³ı¸ÃÓÃ»§Âğ£¿´Ë²Ù×÷²»¿É³·Ïú¡£"
-        okText="È·¶¨É¾³ı"
+        title="ç¡®è®¤åˆ é™¤"
+        content="ç¡®å®šè¦åˆ é™¤è¯¥ç”¨æˆ·å—ï¼Ÿæ­¤æ“ä½œä¸å¯æ’¤é”€ã€‚"
+        okText="ç¡®å®šåˆ é™¤"
         okButtonProps={{ variant: "danger" }}
       />
     </div>

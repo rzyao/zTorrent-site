@@ -52,7 +52,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
       let payload: ImportRoutesDto;
       if (Array.isArray(parsed)) payload = { items: parsed };
       else if (parsed.items || parsed.routes) payload = parsed;
-      else throw new Error("JSON 结构不符合要�?);
+      else throw new Error("JSON 结构不符合要求");
 
       await PlatformRoutesService.routesControllerImport(payload);
       message.success("批量导入成功");
@@ -105,8 +105,8 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
         {/* Sidebar */}
         <div className="flex w-64 flex-col gap-4">
           <Alert
-            message="高风险操�?
-            description="此操作将全量覆盖现有配置，请确保 JSON 数据完整且正确�?
+            message="高风险操作"
+            description="此操作将全量覆盖现有配置，请确保 JSON 数据完整且正确。"
             type="warning"
             showIcon
           />
@@ -116,7 +116,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
               格式说明
             </Text>
             <Text type="secondary" className="text-xs">
-              支持 Route DTO 数组或包�?items 字段的对象�?
+              支持 Route DTO 数组或包含 items 字段的对象。
             </Text>
           </div>
 

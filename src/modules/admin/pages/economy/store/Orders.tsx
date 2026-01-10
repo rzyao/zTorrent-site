@@ -6,7 +6,7 @@ import { formatDate } from "@/modules/admin/utils/formatDate";
 
 /**
  * 订单列表页面
- * 职责：提供订单的分页与筛选查看，支持交付详情抽屉与导�?CSV
+ * 职责：提供订单的分页与筛选查看，支持交付详情抽屉与导出 CSV
  */
 export default function StoreOrdersPage() {
   const { message } = App.useApp();
@@ -145,7 +145,7 @@ export default function StoreOrdersPage() {
           { title: "用户ID", dataIndex: "userId", width: 160 },
           { title: "商品ID", dataIndex: "itemId", width: 160 },
           {
-            title: "状�?,
+            title: "状态",
             dataIndex: "status",
             width: 140,
             render: (s: StoreOrder["status"]) => (

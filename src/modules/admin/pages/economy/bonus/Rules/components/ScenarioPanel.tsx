@@ -55,7 +55,7 @@ export function ScenarioPanel(props: Props) {
           <h3>⏱️ 时长设置</h3>
           <div className="form-group">
             <label style={{ color: "var(--primary-color)" }}>
-              做种时长 (�?
+              做种时长 (天)
               <input
                 type="number"
                 value={userDays}
@@ -63,7 +63,8 @@ export function ScenarioPanel(props: Props) {
               />
             </label>
             <div className="info-tip">
-              计算�?<span>{view.totalHours}</span> 小时的总低�?            </div>
+              计算这 <span>{view.totalHours}</span> 小时的总低保
+            </div>
           </div>
         </div>
 
@@ -71,7 +72,7 @@ export function ScenarioPanel(props: Props) {
           <h3>📦 存储规模</h3>
           <div className="form-group">
             <label>
-              做种数量 (�?
+              做种数量 (个)
               <input
                 type="number"
                 value={userCount}
@@ -99,7 +100,7 @@ export function ScenarioPanel(props: Props) {
             }}
           >
             <div className="detail-row">
-              <span>总体�?</span>
+              <span>总体积:</span>
               <strong>{view.totalVolTB.toFixed(3)} TB</strong>
             </div>
             <div className="detail-row">
@@ -115,7 +116,7 @@ export function ScenarioPanel(props: Props) {
           <h3>📊 市场因子</h3>
           <div className="form-group">
             <label>
-              沉睡时间 (�?
+              沉睡时间 (天)
               <input
                 type="number"
                 value={dormantDays}
@@ -125,7 +126,7 @@ export function ScenarioPanel(props: Props) {
           </div>
           <div className="form-group">
             <label>
-              做种人数 (�?
+              做种人数 (个)
               <input
                 type="number"
                 value={peers}
@@ -135,7 +136,7 @@ export function ScenarioPanel(props: Props) {
           </div>
           <div className="form-group">
             <label>
-              种子年龄 (�?
+              种子年龄 (年)
               <input
                 type="number"
                 value={age}

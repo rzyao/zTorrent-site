@@ -1,4 +1,4 @@
-import { formatDate } from "@/modules/admin/utils/formatDate";
+Ôªøimport { formatDate } from "@/modules/admin/utils/formatDate";
 import { Button, Popconfirm, Space, Switch } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { CategoryItem } from "./types";
@@ -14,19 +14,19 @@ interface GetCategoryColumnsProps {
 export const getCategoryColumns = (props: GetCategoryColumnsProps): ColumnsType<CategoryItem> => {
   return [
     {
-      title: "º¸",
+      title: "ÈîÆ",
       dataIndex: "key",
     },
     {
-      title: "√˚≥∆",
+      title: "ÂêçÁß∞",
       dataIndex: "label",
     },
     {
-      title: "√Ë ˆ",
+      title: "ÊèèËø∞",
       dataIndex: "description",
     },
     {
-      title: "∆Ù”√",
+      title: "ÂêØÁî®",
       dataIndex: "enabled",
       width: 80,
       render: (_: any, record: CategoryItem) => {
@@ -39,7 +39,7 @@ export const getCategoryColumns = (props: GetCategoryColumnsProps): ColumnsType<
       },
     },
     {
-      title: "ƒ¨»œœ‘ æ",
+      title: "ÈªòËÆ§ÊòæÁ§∫",
       dataIndex: "isDefault",
       width: 100,
       render: (_: any, record: CategoryItem) => {
@@ -52,32 +52,32 @@ export const getCategoryColumns = (props: GetCategoryColumnsProps): ColumnsType<
       },
     },
     {
-      title: "≈≈–Ú",
+      title: "ÊéíÂ∫è",
       dataIndex: "sort",
       width: 80,
     },
     {
-      title: "¥¥Ω® ±º‰",
+      title: "ÂàõÂª∫Êó∂Èó¥",
       dataIndex: "createdAt",
       width: 180,
       render: (t: string) => formatDate(t),
     },
     {
-      title: "≤Ÿ◊˜",
+      title: "Êìç‰Ωú",
       width: 200,
       fixed: "right",
       render: (_: any, record: CategoryItem) => {
         return (
           <Space>
             <Button type="link" size="small" onClick={() => props.onEdit(record)}>
-              ±‡º≠
+              ÁºñËæë
             </Button>
             <Button type="link" size="small" onClick={() => props.onAddSub(record.id!)}>
-              ◊”¿‡
+              Â≠êÁ±ª
             </Button>
-            <Popconfirm title="»∑»œ…æ≥˝∏√∑÷¿‡£ø" onConfirm={() => props.onRemove(record.id!)}>
+            <Popconfirm title="Á°ÆËÆ§Âà†Èô§ËØ•ÂàÜÁ±ªÔºü" onConfirm={() => props.onRemove(record.id!)}>
               <Button type="link" size="small" danger>
-                …æ≥˝
+                Âà†Èô§
               </Button>
             </Popconfirm>
           </Space>

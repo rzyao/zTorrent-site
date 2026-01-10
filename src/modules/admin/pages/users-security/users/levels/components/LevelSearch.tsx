@@ -28,7 +28,7 @@ export const LevelSearch: React.FC<LevelSearchProps> = ({
       <Space style={{ width: "100%", justifyContent: "space-between" }}>
         <Space>
           <Typography.Text type="secondary">
-            管理系统的用户等级（键、名称与排序�?
+            管理系统的用户等级（键、名称与排序）
           </Typography.Text>
           <Input
             size="large"
@@ -45,7 +45,7 @@ export const LevelSearch: React.FC<LevelSearchProps> = ({
           <Input
             size="large"
             allowClear
-            placeholder="按显示名称搜�?.."
+            placeholder="按显示名称搜索..."
             prefix={<SearchOutlined />}
             value={searchLabel}
             onChange={(e) => {

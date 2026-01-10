@@ -83,7 +83,7 @@ export default function TorrentRecordsByTorrentPage() {
 
   const columns = [
     {
-      title: "用户�?,
+      title: "用户名",
       dataIndex: "username",
       key: "username",
       render: (_: any, it: any) => String(it.username || it.user?.username || it.userName || "-"),
@@ -96,7 +96,7 @@ export default function TorrentRecordsByTorrentPage() {
         String(it.title || it.torrentTitle || it.name || it.torrentName || "-"),
     },
     {
-      title: "状�?,
+      title: "状态",
       dataIndex: "status",
       key: "status",
       render: (_: any, it: any) => {
@@ -147,7 +147,7 @@ export default function TorrentRecordsByTorrentPage() {
       render: (_: any, it: any) => String(it.speed || it.downloadSpeed || it.uploadSpeed || "-"),
     },
     {
-      title: "客户�?,
+      title: "客户端",
       dataIndex: "client",
       key: "client",
       render: (_: any, it: any) => String(it.client || it.clientName || "-"),
@@ -167,11 +167,11 @@ export default function TorrentRecordsByTorrentPage() {
   ];
 
   return (
-    <Space orientation="vertical" size="large" style={{ width: "100%" }}>
+    <Space direction="vertical" size="large" style={{ width: "100%" }}>
       <Card>
         <Space style={{ width: "100%", justifyContent: "space-between" }}>
           <Space>
-            <Typography.Text>种子ID�?/Typography.Text>
+            <Typography.Text>种子ID：</Typography.Text>
             <Input
               size="large"
               value={torrentId}
@@ -198,11 +198,11 @@ export default function TorrentRecordsByTorrentPage() {
           setPage(1);
         }}
         items={[
-          { key: "completed", label: "已下载种�? },
-          { key: "published", label: "已发�? },
-          { key: "seeding", label: "做种�? },
-          { key: "downloading", label: "下载�? },
-          { key: "incomplete", label: "未完�? },
+          { key: "completed", label: "已下载种子" },
+          { key: "published", label: "已发布" },
+          { key: "seeding", label: "做种中" },
+          { key: "downloading", label: "下载中" },
+          { key: "incomplete", label: "未完成" },
         ]}
       />
 
@@ -224,7 +224,7 @@ export default function TorrentRecordsByTorrentPage() {
             ),
           }}
           locale={{
-            emptyText: torrentId ? "暂无下载记录" : "请输入种子ID后查�?,
+            emptyText: torrentId ? "暂无下载记录" : "请输入种子ID后查询",
           }}
         />
         <div style={{ height: 12 }} />

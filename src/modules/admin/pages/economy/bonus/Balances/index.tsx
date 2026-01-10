@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+ï»¿import { useState, useMemo } from "react";
 import { App, Button, Form, Input, Select, Space, Table } from "antd";
 import { useNavigate } from "react-router-dom";
 import { AdjustModal } from "../components/AdjustModal";
@@ -12,7 +12,7 @@ export default function BonusBalancesPage() {
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
-  // 1. Hooks Âß¼­·â×°
+  // 1. Hooks é€»è¾‘å°è£…
   const { containerRef, scrollY } = useContainerScroll();
   const {
     items,
@@ -31,11 +31,11 @@ export default function BonusBalancesPage() {
     handleUnfreeze,
   } = useBonusBalances(form);
 
-  // 2. ±¾µØ UI ×´Ì¬ (µ¯´°µÈ)
+  // 2. æœ¬åœ° UI çŠ¶æ€ (å¼¹çª—ç­‰)
   const [adjustOpen, setAdjustOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<Partial<UserBonusBalance>>({});
 
-  // 3. ±í¸ñÁĞ¶¨Òå (Ê¹ÓÃ useMemo ±£³ÖÒıÓÃÎÈ¶¨)
+  // 3. è¡¨æ ¼åˆ—å®šä¹‰ (ä½¿ç”¨ useMemo ä¿æŒå¼•ç”¨ç¨³å®š)
   const columns = useMemo(
     () =>
       getBalanceColumns({
@@ -46,13 +46,13 @@ export default function BonusBalancesPage() {
         },
         onFreeze: (userId) => {
           modal.confirm({
-            title: "È·ÈÏ¶³½á¸ÃÕË»§£¿",
+            title: "ç¡®è®¤å†»ç»“è¯¥è´¦æˆ·ï¼Ÿ",
             onOk: () => handleFreeze(userId),
           });
         },
         onUnfreeze: (userId) => {
           modal.confirm({
-            title: "È·ÈÏ½â¶³¸ÃÕË»§£¿",
+            title: "ç¡®è®¤è§£å†»è¯¥è´¦æˆ·ï¼Ÿ",
             onOk: () => handleUnfreeze(userId),
           });
         },
@@ -63,51 +63,51 @@ export default function BonusBalancesPage() {
   return (
     <div ref={containerRef} className="flex h-full flex-col rounded-lg bg-white p-4 shadow-sm">
       <Form form={form} layout="inline" className="mb-4" onValuesChange={() => setPage(1)}>
-        <Form.Item label="ÓÃ»§ID" name="userId">
-          <Input placeholder="ÊäÈëÓÃ»§ID" className="w-[180px]" />
+        <Form.Item label="ç”¨æˆ·ID" name="userId">
+          <Input placeholder="è¾“å…¥ç”¨æˆ·ID" className="w-[180px]" />
         </Form.Item>
-        <Form.Item label="¶³½á" name="isFrozen">
+        <Form.Item label="å†»ç»“" name="isFrozen">
           <Select
             allowClear
-            placeholder="È«²¿"
+            placeholder="å…¨éƒ¨"
             className="w-[120px]"
             options={[
-              { label: "Õı³£", value: 0 },
-              { label: "ÒÑ¶³½á", value: 1 },
+              { label: "æ­£å¸¸", value: 0 },
+              { label: "å·²å†»ç»“", value: 1 },
             ]}
           />
         </Form.Item>
-        <Form.Item label="Óà¶î¡İ" name="min">
-          <Input placeholder="´®´óÕûÊı" className="w-[140px]" />
+        <Form.Item label="ä½™é¢â‰¥" name="min">
+          <Input placeholder="ä¸²å¤§æ•´æ•°" className="w-[140px]" />
         </Form.Item>
-        <Form.Item label="Óà¶î¡Ü" name="max">
-          <Input placeholder="´®´óÕûÊı" className="w-[140px]" />
+        <Form.Item label="ä½™é¢â‰¤" name="max">
+          <Input placeholder="ä¸²å¤§æ•´æ•°" className="w-[140px]" />
         </Form.Item>
-        <Form.Item label="ÅÅĞò" name="sortBy" initialValue={sortBy}>
+        <Form.Item label="æ’åº" name="sortBy" initialValue={sortBy}>
           <Select
             className="w-[140px]"
             onChange={(v) => setSortBy(v)}
             options={[
-              { label: "¿ÉÓÃÄ§Á¦", value: "balance" },
-              { label: "Ô¤Õ¼Ä§Á¦", value: "lockedBalance" },
-              { label: "¸üĞÂÊ±¼ä", value: "updatedAt" },
+              { label: "å¯ç”¨é­”åŠ›", value: "balance" },
+              { label: "é¢„å é­”åŠ›", value: "lockedBalance" },
+              { label: "æ›´æ–°æ—¶é—´", value: "updatedAt" },
             ]}
           />
         </Form.Item>
-        <Form.Item label="·½Ïò" name="order" initialValue={order}>
+        <Form.Item label="æ–¹å‘" name="order" initialValue={order}>
           <Select
             className="w-[100px]"
             onChange={(v) => setOrder(v)}
             options={[
-              { label: "½µĞò", value: "DESC" },
-              { label: "ÉıĞò", value: "ASC" },
+              { label: "é™åº", value: "DESC" },
+              { label: "å‡åº", value: "ASC" },
             ]}
           />
         </Form.Item>
         <Form.Item>
           <Space>
             <Button type="primary" onClick={() => refetch()}>
-              ²éÑ¯
+              æŸ¥è¯¢
             </Button>
             <Button
               onClick={() => {
@@ -115,7 +115,7 @@ export default function BonusBalancesPage() {
                 setPage(1);
               }}
             >
-              ÖØÖÃ
+              é‡ç½®
             </Button>
           </Space>
         </Form.Item>

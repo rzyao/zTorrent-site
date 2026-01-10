@@ -32,7 +32,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       <Space>
         <Space.Compact style={{ width: 360 }}>
           <Input
-            placeholder="搜索用户名称或邮�?
+            placeholder="搜索用户名称或邮箱"
             allowClear
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
@@ -48,7 +48,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             setAdvRules([]);
             setAdvLogic("AND");
             fetchList();
-            message.success("已清空高级搜索条�?);
+            message.success("已清空高级搜索条件");
           }}
         >
           清空高级

@@ -60,7 +60,7 @@ export function ConfigForm(props: Props) {
       <h2>📦 仓储低保策略 (Storage Policy)</h2>
       <div className="formula-box">
         <span className="formula-highlight">
-          低保 = (总体�?× svc) + (数量 × ssr ×{" "}
+          低保 = (总体积 × svc) + (数量 × ssr ×{" "}
           <span className="fraction">
             <span className="numerator">size²</span>
             <span className="denominator">size² + sec</span>
@@ -73,7 +73,7 @@ export function ConfigForm(props: Props) {
           {configError}
         </div>
       )}
-      {loadingConfig && <div className="info-note">配置加载中�?/div>}
+      {loadingConfig && <div className="info-note">配置加载中…</div>}
       <div className={"form-group" + (changes.volRate ? " changed" : "")}>
         <label>
           仓储体积系数(svc)
@@ -123,7 +123,8 @@ export function ConfigForm(props: Props) {
         </span>
         <br />
         <span className="formula-highlight" style={{ color: "#059669" }}>
-          交易收益 = max(单价, tbp * tmpr) * 上传�?        </span>
+          交易收益 = max(单价, tbp * tmpr) * 上传量
+        </span>
       </div>
       <div className={"form-group" + (changes.basePrice ? " changed" : "")}>
         <div className="market-field-row">
@@ -134,12 +135,12 @@ export function ConfigForm(props: Props) {
             onChange={handleNumberChange(setBasePrice, 1, 100)}
             disabled={loadingConfig}
           />
-          <span className="inline-note">建议: 20~50，所有新种子的起步价�?/span>
+          <span className="inline-note">建议: 20~50，所有新种子的起步价格</span>
         </div>
       </div>
       <div className={"form-group" + (changes.kt ? " changed" : "")}>
         <div className="market-field-row">
-          <label>交易沉睡增值系�?tdc)</label>
+          <label>交易沉睡增值系数(tdc)</label>
           <input
             type="number"
             value={kt}
@@ -153,7 +154,7 @@ export function ConfigForm(props: Props) {
       </div>
       <div className={"form-group" + (changes.kAge ? " changed" : "")}>
         <div className="market-field-row">
-          <label>交易年龄增值系�?tac)</label>
+          <label>交易年龄增值系数(tac)</label>
           <input
             type="number"
             value={kAge}
@@ -161,13 +162,13 @@ export function ConfigForm(props: Props) {
             disabled={loadingConfig}
           />
           <span className="inline-note">
-            建议: 0~0.2，种子发布时间系�?无上�?
+            建议: 0~0.2，种子发布时间系数(无上限)
           </span>
         </div>
       </div>
       <div className={"form-group" + (changes.kn ? " changed" : "")}>
         <div className="market-field-row">
-          <label>交易稀缺系�?tsc)</label>
+          <label>交易稀缺系数(tsc)</label>
           <input
             type="number"
             value={kn}
@@ -189,7 +190,8 @@ export function ConfigForm(props: Props) {
             disabled={loadingConfig}
           />
           <span className="inline-note">
-            建议: 0.1~0.3，保底价格占基础价格的比�?          </span>
+            建议: 0.1~0.3，保底价格占基础价格的比例
+          </span>
         </div>
       </div>
       <div

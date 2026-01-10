@@ -47,7 +47,7 @@ export default function Films() {
     msg.error(e?.message || fallback);
   };
 
-  // 列表状态与筛选条�?
+  // 列表状态与筛选条件
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<MovieItem[]>([]);
   const [page, setPage] = useState(1);
@@ -79,10 +79,10 @@ export default function Films() {
     { label: "剧情", value: "Drama" },
     { label: "科幻", value: "Sci-Fi" },
     { label: "惊悚", value: "Thriller" },
-    { label: "恐�?, value: "Horror" },
+    { label: "恐怖", value: "Horror" },
     { label: "爱情", value: "Romance" },
     { label: "动画", value: "Animation" },
-    { label: "纪录�?, value: "Documentary" },
+    { label: "纪录片", value: "Documentary" },
   ]);
 
   const parseGenreIds = (text: string): string[] | undefined => {
@@ -305,7 +305,7 @@ export default function Films() {
         <Space.Compact style={{ width: 260 }}>
           <Input
             allowClear
-            placeholder="关键�?
+            placeholder="关键词"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             onPressEnter={() => setPage(1)}
@@ -421,8 +421,8 @@ export default function Films() {
         width={700}
       >
         <Form form={createForm} layout="vertical">
-          <Form.Item name="title" label="标题" rules={[{ required: true, message: "请输入标�? }]}>
-            <Input placeholder="请输入电影标�? />
+          <Form.Item name="title" label="标题" rules={[{ required: true, message: "请输入标题" }]}>
+            <Input placeholder="请输入电影标题" />
           </Form.Item>
           <Form.Item name="originalTitle" label="原名">
             <Input placeholder="原始片名" />
@@ -448,7 +448,7 @@ export default function Films() {
             <Input.TextArea rows={3} />
           </Form.Item>
           <Form.Item name="categories" label="分类">
-            <Select mode="tags" options={categoryOptions} placeholder="选择或输入分�? />
+            <Select mode="tags" options={categoryOptions} placeholder="选择或输入分类" />
           </Form.Item>
           <Form.Item name="genres" label="类型标签 (Genre IDs)">
             <Select mode="tags" placeholder="输入 ID" />
@@ -456,8 +456,8 @@ export default function Films() {
           <Form.Item name="director" label="导演">
             <Input />
           </Form.Item>
-          <Form.Item name="cast" label="演员 (以逗号或回车分�?">
-            <Select mode="tags" open={false} placeholder="输入后回�? />
+          <Form.Item name="cast" label="演员 (以逗号或回车分隔)">
+            <Select mode="tags" open={false} placeholder="输入后回车" />
           </Form.Item>
           <Space>
             <Form.Item name="enabled" label="启用" valuePropName="checked">

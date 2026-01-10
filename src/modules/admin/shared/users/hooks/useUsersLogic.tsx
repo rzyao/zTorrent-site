@@ -254,7 +254,7 @@ export const useUsersLogic = () => {
     const statusTag = (() => {
       const s = d.status as UserDto["status"];
       const color = s === "banned" ? "red" : s === "active" ? "green" : "gold";
-      const text = s === "banned" ? "已封�? : s === "active" ? "正常" : "待激�?;
+      const text = s === "banned" ? "已封禁" : s === "active" ? "正常" : "待激活";
       return <Tag color={color}>{text}</Tag>;
     })();
 
@@ -274,11 +274,11 @@ export const useUsersLogic = () => {
     return (
       <div>
         <Descriptions title="基础信息" column={2} bordered size="small">
-          <Descriptions.Item label="用户�?>{d.username || "-"}</Descriptions.Item>
+          <Descriptions.Item label="用户名">{d.username || "-"}</Descriptions.Item>
           <Descriptions.Item label="邮箱">{d.email || "-"}</Descriptions.Item>
           <Descriptions.Item label="角色">
             <Space size={4} wrap>
-              {roles.length ? roles.map((x) => <Tag key={x}>{x}</Tag>) : <Tag>未设�?/Tag>}
+              {roles.length ? roles.map((x) => <Tag key={x}>{x}</Tag>) : <Tag>未设置</Tag>}
             </Space>
           </Descriptions.Item>
           <Descriptions.Item label="权限">
@@ -290,7 +290,7 @@ export const useUsersLogic = () => {
                   </Tag>
                 ))
               ) : (
-                <Tag>未设�?/Tag>
+                <Tag>未设置</Tag>
               )}
             </Space>
           </Descriptions.Item>
@@ -302,8 +302,8 @@ export const useUsersLogic = () => {
 
         <div style={{ height: 12 }} />
 
-        <Descriptions title="账号状�? column={2} bordered size="small">
-          <Descriptions.Item label="状�?>{statusTag}</Descriptions.Item>
+        <Descriptions title="账号状态" column={2} bordered size="small">
+          <Descriptions.Item label="状态">{statusTag}</Descriptions.Item>
           <Descriptions.Item label="下载权限">
             <Tag color={d.hasDownloadPermission ? "green" : "red"}>
               {d.hasDownloadPermission ? "允许" : "禁止"}
@@ -314,10 +314,10 @@ export const useUsersLogic = () => {
         <div style={{ height: 12 }} />
 
         <Descriptions title="活跃信息" column={2} bordered size="small">
-          <Descriptions.Item label="最后访�?>
+          <Descriptions.Item label="最后访问">
             {formatDate(d.lastVisitAt || d.lastVisitTime)}
           </Descriptions.Item>
-          <Descriptions.Item label="最后登�?>
+          <Descriptions.Item label="最后登录">
             {formatDate(d.lastLoginAt || d.lastLoginTime)}
           </Descriptions.Item>
           <Descriptions.Item label="最后登录IP">{lastLoginIp}</Descriptions.Item>
@@ -428,7 +428,7 @@ export const useUsersLogic = () => {
           }
           case "delete": {
             if (!can("admin/users/delete")) {
-              toast.info("无删除权�?);
+              toast.info("无删除权限");
               return;
             }
             setDeleteTargetId(id);
@@ -437,7 +437,7 @@ export const useUsersLogic = () => {
           }
           case "ban": {
             if (!can("admin/users/ban")) {
-              toast.info("无封禁权�?);
+              toast.info("无封禁权限");
               return;
             }
             setBanTargetId(uid);
@@ -488,11 +488,11 @@ export const useUsersLogic = () => {
         width: 80,
       },
       {
-        title: "状�?,
+        title: "状态",
         dataIndex: "status",
         render: (status: UserDto["status"]) => {
           const color = status === "banned" ? "red" : status === "active" ? "green" : "gold";
-          const text = status === "banned" ? "已封�? : status === "active" ? "正常" : "待激�?;
+          const text = status === "banned" ? "已封禁" : status === "active" ? "正常" : "待激活";
           return <Tag color={color}>{text}</Tag>;
         },
       },
@@ -506,7 +506,7 @@ export const useUsersLogic = () => {
               查看
             </Button>
           ) : (
-            <Tag>未设�?/Tag>
+            <Tag>未设置</Tag>
           );
         },
       },
@@ -524,7 +524,7 @@ export const useUsersLogic = () => {
               查看
             </Button>
           ) : (
-            <Tag>未设�?/Tag>
+            <Tag>未设置</Tag>
           );
         },
       },
@@ -532,7 +532,7 @@ export const useUsersLogic = () => {
         title: "等级",
         dataIndex: "level",
         render: (level: UserDto["level"]) =>
-          level ? <Tag color="blue">{level}</Tag> : <Tag>未设�?/Tag>,
+          level ? <Tag color="blue">{level}</Tag> : <Tag>未设置</Tag>,
       },
       {
         title: "VIP",
@@ -559,7 +559,7 @@ export const useUsersLogic = () => {
         render: (_: any, r: any) => formatDate(r.createdAt || r.createTime),
       },
       {
-        title: "最后访�?,
+        title: "最后访问",
         dataIndex: "lastVisitAt",
         render: (_: any, r: any) => formatDate(r.lastVisitAt || r.lastVisitTime),
       },
@@ -585,10 +585,10 @@ export const useUsersLogic = () => {
 
   const advFieldOptions = useMemo(
     () => [
-      { label: "用户�?, value: "username", type: "text" as const },
+      { label: "用户名", value: "username", type: "text" as const },
       { label: "邮箱", value: "email", type: "text" as const },
       {
-        label: "状�?,
+        label: "状态",
         value: "status",
         type: "enum" as const,
         enumOptions: STATUS_OPTIONS,
@@ -611,8 +611,8 @@ export const useUsersLogic = () => {
         value: "hasDownloadPermission",
         type: "bool" as const,
       },
-      { label: "最后登录时�?, value: "lastLoginAt", type: "date" as const },
-      { label: "最后访问时�?, value: "lastVisitAt", type: "date" as const },
+      { label: "最后登录时间", value: "lastLoginAt", type: "date" as const },
+      { label: "最后访问时间", value: "lastVisitAt", type: "date" as const },
       { label: "创建时间", value: "createdAt", type: "date" as const },
       { label: "最后登录IP", value: "lastLoginIp", type: "text" as const },
       { label: "角色", value: "roles", type: "array" as const },

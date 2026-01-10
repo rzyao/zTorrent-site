@@ -15,10 +15,10 @@ interface AppSiderProps {
 }
 
 /**
- * 侧边栏组�?
- * 性能优化�?
- * 1. 使用 React.memo 避免父组件更新时不必要的重渲�?
- * 2. 禁用 Menu 的内置动画（inlineCollapsed 时仍保留过渡�?
+ * 侧边栏组件
+ * 性能优化：
+ * 1. 使用 React.memo 避免父组件更新时不必要的重渲染
+ * 2. 禁用 Menu 的内置动画（inlineCollapsed 时仍保留过渡）
  * 3. 使用 CSS transform 代替宽度变化动画
  */
 const AppSider: React.FC<AppSiderProps> = React.memo(

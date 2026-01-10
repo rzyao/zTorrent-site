@@ -40,13 +40,13 @@ export const PermissionAssignModal: React.FC<PermissionAssignModalProps> = ({
     <Modal
       open={isPermissionModalOpen && !!selectedRole}
       title={
-        <Space orientation="vertical" size={4}>
+        <Space direction="vertical" size={4}>
           <Typography.Text>分配权限</Typography.Text>
           {selectedRole && (
             <Typography.Text type="secondary">
               角色：{selectedRole.name}
               <Typography.Text type="secondary" style={{ marginLeft: 8 }}>
-                ({getPermissionCount()} 项权�?
+                ({getPermissionCount()} 项权限)
               </Typography.Text>
             </Typography.Text>
           )}
