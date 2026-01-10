@@ -35,28 +35,28 @@ export default function SendInvitePage() {
   if (!canOfficial) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Result status="403" title="无权限" subTitle="申请该权限或联系管理员" />
+        <Result status="403" title="无权�? subTitle="申请该权限或联系管理�? />
       </div>
     );
   }
 
   return (
     <div className="space-y-4 p-4">
-      <Card title="发送官方邀请" className="border-none shadow-sm">
+      <Card title="发送官方邀�? className="border-none shadow-sm">
         <Form form={form} layout="vertical" className="max-w-2xl">
           <Form.Item
             name="email"
             label="受邀邮箱"
             rules={[
-              { required: true, message: "请输入邮箱" },
-              { type: "email", message: "邮箱格式不正确" },
+              { required: true, message: "请输入邮�? },
+              { type: "email", message: "邮箱格式不正�? },
             ]}
           >
             <Input placeholder="name@example.com" size="large" allowClear />
           </Form.Item>
           <Form.Item
             name="username"
-            label="受邀用户名"
+            label="受邀用户�?
             rules={[{ required: true, message: "请输入用户名" }]}
           >
             <Input placeholder="请输入用户名" size="large" allowClear />
@@ -69,7 +69,7 @@ export default function SendInvitePage() {
                 icon={<SafetyCertificateOutlined />}
                 onClick={handleSubmit}
               >
-                发送邀请邮件
+                发送邀请邮�?
               </Button>
               {canManageInvites && (
                 <Button
@@ -88,7 +88,7 @@ export default function SendInvitePage() {
       </Card>
 
       <Modal
-        title="批量授予邀请名额"
+        title="批量授予邀请名�?
         open={batchOpen}
         onCancel={() => setBatchOpen(false)}
         footer={null}
@@ -97,18 +97,18 @@ export default function SendInvitePage() {
         <Form form={batchForm} layout="vertical" className="p-2">
           <div className="grid grid-cols-2 gap-4">
             <Form.Item name="levels" label="用户等级（多选）">
-              <Select mode="multiple" allowClear options={levelsOptions} placeholder="筛选等级" />
+              <Select mode="multiple" allowClear options={levelsOptions} placeholder="筛选等�? />
             </Form.Item>
             <Form.Item name="roles" label="用户角色（多选）">
-              <Select mode="multiple" allowClear options={rolesOptions} placeholder="筛选角色" />
+              <Select mode="multiple" allowClear options={rolesOptions} placeholder="筛选角�? />
             </Form.Item>
           </div>
 
           <Form.Item name="logic" label="过滤逻辑" initialValue="OR">
             <Select
               options={[
-                { label: "满足任一（OR）", value: "OR" },
-                { label: "同时满足（AND）", value: "AND" },
+                { label: "满足任一（OR�?, value: "OR" },
+                { label: "同时满足（AND�?, value: "AND" },
               ]}
             />
           </Form.Item>

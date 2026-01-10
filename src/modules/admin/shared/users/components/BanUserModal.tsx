@@ -85,7 +85,7 @@ export const BanUserModal: React.FC<BanUserModalProps> = ({
           />
         </Form.Item>
         <Form.Item label="详细原因" name="detailReason">
-          <Input.TextArea placeholder="可选，输入封禁的详细原因" rows={3} />
+          <Input.TextArea placeholder="可选，输入封禁的详细原�? rows={3} />
         </Form.Item>
         <Form.Item
           label="封禁时长"

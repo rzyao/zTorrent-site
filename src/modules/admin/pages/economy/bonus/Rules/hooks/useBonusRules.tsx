@@ -207,10 +207,10 @@ export function useBonusRules() {
       slotMax: { name: "仓储卡槽奖励(ssr)", value: slotMax },
       sigmoidC: { name: "仓储效率曲线常数(sec)", value: sigmoidC },
       basePrice: { name: "交易基础单价(tbp)", value: basePrice },
-      kt: { name: "交易沉睡增值系数(tdc)", value: kt },
-      kn: { name: "交易稀缺系数(tsc)", value: kn },
+      kt: { name: "交易沉睡增值系�?tdc)", value: kt },
+      kn: { name: "交易稀缺系�?tsc)", value: kn },
       pMinRatio: { name: "交易保底价格比例(tmpr)", value: pMinRatio },
-      kAge: { name: "交易年龄增值系数(tac)", value: kAge },
+      kAge: { name: "交易年龄增值系�?tac)", value: kAge },
       costCurveC: { name: "交易花费曲线常数(tcac)", value: costCurveC },
     } as const;
     const keyToApiField: Record<string, keyof BonusConfigDto> = {
@@ -251,7 +251,7 @@ export function useBonusRules() {
       title: "确认保存配置",
       content: (
         <div>
-          <p>以下配置将被保存：</p>
+          <p>以下配置将被保存�?/p>
           <div
             style={{ maxHeight: "300px", overflowY: "auto", marginTop: "10px" }}
           >
@@ -262,7 +262,7 @@ export function useBonusRules() {
               >
                 <strong>{d.name}:</strong>{" "}
                 <span style={{ color: "#999" }}>{fmt(d.before)}</span>
-                {" → "}
+                {" �?"}
                 <span style={{ color: "#52c41a", fontWeight: "bold" }}>
                   {fmt(d.after)}
                 </span>
@@ -404,13 +404,13 @@ export function useBonusRules() {
                   tradingCostDiscount: data.tradingCostDiscount ?? 1,
                   tradingRevenueBonus: data.tradingRevenueBonus ?? 1,
                 });
-                message.success("配置保存成功！");
+                message.success("配置保存成功�?);
               }
             });
           })
           .catch((e: any) => {
             setConfigError(e?.message ?? "保存配置失败");
-            message.error(`保存失败：${e?.message ?? "保存配置失败"}`);
+            message.error(`保存失败�?{e?.message ?? "保存配置失败"}`);
           })
           .finally(() => {
             setSaving(false);

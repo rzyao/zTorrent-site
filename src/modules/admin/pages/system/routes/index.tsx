@@ -87,7 +87,7 @@ const PageHeader = memo(function PageHeader({
           <Title level={4} style={{ margin: 0 }}>
             路由管理
           </Title>
-          <Text type="secondary">可视化的动态路由配置中心</Text>
+          <Text type="secondary">可视化的动态路由配置中�?/Text>
         </div>
         <Space>
           <Button icon={<ReloadOutlined spin={isLoading} />} onClick={onRefresh}>
@@ -143,7 +143,7 @@ function RouteManageContent() {
     },
   });
 
-  // 分组逻辑：将 Admin/Forum 提升为顶级
+  // 分组逻辑：将 Admin/Forum 提升为顶�?
   const groupedData = useMemo(() => {
     const groups = {
       app: [] as RouteTreeNodeDto[],
@@ -169,7 +169,7 @@ function RouteManageContent() {
               } else if (child.layout === "forum") {
                 groups.forum.push(child); // 提升 Forum
               } else {
-                appChildren.push(child); // 保留 App 子节点
+                appChildren.push(child); // 保留 App 子节�?
               }
             });
             appNode.children = appChildren;
@@ -202,7 +202,7 @@ function RouteManageContent() {
         path: node.path,
         name: node.name,
         component: node.component,
-        layout: node.layout as any, // 修正类型兼容性
+        layout: node.layout as any, // 修正类型兼容�?
         isVisible: node.isVisible,
         permissions: node.permissions,
         redirect: node.redirect,
@@ -223,7 +223,7 @@ function RouteManageContent() {
 
   const createMutation = useMutation({
     mutationFn: async (dto: CreateRouteDto) => {
-      // 修正：强制转换 activeTab string 到 layout enum 类型
+      // 修正：强制转�?activeTab string �?layout enum 类型
       const payload = { ...dto, layout: activeTab as any };
       await PlatformAdminRoutesService.adminRoutesControllerCreate(payload);
     },
@@ -251,7 +251,7 @@ function RouteManageContent() {
       await PlatformAdminRoutesService.adminRoutesControllerSort({ items });
     },
     onSuccess: () => {
-      message.success("排序已更新");
+      message.success("排序已更�?);
       queryClient.invalidateQueries({ queryKey: ["adminRouteTree"] });
     },
     onError: (err: any) => message.error(`排序失败: ${err.message}`),
@@ -273,7 +273,7 @@ function RouteManageContent() {
     onError: (err: any) => message.error(`移动失败: ${err.message}`),
   });
 
-  // Handlers - 将所有 hook 调用放在组件内部最顶层，确保初始化顺序
+  // Handlers - 将所�?hook 调用放在组件内部最顶层，确保初始化顺序
   const handleRefresh = useCallback(() => refetch(), [refetch]);
 
   const handleExport = useCallback(() => {
@@ -291,12 +291,12 @@ function RouteManageContent() {
     message.success("导出完成");
   }, [fullTreeData, message]);
 
-  // 处理函数定义 - 确保所有 Handler 在 return 之前定义
+  // 处理函数定义 - 确保所�?Handler �?return 之前定义
   const handleDelete = useCallback(
     (id: string) => {
       modal.confirm({
-        title: "确认删除？",
-        content: "此操作将永久删除该路由及其子节点。",
+        title: "确认删除�?,
+        content: "此操作将永久删除该路由及其子节点�?,
         okText: "删除",
         okType: "danger",
         cancelText: "取消",
@@ -345,7 +345,7 @@ function RouteManageContent() {
       }
 
       if (isAncestor(activeNode, targetId)) {
-        message.warning("无法挂载到子节点下");
+        message.warning("无法挂载到子节点�?);
         return;
       }
 
@@ -361,7 +361,7 @@ function RouteManageContent() {
         const activeParent = findParent(currentTreeData, activeId);
         const targetParent = findParent(currentTreeData, targetId);
 
-        // 同级排序优化：如果父节点相同，使用批量排序接口
+        // 同级排序优化：如果父节点相同，使用批量排序接�?
         if (activeParent?.id === targetParent?.id) {
           const sorted = [...siblings].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
           const oldIndex = sorted.findIndex((n) => n.id === activeId);

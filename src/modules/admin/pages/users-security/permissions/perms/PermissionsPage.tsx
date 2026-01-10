@@ -34,7 +34,7 @@ import { UpdatePermissionRequestDto as UpdatePermissionDto } from "@/api/models/
  * 权限页面 Props
  */
 interface PermissionsPageProps {
-  /** 权限作用范围：web (网页端) 或 admin (后台管理) */
+  /** 权限作用范围：web (网页�? �?admin (后台管理) */
   scope: "admin" | "web";
   /** 页面标题 */
   title?: string;
@@ -42,7 +42,7 @@ interface PermissionsPageProps {
 
 /**
  * 权限管理页面组件
- * 支持通过 props 指定 scope，用于拆分为独立的网页权限/后台权限页面
+ * 支持通过 props 指定 scope，用于拆分为独立的网页权�?后台权限页面
  */
 export default function PermissionsPage({ scope, title }: PermissionsPageProps) {
   const USE_MOCK = false;
@@ -84,7 +84,7 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
           {
             id: "mock-page-dashboard",
             key: `${scope}/dashboard`,
-            name: "仪表盘",
+            name: "仪表�?,
             description: "系统概览页面",
             type: "page",
             scope,
@@ -93,7 +93,7 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
                 id: "mock-button-refresh",
                 key: `${scope}/dashboard/refresh`,
                 name: "刷新数据",
-                description: "刷新仪表盘数据",
+                description: "刷新仪表盘数�?,
                 type: "button",
                 scope,
                 parent_id: "mock-page-dashboard",
@@ -125,7 +125,7 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
                 id: "mock-button-create-user",
                 key: `${scope}/users/create`,
                 name: "创建用户按钮",
-                description: "页面内创建用户操作",
+                description: "页面内创建用户操�?,
                 type: "button",
                 scope,
                 parent_id: "mock-page-users",
@@ -145,7 +145,7 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
                 id: "mock-button-delete-user",
                 key: `${scope}/users/delete`,
                 name: "删除用户按钮",
-                description: "页面内删除用户操作",
+                description: "页面内删除用户操�?,
                 type: "button",
                 scope,
                 parent_id: "mock-page-users",
@@ -329,7 +329,7 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
     setLoading(true);
     try {
       if (USE_MOCK) {
-        message.info("当前为模拟数据模式，删除操作仅展示 UI 效果");
+        message.info("当前为模拟数据模式，删除操作仅展�?UI 效果");
         setLoading(false);
         return;
       }
@@ -460,13 +460,12 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
 
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <Button type="link" icon={<PlusOutlined />} onClick={() => handleAdd(permission)}>
-                子权限
-              </Button>
+                子权�?              </Button>
               <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(permission)}>
                 编辑
               </Button>
               <Popconfirm
-                title="确定删除这个权限吗？所有子权限也会被删除。"
+                title="确定删除这个权限吗？所有子权限也会被删除�?
                 onConfirm={() => handleDelete(permission.id)}
               >
                 <Button type="link" danger icon={<DeleteOutlined />}>
@@ -537,13 +536,12 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
 
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <Button type="link" icon={<PlusOutlined />} onClick={() => handleAdd(permission)}>
-            子权限
-          </Button>
+            子权�?          </Button>
           <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(permission)}>
             编辑
           </Button>
           <Popconfirm
-            title="确定删除这个权限吗？所有子权限也会被删除。"
+            title="确定删除这个权限吗？所有子权限也会被删除�?
             onConfirm={() => handleDelete(permission.id)}
           >
             <Button type="link" danger icon={<DeleteOutlined />}>
@@ -575,11 +573,11 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <Typography.Text type="secondary">关键词</Typography.Text>
+            <Typography.Text type="secondary">关键�?/Typography.Text>
             <Input
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              placeholder="搜索权限名称、键或描述..."
+              placeholder="搜索权限名称、键或描�?.."
               allowClear
               prefix={<SearchOutlined />}
               style={{ width: 240 }}
@@ -605,7 +603,7 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
       </Card>
 
       <Card
-        title="权限树结构"
+        title="权限树结�?
         extra={
           <Button
             type="primary"
@@ -650,21 +648,20 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
 
       <Modal
         open={isModalOpen}
-        title={editingPermission ? "编辑权限" : parentId ? "添加子权限" : "添加权限"}
+        title={editingPermission ? "编辑权限" : parentId ? "添加子权�? : "添加权限"}
         onCancel={() => setIsModalOpen(false)}
         onOk={async () => {
           const values = await form.validateFields();
           setLoading(true);
           try {
             if (USE_MOCK) {
-              message.info("当前为模拟数据模式，保存操作仅展示 UI 效果");
+              message.info("当前为模拟数据模式，保存操作仅展�?UI 效果");
               setIsModalOpen(false);
               setLoading(false);
               return;
             }
             if (editingPermission) {
-              // WORKAROUND: API 定义变更，不再接受 data 包装，改为扁平结构
-              await PermissionsService.permissionsCoreControllerUpdate({
+              // WORKAROUND: API 定义变更，不再接�?data 包装，改为扁平结�?              await PermissionsService.permissionsCoreControllerUpdate({
                 id: editingPermission.id,
                 name: values.name,
                 description: values.description,
@@ -723,7 +720,7 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
         <Form form={form} layout="vertical" initialValues={formData}>
           {!editingPermission && (
             <Form.Item
-              label="权限键"
+              label="权限�?
               name="key"
               rules={[{ required: true, message: "请输入权限键" }]}
             >
@@ -733,9 +730,9 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
           <Form.Item
             label="权限名称"
             name="name"
-            rules={[{ required: true, message: "请输入权限名称" }]}
+            rules={[{ required: true, message: "请输入权限名�? }]}
           >
-            <Input placeholder="例如：创建用户" />
+            <Input placeholder="例如：创建用�? />
           </Form.Item>
           <Form.Item
             label="权限类型"
@@ -745,18 +742,18 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
             <Select
               options={[
                 { label: "页面 - 路由页面访问控制", value: "page" },
-                { label: "按钮 - 页面内操作按钮控制", value: "button" },
+                { label: "按钮 - 页面内操作按钮控�?, value: "button" },
                 { label: "接口 - 后端接口权限校验", value: "api" },
               ]}
             />
           </Form.Item>
           <Form.Item
-            label="排序值"
+            label="排序�?
             name="sort"
             initialValue={1}
-            rules={[{ required: true, message: "请输入排序值" }]}
+            rules={[{ required: true, message: "请输入排序�? }]}
           >
-            <Input type="number" min={0} placeholder="越小越靠前，如 1" />
+            <Input type="number" min={0} placeholder="越小越靠前，�?1" />
           </Form.Item>
           <Form.Item
             label="作用范围"
@@ -766,7 +763,7 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
             <Select
               options={[
                 {
-                  label: scope === "admin" ? "后台管理端" : "用户端网页",
+                  label: scope === "admin" ? "后台管理�? : "用户端网�?,
                   value: scope,
                 } as any,
               ]}
@@ -774,7 +771,7 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
             />
           </Form.Item>
           <Form.Item label="权限描述" name="description">
-            <Input.TextArea rows={3} placeholder="权限的详细描述" />
+            <Input.TextArea rows={3} placeholder="权限的详细描�? />
           </Form.Item>
         </Form>
       </Modal>

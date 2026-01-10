@@ -1,20 +1,20 @@
-ï»¿import React from "react";
+import React from "react";
 import { cn } from "@/utils/cn";
 
 interface AdminPageContainerProps {
   children?: React.ReactNode;
   className?: string;
-  /** æ˜¯å¦ä½¿ç”¨ç´§å‡‘æ¨¡å¼ï¼ˆæ— å†…è¾¹è·ï¼‰ */
+  /** ÊÇ·ñÊ¹ÓÃ½ô´ÕÄ£Ê½£¨ÎŞÄÚ±ß¾à£© */
   compact?: boolean;
 }
 
 /**
- * Admin æ¨¡å—ä¸“ç”¨é¡µé¢å®¹å™¨ç»„ä»¶
+ * Admin Ä£¿é×¨ÓÃÒ³ÃæÈİÆ÷×é¼ş
  *
- * éµå¾ª Ant Design è§„èŒƒï¼š
- * - æ ‡å‡†å†…è¾¹è·ï¼š24px (--antd-spacing-lg)
- * - èƒŒæ™¯è‰²ï¼š#f5f5f5 (--antd-bg-layout)
- * - å…¨å®½å¸ƒå±€ï¼Œæ—  max-width é™åˆ¶
+ * ×ñÑ­ Ant Design ¹æ·¶£º
+ * - ±ê×¼ÄÚ±ß¾à£º24px (--antd-spacing-lg)
+ * - ±³¾°É«£º#f5f5f5 (--antd-bg-layout)
+ * - È«¿í²¼¾Ö£¬ÎŞ max-width ÏŞÖÆ
  */
 export function AdminPageContainer({
   children,
@@ -25,7 +25,7 @@ export function AdminPageContainer({
     <div
       className={cn(
         "flex min-h-0 w-full flex-1 flex-col overflow-hidden bg-[#FAFAFA]",
-        // Ant Design æ ‡å‡†é—´è·ï¼š24px
+        // Ant Design ±ê×¼¼ä¾à£º24px
         !compact && "p-6",
         className,
       )}

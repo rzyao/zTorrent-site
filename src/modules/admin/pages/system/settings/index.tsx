@@ -26,8 +26,8 @@ import { MailToolsModals } from "./components/MailToolsModals";
 /**
  * 系统设置页面 (SystemSettings)
  *
- * 职责：
- * - 组装各个子模块 (Sidebar, List, Modals)
+ * 职责�?
+ * - 组装各个子模�?(Sidebar, List, Modals)
  * - 通过 useSystemSettings Hook 获取状态与操作
  * - 保持页面主要布局结构
  */
@@ -93,7 +93,7 @@ export default function SystemSettings() {
           overflow: "hidden",
         }}
       >
-        {/* 顶部操作区：标题与保存/重置按钮；全局操作与搜索入口 */}
+        {/* 顶部操作区：标题与保�?重置按钮；全局操作与搜索入�?*/}
         <Card styles={{ body: { padding: 16 } }}>
           <div
             style={{
@@ -132,7 +132,7 @@ export default function SystemSettings() {
                   setCreateOpen(true);
                 }}
               >
-                新增配置项
+                新增配置�?
               </Button>
               {!searchText && selectedGroup === "mail" && (
                 <Space>
@@ -140,7 +140,7 @@ export default function SystemSettings() {
                     onClick={() => handleVerifyMail()}
                     loading={mailVerifyLoading}
                   >
-                    测试连通性
+                    测试连通�?
                   </Button>
                   <Button
                     onClick={() => handleViewMailConfig()}
@@ -153,7 +153,7 @@ export default function SystemSettings() {
                       setSendDiagOpen(true);
                     }}
                   >
-                    发送测试邮件
+                    发送测试邮�?
                   </Button>
                 </Space>
               )}
@@ -162,7 +162,7 @@ export default function SystemSettings() {
               <Input
                 size="large"
                 allowClear
-                placeholder="搜索配置键、描述 or 值..."
+                placeholder="搜索配置键、描�?or �?.."
                 prefix={<SearchOutlined />}
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
@@ -171,7 +171,7 @@ export default function SystemSettings() {
           </div>
         </Card>
 
-        {/* 主体布局：左侧分组导航 + 右侧设置列表 */}
+        {/* 主体布局：左侧分组导�?+ 右侧设置列表 */}
         <div
           style={{
             display: "flex",
@@ -191,7 +191,7 @@ export default function SystemSettings() {
             onSelectGroup={setSelectedGroup}
           />
 
-          {/* 右侧内容区 */}
+          {/* 右侧内容�?*/}
           <Card
             className="scroll-area"
             style={{
@@ -231,7 +231,7 @@ export default function SystemSettings() {
                     }}
                   >
                     <Tag color={mailInfo.enabled ? "green" : "red"}>
-                      {mailInfo.enabled ? "已启用" : "未启用"}
+                      {mailInfo.enabled ? "已启�? : "未启�?}
                     </Tag>
                     <Typography.Text>
                       发件人：
@@ -240,7 +240,7 @@ export default function SystemSettings() {
                       </Typography.Text>
                     </Typography.Text>
                     <Typography.Text>
-                      SMTP：
+                      SMTP�?
                       <Typography.Text code>
                         {mailInfo.smtpPreview}
                       </Typography.Text>
@@ -266,7 +266,7 @@ export default function SystemSettings() {
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <AlertOutlined style={{ color: "#fa8c16" }} />
                   <Typography.Text type="warning">
-                    有未保存的更改
+                    有未保存的更�?
                   </Typography.Text>
                 </div>
               )}
@@ -297,7 +297,7 @@ export default function SystemSettings() {
                 />
               ) : (
                 <Typography.Text type="secondary">
-                  {searchText ? "没有找到匹配的配置" : "该分组暂无配置"}
+                  {searchText ? "没有找到匹配的配�? : "该分组暂无配�?}
                 </Typography.Text>
               )}
             </div>

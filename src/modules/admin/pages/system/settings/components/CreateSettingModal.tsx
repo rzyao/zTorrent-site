@@ -55,7 +55,7 @@ export const CreateSettingModal: React.FC<CreateSettingModalProps> = ({
       onCancel={onCancel}
       onOk={() => form.submit()}
       confirmLoading={confirmLoading}
-      title="新增配置项"
+      title="新增配置�?
       okText="创建"
       width={720}
     >
@@ -81,11 +81,11 @@ export const CreateSettingModal: React.FC<CreateSettingModalProps> = ({
             { required: true, message: "请输入键名后缀" },
             {
               pattern: /^[A-Za-z][\w\-.]*$/,
-              message: "后缀需以字母开头，仅包含字母/数字/下划线/点/连字符",
+              message: "后缀需以字母开头，仅包含字�?数字/下划�?�?连字�?,
             },
           ]}
         >
-          <Input placeholder="例如：title 或 mail.smtp.host" />
+          <Input placeholder="例如：title �?mail.smtp.host" />
         </Form.Item>
 
         {/* 键名预览：group + '.' + suffix */}
@@ -119,14 +119,14 @@ export const CreateSettingModal: React.FC<CreateSettingModalProps> = ({
         </Form.Item>
 
         <Form.Item label="描述" name="description">
-          <Input.TextArea rows={3} placeholder="该配置项的用途说明" />
+          <Input.TextArea rows={3} placeholder="该配置项的用途说�? />
         </Form.Item>
 
         <Form.Item label="可运行时修改" name="mutable" valuePropName="checked">
           <Switch />
         </Form.Item>
 
-        <Form.Item label="排序值" name="sort">
+        <Form.Item label="排序�? name="sort">
           <InputNumber style={{ width: 200 }} />
         </Form.Item>
       </Form>

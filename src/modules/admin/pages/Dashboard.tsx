@@ -15,7 +15,7 @@ export default function Dashboard() {
               <span className="metric-icon success">
                 <UserOutlined />
               </span>
-              <Statistic title="在线用户" value={128} suffix="人" />
+              <Statistic title="在线用户" value={128} suffix="�? />
             </div>
           </Card>
         </Col>
@@ -25,7 +25,7 @@ export default function Dashboard() {
               <span className="metric-icon info">
                 <CloudOutlined />
               </span>
-              <Statistic title="今日访问" value={4521} suffix="次" />
+              <Statistic title="今日访问" value={4521} suffix="�? />
             </div>
           </Card>
         </Col>
@@ -35,7 +35,7 @@ export default function Dashboard() {
               <span className="metric-icon warning">
                 <ThunderboltOutlined />
               </span>
-              <Statistic title="待处理任务" value={17} suffix="个" />
+              <Statistic title="待处理任�? value={17} suffix="�? />
             </div>
           </Card>
         </Col>

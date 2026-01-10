@@ -36,17 +36,17 @@ export function ResultsPanel(props: Props) {
       <h2>🧮 收益结算清单</h2>
       <div className="results-row">
         <div className="result-box rent">
-          <span className="result-title">📦 仓储低保总收益</span>
+          <span className="result-title">📦 仓储低保总收�?/span>
           <div className="result-value" style={{ color: "#d97706" }}>
             {fmt(view.totalPeriodRent)}
           </div>
           <div className="result-detail">
             <div className="detail-row">
               <span>做种时长:</span>
-              <span>{userDays} 天</span>
+              <span>{userDays} �?/span>
             </div>
             <div className="detail-row">
-              <span>每小时低保:</span>
+              <span>每小时低�?</span>
               <strong>{fmt(view.hourlyRent)}</strong>
             </div>
             <div className="detail-row" style={{ color: "#b45309" }}>
@@ -59,7 +59,7 @@ export function ResultsPanel(props: Props) {
           <div className="real-formula">
             <strong>计算过程:</strong>
             <br />[ ({view.totalVolTB.toFixed(3)}TB * {volRate}) + ({userCount}
-            个 * {slotMax} * {view.efficiency.toFixed(4)}) ]
+            �?* {slotMax} * {view.efficiency.toFixed(4)}) ]
             <br />* {view.totalHours} 小时
           </div>
         </div>

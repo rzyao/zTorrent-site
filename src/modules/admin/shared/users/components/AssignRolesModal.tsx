@@ -74,12 +74,12 @@ export const AssignRolesModal: React.FC<AssignRolesModalProps> = ({
           <Select
             mode="tags"
             tokenSeparators={[",", " "]}
-            placeholder="输入或选择角色名"
+            placeholder="输入或选择角色�?
             options={rolesOptions}
             loading={rolesLoading}
           />
         </Form.Item>
-        <Form.Item label="权限键列表" name="permissionKeys">
+        <Form.Item label="权限键列�? name="permissionKeys">
           <Select mode="tags" tokenSeparators={[",", " "]} placeholder="输入权限键并回车" />
         </Form.Item>
       </Form>

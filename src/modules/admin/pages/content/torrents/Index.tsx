@@ -44,7 +44,7 @@ type TorrentItem = {
   enabled?: boolean;
   name?: string;
   description?: string;
-  // 新增：审核字段与可见性
+  // 新增：审核字段与可见�?
   approvalStatus?: "pending" | "approved" | "rejected";
   approvedAt?: string;
   visible?: boolean;
@@ -77,7 +77,7 @@ export default function Torrents() {
     { field: string; op: AdvancedRuleDto.op; value?: any; range?: [any, any] }[]
   >([]);
   const [advLogic, setAdvLogic] = useState<"AND" | "OR">("AND");
-  // 新增：审核筛选
+  // 新增：审核筛�?
   const [approvalStatus, setApprovalStatus] = useState<TorrentItem["approvalStatus"] | undefined>(
     undefined,
   );
@@ -128,8 +128,8 @@ export default function Torrents() {
   async function loadList() {
     setLoading(true);
     try {
-      // 说明：后端接口方法名已调整，生成的客户端方法为 torrentsControllerListTorrentsForAdmin
-      // 原调用 torrentsControllerAdminList 在服务中不存在，会导致未发起请求或运行时错误
+      // 说明：后端接口方法名已调整，生成的客户端方法�?torrentsControllerListTorrentsForAdmin
+      // 原调�?torrentsControllerAdminList 在服务中不存在，会导致未发起请求或运行时错误
       const resp: any = await AdminTorrentsService.torrentAdminControllerList(query);
       const data = resp?.data;
       const sourceItems = data?.items || resp?.items || resp?.list || [];
@@ -327,9 +327,9 @@ export default function Torrents() {
               : null
           : null) as SortOrderLocal,
       },
-      { title: "发布者", dataIndex: "uploader", width: 120 },
+      { title: "发布�?, dataIndex: "uploader", width: 120 },
       {
-        title: "审核状态",
+        title: "审核状�?,
         dataIndex: "approvalStatus",
         width: 120,
         render: (text: string) => (
@@ -440,7 +440,7 @@ export default function Torrents() {
         page,
         limit,
       };
-      // 说明：与列表一致，使用新的管理员列表方法 torrentsControllerListTorrentsForAdmin 以适配后端命名
+      // 说明：与列表一致，使用新的管理员列表方�?torrentsControllerListTorrentsForAdmin 以适配后端命名
       const resp: any = await AdminTorrentsService.torrentAdminControllerList(req);
       const data = resp?.data;
       const sourceItems = data?.items || resp?.items || resp?.list || [];
@@ -518,7 +518,7 @@ export default function Torrents() {
           boxSizing: "border-box",
         }}
       >
-        {/* 去掉页面左上角的标题 Title：保留工具条与表格 */}
+        {/* 去掉页面左上角的标题 Title：保留工具条与表�?*/}
         <Space style={{ marginBottom: 16 }}>
           <Space.Compact style={{ width: 240 }}>
             <Input
@@ -550,7 +550,7 @@ export default function Torrents() {
             allowClear
             options={categories}
           />
-          {/* 新增：审核状态筛选 */}
+          {/* 新增：审核状态筛�?*/}
           <Select
             value={approvalStatus}
             onChange={(v) => {
@@ -558,7 +558,7 @@ export default function Torrents() {
               setPage(1);
             }}
             style={{ width: 160 }}
-            placeholder="审核状态"
+            placeholder="审核状�?
             allowClear
             options={[
               { label: "待审", value: "pending" },
@@ -601,7 +601,7 @@ export default function Torrents() {
         >
           <Table
             bordered
-            // 为数据密集的种子列表开启边框，便于按列快速浏览
+            // 为数据密集的种子列表开启边框，便于按列快速浏�?
             rowKey="id"
             loading={loading}
             dataSource={items}
@@ -663,13 +663,13 @@ export default function Torrents() {
       >
         <Form form={createForm} layout="vertical">
           <Form.Item name="name" label="种子名称" rules={[{ required: true }]}>
-            <Input placeholder="请输入种子名称" />
+            <Input placeholder="请输入种子名�? />
           </Form.Item>
           <Form.Item name="category" label="分类" rules={[{ required: true }]}>
             <Select placeholder="请选择分类" options={categories} />
           </Form.Item>
           <Form.Item name="description" label="描述">
-            <Input.TextArea rows={3} placeholder="请输入描述" />
+            <Input.TextArea rows={3} placeholder="请输入描�? />
           </Form.Item>
           <Form.Item name="isAnonymous" label="匿名发布" valuePropName="checked">
             <Switch />
@@ -677,7 +677,7 @@ export default function Torrents() {
         </Form>
       </Modal>
 
-      {/* 审核备注弹窗：用于驳回备注填写 */}
+      {/* 审核备注弹窗：用于驳回备注填�?*/}
       <Modal
         title={reviewAction === "approve" ? "审核通过" : "审核驳回"}
         open={reviewOpen}
@@ -740,13 +740,13 @@ export default function Torrents() {
             <Input value={editing?.id} disabled />
           </Form.Item>
           <Form.Item name="name" label="种子名称" rules={[{ required: true }]}>
-            <Input placeholder="请输入种子名称" />
+            <Input placeholder="请输入种子名�? />
           </Form.Item>
           <Form.Item name="category" label="分类" rules={[{ required: true }]}>
             <Select placeholder="请选择分类" options={categories} />
           </Form.Item>
           <Form.Item name="description" label="描述">
-            <Input.TextArea rows={3} placeholder="请输入描述" />
+            <Input.TextArea rows={3} placeholder="请输入描�? />
           </Form.Item>
         </Form>
       </Modal>

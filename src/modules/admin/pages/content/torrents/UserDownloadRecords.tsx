@@ -81,7 +81,7 @@ export default function UserDownloadRecordsPage() {
 
   const columns = [
     {
-      title: "用户名",
+      title: "用户�?,
       dataIndex: "username",
       key: "username",
       render: (_: any, it: any) => String(it.username || it.user?.username || it.userName || "-"),
@@ -94,7 +94,7 @@ export default function UserDownloadRecordsPage() {
         String(it.title || it.torrentTitle || it.name || it.torrentName || "-"),
     },
     {
-      title: "状态",
+      title: "状�?,
       dataIndex: "status",
       key: "status",
       render: (_: any, it: any) => {
@@ -145,7 +145,7 @@ export default function UserDownloadRecordsPage() {
       render: (_: any, it: any) => String(it.speed || it.downloadSpeed || it.uploadSpeed || "-"),
     },
     {
-      title: "客户端",
+      title: "客户�?,
       dataIndex: "client",
       key: "client",
       render: (_: any, it: any) => String(it.client || it.clientName || "-"),
@@ -165,11 +165,11 @@ export default function UserDownloadRecordsPage() {
   ];
 
   return (
-    <Space direction="vertical" size="large" style={{ width: "100%" }}>
+    <Space orientation="vertical" size="large" style={{ width: "100%" }}>
       <Card>
         <Space style={{ width: "100%", justifyContent: "space-between" }}>
           <Space>
-            <Typography.Text>用户ID：</Typography.Text>
+            <Typography.Text>用户ID�?/Typography.Text>
             <Input
               size="large"
               value={userId}
@@ -196,11 +196,11 @@ export default function UserDownloadRecordsPage() {
           setPage(1);
         }}
         items={[
-          { key: "completed", label: "已下载种子" },
-          { key: "published", label: "已发布" },
-          { key: "seeding", label: "做种中" },
-          { key: "downloading", label: "下载中" },
-          { key: "incomplete", label: "未完成" },
+          { key: "completed", label: "已下载种�? },
+          { key: "published", label: "已发�? },
+          { key: "seeding", label: "做种�? },
+          { key: "downloading", label: "下载�? },
+          { key: "incomplete", label: "未完�? },
         ]}
       />
 

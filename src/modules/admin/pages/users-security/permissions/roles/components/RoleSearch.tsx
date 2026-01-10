@@ -27,7 +27,7 @@ export const RoleSearch: React.FC<RoleSearchProps> = ({
           <Input
             size="large"
             allowClear
-            placeholder="搜索角色名称或描述..."
+            placeholder="搜索角色名称或描�?.."
             prefix={<SearchOutlined />}
             value={searchText}
             onChange={(e) => {

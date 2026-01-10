@@ -9,8 +9,8 @@ interface PageContainerProps {
 /**
  * 通用页面容器组件
  *
- * 用于包裹页面内容，提供统一的边距、背景色和全屏高度布局。
- * 默认占满父容器剩余空间。
+ * 用于包裹页面内容，提供统一的边距、背景色和全屏高度布局�?
+ * 默认占满父容器剩余空间�?
  */
 const PageContainer: React.FC<PageContainerProps> = ({ children, style, className }) => {
   return (

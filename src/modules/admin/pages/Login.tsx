@@ -45,25 +45,25 @@ export default function Login() {
     >
       <Card style={{ width: 360, boxShadow: "0 8px 16px rgba(115,103,240,0.08)" }}>
         <Typography.Title level={3} style={{ textAlign: "center", marginBottom: 24 }}>
-          管理员登录
+          管理员登�?
         </Typography.Title>
         <Form form={form} layout="vertical" initialValues={{ idleLogout30m: false }}>
           <Form.Item
             name="username"
-            label="用户名"
+            label="用户�?
             rules={[{ required: true, message: "请输入用户名" }]}
           >
-            <Input placeholder="用户名" autoFocus />
+            <Input placeholder="用户�? autoFocus />
           </Form.Item>
           <Form.Item
             name="password"
             label="密码"
-            rules={[{ required: true, message: "请输入密码" }]}
+            rules={[{ required: true, message: "请输入密�? }]}
           >
             <Input.Password placeholder="密码" />
           </Form.Item>
           <Form.Item name="idleLogout30m" valuePropName="checked">
-            <Checkbox>启用30分钟无操作自动退出</Checkbox>
+            <Checkbox>启用30分钟无操作自动退�?/Checkbox>
           </Form.Item>
           <Button type="primary" block loading={loading} onClick={onSubmit}>
             登录

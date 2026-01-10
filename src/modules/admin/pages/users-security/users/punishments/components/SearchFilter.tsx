@@ -64,11 +64,11 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
   return (
     <div style={{ padding: isMobile ? "8px 12px" : "12px 16px" }}>
       <Row gutter={[12, 12]} wrap align="middle">
-        {/* 搜索用户名 */}
+        {/* 搜索用户�?*/}
         <Col xs={24} sm={24} md={8} lg={6}>
           <Space.Compact style={{ width: "100%" }}>
             <Input
-              placeholder="搜索用户（用户名）"
+              placeholder="搜索用户（用户名�?
               allowClear
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
@@ -119,7 +119,7 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
         <Col xs={12} sm={8} md={4} lg={3}>
           <Select
             style={{ width: "100%" }}
-            placeholder="撤销状态"
+            placeholder="撤销状�?
             allowClear
             options={[
               { label: "已撤销", value: true },
@@ -137,15 +137,15 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
           />
         </Col>
 
-        {/* 筛选：是否处于处罚期（生效） */}
+        {/* 筛选：是否处于处罚期（生效�?*/}
         <Col xs={12} sm={8} md={4} lg={3}>
           <Select
             style={{ width: "100%" }}
-            placeholder="生效状态"
+            placeholder="生效状�?
             allowClear
             options={[
-              { label: "生效中", value: true },
-              { label: "已失效", value: false },
+              { label: "生效�?, value: true },
+              { label: "已失�?, value: false },
             ]}
             value={activeSelect}
             onChange={(v) => {

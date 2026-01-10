@@ -48,7 +48,7 @@ export const PunishmentTable: React.FC<PunishmentTableProps> = ({
           columns={columns}
           rowKey="id"
           pagination={false}
-          scroll={{ x: "max-content", y: "calc(100vh - 300px)" }} // 这里高度可以优化为 useAutoTableScroll
+          scroll={{ x: "max-content", y: "calc(100vh - 300px)" }} // 这里高度可以优化�?useAutoTableScroll
           style={{ flex: 1, overflow: "hidden" }}
           expandable={{
             expandedRowRender: (r) => {
@@ -74,7 +74,7 @@ export const PunishmentTable: React.FC<PunishmentTableProps> = ({
         />
       </div>
 
-      {/* 底部：分页 */}
+      {/* 底部：分�?*/}
       <div
         style={{
           padding: "12px 16px",

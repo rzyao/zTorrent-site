@@ -146,9 +146,9 @@ export default function PunishmentDictsBase({ category, title }: PunishmentDicts
         data: { enabled: value },
       });
       setItems((prev) => prev.map((it) => (it.id === record.id ? { ...it, enabled: value } : it)));
-      message.success(value ? "已启用" : "已禁用");
+      message.success(value ? "已启�? : "已禁�?);
     } catch {
-      message.error("更新状态失败");
+      message.error("更新状态失�?);
     }
   }
 
@@ -210,7 +210,7 @@ export default function PunishmentDictsBase({ category, title }: PunishmentDicts
         }}
         columns={[
           { title: "ID", dataIndex: "id", width: 220, ellipsis: true },
-          { title: "键", dataIndex: "key", width: 160 },
+          { title: "�?, dataIndex: "key", width: 160 },
           { title: "名称", dataIndex: "label" },
           { title: "描述", dataIndex: "description" },
           {
@@ -239,7 +239,7 @@ export default function PunishmentDictsBase({ category, title }: PunishmentDicts
                 <Button type="link" onClick={() => openEdit(record)}>
                   编辑
                 </Button>
-                <Popconfirm title={`确认删除该${title}？`} onConfirm={() => remove(record.id)}>
+                <Popconfirm title={`确认删除�?{title}？`} onConfirm={() => remove(record.id)}>
                   <Button type="link" danger>
                     删除
                   </Button>
@@ -259,8 +259,8 @@ export default function PunishmentDictsBase({ category, title }: PunishmentDicts
         destroyOnHidden
       >
         <Form form={createForm} layout="vertical">
-          <Form.Item name="key" label="唯一键" rules={[{ required: true }]}>
-            <Input placeholder="如 spam 或 7d" />
+          <Form.Item name="key" label="唯一�? rules={[{ required: true }]}>
+            <Input placeholder="�?spam �?7d" />
           </Form.Item>
           <Form.Item name="label" label="名称" rules={[{ required: true }]}>
             <Input />
@@ -289,7 +289,7 @@ export default function PunishmentDictsBase({ category, title }: PunishmentDicts
         destroyOnHidden
       >
         <Form form={editForm} layout="vertical">
-          <Form.Item label="唯一键">
+          <Form.Item label="唯一�?>
             <Input value={editing?.key} disabled />
           </Form.Item>
           <Form.Item name="label" label="名称" rules={[{ required: true }]}>

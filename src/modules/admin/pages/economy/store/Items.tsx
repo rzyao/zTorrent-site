@@ -22,10 +22,10 @@ import { formatDate } from "@/modules/admin/utils/formatDate";
 
 /**
  * 商品管理页面
- * 职责：提供商城商品的创建/更新/删除/上下架能力，并展示基本信息
- * 设计说明：
- * - 使用 Antd Table 呈现列表；新增/编辑使用 Modal+Form
- * - 写操作（新增、更新、删除、上下架）统一二次确认，满足审计要求
+ * 职责：提供商城商品的创建/更新/删除/上下架能力，并展示基本信�?
+ * 设计说明�?
+ * - 使用 Antd Table 呈现列表；新�?编辑使用 Modal+Form
+ * - 写操作（新增、更新、删除、上下架）统一二次确认，满足审计要�?
  * - 字段校验与默认值遵循后端契约；类型、状态为枚举选择
  */
 export default function StoreItemsPage() {
@@ -79,7 +79,7 @@ export default function StoreItemsPage() {
     try {
       const values = await createForm.validateFields();
       modal.confirm({
-        title: "确认创建商品？",
+        title: "确认创建商品�?,
         content: "写操作将记录审计日志，请确认信息无误",
         onOk: async () => {
           await StoreService.storeControllerCreateItem(values as any);
@@ -102,7 +102,7 @@ export default function StoreItemsPage() {
       const values = await editForm.validateFields();
       const { key: _omitKey, ...payload } = values as any;
       modal.confirm({
-        title: "确认更新商品？",
+        title: "确认更新商品�?,
         onOk: async () => {
           await StoreService.storeControllerUpdateItem({
             ...payload,
@@ -141,7 +141,7 @@ export default function StoreItemsPage() {
           id: record.id!,
           status: (toActive ? "active" : "inactive") as any,
         });
-        message.success(toActive ? "已上架" : "已下架");
+        message.success(toActive ? "已上�? : "已下�?);
         loadList();
       },
     });
@@ -153,7 +153,7 @@ export default function StoreItemsPage() {
         <Space.Compact style={{ width: 280 }}>
           <Input
             allowClear
-            placeholder="搜索键/名称/类型/状态"
+            placeholder="搜索�?名称/类型/状�?
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
@@ -164,7 +164,7 @@ export default function StoreItemsPage() {
       </Space>
       <Table
         bordered
-        // 开启表格边框，便于区分商品列并提高信息密度的可读性
+        // 开启表格边框，便于区分商品列并提高信息密度的可读�?
         rowKey={(r) => r.id || r.key}
         loading={loading}
         dataSource={filtered.slice((page - 1) * limit, (page - 1) * limit + limit)}
@@ -190,7 +190,7 @@ export default function StoreItemsPage() {
           { title: "价格(魔力)", dataIndex: "pricePoints", width: 140 },
           { title: "库存", dataIndex: "stock", width: 120 },
           {
-            title: "状态",
+            title: "状�?,
             dataIndex: "status",
             width: 120,
             render: (s: StoreItem["status"]) => (
@@ -246,12 +246,12 @@ export default function StoreItemsPage() {
         >
           <Form.Item
             name="key"
-            label="唯一键"
-            rules={[{ required: true, message: "请输入唯一键" }]}
+            label="唯一�?
+            rules={[{ required: true, message: "请输入唯一�? }]}
           >
-            <Input placeholder="如 invite_code" />
+            <Input placeholder="�?invite_code" />
           </Form.Item>
-          <Form.Item name="title" label="名称" rules={[{ required: true, message: "请输入名称" }]}>
+          <Form.Item name="title" label="名称" rules={[{ required: true, message: "请输入名�? }]}>
             <Input />
           </Form.Item>
           <Form.Item name="type" label="类型" rules={[{ required: true }]}>
@@ -266,10 +266,10 @@ export default function StoreItemsPage() {
           <Form.Item name="pricePoints" label="价格(魔力)" rules={[{ required: true }]}>
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="stock" label="库存(可选)">
+          <Form.Item name="stock" label="库存(可�?">
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="status" label="状态" rules={[{ required: true }]}>
+          <Form.Item name="status" label="状�? rules={[{ required: true }]}>
             <Select
               options={[
                 { label: "active", value: "active" },
@@ -310,7 +310,7 @@ export default function StoreItemsPage() {
           <Form.Item name="id" label="ID">
             <Input disabled />
           </Form.Item>
-          <Form.Item label="唯一键">
+          <Form.Item label="唯一�?>
             <Input value={editing?.key} disabled />
           </Form.Item>
           <Form.Item name="title" label="名称" rules={[{ required: true }]}>
@@ -328,10 +328,10 @@ export default function StoreItemsPage() {
           <Form.Item name="pricePoints" label="价格(魔力)" rules={[{ required: true }]}>
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="stock" label="库存(可选)">
+          <Form.Item name="stock" label="库存(可�?">
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="status" label="状态" rules={[{ required: true }]}>
+          <Form.Item name="status" label="状�? rules={[{ required: true }]}>
             <Select
               options={[
                 { label: "active", value: "active" },

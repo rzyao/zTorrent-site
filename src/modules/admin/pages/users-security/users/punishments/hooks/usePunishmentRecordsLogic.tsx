@@ -41,7 +41,7 @@ export const usePunishmentRecordsLogic = () => {
   >([]);
   const [revokeReasonLoading, setRevokeReasonLoading] = useState(false);
 
-  // 顶部筛选：类型、原因、状态（撤销）
+  // 顶部筛选：类型、原因、状态（撤销�?
   const [typeSelect, setTypeSelect] = useState<string | undefined>(undefined);
   const [reasonSelect, setReasonSelect] = useState<string | undefined>(
     undefined
@@ -258,7 +258,7 @@ export const usePunishmentRecordsLogic = () => {
         await PunishmentsService.punishmentsControllerListPunishmentRecords(
           req
         );
-      // 归一化后端返回结构
+      // 归一化后端返回结�?
       let items: any[] = [];
       if (Array.isArray(res)) {
         items = res;
@@ -436,7 +436,7 @@ export const usePunishmentRecordsLogic = () => {
           pageOffsetRef.current + idx + 1,
       },
       {
-        title: "用户名",
+        title: "用户�?,
         dataIndex: "userUsername",
         width: 120,
         ellipsis: true,
@@ -486,7 +486,7 @@ export const usePunishmentRecordsLogic = () => {
             : null,
       },
       {
-        title: "开始时间",
+        title: "开始时�?,
         dataIndex: "startsAt",
         width: 120,
         responsive: ["md"],
@@ -518,7 +518,7 @@ export const usePunishmentRecordsLogic = () => {
             : null,
       },
       {
-        title: "处理人",
+        title: "处理�?,
         dataIndex: "handlerId",
         width: 120,
         responsive: ["lg"],
@@ -526,7 +526,7 @@ export const usePunishmentRecordsLogic = () => {
           r.handlerUsername || r.handlerId || "-",
       },
       {
-        title: "状态",
+        title: "状�?,
         dataIndex: "recordSource",
         width: 90,
         responsive: ["xs"],

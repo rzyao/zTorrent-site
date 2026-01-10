@@ -1,4 +1,4 @@
-ï»¿import { memo, useMemo, useCallback, startTransition, useState, useEffect } from "react";
+import { memo, useMemo, useCallback, startTransition, useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -26,18 +26,18 @@ interface DetailsPanelProps {
   isSaving?: boolean;
 }
 
-// ç»„ä»¶é€‰é¡¹å¸¸é‡
+// ×é¼şÑ¡Ïî³£Á¿
 const COMPONENT_OPTIONS = Object.keys(componentRegistry).sort();
 
-// å¸ƒå±€é€‰é¡¹å¸¸é‡
+// ²¼¾ÖÑ¡Ïî³£Á¿
 const LAYOUT_OPTIONS = [
-  { value: "none", label: "æ— å¸ƒå±€ (None)" },
-  { value: "app", label: "å‰å°å¸ƒå±€ (AppLayout)" },
-  { value: "forum", label: "è®ºå›å¸ƒå±€ (ForumLayout)" },
-  { value: "admin", label: "åå°å¸ƒå±€ (AdminLayout)" },
+  { value: "none", label: "ÎŞ²¼¾Ö (None)" },
+  { value: "app", label: "Ç°Ì¨²¼¾Ö (AppLayout)" },
+  { value: "forum", label: "ÂÛÌ³²¼¾Ö (ForumLayout)" },
+  { value: "admin", label: "ºóÌ¨²¼¾Ö (AdminLayout)" },
 ];
 
-// ç©ºçŠ¶æ€ç»„ä»¶
+// ¿Õ×´Ì¬×é¼ş
 const EmptyState = memo(function EmptyState() {
   const { token } = theme.useToken();
   return (
@@ -52,12 +52,12 @@ const EmptyState = memo(function EmptyState() {
         borderRadius: token.borderRadiusLG,
       }}
     >
-      <Empty description="è¯·åœ¨å·¦ä¾§é€‰æ‹©ä¸€ä¸ªè·¯ç”±èŠ‚ç‚¹" />
+      <Empty description="ÇëÔÚ×ó²àÑ¡ÔñÒ»¸öÂ·ÓÉ½Úµã" />
     </div>
   );
 });
 
-// ä¸»ç»„ä»¶
+// Ö÷×é¼ş
 export const DetailsPanel = memo(function DetailsPanel({
   node,
   onSave,
@@ -67,11 +67,11 @@ export const DetailsPanel = memo(function DetailsPanel({
   const [form] = Form.useForm();
   const { token } = theme.useToken();
 
-  // å»¶è¿Ÿæ¸²æŸ“çŠ¶æ€ - é˜²æ­¢åˆ‡æ¢èŠ‚ç‚¹æ—¶çš„å¡é¡¿
+  // ÑÓ³ÙäÖÈ¾×´Ì¬ - ·ÀÖ¹ÇĞ»»½ÚµãÊ±µÄ¿¨¶Ù
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [displayNode, setDisplayNode] = useState<RouteTreeNodeDto | null>(null);
 
-  // èŠ‚ç‚¹åˆ‡æ¢æ—¶çš„å¤„ç† - ç®€åŒ–é€»è¾‘,ç§»é™¤åŒé‡å»¶è¿Ÿ
+  // ½ÚµãÇĞ»»Ê±µÄ´¦Àí - ¼ò»¯Âß¼­,ÒÆ³ıË«ÖØÑÓ³Ù
   useEffect(() => {
     if (!node) {
       form.resetFields();
@@ -79,8 +79,8 @@ export const DetailsPanel = memo(function DetailsPanel({
       return;
     }
 
-    // åªè¦ node æœ‰å˜åŒ–,å°±å¯¹æ¯”å…³é”®å±æ€§æ›´æ–°è¡¨å•
-    // è¿™æ ·ä¿å­˜æˆåŠŸå node å±æ€§å˜åŒ–ä¹Ÿèƒ½åæ˜ åˆ°è¡¨å•ä¸Š
+    // Ö»Òª node ÓĞ±ä»¯,¾Í¶Ô±È¹Ø¼üÊôĞÔ¸üĞÂ±íµ¥
+    // ÕâÑù±£´æ³É¹¦ºó node ÊôĞÔ±ä»¯Ò²ÄÜ·´Ó³µ½±íµ¥ÉÏ
     setIsTransitioning(true);
     setDisplayNode(node);
 
@@ -98,7 +98,7 @@ export const DetailsPanel = memo(function DetailsPanel({
       openInNewTab: (node as any).openInNewTab || false,
     });
 
-    // çŸ­æš‚å»¶è¿Ÿåéšè—éª¨æ¶å±,ç»™ç”¨æˆ·è§†è§‰åé¦ˆ
+    // ¶ÌÔİÑÓ³ÙºóÒş²Ø¹Ç¼ÜÆÁ,¸øÓÃ»§ÊÓ¾õ·´À¡
     const timer = setTimeout(() => setIsTransitioning(false), 100);
     return () => clearTimeout(timer);
   }, [node, form]);
@@ -144,7 +144,7 @@ export const DetailsPanel = memo(function DetailsPanel({
     form.submit();
   }, [form]);
 
-  // æ— èŠ‚ç‚¹æ—¶æ˜¾ç¤ºç©ºçŠ¶æ€
+  // ÎŞ½ÚµãÊ±ÏÔÊ¾¿Õ×´Ì¬
   if (!node) {
     return <EmptyState />;
   }
@@ -175,7 +175,7 @@ export const DetailsPanel = memo(function DetailsPanel({
             <Title level={5} style={{ margin: 0 }}>
               {displayName || <Skeleton.Input active size="small" style={{ width: 100 }} />}
             </Title>
-            {displayNode?.isVisible === false && <Tag color="error">å·²éšè—</Tag>}
+            {displayNode?.isVisible === false && <Tag color="error">ÒÑÒş²Ø</Tag>}
           </Space>
           <div className="mt-1">
             <Text type="secondary" code>
@@ -204,7 +204,7 @@ export const DetailsPanel = memo(function DetailsPanel({
             form={form}
             layout="vertical"
             onFinish={handleFinish}
-            // å…³é—­è¡¨å•éªŒè¯è§¦å‘ï¼Œå‡å°‘æ¸²æŸ“
+            // ¹Ø±Õ±íµ¥ÑéÖ¤´¥·¢£¬¼õÉÙäÖÈ¾
             validateTrigger={[]}
           >
             {/* Basic Config Section */}
@@ -214,41 +214,41 @@ export const DetailsPanel = memo(function DetailsPanel({
                 strong
                 style={{ fontSize: "12px", textTransform: "uppercase" }}
               >
-                åŸºç¡€é…ç½®
+                »ù´¡ÅäÖÃ
               </Text>
               <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4">
-                <Form.Item label="ID (å”¯ä¸€æ ‡è¯†)" name="id">
+                <Form.Item label="ID (Î¨Ò»±êÊ¶)" name="id">
                   <Input disabled />
                 </Form.Item>
 
-                <Form.Item label="è·¯å¾„ Path" name="path">
+                <Form.Item label="Â·¾¶ Path" name="path">
                   <Input placeholder="/admin/users" />
                 </Form.Item>
 
-                <Form.Item label="æ˜¾ç¤ºåç§° Name" name="name">
-                  <Input placeholder="ç”¨æˆ·ç®¡ç†" />
+                <Form.Item label="ÏÔÊ¾Ãû³Æ Name" name="name">
+                  <Input placeholder="ÓÃ»§¹ÜÀí" />
                 </Form.Item>
 
-                <Form.Item label="é‡å®šå‘ Redirect" name="redirect">
-                  <Input placeholder="å¯é€‰: /admin/users/list" />
+                <Form.Item label="ÖØ¶¨Ïò Redirect" name="redirect">
+                  <Input placeholder="¿ÉÑ¡: /admin/users/list" />
                 </Form.Item>
 
                 <Form.Item
-                  label="æ–°æ ‡ç­¾é¡µæ‰“å¼€"
+                  label="ĞÂ±êÇ©Ò³´ò¿ª"
                   name="openInNewTab"
                   valuePropName="checked"
-                  tooltip="ä»…åœ¨è®¾ç½®äº†é‡å®šå‘æ—¶ç”Ÿæ•ˆ,å‹¾é€‰åå°†åœ¨æ–°æ ‡ç­¾é¡µæ‰“å¼€é‡å®šå‘é“¾æ¥"
+                  tooltip="½öÔÚÉèÖÃÁËÖØ¶¨ÏòÊ±ÉúĞ§,¹´Ñ¡ºó½«ÔÚĞÂ±êÇ©Ò³´ò¿ªÖØ¶¨ÏòÁ´½Ó"
                 >
-                  <Switch checkedChildren="æ˜¯" unCheckedChildren="å¦" />
+                  <Switch checkedChildren="ÊÇ" unCheckedChildren="·ñ" />
                 </Form.Item>
 
                 <Form.Item
-                  label="æ˜¯å¦å¯ç”¨"
+                  label="ÊÇ·ñÆôÓÃ"
                   name="isEnabled"
                   valuePropName="checked"
-                  tooltip="æ§åˆ¶è·¯ç”±æ˜¯å¦åŠ è½½åˆ°è·¯ç”±è¡¨,ç¦ç”¨åè¯¥è·¯ç”±å°†æ— æ³•è®¿é—®"
+                  tooltip="¿ØÖÆÂ·ÓÉÊÇ·ñ¼ÓÔØµ½Â·ÓÉ±í,½ûÓÃºó¸ÃÂ·ÓÉ½«ÎŞ·¨·ÃÎÊ"
                 >
-                  <Switch checkedChildren="å¯ç”¨" unCheckedChildren="ç¦ç”¨" />
+                  <Switch checkedChildren="ÆôÓÃ" unCheckedChildren="½ûÓÃ" />
                 </Form.Item>
               </div>
             </div>
@@ -260,32 +260,32 @@ export const DetailsPanel = memo(function DetailsPanel({
                 strong
                 style={{ fontSize: "12px", textTransform: "uppercase" }}
               >
-                æ¸²æŸ“é…ç½®
+                äÖÈ¾ÅäÖÃ
               </Text>
               <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4">
-                <Form.Item label="æ¸²æŸ“ç»„ä»¶ Component" name="component">
+                <Form.Item label="äÖÈ¾×é¼ş Component" name="component">
                   <Select
                     showSearch
-                    placeholder="é€‰æ‹©ç»„ä»¶"
+                    placeholder="Ñ¡Ôñ×é¼ş"
                     optionFilterProp="label"
                     options={COMPONENT_OPTIONS.map((c) => ({ value: c, label: c }))}
                     allowClear
                   />
                 </Form.Item>
 
-                <Form.Item label="æ‰€å±å¸ƒå±€ Layout" name="layout">
+                <Form.Item label="ËùÊô²¼¾Ö Layout" name="layout">
                   <Select options={LAYOUT_OPTIONS} />
                 </Form.Item>
 
                 <Form.Item
-                  label="å›¾æ ‡ Icon"
+                  label="Í¼±ê Icon"
                   name="icon"
-                  tooltip="æ ¼å¼: Lucide:Home æˆ– Antd:DashboardOutlined"
+                  tooltip="¸ñÊ½: Lucide:Home »ò Antd:DashboardOutlined"
                 >
                   <Input placeholder="Lucide:Home" />
                 </Form.Item>
 
-                <Form.Item label="å›¾æ ‡é¢„è§ˆ" shouldUpdate={(prev, cur) => prev.icon !== cur.icon}>
+                <Form.Item label="Í¼±êÔ¤ÀÀ" shouldUpdate={(prev, cur) => prev.icon !== cur.icon}>
                   {({ getFieldValue }) => {
                     const iconValue = getFieldValue("icon");
                     return (
@@ -293,7 +293,7 @@ export const DetailsPanel = memo(function DetailsPanel({
                         {iconValue ? (
                           <DynamicIcon iconName={iconValue} size={20} />
                         ) : (
-                          <Text type="secondary">è¾“å…¥å›¾æ ‡åç§°åé¢„è§ˆ</Text>
+                          <Text type="secondary">ÊäÈëÍ¼±êÃû³ÆºóÔ¤ÀÀ</Text>
                         )}
                       </div>
                     );
@@ -309,20 +309,20 @@ export const DetailsPanel = memo(function DetailsPanel({
                 strong
                 style={{ fontSize: "12px", textTransform: "uppercase" }}
               >
-                è®¿é—®æ§åˆ¶
+                ·ÃÎÊ¿ØÖÆ
               </Text>
               <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4">
-                <Form.Item label="è®¿é—®æƒé™ Permissions" name="permissions">
-                  <Select mode="tags" placeholder="è¾“å…¥æƒé™Key" />
+                <Form.Item label="·ÃÎÊÈ¨ÏŞ Permissions" name="permissions">
+                  <Select mode="tags" placeholder="ÊäÈëÈ¨ÏŞKey" />
                 </Form.Item>
 
                 <Form.Item
-                  label="ä¾§è¾¹æ æ˜¯å¦æ˜¾ç¤º"
+                  label="²à±ßÀ¸ÊÇ·ñÏÔÊ¾"
                   name="isVisible"
                   valuePropName="checked"
-                  tooltip="æ§åˆ¶è·¯ç”±æ˜¯å¦åœ¨ä¾§è¾¹æ èœå•ä¸­æ˜¾ç¤º,ä¸å½±å“è·¯ç”±è®¿é—®"
+                  tooltip="¿ØÖÆÂ·ÓÉÊÇ·ñÔÚ²à±ßÀ¸²Ëµ¥ÖĞÏÔÊ¾,²»Ó°ÏìÂ·ÓÉ·ÃÎÊ"
                 >
-                  <Switch checkedChildren="æ˜¾ç¤º" unCheckedChildren="éšè—" />
+                  <Switch checkedChildren="ÏÔÊ¾" unCheckedChildren="Òş²Ø" />
                 </Form.Item>
               </div>
             </div>
@@ -337,7 +337,7 @@ export const DetailsPanel = memo(function DetailsPanel({
           onClick={handleReset}
           disabled={isSaving || isTransitioning}
         >
-          é‡ç½®
+          ÖØÖÃ
         </Button>
         <Button
           type="primary"
@@ -346,7 +346,7 @@ export const DetailsPanel = memo(function DetailsPanel({
           loading={isSaving}
           disabled={isTransitioning}
         >
-          ä¿å­˜å˜æ›´
+          ±£´æ±ä¸ü
         </Button>
       </div>
     </div>

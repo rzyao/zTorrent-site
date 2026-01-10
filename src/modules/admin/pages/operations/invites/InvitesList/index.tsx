@@ -53,14 +53,14 @@ export default function InvitesListPage() {
         className="mb-4 gap-y-4"
         onFinish={() => fetchList({ page: 1, limit: pageSize })}
       >
-        <Form.Item name="status" label="状态">
+        <Form.Item name="status" label="状�?>
           <Select
             allowClear
             className="w-40"
             options={[
-              { label: "已发送", value: "sent" },
-              { label: "已接受", value: "accepted" },
-              { label: "已过期", value: "expired" },
+              { label: "已发�?, value: "sent" },
+              { label: "已接�?, value: "accepted" },
+              { label: "已过�?, value: "expired" },
               { label: "已撤销", value: "revoked" },
             ]}
           />
@@ -70,13 +70,13 @@ export default function InvitesListPage() {
             allowClear
             className="w-48"
             options={[
-              { label: "私人邀请", value: "private-invitation" },
-              { label: "官方邀请", value: "office-invitation" },
+              { label: "私人邀�?, value: "private-invitation" },
+              { label: "官方邀�?, value: "office-invitation" },
             ]}
           />
         </Form.Item>
         <Form.Item name="email" label="邮箱">
-          <Input allowClear placeholder="被邀请邮箱" className="w-56" />
+          <Input allowClear placeholder="被邀请邮�? className="w-56" />
         </Form.Item>
         <Form.Item name="issuerId" label="发起人ID">
           <Input allowClear placeholder="用户ID" className="w-40" />
@@ -125,7 +125,7 @@ export default function InvitesListPage() {
             render: (t: string) => formatDate(t),
           },
           { title: "发起人ID", dataIndex: "inviterUserId", width: 120 },
-          { title: "被邀请邮箱", dataIndex: "inviteeEmail", width: 200 },
+          { title: "被邀请邮�?, dataIndex: "inviteeEmail", width: 200 },
           {
             title: "邀请码",
             dataIndex: "code",
@@ -133,14 +133,14 @@ export default function InvitesListPage() {
             render: (v: string) => <CodeCell code={v} />,
           },
           {
-            title: "状态",
+            title: "状�?,
             dataIndex: "status",
             width: 100,
             render: (v: InviteStatus) => {
               const map: any = {
-                sent: ["blue", "已发送"],
-                accepted: ["green", "已接受"],
-                expired: ["orange", "已过期"],
+                sent: ["blue", "已发�?],
+                accepted: ["green", "已接�?],
+                expired: ["orange", "已过�?],
                 revoked: ["red", "已撤销"],
               };
               const [color, label] = map[v] || ["default", v];
@@ -153,8 +153,8 @@ export default function InvitesListPage() {
             width: 130,
             render: (v: InviteType) => {
               const map: any = {
-                "private-invitation": ["purple", "私人邀请"],
-                "office-invitation": ["gold", "官方邀请"],
+                "private-invitation": ["purple", "私人邀�?],
+                "office-invitation": ["gold", "官方邀�?],
               };
               const [color, label] = map[v] || ["default", v];
               return <Tag color={color}>{label}</Tag>;

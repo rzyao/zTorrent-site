@@ -16,14 +16,14 @@ function operatorOptions(type: FieldType) {
   if (type === "text") {
     return [
       { label: "包含", value: AdvancedRuleDto.op.LIKE },
-      { label: "不包含", value: AdvancedRuleDto.op.NOT_LIKE },
+      { label: "不包�?, value: AdvancedRuleDto.op.NOT_LIKE },
       { label: "等于", value: AdvancedRuleDto.op.EQUAL },
-      { label: "不等于", value: AdvancedRuleDto.op.NOT_EQUAL },
+      { label: "不等�?, value: AdvancedRuleDto.op.NOT_EQUAL },
       { label: "前缀匹配", value: AdvancedRuleDto.op.LIKE_RIGHT },
       { label: "后缀匹配", value: AdvancedRuleDto.op.LIKE_LEFT },
       { label: "区间", value: AdvancedRuleDto.op.BETWEEN },
       { label: "在集合中", value: AdvancedRuleDto.op.IN },
-      { label: "不在集合中", value: AdvancedRuleDto.op.NOT_IN },
+      { label: "不在集合�?, value: AdvancedRuleDto.op.NOT_IN },
       { label: "为空", value: AdvancedRuleDto.op.IS_NULL },
       { label: "非空", value: AdvancedRuleDto.op.IS_NOT_NULL },
     ];
@@ -31,9 +31,9 @@ function operatorOptions(type: FieldType) {
   if (type === "enum") {
     return [
       { label: "等于", value: AdvancedRuleDto.op.EQUAL },
-      { label: "不等于", value: AdvancedRuleDto.op.NOT_EQUAL },
+      { label: "不等�?, value: AdvancedRuleDto.op.NOT_EQUAL },
       { label: "在集合中", value: AdvancedRuleDto.op.IN },
-      { label: "不在集合中", value: AdvancedRuleDto.op.NOT_IN },
+      { label: "不在集合�?, value: AdvancedRuleDto.op.NOT_IN },
       { label: "为空", value: AdvancedRuleDto.op.IS_NULL },
       { label: "非空", value: AdvancedRuleDto.op.IS_NOT_NULL },
     ];
@@ -54,7 +54,7 @@ function operatorOptions(type: FieldType) {
   }
   return [
     { label: "在集合中", value: AdvancedRuleDto.op.IN },
-    { label: "不在集合中", value: AdvancedRuleDto.op.NOT_IN },
+    { label: "不在集合�?, value: AdvancedRuleDto.op.NOT_IN },
     { label: "为空", value: AdvancedRuleDto.op.IS_NULL },
     { label: "非空", value: AdvancedRuleDto.op.IS_NOT_NULL },
   ];
@@ -82,13 +82,13 @@ export default function AdvancedQueryBuilder({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%" }}>
       <Space style={{ width: "100%", justifyContent: "space-between" }}>
-        <div>逻辑组合：</div>
+        <div>逻辑组合�?/div>
         <Select
           style={{ width: 160 }}
           value={logic}
           options={[
-            { label: "且（AND）", value: "AND" },
-            { label: "或（OR）", value: "OR" },
+            { label: "且（AND�?, value: "AND" },
+            { label: "或（OR�?, value: "OR" },
           ]}
           onChange={(v) => onChange(rules, v)}
         />
@@ -179,8 +179,8 @@ export default function AdvancedQueryBuilder({
                 style={{ width: 160 }}
                 value={(rule.value as any) ?? undefined}
                 options={[
-                  { label: "是", value: true },
-                  { label: "否", value: false },
+                  { label: "�?, value: true },
+                  { label: "�?, value: false },
                 ]}
                 onChange={(v) => {
                   const next = [...rules];
@@ -209,7 +209,7 @@ export default function AdvancedQueryBuilder({
                   next[idx] = { ...next[idx], value: parsed };
                   onChange(next, logic);
                 }}
-                placeholder={"逗号分隔多个值"}
+                placeholder={"逗号分隔多个�?}
               />
             )}
             {isText && rule.op === AdvancedRuleDto.op.BETWEEN && (
@@ -224,7 +224,7 @@ export default function AdvancedQueryBuilder({
                     next[idx] = { ...next[idx], range: [r0, r1] as any, value: undefined };
                     onChange(next, logic);
                   }}
-                  placeholder={"起始值"}
+                  placeholder={"起始�?}
                 />
                 <Input
                   style={{ width: 150 }}
@@ -236,7 +236,7 @@ export default function AdvancedQueryBuilder({
                     next[idx] = { ...next[idx], range: [r0, r1] as any, value: undefined };
                     onChange(next, logic);
                   }}
-                  placeholder={"结束值"}
+                  placeholder={"结束�?}
                 />
               </Space>
             )}
@@ -260,7 +260,7 @@ export default function AdvancedQueryBuilder({
                   next[idx] = { ...next[idx], value: parsed };
                   onChange(next, logic);
                 }}
-                placeholder={"逗号分隔多个值"}
+                placeholder={"逗号分隔多个�?}
               />
             )}
             {!isDate &&
@@ -278,7 +278,7 @@ export default function AdvancedQueryBuilder({
                     next[idx] = { ...next[idx], value: e.target.value };
                     onChange(next, logic);
                   }}
-                  placeholder={"输入查询值"}
+                  placeholder={"输入查询�?}
                 />
               )}
             <Button
@@ -308,7 +308,7 @@ export default function AdvancedQueryBuilder({
       </Button>
       <Divider style={{ margin: "8px 0" }} />
       <div style={{ color: "#888" }}>
-        说明：可组合多字段与规则进行筛选；常用搜索框仅用于用户名或邮箱模糊查询，复杂查询请在此添加条件并选择逻辑（AND/OR）。
+        说明：可组合多字段与规则进行筛选；常用搜索框仅用于用户名或邮箱模糊查询，复杂查询请在此添加条件并选择逻辑（AND/OR）�?
       </div>
     </div>
   );

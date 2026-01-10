@@ -1,4 +1,4 @@
-ï»¿import React from "react";
+import React from "react";
 import { App } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthService } from "@/api/services/AuthService";
@@ -20,11 +20,11 @@ import type { RouteConfig } from "@/types/routeConfig";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
-// Admin æ¨¡å—çš„åŸºç¡€è·¯å¾„å‰ç¼€
+// Admin Ä£¿éµÄ»ù´¡Â·¾¶Ç°×º
 const ADMIN_BASE_PATH = "/admin";
 
 /**
- * ä»åŠ¨æ€è·¯ç”±é…ç½®ä¸­æå– Admin æ¨¡å—çš„å­è·¯ç”±
+ * ´Ó¶¯Ì¬Â·ÓÉÅäÖÃÖĞÌáÈ¡ Admin Ä£¿éµÄ×ÓÂ·ÓÉ
  */
 function findAdminRoutes(routes: RouteConfig[]): RouteConfig[] {
   for (const route of routes) {
@@ -36,24 +36,24 @@ function findAdminRoutes(routes: RouteConfig[]): RouteConfig[] {
 }
 
 /**
- * å°†åŠ¨æ€è·¯ç”±é…ç½®è½¬æ¢ä¸ºèœå•é¡¹æ ¼å¼
+ * ½«¶¯Ì¬Â·ÓÉÅäÖÃ×ª»»Îª²Ëµ¥Ïî¸ñÊ½
  */
 interface DynamicMenuItem {
   key: string;
   label: string;
   path?: string;
   permissions?: string[];
-  icon?: string; // åŠ¨æ€å›¾æ ‡åç§°
+  icon?: string; // ¶¯Ì¬Í¼±êÃû³Æ
   children?: DynamicMenuItem[];
 }
 
 function routeToMenuItem(route: RouteConfig, parentPath: string = ""): DynamicMenuItem | null {
-  // åªæœ‰ isVisible çš„è·¯ç”±æ‰æ˜¾ç¤ºåœ¨èœå•ä¸­
+  // Ö»ÓĞ isVisible µÄÂ·ÓÉ²ÅÏÔÊ¾ÔÚ²Ëµ¥ÖĞ
   if (route.isVisible === false) {
     return null;
   }
 
-  // æ„å»ºç›¸å¯¹è·¯å¾„ï¼ˆç”¨äºèœå•é…ç½®ï¼‰
+  // ¹¹½¨Ïà¶ÔÂ·¾¶£¨ÓÃÓÚ²Ëµ¥ÅäÖÃ£©
   const relativePath = route.index
     ? parentPath || "/"
     : parentPath
@@ -69,7 +69,7 @@ function routeToMenuItem(route: RouteConfig, parentPath: string = ""): DynamicMe
     label: route.name || route.path,
     path: relativePath,
     permissions: route.permissions,
-    icon: route.icon, // ä¼ é€’åŠ¨æ€å›¾æ ‡
+    icon: route.icon, // ´«µİ¶¯Ì¬Í¼±ê
     children: children && children.length > 0 ? children : undefined,
   };
 }
@@ -80,10 +80,10 @@ export function useBasicLayout() {
   const { message } = App.useApp();
   const [refreshKey, setRefreshKey] = React.useState(0);
 
-  // ä»åŠ¨æ€è·¯ç”±è·å–é…ç½®
+  // ´Ó¶¯Ì¬Â·ÓÉ»ñÈ¡ÅäÖÃ
   const { routes: dynamicRoutes } = useRouteConfig();
 
-  // æ³¨å…¥ message å®ä¾‹åˆ°å…¨å±€å·¥å…·
+  // ×¢Èë message ÊµÀıµ½È«¾Ö¹¤¾ß
   React.useEffect(() => {
     setMessageInstance(message);
   }, [message]);
@@ -99,7 +99,7 @@ export function useBasicLayout() {
 
   const path = location.pathname;
 
-  // å°†å½“å‰è·¯å¾„è½¬æ¢ä¸ºç›¸å¯¹è·¯å¾„ï¼ˆç§»é™¤ /admin å‰ç¼€ï¼‰ç”¨äºèœå•åŒ¹é…
+  // ½«µ±Ç°Â·¾¶×ª»»ÎªÏà¶ÔÂ·¾¶£¨ÒÆ³ı /admin Ç°×º£©ÓÃÓÚ²Ëµ¥Æ¥Åä
   const relativePath = React.useMemo(() => {
     if (path.startsWith(ADMIN_BASE_PATH)) {
       const rel = path.slice(ADMIN_BASE_PATH.length);
@@ -108,7 +108,7 @@ export function useBasicLayout() {
     return path;
   }, [path]);
 
-  // ä»åŠ¨æ€è·¯ç”±ä¸­æå– Admin èœå•é…ç½®
+  // ´Ó¶¯Ì¬Â·ÓÉÖĞÌáÈ¡ Admin ²Ëµ¥ÅäÖÃ
   const dynamicMenuItems = React.useMemo((): DynamicMenuItem[] => {
     const adminRoutes = findAdminRoutes(dynamicRoutes);
     return adminRoutes
@@ -116,9 +116,9 @@ export function useBasicLayout() {
       .filter((item): item is DynamicMenuItem => item !== null);
   }, [dynamicRoutes]);
 
-  // è®¡ç®—é€‰ä¸­çš„èœå•é¡¹ key
+  // ¼ÆËãÑ¡ÖĞµÄ²Ëµ¥Ïî key
   const selectedKey = React.useMemo(() => {
-    // æ‹å¹³æ‰€æœ‰èœå•é¡¹
+    // ÅÄÆ½ËùÓĞ²Ëµ¥Ïî
     const flattenItems = (items: DynamicMenuItem[]): DynamicMenuItem[] => {
       let res: DynamicMenuItem[] = [];
       for (const item of items) {
@@ -129,10 +129,10 @@ export function useBasicLayout() {
     };
 
     const all = flattenItems(dynamicMenuItems);
-    // é™åºæ’åˆ—ï¼Œç¡®ä¿åŒ¹é…åˆ°æœ€é•¿è·¯å¾„
+    // ½µĞòÅÅÁĞ£¬È·±£Æ¥Åäµ½×î³¤Â·¾¶
     all.sort((a, b) => (b.path?.length || 0) - (a.path?.length || 0));
 
-    // ä½¿ç”¨ç›¸å¯¹è·¯å¾„è¿›è¡ŒåŒ¹é…
+    // Ê¹ÓÃÏà¶ÔÂ·¾¶½øĞĞÆ¥Åä
     const matched = all.find(
       (item) =>
         item.path && (relativePath === item.path || relativePath.startsWith(item.path + "/")),
@@ -143,7 +143,7 @@ export function useBasicLayout() {
   const matchedKey = Object.keys(SECTION_NAME_MAP).find((k) => path.startsWith(k)) || "/";
   const sectionName = SECTION_NAME_MAP[matchedKey];
 
-  // é¦–æ¬¡åŠ è½½ï¼šä»ç³»ç»Ÿé…ç½®æ¥å£è¯»å–ç«™ç‚¹ä¿¡æ¯å¹¶è®¾ç½® favicon
+  // Ê×´Î¼ÓÔØ£º´ÓÏµÍ³ÅäÖÃ½Ó¿Ú¶ÁÈ¡Õ¾µãĞÅÏ¢²¢ÉèÖÃ favicon
   React.useEffect(() => {
     let mounted = true;
     (async () => {
@@ -178,7 +178,7 @@ export function useBasicLayout() {
     };
   }, []);
 
-  // è·¯ç”±å˜åŒ–ï¼šæ›´æ–° document.title
+  // Â·ÓÉ±ä»¯£º¸üĞÂ document.title
   React.useEffect(() => {
     const pageName = getPageNameByPath(location.pathname, SECTION_NAME_MAP);
     document.title = buildTitle(site.title, pageName);
@@ -188,7 +188,7 @@ export function useBasicLayout() {
     try {
       localStorage.removeItem("token");
     } catch {}
-    message.success("å·²é€€å‡ºç™»å½•");
+    message.success("ÒÑÍË³öµÇÂ¼");
     navigate("/login", { replace: true });
   };
 
@@ -196,7 +196,7 @@ export function useBasicLayout() {
     setRefreshKey((k) => k + 1);
   };
 
-  // è·å–ç”¨æˆ·æƒé™
+  // »ñÈ¡ÓÃ»§È¨ÏŞ
   React.useEffect(() => {
     let mounted = true;
 
@@ -228,7 +228,7 @@ export function useBasicLayout() {
         } catch {}
       })
       .catch((err: any) => {
-        console.warn("åŠ è½½ç”¨æˆ·èµ„æ–™å¤±è´¥", err?.message || err);
+        console.warn("¼ÓÔØÓÃ»§×ÊÁÏÊ§°Ü", err?.message || err);
       });
     return () => {
       mounted = false;
@@ -236,13 +236,13 @@ export function useBasicLayout() {
   }, []);
 
   /**
-   * æ„å»º Ant Design Menu çš„ items æ•°ç»„
-   * ä»åŠ¨æ€è·¯ç”±é…ç½®ç”Ÿæˆï¼Œæ”¯æŒæƒé™è¿‡æ»¤
+   * ¹¹½¨ Ant Design Menu µÄ items Êı×é
+   * ´Ó¶¯Ì¬Â·ÓÉÅäÖÃÉú³É£¬Ö§³ÖÈ¨ÏŞ¹ıÂË
    */
   const menuItems = React.useMemo(() => {
     const isSuperAdmin = username === "admin";
 
-    // æƒé™æ£€æŸ¥å‡½æ•°
+    // È¨ÏŞ¼ì²éº¯Êı
     const can = (itemPermissions?: string[]): boolean => {
       if (isSuperAdmin) return true;
       if (!itemPermissions || itemPermissions.length === 0) return true;
@@ -250,7 +250,7 @@ export function useBasicLayout() {
     };
 
     /**
-     * å°†åŠ¨æ€èœå•é…ç½®è½¬æ¢ä¸º Ant Design Menu éœ€è¦çš„æ ¼å¼
+     * ½«¶¯Ì¬²Ëµ¥ÅäÖÃ×ª»»Îª Ant Design Menu ĞèÒªµÄ¸ñÊ½
      */
     const transformItems = (items: DynamicMenuItem[]): MenuItem[] => {
       return items
@@ -259,12 +259,12 @@ export function useBasicLayout() {
           const hasChildren = item.children && item.children.length > 0;
           const filteredChildren = hasChildren ? transformItems(item.children!) : undefined;
 
-          // å¦‚æœæœ‰å­èœå•ä½†è¿‡æ»¤åä¸ºç©ºï¼Œåˆ™è·³è¿‡è¯¥èœå•é¡¹
+          // Èç¹ûÓĞ×Ó²Ëµ¥µ«¹ıÂËºóÎª¿Õ£¬ÔòÌø¹ı¸Ã²Ëµ¥Ïî
           if (hasChildren && (!filteredChildren || filteredChildren.length === 0)) {
             return null;
           }
 
-          // æ„å»ºå®é™…å¯¼èˆªè·¯å¾„ï¼šèœå•é…ç½®çš„ path æ˜¯ç›¸å¯¹è·¯å¾„ï¼Œéœ€è¦åŠ ä¸Š /admin å‰ç¼€
+          // ¹¹½¨Êµ¼Êµ¼º½Â·¾¶£º²Ëµ¥ÅäÖÃµÄ path ÊÇÏà¶ÔÂ·¾¶£¬ĞèÒª¼ÓÉÏ /admin Ç°×º
           const fullPath = item.path
             ? item.path === "/"
               ? ADMIN_BASE_PATH
@@ -276,7 +276,7 @@ export function useBasicLayout() {
             icon: item.icon ? <DynamicIcon iconName={item.icon} size={16} /> : null,
             label: item.label,
             children: filteredChildren,
-            // åªæœ‰å¶å­èŠ‚ç‚¹ï¼ˆæ— å­èœå•ä¸”æœ‰ pathï¼‰æ‰æ·»åŠ ç‚¹å‡»äº‹ä»¶
+            // Ö»ÓĞÒ¶×Ó½Úµã£¨ÎŞ×Ó²Ëµ¥ÇÒÓĞ path£©²ÅÌí¼Óµã»÷ÊÂ¼ş
             onClick: !hasChildren && fullPath ? () => navigate(fullPath) : undefined,
           };
         })

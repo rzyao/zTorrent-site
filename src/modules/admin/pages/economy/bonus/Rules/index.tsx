@@ -58,8 +58,8 @@ export function BonusRulesPage() {
     <div className="bonus-page-container">
       <div className="top-action-bar">
         <div className="action-bar-left">
-          <h1 className="page-title">💰 魔力值规则配置</h1>
-          {diffList.length > 0 && <span className="change-badge">{diffList.length} 项修改</span>}
+          <h1 className="page-title">💰 魔力值规则配�?/h1>
+          {diffList.length > 0 && <span className="change-badge">{diffList.length} 项修�?/span>}
         </div>
         <div className="action-bar-right">
           <button
@@ -74,7 +74,7 @@ export function BonusRulesPage() {
             disabled={loadingConfig || saving || diffList.length === 0}
             className={"btn btn-primary" + (diffList.length > 0 ? " btn-changed" : "")}
           >
-            {saving ? "💾 保存中…" : "💾 保存配置"}
+            {saving ? "💾 保存中�? : "💾 保存配置"}
           </button>
         </div>
       </div>

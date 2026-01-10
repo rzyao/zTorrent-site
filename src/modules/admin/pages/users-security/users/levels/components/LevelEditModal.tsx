@@ -46,15 +46,15 @@ export const LevelEditModal: React.FC<LevelEditModalProps> = ({
         {!editing && (
           <Form.Item
             name="key"
-            label="等级键（唯一标识）"
+            label="等级键（唯一标识�?
             tooltip="仅限字母（大小写）、数字与短横线；用于后端唯一标识"
             rules={[
               { required: true, message: "请输入等级键" },
-              { min: 2, message: "不少于2个字符" },
-              { max: 50, message: "不超过50个字符" },
+              { min: 2, message: "不少�?个字�? },
+              { max: 50, message: "不超�?0个字�? },
               {
                 pattern: /^[A-Za-z0-9-]+$/,
-                message: "仅限字母、数字与短横线",
+                message: "仅限字母、数字与短横�?,
               },
               {
                 validator: async (_, value) => {
@@ -62,24 +62,24 @@ export const LevelEditModal: React.FC<LevelEditModalProps> = ({
                   if (!v) return Promise.resolve();
                   const exists = levels.some((l) => l.key === v);
                   if (exists)
-                    return Promise.reject(new Error("该等级键已存在，请更换"));
+                    return Promise.reject(new Error("该等级键已存在，请更�?));
                   return Promise.resolve();
                 },
               },
             ]}
           >
-            <Input placeholder="例如：p1 或 novice" allowClear />
+            <Input placeholder="例如：p1 �?novice" allowClear />
           </Form.Item>
         )}
         <Form.Item
           name="label"
           label="显示名称"
           rules={[
-            { required: true, message: "请输入显示名称" },
-            { max: 50, message: "不超过50字符" },
+            { required: true, message: "请输入显示名�? },
+            { max: 50, message: "不超�?0字符" },
           ]}
         >
-          <Input placeholder="例如：P1 或 新手" />
+          <Input placeholder="例如：P1 �?新手" />
         </Form.Item>
         <Form.Item
           name="rank"
@@ -88,7 +88,7 @@ export const LevelEditModal: React.FC<LevelEditModalProps> = ({
             {
               type: "number",
               min: 0,
-              message: "排序必须为不小于0的整数",
+              message: "排序必须为不小于0的整�?,
             },
           ]}
         >
@@ -102,9 +102,9 @@ export const LevelEditModal: React.FC<LevelEditModalProps> = ({
         <Form.Item
           name="description"
           label="描述"
-          rules={[{ max: 200, message: "不超过200字符" }]}
+          rules={[{ max: 200, message: "不超�?00字符" }]}
         >
-          <Input.TextArea rows={3} placeholder="可选，描述该等级用途" />
+          <Input.TextArea rows={3} placeholder="可选，描述该等级用�? />
         </Form.Item>
         {editing && (
           <Form.Item name="isActive" label="是否启用" valuePropName="checked">

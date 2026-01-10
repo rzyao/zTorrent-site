@@ -215,7 +215,7 @@ export default function Playlists() {
       render: (text: string) => <Tag>{text}</Tag>,
     },
     {
-      title: "可见性",
+      title: "可见�?,
       dataIndex: "visibility",
       width: 120,
       render: (text: string) => <Tag>{text}</Tag>,
@@ -236,7 +236,7 @@ export default function Playlists() {
       render: (t: string) => formatDate(t),
     },
     {
-      title: "审核状态",
+      title: "审核状�?,
       dataIndex: "approvalStatus",
       width: 120,
       render: (text: string) => (
@@ -314,7 +314,7 @@ export default function Playlists() {
         <Space.Compact style={{ width: 260 }}>
           <Input
             allowClear
-            placeholder="关键词"
+            placeholder="关键�?
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             onPressEnter={() => {
@@ -337,7 +337,7 @@ export default function Playlists() {
             setPage(1);
           }}
           style={{ width: 160 }}
-          placeholder="审核状态"
+          placeholder="审核状�?
           allowClear
           options={[
             { label: "待审", value: "pending" },
@@ -369,7 +369,7 @@ export default function Playlists() {
             setPage(1);
           }}
           style={{ width: 160 }}
-          placeholder="可见性"
+          placeholder="可见�?
           allowClear
           options={[
             { label: "公开", value: "public" },
@@ -387,7 +387,7 @@ export default function Playlists() {
         <Button type="primary" onClick={openCreate}>
           新增片单
         </Button>
-        {/* 批量操作：启用/禁用选中片单 */}
+        {/* 批量操作：启�?禁用选中片单 */}
         <Button
           disabled={!selectedIds.length}
           onClick={async () => {
@@ -467,7 +467,7 @@ export default function Playlists() {
       >
         <Table
           bordered
-          // 为片单列表开启边框，便于批量操作时按列定位
+          // 为片单列表开启边框，便于批量操作时按列定�?
           rowKey="id"
           loading={loading}
           dataSource={items}
@@ -511,8 +511,8 @@ export default function Playlists() {
         destroyOnHidden
       >
         <Form form={createForm} layout="vertical">
-          <Form.Item name="title" label="标题" rules={[{ required: true, message: "请输入标题" }]}>
-            <Input placeholder="请输入片单标题" />
+          <Form.Item name="title" label="标题" rules={[{ required: true, message: "请输入标�? }]}>
+            <Input placeholder="请输入片单标�? />
           </Form.Item>
           <Form.Item name="description" label="描述">
             <Input.TextArea rows={3} />
@@ -531,7 +531,7 @@ export default function Playlists() {
               ]}
             />
           </Form.Item>
-          <Form.Item name="visibility" label="可见性">
+          <Form.Item name="visibility" label="可见�?>
             <Select
               options={[
                 { label: "公开", value: "public" },
@@ -549,7 +549,7 @@ export default function Playlists() {
         </Form>
       </Modal>
 
-      {/* 编辑片单弹窗：按后端 /playlists/update-playlist 的 { id, data } 结构提交 */}
+      {/* 编辑片单弹窗：按后端 /playlists/update-playlist �?{ id, data } 结构提交 */}
       <Modal
         title="编辑片单"
         open={editOpen}
@@ -572,7 +572,7 @@ export default function Playlists() {
                 <Form.Item
                   name={["data", "title"]}
                   label="标题"
-                  rules={[{ required: true, message: "请输入标题" }]}
+                  rules={[{ required: true, message: "请输入标�? }]}
                 >
                   <Input />
                 </Form.Item>
@@ -593,7 +593,7 @@ export default function Playlists() {
                     ]}
                   />
                 </Form.Item>
-                <Form.Item name={["data", "visibility"]} label="可见性">
+                <Form.Item name={["data", "visibility"]} label="可见�?>
                   <Select
                     options={[
                       { label: "公开", value: "public" },

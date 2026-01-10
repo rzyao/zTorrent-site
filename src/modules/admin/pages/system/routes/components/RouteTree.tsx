@@ -1,4 +1,4 @@
-ï»¿import {
+import {
   useMemo,
   useCallback,
   Key,
@@ -22,13 +22,13 @@ interface RouteTreeProps {
   onDragEnd?: (activeId: string, targetId: string, position: "before" | "after" | "inside") => void;
 }
 
-// æ‰©å±• TreeDataNode
+// À©Õ¹ TreeDataNode
 interface RouteTreeDataNode extends TreeDataNode {
   routeData: RouteTreeNodeDto;
   children?: RouteTreeDataNode[];
 }
 
-// è·å–èŠ‚ç‚¹æ˜¾ç¤ºåç§°
+// »ñÈ¡½ÚµãÏÔÊ¾Ãû³Æ
 function getDisplayName(node: RouteTreeNodeDto): string {
   if (typeof node.name === "string") return node.name;
   if (node.name && typeof node.name === "object") {
@@ -38,7 +38,7 @@ function getDisplayName(node: RouteTreeNodeDto): string {
   return node.id;
 }
 
-// æ„å»º ID -> RouteTreeNodeDto æ˜ å°„è¡¨
+// ¹¹½¨ ID -> RouteTreeNodeDto Ó³Éä±í
 function buildNodeMap(nodes: RouteTreeNodeDto[]): Map<string, RouteTreeNodeDto> {
   const map = new Map<string, RouteTreeNodeDto>();
   const traverse = (list: RouteTreeNodeDto[]) => {
@@ -51,7 +51,7 @@ function buildNodeMap(nodes: RouteTreeNodeDto[]): Map<string, RouteTreeNodeDto> 
   return map;
 }
 
-// æ”¶é›†æ‰€æœ‰ keys
+// ÊÕ¼¯ËùÓĞ keys
 function collectAllKeys(nodes: RouteTreeNodeDto[]): string[] {
   const keys: string[] = [];
   const traverse = (list: RouteTreeNodeDto[]) => {
@@ -64,8 +64,8 @@ function collectAllKeys(nodes: RouteTreeNodeDto[]): string[] {
   return keys;
 }
 
-// å°† RouteTreeNodeDto[] è½¬æ¢ä¸º Antd Tree æ•°æ®ç»“æ„
-// ä½¿ç”¨çº¯å­—ç¬¦ä¸² titleï¼Œåœ¨ titleRender ä¸­æ·»åŠ å›¾æ ‡
+// ½« RouteTreeNodeDto[] ×ª»»Îª Antd Tree Êı¾İ½á¹¹
+// Ê¹ÓÃ´¿×Ö·û´® title£¬ÔÚ titleRender ÖĞÌí¼ÓÍ¼±ê
 function convertToTreeData(nodes: RouteTreeNodeDto[]): RouteTreeDataNode[] {
   const sorted = [...nodes].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
@@ -83,7 +83,7 @@ function convertToTreeData(nodes: RouteTreeNodeDto[]): RouteTreeDataNode[] {
   });
 }
 
-// æ£€æŸ¥ nodeA æ˜¯å¦æ˜¯ nodeB çš„ç¥–å…ˆ
+// ¼ì²é nodeA ÊÇ·ñÊÇ nodeB µÄ×æÏÈ
 function isAncestor(
   nodeMap: Map<string, RouteTreeNodeDto>,
   ancestorId: string,
@@ -103,7 +103,7 @@ function isAncestor(
   return checkDescendant(ancestor.children);
 }
 
-// æ ‘å¤´éƒ¨ç»„ä»¶
+// Ê÷Í·²¿×é¼ş
 const TreeHeader = memo(function TreeHeader({
   count,
   borderColor,
@@ -119,29 +119,29 @@ const TreeHeader = memo(function TreeHeader({
       style={{ borderColor, backgroundColor: bgColor }}
     >
       <Title level={5} style={{ margin: 0 }}>
-        ç«™ç‚¹è·¯ç”±æ ‘ ({count})
+        Õ¾µãÂ·ÓÉÊ÷ ({count})
       </Title>
       <Text type="secondary" style={{ fontSize: 12 }}>
-        æ‹–æ‹½èŠ‚ç‚¹è°ƒæ•´ç»“æ„
+        ÍÏ×§½Úµãµ÷Õû½á¹¹
       </Text>
     </div>
   );
 });
 
-// ä¸»ç»„ä»¶
+// Ö÷×é¼ş
 function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProps) {
   const { token } = theme.useToken();
   const containerRef = useRef<HTMLDivElement>(null);
   const [treeHeight, setTreeHeight] = useState(600);
 
-  // ç›‘å¬å®¹å™¨é«˜åº¦å˜åŒ–
+  // ¼àÌıÈİÆ÷¸ß¶È±ä»¯
   useEffect(() => {
     if (!containerRef.current) return;
 
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0];
       if (entry) {
-        // å‡å»å®‰å…¨ä½™é‡é˜²æ­¢æº¢å‡º
+        // ¼õÈ¥°²È«ÓàÁ¿·ÀÖ¹Òç³ö
         setTreeHeight(entry.contentRect.height - 20);
       }
     });
@@ -151,26 +151,26 @@ function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProp
     return () => observer.disconnect();
   }, []);
 
-  // å—æ§å±•å¼€çŠ¶æ€
+  // ÊÜ¿ØÕ¹¿ª×´Ì¬
   const [expandedKeys, setExpandedKeys] = useState<Key[]>(() => collectAllKeys(data));
 
-  // æ„å»ºèŠ‚ç‚¹æ˜ å°„è¡¨
+  // ¹¹½¨½ÚµãÓ³Éä±í
   const nodeMap = useMemo(() => buildNodeMap(data), [data]);
 
-  // è½¬æ¢æ ‘æ•°æ®
+  // ×ª»»Ê÷Êı¾İ
   const treeData = useMemo(() => convertToTreeData(data), [data]);
 
-  // å±•å¼€/æ”¶èµ·å¤„ç† - ç›´æ¥æ›´æ–°,ä¸ä½¿ç”¨ startTransition (çº¯ UI æ“ä½œåº”ç«‹å³å“åº”)
+  // Õ¹¿ª/ÊÕÆğ´¦Àí - Ö±½Ó¸üĞÂ,²»Ê¹ÓÃ startTransition (´¿ UI ²Ù×÷Ó¦Á¢¼´ÏìÓ¦)
   const handleExpand = useCallback((keys: Key[]) => {
     setExpandedKeys(keys);
   }, []);
 
-  // é€‰ä¸­å¤„ç† - ä½¿ç”¨ startTransition å»¶è¿Ÿè§¦å‘
+  // Ñ¡ÖĞ´¦Àí - Ê¹ÓÃ startTransition ÑÓ³Ù´¥·¢
   const handleSelect: TreeProps["onSelect"] = useCallback(
     (_selectedKeys: Key[], info: any) => {
       const routeData = info.node?.routeData;
       if (routeData) {
-        // ä½¿ç”¨ startTransition è®© UI å…ˆå“åº”
+        // Ê¹ÓÃ startTransition ÈÃ UI ÏÈÏìÓ¦
         startTransition(() => {
           onSelect(routeData);
         });
@@ -179,7 +179,7 @@ function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProp
     [onSelect],
   );
 
-  // æ‹–æ‹½å¤„ç†
+  // ÍÏ×§´¦Àí
   const handleDrop: TreeProps["onDrop"] = useCallback(
     (info) => {
       if (!onDragEnd) return;
@@ -198,7 +198,7 @@ function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProp
     [onDragEnd],
   );
 
-  // æ‹–æ‹½å…è®¸æ£€æŸ¥
+  // ÍÏ×§ÔÊĞí¼ì²é
   const allowDrop: TreeProps["allowDrop"] = useCallback(
     ({ dragNode, dropNode }) => {
       return !isAncestor(nodeMap, dragNode.key as string, dropNode.key as string);
@@ -206,7 +206,7 @@ function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProp
     [nodeMap],
   );
 
-  // æ ‡é¢˜æ¸²æŸ“ - æ˜¾ç¤ºå›¾æ ‡ã€ç¦ç”¨/éšè—çŠ¶æ€
+  // ±êÌâäÖÈ¾ - ÏÔÊ¾Í¼±ê¡¢½ûÓÃ/Òş²Ø×´Ì¬
   const titleRender = useCallback((node: RouteTreeDataNode) => {
     const isDisabled = (node.routeData as any).isEnabled === false;
     const isHidden = node.routeData.isVisible === false;
@@ -217,10 +217,10 @@ function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProp
     let textColor: string | undefined;
 
     if (isDisabled) {
-      statusSuffix = " (å·²ç¦ç”¨)";
+      statusSuffix = " (ÒÑ½ûÓÃ)";
       textColor = "#ff4d4f";
     } else if (isHidden) {
-      statusSuffix = " (å·²éšè—)";
+      statusSuffix = " (ÒÑÒş²Ø)";
       textColor = "#faad14";
     }
 
@@ -235,7 +235,7 @@ function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProp
     );
   }, []);
 
-  // ç¼“å­˜ selectedKeys æ•°ç»„
+  // »º´æ selectedKeys Êı×é
   const selectedKeys = useMemo(() => (selectedId ? [selectedId] : []), [selectedId]);
 
   if (data.length === 0) {
@@ -247,7 +247,7 @@ function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProp
           bgColor={token.colorBgContainer}
         />
         <div className="flex flex-1 items-center justify-center">
-          <Empty description="æš‚æ— è·¯ç”±æ•°æ®" />
+          <Empty description="ÔİÎŞÂ·ÓÉÊı¾İ" />
         </div>
       </div>
     );
@@ -273,7 +273,7 @@ function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProp
           onDrop={handleDrop}
           allowDrop={allowDrop}
           style={{ background: "transparent" }}
-          // å¯ç”¨è™šæ‹Ÿæ»šåŠ¨,æå‡å¤§å‹æ ‘æ€§èƒ½
+          // ÆôÓÃĞéÄâ¹ö¶¯,ÌáÉı´óĞÍÊ÷ĞÔÄÜ
           virtual
           height={treeHeight}
         />
@@ -282,7 +282,7 @@ function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProp
   );
 }
 
-// å¯¼å‡º memo åŒ…è£…çš„ç»„ä»¶
+// µ¼³ö memo °ü×°µÄ×é¼ş
 export const RouteTree = memo(RouteTreeInner, (prevProps, nextProps) => {
   return (
     prevProps.data === nextProps.data &&

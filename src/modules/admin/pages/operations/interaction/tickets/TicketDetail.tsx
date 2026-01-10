@@ -22,8 +22,8 @@ import type { ConfirmResolvedDto } from "@/api/models/ConfirmResolvedDto";
 import { statusText, statusColor, categoryText, priorityText, priorityColor } from "./_dicts";
 
 /**
- * 工单管理 - 详情页
- * 功能：展示工单详情与历史回复；支持回复（含附件上传）、关闭与确认已解决
+ * 工单管理 - 详情�?
+ * 功能：展示工单详情与历史回复；支持回复（含附件上传）、关闭与确认已解�?
  */
 export default function TicketDetail() {
   const { message } = App.useApp();
@@ -37,7 +37,7 @@ export default function TicketDetail() {
   const [form] = Form.useForm<ReplyDto>();
   const [files, setFiles] = useState<UploadFile[]>([]);
 
-  /** 加载详情与回复列表 */
+  /** 加载详情与回复列�?*/
   const load = async () => {
     setLoading(true);
     try {
@@ -66,7 +66,7 @@ export default function TicketDetail() {
             ticketId: id,
             reason: "后台关闭",
           } as CloseTicketDto);
-          message.success("已关闭");
+          message.success("已关�?);
           load();
         } catch (e: any) {
           message.error(e?.response?.data?.message || e?.message || "关闭失败");
@@ -75,11 +75,11 @@ export default function TicketDetail() {
     });
   };
 
-  /** 确认已解决 */
+  /** 确认已解�?*/
   const handleConfirmResolved = async () => {
     try {
       await TicketsService.ticketsControllerConfirmResolved({ ticketId: id } as ConfirmResolvedDto);
-      message.success("已确认");
+      message.success("已确�?);
       load();
     } catch (e: any) {
       message.error(e?.response?.data?.message || e?.message || "操作失败");
@@ -87,8 +87,8 @@ export default function TicketDetail() {
   };
 
   /**
-   * 附件上传：调用后端上传接口获取可用于提交回复的附件信息
-   * 注意：具体后端返回结构可能不同，这里以常见 { attachmentId, url, name, size } 为例
+   * 附件上传：调用后端上传接口获取可用于提交回复的附件信�?
+   * 注意：具体后端返回结构可能不同，这里以常�?{ attachmentId, url, name, size } 为例
    */
   const beforeUpload = async (file: File) => {
     try {
@@ -98,7 +98,7 @@ export default function TicketDetail() {
         file,
       } as any);
       const att = res?.data?.attachment || res?.data;
-      // 将附件写入回复表单字段 attachments，结构需满足 ReplyAttachmentInput
+      // 将附件写入回复表单字�?attachments，结构需满足 ReplyAttachmentInput
       const old = form.getFieldValue("attachments") || [];
       form.setFieldsValue({
         attachments: [
@@ -138,7 +138,7 @@ export default function TicketDetail() {
         content: values.content,
         attachments: values.attachments,
       } as ReplyDto);
-      message.success("已回复");
+      message.success("已回�?);
       form.resetFields();
       setFiles([]);
       load();
@@ -150,7 +150,7 @@ export default function TicketDetail() {
   };
 
   return (
-    <Space direction="vertical" size={12} style={{ width: "100%" }}>
+    <Space orientation="vertical" size={12} style={{ width: "100%" }}>
       <Card
         loading={loading}
         title={`工单详情 #${id}`}
@@ -165,7 +165,7 @@ export default function TicketDetail() {
               disabled={detail?.status !== "resolved"}
               onClick={handleConfirmResolved}
             >
-              确认已解决
+              确认已解�?
             </Button>
           </Space>
         }
@@ -174,14 +174,14 @@ export default function TicketDetail() {
           <Descriptions.Item label="标题" span={2}>
             {detail?.title}
           </Descriptions.Item>
-          <Descriptions.Item label="状态">
+          <Descriptions.Item label="状�?>
             <Tag color={statusColor[detail?.status]}>{statusText[detail?.status]}</Tag>
           </Descriptions.Item>
-          <Descriptions.Item label="优先级">
+          <Descriptions.Item label="优先�?>
             <Tag color={priorityColor[detail?.priority]}>{priorityText[detail?.priority]}</Tag>
           </Descriptions.Item>
           <Descriptions.Item label="类别">{categoryText[detail?.category]}</Descriptions.Item>
-          <Descriptions.Item label="创建人">{detail?.creatorName}</Descriptions.Item>
+          <Descriptions.Item label="创建�?>{detail?.creatorName}</Descriptions.Item>
           <Descriptions.Item label="创建时间">{detail?.createdAt}</Descriptions.Item>
         </Descriptions>
       </Card>
@@ -191,7 +191,7 @@ export default function TicketDetail() {
           dataSource={replies}
           renderItem={(it: any) => (
             <List.Item>
-              <Space direction="vertical" style={{ width: "100%" }}>
+              <Space orientation="vertical" style={{ width: "100%" }}>
                 <div>{it?.content}</div>
                 {/* 附件列表（如有） */}
                 {Array.isArray(it?.attachments) && it.attachments.length > 0 ? (
@@ -214,7 +214,7 @@ export default function TicketDetail() {
           <Form.Item
             name="content"
             label="回复内容"
-            rules={[{ required: true, message: "请输入回复内容" }]}
+            rules={[{ required: true, message: "请输入回复内�? }]}
           >
             <Input.TextArea rows={4} maxLength={2000} showCount />
           </Form.Item>

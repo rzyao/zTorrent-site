@@ -36,13 +36,13 @@ export const PermissionAssignModal: React.FC<PermissionAssignModalProps> = ({
     <Modal
       open={permOpen && !!permTarget}
       title={
-        <Space direction="vertical" size={4}>
+        <Space orientation="vertical" size={4}>
           <Typography.Text>分配权限</Typography.Text>
           {permTarget && (
             <Typography.Text type="secondary">
               等级：{permTarget.label}
               <Typography.Text type="secondary" style={{ marginLeft: 8 }}>
-                （{permTarget.key}）
+                （{permTarget.key}�?
               </Typography.Text>
             </Typography.Text>
           )}
@@ -76,7 +76,7 @@ export const PermissionAssignModal: React.FC<PermissionAssignModalProps> = ({
                           levelKey: permTarget.key,
                           permissionKeys,
                         });
-                        message.success("已保存权限");
+                        message.success("已保存权�?);
                       } catch (e: any) {
                         message.error(e?.message || "分配权限失败");
                       }
@@ -106,7 +106,7 @@ export const PermissionAssignModal: React.FC<PermissionAssignModalProps> = ({
                           levelKey: permTarget.key,
                           permissionKeys,
                         });
-                        message.success("已保存权限");
+                        message.success("已保存权�?);
                       } catch (e: any) {
                         message.error(e?.message || "分配权限失败");
                       }

@@ -1,10 +1,10 @@
-ï»¿import * as React from "react";
+import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/utils/cn";
 
 /**
- * Tag ç»„ä»¶å˜ä½“é…ç½®
- * æ¨¡ä»¿ Ant Design Tag çš„è®¾è®¡é£æ ¼
+ * Tag ×é¼ş±äÌåÅäÖÃ
+ * Ä£·Â Ant Design Tag µÄÉè¼Æ·ç¸ñ
  */
 const tagVariants = cva(
   "inline-flex items-center rounded px-2 py-0.5 text-xs font-normal transition-colors",
@@ -21,7 +21,7 @@ const tagVariants = cva(
         magenta: "border border-pink-200 bg-pink-50 text-pink-600",
         gold: "border border-amber-200 bg-amber-50 text-amber-600",
         lime: "border border-lime-200 bg-lime-50 text-lime-600",
-        // æ— è¾¹æ¡†å˜ä½“
+        // ÎŞ±ß¿ò±äÌå
         "default-borderless": "bg-gray-100 text-gray-600",
         "primary-borderless": "bg-blue-50 text-blue-600",
         "success-borderless": "bg-green-50 text-green-600",
@@ -42,26 +42,26 @@ const tagVariants = cva(
 
 export interface TagProps
   extends React.HTMLAttributes<HTMLSpanElement>, VariantProps<typeof tagVariants> {
-  /** æ˜¯å¦å¯å…³é—­ */
+  /** ÊÇ·ñ¿É¹Ø±Õ */
   closable?: boolean;
-  /** å…³é—­å›è°ƒ */
+  /** ¹Ø±Õ»Øµ÷ */
   onClose?: (e: React.MouseEvent<HTMLElement>) => void;
-  /** è‡ªå®šä¹‰é¢œè‰²ï¼ˆè¦†ç›– variantï¼‰ */
+  /** ×Ô¶¨ÒåÑÕÉ«£¨¸²¸Ç variant£© */
   color?: string;
 }
 
 /**
- * Tag æ ‡ç­¾ç»„ä»¶
+ * Tag ±êÇ©×é¼ş
  *
- * ç”¨äºæ ‡è®°å’Œåˆ†ç±»ï¼Œæ¨¡ä»¿ Ant Design Tag çš„è®¾è®¡ã€‚
+ * ÓÃÓÚ±ê¼ÇºÍ·ÖÀà£¬Ä£·Â Ant Design Tag µÄÉè¼Æ¡£
  *
  * @example
  * ```tsx
- * <Tag>é»˜è®¤æ ‡ç­¾</Tag>
- * <Tag variant="primary">ä¸»è¦æ ‡ç­¾</Tag>
- * <Tag variant="success">æˆåŠŸæ ‡ç­¾</Tag>
- * <Tag variant="error">é”™è¯¯æ ‡ç­¾</Tag>
- * <Tag color="#f50">è‡ªå®šä¹‰é¢œè‰²</Tag>
+ * <Tag>Ä¬ÈÏ±êÇ©</Tag>
+ * <Tag variant="primary">Ö÷Òª±êÇ©</Tag>
+ * <Tag variant="success">³É¹¦±êÇ©</Tag>
+ * <Tag variant="error">´íÎó±êÇ©</Tag>
+ * <Tag color="#f50">×Ô¶¨ÒåÑÕÉ«</Tag>
  * ```
  */
 export function Tag({
@@ -75,7 +75,7 @@ export function Tag({
   style,
   ...props
 }: TagProps) {
-  // è‡ªå®šä¹‰é¢œè‰²æ ·å¼
+  // ×Ô¶¨ÒåÑÕÉ«ÑùÊ½
   const colorStyle: React.CSSProperties = color
     ? {
         backgroundColor: `${color}15`,
@@ -97,7 +97,7 @@ export function Tag({
           type="button"
           className="ml-1 inline-flex h-3 w-3 items-center justify-center rounded-full hover:bg-black/10"
           onClick={onClose}
-          aria-label="å…³é—­"
+          aria-label="¹Ø±Õ"
         >
           <svg className="h-2 w-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
