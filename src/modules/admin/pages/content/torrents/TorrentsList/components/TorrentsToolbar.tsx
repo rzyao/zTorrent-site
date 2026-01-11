@@ -1,5 +1,13 @@
-import { Button, Input, Select, Space } from "antd";
-import { ReviewDto } from "@/api/models/ReviewDto";
+import { Button } from "@/modules/admin/components/ui/button";
+import { Input } from "@/modules/admin/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/modules/admin/components/ui/select";
+import { Search, Plus, Filter, CheckCircle, XCircle } from "lucide-react";
 import { CategoryOption, TorrentItem } from "../types";
 
 interface TorrentsToolbarProps {
@@ -17,6 +25,10 @@ interface TorrentsToolbarProps {
   items: TorrentItem[];
 }
 
+/**
+ * 种子列表工具栏
+ * 包含搜索、筛选、批量操作等功能
+ */
 export const TorrentsToolbar = ({
   searchText,
   setSearchText,
@@ -30,54 +42,94 @@ export const TorrentsToolbar = ({
   onAdvSearch,
   onBatchReview,
 }: TorrentsToolbarProps) => {
-  return (
-    <Space style={{ marginBottom: 16 }}>
-      <Space.Compact style={{ width: 240 }}>
+  // 回车触发搜索
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      onSearch();
+    }
+  };
+
+  // 返回左右两部分内容，便于外部分别使用
+  const left = (
+    <div className="flex items-center gap-3">
+      {/* 搜索框组合 */}
+      <div className="flex">
         <Input
-          allowClear
           placeholder="搜索标题或关键词"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
-          onPressEnter={onSearch}
+          onKeyDown={handleKeyDown}
+          className="w-56 rounded-r-none"
         />
-        <Button type="primary" onClick={onSearch}>
-          搜索
+        <Button variant="primary" className="-ml-px rounded-l-none" onClick={onSearch}>
+          <Search className="h-4 w-4" />
         </Button>
-      </Space.Compact>
+      </div>
+
+      {/* 分类筛选 */}
       <Select
-        value={categoryFilter}
-        onChange={(v) => {
-          setCategoryFilter(v);
+        value={categoryFilter || "__all__"}
+        onValueChange={(v) => {
+          setCategoryFilter(v === "__all__" ? undefined : v);
           onSearch();
         }}
-        style={{ width: 160 }}
-        placeholder="选择分类"
-        allowClear
-        options={categories}
-      />
+      >
+        <SelectTrigger className="w-40">
+          <SelectValue placeholder="选择分类" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="__all__">全部分类</SelectItem>
+          {categories.map((cat) => (
+            <SelectItem key={cat.value} value={cat.value}>
+              {cat.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      {/* 审核状态筛选 */}
       <Select
-        value={approvalStatus}
-        onChange={(v) => {
-          setApprovalStatus(v as any);
+        value={approvalStatus || "__all__"}
+        onValueChange={(v) => {
+          setApprovalStatus(v === "__all__" ? undefined : (v as TorrentItem["approvalStatus"]));
           onSearch();
         }}
-        style={{ width: 160 }}
-        placeholder="审核状态"
-        allowClear
-        options={[
-          { label: "待审", value: "pending" },
-          { label: "通过", value: "approved" },
-          { label: "驳回", value: "rejected" },
-        ]}
-      />
-      <Button onClick={() => onBatchReview("approve")}>全部通过</Button>
-      <Button danger onClick={() => onBatchReview("reject")}>
+      >
+        <SelectTrigger className="w-32">
+          <SelectValue placeholder="审核状态" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="__all__">全部状态</SelectItem>
+          <SelectItem value="pending">待审核</SelectItem>
+          <SelectItem value="approved">已通过</SelectItem>
+          <SelectItem value="rejected">已驳回</SelectItem>
+        </SelectContent>
+      </Select>
+
+      {/* 高级搜索按钮 */}
+      <Button variant="default" onClick={onAdvSearch}>
+        <Filter className="mr-1 h-4 w-4" />
+        高级搜索
+      </Button>
+    </div>
+  );
+
+  const right = (
+    <div className="flex items-center gap-2">
+      <Button variant="default" onClick={() => onBatchReview("approve")}>
+        <CheckCircle className="mr-1 h-4 w-4" />
+        全部通过
+      </Button>
+      <Button variant="default" danger onClick={() => onBatchReview("reject")}>
+        <XCircle className="mr-1 h-4 w-4" />
         全部驳回
       </Button>
-      <Button type="primary" onClick={onCreate}>
+      <Button variant="primary" onClick={onCreate}>
+        <Plus className="mr-1 h-4 w-4" />
         新增种子
       </Button>
-      <Button onClick={onAdvSearch}>高级搜索</Button>
-    </Space>
+    </div>
   );
+
+  return { left, right };
 };

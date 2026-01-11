@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { App, Form } from "antd";
 import { CategoriesService } from "@/api/services/CategoriesService";
 import { AdminTorrentsService } from "@/api/services/AdminTorrentsService";
@@ -43,8 +43,6 @@ export const useTorrentsLogic = () => {
     "approve",
   );
   const [reviewForm] = Form.useForm<{ note?: string }>();
-  const tableContainerRef = useRef<HTMLDivElement>(null);
-  const [tableScrollY, setTableScrollY] = useState<number | undefined>(undefined);
 
   const query = useMemo<AdminListTorrentsDto>(
     () => ({
@@ -258,41 +256,6 @@ export const useTorrentsLogic = () => {
     }
   }
 
-  // 表格高度自适应逻辑
-  useEffect(() => {
-    let rafId: number | null = null;
-    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-
-    const updateScrollY = () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        if (tableContainerRef.current) {
-          const height = tableContainerRef.current.clientHeight;
-          setTableScrollY(height - 55);
-        }
-      });
-    };
-
-    const debouncedUpdate = () => {
-      if (debounceTimer) clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(updateScrollY, 100);
-    };
-
-    updateScrollY();
-
-    const resizeObserver = new ResizeObserver(debouncedUpdate);
-    const container = tableContainerRef.current;
-    if (container) {
-      resizeObserver.observe(container);
-    }
-
-    return () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      if (debounceTimer) clearTimeout(debounceTimer);
-      resizeObserver.disconnect();
-    };
-  }, []);
-
   return {
     loading,
     items,
@@ -332,8 +295,6 @@ export const useTorrentsLogic = () => {
     reviewAction,
     setReviewAction,
     reviewForm,
-    tableContainerRef,
-    tableScrollY,
     loadList,
     openCreate,
     submitCreate,

@@ -1,116 +1,146 @@
-import { Table, Tag } from "antd";
+import { useMemo } from "react";
+import { DataTable, Column } from "@/modules/admin/components/ui/data-table";
+import { Tag } from "@/modules/admin/components/ui/tag";
 import { RecordItem } from "./types";
 
 interface RecordsTableProps {
   loading: boolean;
   items: RecordItem[];
   emptyText?: string;
+  page?: number;
+  pageSize?: number;
+  total?: number;
+  onPageChange?: (page: number, pageSize: number) => void;
+  /** 工具栏插槽 (放置于 DataTable 的 toolbarLeft) */
+  toolbarSlot?: React.ReactNode;
 }
 
-export const RecordsTable = ({ loading, items, emptyText = "暂无记录" }: RecordsTableProps) => {
-  const columns = [
-    {
-      title: "用户名",
-      dataIndex: "username",
-      key: "username",
-      render: (_: any, it: any) => String(it.username || it.user?.username || it.userName || "-"),
-    },
-    {
-      title: "种子标题",
-      dataIndex: "title",
-      key: "title",
-      render: (_: any, it: any) =>
-        String(it.title || it.torrentTitle || it.name || it.torrentName || "-"),
-    },
-    {
-      title: "状态",
-      dataIndex: "status",
-      key: "status",
-      render: (_: any, it: any) => {
-        const s = String(it.status || it.state || it.phase || "");
-        const color =
-          s === "completed"
-            ? "green"
-            : s === "downloading"
-              ? "blue"
-              : s === "seeding"
-                ? "geekblue"
-                : s
-                  ? "gold"
-                  : "default";
-        return <Tag color={color}>{s || "-"}</Tag>;
+/**
+ * 下载记录表格组件 (使用 Admin UI DataTable)
+ * 用于展示种子下载/做种/上传等记录
+ */
+export const RecordsTable = ({
+  loading,
+  items,
+  emptyText = "暂无记录",
+  page = 1,
+  pageSize = 10,
+  total,
+  onPageChange,
+  toolbarSlot,
+}: RecordsTableProps) => {
+  // 表格列配置
+  const columns = useMemo<Column<RecordItem>[]>(
+    () => [
+      {
+        key: "username",
+        title: "用户名",
+        width: 120,
+        render: (_, it) => String(it.username || it.user?.username || it.userName || "-"),
       },
-    },
-    {
-      title: "进度",
-      dataIndex: "progress",
-      key: "progress",
-      render: (_: any, it: any) => {
-        const v =
-          typeof it.progress === "number"
-            ? it.progress
-            : typeof it.percent === "number"
-              ? it.percent
-              : undefined;
-        return v === undefined ? "-" : `${Math.round(v * (v <= 1 ? 100 : 1))}%`;
+      {
+        key: "title",
+        title: "种子标题",
+        render: (_, it) => String(it.title || it.torrentTitle || it.name || it.torrentName || "-"),
       },
-    },
-    {
-      title: "上传",
-      dataIndex: "uploaded",
-      key: "uploaded",
-      render: (_: any, it: any) => String(it.uploaded || it.up || "-"),
-    },
-    {
-      title: "下载",
-      dataIndex: "downloaded",
-      key: "downloaded",
-      render: (_: any, it: any) => String(it.downloaded || it.down || "-"),
-    },
-    {
-      title: "速度",
-      dataIndex: "speed",
-      key: "speed",
-      render: (_: any, it: any) => String(it.speed || it.downloadSpeed || it.uploadSpeed || "-"),
-    },
-    {
-      title: "客户端",
-      dataIndex: "client",
-      key: "client",
-      render: (_: any, it: any) => String(it.client || it.clientName || "-"),
-    },
-    {
-      title: "创建时间",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (_: any, it: any) => String(it.createdAt || it.created_at || "-"),
-    },
-    {
-      title: "更新时间",
-      dataIndex: "updatedAt",
-      key: "updatedAt",
-      render: (_: any, it: any) => String(it.updatedAt || it.updated_at || "-"),
-    },
-  ];
+      {
+        key: "status",
+        title: "状态",
+        width: 100,
+        align: "center",
+        render: (_, it) => {
+          const s = String(it.status || it.state || it.phase || "");
+          const variant =
+            s === "completed"
+              ? "success"
+              : s === "downloading"
+                ? "primary"
+                : s === "seeding"
+                  ? "cyan"
+                  : s
+                    ? "warning"
+                    : "default";
+          return <Tag variant={variant}>{s || "-"}</Tag>;
+        },
+      },
+      {
+        key: "progress",
+        title: "进度",
+        width: 80,
+        align: "center",
+        render: (_, it) => {
+          const v =
+            typeof it.progress === "number"
+              ? it.progress
+              : typeof it.percent === "number"
+                ? it.percent
+                : undefined;
+          return v === undefined ? "-" : `${Math.round(v * (v <= 1 ? 100 : 1))}%`;
+        },
+      },
+      {
+        key: "uploaded",
+        title: "上传",
+        width: 100,
+        align: "right",
+        render: (_, it) => String(it.uploaded || it.up || "-"),
+      },
+      {
+        key: "downloaded",
+        title: "下载",
+        width: 100,
+        align: "right",
+        render: (_, it) => String(it.downloaded || it.down || "-"),
+      },
+      {
+        key: "speed",
+        title: "速度",
+        width: 100,
+        align: "right",
+        render: (_, it) => String(it.speed || it.downloadSpeed || it.uploadSpeed || "-"),
+      },
+      {
+        key: "client",
+        title: "客户端",
+        width: 120,
+        render: (_, it) => String(it.client || it.clientName || "-"),
+      },
+      {
+        key: "createdAt",
+        title: "创建时间",
+        width: 160,
+        render: (_, it) => String(it.createdAt || it.created_at || "-"),
+      },
+      {
+        key: "updatedAt",
+        title: "更新时间",
+        width: 160,
+        render: (_, it) => String(it.updatedAt || it.updated_at || "-"),
+      },
+    ],
+    [],
+  );
 
   return (
-    <Table
-      bordered
+    <DataTable
+      columns={columns}
+      dataSource={items}
       rowKey={(it) =>
         String(it.tid || it.torrentId || it.infoHash || it.createdAt || Math.random())
       }
-      columns={columns as any}
-      dataSource={items}
       loading={loading}
-      pagination={false}
-      expandable={{
-        expandedRowRender: (record) => (
-          <pre style={{ margin: 0, maxHeight: "40vh", overflow: "auto" }}>
-            {JSON.stringify(record, null, 2)}
-          </pre>
-        ),
-      }}
-      locale={{ emptyText }}
+      emptyText={emptyText}
+      toolbarLeft={toolbarSlot}
+      pagination={
+        onPageChange
+          ? {
+              current: page,
+              pageSize: pageSize,
+              total: total || items.length,
+              onChange: onPageChange,
+            }
+          : undefined
+      }
     />
   );
 };

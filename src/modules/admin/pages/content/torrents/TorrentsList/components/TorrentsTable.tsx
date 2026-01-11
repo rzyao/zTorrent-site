@@ -1,200 +1,260 @@
-import { useMemo } from "react";
-import { Button, Popconfirm, Space, Table, Tag } from "antd";
-import type { ColumnsType } from "antd/es/table";
+import { useState, useMemo } from "react";
 import { AdminListTorrentsDto } from "@/api/models/AdminListTorrentsDto";
-import { ReviewDto } from "@/api/models/ReviewDto";
 import { formatBytes } from "@/modules/admin/utils/formatBytes";
 import { formatDate } from "@/modules/admin/utils/formatDate";
-import { TorrentItem, SortOrderLocal } from "../types";
+import { DataTable, Column, SortOrder } from "@/modules/admin/components/ui/data-table";
+import { Button } from "@/modules/admin/components/ui/button";
+import { Tag } from "@/modules/admin/components/ui/tag";
+import { ConfirmModal } from "@/modules/admin/components/ui/modal";
+import { TorrentItem } from "../types";
 
 interface TorrentsTableProps {
   loading: boolean;
   items: TorrentItem[];
+  page: number;
+  limit: number;
+  total: number;
   sortBy: AdminListTorrentsDto["sortBy"] | undefined;
   sortOrder: AdminListTorrentsDto["order"] | undefined;
   onSortChange: (
     sortBy: AdminListTorrentsDto["sortBy"] | undefined,
     order: AdminListTorrentsDto["order"] | undefined,
   ) => void;
-  tableScrollY: number | undefined;
+  onPageChange: (page: number, pageSize: number) => void;
+  /** 工具栏左侧内容 */
+  toolbarLeft?: React.ReactNode;
+  /** 工具栏右侧内容 */
+  toolbarRight?: React.ReactNode;
   onDetail: (id: string) => void;
-  onDownload: (id: string) => void;
-  onEdit: (record: TorrentItem) => void;
   onRemove: (id: string) => void;
-  onReview: (ids: string[], action: ReviewDto.action) => void;
-  onRejectReview: (record: TorrentItem) => void;
 }
 
+// 将 API 排序参数映射到列 key
+const sortByToColumnKey: Record<string, string> = {
+  [AdminListTorrentsDto.sortBy.SIZE]: "size",
+  [AdminListTorrentsDto.sortBy.SEEDERS]: "seeders",
+  [AdminListTorrentsDto.sortBy.DOWNLOADS]: "completed",
+  [AdminListTorrentsDto.sortBy.UPLOADED_AT]: "createdAt",
+};
+
+// 将列 key 映射回 API 排序参数
+const columnKeyToSortBy: Record<string, AdminListTorrentsDto["sortBy"]> = {
+  size: AdminListTorrentsDto.sortBy.SIZE,
+  seeders: AdminListTorrentsDto.sortBy.SEEDERS,
+  completed: AdminListTorrentsDto.sortBy.DOWNLOADS,
+  createdAt: AdminListTorrentsDto.sortBy.UPLOADED_AT,
+};
+
+/**
+ * 种子列表表格组件
+ * 使用项目标准的 DataTable 组件，完全移除 AntD 依赖
+ */
 export const TorrentsTable = ({
   loading,
   items,
+  page,
+  limit,
+  total,
   sortBy,
   sortOrder,
   onSortChange,
-  tableScrollY,
+  onPageChange,
+  toolbarLeft,
+  toolbarRight,
   onDetail,
-  onDownload,
-  onEdit,
   onRemove,
-  onReview,
-  onRejectReview,
 }: TorrentsTableProps) => {
-  const columns = useMemo<ColumnsType<TorrentItem>>(
+  // 删除确认弹窗状态
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+
+  // 处理删除确认
+  const handleDeleteConfirm = () => {
+    if (deleteTarget) {
+      onRemove(deleteTarget);
+      setDeleteTarget(null);
+      setDeleteModalOpen(false);
+    }
+  };
+
+  // 获取列的当前排序方向
+  const getColumnSortOrder = (columnKey: string): SortOrder => {
+    if (!sortBy) return null;
+    const currentKey = sortByToColumnKey[sortBy];
+    if (currentKey !== columnKey) return null;
+    if (sortOrder === "ASC") return "asc";
+    if (sortOrder === "DESC") return "desc";
+    return null;
+  };
+
+  // 处理排序变化
+  const handleSortChange = (columnKey: string, order: SortOrder) => {
+    if (order === null) {
+      onSortChange(undefined, undefined);
+    } else {
+      const apiSortBy = columnKeyToSortBy[columnKey];
+      const apiOrder =
+        order === "asc" ? AdminListTorrentsDto.order.ASC : AdminListTorrentsDto.order.DESC;
+      onSortChange(apiSortBy, apiOrder);
+    }
+  };
+
+  // 表格列定义
+  const columns = useMemo<Column<TorrentItem>[]>(
     () => [
-      { title: "ID", dataIndex: "id", width: 80, ellipsis: true },
       {
+        key: "id",
+        title: "ID",
+        dataIndex: "id",
+        width: 140,
+        ellipsis: true,
+      },
+      {
+        key: "category",
         title: "分类",
         dataIndex: "category",
         width: 100,
-        render: (text: string) => <Tag>{text}</Tag>,
+        render: (text: string) => <Tag>{text || "-"}</Tag>,
       },
-      { title: "标题", dataIndex: "title", ellipsis: true },
       {
+        key: "title",
+        title: "标题",
+        dataIndex: "title",
+        width: 200,
+        ellipsis: true,
+      },
+      {
+        key: "size",
         title: "大小",
         dataIndex: "size",
         width: 100,
-        render: (size: number) => formatBytes(size || 0),
         sorter: true,
-        sortOrder: (sortBy === AdminListTorrentsDto.sortBy.SIZE
-          ? sortOrder === "ASC"
-            ? "ascend"
-            : sortOrder === "DESC"
-              ? "descend"
-              : null
-          : null) as SortOrderLocal,
+        sortOrder: getColumnSortOrder("size"),
+        render: (size: number) => formatBytes(size || 0),
       },
       {
+        key: "seeders",
         title: "做种",
         dataIndex: "seeders",
         width: 80,
-        align: "center" as const,
+        align: "center",
         sorter: true,
-        sortOrder: (sortBy === AdminListTorrentsDto.sortBy.SEEDERS
-          ? sortOrder === "ASC"
-            ? "ascend"
-            : sortOrder === "DESC"
-              ? "descend"
-              : null
-          : null) as SortOrderLocal,
+        sortOrder: getColumnSortOrder("seeders"),
       },
       {
+        key: "completed",
         title: "完成",
         dataIndex: "completed",
         width: 80,
-        align: "center" as const,
+        align: "center",
         sorter: true,
-        sortOrder: (sortBy === AdminListTorrentsDto.sortBy.DOWNLOADS
-          ? sortOrder === "ASC"
-            ? "ascend"
-            : sortOrder === "DESC"
-              ? "descend"
-              : null
-          : null) as SortOrderLocal,
+        sortOrder: getColumnSortOrder("completed"),
       },
       {
+        key: "createdAt",
         title: "添加时间",
         dataIndex: "createdAt",
         width: 160,
-        render: (date: string) => formatDate(date),
         sorter: true,
-        sortOrder: (sortBy === AdminListTorrentsDto.sortBy.UPLOADED_AT
-          ? sortOrder === "ASC"
-            ? "ascend"
-            : sortOrder === "DESC"
-              ? "descend"
-              : null
-          : null) as SortOrderLocal,
+        sortOrder: getColumnSortOrder("createdAt"),
+        render: (date: string) => formatDate(date),
       },
-      { title: "发布者", dataIndex: "uploader", width: 120 },
       {
+        key: "uploader",
+        title: "发布者",
+        dataIndex: "uploader",
+        width: 120,
+      },
+      {
+        key: "approvalStatus",
         title: "审核状态",
         dataIndex: "approvalStatus",
-        width: 120,
-        render: (text: string) => (
-          <Tag color={text === "approved" ? "green" : text === "rejected" ? "red" : "gold"}>
-            {text || "-"}
-          </Tag>
-        ),
+        width: 100,
+        render: (text: string) => {
+          const variantMap: Record<string, "success" | "error" | "gold"> = {
+            approved: "success",
+            rejected: "error",
+            pending: "gold",
+          };
+          const labelMap: Record<string, string> = {
+            approved: "已通过",
+            rejected: "已驳回",
+            pending: "待审核",
+          };
+          return <Tag variant={variantMap[text] || "default"}>{labelMap[text] || text || "-"}</Tag>;
+        },
       },
       {
+        key: "approvedAt",
         title: "通过时间",
         dataIndex: "approvedAt",
         width: 160,
         render: (date: string) => formatDate(date),
-        sorter: true,
-        sortOrder: (sortBy === (AdminListTorrentsDto as any).sortBy.APPROVED_AT
-          ? sortOrder === "ASC"
-            ? "ascend"
-            : sortOrder === "DESC"
-              ? "descend"
-              : null
-          : null) as SortOrderLocal,
       },
       {
+        key: "visible",
         title: "可见",
         dataIndex: "visible",
-        width: 80,
-        render: (v: boolean) => <Tag color={v ? "green" : "red"}>{String(v)}</Tag>,
+        width: 70,
+        render: (v: boolean) => <Tag variant={v ? "success" : "error"}>{v ? "是" : "否"}</Tag>,
       },
       {
+        key: "actions",
         title: "操作",
-        width: 200,
+        width: 100,
         render: (_: any, record: TorrentItem) => (
-          <Space>
-            <Button type="link" onClick={() => onDetail(record.id!)}>
+          <div className="flex items-center gap-1">
+            <Button variant="link" onClick={() => onDetail(record.id!)}>
               详情
             </Button>
-            <Button type="link" onClick={() => onDownload(record.id!)}>
-              下载
+            <Button
+              variant="link"
+              danger
+              onClick={() => {
+                setDeleteTarget(record.id!);
+                setDeleteModalOpen(true);
+              }}
+            >
+              删除
             </Button>
-            <Button type="link" onClick={() => onEdit(record)}>
-              编辑
-            </Button>
-            <Popconfirm title="确认删除该种子？" onConfirm={() => onRemove(record.id!)}>
-              <Button type="link" danger>
-                删除
-              </Button>
-            </Popconfirm>
-            <Button type="link" onClick={() => onReview([record.id!], ReviewDto.action.APPROVE)}>
-              通过
-            </Button>
-            <Button type="link" danger onClick={() => onRejectReview(record)}>
-              驳回
-            </Button>
-          </Space>
+          </div>
         ),
       },
     ],
-    [sortBy, sortOrder, onDetail, onDownload, onEdit, onRemove, onReview, onRejectReview],
+    [sortBy, sortOrder, onDetail],
   );
 
   return (
-    <Table
-      bordered
-      rowKey="id"
-      loading={loading}
-      dataSource={items}
-      pagination={false}
-      scroll={{ x: "max-content", y: tableScrollY }}
-      tableLayout="fixed"
-      onChange={(_, __, sorter: any) => {
-        const field = sorter?.field as string | undefined;
-        const order = sorter?.order as "ascend" | "descend" | undefined;
-        const fieldMap: Record<string, AdminListTorrentsDto["sortBy"]> = {
-          createdAt: AdminListTorrentsDto.sortBy.UPLOADED_AT,
-          size: AdminListTorrentsDto.sortBy.SIZE,
-          seeders: AdminListTorrentsDto.sortBy.SEEDERS,
-          completed: AdminListTorrentsDto.sortBy.DOWNLOADS,
-        };
-        const nextSortBy = field ? fieldMap[field] : undefined;
-        const nextOrder: AdminListTorrentsDto["order"] | undefined = order
-          ? order === "ascend"
-            ? AdminListTorrentsDto.order.ASC
-            : AdminListTorrentsDto.order.DESC
-          : undefined;
-        onSortChange(nextSortBy, nextOrder);
-      }}
-      columns={columns}
-    />
+    <>
+      <DataTable
+        columns={columns}
+        dataSource={items}
+        rowKey="id"
+        loading={loading}
+        toolbarLeft={toolbarLeft}
+        toolbarRight={toolbarRight}
+        onSortChange={handleSortChange}
+        pagination={{
+          current: page,
+          pageSize: limit,
+          total,
+          onChange: onPageChange,
+        }}
+      />
+
+      {/* 删除确认弹窗 */}
+      <ConfirmModal
+        open={deleteModalOpen}
+        title="确认删除"
+        content="确定要删除该种子吗？此操作不可撤销。"
+        okText="删除"
+        cancelText="取消"
+        onOk={handleDeleteConfirm}
+        onCancel={() => {
+          setDeleteModalOpen(false);
+          setDeleteTarget(null);
+        }}
+      />
+    </>
   );
 };

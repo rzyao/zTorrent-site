@@ -1,4 +1,3 @@
-import { Pagination } from "antd";
 import { ReviewDto } from "@/api/models/ReviewDto";
 import { useTorrentsLogic } from "./hooks/useTorrentsLogic";
 import { TorrentsToolbar } from "./components/TorrentsToolbar";
@@ -8,6 +7,10 @@ import { EditTorrentModal } from "./components/EditTorrentModal";
 import { ReviewModal } from "./components/ReviewModal";
 import { AdvancedSearchModal } from "./components/AdvancedSearchModal";
 
+/**
+ * 种子列表管理页面
+ * 支持搜索、筛选、排序、CRUD和审核操作
+ */
 export default function TorrentsList() {
   const {
     loading,
@@ -48,9 +51,6 @@ export default function TorrentsList() {
     reviewAction,
     setReviewAction,
     reviewForm,
-    tableContainerRef,
-    tableScrollY,
-    loadList,
     openCreate,
     submitCreate,
     openEdit,
@@ -61,91 +61,59 @@ export default function TorrentsList() {
     msg,
   } = useTorrentsLogic();
 
+  // 处理分页变化
+  const handlePageChange = (newPage: number, newPageSize: number) => {
+    setPage(newPage);
+    setLimit(newPageSize);
+  };
+
+  // 处理排序变化
+  const handleSortChange = (nextSortBy: typeof sortBy, nextOrder: typeof sortOrder) => {
+    setSortBy(nextSortBy);
+    setSortOrder(nextOrder);
+    setPage(1); // 排序变化时重置页码
+  };
+
+  // 获取工具栏内容
+  const toolbar = TorrentsToolbar({
+    searchText,
+    setSearchText,
+    categoryFilter,
+    setCategoryFilter,
+    categories,
+    approvalStatus,
+    setApprovalStatus,
+    items,
+    onSearch: () => setPage(1),
+    onCreate: openCreate,
+    onAdvSearch: () => setAdvOpen(true),
+    onBatchReview: (action) => {
+      setReviewAction(action);
+      setReviewOpen(true);
+      reviewForm.resetFields();
+    },
+  });
+
   return (
-    <div
-      style={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        boxSizing: "border-box",
-      }}
-    >
-      <TorrentsToolbar
-        searchText={searchText}
-        setSearchText={setSearchText}
-        categoryFilter={categoryFilter}
-        setCategoryFilter={setCategoryFilter}
-        categories={categories}
-        approvalStatus={approvalStatus}
-        setApprovalStatus={setApprovalStatus}
+    <>
+      {/* 使用 DataTable，自带边框、分页等 */}
+      <TorrentsTable
+        loading={loading}
         items={items}
-        onSearch={() => {
-          setPage(1);
-        }}
-        onCreate={openCreate}
-        onAdvSearch={() => setAdvOpen(true)}
-        onBatchReview={(action) => {
-          setReviewAction(action);
-          setReviewOpen(true);
-          reviewForm.resetFields();
-        }}
+        page={page}
+        limit={limit}
+        total={total}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        onSortChange={handleSortChange}
+        onPageChange={handlePageChange}
+        toolbarLeft={toolbar.left}
+        toolbarRight={toolbar.right}
+        onDetail={(id) => msg.info(`查看种子详情: ${id}`)}
+        onRemove={remove}
       />
 
-      <div
-        ref={tableContainerRef}
-        style={{
-          flex: 1,
-          minHeight: 0,
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <TorrentsTable
-          loading={loading}
-          items={items}
-          sortBy={sortBy}
-          sortOrder={sortOrder}
-          tableScrollY={tableScrollY}
-          onSortChange={(nextSortBy, nextOrder) => {
-            setSortBy(nextSortBy);
-            setSortOrder(nextOrder);
-            setPage(1);
-          }}
-          onDetail={(id) => msg.info(`查看种子详情: ${id}`)}
-          onDownload={(id) => msg.info(`下载种子: ${id}`)}
-          onEdit={openEdit}
-          onRemove={remove}
-          onReview={doReview}
-          onRejectReview={(record) => {
-            setReviewAction("reject");
-            setReviewOpen(true);
-            reviewForm.resetFields();
-            setEditing({ id: record.id } as any);
-          }}
-        />
-      </div>
-
-      <div
-        style={{
-          height: 56,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Pagination
-          current={page}
-          pageSize={limit}
-          total={total}
-          showSizeChanger
-          onChange={(p, ps) => {
-            setPage(p);
-            setLimit(ps);
-          }}
-        />
-      </div>
-
+      {/* 弹窗组件 */}
       <CreateTorrentModal
         open={createOpen}
         onCancel={() => setCreateOpen(false)}
@@ -198,6 +166,6 @@ export default function TorrentsList() {
           setAdvLogic(nextLogic);
         }}
       />
-    </div>
+    </>
   );
 }

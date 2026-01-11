@@ -2,13 +2,24 @@
 import { cn } from "@/utils/cn";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table";
 import { Button } from "./button";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  ArrowUp,
+  ArrowDown,
+  ArrowUpDown,
+} from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 
 // ============================================================
 // DataTable 高级表格组件
 // 包含：操作栏 (Toolbar)、表格主体 (Table)、分页栏 (Pagination)
 // ============================================================
+
+/** 排序方向类型 */
+export type SortOrder = "asc" | "desc" | null;
 
 export interface Column<T> {
   /** 列标识符 */
@@ -23,6 +34,12 @@ export interface Column<T> {
   dataIndex?: keyof T;
   /** 对齐方式 */
   align?: "left" | "center" | "right";
+  /** 是否可排序 */
+  sorter?: boolean;
+  /** 当前排序方向 */
+  sortOrder?: SortOrder;
+  /** 文本溢出时显示省略号 */
+  ellipsis?: boolean;
 }
 
 export interface DataTableProps<T> {
@@ -46,6 +63,8 @@ export interface DataTableProps<T> {
     pageSizeOptions?: number[];
     onChange?: (page: number, pageSize: number) => void;
   };
+  /** 排序变化回调 */
+  onSortChange?: (columnKey: string, order: SortOrder) => void;
   /** 空数据提示文案 */
   emptyText?: string;
   /** 自定义类名 */
@@ -210,6 +229,7 @@ export function DataTable<T extends Record<string, any>>({
   toolbarLeft,
   toolbarRight,
   pagination,
+  onSortChange,
   emptyText = "暂无数据",
   className,
 }: DataTableProps<T>) {
@@ -245,32 +265,64 @@ export function DataTable<T extends Record<string, any>>({
         </div>
       )}
 
-      {/* ============== 表格表头 (Header) - 固定不滚动 ============== */}
-      <div className="mx-6 shrink-0 overflow-hidden bg-[#FAFAFA]">
-        <Table className="table-fixed border-b border-gray-100">
-          <TableHeader>
-            <TableRow className="border-0 hover:bg-transparent">
-              {columns.map((column) => (
-                <TableHead
-                  key={column.key}
-                  style={{ width: column.width, minWidth: column.width }}
-                  className={cn(
-                    "border-0 bg-[#FAFAFA]",
-                    column.align === "center" && "text-center",
-                    column.align === "right" && "text-right",
-                  )}
-                >
-                  {column.title}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-        </Table>
-      </div>
-
-      {/* ============== 表格表体 (Body) - 独立滚动 ============== */}
+      {/* ============== 表格容器 (Header + Body 在同一滚动容器) ============== */}
       <div className="table-scrollbar mx-6 flex-1 overflow-auto">
         <Table className="table-fixed">
+          {/* 表头 - 使用 sticky 固定 */}
+          <TableHeader className="sticky top-0 z-10">
+            <TableRow className="border-0 hover:bg-transparent">
+              {columns.map((column) => {
+                // 处理排序点击
+                const handleSortClick = () => {
+                  if (!column.sorter || !onSortChange) return;
+                  // 切换排序方向：null -> asc -> desc -> null
+                  const nextOrder: SortOrder =
+                    column.sortOrder === null ? "asc" : column.sortOrder === "asc" ? "desc" : null;
+                  onSortChange(column.key, nextOrder);
+                };
+
+                // 渲染排序图标
+                const renderSortIcon = () => {
+                  if (!column.sorter) return null;
+                  const iconClass = "h-3.5 w-3.5 ml-1";
+                  if (column.sortOrder === "asc") {
+                    return <ArrowUp className={cn(iconClass, "text-antd-primary")} />;
+                  }
+                  if (column.sortOrder === "desc") {
+                    return <ArrowDown className={cn(iconClass, "text-antd-primary")} />;
+                  }
+                  return <ArrowUpDown className={cn(iconClass, "text-neutral-400")} />;
+                };
+
+                return (
+                  <TableHead
+                    key={column.key}
+                    style={{ width: column.width, minWidth: column.width }}
+                    className={cn(
+                      "border-0 bg-[#FAFAFA]",
+                      column.align === "center" && "text-center",
+                      column.align === "right" && "text-right",
+                      column.sorter && "cursor-pointer select-none hover:bg-neutral-100",
+                    )}
+                    onClick={column.sorter ? handleSortClick : undefined}
+                  >
+                    <div
+                      className={cn(
+                        "flex items-center",
+                        column.align === "center" && "justify-center",
+                        column.align === "right" && "justify-end",
+                      )}
+                    >
+                      {column.title}
+                      {renderSortIcon()}
+                    </div>
+                  </TableHead>
+                );
+              })}
+            </TableRow>
+          </TableHeader>
+
+          {/* 表体 */}
           <TableBody>
             {loading && dataSource.length === 0 ? (
               <TableRow>
@@ -290,10 +342,15 @@ export function DataTable<T extends Record<string, any>>({
                   {columns.map((column) => (
                     <TableCell
                       key={`${getRowKey(record, index)}-${column.key}`}
-                      style={{ width: column.width, minWidth: column.width }}
+                      style={{
+                        width: column.width,
+                        minWidth: column.width,
+                        maxWidth: column.width,
+                      }}
                       className={cn(
                         column.align === "center" && "text-center",
                         column.align === "right" && "text-right",
+                        column.ellipsis && "overflow-hidden text-ellipsis whitespace-nowrap",
                       )}
                     >
                       {getCellValue(record, column, index)}

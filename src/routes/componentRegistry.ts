@@ -117,6 +117,9 @@ export const componentRegistry: Record<string, LazyComponent> = {
   AdminTorrentRecords: lazy(
     () => import("@/modules/admin/pages/content/torrents/TorrentRecordsByTorrent"),
   ),
+  AdminTorrentDownloadRecords: lazy(
+    () => import("@/modules/admin/pages/content/torrents/TorrentDownloadRecords"),
+  ),
   AdminUserDownloadRecords: lazy(
     () => import("@/modules/admin/pages/content/torrents/UserDownloadRecords"),
   ),
