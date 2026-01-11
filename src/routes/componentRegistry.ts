@@ -196,7 +196,9 @@ export const componentRegistry: Record<string, LazyComponent> = {
   AdminBonusLedger: lazy(() => import("@/modules/admin/pages/economy/bonus/BonusLedgerPage")),
   AdminBonusBatchAdjust: lazy(() => import("@/modules/admin/pages/economy/bonus/BatchAdjust")),
   AdminBonusRules: lazy(() => import("@/modules/admin/pages/economy/bonus/Rules")),
-  AdminBonusAdjustments: lazy(() => import("@/modules/admin/pages/economy/bonus/Adjustments")),
+  AdminBonusAdjustments: lazy(
+    () => import("@/modules/admin/pages/economy/bonus/BonusAdjustmentsPage"),
+  ),
   // 商城管理
   AdminStoreItems: lazy(() => import("@/modules/admin/pages/economy/store/Items")),
   AdminStoreOrders: lazy(() => import("@/modules/admin/pages/economy/store/Orders")),
