@@ -9,7 +9,7 @@ import { EditUserModal } from "@/modules/admin/shared/users/components/EditUserM
 import { BanUserModal } from "@/modules/admin/shared/users/components/BanUserModal";
 import { AssignRolesModal } from "@/modules/admin/shared/users/components/AssignRolesModal";
 import { Modal, ConfirmModal } from "@/modules/admin/components/ui/modal";
-import { Tag } from "@/modules/admin/components/ui/tag";
+import { Tag } from "tag";
 import type { UserDto } from "@/api/models/UserDto";
 
 const UsersPage: React.FC = () => {

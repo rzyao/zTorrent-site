@@ -34,7 +34,7 @@
     "src",
     "api",
     "vite.config.ts"
-, "scripts/auto_seed.js", "scripts/auto_seed_dev.js"  ],
+, "scripts/auto_seed.js", "scripts/auto_seed_dev.js", "tag.tsx"  ],
   "exclude": [
     "dist",
     "node_modules",

@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/utils/cn";
 
@@ -21,11 +21,11 @@ const tagVariants = cva(
         magenta: "border border-pink-200 bg-pink-50 text-pink-600",
         gold: "border border-amber-200 bg-amber-50 text-amber-600",
         lime: "border border-lime-200 bg-lime-50 text-lime-600",
-        // 无边框变体
-        "default-borderless": "bg-gray-100 text-gray-600",
-        "primary-borderless": "bg-blue-50 text-blue-600",
-        "success-borderless": "bg-green-50 text-green-600",
-        "error-borderless": "bg-red-50 text-red-600",
+        // 兼容 antd color 属性
+        blue: "border border-blue-200 bg-blue-50 text-blue-600",
+        green: "border border-green-200 bg-green-50 text-green-600",
+        red: "border border-red-200 bg-red-50 text-red-600",
+        orange: "border border-orange-200 bg-orange-50 text-orange-600",
       },
       size: {
         sm: "px-1.5 py-0 text-[10px]",
@@ -46,8 +46,8 @@ export interface TagProps
   closable?: boolean;
   /** 关闭回调 */
   onClose?: (e: React.MouseEvent<HTMLElement>) => void;
-  /** 自定义颜色（覆盖 variant） */
-  color?: string;
+  /** 兼容 antd 的 color 属性 */
+  color?: "blue" | "green" | "red" | "orange" | "default";
 }
 
 /**
@@ -60,8 +60,7 @@ export interface TagProps
  * <Tag>默认标签</Tag>
  * <Tag variant="primary">主要标签</Tag>
  * <Tag variant="success">成功标签</Tag>
- * <Tag variant="error">错误标签</Tag>
- * <Tag color="#f50">自定义颜色</Tag>
+ * <Tag color="blue">蓝色标签</Tag>
  * ```
  */
 export function Tag({
@@ -72,25 +71,13 @@ export function Tag({
   onClose,
   color,
   children,
-  style,
   ...props
 }: TagProps) {
-  // 自定义颜色样式
-  const colorStyle: React.CSSProperties = color
-    ? {
-        backgroundColor: `${color}15`,
-        color: color,
-        borderColor: `${color}40`,
-        ...style,
-      }
-    : style || {};
+  // 如果使用 color 属性，转换为 variant
+  const effectiveVariant = color ? (color as typeof variant) : variant;
 
   return (
-    <span
-      className={cn(tagVariants({ variant: color ? undefined : variant, size }), className)}
-      style={colorStyle}
-      {...props}
-    >
+    <span className={cn(tagVariants({ variant: effectiveVariant, size }), className)} {...props}>
       {children}
       {closable && (
         <button

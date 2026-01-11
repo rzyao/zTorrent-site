@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, X } from "lucide-react";
 
 import { cn } from "@/utils/cn";
 
@@ -152,6 +152,80 @@ const SelectSeparator = React.forwardRef<
 ));
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
+interface SelectOption {
+  value: string;
+  label: React.ReactNode;
+  disabled?: boolean;
+}
+
+interface StandardSelectProps {
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (value: string | undefined) => void;
+  options?: SelectOption[];
+  placeholder?: string;
+  className?: string;
+  disabled?: boolean;
+  allowClear?: boolean;
+  mode?: "multiple" | "default"; // 占位，当前只支持单选
+}
+
+/**
+ * 封装后的标准 Select 组件，提供类似 Ant Design 的 options API
+ */
+const StandardSelect = React.forwardRef<HTMLButtonElement, StandardSelectProps>(
+  (
+    {
+      options = [],
+      placeholder,
+      value,
+      defaultValue,
+      onValueChange,
+      className,
+      disabled,
+      allowClear,
+    },
+    ref,
+  ) => {
+    const handleClear = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onValueChange?.(undefined);
+    };
+
+    return (
+      <Select
+        value={value}
+        defaultValue={defaultValue}
+        onValueChange={onValueChange}
+        disabled={disabled}
+      >
+        <SelectTrigger className={cn("group relative", className)} ref={ref}>
+          <SelectValue placeholder={placeholder} />
+          {allowClear && value && !disabled && (
+            <div
+              role="button"
+              className="absolute top-1/2 right-2 z-10 hidden -translate-y-1/2 cursor-pointer rounded-full bg-gray-200 p-0.5 group-hover:block hover:bg-gray-300"
+              onClick={handleClear}
+            >
+              <X className="h-2.5 w-2.5 text-gray-400" />
+            </div>
+          )}
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {options.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value} disabled={opt.disabled}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    );
+  },
+);
+StandardSelect.displayName = "StandardSelect";
+
 export {
   Select,
   SelectGroup,
@@ -163,4 +237,5 @@ export {
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,
+  StandardSelect, // 导出封装后的组件
 };

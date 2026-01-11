@@ -174,14 +174,12 @@ export const componentRegistry: Record<string, LazyComponent> = {
 
   // ==================== Admin 模块 - 社区运营 (operations) ====================
   // 互动管理
-  AdminTicketsList: lazy(
-    () => import("@/modules/admin/pages/operations/interaction/tickets/TicketsList"),
-  ),
+  AdminTicketsList: lazy(() => import("@/modules/admin/pages/operations/interaction/TicketsPage")),
   AdminTicketDetail: lazy(
-    () => import("@/modules/admin/pages/operations/interaction/tickets/TicketDetail"),
+    () => import("@/modules/admin/pages/operations/interaction/TicketsPage/TicketDetail"),
   ),
   AdminRecommendationConfig: lazy(
-    () => import("@/modules/admin/pages/operations/interaction/recommendation"),
+    () => import("@/modules/admin/pages/operations/interaction/RecommendationsPage"),
   ),
   // 邀请系统
   AdminInvitesList: lazy(() => import("@/modules/admin/pages/operations/invites/InvitesList")),

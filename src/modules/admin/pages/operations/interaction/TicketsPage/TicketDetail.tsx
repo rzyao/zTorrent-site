@@ -1,33 +1,17 @@
-﻿import { useEffect, useState } from "react";
-import {
-  App,
-  Button,
-  Card,
-  Descriptions,
-  Form,
-  Input,
-  List,
-  Modal,
-  Space,
-  Tag,
-  Upload,
-} from "antd";
+import { useEffect, useState, useCallback } from "react";
+import { App, Card, Descriptions, Form, List, Modal, Space, Tag, Upload } from "antd";
 import type { UploadFile } from "antd/es/upload/interface";
 import { useParams, useNavigate } from "react-router-dom";
 import { TicketsService } from "@/api/services/TicketsService";
-import type { TicketDetailDto } from "@/api/models/TicketDetailDto";
 import type { ReplyDto } from "@/api/models/ReplyDto";
-import type { CloseTicketDto } from "@/api/models/CloseTicketDto";
-import type { ConfirmResolvedDto } from "@/api/models/ConfirmResolvedDto";
-import { statusText, statusColor, categoryText, priorityText, priorityColor } from "./_dicts";
+import { statusText, statusColor, categoryText, priorityText, priorityColor } from "./constants";
+import { Button } from "@/modules/admin/components/ui/button";
+import { Textarea } from "@/modules/admin/components/ui/textarea";
+import { formatDate } from "@/modules/admin/utils/formatDate";
 
-/**
- * 工单管理 - 详情页
- * 功能：展示工单详情与历史回复；支持回复（含附件上传）、关闭与确认已解决
- */
 export default function TicketDetail() {
   const { message } = App.useApp();
-  const nav = useNavigate();
+  const navigate = useNavigate();
   const { id = "" } = useParams();
 
   const [loading, setLoading] = useState(false);
@@ -37,13 +21,12 @@ export default function TicketDetail() {
   const [form] = Form.useForm<ReplyDto>();
   const [files, setFiles] = useState<UploadFile[]>([]);
 
-  /** 加载详情与回复列表 */
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const res: any = await TicketsService.ticketsControllerDetail({
         ticketId: id,
-      } as TicketDetailDto);
+      } as any);
       setDetail(res?.data?.detail || res?.data || {});
       setReplies(res?.data?.replies ?? []);
     } catch (e: any) {
@@ -51,13 +34,13 @@ export default function TicketDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, message]);
+
   useEffect(() => {
     load();
-  }, [id]);
+  }, [load]);
 
-  /** 关闭工单 */
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     Modal.confirm({
       title: "确认关闭该工单？",
       onOk: async () => {
@@ -65,7 +48,7 @@ export default function TicketDetail() {
           await TicketsService.ticketsControllerClose({
             ticketId: id,
             reason: "后台关闭",
-          } as CloseTicketDto);
+          } as any);
           message.success("已关闭");
           load();
         } catch (e: any) {
@@ -73,23 +56,18 @@ export default function TicketDetail() {
         }
       },
     });
-  };
+  }, [id, load, message]);
 
-  /** 确认已解决 */
-  const handleConfirmResolved = async () => {
+  const handleConfirmResolved = useCallback(async () => {
     try {
-      await TicketsService.ticketsControllerConfirmResolved({ ticketId: id } as ConfirmResolvedDto);
+      await TicketsService.ticketsControllerConfirmResolved({ ticketId: id } as any);
       message.success("已确认");
       load();
     } catch (e: any) {
       message.error(e?.response?.data?.message || e?.message || "操作失败");
     }
-  };
+  }, [id, load, message]);
 
-  /**
-   * 附件上传：调用后端上传接口获取可用于提交回复的附件信息
-   * 注意：具体后端返回结构可能不同，这里以常见 { attachmentId, url, name, size } 为例
-   */
   const beforeUpload = async (file: File) => {
     try {
       const res: any = await TicketsService.ticketsControllerUpload({
@@ -98,7 +76,6 @@ export default function TicketDetail() {
         file,
       } as any);
       const att = res?.data?.attachment || res?.data;
-      // 将附件写入回复表单字段 attachments，结构需满足 ReplyAttachmentInput
       const old = form.getFieldValue("attachments") || [];
       form.setFieldsValue({
         attachments: [
@@ -128,7 +105,6 @@ export default function TicketDetail() {
     }
   };
 
-  /** 提交回复 */
   const onReply = async () => {
     const values = await form.validateFields();
     setReplying(true);
@@ -137,7 +113,7 @@ export default function TicketDetail() {
         ticketId: id,
         content: values.content,
         attachments: values.attachments,
-      } as ReplyDto);
+      } as any);
       message.success("已回复");
       form.resetFields();
       setFiles([]);
@@ -150,25 +126,29 @@ export default function TicketDetail() {
   };
 
   return (
-    <Space orientation="vertical" size={12} style={{ width: "100%" }}>
+    <div className="space-y-4">
       <Card
         loading={loading}
-        title={`工单详情 #${id}`}
+        title={<div className="text-lg font-bold">工单详情 #{id}</div>}
         extra={
           <Space>
-            <Button onClick={() => nav("/tickets")}>返回列表</Button>
-            <Button danger disabled={detail?.status === "closed"} onClick={handleClose}>
-              关闭工单
+            <Button variant="default" onClick={() => navigate(-1)}>
+              返回
             </Button>
             <Button
-              type="primary"
-              disabled={detail?.status !== "resolved"}
-              onClick={handleConfirmResolved}
+              variant="text"
+              className="text-destructive h-8"
+              disabled={detail?.status === "closed"}
+              onClick={handleClose}
             >
+              关闭工单
+            </Button>
+            <Button disabled={detail?.status !== "resolved"} onClick={handleConfirmResolved}>
               确认已解决
             </Button>
           </Space>
         }
+        className="shadow-sm"
       >
         <Descriptions column={2} bordered size="small">
           <Descriptions.Item label="标题" span={2}>
@@ -186,39 +166,48 @@ export default function TicketDetail() {
         </Descriptions>
       </Card>
 
-      <Card title="历史回复">
+      <Card title="历史回复" className="shadow-sm">
         <List
           dataSource={replies}
           renderItem={(it: any) => (
             <List.Item>
-              <Space orientation="vertical" style={{ width: "100%" }}>
-                <div>{it?.content}</div>
-                {/* 附件列表（如有） */}
+              <div className="w-full space-y-2">
+                <div className="text-muted-foreground flex justify-between text-xs">
+                  <span>{it.userName}</span>
+                  <span>{formatDate(it.createdAt)}</span>
+                </div>
+                <div className="text-sm whitespace-pre-wrap">{it?.content}</div>
                 {Array.isArray(it?.attachments) && it.attachments.length > 0 ? (
-                  <Space wrap>
+                  <div className="mt-2 flex flex-wrap gap-2">
                     {it.attachments.map((a: any) => (
-                      <a key={a.attachmentId} href={a.url} target="_blank" rel="noreferrer">
-                        {a.name}
+                      <a
+                        key={a.attachmentId}
+                        href={a.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-primary bg-primary/5 rounded px-2 py-1 text-xs hover:underline"
+                      >
+                        📎 {a.name}
                       </a>
                     ))}
-                  </Space>
+                  </div>
                 ) : null}
-              </Space>
+              </div>
             </List.Item>
           )}
         />
       </Card>
 
-      <Card title="回复">
+      <Card title="回复工单" className="shadow-sm">
         <Form form={form} layout="vertical" onFinish={onReply}>
           <Form.Item
             name="content"
             label="回复内容"
             rules={[{ required: true, message: "请输入回复内容" }]}
           >
-            <Input.TextArea rows={4} maxLength={2000} showCount />
+            <Textarea rows={4} placeholder="请输入回复内容..." />
           </Form.Item>
-          <Form.Item name="attachments" label="附件">
+          <Form.Item name="attachments" label="附件资料">
             <Upload
               multiple
               fileList={files}
@@ -231,24 +220,25 @@ export default function TicketDetail() {
                 form.setFieldsValue({ attachments: list });
               }}
             >
-              <Button>选择文件</Button>
+              <Button variant="default">选择附件</Button>
             </Upload>
           </Form.Item>
-          <Space>
-            <Button type="primary" htmlType="submit" loading={replying}>
-              提交回复
-            </Button>
+          <div className="flex justify-end space-x-2">
             <Button
+              variant="default"
               onClick={() => {
                 form.resetFields();
                 setFiles([]);
               }}
             >
-              重置
+              清空
             </Button>
-          </Space>
+            <Button type="submit" loading={replying}>
+              提交回复
+            </Button>
+          </div>
         </Form>
       </Card>
-    </Space>
+    </div>
   );
 }

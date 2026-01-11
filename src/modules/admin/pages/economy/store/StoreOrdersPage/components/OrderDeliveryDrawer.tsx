@@ -1,5 +1,5 @@
 import { Modal } from "@/modules/admin/components/ui/modal";
-import { Tag } from "@/modules/admin/components/ui/tag";
+import { Tag } from "tag";
 import type { StoreOrder } from "@/modules/admin/types/store";
 
 interface OrderDeliveryDrawerProps {

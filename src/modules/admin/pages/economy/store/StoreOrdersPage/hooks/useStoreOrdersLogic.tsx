@@ -6,7 +6,7 @@ import type { StoreOrder, ListStoreOrdersDto } from "@/modules/admin/types/store
 import { formatDate } from "@/modules/admin/utils/formatDate";
 import type { Column } from "@/modules/admin/components/ui/data-table";
 import { Button } from "@/modules/admin/components/ui/button";
-import { Tag } from "@/modules/admin/components/ui/tag";
+import { Tag } from "tag";
 
 export function useStoreOrdersLogic() {
   const [page, setPage] = useState(1);
@@ -147,7 +147,7 @@ export function useStoreOrdersLogic() {
         ),
       },
     ],
-    [setDetailOrder]
+    [setDetailOrder],
   );
 
   return {

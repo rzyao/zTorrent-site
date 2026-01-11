@@ -4,7 +4,7 @@ import { formatBytes } from "@/modules/admin/utils/formatBytes";
 import { formatDate } from "@/modules/admin/utils/formatDate";
 import { DataTable, Column, SortOrder } from "@/modules/admin/components/ui/data-table";
 import { Button } from "@/modules/admin/components/ui/button";
-import { Tag } from "@/modules/admin/components/ui/tag";
+import { Tag } from "tag";
 import { ConfirmModal } from "@/modules/admin/components/ui/modal";
 import { TorrentItem } from "../types";
 

@@ -7,7 +7,7 @@ import { PunishmentDictsService } from "@/api/services/PunishmentDictsService";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
 import { PunishmentRecord, DEFAULT_QUERY, PunishmentQuery, AdvRule } from "../types";
 import { Column } from "@/modules/admin/components/ui/data-table";
-import { Tag } from "@/modules/admin/components/ui/tag";
+import { Tag } from "tag";
 import { Button } from "@/modules/admin/components/ui/button";
 import { ADV_OP_MAP } from "../constants";
 
