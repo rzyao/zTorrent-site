@@ -267,7 +267,7 @@ export function DataTable<T extends Record<string, any>>({
 
       {/* ============== 表格容器 (Header + Body 在同一滚动容器) ============== */}
       <div className="table-scrollbar mx-6 flex-1 overflow-auto">
-        <Table className="table-fixed">
+        <Table className="table-auto">
           {/* 表头 - 使用 sticky 固定 */}
           <TableHeader className="sticky top-0 z-10">
             <TableRow className="border-0 hover:bg-transparent">
@@ -345,7 +345,7 @@ export function DataTable<T extends Record<string, any>>({
                       style={{
                         width: column.width,
                         minWidth: column.width,
-                        maxWidth: column.width,
+                        maxWidth: column.ellipsis ? column.width : undefined,
                       }}
                       className={cn(
                         column.align === "center" && "text-center",

@@ -107,7 +107,6 @@ export const TorrentsTable = ({
         title: "ID",
         dataIndex: "id",
         width: 140,
-        ellipsis: true,
       },
       {
         key: "category",
@@ -121,7 +120,6 @@ export const TorrentsTable = ({
         title: "标题",
         dataIndex: "title",
         width: 200,
-        ellipsis: true,
       },
       {
         key: "size",
