@@ -3,6 +3,7 @@
  * 从后端获取用户可访问的路由配置
  * 严格依赖后端 API，无静态兜底
  */
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { RouteConfig } from "@/types/routeConfig";
 import { PlatformRoutesService } from "@/api/services/PlatformRoutesService";
@@ -35,6 +36,30 @@ function mapDtoToConfig(dto: RouteTreeNodeDto): RouteConfig {
  * 完全依赖后端 API
  */
 export function useRouteConfig() {
+  // 使用状态追踪登录状态，确保登录状态变化时能够触发重新渲染
+  // 这解决了登录成功后 enabled 条件不更新的问题
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => !!localStorage.getItem("accessToken"),
+  );
+
+  // 监听认证状态变化事件（由 useAuth.login 触发）
+  useEffect(() => {
+    const handleAuthChange = () => {
+      const hasToken = !!localStorage.getItem("accessToken");
+      console.log("[useRouteConfig] 检测到认证状态变化:", hasToken);
+      setIsAuthenticated(hasToken);
+    };
+
+    window.addEventListener("authChange", handleAuthChange);
+    // 同时监听 storage 事件，处理其他标签页的登录/登出
+    window.addEventListener("storage", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("authChange", handleAuthChange);
+      window.removeEventListener("storage", handleAuthChange);
+    };
+  }, []);
+
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["routeConfig"],
     queryFn: async (): Promise<RouteConfig[]> => {
@@ -70,8 +95,8 @@ export function useRouteConfig() {
     },
     staleTime: 5 * 60 * 1000, // 5 分钟缓存
     retry: 1,
-    // 确保用户已登录，否则不请求
-    enabled: !!localStorage.getItem("accessToken"),
+    // 使用状态变量而非直接读取 localStorage，确保响应式更新
+    enabled: isAuthenticated,
   });
 
   return {

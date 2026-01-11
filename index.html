@@ -1,31 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GuoYuan</title>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/src/assets/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GuoYuan</title>
+  </head>
   <script>
-    (function() {
+    (function () {
       try {
-        const STORAGE_KEY = 'forum-theme-preference';
+        const STORAGE_KEY = "forum-theme-preference";
         const theme = localStorage.getItem(STORAGE_KEY);
-        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
-        
+        const supportDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches === true;
+
         // 如果用户选了暗色，或者没选但系统是暗色
-        if (theme === 'dark' || (!theme && supportDarkMode)) {
-          document.documentElement.classList.add('dark');
+        if (theme === "dark" || (!theme && supportDarkMode)) {
+          document.documentElement.classList.add("dark");
         } else {
-          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.remove("dark");
         }
       } catch (e) {}
     })();
   </script>
 
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
-</body>
-
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

@@ -1,6 +1,7 @@
 import { Search, MessageSquare, Bell, User, Menu, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import Logo from "@/assets/logo.svg";
 import { useForumTheme } from "../context/ForumThemeContext";
 import { ForumsTopicsService, ForumTopic } from "@/api";
 
@@ -67,7 +68,7 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
     <header className={`sticky top-0 ${colors.headerBg} border-b ${colors.borderColor} z-50`}>
       <div className="mx-auto max-w-[1420px] px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
+          {/* Logo - 与 App Header 保持一致 */}
           <div className="flex items-center gap-3">
             <button
               className={`rounded-lg p-2 lg:hidden ${colors.buttonHover}`}
@@ -76,14 +77,10 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
             >
               <Menu className={`h-5 w-5 ${colors.textSecondary}`} />
             </button>
-            <div className="flex items-center gap-2">
-              <div
-                className={`flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-purple-600 dark:bg-amber-500/20`}
-              >
-                <MessageSquare className={`h-6 w-6 text-white dark:text-amber-400`} />
-              </div>
+            <Link to="/forum" className="flex items-center gap-2">
+              <img src={Logo} alt="Logo" className="h-7 md:h-9" />
               <span className={`text-xl font-semibold ${colors.textPrimary}`}>论坛社区</span>
-            </div>
+            </Link>
           </div>
 
           {/* Search Bar */}

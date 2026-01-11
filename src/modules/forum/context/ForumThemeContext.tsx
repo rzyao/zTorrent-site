@@ -26,8 +26,8 @@ export function ForumThemeProvider({ children }: { children: ReactNode }) {
         return "dark";
       }
     }
-    // 默认回退到浅色 (Light) - 如果系统是浅色或无法判断
-    return "light";
+    // 默认回退到深色 (Dark) - 如果无法判断系统偏好
+    return "dark";
   });
 
   // 同步更新 html 元素的 class，使 Tailwind 的 dark: 前缀生效

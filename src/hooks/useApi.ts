@@ -46,7 +46,10 @@ export function useAuth() {
         // 触发认证事件，通知路由守卫更新状态
         window.dispatchEvent(new Event("authChange"));
 
-        // 登录成功后刷新导航菜单
+        // 登录成功后刷新路由配置和导航菜单
+        // 这一步至关重要：useRouteConfig 的 enabled 依赖 accessToken，
+        // 登录前未获取路由配置，登录后必须手动触发重新获取
+        queryClient.invalidateQueries({ queryKey: ["routeConfig"] });
         queryClient.invalidateQueries({ queryKey: ["navigation"] });
 
         return response;
