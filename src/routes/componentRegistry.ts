@@ -113,7 +113,7 @@ export const componentRegistry: Record<string, LazyComponent> = {
 
   // ==================== Admin 模块 - 站点内容 (content) ====================
   // 种子管理
-  AdminTorrents: lazy(() => import("@/modules/admin/pages/content/torrents/Index")),
+  AdminTorrents: lazy(() => import("@/modules/admin/pages/content/torrents/TorrentsList")),
   AdminTorrentRecords: lazy(
     () => import("@/modules/admin/pages/content/torrents/TorrentRecordsByTorrent"),
   ),
