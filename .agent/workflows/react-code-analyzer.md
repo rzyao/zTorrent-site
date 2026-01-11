@@ -157,17 +157,17 @@ description: React 代码深度分析与重构工作流，融合性能优化与�
         <template name="推荐目录结构">
 
 ```
-src/pages/[PageName]/
-├── components/           # 该页面专用的子组件
+src/pages/[ModuleName]Page/      # 目录名必须是 PascalCase + Page 后缀 (如 FilmsPage)
+├── components/                  # 该页面专用的子组件
 │   ├── Header.tsx
 │   ├── DataTable.tsx
 │   └── ActionModal.tsx
-├── hooks/                # 该页面专用的逻辑
-│   └── use[PageName].ts
-├── utils/                # (可选) 页面专用工具函数
-├── types.ts              # 类型定义
-├── constants.ts          # 静态常量 (如 tableColumns)
-└── index.tsx             # 主入口 (组装以上内容)
+├── hooks/                       # 该页面专用的逻辑
+│   └── use[ModuleName]Logic.ts
+├── utils/                       # (可选) 页面专用工具函数
+├── types.ts                     # 类型定义
+├── constants.ts                 # 静态常量 (如 tableColumns)
+└── index.tsx                    # 主入口 (组装以上内容)
 ```
 
         </template>
@@ -238,6 +238,9 @@ src/pages/[PageName]/
     </rule>
     <rule id="user_confirmation" priority="HIGH">
         任何代码修改必须获得用户明确确认后才能执行。
+    </rule>
+    <rule id="directory_naming" priority="HIGH">
+        **页面目录命名规范**：目录名必须使用 **PascalCase (驼峰命名)** 并以 `Page` 结尾。例如：`FilmsPage`、`UsersPage`、`PunishmentsPage`。禁止使用小写连字符命名如 `films`、`user-list`。
     </rule>
     <rule id="turbo">
         只读命令 (如 `pnpm tsc --noEmit`, `pnpm lint`) 使用 `SafeToAutoRun: true`。

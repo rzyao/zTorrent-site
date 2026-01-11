@@ -43,6 +43,7 @@ export const useTorrentsLogic = () => {
     "approve",
   );
   const [reviewForm] = Form.useForm<{ note?: string }>();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
   const query = useMemo<AdminListTorrentsDto>(
     () => ({
@@ -295,6 +296,8 @@ export const useTorrentsLogic = () => {
     reviewAction,
     setReviewAction,
     reviewForm,
+    selectedRowKeys,
+    setSelectedRowKeys,
     loadList,
     openCreate,
     submitCreate,

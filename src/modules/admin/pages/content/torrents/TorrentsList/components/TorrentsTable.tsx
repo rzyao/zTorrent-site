@@ -27,6 +27,9 @@ interface TorrentsTableProps {
   toolbarRight?: React.ReactNode;
   onDetail: (id: string) => void;
   onRemove: (id: string) => void;
+  /** 行选择配置 */
+  selectedRowKeys: string[];
+  onSelectionChange: (keys: string[]) => void;
 }
 
 // 将 API 排序参数映射到列 key
@@ -63,6 +66,8 @@ export const TorrentsTable = ({
   toolbarRight,
   onDetail,
   onRemove,
+  selectedRowKeys,
+  onSelectionChange,
 }: TorrentsTableProps) => {
   // 删除确认弹窗状态
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -232,6 +237,10 @@ export const TorrentsTable = ({
         toolbarLeft={toolbarLeft}
         toolbarRight={toolbarRight}
         onSortChange={handleSortChange}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: onSelectionChange,
+        }}
         pagination={{
           current: page,
           pageSize: limit,

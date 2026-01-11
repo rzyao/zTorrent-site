@@ -1,5 +1,6 @@
 import { Button } from "@/modules/admin/components/ui/button";
 import { Input } from "@/modules/admin/components/ui/input";
+import { Search } from "@/modules/admin/components/ui/search";
 import {
   Select,
   SelectContent,
@@ -7,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/modules/admin/components/ui/select";
-import { Search, Plus, Filter, CheckCircle, XCircle } from "lucide-react";
+import { Plus, Check, X, Filter, CheckCircle2, XCircle } from "lucide-react";
 import { CategoryOption, TorrentItem } from "../types";
 
 interface TorrentsToolbarProps {
@@ -23,6 +24,7 @@ interface TorrentsToolbarProps {
   onAdvSearch: () => void;
   onBatchReview: (action: "approve" | "reject") => void;
   items: TorrentItem[];
+  selectedCount: number;
 }
 
 /**
@@ -41,6 +43,7 @@ export const TorrentsToolbar = ({
   onCreate,
   onAdvSearch,
   onBatchReview,
+  selectedCount,
 }: TorrentsToolbarProps) => {
   // 回车触发搜索
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -52,19 +55,14 @@ export const TorrentsToolbar = ({
   // 返回左右两部分内容，便于外部分别使用
   const left = (
     <div className="flex items-center gap-3">
-      {/* 搜索框组合 */}
-      <div className="flex">
-        <Input
-          placeholder="搜索标题或关键词"
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className="w-56 rounded-r-none"
-        />
-        <Button variant="primary" className="-ml-px rounded-l-none" onClick={onSearch}>
-          <Search className="h-4 w-4" />
-        </Button>
-      </div>
+      {/* 搜索框组件 */}
+      <Search
+        placeholder="搜索标题或关键词"
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        onSearch={onSearch}
+        wrapperClassName="w-64"
+      />
 
       {/* 分类筛选 */}
       <Select
@@ -116,11 +114,20 @@ export const TorrentsToolbar = ({
 
   const right = (
     <div className="flex items-center gap-2">
-      <Button variant="default" onClick={() => onBatchReview("approve")}>
-        <CheckCircle className="mr-1 h-4 w-4" />
+      <Button
+        variant="default"
+        onClick={() => onBatchReview("approve")}
+        disabled={selectedCount === 0}
+      >
+        <CheckCircle2 className="mr-1 h-4 w-4" />
         全部通过
       </Button>
-      <Button variant="default" danger onClick={() => onBatchReview("reject")}>
+      <Button
+        variant="default"
+        danger
+        onClick={() => onBatchReview("reject")}
+        disabled={selectedCount === 0}
+      >
         <XCircle className="mr-1 h-4 w-4" />
         全部驳回
       </Button>

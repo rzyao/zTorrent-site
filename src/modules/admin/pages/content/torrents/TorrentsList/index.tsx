@@ -51,6 +51,8 @@ export default function TorrentsList() {
     reviewAction,
     setReviewAction,
     reviewForm,
+    selectedRowKeys,
+    setSelectedRowKeys,
     openCreate,
     submitCreate,
     openEdit,
@@ -87,6 +89,7 @@ export default function TorrentsList() {
     onSearch: () => setPage(1),
     onCreate: openCreate,
     onAdvSearch: () => setAdvOpen(true),
+    selectedCount: selectedRowKeys.length,
     onBatchReview: (action) => {
       setReviewAction(action);
       setReviewOpen(true);
@@ -111,6 +114,8 @@ export default function TorrentsList() {
         toolbarRight={toolbar.right}
         onDetail={(id) => msg.info(`查看种子详情: ${id}`)}
         onRemove={remove}
+        selectedRowKeys={selectedRowKeys}
+        onSelectionChange={setSelectedRowKeys}
       />
 
       {/* 弹窗组件 */}
@@ -142,11 +147,12 @@ export default function TorrentsList() {
           const v = await reviewForm.validateFields().catch(() => null);
           setReviewOpen(false);
           await doReview(
-            editing?.id ? [editing.id] : items.map((i) => i.id!).filter(Boolean),
+            editing?.id ? [editing.id] : selectedRowKeys,
             reviewAction as any,
             v?.note,
           );
           setEditing(null);
+          setSelectedRowKeys([]); // 批量操作后重置选中状态
         }}
         form={reviewForm}
         reviewAction={reviewAction as any}

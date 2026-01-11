@@ -12,6 +12,7 @@ import {
   ArrowUpDown,
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
+import { Checkbox } from "./checkbox";
 
 // ============================================================
 // DataTable 高级表格组件
@@ -65,6 +66,11 @@ export interface DataTableProps<T> {
   };
   /** 排序变化回调 */
   onSortChange?: (columnKey: string, order: SortOrder) => void;
+  /** 行选择配置 */
+  rowSelection?: {
+    selectedRowKeys: string[];
+    onChange: (selectedRowKeys: string[]) => void;
+  };
   /** 空数据提示文案 */
   emptyText?: string;
   /** 自定义类名 */
@@ -222,7 +228,7 @@ function Pagination({
 // DataTable 主组件
 // ============================================================
 export function DataTable<T extends Record<string, any>>({
-  columns,
+  columns: userColumns,
   dataSource,
   rowKey,
   loading = false,
@@ -230,16 +236,93 @@ export function DataTable<T extends Record<string, any>>({
   toolbarRight,
   pagination,
   onSortChange,
+  rowSelection,
   emptyText = "暂无数据",
   className,
 }: DataTableProps<T>) {
   // 获取行的唯一标识
-  const getRowKey = (record: T, index: number): string => {
-    if (typeof rowKey === "function") {
-      return rowKey(record);
+  const getRowKey = React.useCallback(
+    (record: T, index: number): string => {
+      if (typeof rowKey === "function") {
+        return rowKey(record);
+      }
+      return String(record[rowKey] ?? index);
+    },
+    [rowKey],
+  );
+
+  // 全选状态处理
+  const selectedRowKeys = rowSelection?.selectedRowKeys || [];
+  const onSelectionChange = rowSelection?.onChange;
+
+  const rowKeysInPage = React.useMemo(
+    () => dataSource.map((item, idx) => getRowKey(item, idx)),
+    [dataSource, getRowKey],
+  );
+
+  const isAllSelected =
+    rowKeysInPage.length > 0 && rowKeysInPage.every((key) => selectedRowKeys.includes(key));
+
+  const isPartialSelected =
+    !isAllSelected && rowKeysInPage.some((key) => selectedRowKeys.includes(key));
+
+  const handleSelectAll = (checked: boolean | "indeterminate") => {
+    if (!onSelectionChange) return;
+    if (checked === true) {
+      // 全选当前页（合并已选中的）
+      const newKeys = Array.from(new Set([...selectedRowKeys, ...rowKeysInPage]));
+      onSelectionChange(newKeys);
+    } else {
+      // 取消选中当前页
+      const newKeys = selectedRowKeys.filter((key) => !rowKeysInPage.includes(key));
+      onSelectionChange(newKeys);
     }
-    return String(record[rowKey] ?? index);
   };
+
+  const handleSelectRow = (key: string, checked: boolean | "indeterminate") => {
+    if (!onSelectionChange) return;
+    if (checked === true) {
+      onSelectionChange([...selectedRowKeys, key]);
+    } else {
+      onSelectionChange(selectedRowKeys.filter((k) => k !== key));
+    }
+  };
+
+  // 注入选择列
+  const columns = React.useMemo(() => {
+    if (!rowSelection) return userColumns;
+
+    const selectionColumn: Column<T> = {
+      key: "__selection",
+      title: (
+        <Checkbox
+          checked={isAllSelected ? true : isPartialSelected ? "indeterminate" : false}
+          onCheckedChange={handleSelectAll}
+        />
+      ),
+      width: 40,
+      align: "center",
+      render: (_, record, index) => {
+        const key = getRowKey(record, index);
+        return (
+          <Checkbox
+            checked={selectedRowKeys.includes(key)}
+            onCheckedChange={(checked) => handleSelectRow(key, checked)}
+          />
+        );
+      },
+    };
+
+    return [selectionColumn, ...userColumns];
+  }, [
+    userColumns,
+    rowSelection,
+    isAllSelected,
+    isPartialSelected,
+    selectedRowKeys,
+    getRowKey,
+    rowKeysInPage,
+  ]);
 
   // 获取单元格的值
   const getCellValue = (record: T, column: Column<T>, index: number) => {

@@ -28,7 +28,8 @@ description: 自动生成或重构 Admin 模块的列表页面，强化对旧代
         <description>建立标准化的模块目录结构。</description>
         // turbo
         <action>
-            1. 在 `src/modules/admin/pages/[parent-path]/[module-name]/` 下创建目录。
+            1. 在 `src/modules/admin/pages/[parent-path]/[ModuleName]Page/` 下创建目录。
+               **命名规范**：目录名必须使用 **PascalCase (驼峰命名)** 并以 `Page` 结尾，如 `FilmsPage`、`UsersPage`。
                (不再推荐使用 `shared` 目录，建议就在 `pages` 下建立自包含模块)。
             2. 创建空文件：`types.ts`, `use[Module]Logic.tsx`, `index.tsx`, 和 `components/[Module]Modal.tsx`。
         </action>
@@ -90,6 +91,9 @@ description: 自动生成或重构 Admin 模块的列表页面，强化对旧代
     </rule>
     <rule id="no_page_container">
         页面组件 (Index.tsx) 严禁使用 `AdminPageContainer` 包裹。外层 Admin 布局已统一设置内边距 (`p-6`)，页面组件应直接使用 Fragment 或 `div` 作为根元素，避免重复内边距。
+    </rule>
+    <rule id="directory_naming" priority="HIGH">
+        **页面目录命名规范**：目录名必须使用 **PascalCase (驼峰命名)** 并以 `Page` 结尾。例如：`FilmsPage`、`UsersPage`、`PunishmentsPage`。禁止使用小写连字符命名如 `films`、`user-list`。
     </rule>
     <rule id="turbo_mode">
         只读查看、目录创建等无副作用命令需设置 `SafeToAutoRun: true`。
