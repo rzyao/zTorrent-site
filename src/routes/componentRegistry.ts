@@ -176,16 +176,20 @@ export const componentRegistry: Record<string, LazyComponent> = {
   // 互动管理
   AdminTicketsList: lazy(() => import("@/modules/admin/pages/operations/interaction/TicketsPage")),
   AdminTicketDetail: lazy(
-    () => import("@/modules/admin/pages/operations/interaction/TicketsPage/TicketDetail"),
+    () => import("@/modules/admin/pages/operations/interaction/TicketDetailPage"),
   ),
   AdminRecommendationConfig: lazy(
     () => import("@/modules/admin/pages/operations/interaction/RecommendationsPage"),
   ),
   // 邀请系统
-  AdminInvitesList: lazy(() => import("@/modules/admin/pages/operations/invites/InvitesList")),
-  AdminInviteQuotaList: lazy(() => import("@/modules/admin/pages/operations/invites/InviteQuota")),
-  AdminInvitesStatistics: lazy(() => import("@/modules/admin/pages/operations/invites/Statistics")),
-  AdminSendInvite: lazy(() => import("@/modules/admin/pages/operations/invites/SendInvite")),
+  AdminInvitesList: lazy(() => import("@/modules/admin/pages/operations/invites/InvitesListPage")),
+  AdminInviteQuotaList: lazy(
+    () => import("@/modules/admin/pages/operations/invites/InviteQuotaPage"),
+  ),
+  AdminInvitesStatistics: lazy(
+    () => import("@/modules/admin/pages/operations/invites/InvitesStatisticsPage"),
+  ),
+  AdminSendInvite: lazy(() => import("@/modules/admin/pages/operations/invites/SendInvitePage")),
   // 导航管理
 
   // ==================== Admin 模块 - 经济系统 (economy) ====================
@@ -205,7 +209,7 @@ export const componentRegistry: Record<string, LazyComponent> = {
 
   // ==================== Admin 模块 - 系统配置 (system) ====================
   // 基础设置
-  AdminSystemSettings: lazy(() => import("@/modules/admin/pages/system/settings")),
+  AdminSystemSettings: lazy(() => import("@/modules/admin/pages/system/SystemSettingsPage")),
   // 路由管理
   RouteManagePage: lazy(() => import("@/modules/admin/pages/system/routes")),
   // 字典管理

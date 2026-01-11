@@ -1,10 +1,10 @@
 import { DataTable } from "@/modules/admin/components/ui/data-table";
 import { Button } from "@/modules/admin/components/ui/button";
-import { Plus, Search, RotateCcw } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useTicketsLogic } from "./useTicketsLogic";
 import { TicketModal } from "./components/TicketModal";
 import { StandardSelect as Select } from "@/modules/admin/components/ui/select";
-import { Input } from "@/modules/admin/components/ui/input";
+import { SearchInput } from "@/modules/admin/components/ui/search-input";
 import { Card } from "antd";
 import { statusOptions, categoryOptions } from "./constants";
 
@@ -24,7 +24,6 @@ export default function TicketsPage() {
     createForm,
     // 操作
     handleSearch,
-    handleReset,
     handleSubmitCreate,
   } = useTicketsLogic();
 
@@ -64,41 +63,39 @@ export default function TicketsPage() {
         }}
         toolbarLeft={
           <div className="flex items-center space-x-2">
-            <div className="flex items-center">
-              <Input
-                placeholder="搜索关键词..."
-                value={query.keyword || ""}
-                onChange={(e) => setQuery((prev) => ({ ...prev, keyword: e.target.value }))}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch({})}
-                className="h-8 w-48 rounded-r-none"
-              />
-              <Button
-                variant="default"
-                className="-ml-px h-8 rounded-l-none"
-                onClick={() => handleSearch({})}
-              >
-                <Search className="h-4 w-4" />
-              </Button>
-            </div>
+            <SearchInput
+              placeholder="搜索关键词..."
+              value={query.keyword || ""}
+              onChange={(e) => setQuery((prev) => ({ ...prev, keyword: e.target.value }))}
+              onSearch={() => handleSearch({})}
+              wrapperClassName="w-64"
+              enterButton={
+                <>
+                  <Search className="mr-1 h-4 w-4" />
+                  搜索
+                </>
+              }
+            />
             <Select
               value={query.status}
               onValueChange={(v) => setQuery((prev) => ({ ...prev, status: v, page: 1 }))}
               options={statusOptions}
+              placeholder="状态"
               className="w-32"
+              allowClear
             />
             <Select
               value={query.category}
               onValueChange={(v) => setQuery((prev) => ({ ...prev, category: v, page: 1 }))}
               options={categoryOptions}
+              placeholder="类别"
               className="w-32"
+              allowClear
             />
-            <Button variant="text" size="sm" onClick={handleReset} className="h-8 w-8 p-1">
-              <RotateCcw className="h-4 w-4" />
-            </Button>
           </div>
         }
         toolbarRight={
-          <Button onClick={() => setCreateOpen(true)}>
+          <Button variant="primary" onClick={() => setCreateOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             新建工单
           </Button>

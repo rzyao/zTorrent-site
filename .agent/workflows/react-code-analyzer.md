@@ -1,12 +1,12 @@
 ---
-description: React 代码深度分析与重构工作流，融合性能优化与页面拆分最佳实践
+description: 对指定的 React 组件进行全方位分析
 ---
 
-# React Code Analyzer
+# React Code Analyzer (Optimization Rules Included)
 
 <workflow_meta>
 <role>React 代码架构师 (React Code Architect)</role>
-<goal>对指定的 React 组件进行全方位分析，涵盖**性能瓶颈识别**与**代码结构重构**两大核心任务。遵循"架构优先"原则，输出可行的优化方案和拆分建议，并可选择性地自动应用修改。</goal>
+<goal>对指定的 React 组件进行全方位分析，涵盖**性能瓶颈识别**与**代码结构重构**两大核心任务。遵循"架构优先"原则，自动应用最佳实践（如 TanStack Query），减少人工干预。</goal>
 </workflow_meta>
 
 <optimization_strategy>
@@ -26,10 +26,13 @@ description: React 代码深度分析与重构工作流，融合性能优化与�
             将 JSX 中独立的视觉块（如搜索栏、数据表格、弹窗）提取为无状态子组件，只通过 Props 接收数据和回调。
         </technique>
         <technique name="逻辑提取 (Custom Hooks)">
-            将 `useState`、`useEffect` 和事件处理函数抽离到 `use[PageName].ts`，UI 组件只负责"显示"，Hook 负责"怎么做"。
+            将 `useState`、`useEffect` 和事件处理函数抽离到 `use[PageName]Logic.ts`。UI 组件只负责"显示"，Hook 负责"怎么做"。
         </technique>
         <technique name="静态数据抽离">
             将 TypeScript 类型移入 `types.ts`，常量移入 `constants.ts`，工具函数移入 `utils.ts`，保持主组件清爽。
+        </technique>
+        <technique name="数据层现代化 (TanStack Query)">
+            **强制使用** TanStack Query (`useQuery`, `useMutation`) 替代手动的 `useEffect` + `useState` 进行数据请求。
         </technique>
     </layer>
 
@@ -73,20 +76,18 @@ description: React 代码深度分析与重构工作流，融合性能优化与�
             </category>
             <category name="逻辑提取 (Hook Extraction)">
                 <item>组件内是否充斥大量 `useState`、`useEffect` 和事件处理函数？</item>
-                <item>是否可以将这些逻辑抽离到自定义 Hook (`use[PageName].ts`)？</item>
+                <item>是否可以将这些逻辑抽离到自定义 Hook (`use[PageName]Logic.ts`)？</item>
             </category>
-            <category name="静态数据抽离">
-                <item>文件头部是否有大量 `interface`、`type` 定义？应移至 `types.ts`。</item>
-                <item>是否有静态常量（如下拉选项、列定义）？应移至 `constants.ts`。</item>
-                <item>是否有与组件无关的纯函数？应移至 `utils.ts`。</item>
+            <category name="数据层检查 (Data Fetching)">
+                <item>是否使用了手动的 `useEffect` 进行 API 请求？(是->需重构为 TanStack Query)</item>
+                <item>是否缺少自动的 Loading/Error 状态管理？</item>
+                <item>列表页和详情页是否缺少缓存失效机制 (`invalidateQueries`)？</item>
             </category>
-            <category name="状态下放 (State Colocation)">
-                <item>是否存在状态被不必要地提升到父组件或全局？</item>
-                <item>状态变更是否影响了不相关的组件？</item>
-            </category>
-            <category name="内容组合 (Children Pattern)">
-                <item>是否存在父组件频繁重绘，但子组件实际不需要更新的情况？</item>
-                <item>是否可以通过 `children` 模式将静态内容传入？</item>
+            <category name="UI 规范检查 (UI Standards)">
+                <item>是否混用了 Ant Design 和 Admin UI 组件？(如 `Tag` vs `AdminTag`)</item>
+                <item>搜索栏是否使用了标准的 `SearchInput` 组件？</item>
+                <item>`Select` 组件是否使用了 `allowClear` 和 `placeholder`？</item>
+                <item>是否不再需要 `Reset` 按钮？</item>
             </category>
         </checklist>
         <output>架构层问题清单，标记为「可通过重构解决」。</output>
@@ -121,7 +122,6 @@ description: React 代码深度分析与重构工作流，融合性能优化与�
             <category name="副作用问题 (Side Effects)">
                 <item>`useEffect` 依赖数组是否正确？是否存在过度触发？</item>
                 <item>是否存在未清理的订阅、定时器或事件监听器？</item>
-                <item>数据请求是否应该使用 TanStack Query 替代手动 `useEffect`？</item>
             </category>
             <category name="渲染效率 (Render Efficiency)">
                 <item>列表渲染是否使用了正确的 `key`？</item>
@@ -140,30 +140,27 @@ description: React 代码深度分析与重构工作流，融合性能优化与�
         <description>生成结构化的分析报告。</description>
         <action>
             整理分析结果为 Markdown 报告，包含：
-            1. **摘要**: 总体评估 (Good / Needs Improvement / Critical)。
-            2. **架构层问题**: 可通过重构解决的问题（**优先处理**）。
-               - 包含推荐的拆分后目录结构。
-            3. **手动优化层问题**: 需要使用 Hook 工具的问题。
-            4. **扩展问题**: 副作用、渲染效率、代码分割相关问题。
-            5. 每个问题包含：
-               - 问题描述
-               - 代码位置 (行号)
-               - 严重程度 (🔴 Critical / 🟡 Warning / 🟢 Suggestion)
-               - 所属层级 (架构层 / 手动优化层)
-               - 优化/重构建议
-               - 优化后的代码示例
-            6. **优化优先级**: 架构层 → 手动优化层 → 扩展优化。
+            1. **摘要**: 总体评估。
+            2. **架构层问题**:
+               - **TanStack Query 迁移**: 明确指出所有需要替换 `useEffect` 的地方。
+               - **逻辑 Hook 命名**: 统一为 `use[PageName]Logic.ts`。
+            3. **UI 规范问题**:
+               - 列出所有非标准组件的使用（如 AntD Tag -> Admin UI Tag）。
+               - 检查 SearchInput 和 Select 的配置。
+            4. **推荐目录结构**:
+               - 展示标准的 PascalCase Page 目录结构。
         </action>
         <template name="推荐目录结构">
 
 ```
-src/pages/[ModuleName]Page/      # 目录名必须是 PascalCase + Page 后缀 (如 FilmsPage)
+src/pages/[ModuleName]Page/      # 目录名必须是 PascalCase + Page 后缀 (如 TicketsPage)
 ├── components/                  # 该页面专用的子组件
 │   ├── Header.tsx
 │   ├── DataTable.tsx
 │   └── ActionModal.tsx
 ├── hooks/                       # 该页面专用的逻辑
-│   └── use[ModuleName]Logic.ts
+│   ├── use[ModuleName]Logic.ts  # 主逻辑
+│   └── use[DetailName]Logic.ts  # 详情页逻辑
 ├── utils/                       # (可选) 页面专用工具函数
 ├── types.ts                     # 类型定义
 ├── constants.ts                 # 静态常量 (如 tableColumns)
@@ -180,7 +177,7 @@ src/pages/[ModuleName]Page/      # 目录名必须是 PascalCase + Page 后缀 (
             1. 展示分析报告。
             2. 询问用户需要执行的操作：
                - [ ] 仅查看报告 (不修改代码)
-               - [ ] 自动执行架构层重构 (创建文件、移动代码)
+               - [ ] 自动执行架构层重构 (包含 TanStack Query 迁移、逻辑提取、UI 标准化)
                - [ ] 自动应用性能优化 (添加 memo/useMemo/useCallback)
             3. 确认需要修改的问题范围。
         </action>
@@ -189,11 +186,19 @@ src/pages/[ModuleName]Page/      # 目录名必须是 PascalCase + Page 后缀 (
     <step id="7" name="Apply Refactoring" optional="true">
         <description>根据用户确认，执行代码重构。</description>
         <action>
-            **架构层重构步骤 (按顺序执行，风险最小)**：
-            1. **剥离常量与类型**：将 `interface`/`type` 和 `const` 移到单独文件，主文件 `import` 进来。
-            2. **拆分大块 UI**：将 JSX 中独立块剪切为新组件文件，通过 Props 传参。
-            3. **拆分逻辑 (Hook)**：创建 `use[PageName].ts`，将状态和事件处理逻辑移入。
-            4. **整理 Imports**：检查并修正所有 import 路径。
+            **架构层重构步骤 (按顺序执行)**：
+            1. **剥离常量与类型**：将 `interface`/`type` 和 `const` 移到单独文件。
+            2. **UI 标准化**:
+               - 替换 Ant Design `Tag` 为 Admin UI `Tag`。
+               - 替换组合搜索框为标准 `SearchInput`。
+               - 为 `Select` 添加 `allowClear`, `placeholder`，移除 `RotateCcw` 重置按钮。
+            3. **逻辑提取 & 数据层现代化**:
+               - 创建/更新 `use[PageName]Logic.ts`。
+               - **使用 `useQuery` 替代 `useEffect` 获取列表**。
+               - **使用 `useMutation` 替代手动请求处理操作**。
+               - 确保 Mutation 成功后调用 `invalidateQueries`。
+            4. **拆分大块 UI**：将 JSX 中独立块剪切为新组件文件。
+            5. **整理 Imports**：检查并修正所有 import 路径。
 
             使用 `write_to_file` 创建新文件，`multi_replace_file_content` 修改现有文件。
         </action>
@@ -206,46 +211,33 @@ src/pages/[ModuleName]Page/      # 目录名必须是 PascalCase + Page 后缀 (
             1. 使用 `replace_file_content` 或 `multi_replace_file_content` 添加 `React.memo`、`useMemo`、`useCallback`。
             2. 仅修改用户确认的问题。
             3. 修改后使用 `view_file` 验证结果。
+            // turbo
+            4. 运行 `pnpm tsc --noEmit` 检查类型错误。
         </action>
         <output>优化后的代码。</output>
-    </step>
-
-    <step id="9" name="Validation" optional="true">
-        <description>验证修改后的代码。</description>
-        <action>
-            // turbo
-            1. 运行 `pnpm tsc --noEmit` 检查类型错误。
-            2. 运行 `pnpm lint` 检查代码规范。
-            3. 如有测试，运行 `pnpm test` 确保无回归。
-        </action>
-        <output>验证结果报告。</output>
     </step>
 
 </workflow_steps>
 
 <rules>
     <rule id="layered_approach" priority="CRITICAL">
-        优化必须遵循分层原则：**架构层优化优先**（性价比约 80%），仅当架构无法解决时才使用手动优化层工具。
+        优化必须遵循分层原则：**架构层优化优先**（TanStack Query、逻辑分离、UI 标准化），仅当架构无法解决时才使用手动优化层工具。
+    </rule>
+    <rule id="data_fetching" priority="CRITICAL">
+        **必须**使用 TanStack Query 替代手动的 `useEffect` 进行数据请求。这是非协商性规则。
+    </rule>
+    <rule id="ui_standards" priority="HIGH">
+        **搜索框**: 必须使用 `@/modules/admin/components/ui/search-input`。
+        **Select**: 必须包含 `allowClear` 和 `placeholder`。无需独立的重置按钮。
+        **Tag**: 必须使用 `@/modules/admin/components/ui/tag` 而非 AntD Tag。
+    </rule>
+    <rule id="directory_naming" priority="HIGH">
+        **页面目录命名规范**：目录名必须使用 **PascalCase (驼峰命名)** 并以 `Page` 结尾。例如：`FilmsPage`。禁止使用小写连字符命名。
     </rule>
     <rule id="read_first" priority="HIGH">
         分析前必须先完整阅读目标文件，禁止基于假设进行分析。
     </rule>
-    <rule id="no_over_optimize">
-        避免过度优化。仅针对有实际影响的问题提出建议。不要为每个函数都加 `useCallback`。
-    </rule>
-    <rule id="preserve_readability">
-        优化不应牺牲代码可读性。如果优化后代码显著变复杂，需在报告中说明权衡。
-    </rule>
-    <rule id="user_confirmation" priority="HIGH">
-        任何代码修改必须获得用户明确确认后才能执行。
-    </rule>
-    <rule id="directory_naming" priority="HIGH">
-        **页面目录命名规范**：目录名必须使用 **PascalCase (驼峰命名)** 并以 `Page` 结尾。例如：`FilmsPage`、`UsersPage`、`PunishmentsPage`。禁止使用小写连字符命名如 `films`、`user-list`。
-    </rule>
     <rule id="turbo">
-        只读命令 (如 `pnpm tsc --noEmit`, `pnpm lint`) 使用 `SafeToAutoRun: true`。
-    </rule>
-    <rule id="split_order">
-        架构层重构遵循低风险顺序：剥离常量/类型 → 拆分 UI 组件 → 提取 Hook 逻辑 → 整理 Imports。
+        只读命令 (如 `pnpm tsc --noEmit`) 使用 `SafeToAutoRun: true`。
     </rule>
 </rules>
