@@ -187,14 +187,15 @@ const StandardSelect = React.forwardRef<HTMLButtonElement, StandardSelectProps>(
     },
     ref,
   ) => {
-    const handleClear = (e: React.MouseEvent) => {
+    const handleClear = (e: React.MouseEvent | React.PointerEvent) => {
       e.stopPropagation();
+      e.preventDefault();
       onValueChange?.(undefined);
     };
 
     return (
       <Select
-        value={value}
+        value={value ?? ""}
         defaultValue={defaultValue}
         onValueChange={onValueChange}
         disabled={disabled}
@@ -204,8 +205,8 @@ const StandardSelect = React.forwardRef<HTMLButtonElement, StandardSelectProps>(
           {allowClear && value && !disabled && (
             <div
               role="button"
-              className="absolute top-1/2 right-2 z-10 hidden -translate-y-1/2 cursor-pointer rounded-full bg-gray-200 p-0.5 group-hover:block hover:bg-gray-300"
-              onClick={handleClear}
+              className="absolute top-1/2 right-2 z-10 -translate-y-1/2 cursor-pointer rounded-full bg-gray-200 p-0.5 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-300"
+              onPointerDown={handleClear}
             >
               <X className="h-2.5 w-2.5 text-gray-400" />
             </div>

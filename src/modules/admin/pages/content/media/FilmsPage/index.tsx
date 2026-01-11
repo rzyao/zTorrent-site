@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/modules/admin/components/ui/select";
 import { ConfirmModal } from "@/modules/admin/components/ui/modal";
-import { Search } from "@/modules/admin/components/ui/search";
+import { SearchInput } from "@/modules/admin/components/ui/search-input";
 import { getFilmsColumns } from "./columns";
 
 /**
@@ -85,7 +85,7 @@ export default function FilmsList() {
   // 工具栏内容
   const toolbarLeft = (
     <>
-      <Search
+      <SearchInput
         placeholder="关键词"
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}

@@ -84,8 +84,13 @@ export function useRecommendationsLogic() {
     },
   });
 
-  const data = listData ?? [];
-  const total = data.length;
+  const filteredFullData = listData ?? [];
+  const total = filteredFullData.length;
+
+  // 前端分页切片
+  const startIndex = (query.page - 1) * query.limit;
+  const endIndex = startIndex + query.limit;
+  const data = filteredFullData.slice(startIndex, endIndex);
 
   // --- 获取 Tab 选项 ---
   const { data: tabOptions = [] } = useQuery({
@@ -204,11 +209,11 @@ export function useRecommendationsLogic() {
         width: 200,
         render: (_, record) => {
           const tabs = (record as any).tabs ?? [];
-          if (tabs.length === 0) return <Tag>未关联</Tag>;
+          if (tabs.length === 0) return <Tag icon={null}>未关联</Tag>;
           return (
             <div className="flex flex-wrap gap-1">
               {tabs.map((t: RecommendationTabDto) => (
-                <Tag key={t.id} color="blue">
+                <Tag key={t.id} color="blue" icon={null}>
                   {t.label}
                 </Tag>
               ))}

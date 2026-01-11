@@ -1,5 +1,5 @@
 import { Modal } from "@/modules/admin/components/ui/modal";
-import { Tag } from "tag";
+import { Tag } from "@/modules/admin/components/ui/tag";
 import type { StoreOrder } from "@/modules/admin/types/store";
 
 interface OrderDeliveryDrawerProps {
@@ -17,7 +17,7 @@ export function OrderDeliveryDrawer({ order, onClose }: OrderDeliveryDrawerProps
       footer={null}
     >
       {order?.status === "failed" && (
-        <Tag variant="error" className="mb-3">
+        <Tag color="error" className="mb-3">
           交付失败：{String((order?.deliveryResult as any)?.msg || "")}
         </Tag>
       )}

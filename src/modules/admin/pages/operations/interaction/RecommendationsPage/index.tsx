@@ -1,8 +1,8 @@
 import { DataTable } from "@/modules/admin/components/ui/data-table";
-import { Input } from "@/modules/admin/components/ui/input";
+import { SearchInput } from "@/modules/admin/components/ui/search-input";
 import { Button } from "@/modules/admin/components/ui/button";
 import { ConfirmModal } from "@/modules/admin/components/ui/modal";
-import { Plus, Search, RotateCcw } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useRecommendationsLogic } from "./useRecommendationsLogic";
 import { RecommendationModal } from "./components/RecommendationModal";
 import { StandardSelect as Select } from "@/modules/admin/components/ui/select";
@@ -53,23 +53,19 @@ export default function RecommendationsPage() {
         }}
         toolbarLeft={
           <div className="flex items-center space-x-2">
-            <div className="flex items-center">
-              <Input
-                placeholder="搜索标题..."
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                className="h-8 w-64 rounded-r-none"
-              />
-              <Button
-                variant="primary"
-                className="-ml-px h-8 rounded-l-none"
-                onClick={handleSearch}
-              >
-                <Search className="mr-1 h-4 w-4" />
-                搜索
-              </Button>
-            </div>
+            <SearchInput
+              placeholder="搜索标题..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onSearch={handleSearch}
+              wrapperClassName="w-64"
+              enterButton={
+                <>
+                  <Search className="mr-1 h-4 w-4" />
+                  搜索
+                </>
+              }
+            />
             <Select
               value={query.type}
               onValueChange={(value) => setQuery((prev) => ({ ...prev, page: 1, type: value }))}
@@ -78,15 +74,6 @@ export default function RecommendationsPage() {
               className="w-56"
               allowClear
             />
-            <Button
-              variant="text"
-              size="sm"
-              onClick={handleReset}
-              title="重置"
-              className="h-8 w-8 p-1"
-            >
-              <RotateCcw className="h-4 w-4" />
-            </Button>
           </div>
         }
         toolbarRight={

@@ -1,6 +1,6 @@
 import { Button } from "@/modules/admin/components/ui/button";
 import { Input } from "@/modules/admin/components/ui/input";
-import { Search } from "@/modules/admin/components/ui/search";
+import { SearchInput } from "@/modules/admin/components/ui/search-input";
 import {
   Select,
   SelectContent,
@@ -56,7 +56,7 @@ export const TorrentsToolbar = ({
   const left = (
     <div className="flex items-center gap-3">
       {/* 搜索框组件 */}
-      <Search
+      <SearchInput
         placeholder="搜索标题或关键词"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
