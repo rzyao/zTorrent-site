@@ -1,4 +1,4 @@
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { DataTable } from "@/modules/admin/components/ui/data-table";
 import { Input } from "@/modules/admin/components/ui/input";
 import { Button } from "@/modules/admin/components/ui/button";
@@ -11,8 +11,6 @@ import {
   SelectValue,
 } from "@/modules/admin/components/ui/select";
 import { usePlaylistsLogic } from "./usePlaylistsLogic";
-import { PlaylistModal } from "./components/PlaylistModal";
-import { ReviewModal } from "./components/ReviewModal";
 import { APPROVAL_STATUS_OPTIONS, TYPE_OPTIONS, VISIBILITY_OPTIONS } from "./types";
 
 /**
@@ -30,35 +28,12 @@ export default function Playlists() {
     searchText,
     setSearchText,
     handleSearch,
-    selectedIds,
-    setSelectedIds,
-    createOpen,
-    setCreateOpen,
-    editOpen,
-    setEditOpen,
-    editRecord,
     deleteConfirmOpen,
     setDeleteConfirmOpen,
     deleteRecord,
     deleteLoading,
     handleDeleteExecute,
-    handleBatchEnable,
-    handleBatchDisable,
-    batchEnableLoading,
-    batchDisableLoading,
-    reviewOpen,
-    setReviewOpen,
-    reviewAction,
-    reviewIds,
-    reviewLoading,
-    handleReviewExecute,
-    openReviewApprove,
-    openReviewReject,
-    fetchList,
   } = usePlaylistsLogic();
-
-  // 是否有选中行
-  const hasSelection = selectedIds.length > 0;
 
   return (
     <>
@@ -68,10 +43,6 @@ export default function Playlists() {
         dataSource={data}
         rowKey="id"
         loading={loading}
-        rowSelection={{
-          selectedRowKeys: selectedIds,
-          onChange: setSelectedIds,
-        }}
         toolbarLeft={
           <div className="flex flex-wrap items-center gap-2">
             {/* 搜索框 + 搜索按钮 */}
@@ -177,52 +148,6 @@ export default function Playlists() {
             />
           </div>
         }
-        toolbarRight={
-          <div className="flex items-center gap-2">
-            {/* 批量操作按钮 */}
-            <Button
-              variant="default"
-              disabled={!hasSelection}
-              loading={batchEnableLoading}
-              onClick={handleBatchEnable}
-            >
-              批量启用
-            </Button>
-            <Button
-              variant="default"
-              danger
-              disabled={!hasSelection}
-              loading={batchDisableLoading}
-              onClick={handleBatchDisable}
-            >
-              批量禁用
-            </Button>
-            <Button
-              variant="default"
-              disabled={!hasSelection}
-              onClick={() => openReviewApprove(selectedIds)}
-            >
-              批量通过
-            </Button>
-            <Button
-              variant="default"
-              danger
-              disabled={!hasSelection}
-              onClick={() => openReviewReject(selectedIds)}
-            >
-              批量驳回
-            </Button>
-            {/* 新增按钮 */}
-            <Button
-              variant="primary"
-              onClick={() => setCreateOpen(true)}
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              新增片单
-            </Button>
-          </div>
-        }
         pagination={{
           current: query.page,
           pageSize: query.limit,
@@ -231,22 +156,6 @@ export default function Playlists() {
             setQuery((prev) => ({ ...prev, page, limit }));
           },
         }}
-      />
-
-      {/* 新增弹窗 */}
-      <PlaylistModal
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-        record={null}
-        onSuccess={fetchList}
-      />
-
-      {/* 编辑弹窗 */}
-      <PlaylistModal
-        open={editOpen}
-        onOpenChange={setEditOpen}
-        record={editRecord}
-        onSuccess={fetchList}
       />
 
       {/* 删除确认弹窗 */}
@@ -269,16 +178,6 @@ export default function Playlists() {
         onOk={handleDeleteExecute}
         confirmLoading={deleteLoading}
         okButtonProps={{ variant: "primary", danger: true }}
-      />
-
-      {/* 审核弹窗 */}
-      <ReviewModal
-        open={reviewOpen}
-        onOpenChange={setReviewOpen}
-        action={reviewAction}
-        ids={reviewIds}
-        loading={reviewLoading}
-        onConfirm={handleReviewExecute}
       />
     </>
   );

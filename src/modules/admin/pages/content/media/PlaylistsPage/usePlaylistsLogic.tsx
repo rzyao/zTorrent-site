@@ -34,19 +34,9 @@ export const usePlaylistsLogic = () => {
   // --- 行选择状态 ---
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  // --- 弹窗状态 ---
-  const [createOpen, setCreateOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
-  const [editRecord, setEditRecord] = useState<PlaylistItem | null>(null);
-
   // --- 删除弹窗状态 ---
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteRecord, setDeleteRecord] = useState<PlaylistItem | null>(null);
-
-  // --- 审核弹窗状态 ---
-  const [reviewOpen, setReviewOpen] = useState(false);
-  const [reviewAction, setReviewAction] = useState<"approve" | "reject">("approve");
-  const [reviewIds, setReviewIds] = useState<string[]>([]);
 
   // --- 数据获取 ---
   const fetchList = useCallback(async () => {
@@ -123,95 +113,6 @@ export const usePlaylistsLogic = () => {
     onSuccess: fetchList,
   });
 
-  // --- 批量启用/禁用 ---
-  const { execute: executeBatchEnable, loading: batchEnableLoading } = useAsyncAction({
-    successMessage: "批量启用成功",
-    onSuccess: () => {
-      setSelectedIds([]);
-      fetchList();
-    },
-  });
-
-  const { execute: executeBatchDisable, loading: batchDisableLoading } = useAsyncAction({
-    successMessage: "批量禁用成功",
-    onSuccess: () => {
-      setSelectedIds([]);
-      fetchList();
-    },
-  });
-
-  const handleBatchEnable = useCallback(() => {
-    executeBatchEnable(async () => {
-      for (const id of selectedIds) {
-        await PlaylistsService.playlistCoreControllerUpdate({
-          id,
-          data: { enabled: true },
-        } as any);
-      }
-    });
-  }, [selectedIds, executeBatchEnable]);
-
-  const handleBatchDisable = useCallback(() => {
-    executeBatchDisable(async () => {
-      for (const id of selectedIds) {
-        await PlaylistsService.playlistCoreControllerUpdate({
-          id,
-          data: { enabled: false },
-        } as any);
-      }
-    });
-  }, [selectedIds, executeBatchDisable]);
-
-  // --- 审核操作 ---
-  const { execute: executeReview, loading: reviewLoading } = useAsyncAction({
-    onSuccess: () => {
-      setReviewOpen(false);
-      setReviewIds([]);
-      setSelectedIds([]);
-      fetchList();
-    },
-  });
-
-  const handleReviewExecute = useCallback(
-    (note?: string) => {
-      const action =
-        reviewAction === "approve" ? ReviewDto.action.APPROVE : ReviewDto.action.REJECT;
-      executeReview(async () => {
-        for (const id of reviewIds) {
-          await PlaylistsReviewService.playlistReviewControllerReview({
-            id,
-            action,
-            note,
-          });
-        }
-      });
-    },
-    [reviewIds, reviewAction, executeReview],
-  );
-
-  const openReviewApprove = useCallback(
-    (ids: string[]) => {
-      setReviewIds(ids);
-      setReviewAction("approve");
-      // 直接执行通过，无需填写备注
-      executeReview(async () => {
-        for (const id of ids) {
-          await PlaylistsReviewService.playlistReviewControllerReview({
-            id,
-            action: ReviewDto.action.APPROVE,
-          });
-        }
-      });
-    },
-    [executeReview],
-  );
-
-  const openReviewReject = useCallback((ids: string[]) => {
-    setReviewIds(ids);
-    setReviewAction("reject");
-    setReviewOpen(true);
-  }, []);
-
   // --- 导航方法 ---
   const openDetail = useCallback(
     (id: string) => {
@@ -219,11 +120,6 @@ export const usePlaylistsLogic = () => {
     },
     [navigate],
   );
-
-  const openEdit = useCallback((record: PlaylistItem) => {
-    setEditRecord(record);
-    setEditOpen(true);
-  }, []);
 
   // --- 列定义 ---
   const columns = useMemo<Column<PlaylistItem>[]>(
@@ -233,7 +129,6 @@ export const usePlaylistsLogic = () => {
         title: "ID",
         dataIndex: "id",
         width: 80,
-        ellipsis: true,
       },
       {
         key: "title",
@@ -241,13 +136,7 @@ export const usePlaylistsLogic = () => {
         dataIndex: "title",
         ellipsis: true,
       },
-      {
-        key: "coverUrl",
-        title: "封面",
-        dataIndex: "coverUrl",
-        width: 100,
-        ellipsis: true,
-      },
+
       {
         key: "type",
         title: "类型",
@@ -330,7 +219,7 @@ export const usePlaylistsLogic = () => {
       {
         key: "actions",
         title: "操作",
-        width: 240,
+        width: 140,
         render: (_, record) => (
           <div className="flex items-center gap-1">
             <Button
@@ -344,49 +233,17 @@ export const usePlaylistsLogic = () => {
             <Button
               variant="link"
               size="sm"
-              className="text-[14px]"
-              onClick={() => openEdit(record)}
-            >
-              编辑
-            </Button>
-            <Button
-              variant="link"
-              size="sm"
               danger
               className="text-[14px]"
               onClick={() => openDeleteConfirm(record)}
             >
               删除
             </Button>
-            <Button
-              variant="link"
-              size="sm"
-              className="text-[14px]"
-              onClick={() => openReviewApprove([record.id])}
-            >
-              通过
-            </Button>
-            <Button
-              variant="link"
-              size="sm"
-              danger
-              className="text-[14px]"
-              onClick={() => openReviewReject([record.id])}
-            >
-              驳回
-            </Button>
           </div>
         ),
       },
     ],
-    [
-      handleToggleEnabled,
-      openDetail,
-      openEdit,
-      openDeleteConfirm,
-      openReviewApprove,
-      openReviewReject,
-    ],
+    [handleToggleEnabled, openDetail, openDeleteConfirm],
   );
 
   // --- 效果钩子 ---
@@ -409,32 +266,12 @@ export const usePlaylistsLogic = () => {
     // 行选择
     selectedIds,
     setSelectedIds,
-    // 弹窗
-    createOpen,
-    setCreateOpen,
-    editOpen,
-    setEditOpen,
-    editRecord,
     // 删除弹窗
     deleteConfirmOpen,
     setDeleteConfirmOpen,
     deleteRecord,
     deleteLoading,
     handleDeleteExecute,
-    // 批量操作
-    handleBatchEnable,
-    handleBatchDisable,
-    batchEnableLoading,
-    batchDisableLoading,
-    // 审核弹窗
-    reviewOpen,
-    setReviewOpen,
-    reviewAction,
-    reviewIds,
-    reviewLoading,
-    handleReviewExecute,
-    openReviewApprove,
-    openReviewReject,
     // 方法
     fetchList,
   };

@@ -192,8 +192,8 @@ export const componentRegistry: Record<string, LazyComponent> = {
 
   // ==================== Admin 模块 - 经济系统 (economy) ====================
   // 魔力值中心
-  AdminBonusBalances: lazy(() => import("@/modules/admin/pages/economy/bonus/Balances")),
-  AdminBonusLedger: lazy(() => import("@/modules/admin/pages/economy/bonus/Ledger")),
+  AdminBonusBalances: lazy(() => import("@/modules/admin/pages/economy/bonus/BonusBalancesPage")),
+  AdminBonusLedger: lazy(() => import("@/modules/admin/pages/economy/bonus/BonusLedgerPage")),
   AdminBonusBatchAdjust: lazy(() => import("@/modules/admin/pages/economy/bonus/BatchAdjust")),
   AdminBonusRules: lazy(() => import("@/modules/admin/pages/economy/bonus/Rules")),
   AdminBonusAdjustments: lazy(() => import("@/modules/admin/pages/economy/bonus/Adjustments")),
