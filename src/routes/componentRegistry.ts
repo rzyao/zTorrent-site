@@ -202,7 +202,7 @@ export const componentRegistry: Record<string, LazyComponent> = {
     () => import("@/modules/admin/pages/economy/bonus/BonusAdjustmentsPage"),
   ),
   // 商城管理
-  AdminStoreItems: lazy(() => import("@/modules/admin/pages/economy/store/Items")),
+  AdminStoreItems: lazy(() => import("@/modules/admin/pages/economy/store/StoreItemsPage")),
   AdminStoreOrders: lazy(() => import("@/modules/admin/pages/economy/store/StoreOrdersPage")),
 
   // ==================== Admin 模块 - 系统配置 (system) ====================
