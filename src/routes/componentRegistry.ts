@@ -124,12 +124,8 @@ export const componentRegistry: Record<string, LazyComponent> = {
     () => import("@/modules/admin/pages/content/torrents/UserDownloadRecords"),
   ),
   // 影视库
-  AdminFilms: lazy(() => import("@/modules/admin/pages/content/media/films/Films")),
-  AdminFilmDetail: lazy(() => import("@/modules/admin/pages/content/media/films/FilmDetail")),
-  AdminPlaylists: lazy(() => import("@/modules/admin/pages/content/media/playlists/Playlists")),
-  AdminPlaylistDetail: lazy(
-    () => import("@/modules/admin/pages/content/media/playlists/PlaylistDetail"),
-  ),
+  AdminFilms: lazy(() => import("@/modules/admin/pages/content/media/FilmsPage")),
+  AdminPlaylists: lazy(() => import("@/modules/admin/pages/content/media/PlaylistsPage")),
   // 分类配置
   AdminTorrentCategories: lazy(
     () => import("@/modules/admin/pages/content/categories/TorrentCategories"),
