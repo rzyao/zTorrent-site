@@ -16,10 +16,7 @@ export const ADV_FIELD_OPTIONS = [
   { label: "创建时间", value: "createdAt", type: "date" as const },
 ];
 
-export const OPS_BY_FIELD: Record<
-  string,
-  { label: string; value: AdvancedRuleDto.op }[]
-> = {
+export const OPS_BY_FIELD: Record<string, { label: string; value: AdvancedRuleDto.op }[]> = {
   userId: [
     { label: "包含", value: AdvancedRuleDto.op.LIKE },
     { label: "等于", value: AdvancedRuleDto.op.EQUAL },
@@ -130,4 +127,25 @@ export const OPS_BY_FIELD: Record<
     { label: "为空", value: AdvancedRuleDto.op.IS_NULL },
     { label: "非空", value: AdvancedRuleDto.op.IS_NOT_NULL },
   ],
+};
+
+/**
+ * 高级搜索 UI 操作符到后端 API 标识符的映射表
+ */
+export const ADV_OP_MAP: Record<string, string> = {
+  [AdvancedRuleDto.op.EQUAL]: "eq",
+  [AdvancedRuleDto.op.NOT_EQUAL]: "neq",
+  [AdvancedRuleDto.op.LIKE]: "like",
+  [AdvancedRuleDto.op.NOT_LIKE]: "like",
+  [AdvancedRuleDto.op.LIKE_LEFT]: "like_left",
+  [AdvancedRuleDto.op.LIKE_RIGHT]: "like_right",
+  [AdvancedRuleDto.op.NOT_IN]: "contains",
+  [AdvancedRuleDto.op.IN]: "contains",
+  [AdvancedRuleDto.op.GREATER_THAN]: "gt",
+  [AdvancedRuleDto.op.GREATER_THAN_OR_EQUAL]: "gte",
+  [AdvancedRuleDto.op.LESS_THAN]: "lt",
+  [AdvancedRuleDto.op.LESS_THAN_OR_EQUAL]: "lte",
+  [AdvancedRuleDto.op.IS_NULL]: "is_null",
+  [AdvancedRuleDto.op.IS_NOT_NULL]: "is_not_null",
+  [AdvancedRuleDto.op.BETWEEN]: "range",
 };

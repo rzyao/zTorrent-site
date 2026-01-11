@@ -229,7 +229,7 @@ const UsersPage: React.FC = () => {
         title="确认删除"
         content="确定要删除该用户吗？此操作不可撤销。"
         okText="确定删除"
-        okButtonProps={{ variant: "danger" }}
+        okButtonProps={{ variant: "primary", danger: true }}
       />
     </div>
   );

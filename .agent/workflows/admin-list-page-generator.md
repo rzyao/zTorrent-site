@@ -1,93 +1,97 @@
 ---
-description: 自动生成或重构 Admin 模块的列表页面，遵循逻辑抽离、组件原子化以及 Ant Design + Tailwind 融合规范。
+description: 自动生成或重构 Admin 模块的列表页面，强化对旧代码功能的还原与 UI 标准化。
 ---
 
-# Admin 列表页生成器 (Admin List Page Generator - XML v2)
+# Admin 列表页生成器 (Admin List Page Generator - XML v2.1)
 
 <workflow_meta>
 <role>前端架构资深开发 (Senior Frontend Architect)</role>
-<goal>将 Admin 模块的列表页面标准化，实现业务逻辑 (Hook) 与 UI 布局 (Component) 的深度分离，并确保视觉风格严格符合 Ant Design 设计规范与项目定制的 Tailwind 主题。</goal>
+<goal>将 Admin 模块的列表页面标准化，确保业务逻辑 (Hook) 与 UI 布局 (Component) 分离，并**完整还原**原有的操作栏功能（搜索、筛选、按钮）及表格列逻辑，严格符合 Ant Design + Tailwind 规范。</goal>
 </workflow_meta>
 
 <workflow_steps>
 
-    <step id="1" name="环境与规范同步 (Context & Guidelines)">
-        <description>获取目标模块信息并确认 AntD-Tailwind 融合规范。</description>
+    <step id="1" name="环境与旧代码分析 (Context & Legacy Analysis)">
+        <description>获取目标模块信息，并深度分析旧文件（如果是重构任务）以防功能遗漏。</description>
         // turbo
         <action>
-            1. 使用 `view_file` 阅读 `src/modules/admin/guidelines/antd-tailwind-integration.md` 确保最新的 Token 映射关系。
-            2. 确定目标模块 `[module]` 名称及对应的 API Service。
+            1. 确定目标模块路径及对应的 API Service。
+            2. **旧代码扫描**：如果存在旧文件（如 `OldPage.tsx`），必须提取以下要素：
+               - **操作栏 (Toolbar)**：所有的搜索框（Key/Enter触发）、下拉筛选（Status/Type）、操作按钮（Add/Export/Batch）。
+               - **表格列 (Columns)**：列定义，特别是自定义 `render`（如 `Switch`, `Tag`, `Button`）。
+               - **分页设置**：默认 `pageSize` 及分页选项。
+            3. 阅读 `src/modules/admin/guidelines/antd-tailwind-integration.md` 确认 UI 规范。
         </action>
     </step>
 
     <step id="2" name="结构初始化 (Structure Initialization)">
-        <description>在 `src/modules/admin/shared/[module]` 目录下建立标准化的工程结构。</description>
+        <description>建立标准化的模块目录结构。</description>
         // turbo
         <action>
-            1. 执行 `run_command` 创建目录：`mkdir -p src/modules/admin/shared/[module]/{components,hooks}`。
-            2. 创建空文件：`types.ts`, `constants.ts`。
+            1. 在 `src/modules/admin/pages/[parent-path]/[module-name]/` 下创建目录。
+               (不再推荐使用 `shared` 目录，建议就在 `pages` 下建立自包含模块)。
+            2. 创建空文件：`types.ts`, `use[Module]Logic.tsx`, `index.tsx`, 和 `components/[Module]Modal.tsx`。
         </action>
     </step>
 
     <step id="3" name="核心逻辑抽离 (Logic Orchestration)">
-        <description>实现模块业务逻辑中心 `hooks/use[Module]Logic.tsx`。</description>
+        <description>实现 `use[Module]Logic.tsx`，集中管理状态与业务。</description>
         <thought>
-            这个 Hook 必须是页面的“大脑”，不含任何 UI 渲染逻辑。
-            - 状态管理：使用 `DataTable` 所需的 `query`, `setQuery`, `data`, `loading`。
-            - 列定义 (`columns`)：在 Hook 内部或 `constants.ts` 中定义，必须包含操作列且使用项目标准 UI 组件。
-            - 弹窗控制：封装所有的 `open/close` 状态及基于 `useAsyncAction` 的 CRUD 操作。
-            - 样式参考：间距应参考 AntD Spacing 规范，文本使用 `text-neutral-900` (主要) 和 `text-neutral-500` (次要)。
+            这个 Hook 是页面的大脑。
+            - **状态管理**：`query` (包含 `page`, `limit` 及所有筛选字段), `loading`, `data`, `total`。
+            - **搜索逻辑**：必须实现 `searchText` 独立状态 + `handleSearch` 方法（重置页码为1）。
+            - **列定义**：完整迁移旧代码的列，包括使用 `Switch` (状态切换)、`Button` (操作) 等组件的 `render` 函数。
+            - **CRUD**：基于 `useAsyncAction` 封装删除、更新状态等操作。
         </thought>
-        <action>编写 `use[Module]Logic.tsx` 并导出所有状态与方法。</action>
+        <action>编写 Logic Hook。</action>
     </step>
 
-    <step id="4" name="原子业务组件开发 (Atomic Component Development)">
-        <description>实现具体的业务弹窗组件 (如 EditModal, DetailModal)。</description>
+    <step id="4" name="原子组件与操作栏 (Components & Toolbar)">
+        <description>开发弹窗组件并规划操作栏结构。</description>
         <action>
-            1. 在 `shared/[module]/components` 中为每个操作模块创建组件。
-            2. **强制规范**：
-               - 使用 `src/modules/admin/components/ui/modal` 作为容器。
-               - 控件高度必须匹配 AntD 规范：默认使用 `h-8` (32px)，小型使用 `h-6` (24px)。
-               - 边框颜色使用 `border-gray-200`，分割线使用 `divide-gray-100`。
+            1. **Modal 开发**：实现新增/编辑弹窗，遵循 AntD Form 规范。
+            2. **UI 元素准备**：准备好 `index.tsx` 需要的 UI 组件：
+               - 搜索：`Input` + `Button` (无圆角连接，`-ml-px`)。
+               - 筛选：使用 **Admin UI Select** (`@/modules/admin/components/ui/select`) 替换原生 select。
+               - 按钮：主要操作放在 `toolbarRight`，筛选放在 `toolbarLeft`。
         </action>
     </step>
 
-    <step id="5" name="页面组装与注册 (Page Assembly & Registration)">
-        <description>在 `src/modules/admin/pages/` 下创建入口并注册路由。</description>
+    <step id="5" name="页面组装 (Page Assembly)">
+        <description>实现 `index.tsx` 入口。</description>
         <action>
-            1. 实现 `Index.tsx`：注入 `use[Module]Logic`，通过 `DataTable` 渲染列表。
-               **注意**：页面组件使用 Fragment (`<>...</>`) 作为根容器，
-               严禁再包裹 `AdminPageContainer`，内边距由外层 Admin 布局 (`AdminLayout`) 统一提供。
-            2. 更新 `src/routes/componentRegistry.ts`，确保导入路径正确。
+            1. 注入 Hook，解构出 `columns`, `data`, `toolbarProps` 等。
+            2. 使用 `DataTable` 组件：
+               - **toolbarLeft**：放置 搜索框组合 + 状态 Select。
+               - **toolbarRight**：放置 "新增" 按钮。
+               - **pagination**：绑定 Hook 的分页状态。
+            3. 注册路由到 `componentRegistry.ts`。
         </action>
     </step>
 
-    <step id="6" name="规范验证 (Verification & Audit)">
-        <description>对生成的代码进行合规性检查。</description>
+    <step id="6" name="完整性验证 (Integrity Verification)">
+        <description>检查是否遗漏功能。</description>
         <checklist>
-            <item>UI 检查：是否还有直接引用 `antd` 组件的情况？（应使用 `ui/` 下的封装组件）</item>
-            <item>样式检查：颜色类名是否使用了 `neutral-*` 系列代替通用的 `gray-*`？</item>
-            <item>逻辑检查：`Index.tsx` 是否超过 150 行？核心逻辑是否已提取到 Hook？</item>
-            <item>类型检查：使用 `tsc` 或查看编辑器 lint 错误。</item>
+            <item>功能回归：旧页面的所有筛选器是否都已存在？</item>
+            <item>列完整性：由 `render` 渲染的复杂列（如时间格式化、状态开关）是否正常工作？</item>
+            <item>交互一致：搜索是否支持回车触发？下拉选择是否立即生效？</item>
+            <item>样式合规：是否移除了所有 Shadcn 的默认样式，使用了 AntD 风格的 Select 和 Input？</item>
         </checklist>
     </step>
 
 </workflow_steps>
 
 <rules>
-    <rule id="antd_consistency">
-        所有手动编写的 Tailwind 类名必须参考 `antd-tailwind-integration.md` 中的映射表。严禁使用未经定义的颜色值。
+    <rule id="toolbar_mandatory" priority="HIGH">
+        **必须显式实现操作栏**：严禁遗漏搜索框和筛选器。搜索框必须配套搜索按钮。
     </rule>
-    <rule id="logic_purity">
-        Hook (`use[Module]Logic`) 禁止返回任何 JSX 元素（除 `columns` 中的渲染函数外）。列表操作按钮的样式必须由 Hook 内部逻辑决定，但由原子组件执行。
+    <rule id="antd_ui_only">
+        必须使用 `src/modules/admin/components/ui` 下的标准化组件 (`Select`, `Input`, `Switch`)，禁止使用原生 HTML 标签。
     </rule>
-    <rule id="component_size">
-        单个业务弹窗组件文件不应超过 200 行，若逻辑复杂应进一步拆分子组件。
+    <rule id="no_page_container">
+        页面组件 (Index.tsx) 严禁使用 `AdminPageContainer` 包裹。外层 Admin 布局已统一设置内边距 (`p-6`)，页面组件应直接使用 Fragment 或 `div` 作为根元素，避免重复内边距。
     </rule>
     <rule id="turbo_mode">
-        所有的只读查看 (view_file)、目录创建 (mkdir)、简单的文件改名 (mv) 命令必须设置 `SafeToAutoRun: true`。
-    </rule>
-    <rule id="no_page_container" priority="HIGH">
-        页面组件 (Index.tsx) 严禁使用 `AdminPageContainer` 包裹。外层 Admin 布局已统一设置内边距 (`p-6`)，页面组件应直接使用 Fragment 或 `div` 作为根元素，避免重复内边距。
+        只读查看、目录创建等无副作用命令需设置 `SafeToAutoRun: true`。
     </rule>
 </rules>

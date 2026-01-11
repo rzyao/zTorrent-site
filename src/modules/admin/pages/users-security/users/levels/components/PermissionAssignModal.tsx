@@ -1,123 +1,118 @@
-﻿import React from "react";
-import { Modal, Space, Typography, Tabs, App } from "antd";
+﻿import React, { useState, memo } from "react";
+import { Modal } from "@/modules/admin/components/ui/modal";
+import { Button } from "@/modules/admin/components/ui/button";
 import PermissionTree from "@/modules/admin/pages/users-security/permissions/perms/PermissionTree";
-import { LevelsService } from "@/api/services/LevelsService";
-import type { LevelItem } from "../types";
+import { usePermissionAssign } from "../hooks/usePermissionAssign";
+import { LevelItem } from "../types";
 
 interface PermissionAssignModalProps {
-  permOpen: boolean;
-  setPermOpen: (open: boolean) => void;
-  permTarget: LevelItem | null;
-  permissionsAdmin: any[];
-  selectedAdminIds: string[];
-  permissionsWeb: any[];
-  selectedWebIds: string[];
-  setSelectedAdminIds: (ids: string[]) => void;
-  setSelectedWebIds: (ids: string[]) => void;
-  permissionIdToKey: Record<string, string>;
-  selectedWebIdsInitial?: string[]; // Assuming logic
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  target: LevelItem | null;
 }
 
-export const PermissionAssignModal: React.FC<PermissionAssignModalProps> = ({
-  permOpen,
-  setPermOpen,
-  permTarget,
-  permissionsAdmin,
-  selectedAdminIds,
-  permissionsWeb,
-  selectedWebIds,
-  setSelectedAdminIds,
-  setSelectedWebIds,
-  permissionIdToKey,
+const PermissionAssignModalComponent: React.FC<PermissionAssignModalProps> = ({
+  open,
+  onOpenChange,
+  target,
 }) => {
-  const { message } = App.useApp();
+  const [activeTab, setActiveTab] = useState<"admin" | "web">("admin");
+  const {
+    isLoading,
+    adminTree,
+    webTree,
+    selectedAdminIds,
+    setSelectedAdminIds,
+    selectedWebIds,
+    setSelectedWebIds,
+    savePermissions,
+  } = usePermissionAssign(target?.key);
+
+  const handleAdminChange = async (ids: string[]) => {
+    setSelectedAdminIds(ids);
+    await savePermissions(ids, selectedWebIds);
+  };
+
+  const handleWebChange = async (ids: string[]) => {
+    setSelectedWebIds(ids);
+    await savePermissions(selectedAdminIds, ids);
+  };
 
   return (
     <Modal
-      open={permOpen && !!permTarget}
       title={
-        <Space orientation="vertical" size={4}>
-          <Typography.Text>分配权限</Typography.Text>
-          {permTarget && (
-            <Typography.Text type="secondary">
-              等级：{permTarget.label}
-              <Typography.Text type="secondary" style={{ marginLeft: 8 }}>
-                （{permTarget.key}）
-              </Typography.Text>
-            </Typography.Text>
+        <div className="flex flex-col gap-1">
+          <span className="text-lg font-semibold">分配权限</span>
+          {target && (
+            <span className="text-sm font-normal text-neutral-500">
+              等级：{target.label} ({target.key})
+            </span>
           )}
-        </Space>
+        </div>
       }
-      onCancel={() => setPermOpen(false)}
+      open={open}
+      onClose={() => onOpenChange(false)}
       footer={null}
-      width={960}
-      destroyOnHidden
+      width={1000}
     >
-      <Tabs
-        defaultActiveKey="admin"
-        items={[
-          {
-            key: "admin",
-            label: "Admin 权限",
-            children: (
-              <div style={{ maxHeight: "70vh", overflow: "auto" }}>
+      <div className="py-2">
+        {/* Tab 导航 */}
+        <div className="mb-6 flex border-b border-neutral-200">
+          <button
+            className={`-mb-px border-b-2 px-6 py-3 text-sm font-medium transition-colors ${
+              activeTab === "admin"
+                ? "border-antd-primary text-antd-primary"
+                : "border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"
+            }`}
+            onClick={() => setActiveTab("admin")}
+          >
+            Admin 权限
+          </button>
+          <button
+            className={`-mb-px border-b-2 px-6 py-3 text-sm font-medium transition-colors ${
+              activeTab === "web"
+                ? "border-antd-primary text-antd-primary"
+                : "border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"
+            }`}
+            onClick={() => setActiveTab("web")}
+          >
+            Web 权限
+          </button>
+        </div>
+
+        {/* 权限内容 */}
+        <div className="min-h-[400px]">
+          {isLoading ? (
+            <div className="flex h-64 items-center justify-center text-neutral-400">
+              正在加载权限数据...
+            </div>
+          ) : (
+            <div className="max-h-[60vh] overflow-y-auto rounded-lg border border-neutral-100 bg-neutral-50/50 p-4">
+              {activeTab === "admin" ? (
                 <PermissionTree
-                  permissions={permissionsAdmin as any}
+                  permissions={adminTree}
                   selectedIds={selectedAdminIds}
-                  onChange={async (ids: string[]) => {
-                    setSelectedAdminIds(ids);
-                    const allIds = [...ids, ...selectedWebIds];
-                    const permissionKeys = allIds
-                      .map((id) => permissionIdToKey[id])
-                      .filter(Boolean);
-                    if (permTarget) {
-                      try {
-                        await LevelsService.levelsPermissionsControllerSetPermissions({
-                          levelKey: permTarget.key,
-                          permissionKeys,
-                        });
-                        message.success("已保存权限");
-                      } catch (e: any) {
-                        message.error(e?.message || "分配权限失败");
-                      }
-                    }
-                  }}
+                  onChange={handleAdminChange}
                 />
-              </div>
-            ),
-          },
-          {
-            key: "web",
-            label: "Web 权限",
-            children: (
-              <div style={{ maxHeight: "70vh", overflow: "auto" }}>
+              ) : (
                 <PermissionTree
-                  permissions={permissionsWeb as any}
+                  permissions={webTree}
                   selectedIds={selectedWebIds}
-                  onChange={async (ids: string[]) => {
-                    setSelectedWebIds(ids);
-                    const allIds = [...selectedAdminIds, ...ids];
-                    const permissionKeys = allIds
-                      .map((id) => permissionIdToKey[id])
-                      .filter(Boolean);
-                    if (permTarget) {
-                      try {
-                        await LevelsService.levelsPermissionsControllerSetPermissions({
-                          levelKey: permTarget.key,
-                          permissionKeys,
-                        });
-                        message.success("已保存权限");
-                      } catch (e: any) {
-                        message.error(e?.message || "分配权限失败");
-                      }
-                    }
-                  }}
+                  onChange={handleWebChange}
                 />
-              </div>
-            ),
-          },
-        ]}
-      />
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="mt-8 flex justify-end">
+          <Button variant="primary" onClick={() => onOpenChange(false)}>
+            确认
+          </Button>
+        </div>
+      </div>
     </Modal>
   );
 };
+
+export const PermissionAssignModal = memo(PermissionAssignModalComponent);

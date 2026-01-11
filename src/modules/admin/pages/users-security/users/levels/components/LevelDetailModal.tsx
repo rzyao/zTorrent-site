@@ -1,28 +1,32 @@
-import React from "react";
-import { Modal } from "antd";
+import React, { memo } from "react";
+import { Modal } from "@/modules/admin/components/ui/modal";
 
 interface LevelDetailModalProps {
-  detailOpen: boolean;
-  setDetailOpen: (open: boolean) => void;
-  detailData: any;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  data: any;
 }
 
-export const LevelDetailModal: React.FC<LevelDetailModalProps> = ({
-  detailOpen,
-  setDetailOpen,
-  detailData,
+const LevelDetailModalComponent: React.FC<LevelDetailModalProps> = ({
+  open,
+  onOpenChange,
+  data,
 }) => {
   return (
     <Modal
-      open={detailOpen}
       title="等级详情"
-      onCancel={() => setDetailOpen(false)}
+      open={open}
+      onClose={() => onOpenChange(false)}
       footer={null}
-      destroyOnHidden
+      width={600}
     >
-      <pre style={{ margin: 0, maxHeight: "60vh", overflow: "auto" }}>
-        {JSON.stringify(detailData ?? {}, null, 2)}
-      </pre>
+      <div className="py-4">
+        <pre className="max-h-[60vh] overflow-auto rounded-lg border border-neutral-200 bg-neutral-50 p-4 font-mono text-xs text-neutral-800">
+          {JSON.stringify(data ?? {}, null, 2)}
+        </pre>
+      </div>
     </Modal>
   );
 };
+
+export const LevelDetailModal = memo(LevelDetailModalComponent);

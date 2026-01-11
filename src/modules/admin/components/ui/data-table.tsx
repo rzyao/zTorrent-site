@@ -98,7 +98,7 @@ function Pagination({
           key={i}
           onClick={() => handlePageChange(i)}
           className={cn(
-            "flex h-8 min-w-[2rem] items-center justify-center rounded-md border text-sm transition-all",
+            "flex h-8 min-w-8 items-center justify-center rounded-md border text-sm transition-all",
             i === current
               ? "border-antd-primary text-antd-primary bg-white font-medium"
               : "hover:border-antd-primary hover:text-antd-primary border-gray-200 bg-white text-neutral-600",

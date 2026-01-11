@@ -19,6 +19,8 @@ export interface ModalProps {
   onCancel?: () => void;
   /** Modal 标题 */
   title?: React.ReactNode;
+  /** Modal 描述 (用于 AI/读屏器) */
+  description?: string;
   /** Modal 宽度 */
   width?: number | string;
   /** 确定按钮文字 */
@@ -50,19 +52,6 @@ export interface ModalProps {
  *
  * 基于 Radix UI Dialog 实现，API 设计模仿 Ant Design Modal。
  * 提供统一的弹窗样式和交互体验。
- *
- * @example
- * ```tsx
- * <Modal
- *   open={visible}
- *   title="确认删除"
- *   onOk={handleDelete}
- *   onCancel={() => setVisible(false)}
- *   okButtonProps={{ variant: "danger" }}
- * >
- *   确定要删除该记录吗？
- * </Modal>
- * ```
  */
 export function Modal({
   open = false,
@@ -70,6 +59,7 @@ export function Modal({
   onOk,
   onCancel,
   title,
+  description,
   width = 520,
   okText = "确定",
   cancelText = "取消",
@@ -79,7 +69,7 @@ export function Modal({
   closable = true,
   maskClosable = true,
   confirmLoading = false,
-  centered = true,
+  centered = false,
   className,
   children,
 }: ModalProps) {
@@ -110,17 +100,9 @@ export function Modal({
 
   // 渲染底部按钮区
   const renderFooter = () => {
-    // 如果 footer 为 null，不渲染
-    if (footer === null) {
-      return null;
-    }
+    if (footer === null) return null;
+    if (footer !== undefined) return <div className="mt-6 flex justify-end gap-2">{footer}</div>;
 
-    // 如果提供了自定义 footer
-    if (footer !== undefined) {
-      return <div className="mt-6 flex justify-end gap-2">{footer}</div>;
-    }
-
-    // 默认底部按钮
     return (
       <div className="mt-6 flex justify-end gap-2">
         <Button variant="default" onClick={handleCancel} {...cancelButtonProps}>
@@ -136,7 +118,6 @@ export function Modal({
   return (
     <DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
       <DialogPrimitive.Portal>
-        {/* 遮罩层 */}
         <DialogPrimitive.Overlay
           className={cn(
             "fixed inset-0 z-50 bg-black/45",
@@ -146,7 +127,6 @@ export function Modal({
           onClick={maskClosable ? handleCancel : undefined}
         />
 
-        {/* 内容区 */}
         <DialogPrimitive.Content
           className={cn(
             "fixed z-50 rounded-lg border border-gray-100 bg-white shadow-lg",
@@ -165,9 +145,7 @@ export function Modal({
               '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
           }}
           onPointerDownOutside={(e) => {
-            if (!maskClosable) {
-              e.preventDefault();
-            }
+            if (!maskClosable) e.preventDefault();
           }}
         >
           {/* 头部区域 */}
@@ -192,6 +170,11 @@ export function Modal({
             </div>
           )}
 
+          {/* Radix UI 要求的描述文字，保证无障碍访问 */}
+          <DialogPrimitive.Description className="sr-only">
+            {description || (typeof title === "string" ? title : "弹窗内容")}
+          </DialogPrimitive.Description>
+
           {/* 内容区域 */}
           <div className="px-6 py-4">{children}</div>
 
@@ -203,19 +186,10 @@ export function Modal({
   );
 }
 
-/**
- * 确认对话框快捷方法的 Props
- */
 export interface ConfirmModalProps extends Omit<ModalProps, "children"> {
-  /** 确认内容 */
   content?: React.ReactNode;
 }
 
-/**
- * Modal.confirm 静态方法的配置
- * 注意：由于 React 18+ 的限制，静态方法需要通过 Context 实现
- * 这里提供一个简化的组件形式
- */
 export function ConfirmModal({
   content,
   okButtonProps = { variant: "primary", danger: true },
@@ -228,7 +202,6 @@ export function ConfirmModal({
   );
 }
 
-// 导出底层 Radix 组件供高级定制使用
 export const ModalRoot = DialogPrimitive.Root;
 export const ModalTrigger = DialogPrimitive.Trigger;
 export const ModalClose = DialogPrimitive.Close;

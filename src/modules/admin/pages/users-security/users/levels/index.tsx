@@ -1,109 +1,86 @@
-﻿import { Space } from "antd";
-import { useLevelManagement } from "./hooks/useLevelManagement";
-import { LevelSearch } from "./components/LevelSearch";
-import { LevelTable } from "./components/LevelTable";
-import { LevelDetailModal } from "./components/LevelDetailModal";
+﻿import { Plus } from "lucide-react";
+import { DataTable } from "@/modules/admin/components/ui/data-table";
+import { Button } from "@/modules/admin/components/ui/button";
+import { useLevelsLogic } from "./hooks/useLevelsLogic";
 import { LevelEditModal } from "./components/LevelEditModal";
+import { LevelDetailModal } from "./components/LevelDetailModal";
 import { PermissionAssignModal } from "./components/PermissionAssignModal";
+import { LevelFilterBar } from "./components/LevelFilterBar";
 
 export default function LevelsPage() {
   const {
     levels,
     loading,
-    searchKey,
-    setSearchKey,
-    searchLabel,
-    setSearchLabel,
-    page,
-    setPage,
-    pageSize,
-    setPageSize,
     total,
-    can,
+    query,
+    columns,
+    // 逻辑
+    handleSearch,
+    handleFilterChange,
+    // 编辑
+    editOpen,
+    setEditOpen,
+    editingLevel,
+    setEditingLevel,
+    handleSave,
+    // 详情
     detailOpen,
     setDetailOpen,
     detailData,
-    editOpen,
-    setEditOpen,
-    editing,
-    form,
+    // 权限
     permOpen,
     setPermOpen,
     permTarget,
-    permissionsAdmin,
-    permissionsWeb,
-    permissionIdToKey,
-    selectedAdminIds,
-    setSelectedAdminIds,
-    selectedWebIds,
-    setSelectedWebIds,
-    handleAdd,
-    handleEdit,
-    submitEdit,
-    confirmDelete,
-    openAssignPermissions,
-    handleShowDetail,
-  } = useLevelManagement();
+  } = useLevelsLogic();
 
   return (
-    <div style={{ height: "100%", overflowY: "auto" }}>
-      <Space orientation="vertical" size="large" style={{ width: "100%" }}>
-        <LevelSearch
-          searchKey={searchKey}
-          setSearchKey={setSearchKey}
-          searchLabel={searchLabel}
-          setSearchLabel={setSearchLabel}
-          setPage={setPage}
-          can={can}
-          onAdd={handleAdd}
-          loading={loading}
-        />
+    <>
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-neutral-900">等级权重管理</h1>
+      </div>
 
-        <LevelTable
-          levels={levels}
-          loading={loading}
-          page={page}
-          pageSize={pageSize}
-          total={total}
-          setPage={setPage}
-          setPageSize={setPageSize}
-          searchKey={searchKey}
-          searchLabel={searchLabel}
-          can={can}
-          onShowDetail={handleShowDetail}
-          onEdit={handleEdit}
-          onAssignPermissions={openAssignPermissions}
-          onDelete={confirmDelete}
-        />
+      <DataTable
+        columns={columns}
+        dataSource={levels}
+        rowKey="id"
+        loading={loading}
+        toolbarLeft={<LevelFilterBar onSearch={handleSearch} loading={loading} />}
+        toolbarRight={
+          <Button
+            variant="primary"
+            className="flex items-center gap-2"
+            onClick={() => {
+              setEditingLevel(null);
+              setEditOpen(true);
+            }}
+          >
+            <Plus className="h-4 w-4" />
+            新建等级
+          </Button>
+        }
+        pagination={{
+          current: query.page,
+          pageSize: query.limit,
+          total: total,
+          onChange: (page, limit) => {
+            handleFilterChange("page", page);
+            if (limit !== query.limit) {
+              handleFilterChange("limit", limit);
+            }
+          },
+        }}
+      />
 
-        <LevelDetailModal
-          detailOpen={detailOpen}
-          setDetailOpen={setDetailOpen}
-          detailData={detailData}
-        />
+      <LevelEditModal
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        level={editingLevel}
+        onSave={handleSave}
+      />
 
-        <LevelEditModal
-          editOpen={editOpen}
-          setEditOpen={setEditOpen}
-          editing={editing}
-          form={form}
-          onFinish={submitEdit}
-          levels={levels}
-        />
+      <LevelDetailModal open={detailOpen} onOpenChange={setDetailOpen} data={detailData} />
 
-        <PermissionAssignModal
-          permOpen={permOpen}
-          setPermOpen={setPermOpen}
-          permTarget={permTarget}
-          permissionsAdmin={permissionsAdmin}
-          selectedAdminIds={selectedAdminIds}
-          permissionsWeb={permissionsWeb}
-          selectedWebIds={selectedWebIds}
-          setSelectedAdminIds={setSelectedAdminIds}
-          setSelectedWebIds={setSelectedWebIds}
-          permissionIdToKey={permissionIdToKey}
-        />
-      </Space>
-    </div>
+      <PermissionAssignModal open={permOpen} onOpenChange={setPermOpen} target={permTarget} />
+    </>
   );
 }

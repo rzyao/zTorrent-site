@@ -19,6 +19,10 @@ export const useUnbanReasonsLogic = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [editRecord, setEditRecord] = useState<UnbanReason | null>(null);
 
+  // 删除确认弹窗状态
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteRecord, setDeleteRecord] = useState<UnbanReason | null>(null);
+
   // --- 异步操作 ---
   const fetchList = useCallback(async () => {
     setLoading(true);
@@ -45,10 +49,29 @@ export const useUnbanReasonsLogic = () => {
     setQuery((prev) => ({ ...prev, search: searchText || undefined, page: 1 }));
   }, [searchText]);
 
-  const { execute: handleDelete } = useAsyncAction({
+  const { execute: executeDelete, loading: deleteLoading } = useAsyncAction({
     successMessage: "删除成功",
-    onSuccess: fetchList,
+    onSuccess: () => {
+      setDeleteConfirmOpen(false);
+      setDeleteRecord(null);
+      fetchList();
+    },
   });
+
+  const handleDeleteExecute = useCallback(() => {
+    if (deleteRecord) {
+      executeDelete(async () => {
+        await PunishmentDictsService.punishmentDictsControllerDelete({
+          id: deleteRecord.id,
+        });
+      });
+    }
+  }, [deleteRecord, executeDelete]);
+
+  const openDeleteConfirm = useCallback((record: UnbanReason) => {
+    setDeleteRecord(record);
+    setDeleteConfirmOpen(true);
+  }, []);
 
   const { execute: handleToggleStatus } = useAsyncAction({
     successMessage: "状态更新成功",
@@ -135,15 +158,7 @@ export const useUnbanReasonsLogic = () => {
               size="sm"
               danger
               className="text-[14px]"
-              onClick={() => {
-                if (confirm(`确定要删除原因 "${record.label}" 吗?`)) {
-                  handleDelete(async () => {
-                    await PunishmentDictsService.punishmentDictsControllerDelete({
-                      id: record.id,
-                    });
-                  });
-                }
-              }}
+              onClick={() => openDeleteConfirm(record)}
             >
               删除
             </Button>
@@ -151,7 +166,7 @@ export const useUnbanReasonsLogic = () => {
         ),
       },
     ],
-    [handleDelete, handleToggleStatus],
+    [handleToggleStatus, openDeleteConfirm],
   );
 
   // --- 效果钩子 ---
@@ -167,16 +182,22 @@ export const useUnbanReasonsLogic = () => {
     query,
     setQuery,
     columns,
+    // 搜索
+    searchText,
+    setSearchText,
+    handleSearch,
     // 弹窗
     createOpen,
     setCreateOpen,
     editOpen,
     setEditOpen,
     editRecord,
-    // 搜索
-    searchText,
-    setSearchText,
-    handleSearch,
+    // 删除弹窗
+    deleteConfirmOpen,
+    setDeleteConfirmOpen,
+    deleteRecord,
+    deleteLoading,
+    handleDeleteExecute,
     // 方法
     fetchList,
   };

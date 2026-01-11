@@ -4,6 +4,7 @@ import { Input } from "@/modules/admin/components/ui/input";
 import { Button } from "@/modules/admin/components/ui/button";
 import { useUnbanReasonsLogic } from "./useUnbanReasonsLogic";
 import { UnbanReasonModal } from "./UnbanReasonModal";
+import { ConfirmModal } from "@/modules/admin/components/ui/modal";
 import {
   Select,
   SelectContent,
@@ -28,6 +29,11 @@ export default function UnbanReasons() {
     editOpen,
     setEditOpen,
     editRecord,
+    deleteConfirmOpen,
+    setDeleteConfirmOpen,
+    deleteRecord,
+    deleteLoading,
+    handleDeleteExecute,
     fetchList,
   } = useUnbanReasonsLogic();
 
@@ -116,6 +122,28 @@ export default function UnbanReasons() {
         onOpenChange={setEditOpen}
         record={editRecord}
         onSuccess={fetchList}
+      />
+
+      {/* 删除确认弹窗 */}
+      <ConfirmModal
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        title="确认删除"
+        content={
+          <div className="space-y-2">
+            <div className="text-gray-600">确定要删除该解封原因吗？</div>
+            {deleteRecord && (
+              <div className="rounded bg-gray-50 px-3 py-2 text-sm">
+                <span className="font-medium text-gray-900">{deleteRecord.label}</span>
+                <span className="ml-2 text-gray-400">({deleteRecord.key})</span>
+              </div>
+            )}
+            <div className="text-xs text-gray-400">此操作无法撤销。</div>
+          </div>
+        }
+        onOk={handleDeleteExecute}
+        confirmLoading={deleteLoading}
+        okButtonProps={{ variant: "primary", danger: true }}
       />
     </>
   );

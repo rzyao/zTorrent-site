@@ -23,6 +23,10 @@ export const useBanDaysLogic = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [editRecord, setEditRecord] = useState<BanDay | null>(null);
 
+  // 删除弹窗状态
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteRecord, setDeleteRecord] = useState<BanDay | null>(null);
+
   // --- 异步操作 ---
   const fetchList = useCallback(async () => {
     setLoading(true);
@@ -50,10 +54,29 @@ export const useBanDaysLogic = () => {
   }, [searchText]);
 
   // 删除操作
-  const { execute: handleDelete } = useAsyncAction({
+  const { execute: executeDelete, loading: deleteLoading } = useAsyncAction({
     successMessage: "删除成功",
-    onSuccess: fetchList,
+    onSuccess: () => {
+      setDeleteConfirmOpen(false);
+      setDeleteRecord(null);
+      fetchList();
+    },
   });
+
+  const handleDeleteExecute = useCallback(() => {
+    if (deleteRecord) {
+      executeDelete(async () => {
+        await PunishmentDictsService.punishmentDictsControllerDelete({
+          id: deleteRecord.id,
+        });
+      });
+    }
+  }, [deleteRecord, executeDelete]);
+
+  const openDeleteConfirm = useCallback((record: BanDay) => {
+    setDeleteRecord(record);
+    setDeleteConfirmOpen(true);
+  }, []);
 
   // 状态切换操作
   const { execute: handleToggleStatus } = useAsyncAction({
@@ -141,15 +164,7 @@ export const useBanDaysLogic = () => {
               size="sm"
               danger
               className="text-[14px]"
-              onClick={() => {
-                if (confirm(`确定要删除封禁时长 "${record.label}" 吗?`)) {
-                  handleDelete(async () => {
-                    await PunishmentDictsService.punishmentDictsControllerDelete({
-                      id: record.id,
-                    });
-                  });
-                }
-              }}
+              onClick={() => openDeleteConfirm(record)}
             >
               删除
             </Button>
@@ -157,7 +172,7 @@ export const useBanDaysLogic = () => {
         ),
       },
     ],
-    [handleDelete, handleToggleStatus],
+    [handleToggleStatus, openDeleteConfirm],
   );
 
   // --- 效果钩子 ---
@@ -183,6 +198,12 @@ export const useBanDaysLogic = () => {
     editOpen,
     setEditOpen,
     editRecord,
+    // 删除弹窗
+    deleteConfirmOpen,
+    setDeleteConfirmOpen,
+    deleteRecord,
+    deleteLoading,
+    handleDeleteExecute,
     // 方法
     fetchList,
   };

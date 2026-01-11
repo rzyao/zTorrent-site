@@ -1,97 +1,103 @@
-import React from "react";
-import { Modal, Form, Input, Select, Button } from "antd";
-import type { RecordItem } from "../types";
-import type { RevokePunishmentDto } from "@/api/models/RevokePunishmentDto";
-import { PunishmentsService } from "@/api/services/PunishmentsService";
+import { useState, useEffect } from "react";
+import { Modal } from "@/modules/admin/components/ui/modal";
+import { Label } from "@/modules/admin/components/ui/label";
+import { Textarea } from "@/modules/admin/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/modules/admin/components/ui/select";
+import { PunishmentRecord, SelectOption } from "../types";
 
 interface RevokePunishmentModalProps {
-  revokeOpen: boolean;
-  setRevokeOpen: (v: boolean) => void;
-  revokeTarget: RecordItem | null;
-  revokeForm: any;
-  revokeReasonOptions: { label: string; value: string }[];
-  revokeReasonLoading: boolean;
-  revokeLoading: boolean;
-  setRevokeLoading: (v: boolean) => void;
-  fetchList: (params: { page: number; limit: number }) => void;
-  page: number;
-  pageSize: number;
-  message: any;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  record: PunishmentRecord | null;
+  reasonOptions: SelectOption[];
+  loading: boolean;
+  onConfirm: (data: { reason: string; detailReason?: string }) => void;
 }
 
-export const RevokePunishmentModal: React.FC<RevokePunishmentModalProps> = ({
-  revokeOpen,
-  setRevokeOpen,
-  revokeTarget,
-  revokeForm,
-  revokeReasonOptions,
-  revokeReasonLoading,
-  revokeLoading,
-  setRevokeLoading,
-  fetchList,
-  page,
-  pageSize,
-  message,
-}) => {
-  const handleRevoke = async () => {
-    try {
-      const values = await revokeForm.validateFields();
-      if (!revokeTarget?.id) return;
-      setRevokeLoading(true);
-      const req: RevokePunishmentDto = {
-        id: revokeTarget.id, // DTO expects 'id' for punishmentId
-        revokeReason: values.reason, // DTO expects 'revokeReason'
-        revokeDetailReason: values.detailReason, // DTO expects 'revokeDetailReason'
-      };
-      // 说明：后端API方法名为 punishmentsControllerRevoke（/punishments/revoke）
-      await PunishmentsService.punishmentsControllerRevoke(req);
-      message.success("撤销成功");
-      setRevokeOpen(false);
-      fetchList({ page, limit: pageSize });
-    } catch (e: any) {
-      if (e?.errorFields) return;
-      message.error(e?.message || "撤销失败");
-    } finally {
-      setRevokeLoading(false);
+export function RevokePunishmentModal({
+  open,
+  onOpenChange,
+  record,
+  reasonOptions,
+  loading,
+  onConfirm,
+}: RevokePunishmentModalProps) {
+  const [reason, setReason] = useState("");
+  const [detailReason, setDetailReason] = useState("");
+
+  // 重置表单
+  useEffect(() => {
+    if (open) {
+      setReason("");
+      setDetailReason("");
     }
+  }, [open]);
+
+  const handleConfirm = () => {
+    if (!reason) return;
+    onConfirm({ reason, detailReason });
   };
 
   return (
     <Modal
+      open={open}
+      onClose={() => onOpenChange(false)}
       title="撤销处罚"
-      open={revokeOpen}
-      onCancel={() => setRevokeOpen(false)}
-      footer={[
-        <Button key="cancel" onClick={() => setRevokeOpen(false)}>
-          取消
-        </Button>,
-        <Button
-          key="submit"
-          type="primary"
-          danger
-          loading={revokeLoading}
-          onClick={handleRevoke}
-        >
-          确定撤销
-        </Button>,
-      ]}
+      onOk={handleConfirm}
+      confirmLoading={loading}
+      okButtonProps={{ variant: "primary", danger: true }}
+      okText="确定撤销"
+      width={480}
     >
-      <Form form={revokeForm} layout="vertical">
-        <Form.Item
-          name="reason"
-          label="撤销原因"
-          rules={[{ required: true, message: "请选择撤销原因" }]}
-        >
-          <Select
-            options={revokeReasonOptions}
-            loading={revokeReasonLoading}
-            placeholder="请选择撤销原因"
+      <div className="space-y-4 py-2">
+        {record && (
+          <div className="rounded-md bg-gray-50 p-3 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-500">用户名：</span>
+              <span className="font-medium text-gray-900">{record.userUsername}</span>
+            </div>
+            <div className="mt-1 flex justify-between">
+              <span className="text-gray-500">处罚类型：</span>
+              <span className="font-medium text-gray-900">{record.typeLabel || record.type}</span>
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <Label htmlFor="revoke-reason" className="required">
+            撤销原因
+          </Label>
+          <Select value={reason} onValueChange={setReason}>
+            <SelectTrigger id="revoke-reason">
+              <SelectValue placeholder="请选择撤销原因" />
+            </SelectTrigger>
+            <SelectContent>
+              {reasonOptions.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="revoke-detail">撤销说明 (可选)</Label>
+          <Textarea
+            id="revoke-detail"
+            placeholder="请输入撤销说明，详细描述撤销原因..."
+            value={detailReason}
+            onChange={(e) => setDetailReason(e.target.value)}
+            rows={4}
           />
-        </Form.Item>
-        <Form.Item name="detailReason" label="撤销说明 (可选)">
-          <Input.TextArea rows={3} placeholder="请输入撤销说明" />
-        </Form.Item>
-      </Form>
+        </div>
+      </div>
     </Modal>
   );
-};
+}
