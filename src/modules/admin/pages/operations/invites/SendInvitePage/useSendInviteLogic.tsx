@@ -1,6 +1,9 @@
 import { useState, useMemo, useCallback } from "react";
-import { App, Form } from "antd";
 import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
 import { Service as InvitesService } from "@/api/services/Service";
 import { UsersService } from "@/api/services/UsersService";
 import { RolesService } from "@/api/services/RolesService";
@@ -12,18 +15,51 @@ import type { RoleDto } from "@/api/models/RoleDto";
 import type { SendInviteDto } from "@/api/models/SendInviteDto";
 import type { SelectOption, BatchGrantFormData } from "./types";
 
-/**
- * 发送邀请页面逻辑 Hook
- * 使用 TanStack Query useMutation 管理请求状态
- */
+const sendInviteSchema = z.object({
+  userId: z.string().min(1, "请输入用户ID"),
+  count: z.number().min(1, "数量必须大于0").default(1),
+  reason: z.string().min(1, "请输入原因"),
+});
+
+const batchGrantSchema = z.object({
+  logic: z.enum(["AND", "OR"]).default("AND"),
+  levels: z.array(z.string()).optional().default([]),
+  roles: z.array(z.string()).optional().default([]),
+  permanent: z.number().min(0).default(0),
+  temporaryCount: z.number().min(0).default(0),
+  temporaryExpiresAt: z.string().optional(),
+});
+
+type SendInviteFormValues = z.infer<typeof sendInviteSchema>;
+type BatchGrantFormValues = z.infer<typeof batchGrantSchema>;
+
 export function useSendInviteLogic() {
-  const { message } = App.useApp();
-  const [form] = Form.useForm();
   const [batchOpen, setBatchOpen] = useState(false);
-  const [batchForm] = Form.useForm();
   const [rolesOptions, setRolesOptions] = useState<SelectOption[]>([]);
   const [levelsOptions, setLevelsOptions] = useState<SelectOption[]>([]);
-  const [previewCount, setPreviewCount] = useState(0);
+  const [previewCount, setPreviewCount] = useState<number | null>(null);
+
+  // Main Form
+  const mainForm = useForm<SendInviteFormValues>({
+    resolver: zodResolver(sendInviteSchema),
+    defaultValues: {
+      userId: "",
+      count: 1,
+      reason: "",
+    },
+  });
+
+  // Batch Form
+  const batchForm = useForm<BatchGrantFormValues>({
+    resolver: zodResolver(batchGrantSchema),
+    defaultValues: {
+      logic: "AND",
+      levels: [],
+      roles: [],
+      permanent: 0,
+      temporaryCount: 0,
+    },
+  });
 
   // 权限检查
   const perms = useMemo(() => {
@@ -51,27 +87,21 @@ export function useSendInviteLogic() {
       const ok = (resp as any)?.code === 1000 || !!(resp as any)?.data?.recordId;
       if (ok) {
         const rid = (resp as any)?.data?.recordId;
-        message.success(`邀请已发送，记录ID：${rid}`);
-        form.resetFields();
+        toast.success(`邀请已发送，记录ID：${rid}`);
+        mainForm.reset();
       } else {
-        message.error((resp as any)?.message || "发送失败");
+        toast.error((resp as any)?.message || "发送失败");
       }
     },
     onError: (e: any) => {
-      message.error(e?.response?.data?.message || e?.message || "发送失败");
+      toast.error(e?.response?.data?.message || e?.message || "发送失败");
     },
   });
 
   // 处理提交
-  const handleSubmit = useCallback(async () => {
-    try {
-      const v = (await form.validateFields()) as SendInviteDto;
-      sendInviteMutation.mutate(v);
-    } catch (e: any) {
-      if (e?.errorFields) return;
-      message.error(e?.response?.data?.message || e?.message || "发送失败");
-    }
-  }, [form, sendInviteMutation, message]);
+  const handleMainSubmit = mainForm.handleSubmit((values) => {
+    sendInviteMutation.mutate(values as any);
+  });
 
   // 加载选项
   const loadOptions = useCallback(async () => {
@@ -94,7 +124,7 @@ export function useSendInviteLogic() {
   }, []);
 
   // 构建用户列表请求
-  const buildUserListRequest = useCallback((values: BatchGrantFormData): ListUsersDto => {
+  const buildUserListRequest = useCallback((values: BatchGrantFormValues): ListUsersDto => {
     const rules: AdvancedRuleDto[] = [];
     const lvls: string[] = Array.isArray(values.levels) ? values.levels : [];
     const roles: string[] = Array.isArray(values.roles) ? values.roles : [];
@@ -110,7 +140,7 @@ export function useSendInviteLogic() {
 
   // 预览匹配 Mutation
   const previewMutation = useMutation({
-    mutationFn: async (values: BatchGrantFormData) => {
+    mutationFn: async (values: BatchGrantFormValues) => {
       const req = buildUserListRequest(values);
       let total = 0,
         page = 1;
@@ -125,32 +155,26 @@ export function useSendInviteLogic() {
     },
     onSuccess: (total) => {
       setPreviewCount(total);
-      message.success(`匹配用户数：${total}`);
+      toast.success(`匹配用户数：${total}`);
     },
     onError: (e: any) => {
-      message.error(e?.response?.data?.message || e?.message || "预览失败");
+      toast.error(e?.response?.data?.message || e?.message || "预览失败");
     },
   });
 
   // 预览匹配处理
-  const previewMatching = useCallback(async () => {
-    try {
-      const v = (await batchForm.validateFields()) as BatchGrantFormData;
-      previewMutation.mutate(v);
-    } catch (e: any) {
-      if (e?.errorFields) return;
-    }
-  }, [batchForm, previewMutation]);
+  const handlePreview = batchForm.handleSubmit((values) => {
+    previewMutation.mutate(values);
+  });
 
   // 批量授予 Mutation
   const batchGrantMutation = useMutation({
-    mutationFn: async (values: BatchGrantFormData) => {
+    mutationFn: async (values: BatchGrantFormValues) => {
       const req = buildUserListRequest(values);
       let page = 1,
         success = 0,
         fail = 0;
       const { permanent = 0, temporaryCount = 0, temporaryExpiresAt } = values;
-      const exp = temporaryExpiresAt?.toISOString?.();
 
       while (true) {
         const usersResp: any = await UsersService.usersControllerListUsers({ ...req, page });
@@ -162,7 +186,7 @@ export function useSendInviteLogic() {
               userId: String(u.id),
               permanent,
               temporaryCount,
-              temporaryExpiresAt: exp,
+              temporaryExpiresAt,
             });
             success++;
           } catch {
@@ -175,23 +199,20 @@ export function useSendInviteLogic() {
       return { success, fail };
     },
     onSuccess: ({ success, fail }) => {
-      message.success(`批量授予完成：成功 ${success}，失败 ${fail}`);
+      toast.success(`批量授予完成：成功 ${success}，失败 ${fail}`);
       setBatchOpen(false);
+      batchForm.reset();
+      setPreviewCount(null);
     },
     onError: (e: any) => {
-      message.error(e?.response?.data?.message || e?.message || "批量授予失败");
+      toast.error(e?.response?.data?.message || e?.message || "批量授予失败");
     },
   });
 
   // 执行批量授予
-  const executeBatchGrant = useCallback(async () => {
-    try {
-      const v = (await batchForm.validateFields()) as BatchGrantFormData;
-      batchGrantMutation.mutate(v);
-    } catch (e: any) {
-      if (e?.errorFields) return;
-    }
-  }, [batchForm, batchGrantMutation]);
+  const handleBatchSubmit = batchForm.handleSubmit((values) => {
+    batchGrantMutation.mutate(values);
+  });
 
   // 打开批量授予弹窗
   const openBatchModal = useCallback(() => {
@@ -202,14 +223,16 @@ export function useSendInviteLogic() {
   // 关闭批量授予弹窗
   const closeBatchModal = useCallback(() => {
     setBatchOpen(false);
-  }, []);
+    batchForm.reset();
+    setPreviewCount(null);
+  }, [batchForm]);
 
   // 计算加载状态
   const batchLoading = previewMutation.isPending || batchGrantMutation.isPending;
   const submitLoading = sendInviteMutation.isPending;
 
   return {
-    form,
+    mainForm,
     batchOpen,
     batchForm,
     batchLoading,
@@ -219,10 +242,10 @@ export function useSendInviteLogic() {
     previewCount,
     canOfficial,
     canManageInvites,
-    handleSubmit,
+    handleMainSubmit,
     openBatchModal,
     closeBatchModal,
-    previewMatching,
-    executeBatchGrant,
+    handlePreview,
+    handleBatchSubmit,
   };
 }

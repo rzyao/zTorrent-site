@@ -63,8 +63,8 @@
 
 处理零散的页面。
 
-- [ ] **Operations**: `TicketsPage`, `SendInvitePage`, `InvitesListPage`.
-- [ ] **Economy**: `StoreItemsPage`, `Bonus` 相关 Modals.
+- [x] **Operations**: `TicketsPage`, `SendInvitePage`, `InvitesListPage`, `InvitesStatisticsPage`.
+- [x] **Economy**: `StoreItemsPage`, `Bonus` 相关模块 (Adjustments, Rules, BatchAdjust, Ledger).
 - [ ] **Content**: `TorrentsList` 及其 Modals.
 - [ ] **Layouts**: `KeepAliveTabs` (Tabs 组件), `Dashboard` (Cards).
 

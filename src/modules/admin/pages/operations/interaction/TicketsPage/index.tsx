@@ -1,11 +1,17 @@
 import { DataTable } from "@/modules/admin/components/ui/data-table";
 import { Button } from "@/modules/admin/components/ui/button";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Loader2 } from "lucide-react";
 import { useTicketsLogic } from "./useTicketsLogic";
 import { TicketModal } from "./components/TicketModal";
 import { StandardSelect as Select } from "@/modules/admin/components/ui/select";
 import { SearchInput } from "@/modules/admin/components/ui/search-input";
-import { Card } from "antd";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/modules/admin/components/ui/dialog";
 import { statusOptions, categoryOptions } from "./constants";
 
 export default function TicketsPage() {
@@ -21,10 +27,16 @@ export default function TicketsPage() {
     createOpen,
     setCreateOpen,
     createLoading,
-    createForm,
+    control,
+    errors,
+    // 确认弹窗
+    confirmOpen,
+    setConfirmOpen,
+    handleConfirmClose,
+    isClosing,
     // 操作
     handleSearch,
-    handleSubmitCreate,
+    onSubmitCreate,
   } = useTicketsLogic();
 
   return (
@@ -37,16 +49,13 @@ export default function TicketsPage() {
           { title: "已解决", value: stats.resolved, color: "text-green-500" },
           { title: "已关闭", value: stats.closed, color: "text-muted-foreground" },
         ].map((item) => (
-          <Card
+          <div
             key={item.title}
-            size="small"
-            className="bg-card/50 border-none shadow-sm backdrop-blur-sm"
+            className="bg-card border-border/50 rounded-lg border p-4 shadow-sm"
           >
-            <div className="p-2">
-              <div className="text-muted-foreground text-sm font-medium">{item.title}</div>
-              <div className={`text-2xl font-bold ${item.color}`}>{item.value}</div>
-            </div>
-          </Card>
+            <div className="text-muted-foreground text-sm font-medium">{item.title}</div>
+            <div className={`mt-1 text-2xl font-bold ${item.color}`}>{item.value}</div>
+          </div>
         ))}
       </div>
 
@@ -105,10 +114,32 @@ export default function TicketsPage() {
       <TicketModal
         open={createOpen}
         onOpenChange={setCreateOpen}
-        form={createForm}
-        onFinish={handleSubmitCreate}
+        control={control}
+        errors={errors}
+        onFinish={onSubmitCreate}
         loading={createLoading}
       />
+
+      {/* 关闭工单确认弹窗 */}
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>确认关闭该工单？</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 text-sm text-neutral-500">
+            关闭后工单将不再接受回复，且状态变更为“已关闭”。
+          </div>
+          <DialogFooter>
+            <Button variant="default" onClick={() => setConfirmOpen(false)}>
+              取消
+            </Button>
+            <Button variant="primary" danger onClick={handleConfirmClose} loading={isClosing}>
+              {isClosing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              确认关闭
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

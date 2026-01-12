@@ -1,27 +1,31 @@
-import { memo, useCallback } from "react";
-import { Form, Select, InputNumber, DatePicker } from "antd";
-import type { FormInstance } from "antd";
+import { memo } from "react";
+import { Controller } from "react-hook-form";
 import { Button } from "@/modules/admin/components/ui/button";
-import { Modal } from "@/modules/admin/components/ui/modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/modules/admin/components/ui/dialog";
+import { Input } from "@/modules/admin/components/ui/input";
+import { Label } from "@/modules/admin/components/ui/label";
+import { StandardSelect as Select } from "@/modules/admin/components/ui/select";
 import { LOGIC_OPTIONS } from "../constants";
 import type { SelectOption } from "../types";
 
 interface BatchGrantModalProps {
   open: boolean;
   onClose: () => void;
-  form: FormInstance;
+  form: any;
   loading: boolean;
   rolesOptions: SelectOption[];
   levelsOptions: SelectOption[];
-  previewCount: number;
+  previewCount: number | null;
   onPreview: () => void;
   onSubmit: () => void;
 }
 
-/**
- * 批量授予邀请名额弹窗
- * 使用 memo 优化性能
- */
 export const BatchGrantModal = memo(function BatchGrantModal({
   open,
   onClose,
@@ -33,51 +37,132 @@ export const BatchGrantModal = memo(function BatchGrantModal({
   onPreview,
   onSubmit,
 }: BatchGrantModalProps) {
-  const handleClose = useCallback(() => {
-    onClose();
-  }, [onClose]);
+  const { control } = form;
 
   return (
-    <Modal open={open} onClose={handleClose} title="批量授予邀请名额" className="max-w-[600px]">
-      <Form form={form} layout="vertical" className="p-2">
-        <div className="grid grid-cols-2 gap-4">
-          <Form.Item name="levels" label="用户等级（多选）">
-            <Select mode="multiple" allowClear options={levelsOptions} placeholder="筛选等级" />
-          </Form.Item>
-          <Form.Item name="roles" label="用户角色（多选）">
-            <Select mode="multiple" allowClear options={rolesOptions} placeholder="筛选角色" />
-          </Form.Item>
-        </div>
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle>批量授予邀请名额</DialogTitle>
+        </DialogHeader>
 
-        <Form.Item name="logic" label="过滤逻辑" initialValue="OR">
-          <Select options={LOGIC_OPTIONS} />
-        </Form.Item>
-
-        <div className="grid grid-cols-2 gap-4">
-          <Form.Item name="permanent" label="永久名额" initialValue={0}>
-            <InputNumber min={0} className="w-full" placeholder="输入数量" />
-          </Form.Item>
-          <Form.Item name="temporaryCount" label="临时名额" initialValue={0}>
-            <InputNumber min={0} className="w-full" placeholder="输入数量" />
-          </Form.Item>
-        </div>
-
-        <Form.Item name="temporaryExpiresAt" label="临时名额过期时间">
-          <DatePicker showTime className="w-full" />
-        </Form.Item>
-
-        <div className="mt-6 flex items-center justify-between rounded-lg bg-gray-50 p-4">
-          <div className="flex gap-2">
-            <Button variant="default" onClick={onPreview} loading={loading}>
-              预览匹配
-            </Button>
-            <Button variant="primary" onClick={onSubmit} loading={loading}>
-              提交执行
-            </Button>
+        <div className="space-y-4 py-2">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label>用户等级（多选）</Label>
+              <Controller
+                name="levels"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    mode="multiple"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    options={levelsOptions}
+                    placeholder="筛选等级"
+                  />
+                )}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>用户角色（多选）</Label>
+              <Controller
+                name="roles"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    mode="multiple"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    options={rolesOptions}
+                    placeholder="筛选角色"
+                  />
+                )}
+              />
+            </div>
           </div>
-          <span className="font-semibold text-blue-600">匹配用户数：{previewCount}</span>
+
+          <div className="space-y-1.5">
+            <Label>过滤逻辑</Label>
+            <Controller
+              name="logic"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  options={LOGIC_OPTIONS}
+                />
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label>永久名额</Label>
+              <Controller
+                name="permanent"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    type="number"
+                    min={0}
+                    value={field.value}
+                    onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                    placeholder="输入数量"
+                  />
+                )}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>临时名额</Label>
+              <Controller
+                name="temporaryCount"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    type="number"
+                    min={0}
+                    value={field.value}
+                    onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                    placeholder="输入数量"
+                  />
+                )}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>临时名额过期时间</Label>
+            <Controller
+              name="temporaryExpiresAt"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  type="datetime-local"
+                  value={field.value || ""}
+                  onChange={field.onChange}
+                  className="w-full"
+                />
+              )}
+            />
+          </div>
+
+          <div className="mt-6 flex items-center justify-between rounded-lg bg-gray-50 p-4">
+            <div className="flex gap-2">
+              <Button type="button" variant="default" onClick={onPreview} loading={loading}>
+                预览匹配
+              </Button>
+              <Button type="button" variant="primary" onClick={onSubmit} loading={loading}>
+                提交执行
+              </Button>
+            </div>
+            <span className="text-sm font-semibold text-blue-600">
+              匹配用户数：{previewCount !== null ? previewCount : "-"}
+            </span>
+          </div>
         </div>
-      </Form>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 });

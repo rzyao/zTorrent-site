@@ -6,13 +6,13 @@ import type { StatisticRow, StatisticsQuery } from "./types";
 
 /**
  * 邀请统计页面逻辑 Hook
- * 使用 TanStack Query useMutation 管理请求状态
  */
 export function useStatisticsLogic() {
   const [rows, setRows] = useState<StatisticRow[]>([]);
 
   // 筛选条件状态
-  const [dateRange, setDateRange] = useState<[any, any] | null>(null);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [granularity, setGranularity] = useState<string>("day");
   const [issuerId, setIssuerId] = useState("");
 
@@ -34,17 +34,18 @@ export function useStatisticsLogic() {
   // 执行统计
   const fetchStat = useCallback(() => {
     const params: StatisticsQuery = {
-      dateFrom: dateRange?.[0]?.toISOString?.() ?? undefined,
-      dateTo: dateRange?.[1]?.toISOString?.() ?? undefined,
+      dateFrom: dateFrom ? new Date(dateFrom).toISOString() : undefined,
+      dateTo: dateTo ? new Date(dateTo).toISOString() : undefined,
       granularity: (granularity as "day" | "week" | "month") || "day",
       issuerId: issuerId.trim() || undefined,
     };
     statisticsMutation.mutate(params);
-  }, [dateRange, granularity, issuerId, statisticsMutation]);
+  }, [dateFrom, dateTo, granularity, issuerId, statisticsMutation]);
 
   // 重置筛选条件
   const resetFilters = useCallback(() => {
-    setDateRange(null);
+    setDateFrom("");
+    setDateTo("");
     setGranularity("day");
     setIssuerId("");
     setRows([]);
@@ -53,8 +54,10 @@ export function useStatisticsLogic() {
   return {
     rows,
     loading: statisticsMutation.isPending,
-    dateRange,
-    setDateRange,
+    dateFrom,
+    setDateFrom,
+    dateTo,
+    setDateTo,
     granularity,
     setGranularity,
     issuerId,

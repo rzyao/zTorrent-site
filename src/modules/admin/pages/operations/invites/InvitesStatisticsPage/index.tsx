@@ -1,80 +1,99 @@
 import { useMemo } from "react";
-import { DatePicker } from "antd";
-import { BarChart3, RefreshCw } from "lucide-react";
+import { BarChart3, RefreshCw, Filter } from "lucide-react";
 import { useStatisticsLogic } from "./useStatisticsLogic";
 import { DataTable } from "@/modules/admin/components/ui/data-table";
 import { Button } from "@/modules/admin/components/ui/button";
 import { Input } from "@/modules/admin/components/ui/input";
 import { StandardSelect } from "@/modules/admin/components/ui/select";
+import { Label } from "@/modules/admin/components/ui/label";
 import { GRANULARITY_OPTIONS, STATISTICS_COLUMNS } from "./constants";
 import type { StatisticRow } from "./types";
-
-const { RangePicker } = DatePicker;
 
 /** 行 Key 提取函数 */
 const getRowKey = (record: StatisticRow) => record.time;
 
-/**
- * 邀请统计页面
- * 已完成架构层重构：
- * - TanStack Query useMutation 管理请求状态
- * - Admin UI 组件
- * - 逻辑与视图分离
- * - 性能优化 (useMemo/useCallback)
- */
 export default function InvitesStatisticsPage() {
   const {
     rows,
     loading,
-    dateRange,
-    setDateRange,
+    dateFrom,
+    setDateFrom,
+    dateTo,
+    setDateTo,
     granularity,
     setGranularity,
     issuerId,
     setIssuerId,
     fetchStat,
+    resetFilters,
   } = useStatisticsLogic();
 
   // 工具栏（memoize 以优化性能）
   const toolbarLeft = useMemo(
     () => (
-      <div className="flex flex-wrap items-center gap-3">
-        <RangePicker
-          value={dateRange}
-          onChange={(dates) => setDateRange(dates as [any, any] | null)}
-          placeholder={["开始日期", "结束日期"]}
-          className="w-[260px]"
-        />
+      <div className="flex flex-wrap items-end gap-3 rounded-lg border bg-slate-50/50 p-4 dark:bg-slate-900/10">
+        <div className="space-y-1.5">
+          <Label size="sm">统计时间范围</Label>
+          <div className="flex items-center gap-2">
+            <Input
+              type="datetime-local"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="w-[200px]"
+            />
+            <span className="text-muted-foreground text-xs font-medium italic">至</span>
+            <Input
+              type="datetime-local"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="w-[200px]"
+            />
+          </div>
+        </div>
 
-        <StandardSelect
-          value={granularity}
-          onValueChange={setGranularity}
-          options={GRANULARITY_OPTIONS}
-          placeholder="统计粒度"
-          className="w-28"
-        />
+        <div className="space-y-1.5">
+          <Label size="sm">粒度</Label>
+          <StandardSelect
+            value={granularity}
+            onValueChange={setGranularity}
+            options={GRANULARITY_OPTIONS}
+            placeholder="粒度"
+            className="w-28"
+          />
+        </div>
 
-        <Input
-          value={issuerId}
-          onChange={(e) => setIssuerId(e.target.value)}
-          placeholder="发起人ID（可选）"
-          className="w-40"
-        />
+        <div className="space-y-1.5">
+          <Label size="sm">发起人ID (选填)</Label>
+          <Input
+            value={issuerId}
+            onChange={(e) => setIssuerId(e.target.value)}
+            placeholder="搜索发起人..."
+            className="w-40"
+          />
+        </div>
 
-        <Button variant="primary" onClick={fetchStat} loading={loading}>
-          <RefreshCw className="mr-1.5 h-4 w-4" />
-          统计
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="primary" onClick={fetchStat} loading={loading}>
+            <BarChart3 className="mr-1.5 h-4 w-4" />
+            分析
+          </Button>
+          <Button variant="default" onClick={resetFilters}>
+            重置
+          </Button>
+        </div>
       </div>
     ),
     [
-      dateRange,
-      setDateRange,
+      dateFrom,
+      setDateFrom,
+      dateTo,
+      setDateTo,
       granularity,
       setGranularity,
       issuerId,
       setIssuerId,
       fetchStat,
+      resetFilters,
       loading,
     ],
   );
@@ -82,10 +101,14 @@ export default function InvitesStatisticsPage() {
   return (
     <div className="flex h-full flex-col space-y-4">
       {/* 页面标题 */}
-      <div className="flex shrink-0 items-center gap-2 text-lg font-semibold text-gray-900">
-        <BarChart3 className="h-5 w-5" />
-        邀请统计
+      <div className="flex shrink-0 items-center justify-between">
+        <div className="flex items-center gap-2 text-lg font-semibold">
+          <Filter className="text-primary h-5 w-5" />
+          邀请数据统计分析
+        </div>
       </div>
+
+      {toolbarLeft}
 
       {/* 数据表格 */}
       <DataTable
@@ -94,8 +117,7 @@ export default function InvitesStatisticsPage() {
         dataSource={rows}
         rowKey={getRowKey}
         loading={loading}
-        toolbarLeft={toolbarLeft}
-        emptyText="暂无统计数据，请选择时间范围后点击「统计」"
+        emptyText="暂无统计数据，请选择时间范围后点击「分析」"
       />
     </div>
   );

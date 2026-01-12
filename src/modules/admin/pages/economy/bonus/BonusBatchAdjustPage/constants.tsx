@@ -1,6 +1,6 @@
 import type { Column } from "@/modules/admin/components/ui/data-table";
 import type { BatchItem, ResultItem } from "./types";
-import { Tag } from "antd";
+import { Tag } from "@/modules/admin/components/ui/tag";
 
 export const PREVIEW_COLUMNS: Column<BatchItem>[] = [
   { title: "用户ID", dataIndex: "userId", key: "userId", width: 160 },

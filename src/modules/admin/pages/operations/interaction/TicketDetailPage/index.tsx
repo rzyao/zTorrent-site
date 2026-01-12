@@ -13,7 +13,7 @@ export default function TicketDetailPage() {
     form,
     files,
     setFiles,
-    beforeUpload,
+    handleFileUpload,
     onRemoveFile,
     resolveTicket,
     closeTicket,
@@ -37,7 +37,7 @@ export default function TicketDetailPage() {
       <TicketReplyForm
         form={form}
         files={files}
-        beforeUpload={beforeUpload}
+        handleFileUpload={handleFileUpload}
         onRemoveFile={onRemoveFile}
         loading={replying}
         onSubmit={handleReply}

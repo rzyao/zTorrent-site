@@ -6,8 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
 import { TicketsService } from "@/api/services/TicketsService";
-import type { UploadFile } from "antd/es/upload/interface";
-import { Upload } from "antd";
 
 const replySchema = z.object({
   content: z.string().min(1, "请输入回复内容"),
@@ -16,11 +14,18 @@ const replySchema = z.object({
 
 export type ReplyFormValues = z.infer<typeof replySchema>;
 
+export interface TicketAttachment {
+  uid: string;
+  name: string;
+  url: string;
+  size?: number;
+}
+
 export function useTicketDetailLogic() {
   const navigate = useNavigate();
   const { id = "" } = useParams();
   const queryClient = useQueryClient();
-  const [files, setFiles] = useState<UploadFile[]>([]);
+  const [files, setFiles] = useState<TicketAttachment[]>([]);
 
   // RHF setup
   const form = useForm<ReplyFormValues>({
@@ -44,7 +49,7 @@ export function useTicketDetailLogic() {
     enabled: !!id,
   });
 
-  // Close Mutation
+  // Mutations
   const closeMutation = useMutation({
     mutationFn: async () => {
       await TicketsService.ticketsControllerClose({
@@ -100,7 +105,7 @@ export function useTicketDetailLogic() {
   });
 
   // Upload Logic
-  const beforeUpload = async (file: File) => {
+  const handleFileUpload = async (file: File) => {
     try {
       const res: any = await TicketsService.ticketsControllerUpload({
         ticketId: id,
@@ -124,25 +129,27 @@ export function useTicketDetailLogic() {
       setFiles((prev) => [
         ...prev,
         {
-          uid: String(Date.now()),
+          uid: String(Date.now() + Math.random()),
           name: att?.name || file.name,
-          status: "done",
           url: att?.url,
-        } as any,
+          size: att?.size || file.size,
+        },
       ]);
 
-      return false;
+      toast.success(`附件 ${file.name} 上传成功`);
     } catch (e: any) {
       toast.error(e?.response?.data?.message || e?.message || "上传失败");
-      return Upload.LIST_IGNORE;
     }
   };
 
-  const onRemoveFile = (file: UploadFile) => {
-    setFiles((fs) => fs.filter((x) => x.uid !== file.uid));
+  const onRemoveFile = (uid: string) => {
+    const fileToRemove = files.find((f) => f.uid === uid);
+    if (!fileToRemove) return;
+
+    setFiles((fs) => fs.filter((x) => x.uid !== uid));
     const currentAttachments = form.getValues("attachments") || [];
     const newAttachments = currentAttachments.filter(
-      (x: any) => x.name !== file.name || x.url !== (file as any).url,
+      (x: any) => x.name !== fileToRemove.name || x.url !== fileToRemove.url,
     );
     form.setValue("attachments", newAttachments);
   };
@@ -159,8 +166,8 @@ export function useTicketDetailLogic() {
     replies: data?.replies,
     form,
     files,
-    setFiles, // Exposed just in case, though onRemoveFile should be preferred
-    beforeUpload,
+    setFiles,
+    handleFileUpload,
     onRemoveFile,
     closeTicket: closeMutation.mutate,
     resolveTicket: resolveMutation.mutate,

@@ -2,19 +2,20 @@ import { useCallback, useMemo } from "react";
 import { useInvitesListLogic } from "./useInvitesListLogic";
 import { DataTable } from "@/modules/admin/components/ui/data-table";
 import { InvitesFilter } from "./components/InvitesFilter";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/modules/admin/components/ui/dialog";
+import { Button } from "@/modules/admin/components/ui/button";
+import { Loader2 } from "lucide-react";
 import type { InviteRecord } from "./types";
 
 /** 行 Key 提取函数 */
 const getRowKey = (record: InviteRecord) => record.id;
 
-/**
- * 邀请列表管理页面
- * 已完成架构层重构：
- * - TanStack Query 数据管理 (useQuery + useMutation)
- * - Admin UI 组件
- * - 逻辑与视图分离
- * - 性能优化 (memo/useMemo/useCallback)
- */
 export default function InvitesListPage() {
   const {
     items,
@@ -27,9 +28,15 @@ export default function InvitesListPage() {
     onSearch,
     columns,
     handleExport,
+    // 弹窗状态
+    confirmOpen,
+    setConfirmOpen,
+    pendingAction,
+    handleConfirmAction,
+    isProcessing,
   } = useInvitesListLogic();
 
-  // 分页变更回调（稳定引用）
+  // 分页变更回调
   const handlePageChange = useCallback(
     (p: number, s: number) => {
       setPage(p);
@@ -38,7 +45,7 @@ export default function InvitesListPage() {
     [setPage, setPageSize],
   );
 
-  // 分页配置（memoize 以优化性能）
+  // 分页配置
   const pagination = useMemo(
     () => ({
       current: page,
@@ -49,23 +56,37 @@ export default function InvitesListPage() {
     [page, pageSize, total, handlePageChange],
   );
 
-  // 工具栏左侧（筛选器）
-  const toolbarLeft = useMemo(
-    () => <InvitesFilter onSearch={onSearch} onExport={handleExport} />,
-    [onSearch, handleExport],
-  );
-
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col space-y-4">
+      <InvitesFilter onSearch={onSearch} onExport={handleExport} />
+
       <DataTable
         className="min-h-0 flex-1"
         columns={columns}
         dataSource={items}
         rowKey={getRowKey}
         loading={isLoading}
-        toolbarLeft={toolbarLeft}
         pagination={pagination}
       />
+
+      {/* 确认操作弹窗 */}
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>{pendingAction?.title}</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 text-sm text-neutral-500">{pendingAction?.content}</div>
+          <DialogFooter>
+            <Button variant="default" onClick={() => setConfirmOpen(false)}>
+              取消
+            </Button>
+            <Button variant="primary" onClick={handleConfirmAction} loading={isProcessing}>
+              {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              确认执行
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

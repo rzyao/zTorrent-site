@@ -1,17 +1,16 @@
+import { useRef } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { ReplyFormValues } from "../hooks/useTicketDetailLogic";
+import { ReplyFormValues, TicketAttachment } from "../hooks/useTicketDetailLogic";
 import { Button } from "@/modules/admin/components/ui/button";
 import { Textarea } from "@/modules/admin/components/ui/textarea";
 import { Label } from "@/modules/admin/components/ui/label";
-import { Upload } from "antd";
-import type { UploadFile } from "antd/es/upload/interface";
-import { Loader2, Paperclip, X } from "lucide-react";
+import { Paperclip, X } from "lucide-react";
 
 interface TicketReplyFormProps {
   form: UseFormReturn<ReplyFormValues>;
-  files: UploadFile[];
-  beforeUpload: (file: File) => Promise<any>;
-  onRemoveFile: (file: UploadFile) => void;
+  files: TicketAttachment[];
+  handleFileUpload: (file: File) => Promise<void>;
+  onRemoveFile: (uid: string) => void;
   onReset: () => void;
   onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   loading: boolean;
@@ -20,16 +19,29 @@ interface TicketReplyFormProps {
 export function TicketReplyForm({
   form,
   files,
-  beforeUpload,
+  handleFileUpload,
   onRemoveFile,
   onReset,
   onSubmit,
   loading,
 }: TicketReplyFormProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const {
     register,
     formState: { errors },
   } = form;
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files;
+    if (selectedFiles) {
+      for (let i = 0; i < selectedFiles.length; i++) {
+        await handleFileUpload(selectedFiles[i]);
+      }
+      // Reset input value to allow selecting same file again
+      e.target.value = "";
+    }
+  };
 
   return (
     <div className="bg-card text-card-foreground rounded-lg border shadow-sm">
@@ -55,17 +67,22 @@ export function TicketReplyForm({
           <div className="space-y-2">
             <Label>附件资料</Label>
             <div className="flex flex-col gap-2">
-              <Upload
+              <input
+                type="file"
                 multiple
-                fileList={files}
-                beforeUpload={beforeUpload as any}
-                onRemove={onRemoveFile}
-                showUploadList={false}
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="default"
+                size="sm"
+                className="w-fit"
+                onClick={() => fileInputRef.current?.click()}
               >
-                <Button type="button" variant="default" size="sm">
-                  <Paperclip className="mr-2 h-4 w-4" /> 选择附件
-                </Button>
-              </Upload>
+                <Paperclip className="mr-2 h-4 w-4" /> 选择附件
+              </Button>
 
               {/* Custom File List Display */}
               {files.length > 0 && (
@@ -78,7 +95,7 @@ export function TicketReplyForm({
                       <span className="max-w-[150px] truncate">{file.name}</span>
                       <button
                         type="button"
-                        onClick={() => onRemoveFile(file)}
+                        onClick={() => onRemoveFile(file.uid)}
                         className="text-muted-foreground hover:text-destructive"
                       >
                         <X className="h-3 w-3" />

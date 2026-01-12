@@ -1,21 +1,15 @@
 import { useMemo } from "react";
-import { Form, Input } from "antd";
-import { ShieldCheck } from "lucide-react";
+import { Controller } from "react-hook-form";
+import { ShieldCheck, Mail, User, Info } from "lucide-react";
 import { useSendInviteLogic } from "./useSendInviteLogic";
 import { BatchGrantModal } from "./components/BatchGrantModal";
 import { Button } from "@/modules/admin/components/ui/button";
+import { Input } from "@/modules/admin/components/ui/input";
+import { Label } from "@/modules/admin/components/ui/label";
 
-/**
- * 发送官方邀请页面
- * 已完成架构层重构：
- * - TanStack Query useMutation 管理请求状态
- * - Admin UI 组件
- * - 逻辑与视图分离
- * - 性能优化 (memo/useMemo/useCallback)
- */
 export default function SendInvitePage() {
   const {
-    form,
+    mainForm,
     batchOpen,
     batchForm,
     batchLoading,
@@ -25,23 +19,28 @@ export default function SendInvitePage() {
     previewCount,
     canOfficial,
     canManageInvites,
-    handleSubmit,
+    handleMainSubmit,
     openBatchModal,
     closeBatchModal,
-    previewMatching,
-    executeBatchGrant,
+    handlePreview,
+    handleBatchSubmit,
   } = useSendInviteLogic();
+
+  const {
+    control,
+    formState: { errors },
+  } = mainForm;
 
   // 无权限提示
   const noPermissionContent = useMemo(
     () => (
       <div className="flex h-full items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
             <ShieldCheck className="h-8 w-8 text-red-500" />
           </div>
-          <h2 className="mb-2 text-xl font-semibold text-gray-900">无权限</h2>
-          <p className="text-gray-500">申请该权限或联系管理员</p>
+          <h2 className="mb-2 text-xl font-semibold">无权限</h2>
+          <p className="text-muted-foreground">申请该权限或联系管理员</p>
         </div>
       </div>
     ),
@@ -53,42 +52,83 @@ export default function SendInvitePage() {
   }
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-6 p-4">
       {/* 发送官方邀请卡片 */}
-      <div className="rounded-lg bg-white p-6 shadow-sm">
-        <h2 className="mb-6 text-lg font-semibold text-gray-900">发送官方邀请</h2>
-        <Form form={form} layout="vertical" className="max-w-2xl">
-          <Form.Item
-            name="email"
-            label="受邀邮箱"
-            rules={[
-              { required: true, message: "请输入邮箱" },
-              { type: "email", message: "邮箱格式不正确" },
-            ]}
-          >
-            <Input placeholder="name@example.com" size="large" allowClear />
-          </Form.Item>
-          <Form.Item
-            name="username"
-            label="受邀用户名"
-            rules={[{ required: true, message: "请输入用户名" }]}
-          >
-            <Input placeholder="请输入用户名" size="large" allowClear />
-          </Form.Item>
-          <Form.Item className="mt-8">
-            <div className="flex gap-3">
-              <Button variant="primary" size="lg" onClick={handleSubmit} loading={submitLoading}>
-                <ShieldCheck className="mr-2 h-4 w-4" />
-                发送邀请邮件
-              </Button>
-              {canManageInvites && (
-                <Button variant="default" size="lg" onClick={openBatchModal}>
-                  批量授予名额
-                </Button>
+      <div className="bg-card text-card-foreground rounded-lg border p-6 shadow-sm">
+        <div className="mb-6 flex items-center gap-2">
+          <ShieldCheck className="text-primary h-5 w-5" />
+          <h2 className="text-lg font-semibold">发送官方邀请</h2>
+        </div>
+
+        <form onSubmit={handleMainSubmit} className="max-w-2xl space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="userId" required className="flex items-center gap-2">
+              <User className="h-4 w-4" /> 用户标识 (ID/用户名)
+            </Label>
+            <Controller
+              name="userId"
+              control={control}
+              render={({ field }) => (
+                <Input {...field} placeholder="请输入受邀用户的 UID 或用户名" size="lg" />
+              )}
+            />
+            {errors.userId && (
+              <p className="text-destructive text-xs font-medium">{errors.userId.message}</p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="count" required>
+                邀请数量
+              </Label>
+              <Controller
+                name="count"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="number"
+                    min={1}
+                    onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
+                    size="lg"
+                  />
+                )}
+              />
+              {errors.count && (
+                <p className="text-destructive text-xs font-medium">{errors.count.message}</p>
               )}
             </div>
-          </Form.Item>
-        </Form>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="reason" required className="flex items-center gap-2">
+              <Info className="h-4 w-4" /> 发送原因
+            </Label>
+            <Controller
+              name="reason"
+              control={control}
+              render={({ field }) => (
+                <Input {...field} placeholder="例如：特殊奖励、补偿等" size="lg" />
+              )}
+            />
+            {errors.reason && (
+              <p className="text-destructive text-xs font-medium">{errors.reason.message}</p>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-4 pt-4">
+            <Button type="submit" variant="primary" size="lg" loading={submitLoading}>
+              <Mail className="mr-2 h-4 w-4" />
+              确认发送邀请
+            </Button>
+            {canManageInvites && (
+              <Button type="button" variant="default" size="lg" onClick={openBatchModal}>
+                批量授予名额
+              </Button>
+            )}
+          </div>
+        </form>
       </div>
 
       {/* 批量授予弹窗 */}
@@ -100,8 +140,8 @@ export default function SendInvitePage() {
         rolesOptions={rolesOptions}
         levelsOptions={levelsOptions}
         previewCount={previewCount}
-        onPreview={previewMatching}
-        onSubmit={executeBatchGrant}
+        onPreview={handlePreview}
+        onSubmit={handleBatchSubmit}
       />
     </div>
   );

@@ -1,9 +1,11 @@
-import { useState, useMemo } from "react";
-import { Form, Space, App, Modal } from "antd";
+import { useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
 import { TicketsService } from "@/api/services/TicketsService";
-import type { CreateTicketDto } from "@/api/models/CreateTicketDto";
 import { formatDate } from "@/modules/admin/utils/formatDate";
 import { Button } from "@/modules/admin/components/ui/button";
 import { Tag } from "@/modules/admin/components/ui/tag";
@@ -11,9 +13,17 @@ import { statusText, statusColor, priorityText, priorityColor, categoryText } fr
 import type { TicketsQuery, TicketItem } from "./types";
 import type { Column } from "@/modules/admin/components/ui/data-table";
 
+const createTicketSchema = z.object({
+  title: z.string().min(1, "请输入标题").max(200, "标题最长200个字符"),
+  category: z.string().min(1, "请选择类别"),
+  priority: z.string().min(1, "请选择优先级"),
+  content: z.string().min(1, "请输入描述内容"),
+});
+
+type CreateTicketFormValues = z.infer<typeof createTicketSchema>;
+
 export function useTicketsLogic() {
   const navigate = useNavigate();
-  const { message } = App.useApp();
   const queryClient = useQueryClient();
 
   // 查询状态
@@ -27,7 +37,25 @@ export function useTicketsLogic() {
 
   // 新建工单弹窗
   const [createOpen, setCreateOpen] = useState(false);
-  const [createForm] = Form.useForm<CreateTicketDto>();
+
+  // 二次确认弹窗
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingTicketId, setPendingTicketId] = useState<string | null>(null);
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CreateTicketFormValues>({
+    resolver: zodResolver(createTicketSchema),
+    defaultValues: {
+      title: "",
+      category: "",
+      priority: "",
+      content: "",
+    },
+  });
 
   // 1. 获取列表 (React Query)
   const { data: listData, isLoading: loading } = useQuery({
@@ -45,7 +73,7 @@ export function useTicketsLogic() {
         total: res?.data?.total ?? 0,
       };
     },
-    placeholderData: (previousData) => previousData, // Keep previous data while fetching
+    placeholderData: (previousData) => previousData,
   });
 
   // 2. 获取统计 (React Query)
@@ -67,12 +95,14 @@ export function useTicketsLogic() {
       } as any);
     },
     onSuccess: () => {
-      message.success("已关闭");
+      toast.success("已关闭");
+      setConfirmOpen(false);
+      setPendingTicketId(null);
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
       queryClient.invalidateQueries({ queryKey: ["tickets-stats"] });
     },
     onError: (e: any) => {
-      message.error(e?.response?.data?.message || e?.message || "关闭失败");
+      toast.error(e?.response?.data?.message || e?.message || "关闭失败");
     },
   });
 
@@ -81,61 +111,62 @@ export function useTicketsLogic() {
       await TicketsService.ticketsControllerConfirmResolved({ ticketId } as any);
     },
     onSuccess: () => {
-      message.success("已确认");
+      toast.success("已确认");
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
       queryClient.invalidateQueries({ queryKey: ["tickets-stats"] });
     },
     onError: (e: any) => {
-      message.error(e?.response?.data?.message || e?.message || "操作失败");
+      toast.error(e?.response?.data?.message || e?.message || "操作失败");
     },
   });
 
   const createMutation = useMutation({
-    mutationFn: async (values: CreateTicketDto) => {
+    mutationFn: async (values: CreateTicketFormValues) => {
       await TicketsService.ticketsControllerCreate(values as any);
     },
     onSuccess: () => {
-      message.success("新建成功");
+      toast.success("新建成功");
       setCreateOpen(false);
-      createForm.resetFields();
-      // Reset page to 1
+      reset();
       setQuery((prev) => ({ ...prev, page: 1 }));
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
       queryClient.invalidateQueries({ queryKey: ["tickets-stats"] });
     },
     onError: (e: any) => {
-      message.error(e?.response?.data?.message || e?.message || "新建失败");
+      toast.error(e?.response?.data?.message || e?.message || "新建失败");
     },
   });
 
   // Actions
-  const handleSearch = (values: Partial<TicketsQuery>) => {
+  const handleSearch = useCallback((values: Partial<TicketsQuery>) => {
     setQuery((prev) => ({ ...prev, ...values, page: 1 }));
-  };
+  }, []);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setQuery({ page: 1, pageSize: 20 });
-  };
+  }, []);
 
-  const handleClose = (ticketId: string) => {
-    Modal.confirm({
-      title: "确认关闭该工单？",
-      onOk: () => closeMutation.mutate(ticketId),
-    });
-  };
+  const handleCloseClick = useCallback((ticketId: string) => {
+    setPendingTicketId(ticketId);
+    setConfirmOpen(true);
+  }, []);
 
-  const handleConfirm = (ticketId: string) => {
-    confirmMutation.mutate(ticketId);
-  };
-
-  const handleSubmitCreate = async () => {
-    try {
-      const values = await createForm.validateFields();
-      createMutation.mutate(values);
-    } catch {
-      // Validate Error
+  const handleConfirmClose = useCallback(() => {
+    if (pendingTicketId) {
+      closeMutation.mutate(pendingTicketId);
     }
-  };
+  }, [pendingTicketId, closeMutation]);
+
+  const handleConfirmResolved = useCallback(
+    (ticketId: string) => {
+      confirmMutation.mutate(ticketId);
+    },
+    [confirmMutation],
+  );
+
+  const onSubmitCreate = handleSubmit((values) => {
+    createMutation.mutate(values);
+  });
 
   // Columns
   const columns = useMemo<Column<TicketItem>[]>(
@@ -176,36 +207,31 @@ export function useTicketsLogic() {
         title: "操作",
         width: 240,
         render: (_, record) => (
-          <Space size="small">
+          <div className="flex items-center gap-2">
             <Button variant="default" size="sm" onClick={() => navigate(record.id)}>
-              查看详情
+              详情
             </Button>
             <Button
               variant="text"
+              danger
               size="sm"
-              className="text-destructive h-8"
               disabled={record.status === "closed"}
-              onClick={() => handleClose(record.id)}
+              onClick={() => handleCloseClick(record.id)}
             >
               关闭
             </Button>
             <Button
               size="sm"
               disabled={record.status !== "resolved"}
-              onClick={() => handleConfirm(record.id)}
+              onClick={() => handleConfirmResolved(record.id)}
             >
-              确认已解决
+              已解决
             </Button>
-          </Space>
+          </div>
         ),
       },
     ],
-    [navigate], // handleClose/Confirm are stable if defined outside, but inside component they change on render?
-    // Actually they depend on closeMutation.mutate which is stable from useMutation?
-    // Wait, useMutation returns an object, .mutate is stable.
-    // However, I defined handleClose inside component.
-    // To be safe, I should include them in dep array or use useCallback.
-    // But since I rebuilt the component, I'll just pass variables needed.
+    [navigate, handleCloseClick, handleConfirmResolved],
   );
 
   return {
@@ -216,14 +242,20 @@ export function useTicketsLogic() {
     query,
     setQuery,
     columns,
-    // 弹窗
+    // 弹窗状态
     createOpen,
     setCreateOpen,
     createLoading: createMutation.isPending,
-    createForm,
+    control,
+    errors,
+    // 确认弹窗
+    confirmOpen,
+    setConfirmOpen,
+    handleConfirmClose,
+    isClosing: closeMutation.isPending,
     // 操作
     handleSearch,
     handleReset,
-    handleSubmitCreate,
+    onSubmitCreate,
   };
 }
