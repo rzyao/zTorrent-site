@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react";
-import { Form } from "antd";
+import { useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Modal } from "@/modules/admin/components/ui/modal";
 import { Input } from "@/modules/admin/components/ui/input";
 import { Switch } from "@/modules/admin/components/ui/switch";
+import { Textarea } from "@/modules/admin/components/ui/textarea"; // Using ui/textarea if available
+import { Label } from "@/modules/admin/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -13,303 +17,323 @@ import {
 import { UpdateCategoryDto } from "@/api/models/UpdateCategoryDto";
 import type { CategoryItem } from "../types";
 
+// --- Schemas ---
+
+const createSchema = z.object({
+  key: z.string().optional(),
+  keySuffix: z.string().optional(),
+  label: z.string().min(1, "名称必填"),
+  description: z.string().optional(),
+  sort: z.coerce.number().min(0).default(0),
+  enabled: z.boolean().default(true),
+  genre: z.nativeEnum(UpdateCategoryDto.genre).default(UpdateCategoryDto.genre.GENERAL),
+});
+
+const editSchema = z.object({
+  label: z.string().min(1, "名称必填"),
+  description: z.string().optional(),
+  sort: z.coerce.number().min(0).default(0),
+  enabled: z.boolean().default(true),
+  genre: z.nativeEnum(UpdateCategoryDto.genre).default(UpdateCategoryDto.genre.GENERAL),
+});
+
+type CreateFormValues = z.infer<typeof createSchema>;
+type EditFormValues = z.infer<typeof editSchema>;
+
+// --- Props ---
+
 interface CategoryModalsProps {
   // Create
   createOpen: boolean;
-  createForm: any;
   createInitial?: any;
   createKeyPrefix?: string;
   onCancelCreate: () => void;
-  onSubmitCreate: () => void;
+  handleCreate: (data: any) => void;
   // Edit
   editOpen: boolean;
-  editForm: any;
   editInitial?: any;
   editing: CategoryItem | null;
   onCancelEdit: () => void;
-  onSubmitEdit: () => void;
+  handleEdit: (data: any) => void;
 }
 
-/**
- * 新增分类表单
- */
-function CreateCategoryForm({
-  form,
+// --- Components ---
+
+function CreateCategoryModal({
+  open,
+  onClose,
+  onOk,
   initial,
   keyPrefix,
 }: {
-  form: any;
+  open: boolean;
+  onClose: () => void;
+  onOk: (data: any) => void;
   initial?: any;
   keyPrefix?: string;
 }) {
-  const [formState, setFormState] = useState({
-    key: "",
-    keySuffix: "",
-    label: "",
-    description: "",
-    sort: 0,
-    enabled: true,
-    genre: UpdateCategoryDto.genre.GENERAL,
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateFormValues>({
+    resolver: zodResolver(createSchema),
+    defaultValues: {
+      key: "",
+      keySuffix: "",
+      label: "",
+      description: "",
+      sort: 0,
+      enabled: true,
+      genre: UpdateCategoryDto.genre.GENERAL,
+    },
   });
 
-  // 同步初始值
   useEffect(() => {
-    if (initial) {
-      setFormState((prev) => ({
-        ...prev,
-        enabled: initial.enabled ?? true,
-        sort: initial.sort ?? 0,
-        genre: initial.genre ?? UpdateCategoryDto.genre.GENERAL,
-      }));
-      form.setFieldsValue(initial);
+    if (open) {
+      reset({
+        key: "",
+        keySuffix: "",
+        label: "",
+        description: "",
+        sort: 0,
+        enabled: true,
+        genre: UpdateCategoryDto.genre.GENERAL,
+        ...initial,
+      });
     }
-  }, [initial, form]);
+  }, [open, initial, reset]);
 
-  const handleChange = (field: string, value: any) => {
-    setFormState((prev) => ({ ...prev, [field]: value }));
-    form.setFieldValue(field, value);
+  const onSubmit = (data: CreateFormValues) => {
+    onOk(data);
   };
 
   return (
-    <div className="space-y-4">
-      {/* 键 */}
-      {keyPrefix ? (
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-neutral-700">
-            键后缀 <span className="text-neutral-400">(父类: {keyPrefix})</span>
-          </label>
-          <Input
-            placeholder="如 action 或 classic"
-            value={formState.keySuffix}
-            onChange={(e) => handleChange("keySuffix", e.target.value)}
-          />
-        </div>
-      ) : (
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-neutral-700">
-            唯一键 <span className="text-red-500">*</span>
-          </label>
-          <Input
-            placeholder="如 movies"
-            value={formState.key}
-            onChange={(e) => handleChange("key", e.target.value)}
-          />
-        </div>
-      )}
+    <Modal
+      title={keyPrefix ? "新增子分类" : "新增分类"}
+      open={open}
+      onClose={onClose}
+      onOk={handleSubmit(onSubmit)}
+      confirmLoading={isSubmitting}
+      width={480}
+    >
+      <div className="space-y-4">
+        {keyPrefix ? (
+          <div className="space-y-1.5">
+            <Label>
+              键后缀 <span className="text-muted-foreground font-normal">(父类: {keyPrefix})</span>
+            </Label>
+            <Input placeholder="如 action 或 classic" {...register("keySuffix")} />
+          </div>
+        ) : (
+          <div className="space-y-1.5">
+            <Label>
+              唯一键 <span className="text-red-500">*</span>
+            </Label>
+            <Input placeholder="如 movies" {...register("key")} />
+            {errors.key && <p className="text-sm text-red-500">{errors.key.message}</p>}
+          </div>
+        )}
 
-      {/* 名称 */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-neutral-700">
-          名称 <span className="text-red-500">*</span>
-        </label>
-        <Input
-          placeholder="分类名称"
-          value={formState.label}
-          onChange={(e) => handleChange("label", e.target.value)}
-        />
-      </div>
-
-      {/* 排序和启用 */}
-      <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-neutral-700">排序</label>
-          <Input
-            type="number"
-            min={0}
-            value={formState.sort}
-            onChange={(e) => handleChange("sort", Number(e.target.value))}
-          />
+          <Label>
+            名称 <span className="text-red-500">*</span>
+          </Label>
+          <Input placeholder="分类名称" {...register("label")} />
+          {errors.label && <p className="text-sm text-red-500">{errors.label.message}</p>}
         </div>
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-neutral-700">启用</label>
-          <div className="flex h-8 items-center">
-            <Switch
-              checked={formState.enabled}
-              onCheckedChange={(v) => handleChange("enabled", v)}
-            />
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label>排序</Label>
+            <Input type="number" min={0} {...register("sort")} />
+          </div>
+          <div className="space-y-1.5">
+            <Label>启用</Label>
+            <div className="flex h-10 items-center">
+              <Controller
+                control={control}
+                name="enabled"
+                render={({ field }) => (
+                  <Switch checked={field.value} onCheckedChange={field.onChange} />
+                )}
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* 分区 */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-neutral-700">
-          分区 <span className="text-red-500">*</span>
-        </label>
-        <Select value={formState.genre} onValueChange={(v) => handleChange("genre", v)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="选择分区" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={UpdateCategoryDto.genre.GENERAL}>普通</SelectItem>
-            <SelectItem value={UpdateCategoryDto.genre.ADULT}>成人</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+        <div className="space-y-1.5">
+          <Label>
+            分区 <span className="text-red-500">*</span>
+          </Label>
+          <Controller
+            control={control}
+            name="genre"
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="选择分区" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={UpdateCategoryDto.genre.GENERAL}>普通</SelectItem>
+                  <SelectItem value={UpdateCategoryDto.genre.ADULT}>成人</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </div>
 
-      {/* 描述 */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-neutral-700">描述</label>
-        <textarea
-          className="focus:border-antd-primary flex min-h-[80px] w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm transition-colors placeholder:text-neutral-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-          placeholder="分类描述（可选）"
-          value={formState.description}
-          onChange={(e) => handleChange("description", e.target.value)}
-        />
+        <div className="space-y-1.5">
+          <Label>描述</Label>
+          <Textarea placeholder="分类描述（可选）" {...register("description")} />
+        </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 
-/**
- * 编辑分类表单
- */
-function EditCategoryForm({
-  form,
+function EditCategoryModal({
+  open,
+  onClose,
+  onOk,
   initial,
   editing,
 }: {
-  form: any;
+  open: boolean;
+  onClose: () => void;
+  onOk: (data: any) => void;
   initial?: any;
   editing: CategoryItem | null;
 }) {
-  const [formState, setFormState] = useState({
-    label: "",
-    description: "",
-    sort: 0,
-    enabled: true,
-    genre: UpdateCategoryDto.genre.GENERAL,
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<EditFormValues>({
+    resolver: zodResolver(editSchema),
+    defaultValues: {
+      label: "",
+      description: "",
+      sort: 0,
+      enabled: true,
+      genre: UpdateCategoryDto.genre.GENERAL,
+    },
   });
 
   useEffect(() => {
-    if (initial) {
-      setFormState({
-        label: initial.label ?? "",
-        description: initial.description ?? "",
-        sort: initial.sort ?? 0,
-        enabled: initial.enabled ?? true,
-        genre: initial.genre ?? UpdateCategoryDto.genre.GENERAL,
+    if (open) {
+      reset({
+        label: initial?.label || "",
+        description: initial?.description || "",
+        sort: initial?.sort || 0,
+        enabled: initial?.enabled ?? true,
+        genre: initial?.genre || UpdateCategoryDto.genre.GENERAL,
       });
-      form.setFieldsValue(initial);
     }
-  }, [initial, form]);
-
-  const handleChange = (field: string, value: any) => {
-    setFormState((prev) => ({ ...prev, [field]: value }));
-    form.setFieldValue(field, value);
-  };
+  }, [open, initial, reset]);
 
   return (
-    <div className="space-y-4">
-      {/* 唯一键（只读） */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-neutral-700">唯一键</label>
-        <Input value={editing?.key || ""} disabled />
-      </div>
-
-      {/* 名称 */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-neutral-700">
-          名称 <span className="text-red-500">*</span>
-        </label>
-        <Input
-          placeholder="分类名称"
-          value={formState.label}
-          onChange={(e) => handleChange("label", e.target.value)}
-        />
-      </div>
-
-      {/* 排序和启用 */}
-      <div className="grid grid-cols-2 gap-4">
+    <Modal
+      title="编辑分类"
+      open={open}
+      onClose={onClose}
+      onOk={handleSubmit(onOk)}
+      confirmLoading={isSubmitting}
+      width={480}
+    >
+      <div className="space-y-4">
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-neutral-700">排序</label>
-          <Input
-            type="number"
-            min={0}
-            value={formState.sort}
-            onChange={(e) => handleChange("sort", Number(e.target.value))}
-          />
+          <Label>唯一键</Label>
+          <Input value={editing?.key || ""} disabled />
         </div>
+
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-neutral-700">启用</label>
-          <div className="flex h-8 items-center">
-            <Switch
-              checked={formState.enabled}
-              onCheckedChange={(v) => handleChange("enabled", v)}
-            />
+          <Label>
+            名称 <span className="text-red-500">*</span>
+          </Label>
+          <Input placeholder="分类名称" {...register("label")} />
+          {errors.label && <p className="text-sm text-red-500">{errors.label.message}</p>}
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label>排序</Label>
+            <Input type="number" min={0} {...register("sort")} />
+          </div>
+          <div className="space-y-1.5">
+            <Label>启用</Label>
+            <div className="flex h-10 items-center">
+              <Controller
+                control={control}
+                name="enabled"
+                render={({ field }) => (
+                  <Switch checked={field.value} onCheckedChange={field.onChange} />
+                )}
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* 分区 */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-neutral-700">分区</label>
-        <Select value={formState.genre} onValueChange={(v) => handleChange("genre", v)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="选择分区" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={UpdateCategoryDto.genre.GENERAL}>普通</SelectItem>
-            <SelectItem value={UpdateCategoryDto.genre.ADULT}>成人</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+        <div className="space-y-1.5">
+          <Label>分区</Label>
+          <Controller
+            control={control}
+            name="genre"
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="选择分区" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={UpdateCategoryDto.genre.GENERAL}>普通</SelectItem>
+                  <SelectItem value={UpdateCategoryDto.genre.ADULT}>成人</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </div>
 
-      {/* 描述 */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-neutral-700">描述</label>
-        <textarea
-          className="focus:border-antd-primary flex min-h-[80px] w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm transition-colors placeholder:text-neutral-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-          placeholder="分类描述（可选）"
-          value={formState.description}
-          onChange={(e) => handleChange("description", e.target.value)}
-        />
+        <div className="space-y-1.5">
+          <Label>描述</Label>
+          <Textarea placeholder="分类描述（可选）" {...register("description")} />
+        </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 
 export function CategoryModals({
   createOpen,
-  createForm,
   createInitial,
   createKeyPrefix,
   onCancelCreate,
-  onSubmitCreate,
+  handleCreate,
   editOpen,
-  editForm,
   editInitial,
   editing,
   onCancelEdit,
-  onSubmitEdit,
+  handleEdit,
 }: CategoryModalsProps) {
   return (
     <>
-      {/* 新增分类弹窗 */}
-      <Modal
-        title={createKeyPrefix ? "新增子分类" : "新增分类"}
+      <CreateCategoryModal
         open={createOpen}
         onClose={onCancelCreate}
-        onOk={onSubmitCreate}
-        okText="保存"
-        cancelText="取消"
-        width={480}
-      >
-        <CreateCategoryForm form={createForm} initial={createInitial} keyPrefix={createKeyPrefix} />
-      </Modal>
-
-      {/* 编辑分类弹窗 */}
-      <Modal
-        title="编辑分类"
+        onOk={handleCreate}
+        initial={createInitial}
+        keyPrefix={createKeyPrefix}
+      />
+      <EditCategoryModal
         open={editOpen}
         onClose={onCancelEdit}
-        onOk={onSubmitEdit}
-        okText="保存"
-        cancelText="取消"
-        width={480}
-      >
-        <EditCategoryForm form={editForm} initial={editInitial} editing={editing} />
-      </Modal>
+        onOk={handleEdit}
+        initial={editInitial}
+        editing={editing}
+      />
     </>
   );
 }

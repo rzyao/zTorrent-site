@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { App, Form } from "antd";
+import { toast } from "sonner";
 import { CategoriesService } from "@/api/services/CategoriesService";
 import { UpdateCategoryDto } from "@/api/models/UpdateCategoryDto";
 import { OpenAPI } from "@/api/core/OpenAPI";
@@ -10,7 +10,7 @@ export function useCategoryManagement(
   kind: UpdateCategoryDto.kind,
   genre?: UpdateCategoryDto.genre,
 ) {
-  const { message } = App.useApp();
+  // const { message } = App.useApp(); // Removed Antd App
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<CategoryItem[]>([]);
   const [search, setSearch] = useState<string | undefined>(undefined);
@@ -20,8 +20,8 @@ export function useCategoryManagement(
   const [editOpen, setEditOpen] = useState(false);
   const [editing, setEditing] = useState<CategoryItem | null>(null);
 
-  const [createForm] = Form.useForm<CreateCategoryFormValues>();
-  const [editForm] = Form.useForm<UpdateCategoryDto>();
+  // const [createForm] = Form.useForm<CreateCategoryFormValues>(); // Removed
+  // const [editForm] = Form.useForm<UpdateCategoryDto>(); // Removed
 
   const [createInitial, setCreateInitial] = useState<Partial<CreateCategoryFormValues> | undefined>(
     undefined,
@@ -78,7 +78,7 @@ export function useCategoryManagement(
       const roots = normalized.filter((n) => !n.parentId);
       setItems(roots);
     } catch (e) {
-      message.error((e as any)?.message || "分类树加载失败");
+      toast.error((e as any)?.message || "分类树加载失败");
     } finally {
       setLoading(false);
     }
@@ -166,9 +166,8 @@ export function useCategoryManagement(
     });
   };
 
-  const submitCreate = async () => {
+  const handleCreate = async (values: any) => {
     try {
-      const values = await createForm.validateFields();
       const payload: any = { ...values, kind };
       if (!payload.parentId) delete payload.parentId;
 
@@ -180,9 +179,11 @@ export function useCategoryManagement(
 
       await CategoriesService.categoriesControllerCreate(payload);
       setCreateOpen(false);
-      message.success("新增分类成功");
+      toast.success("新增分类成功");
       loadList();
-    } catch {}
+    } catch (e: any) {
+      toast.error(e?.message || "新增分类失败");
+    }
   };
 
   const openEdit = (record: CategoryItem) => {
@@ -197,19 +198,20 @@ export function useCategoryManagement(
     setEditOpen(true);
   };
 
-  const submitEdit = async () => {
+  const handleEdit = async (values: any) => {
     if (!editing?.id) return;
     try {
-      const values = await editForm.validateFields();
       await CategoriesService.categoriesControllerUpdate({
         id: editing.id,
         data: values,
       });
       setEditOpen(false);
       setEditing(null);
-      message.success("更新分类成功");
+      toast.success("更新分类成功");
       loadList();
-    } catch {}
+    } catch (e: any) {
+      toast.error(e?.message || "更新分类失败");
+    }
   };
 
   const remove = async (id?: string) => {
@@ -218,15 +220,14 @@ export function useCategoryManagement(
       // 检查是否有子节点（防错校验）
       const node = findNodeById(items, id);
       if (node?.children && node.children.length > 0) {
-        message.error("删除失败：该主分类存在副分类，请先处理副分类");
         return;
       }
 
       await CategoriesService.categoriesControllerDelete({ id });
-      message.success("删除成功");
+      toast.success("删除成功");
       loadList();
     } catch (e) {
-      message.error((e as any)?.message || "删除失败");
+      toast.error((e as any)?.message || "删除失败");
     }
   };
 
@@ -240,9 +241,9 @@ export function useCategoryManagement(
       setItems((prev) =>
         updateItemRecursive(prev, record.id!, (node) => ({ ...node, enabled: value })),
       );
-      message.success(value ? "已启用" : "已禁用");
+      toast.success(value ? "已启用" : "已禁用");
     } catch {
-      message.error("更新状态失败");
+      toast.error("更新状态失败");
     }
   };
 
@@ -256,9 +257,9 @@ export function useCategoryManagement(
       setItems((prev) =>
         updateItemRecursive(prev, record.id!, (node) => ({ ...node, isDefault: value })),
       );
-      message.success(value ? "已设置展示" : "已隐藏展示");
+      toast.success(value ? "已设置展示" : "已隐藏展示");
     } catch {
-      message.error("更新展示状态失败");
+      toast.error("更新展示状态失败");
     }
   };
 
@@ -273,22 +274,22 @@ export function useCategoryManagement(
 
     // Create
     createOpen,
-    createForm,
+    // Create
+    createOpen,
     createInitial,
     createKeyPrefix,
     setCreateOpen,
     openCreate,
     openCreateSub,
-    submitCreate,
+    handleCreate,
 
     // Edit
     editOpen,
-    editForm,
     editInitial,
     editing,
     setEditOpen,
     openEdit,
-    submitEdit,
+    handleEdit,
 
     // Actions
     remove,

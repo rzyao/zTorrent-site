@@ -46,7 +46,7 @@
   - [x] `AdvancedSearchModal.tsx`
   - [x] `UsersTable.tsx` (Table & Pagination)
 - [ ] **Categories**:
-  - [ ] `CategoryModals.tsx`
+  - [x] `CategoryModals.tsx`
 
 ### Phase 2: 复杂业务模块 (Complex Modules)
 

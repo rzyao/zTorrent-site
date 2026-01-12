@@ -99,20 +99,13 @@ export default function CategoriesView({ kind, genre }: CategoriesViewProps) {
     setSearch,
     setEnabledFilter,
     createOpen,
-    createForm,
-    createInitial,
-    createKeyPrefix,
-    setCreateOpen,
-    openCreate,
-    openCreateSub,
-    submitCreate,
+    handleCreate,
     editOpen,
-    editForm,
     editInitial,
     editing,
     setEditOpen,
     openEdit,
-    submitEdit,
+    handleEdit,
     remove,
     toggleEnabled,
     toggleDefault,
@@ -166,17 +159,15 @@ export default function CategoriesView({ kind, genre }: CategoriesViewProps) {
       {/* 弹窗组件 */}
       <CategoryModals
         createOpen={createOpen}
-        createForm={createForm}
         createInitial={createInitial}
         createKeyPrefix={createKeyPrefix}
         onCancelCreate={() => setCreateOpen(false)}
-        onSubmitCreate={submitCreate}
+        handleCreate={handleCreate}
         editOpen={editOpen}
-        editForm={editForm}
         editInitial={editInitial}
         editing={editing}
         onCancelEdit={() => setEditOpen(false)}
-        onSubmitEdit={submitEdit}
+        handleEdit={handleEdit}
       />
     </>
   );
