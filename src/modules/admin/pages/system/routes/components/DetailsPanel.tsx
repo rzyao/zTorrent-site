@@ -1,23 +1,33 @@
-﻿import { memo, useMemo, useCallback, startTransition, useState, useEffect } from "react";
-import {
-  Form,
-  Input,
-  Select,
-  Switch,
-  Button,
-  Typography,
-  Space,
-  Tag,
-  theme,
-  Empty,
-  Skeleton,
-} from "antd";
-import { SaveOutlined, ReloadOutlined, DeleteOutlined } from "@ant-design/icons";
+﻿import { memo, useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Input } from "@/modules/admin/components/ui/input";
+import { StandardSelect as Select } from "@/modules/admin/components/ui/select";
+import { Switch } from "@/modules/admin/components/ui/switch";
+import { Button } from "@/modules/admin/components/ui/button";
+import { Label } from "@/modules/admin/components/ui/label";
+import { Tag } from "@/modules/admin/components/ui/tag";
 import { RouteTreeNodeDto } from "@/api/models/RouteTreeNodeDto";
 import { componentRegistry } from "@/routes/componentRegistry";
 import DynamicIcon from "@/modules/admin/components/DynamicIcon";
+import { Save, RefreshCw, Trash2, Loader2 } from "lucide-react";
 
-const { Text, Title } = Typography;
+const editRouteSchema = z.object({
+  id: z.string(),
+  path: z.string().min(1, "必填"),
+  name: z.string().optional(),
+  redirect: z.string().optional(),
+  component: z.string().optional(),
+  layout: z.string().optional(),
+  icon: z.string().optional(),
+  permissions: z.array(z.string()).optional(),
+  isVisible: z.boolean().default(true),
+  isEnabled: z.boolean().default(true),
+  openInNewTab: z.boolean().default(false),
+});
+
+type EditRouteFormValues = z.infer<typeof editRouteSchema>;
 
 interface DetailsPanelProps {
   node: RouteTreeNodeDto | null;
@@ -26,10 +36,10 @@ interface DetailsPanelProps {
   isSaving?: boolean;
 }
 
-// 组件选项常量
-const COMPONENT_OPTIONS = Object.keys(componentRegistry).sort();
+const COMPONENT_OPTIONS = Object.keys(componentRegistry)
+  .sort()
+  .map((c) => ({ value: c, label: c }));
 
-// 布局选项常量
 const LAYOUT_OPTIONS = [
   { value: "none", label: "无布局 (None)" },
   { value: "app", label: "前台布局 (AppLayout)" },
@@ -37,315 +47,283 @@ const LAYOUT_OPTIONS = [
   { value: "admin", label: "后台布局 (AdminLayout)" },
 ];
 
-// 空状态组件
 const EmptyState = memo(function EmptyState() {
-  const { token } = theme.useToken();
   return (
-    <div
-      style={{
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: token.colorBgContainer,
-        border: `1px dashed ${token.colorBorderSecondary}`,
-        borderRadius: token.borderRadiusLG,
-      }}
-    >
-      <Empty description="请在左侧选择一个路由节点" />
+    <div className="bg-card text-muted-foreground flex h-full items-center justify-center rounded-lg border border-dashed p-12">
+      <div className="text-center">
+        <p>请在左侧选择一个路由节点</p>
+      </div>
     </div>
   );
 });
 
-// 主组件
 export const DetailsPanel = memo(function DetailsPanel({
   node,
   onSave,
   onDelete,
   isSaving,
 }: DetailsPanelProps) {
-  const [form] = Form.useForm();
-  const { token } = theme.useToken();
+  const {
+    control,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { isDirty },
+  } = useForm<EditRouteFormValues>({
+    resolver: zodResolver(editRouteSchema),
+  });
 
-  // 延迟渲染状态 - 防止切换节点时的卡顿
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [displayNode, setDisplayNode] = useState<RouteTreeNodeDto | null>(null);
 
-  // 节点切换时的处理 - 简化逻辑,移除双重延迟
   useEffect(() => {
-    if (!node) {
-      form.resetFields();
-      setDisplayNode(null);
-      return;
-    }
-
-    // 只要 node 有变化,就对比关键属性更新表单
-    // 这样保存成功后 node 属性变化也能反映到表单上
-    setIsTransitioning(true);
-    setDisplayNode(node);
-
-    form.setFieldsValue({
-      id: node.id,
-      path: node.path,
-      name: typeof node.name === "string" ? node.name : node.id,
-      redirect: node.redirect || "",
-      component: node.component || undefined,
-      layout: node.layout || "none",
-      icon: typeof (node as any).icon === "string" ? (node as any).icon : "",
-      permissions: node.permissions || [],
-      isVisible: node.isVisible !== false,
-      isEnabled: (node as any).isEnabled !== false,
-      openInNewTab: (node as any).openInNewTab || false,
-    });
-
-    // 短暂延迟后隐藏骨架屏,给用户视觉反馈
-    const timer = setTimeout(() => setIsTransitioning(false), 100);
-    return () => clearTimeout(timer);
-  }, [node, form]);
-
-  const handleFinish = useCallback(
-    (values: any) => {
-      if (!displayNode) return;
-      const updatedNode: RouteTreeNodeDto = {
-        ...displayNode,
-        ...values,
-        permissions: Array.isArray(values.permissions) ? values.permissions : [],
-      };
-      onSave(updatedNode);
-    },
-    [displayNode, onSave],
-  );
-
-  const handleReset = useCallback(() => {
-    if (displayNode) {
-      form.setFieldsValue({
-        id: displayNode.id,
-        path: displayNode.path,
-        name: typeof displayNode.name === "string" ? displayNode.name : displayNode.id,
-        redirect: displayNode.redirect || "",
-        component: displayNode.component || undefined,
-        layout: displayNode.layout || "none",
-        icon: (displayNode as any).icon || "",
-        permissions: displayNode.permissions || [],
-        isVisible: displayNode.isVisible !== false,
-        isEnabled: (displayNode as any).isEnabled !== false,
-        openInNewTab: (displayNode as any).openInNewTab || false,
+    if (node) {
+      setIsTransitioning(true);
+      reset({
+        id: node.id,
+        path: node.path,
+        name: typeof node.name === "string" ? node.name : node.id,
+        redirect: node.redirect || "",
+        component: node.component || undefined,
+        layout: node.layout || "none",
+        icon: (node as any).icon || "",
+        permissions: node.permissions || [],
+        isVisible: node.isVisible !== false,
+        isEnabled: (node as any).isEnabled !== false,
+        openInNewTab: (node as any).openInNewTab || false,
       });
+      // Small delay to simulate smooth transition if needed, or mostly just reset logic
+      const t = setTimeout(() => setIsTransitioning(false), 50);
+      return () => clearTimeout(t);
     }
-  }, [form, displayNode]);
+  }, [node, reset]);
 
-  const handleDelete = useCallback(() => {
-    if (displayNode) {
-      onDelete(displayNode.id);
-    }
-  }, [onDelete, displayNode]);
+  const onFormSubmit = (values: EditRouteFormValues) => {
+    if (!node) return;
+    onSave({
+      ...node,
+      ...values,
+      permissions: values.permissions || [],
+    });
+  };
 
-  const handleSubmit = useCallback(() => {
-    form.submit();
-  }, [form]);
+  const currentIcon = watch("icon");
 
-  // 无节点时显示空状态
   if (!node) {
     return <EmptyState />;
   }
 
-  const displayName = displayNode
-    ? typeof displayNode.name === "string"
-      ? displayNode.name
-      : displayNode.id
-    : "";
+  const displayName = typeof node.name === "string" ? node.name : node.id;
 
   return (
-    <div
-      style={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        backgroundColor: token.colorBgContainer,
-        borderRadius: token.borderRadiusLG,
-        border: `1px solid ${token.colorBorderSecondary}`,
-        boxShadow: token.boxShadowTertiary,
-        overflow: "hidden",
-      }}
-    >
+    <div className="bg-card flex h-full flex-col overflow-hidden rounded-lg border shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[rgba(5,5,5,0.06)] px-6 py-4">
+      <div className="flex items-center justify-between border-b px-6 py-4">
         <div>
-          <Space align="center">
-            <Title level={5} style={{ margin: 0 }}>
-              {displayName || <Skeleton.Input active size="small" style={{ width: 100 }} />}
-            </Title>
-            {displayNode?.isVisible === false && <Tag color="error">已隐藏</Tag>}
-          </Space>
-          <div className="mt-1">
-            <Text type="secondary" code>
-              {displayNode?.id || "..."}
-            </Text>
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg leading-none font-semibold tracking-tight">
+              {displayName || "..."}
+            </h3>
+            {node.isVisible === false && <Tag variant="destructive">已隐藏</Tag>}
           </div>
+          <p className="text-muted-foreground mt-1 font-mono text-sm">{node.id}</p>
         </div>
-        <Button
-          danger
-          type="text"
-          icon={<DeleteOutlined />}
-          onClick={handleDelete}
-          disabled={!displayNode}
-        />
+        <Button variant="destructive" size="sm" onClick={() => onDelete(node.id)} title="删除路由">
+          <Trash2 className="h-4 w-4" />
+        </Button>
       </div>
 
-      {/* Form Content */}
+      {/* Content */}
       <div className="flex-1 overflow-y-auto p-6">
         {isTransitioning ? (
-          <div className="space-y-4">
-            <Skeleton active paragraph={{ rows: 4 }} />
-            <Skeleton active paragraph={{ rows: 3 }} />
+          <div className="animate-pulse space-y-4">
+            <div className="bg-muted h-8 w-full rounded"></div>
+            <div className="bg-muted h-24 w-full rounded"></div>
+            <div className="bg-muted h-24 w-full rounded"></div>
           </div>
         ) : (
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleFinish}
-            // 关闭表单验证触发，减少渲染
-            validateTrigger={[]}
-          >
-            {/* Basic Config Section */}
-            <div className="mb-6">
-              <Text
-                type="secondary"
-                strong
-                style={{ fontSize: "12px", textTransform: "uppercase" }}
-              >
-                基础配置
-              </Text>
-              <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4">
-                <Form.Item label="ID (唯一标识)" name="id">
-                  <Input disabled />
-                </Form.Item>
+          <form id="details-form" onSubmit={handleSubmit(onFormSubmit)} className="space-y-8">
+            {/* Basic Config */}
+            <div>
+              <h4 className="text-muted-foreground mb-4 text-xs font-bold uppercase">基础配置</h4>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label>ID (唯一标识)</Label>
+                  <Input value={node.id} disabled className="bg-muted" />
+                </div>
 
-                <Form.Item label="路径 Path" name="path">
-                  <Input placeholder="/admin/users" />
-                </Form.Item>
-
-                <Form.Item label="显示名称 Name" name="name">
-                  <Input placeholder="用户管理" />
-                </Form.Item>
-
-                <Form.Item label="重定向 Redirect" name="redirect">
-                  <Input placeholder="可选: /admin/users/list" />
-                </Form.Item>
-
-                <Form.Item
-                  label="新标签页打开"
-                  name="openInNewTab"
-                  valuePropName="checked"
-                  tooltip="仅在设置了重定向时生效,勾选后将在新标签页打开重定向链接"
-                >
-                  <Switch checkedChildren="是" unCheckedChildren="否" />
-                </Form.Item>
-
-                <Form.Item
-                  label="是否启用"
-                  name="isEnabled"
-                  valuePropName="checked"
-                  tooltip="控制路由是否加载到路由表,禁用后该路由将无法访问"
-                >
-                  <Switch checkedChildren="启用" unCheckedChildren="禁用" />
-                </Form.Item>
-              </div>
-            </div>
-
-            {/* Render Config Section */}
-            <div className="mb-6 border-t border-[rgba(5,5,5,0.06)] pt-6">
-              <Text
-                type="secondary"
-                strong
-                style={{ fontSize: "12px", textTransform: "uppercase" }}
-              >
-                渲染配置
-              </Text>
-              <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4">
-                <Form.Item label="渲染组件 Component" name="component">
-                  <Select
-                    showSearch
-                    placeholder="选择组件"
-                    optionFilterProp="label"
-                    options={COMPONENT_OPTIONS.map((c) => ({ value: c, label: c }))}
-                    allowClear
+                <div className="space-y-2">
+                  <Label>路径 Path</Label>
+                  <Controller
+                    control={control}
+                    name="path"
+                    render={({ field }) => <Input {...field} placeholder="/admin/users" />}
                   />
-                </Form.Item>
+                </div>
 
-                <Form.Item label="所属布局 Layout" name="layout">
-                  <Select options={LAYOUT_OPTIONS} />
-                </Form.Item>
+                <div className="space-y-2">
+                  <Label>显示名称 Name</Label>
+                  <Controller
+                    control={control}
+                    name="name"
+                    render={({ field }) => <Input {...field} placeholder="用户管理" />}
+                  />
+                </div>
 
-                <Form.Item
-                  label="图标 Icon"
-                  name="icon"
-                  tooltip="格式: Lucide:Home 或 Antd:DashboardOutlined"
-                >
-                  <Input placeholder="Lucide:Home" />
-                </Form.Item>
+                <div className="space-y-2">
+                  <Label>重定向 Redirect</Label>
+                  <Controller
+                    control={control}
+                    name="redirect"
+                    render={({ field }) => <Input {...field} placeholder="可选" />}
+                  />
+                </div>
 
-                <Form.Item label="图标预览" shouldUpdate={(prev, cur) => prev.icon !== cur.icon}>
-                  {({ getFieldValue }) => {
-                    const iconValue = getFieldValue("icon");
-                    return (
-                      <div className="flex h-8 items-center">
-                        {iconValue ? (
-                          <DynamicIcon iconName={iconValue} size={20} />
-                        ) : (
-                          <Text type="secondary">输入图标名称后预览</Text>
-                        )}
+                <div className="col-span-2 flex items-center gap-8">
+                  <Controller
+                    control={control}
+                    name="openInNewTab"
+                    render={({ field }) => (
+                      <div className="flex items-center gap-2">
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        <div className="grid gap-1.5 leading-none">
+                          <Label>新标签页打开</Label>
+                          <p className="text-muted-foreground text-xs">仅在设置了重定向时生效</p>
+                        </div>
                       </div>
-                    );
-                  }}
-                </Form.Item>
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="isEnabled"
+                    render={({ field }) => (
+                      <div className="flex items-center gap-2">
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        <div className="grid gap-1.5 leading-none">
+                          <Label>是否启用</Label>
+                          <p className="text-muted-foreground text-xs">禁用后无法访问</p>
+                        </div>
+                      </div>
+                    )}
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Access Control Section */}
-            <div className="mb-6 border-t border-[rgba(5,5,5,0.06)] pt-6">
-              <Text
-                type="secondary"
-                strong
-                style={{ fontSize: "12px", textTransform: "uppercase" }}
-              >
-                访问控制
-              </Text>
-              <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4">
-                <Form.Item label="访问权限 Permissions" name="permissions">
-                  <Select mode="tags" placeholder="输入权限Key" />
-                </Form.Item>
+            <div className="border-t pt-6">
+              <h4 className="text-muted-foreground mb-4 text-xs font-bold uppercase">渲染配置</h4>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label>渲染组件</Label>
+                  <Controller
+                    control={control}
+                    name="component"
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        options={COMPONENT_OPTIONS}
+                        placeholder="选择组件"
+                        className="w-full"
+                      />
+                    )}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>所属布局</Label>
+                  <Controller
+                    control={control}
+                    name="layout"
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        options={LAYOUT_OPTIONS}
+                      />
+                    )}
+                  />
+                </div>
 
-                <Form.Item
-                  label="侧边栏是否显示"
-                  name="isVisible"
-                  valuePropName="checked"
-                  tooltip="控制路由是否在侧边栏菜单中显示,不影响路由访问"
-                >
-                  <Switch checkedChildren="显示" unCheckedChildren="隐藏" />
-                </Form.Item>
+                <div className="space-y-2">
+                  <Label>图标 Icon</Label>
+                  <Controller
+                    control={control}
+                    name="icon"
+                    render={({ field }) => <Input {...field} placeholder="Lucide:Home" />}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>图标预览</Label>
+                  <div className="text-muted-foreground flex h-10 items-center">
+                    {currentIcon ? (
+                      <DynamicIcon iconName={currentIcon} size={20} />
+                    ) : (
+                      <span className="text-xs">输入后预览</span>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-          </Form>
+
+            <div className="border-t pt-6">
+              <h4 className="text-muted-foreground mb-4 text-xs font-bold uppercase">访问控制</h4>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label>访问权限 Permissions (逗号分隔)</Label>
+                  <Controller
+                    control={control}
+                    name="permissions"
+                    render={({ field }) => (
+                      <Input
+                        value={field.value?.join(",") || ""}
+                        onChange={(e) => field.onChange(e.target.value.split(",").filter(Boolean))}
+                        placeholder="admin:read"
+                      />
+                    )}
+                  />
+                </div>
+
+                <div className="flex items-center pt-8">
+                  <Controller
+                    control={control}
+                    name="isVisible"
+                    render={({ field }) => (
+                      <div className="flex items-center gap-2">
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        <div className="grid gap-1.5 leading-none">
+                          <Label>侧边栏显示</Label>
+                          <p className="text-muted-foreground text-xs">控制菜单显隐</p>
+                        </div>
+                      </div>
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+          </form>
         )}
       </div>
 
-      {/* Footer Actions */}
-      <div className="flex justify-end gap-3 border-t border-[rgba(5,5,5,0.06)] px-6 py-4">
+      {/* Footer */}
+      <div className="bg-muted/40 flex justify-end gap-3 border-t px-6 py-4">
         <Button
-          icon={<ReloadOutlined />}
-          onClick={handleReset}
-          disabled={isSaving || isTransitioning}
+          variant="outline"
+          onClick={() => reset()}
+          disabled={isSaving || !isDirty || isTransitioning}
         >
+          <RefreshCw className="mr-2 h-4 w-4" />
           重置
         </Button>
         <Button
-          type="primary"
-          icon={<SaveOutlined />}
-          onClick={handleSubmit}
+          onClick={handleSubmit(onFormSubmit)}
+          disabled={isSaving || isTransitioning}
           loading={isSaving}
-          disabled={isTransitioning}
         >
+          {isSaving ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Save className="mr-2 h-4 w-4" />
+          )}
           保存变更
         </Button>
       </div>

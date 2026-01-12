@@ -1,34 +1,19 @@
-﻿import {
-  useMemo,
-  useCallback,
-  Key,
-  useState,
-  memo,
-  startTransition,
-  useRef,
-  useEffect,
-} from "react";
-import { Tree, Typography, Empty, theme } from "antd";
-import type { TreeProps, TreeDataNode } from "antd";
+﻿import { useMemo, useCallback, useRef } from "react";
+import { Tree, NodeRendererProps, TreeApi } from "react-arborist";
+import AutoSizer from "react-virtualized-auto-sizer";
 import { RouteTreeNodeDto } from "@/api/models/RouteTreeNodeDto";
 import DynamicIcon from "@/modules/admin/components/DynamicIcon";
-
-const { Text, Title } = Typography;
+import { cn } from "@/utils/cn";
+import { ChevronRight, ChevronDown, Folder, File as FileIcon, EyeOff, Lock } from "lucide-react";
 
 interface RouteTreeProps {
   data: RouteTreeNodeDto[];
   selectedId: string | null;
-  onSelect: (node: RouteTreeNodeDto) => void;
-  onDragEnd?: (activeId: string, targetId: string, position: "before" | "after" | "inside") => void;
+  onSelect: (node: RouteTreeNodeDto | null) => void;
+  onMove?: (opts: { dragIds: string[]; parentId: string | null; index: number }) => void;
 }
 
-// 扩展 TreeDataNode
-interface RouteTreeDataNode extends TreeDataNode {
-  routeData: RouteTreeNodeDto;
-  children?: RouteTreeDataNode[];
-}
-
-// 获取节点显示名称
+// 辅助：获取节点显示名称
 function getDisplayName(node: RouteTreeNodeDto): string {
   if (typeof node.name === "string") return node.name;
   if (node.name && typeof node.name === "object") {
@@ -38,256 +23,117 @@ function getDisplayName(node: RouteTreeNodeDto): string {
   return node.id;
 }
 
-// 构建 ID -> RouteTreeNodeDto 映射表
-function buildNodeMap(nodes: RouteTreeNodeDto[]): Map<string, RouteTreeNodeDto> {
-  const map = new Map<string, RouteTreeNodeDto>();
-  const traverse = (list: RouteTreeNodeDto[]) => {
-    list.forEach((node) => {
-      map.set(node.id, node);
-      if (node.children?.length) traverse(node.children);
-    });
-  };
-  traverse(nodes);
-  return map;
-}
+// Node Component
+function RouteNode({ node, style, dragHandle }: NodeRendererProps<RouteTreeNodeDto>) {
+  const data = node.data;
+  const isSelected = node.isSelected;
+  const isFolder = node.data.children && node.data.children.length > 0;
 
-// 收集所有 keys
-function collectAllKeys(nodes: RouteTreeNodeDto[]): string[] {
-  const keys: string[] = [];
-  const traverse = (list: RouteTreeNodeDto[]) => {
-    list.forEach((node) => {
-      keys.push(node.id);
-      if (node.children?.length) traverse(node.children);
-    });
-  };
-  traverse(nodes);
-  return keys;
-}
+  const iconName = (data as any).icon;
+  const isVisible = data.isVisible !== false;
+  const isEnabled = (data as any).isEnabled !== false;
 
-// 将 RouteTreeNodeDto[] 转换为 Antd Tree 数据结构
-// 使用纯字符串 title，在 titleRender 中添加图标
-function convertToTreeData(nodes: RouteTreeNodeDto[]): RouteTreeDataNode[] {
-  const sorted = [...nodes].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-
-  return sorted.map((node) => {
-    const hasChildren = node.children && node.children.length > 0;
-    const displayName = getDisplayName(node);
-
-    return {
-      key: node.id,
-      title: displayName,
-      isLeaf: !hasChildren,
-      children: hasChildren ? convertToTreeData(node.children!) : undefined,
-      routeData: node,
-    };
-  });
-}
-
-// 检查 nodeA 是否是 nodeB 的祖先
-function isAncestor(
-  nodeMap: Map<string, RouteTreeNodeDto>,
-  ancestorId: string,
-  descendantId: string,
-): boolean {
-  const ancestor = nodeMap.get(ancestorId);
-  if (!ancestor?.children) return false;
-
-  const checkDescendant = (children: RouteTreeNodeDto[]): boolean => {
-    for (const child of children) {
-      if (child.id === descendantId) return true;
-      if (child.children?.length && checkDescendant(child.children)) return true;
-    }
-    return false;
-  };
-
-  return checkDescendant(ancestor.children);
-}
-
-// 树头部组件
-const TreeHeader = memo(function TreeHeader({
-  count,
-  borderColor,
-  bgColor,
-}: {
-  count: number;
-  borderColor: string;
-  bgColor: string;
-}) {
   return (
     <div
-      className="shrink-0 rounded-t-lg border-b px-6 py-4"
-      style={{ borderColor, backgroundColor: bgColor }}
+      style={style}
+      ref={dragHandle}
+      className={cn(
+        "hover:bg-muted/50 flex cursor-default items-center rounded-md px-2 py-1 transition-colors outline-none",
+        isSelected && "bg-primary/10 text-primary hover:bg-primary/15",
+        !isEnabled && "opacity-50 grayscale",
+      )}
+      onClick={() => node.select()}
     >
-      <Title level={5} style={{ margin: 0 }}>
-        站点路由树 ({count})
-      </Title>
-      <Text type="secondary" style={{ fontSize: 12 }}>
-        拖拽节点调整结构
-      </Text>
-    </div>
-  );
-});
+      {/* Indentation / Toggle */}
+      <div
+        className="text-muted-foreground hover:text-foreground flex cursor-pointer items-center justify-center p-1"
+        onClick={(e) => {
+          e.stopPropagation();
+          node.toggle();
+        }}
+      >
+        {isFolder ? (
+          node.isOpen ? (
+            <ChevronDown className="h-4 w-4" />
+          ) : (
+            <ChevronRight className="h-4 w-4" />
+          )
+        ) : (
+          <span className="w-4" />
+        )}
+      </div>
 
-// 主组件
-function RouteTreeInner({ data, selectedId, onSelect, onDragEnd }: RouteTreeProps) {
-  const { token } = theme.useToken();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [treeHeight, setTreeHeight] = useState(600);
+      {/* Icon */}
+      <div className="text-muted-foreground mr-2 flex items-center">
+        {iconName ? (
+          <DynamicIcon iconName={iconName} size={16} />
+        ) : isFolder ? (
+          <Folder className="h-4 w-4" />
+        ) : (
+          <FileIcon className="h-4 w-4" />
+        )}
+      </div>
 
-  // 监听容器高度变化
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const observer = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (entry) {
-        // 减去安全余量防止溢出
-        setTreeHeight(entry.contentRect.height - 20);
-      }
-    });
-
-    observer.observe(containerRef.current);
-
-    return () => observer.disconnect();
-  }, []);
-
-  // 受控展开状态
-  const [expandedKeys, setExpandedKeys] = useState<Key[]>(() => collectAllKeys(data));
-
-  // 构建节点映射表
-  const nodeMap = useMemo(() => buildNodeMap(data), [data]);
-
-  // 转换树数据
-  const treeData = useMemo(() => convertToTreeData(data), [data]);
-
-  // 展开/收起处理 - 直接更新,不使用 startTransition (纯 UI 操作应立即响应)
-  const handleExpand = useCallback((keys: Key[]) => {
-    setExpandedKeys(keys);
-  }, []);
-
-  // 选中处理 - 使用 startTransition 延迟触发
-  const handleSelect: TreeProps["onSelect"] = useCallback(
-    (_selectedKeys: Key[], info: any) => {
-      const routeData = info.node?.routeData;
-      if (routeData) {
-        // 使用 startTransition 让 UI 先响应
-        startTransition(() => {
-          onSelect(routeData);
-        });
-      }
-    },
-    [onSelect],
-  );
-
-  // 拖拽处理
-  const handleDrop: TreeProps["onDrop"] = useCallback(
-    (info) => {
-      if (!onDragEnd) return;
-
-      const dragKey = info.dragNode.key as string;
-      const dropKey = info.node.key as string;
-      const dropPos = info.node.pos.split("-");
-      const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
-
-      if (info.dropToGap) {
-        onDragEnd(dragKey, dropKey, dropPosition === -1 ? "before" : "after");
-      } else {
-        onDragEnd(dragKey, dropKey, "inside");
-      }
-    },
-    [onDragEnd],
-  );
-
-  // 拖拽允许检查
-  const allowDrop: TreeProps["allowDrop"] = useCallback(
-    ({ dragNode, dropNode }) => {
-      return !isAncestor(nodeMap, dragNode.key as string, dropNode.key as string);
-    },
-    [nodeMap],
-  );
-
-  // 标题渲染 - 显示图标、禁用/隐藏状态
-  const titleRender = useCallback((node: RouteTreeDataNode) => {
-    const isDisabled = (node.routeData as any).isEnabled === false;
-    const isHidden = node.routeData.isVisible === false;
-    const iconName = (node.routeData as any).icon as string | undefined;
-
-    const titleText = node.title as string;
-    let statusSuffix = "";
-    let textColor: string | undefined;
-
-    if (isDisabled) {
-      statusSuffix = " (已禁用)";
-      textColor = "#ff4d4f";
-    } else if (isHidden) {
-      statusSuffix = " (已隐藏)";
-      textColor = "#faad14";
-    }
-
-    return (
-      <span style={{ color: textColor, display: "inline-flex", alignItems: "center", gap: 6 }}>
-        {iconName && <DynamicIcon iconName={iconName} size={14} />}
-        <span>
-          {titleText}
-          {statusSuffix}
-        </span>
+      {/* Label */}
+      <span
+        className={cn(
+          "flex-1 truncate text-sm font-medium",
+          !isVisible && "text-muted-foreground/70 italic",
+        )}
+      >
+        {getDisplayName(data)}
+        {!isVisible && <span className="ml-2 text-[10px] text-amber-500 not-italic">(隐藏)</span>}
+        {!isEnabled && <span className="text-destructive ml-2 text-[10px] not-italic">(禁用)</span>}
       </span>
-    );
-  }, []);
-
-  // 缓存 selectedKeys 数组
-  const selectedKeys = useMemo(() => (selectedId ? [selectedId] : []), [selectedId]);
-
-  if (data.length === 0) {
-    return (
-      <div className="flex min-h-0 flex-1 flex-col">
-        <TreeHeader
-          count={0}
-          borderColor={token.colorBorderSecondary}
-          bgColor={token.colorBgContainer}
-        />
-        <div className="flex flex-1 items-center justify-center">
-          <Empty description="暂无路由数据" />
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-      <TreeHeader
-        count={data.length}
-        borderColor={token.colorBorderSecondary}
-        bgColor={token.colorBgContainer}
-      />
-      <div className="min-h-0 flex-1 overflow-hidden p-2" ref={containerRef}>
-        <Tree<RouteTreeDataNode>
-          expandedKeys={expandedKeys}
-          onExpand={handleExpand}
-          selectedKeys={selectedKeys}
-          treeData={treeData}
-          onSelect={handleSelect}
-          titleRender={titleRender}
-          draggable
-          blockNode
-          onDrop={handleDrop}
-          allowDrop={allowDrop}
-          style={{ background: "transparent" }}
-          // 启用虚拟滚动,提升大型树性能
-          virtual
-          height={treeHeight}
-        />
-      </div>
     </div>
   );
 }
 
-// 导出 memo 包装的组件
-export const RouteTree = memo(RouteTreeInner, (prevProps, nextProps) => {
+export function RouteTree({ data, selectedId, onSelect, onMove }: RouteTreeProps) {
+  const treeRef = useRef<TreeApi<RouteTreeNodeDto>>(null);
+
+  // Sync selection from props to tree (controlled) mechanism in Arborist is tricky
+  // usually it controls itself, but we can usage logic to sync if needed.
+  // Actually, Arborist selection is internal state mostly, but we can drive it via props?
+  // V3 uses internal state.
+  // We can standardise: parent controls "selectedId", we tell tree to select it.
+
+  /* 
+     Ideally we use 'selection' prop if controlled, but react-arborist might differ.
+     Checking docs (mental): <Tree selection={selectedId} ... /> ? No.
+     It has 'initialSelection' but likely managed internally.
+     However, we can listen to onSelect and update parent.
+     For external updates (e.g. creating node), we might want to focus it.
+  */
+
   return (
-    prevProps.data === nextProps.data &&
-    prevProps.selectedId === nextProps.selectedId &&
-    prevProps.onSelect === nextProps.onSelect &&
-    prevProps.onDragEnd === nextProps.onDragEnd
+    <div className="h-full w-full">
+      <AutoSizer>
+        {({ width, height }) => (
+          <Tree
+            ref={treeRef}
+            data={data}
+            width={width}
+            height={height}
+            rowHeight={32}
+            overscanCount={5}
+            // Logic Mappings
+            onMove={onMove}
+            onSelect={(nodes) => {
+              if (nodes.length > 0) onSelect(nodes[0].data);
+              else onSelect(null);
+            }}
+            // Renderers
+            children={RouteNode}
+            // Config
+            openByDefault={false}
+            padding={10}
+            indent={24}
+            // ID accessor
+            idAccessor="id"
+          />
+        )}
+      </AutoSizer>
+    </div>
   );
-});
+}
