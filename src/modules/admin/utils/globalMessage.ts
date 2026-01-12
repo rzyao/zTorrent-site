@@ -1,23 +1,31 @@
-// 全局消息实例：用于在 React 组件树外部（如 API 拦截器）安全调用 message
-// 原因：静态 import { message } from 'antd' 无法获取 ConfigProvider 的上下文，会触发警告
-// 解决：在 App 组件挂载时注入动态实例，模块级代码使用该实例
+import { toast } from "sonner";
 
-import type { MessageInstance } from 'antd/es/message/interface'
+/**
+ * 全局消息工具
+ * 已从 Ant Design message 迁移至 sonner toast
+ *
+ * 注意：由于 Sonner 的 toast 函数可以直接在任何地方导入使用，
+ * 这种封装主要为了保持与旧代码的兼容性。
+ */
 
-let messageInstance: MessageInstance | null = null
-
-export function setMessageInstance(instance: MessageInstance) {
-  messageInstance = instance
-}
-
-export function getMessageInstance(): MessageInstance | null {
-  return messageInstance
-}
-
-// 便捷方法：安全调用 message，如果实例未注入则静默失败
 export const globalMessage = {
-  success: (content: string) => messageInstance?.success(content),
-  error: (content: string) => messageInstance?.error(content),
-  warning: (content: string) => messageInstance?.warning(content),
-  info: (content: string) => messageInstance?.info(content),
+  success: (content: string) => toast.success(content),
+  error: (content: string) => toast.error(content),
+  warning: (content: string) => toast.warning(content),
+  info: (content: string) => toast.info(content),
+};
+
+/**
+ * @deprecated 迁移至 Sonner 后不再需要注入实例
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function setMessageInstance(_instance: any) {
+  // no-op
+}
+
+/**
+ * @deprecated 迁移至 Sonner 后不再需要获取实例
+ */
+export function getMessageInstance() {
+  return null;
 }

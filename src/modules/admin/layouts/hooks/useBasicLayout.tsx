@@ -1,5 +1,4 @@
 ﻿import React from "react";
-import { App } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthService } from "@/api/services/AuthService";
 import { SettingsService } from "@/api/services/SettingsService";
@@ -11,8 +10,8 @@ import {
 } from "@/modules/admin/utils/tabTitle";
 import logoSvgContent from "@/assets/logo.svg?raw";
 import logoUrlPath from "@/assets/logo.svg";
-import { setMessageInstance } from "@/modules/admin/utils/globalMessage";
 import { SECTION_NAME_MAP } from "../constants";
+import { toast } from "sonner";
 import { useRouteConfig } from "@/hooks/useRouteConfig";
 import DynamicIcon from "@/modules/admin/components/DynamicIcon";
 import type { MenuProps } from "antd";
@@ -77,16 +76,11 @@ function routeToMenuItem(route: RouteConfig, parentPath: string = ""): DynamicMe
 export function useBasicLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { message } = App.useApp();
+
   const [refreshKey, setRefreshKey] = React.useState(0);
 
   // 从动态路由获取配置
   const { routes: dynamicRoutes } = useRouteConfig();
-
-  // 注入 message 实例到全局工具
-  React.useEffect(() => {
-    setMessageInstance(message);
-  }, [message]);
 
   const [site, setSite] = React.useState<{ title: string; logoUrl: string }>({
     title: "ztorrent-admin",
@@ -188,7 +182,7 @@ export function useBasicLayout() {
     try {
       localStorage.removeItem("token");
     } catch {}
-    message.success("已退出登录");
+    toast.success("已退出登录");
     navigate("/login", { replace: true });
   };
 

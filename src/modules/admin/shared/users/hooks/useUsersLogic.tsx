@@ -1,6 +1,16 @@
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
-import { App, Form, Space, Tag, Descriptions, Button, Dropdown } from "antd";
-import type { MenuProps } from "antd";
+import { Form } from "antd";
+import { Button } from "@/modules/admin/components/ui/button";
+import { Tag } from "@/modules/admin/components/ui/tag";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/modules/admin/components/ui/dropdown-menu";
+import { MoreHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { UsersService } from "@/api/services/UsersService";
 import { RolesService } from "@/api/services/RolesService";
@@ -259,10 +269,10 @@ export const useUsersLogic = () => {
     })();
 
     const vipNode = (
-      <Space size={4}>
+      <div className="flex gap-1">
         <Tag color={d.isVip ? "magenta" : "default"}>{d.isVip ? "VIP" : "非VIP"}</Tag>
         {d.isVip && d.vipLevel && <Tag color="magenta">{d.vipLevel}</Tag>}
-      </Space>
+      </div>
     );
     const lastLoginIp =
       typeof d.lastLoginIp === "string"
@@ -272,67 +282,96 @@ export const useUsersLogic = () => {
           : "-";
 
     return (
-      <div>
-        <Descriptions title="基础信息" column={2} bordered size="small">
-          <Descriptions.Item label="用户名">{d.username || "-"}</Descriptions.Item>
-          <Descriptions.Item label="邮箱">{d.email || "-"}</Descriptions.Item>
-          <Descriptions.Item label="角色">
-            <Space size={4} wrap>
-              {roles.length ? roles.map((x) => <Tag key={x}>{x}</Tag>) : <Tag>未设置</Tag>}
-            </Space>
-          </Descriptions.Item>
-          <Descriptions.Item label="权限">
-            <Space size={4} wrap>
-              {permissions.length ? (
-                permissions.map((x) => (
-                  <Tag key={x} color="purple">
-                    {x}
-                  </Tag>
-                ))
-              ) : (
-                <Tag>未设置</Tag>
-              )}
-            </Space>
-          </Descriptions.Item>
-          <Descriptions.Item label="等级">
-            {d.level ? <Tag color="blue">{d.level}</Tag> : "-"}
-          </Descriptions.Item>
-          <Descriptions.Item label="VIP">{vipNode}</Descriptions.Item>
-        </Descriptions>
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-2 font-medium">基础信息</h3>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <div className="flex bg-neutral-50 px-3 py-2">
+              <span className="w-24 text-neutral-500">用户名</span>
+              <span>{d.username || "-"}</span>
+            </div>
+            <div className="flex bg-neutral-50 px-3 py-2">
+              <span className="w-24 text-neutral-500">邮箱</span>
+              <span>{d.email || "-"}</span>
+            </div>
+            <div className="flex bg-neutral-50 px-3 py-2">
+              <span className="w-24 text-neutral-500">角色</span>
+              <div className="flex flex-wrap gap-1">
+                {roles.length ? roles.map((x) => <Tag key={x}>{x}</Tag>) : <Tag>未设置</Tag>}
+              </div>
+            </div>
+            <div className="flex bg-neutral-50 px-3 py-2">
+              <span className="w-24 text-neutral-500">权限</span>
+              <div className="flex flex-wrap gap-1">
+                {permissions.length ? (
+                  permissions.map((x) => (
+                    <Tag key={x} color="purple">
+                      {x}
+                    </Tag>
+                  ))
+                ) : (
+                  <Tag>未设置</Tag>
+                )}
+              </div>
+            </div>
+            <div className="flex bg-neutral-50 px-3 py-2">
+              <span className="w-24 text-neutral-500">等级</span>
+              {d.level ? <Tag color="blue">{d.level}</Tag> : "-"}
+            </div>
+            <div className="flex bg-neutral-50 px-3 py-2">
+              <span className="w-24 text-neutral-500">VIP</span>
+              {vipNode}
+            </div>
+          </div>
+        </div>
 
-        <div style={{ height: 12 }} />
+        <div>
+          <h3 className="mb-2 font-medium">账号状态</h3>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <div className="flex bg-neutral-50 px-3 py-2">
+              <span className="w-24 text-neutral-500">状态</span>
+              {statusTag}
+            </div>
+            <div className="flex bg-neutral-50 px-3 py-2">
+              <span className="w-24 text-neutral-500">下载权限</span>
+              <Tag color={d.hasDownloadPermission ? "green" : "red"}>
+                {d.hasDownloadPermission ? "允许" : "禁止"}
+              </Tag>
+            </div>
+          </div>
+        </div>
 
-        <Descriptions title="账号状态" column={2} bordered size="small">
-          <Descriptions.Item label="状态">{statusTag}</Descriptions.Item>
-          <Descriptions.Item label="下载权限">
-            <Tag color={d.hasDownloadPermission ? "green" : "red"}>
-              {d.hasDownloadPermission ? "允许" : "禁止"}
-            </Tag>
-          </Descriptions.Item>
-        </Descriptions>
+        <div>
+          <h3 className="mb-2 font-medium">活跃信息</h3>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <div className="flex bg-neutral-50 px-3 py-2">
+              <span className="w-24 text-neutral-500">最后访问</span>
+              <span>{formatDate(d.lastVisitAt || d.lastVisitTime)}</span>
+            </div>
+            <div className="flex bg-neutral-50 px-3 py-2">
+              <span className="w-24 text-neutral-500">最后登录</span>
+              <span>{formatDate(d.lastLoginAt || d.lastLoginTime)}</span>
+            </div>
+            <div className="flex bg-neutral-50 px-3 py-2">
+              <span className="w-24 text-neutral-500">最后登录IP</span>
+              <span>{lastLoginIp}</span>
+            </div>
+          </div>
+        </div>
 
-        <div style={{ height: 12 }} />
-
-        <Descriptions title="活跃信息" column={2} bordered size="small">
-          <Descriptions.Item label="最后访问">
-            {formatDate(d.lastVisitAt || d.lastVisitTime)}
-          </Descriptions.Item>
-          <Descriptions.Item label="最后登录">
-            {formatDate(d.lastLoginAt || d.lastLoginTime)}
-          </Descriptions.Item>
-          <Descriptions.Item label="最后登录IP">{lastLoginIp}</Descriptions.Item>
-        </Descriptions>
-
-        <div style={{ height: 12 }} />
-
-        <Descriptions title="时间" column={2} bordered size="small">
-          <Descriptions.Item label="创建时间">
-            {formatDate(d.createdAt || d.createTime)}
-          </Descriptions.Item>
-          <Descriptions.Item label="更新时间">
-            {formatDate(d.updatedAt || d.updateTime)}
-          </Descriptions.Item>
-        </Descriptions>
+        <div>
+          <h3 className="mb-2 font-medium">时间</h3>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <div className="flex bg-neutral-50 px-3 py-2">
+              <span className="w-24 text-neutral-500">创建时间</span>
+              <span>{formatDate(d.createdAt || d.createTime)}</span>
+            </div>
+            <div className="flex bg-neutral-50 px-3 py-2">
+              <span className="w-24 text-neutral-500">更新时间</span>
+              <span>{formatDate(d.updatedAt || d.updateTime)}</span>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }, []);
@@ -349,26 +388,6 @@ export const useUsersLogic = () => {
     setDetailData({ title: "权限列表", type: "permissions", record });
     setDetailOpen(true);
   }, []);
-
-  const userActions = useMemo<MenuProps["items"]>(() => {
-    const items: MenuProps["items"] = [];
-    items.push({ key: "detail", label: "查看详情" });
-    items.push({ key: "downloads", label: "查看下载记录" });
-    items.push({ key: "edit", label: "编辑用户" });
-    items.push({ key: "assign", label: "分配角色/权限" });
-    items.push(
-      can("admin/users/ban")
-        ? { key: "ban", label: "封禁用户" }
-        : { key: "ban", label: "封禁用户", disabled: true },
-    );
-    items.push(
-      can("admin/users/delete")
-        ? { key: "delete", label: "删除用户" }
-        : { key: "delete", label: "删除用户", disabled: true },
-    );
-    items.push({ key: "punishments", label: "解封（跳转处罚记录）" });
-    return items;
-  }, [can]);
 
   const onAction = useCallback(
     async (actionKey: string, record: any) => {
@@ -459,37 +478,27 @@ export const useUsersLogic = () => {
         toast.error(e?.message || "操作失败");
       }
     },
-    [
-      assignForm,
-      banForm,
-      can,
-      editForm,
-      loadBanDictionaries,
-      loadPunishTypes,
-      navigate,
-      renderDetailContent,
-    ],
+    [assignForm, banForm, can, editForm, loadBanDictionaries, loadPunishTypes, navigate],
   );
 
   const columns = useMemo(
     () => [
       {
         title: "#",
-        fixed: "left" as const,
         width: 50,
         align: "center" as const,
         render: (_: any, __: any, index: number) => pageOffsetRef.current + index + 1,
       },
       {
         title: "用户",
-        dataIndex: "username",
+        dataIndex: "username" as const,
         render: (_: any, r: any) => r.username || r.name,
-        fixed: "left" as const,
-        width: 80,
+        width: 150,
       },
       {
         title: "状态",
-        dataIndex: "status",
+        dataIndex: "status" as const,
+        width: 100,
         render: (status: UserDto["status"]) => {
           const color = status === "banned" ? "red" : status === "active" ? "green" : "gold";
           const text = status === "banned" ? "已封禁" : status === "active" ? "正常" : "待激活";
@@ -498,21 +507,27 @@ export const useUsersLogic = () => {
       },
       {
         title: "角色",
-        dataIndex: "roles",
+        dataIndex: "roles" as const,
+        width: 120,
         render: (_: any, r: any) => {
           const list: string[] = Array.isArray(r?.roles) ? r.roles : r?.roles ? [r.roles] : [];
           return list.length ? (
-            <Button type="link" onClick={() => openRolesModal(r)}>
+            <Button
+              variant="link"
+              className="h-auto p-0 text-blue-600"
+              onClick={() => openRolesModal(r)}
+            >
               查看
             </Button>
           ) : (
-            <Tag>未设置</Tag>
+            <Tag color="default">未设置</Tag>
           );
         },
       },
       {
         title: "权限",
-        dataIndex: "permissions",
+        dataIndex: "permissions" as const,
+        width: 120,
         render: (_: any, r: any) => {
           const list: string[] = Array.isArray(r?.permissions)
             ? r.permissions
@@ -520,67 +535,103 @@ export const useUsersLogic = () => {
               ? [r.permissions]
               : [];
           return list.length ? (
-            <Button type="link" onClick={() => openPermissionsModal(r)}>
+            <Button
+              variant="link"
+              className="h-auto p-0 text-blue-600"
+              onClick={() => openPermissionsModal(r)}
+            >
               查看
             </Button>
           ) : (
-            <Tag>未设置</Tag>
+            <Tag color="default">未设置</Tag>
           );
         },
       },
       {
         title: "等级",
-        dataIndex: "level",
+        dataIndex: "level" as const,
+        width: 100,
         render: (level: UserDto["level"]) =>
-          level ? <Tag color="blue">{level}</Tag> : <Tag>未设置</Tag>,
+          level ? <Tag color="blue">{level}</Tag> : <Tag color="default">未设置</Tag>,
       },
       {
         title: "VIP",
-        dataIndex: "isVip",
+        dataIndex: "isVip" as const,
+        width: 150,
         render: (_: any, r: any) => {
           const isVip = Boolean(r.isVip);
           const vipLevel = r.vipLevel || "V0";
           return (
-            <Space size={4}>
+            <div className="flex gap-1">
               <Tag color={isVip ? "magenta" : "default"}>{isVip ? "VIP" : "非VIP"}</Tag>
               {isVip && <Tag color="magenta">{vipLevel}</Tag>}
-            </Space>
+            </div>
           );
         },
       },
       {
-        title: "下载权限",
-        dataIndex: "hasDownloadPermission",
+        title: "下载",
+        dataIndex: "hasDownloadPermission" as const,
+        width: 100,
         render: (v: boolean) => <Tag color={v ? "green" : "red"}>{v ? "允许" : "禁止"}</Tag>,
       },
       {
         title: "创建时间",
-        dataIndex: "createdAt",
+        dataIndex: "createdAt" as const,
+        width: 160,
         render: (_: any, r: any) => formatDate(r.createdAt || r.createTime),
       },
       {
-        title: "最后访问",
-        dataIndex: "lastVisitAt",
+        title: "访问时间",
+        dataIndex: "lastVisitAt" as const,
+        width: 160,
         render: (_: any, r: any) => formatDate(r.lastVisitAt || r.lastVisitTime),
       },
       {
         title: "操作",
+        width: 80,
+        align: "center" as const,
         fixed: "right" as const,
-        width: 110,
         render: (_: any, r: any) => (
-          <Dropdown
-            menu={{
-              items: userActions,
-              onClick: ({ key }) => onAction(String(key), r),
-            }}
-            trigger={["click"]}
-          >
-            <Button type="link">操作</Button>
-          </Dropdown>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="text" size="sm" className="h-8 w-8 p-0">
+                <span className="sr-only">打开菜单</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>操作</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => onAction("detail", r)}>查看详情</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onAction("downloads", r)}>下载记录</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => onAction("edit", r)}>编辑用户</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onAction("assign", r)}>分配权限</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                disabled={!can("admin/users/ban")}
+                onClick={() => onAction("ban", r)}
+                className="text-red-600 focus:bg-red-50 focus:text-red-600"
+              >
+                封禁用户
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onAction("punishments", r)}>
+                解封/记录
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                disabled={!can("admin/users/delete")}
+                onClick={() => onAction("delete", r)}
+                className="text-red-600 focus:bg-red-50 focus:text-red-600"
+              >
+                删除用户
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ),
       },
     ],
-    [onAction, openPermissionsModal, openRolesModal, userActions],
+    [onAction, openPermissionsModal, openRolesModal, can],
   );
 
   const advFieldOptions = useMemo(

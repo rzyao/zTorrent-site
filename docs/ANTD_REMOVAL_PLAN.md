@@ -32,7 +32,7 @@
 
 优先解决全局性的工具和样式依赖，防止牵一发而动全身。
 
-- [ ] **Global Message**: 重构 `src/modules/admin/utils/globalMessage.ts`，不再依赖 `antd/message`，改为封装 `sonner`。
+- [x] **Global Message**: 重构 `src/modules/admin/utils/globalMessage.ts`，不再依赖 `antd/message`，改为封装 `sonner`。
 - [ ] **Styles**: 清理 `admin.css` 和 `admin-theme.css` 中对 Antd 类名的覆盖。
 
 ### Phase 1: 公共组件模块 (Shared Components)
@@ -44,7 +44,7 @@
   - [ ] `BanUserModal.tsx`
   - [ ] `AssignRolesModal.tsx`
   - [ ] `AdvancedSearchModal.tsx`
-  - [ ] `UsersTable.tsx` (Table & Pagination)
+  - [x] `UsersTable.tsx` (Table & Pagination)
 - [ ] **Categories**:
   - [ ] `CategoryModals.tsx`
 
