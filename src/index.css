@@ -9,11 +9,7 @@
 @plugin "@tailwindcss/typography";
 @variant dark (&:where(.dark, .dark *));
 
-:root {
-  /* 全局回退值：防止 Modal/Tooltip 等 Portal 元素因脱离 #root-admin 作用域而丢失圆角 */
-  /* Ant Design 规范圆角为 6px */
-  --radius: 6px; 
-}
+
 
 
 

@@ -1,5 +1,18 @@
 @theme {
-  /* ============== Forum 圆角系统 ============== */
+  /* 圆角系统映射 */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-3xl: var(--radius-3xl);
+  --radius-4xl: var(--radius-4xl);
+}
+
+/* Forum 作用域变量 */
+#root-forum {
+  /* Forum 圆角系统 (Scoped) */
+  --radius: 0.5rem;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -7,15 +20,19 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
-}
-
-/* Forum 作用域变量 */
-#root-forum {
-  /* Tailwind Radius 基准值 */
-  --radius: 0.5rem;
 
   /* 示例变量 */
   --forum-primary: #6366f1;
+
+  /* ==================== Tailwind 映射变量重定义 ==================== */
+  /* 关键：必须在此作用域内重新定义 --radius-* 变量 */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
 }
 
 .dark #root-forum,

@@ -1,12 +1,12 @@
-/* ============================================================
+﻿/* ============================================================
    Ant Design 6.0 Design Tokens for Admin Module (Tailwind CSS)
    Admin 模块专用设计 Token - 与主站样式隔离
    ============================================================ */
 
 /* 
  * 这些 CSS 变量可在 Admin 模块内通过以下方式使用:
- * - 直接使用: color: var(--antd-primary);
- * - Tailwind 任意值: text-[var(--antd-text)] bg-[var(--antd-bg-container)]
+ * - 直接使用: color: var(--primary);
+ * - Tailwind 任意值: text-[var(--text)] bg-[var(--bg-container)]
  * 
  * 注意: Tailwind CSS v4 的 @theme 配置已在 index.css 中定义，
  * 此处定义的变量作为降级方案和 Admin 模块专用覆盖。
@@ -14,203 +14,203 @@
 
 .admin-layout {
   /* ============== 间距 (Spacing) ============== */
-  --antd-spacing-xs: 8px;
-  --antd-spacing-sm: 12px;
-  --antd-spacing-md: 16px;
-  --antd-spacing-lg: 24px;
-  --antd-spacing-xl: 32px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
 
   /* ============== 圆角 (Border Radius) ============== */
-  --antd-radius: 6px;
-  --antd-radius-sm: 4px;
-  --antd-radius-lg: 8px;
+  --radius: 6px;
+  --radius-sm: 4px;
+  --radius-lg: 8px;
 
   /* ============== 字号 (Font Size) ============== */
-  --antd-font-xs: 12px;
-  --antd-font-sm: 14px;
-  --antd-font-md: 16px;
-  --antd-font-lg: 20px;
-  --antd-font-xl: 24px;
-  --antd-line-height-xs: 20px;
-  --antd-line-height-sm: 22px;
-  --antd-line-height-md: 24px;
-  --antd-line-height-lg: 28px;
-  --antd-line-height-xl: 32px;
+  --font-xs: 12px;
+  --font-sm: 14px;
+  --font-md: 16px;
+  --font-lg: 20px;
+  --font-xl: 24px;
+  --line-height-xs: 20px;
+  --line-height-sm: 22px;
+  --line-height-md: 24px;
+  --line-height-lg: 28px;
+  --line-height-xl: 32px;
 
   /* ============== 主题色 (Primary) ============== */
-  --antd-primary: #1677ff;
-  --antd-primary-hover: #4096ff;
-  --antd-primary-active: #0958d9;
-  --antd-primary-bg: #e6f4ff;
-  --antd-primary-bg-hover: #bae0ff;
+  --primary: #1677ff;
+  --primary-hover: #4096ff;
+  --primary-active: #0958d9;
+  --primary-bg: #e6f4ff;
+  --primary-bg-hover: #bae0ff;
 
   /* ============== 成功色 (Success) ============== */
-  --antd-success: #52c41a;
-  --antd-success-hover: #73d13d;
-  --antd-success-bg: #f6ffed;
+  --success: #52c41a;
+  --success-hover: #73d13d;
+  --success-bg: #f6ffed;
 
   /* ============== 警告色 (Warning) ============== */
-  --antd-warning: #faad14;
-  --antd-warning-hover: #ffc53d;
-  --antd-warning-bg: #fffbe6;
+  --warning: #faad14;
+  --warning-hover: #ffc53d;
+  --warning-bg: #fffbe6;
 
   /* ============== 错误色 (Error) ============== */
-  --antd-error: #ff4d4f;
-  --antd-error-hover: #ff7875;
-  --antd-error-bg: #fff2f0;
+  --error: #ff4d4f;
+  --error-hover: #ff7875;
+  --error-bg: #fff2f0;
 
   /* ============== 文字色 (Text) ============== */
-  --antd-text: rgba(0, 0, 0, 0.88);
-  --antd-text-secondary: rgba(0, 0, 0, 0.65);
-  --antd-text-description: rgba(0, 0, 0, 0.45);
-  --antd-text-placeholder: rgba(0, 0, 0, 0.25);
-  --antd-text-disabled: rgba(0, 0, 0, 0.25);
+  --text: rgba(0, 0, 0, 0.88);
+  --text-secondary: rgba(0, 0, 0, 0.65);
+  --text-description: rgba(0, 0, 0, 0.45);
+  --text-placeholder: rgba(0, 0, 0, 0.25);
+  --text-disabled: rgba(0, 0, 0, 0.25);
 
   /* ============== 边框色 (Border) ============== */
-  --antd-border: #d9d9d9;
-  --antd-border-secondary: #f0f0f0;
+  --border: #d9d9d9;
+  --border-secondary: #f0f0f0;
 
   /* ============== 背景色 (Background) ============== */
-  --antd-bg-container: #ffffff;
-  --antd-bg-layout: #f5f5f5;
-  --antd-bg-elevated: #ffffff;
+  --bg-container: #ffffff;
+  --bg-layout: #f5f5f5;
+  --bg-elevated: #ffffff;
 
   /* ============== 阴影 (Shadow) ============== */
-  --antd-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  --antd-shadow-sm:
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-sm:
     0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.02);
-  --antd-shadow-lg: 0 6px 16px rgba(0, 0, 0, 0.08), 0 0 8px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 6px 16px rgba(0, 0, 0, 0.08), 0 0 8px rgba(0, 0, 0, 0.04);
 }
 
 /* ============== Admin 模块工具类 ============== */
 
 /* 页面容器 */
 .admin-page {
-  padding: var(--antd-spacing-lg);
-  background: var(--antd-bg-layout);
+  padding: var(--spacing-lg);
+  background: var(--bg-layout);
   min-height: calc(100vh - 64px);
 }
 
 /* 卡片容器 */
 .admin-card {
-  background: var(--antd-bg-container);
-  border: 1px solid var(--antd-border-secondary);
-  border-radius: var(--antd-radius-lg);
-  box-shadow: var(--antd-shadow-sm);
+  background: var(--bg-container);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 /* 页面标题 */
 .admin-title {
-  font-size: var(--antd-font-xl);
-  line-height: var(--antd-line-height-xl);
-  color: var(--antd-text);
+  font-size: var(--font-xl);
+  line-height: var(--line-height-xl);
+  color: var(--text);
   font-weight: 600;
 }
 
 /* 页面描述 */
 .admin-description {
-  font-size: var(--antd-font-sm);
-  line-height: var(--antd-line-height-sm);
-  color: var(--antd-text-description);
+  font-size: var(--font-sm);
+  line-height: var(--line-height-sm);
+  color: var(--text-description);
 }
 
 /* 主按钮 */
 .admin-btn-primary {
-  background: var(--antd-primary);
+  background: var(--primary);
   color: white;
   border: none;
-  border-radius: var(--antd-radius);
-  padding: var(--antd-spacing-xs) var(--antd-spacing-md);
-  font-size: var(--antd-font-sm);
+  border-radius: var(--radius);
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-sm);
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .admin-btn-primary:hover {
-  background: var(--antd-primary-hover);
+  background: var(--primary-hover);
 }
 
 .admin-btn-primary:active {
-  background: var(--antd-primary-active);
+  background: var(--primary-active);
 }
 
 /* 默认按钮 */
 .admin-btn-default {
-  background: var(--antd-bg-container);
-  color: var(--antd-text);
-  border: 1px solid var(--antd-border);
-  border-radius: var(--antd-radius);
-  padding: var(--antd-spacing-xs) var(--antd-spacing-md);
-  font-size: var(--antd-font-sm);
+  background: var(--bg-container);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-sm);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .admin-btn-default:hover {
-  color: var(--antd-primary);
-  border-color: var(--antd-primary);
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 /* 危险按钮 */
 .admin-btn-danger {
-  background: var(--antd-error);
+  background: var(--error);
   color: white;
   border: none;
-  border-radius: var(--antd-radius);
-  padding: var(--antd-spacing-xs) var(--antd-spacing-md);
-  font-size: var(--antd-font-sm);
+  border-radius: var(--radius);
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-sm);
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .admin-btn-danger:hover {
-  background: var(--antd-error-hover);
+  background: var(--error-hover);
 }
 
 /* 输入框 */
 .admin-input {
   width: 100%;
-  padding: var(--antd-spacing-xs) var(--antd-spacing-sm);
-  font-size: var(--antd-font-sm);
-  border: 1px solid var(--antd-border);
-  border-radius: var(--antd-radius);
-  background: var(--antd-bg-container);
-  color: var(--antd-text);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-container);
+  color: var(--text);
   transition: all 0.2s;
 }
 
 .admin-input:hover {
-  border-color: var(--antd-primary);
+  border-color: var(--primary);
 }
 
 .admin-input:focus {
-  border-color: var(--antd-primary);
+  border-color: var(--primary);
   box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2);
   outline: none;
 }
 
 .admin-input::placeholder {
-  color: var(--antd-text-placeholder);
+  color: var(--text-placeholder);
 }
 
 .admin-input:disabled {
-  background: var(--antd-bg-layout);
-  color: var(--antd-text-disabled);
+  background: var(--bg-layout);
+  color: var(--text-disabled);
   cursor: not-allowed;
 }
 
 /* 表单标签 */
 .admin-label {
-  font-size: var(--antd-font-xs);
-  color: var(--antd-text);
+  font-size: var(--font-xs);
+  color: var(--text);
   margin-bottom: 4px;
   display: block;
 }
 
 /* 章节标题 */
 .admin-section-title {
-  font-size: var(--antd-font-xs);
-  color: var(--antd-text-description);
+  font-size: var(--font-xs);
+  color: var(--text-description);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;

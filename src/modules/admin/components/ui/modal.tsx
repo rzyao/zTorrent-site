@@ -117,7 +117,7 @@ export function Modal({
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
-      <DialogPrimitive.Portal>
+      <DialogPrimitive.Portal container={document.getElementById("root-admin")}>
         <DialogPrimitive.Overlay
           className={cn(
             "fixed inset-0 z-50 bg-black/45",

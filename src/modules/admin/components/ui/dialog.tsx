@@ -67,7 +67,7 @@ export interface DialogContentProps extends React.ComponentPropsWithoutRef<
  */
 export function DialogContent({ title, titleHidden, children, ...props }: DialogContentProps) {
   return (
-    <DialogPrimitive.Portal>
+    <DialogPrimitive.Portal container={document.getElementById("root-admin")}>
       {/* 遮罩：30% 黑色透明度，确保高于固定表头 (z-10) */}
       <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/30" />
       <DialogPrimitive.Content

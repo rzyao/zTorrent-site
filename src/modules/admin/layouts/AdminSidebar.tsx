@@ -79,7 +79,7 @@ function MenuItem({
           onClick={() => toggleMenu(item.id)}
           className={cn(
             "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-gray-50",
-            isActive || isParentActive ? "text-admin-primary" : "text-gray-900",
+            isActive || isParentActive ? "text-primary" : "text-gray-900",
             collapsed && "justify-center px-2",
           )}
         >
@@ -88,11 +88,11 @@ function MenuItem({
               <DynamicIcon
                 iconName={iconName}
                 size={depth === 0 ? 18 : 16}
-                className={isActive || isParentActive ? "text-admin-primary" : "text-gray-600"}
+                className={isActive || isParentActive ? "text-primary" : "text-gray-600"}
               />
             )}
             {!collapsed && (
-              <span className={isActive || isParentActive ? "text-admin-primary" : "text-gray-900"}>
+              <span className={isActive || isParentActive ? "text-primary" : "text-gray-900"}>
                 {item.name || item.path}
               </span>
             )}
@@ -101,7 +101,7 @@ function MenuItem({
             <ChevronDown
               className={cn(
                 "h-4 w-4 transition-transform",
-                isActive || isParentActive ? "text-admin-primary" : "text-gray-400",
+                isActive || isParentActive ? "text-primary" : "text-gray-400",
                 isExpanded && "rotate-180",
               )}
             />
@@ -138,7 +138,7 @@ function MenuItem({
         end
         className={cn(
           "flex items-center gap-3 rounded-lg px-3 py-2 text-sm whitespace-nowrap no-underline transition-colors hover:bg-gray-50",
-          isActive ? "text-admin-primary" : "text-gray-900",
+          isActive ? "text-primary" : "text-gray-900",
           collapsed && "justify-center px-2",
         )}
       >
@@ -146,13 +146,11 @@ function MenuItem({
           <DynamicIcon
             iconName={iconName}
             size={depth === 0 ? 18 : 16}
-            className={isActive ? "text-admin-primary" : "text-antd-text-description"}
+            className={isActive ? "text-primary" : "text-text-description"}
           />
         )}
         {!collapsed && (
-          <span className={isActive ? "text-admin-primary" : "text-antd-text"}>
-            {item.name || item.path}
-          </span>
+          <span className={isActive ? "text-primary" : "text-text"}>{item.name || item.path}</span>
         )}
       </NavLink>
     </div>

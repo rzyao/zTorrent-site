@@ -51,7 +51,7 @@ const Search = React.forwardRef<HTMLInputElement, SearchProps>(
           className={cn(
             "pr-10",
             enterButton && "rounded-r-none border-r-0",
-            focused && "border-antd-primary ring-2 ring-[rgba(5,145,255,0.1)] outline-none",
+            focused && "border-primary ring-2 ring-[rgba(5,145,255,0.1)] outline-none",
             className,
           )}
           onFocus={(e) => {

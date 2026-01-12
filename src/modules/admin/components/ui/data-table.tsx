@@ -125,8 +125,8 @@ function Pagination({
           className={cn(
             "flex h-8 min-w-8 items-center justify-center rounded-md border text-sm transition-all",
             i === current
-              ? "border-antd-primary text-antd-primary bg-white font-medium"
-              : "hover:border-antd-primary hover:text-antd-primary border-gray-200 bg-white text-neutral-600",
+              ? "border-primary text-primary bg-white font-medium"
+              : "hover:border-primary hover:text-primary border-gray-200 bg-white text-neutral-600",
           )}
         >
           {i}
@@ -156,7 +156,7 @@ function Pagination({
             size="sm"
             onClick={() => handlePageChange(1)}
             disabled={current === 1}
-            className="hover:text-antd-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
+            className="hover:text-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
           >
             <ChevronsLeft className="h-4 w-4" />
           </Button>
@@ -167,7 +167,7 @@ function Pagination({
             size="sm"
             onClick={() => handlePageChange(current - 1)}
             disabled={current === 1}
-            className="hover:text-antd-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
+            className="hover:text-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -181,7 +181,7 @@ function Pagination({
             size="sm"
             onClick={() => handlePageChange(current + 1)}
             disabled={current === totalPages}
-            className="hover:text-antd-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
+            className="hover:text-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -192,7 +192,7 @@ function Pagination({
             size="sm"
             onClick={() => handlePageChange(totalPages)}
             disabled={current === totalPages}
-            className="hover:text-antd-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
+            className="hover:text-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
           >
             <ChevronsRight className="h-4 w-4" />
           </Button>
@@ -369,7 +369,7 @@ export function DataTable<T extends Record<string, any>>({
                   if (!column.sorter) return null;
                   const iconClass = "h-3.5 w-3.5 ml-1";
                   if (column.sortOrder === "asc") {
-                    return <ArrowUp className={cn(iconClass, "text-antd-primary")} />;
+                    return <ArrowUp className={cn(iconClass, "text-primary")} />;
                   }
                   if (column.sortOrder === "desc") {
                     return <ArrowDown className={cn(iconClass, "text-antd-primary")} />;

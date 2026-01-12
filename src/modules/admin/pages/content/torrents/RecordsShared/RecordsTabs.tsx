@@ -32,7 +32,7 @@ export const RecordsTabs = ({ activeKey, onChange, items }: RecordsTabsProps) =>
             className={cn(
               "border-b-2 py-3 text-sm font-medium whitespace-nowrap transition-all",
               activeKey === tab.key
-                ? "border-antd-primary text-antd-primary"
+                ? "border-primary text-primary"
                 : "border-transparent text-neutral-500 hover:border-gray-300 hover:text-neutral-700",
             )}
           >

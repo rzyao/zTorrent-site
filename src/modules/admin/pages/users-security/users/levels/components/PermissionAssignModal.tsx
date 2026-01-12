@@ -61,7 +61,7 @@ const PermissionAssignModalComponent: React.FC<PermissionAssignModalProps> = ({
           <button
             className={`-mb-px border-b-2 px-6 py-3 text-sm font-medium transition-colors ${
               activeTab === "admin"
-                ? "border-antd-primary text-antd-primary"
+                ? "border-primary text-primary"
                 : "border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"
             }`}
             onClick={() => setActiveTab("admin")}
@@ -71,7 +71,7 @@ const PermissionAssignModalComponent: React.FC<PermissionAssignModalProps> = ({
           <button
             className={`-mb-px border-b-2 px-6 py-3 text-sm font-medium transition-colors ${
               activeTab === "web"
-                ? "border-antd-primary text-antd-primary"
+                ? "border-primary text-primary"
                 : "border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"
             }`}
             onClick={() => setActiveTab("web")}

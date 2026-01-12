@@ -76,7 +76,7 @@ const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
 >(({ className, children, position = "popper", ...props }, ref) => (
-  <SelectPrimitive.Portal>
+  <SelectPrimitive.Portal container={document.getElementById("root-admin")}>
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
@@ -127,8 +127,8 @@ const SelectItem = React.forwardRef<
       "relative flex w-full cursor-pointer items-center rounded px-3 py-1.5 text-sm text-[rgba(0,0,0,0.88)] transition-colors outline-none select-none",
       // Hover 状态 (AntD uses background color change)
       "focus:bg-[rgba(0,0,0,0.04)]",
-      // Selected 状态 (AntD: bg-admin-primary-bg, font-weight: 600)
-      "data-[state=checked]:bg-admin-primary-bg data-[state=checked]:font-semibold data-[state=checked]:text-[rgba(0,0,0,0.88)]",
+      // Selected 状态 (AntD: bg-primary-bg, font-weight: 600)
+      "data-[state=checked]:bg-primary-bg data-[state=checked]:font-semibold data-[state=checked]:text-[rgba(0,0,0,0.88)]",
       // Disabled
       "data-disabled:pointer-events-none data-disabled:opacity-50",
       className,

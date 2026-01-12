@@ -1,26 +1,27 @@
 @theme {
-  /* ============== Admin 圆角系统 ============== */
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  /* ============== Admin 模块颜色映射 (Standardized) ============== */
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
+  --color-primary-bg: var(--primary-bg);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-success-hover: var(--success-hover);
+  --color-success-active: var(--success-active);
+  --color-warning-hover: var(--warning-hover);
+  --color-warning-active: var(--warning-active);
+  --color-error-hover: var(--error-hover);
+  --color-error-active: var(--error-active);
 
-  /* ============== Admin 模块颜色（Ant Design 风格）============== */
-  --color-admin-primary: #1677ff;
-  --color-admin-primary-hover: #4096ff;
-  --color-admin-primary-active: #0958d9;
-  --color-admin-primary-bg: #e6f4ff;
-  --color-admin-success: #52c41a;
-  --color-admin-warning: #faad14;
-  --color-admin-error: #ff4d4f;
-
-  /* Admin 模块 Ant Design 风格工具类（bg-antd-primary 等）*/
-  --color-antd-primary: #1677ff;
-  --color-antd-primary-hover: #4096ff;
-  --color-antd-primary-active: #0958d9;
+  /* 圆角系统映射 */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-3xl: var(--radius-3xl);
+  --radius-4xl: var(--radius-4xl);
 }
 
 /* Admin 作用域变量 */
@@ -29,14 +30,52 @@
     color: rgba(0, 0, 0, 0.88);
     background-color: #ffffff;
 
-    /* Tailwind Radius 基准值 (配合 @theme 计算使用) */
+    /* Tailwind Radius 基准值 & Scoped 计算 */
     --radius: 6px;
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --radius-2xl: calc(var(--radius) + 8px);
+    --radius-3xl: calc(var(--radius) + 12px);
+    --radius-4xl: calc(var(--radius) + 16px);
 
-    /* 定义 Admin 专用的 CSS 变量，可以复用 antd 变量命名习惯 */
-    --antd-primary: #1677ff;
-    --antd-primary-hover: #4096ff;
-    --antd-primary-active: #0958d9;
-    --antd-primary-bg: #e6f4ff;
+    /* Admin 颜色定义 (Scoped & Standardized) */
+    --primary: #1677ff;
+    --primary-hover: #4096ff;
+    --primary-active: #0958d9;
+    --primary-bg: #e6f4ff;
+    
+    --success: #52c41a;
+    --success-hover: #73d13d;
+    --success-active: #389e0d;
+    
+    --warning: #faad14;
+    --warning-hover: #ffc53d;
+    --warning-active: #d48806;
+    
+    --error: #ff4d4f;
+    --error-hover: #ff7875;
+    --error-active: #d9363e;
+
+    /* ==================== Tailwind 映射变量重定义 ==================== */
+    /* 关键：必须在 #root-admin 作用域内重新定义 --color-* 变量，
+       因为 @theme 块的变量在全局作用域解析时 --primary 等未定义，
+       导致 Tailwind 生成的工具类 (如 bg-primary) 获取到 invalid 值。
+       通过在此作用域内重新赋值，覆盖全局的 invalid 状态。 */
+    --color-primary: var(--primary);
+    --color-primary-hover: var(--primary-hover);
+    --color-primary-active: var(--primary-active);
+    --color-primary-bg: var(--primary-bg);
+    --color-success: var(--success);
+    --color-success-hover: var(--success-hover);
+    --color-success-active: var(--success-active);
+    --color-warning: var(--warning);
+    --color-warning-hover: var(--warning-hover);
+    --color-warning-active: var(--warning-active);
+    --color-error: var(--error);
+    --color-error-hover: var(--error-hover);
+    --color-error-active: var(--error-active);
 
     /* 可以在这里定义 Admin 自己的 --background 等，如果需要支持 Dark Mode */
 }
@@ -52,8 +91,6 @@
 /* ============================================================
    Admin 模块专用样式配置
    基于现代后台系统设计规范
-   
-   注意：不要在此处导入 tailwindcss，全局已导入
    ============================================================ */
 
 /* Admin 布局容器样式 */
@@ -67,39 +104,39 @@
   color: rgba(0, 0, 0, 0.88);
 
   /* 这些变量供 Admin 组件和自定义工具类使用 */
-  --antd-primary: #1677ff;
-  --antd-primary-hover: #4096ff;
-  --antd-primary-active: #0958d9;
-  --antd-primary-bg: #e6f4ff;
+  --primary: #1677ff;
+  --primary-hover: #4096ff;
+  --primary-active: #0958d9;
+  --primary-bg: #e6f4ff;
 
-  --antd-success: #52c41a;
-  --antd-warning: #faad14;
-  --antd-error: #ff4d4f;
+  --success: #52c41a;
+  --warning: #faad14;
+  --error: #ff4d4f;
 
-  --antd-text: rgba(0, 0, 0, 0.88);
-  --antd-text-secondary: rgba(0, 0, 0, 0.65);
-  --antd-text-description: rgba(0, 0, 0, 0.45);
-  --antd-text-placeholder: rgba(0, 0, 0, 0.25);
-  --antd-text-disabled: rgba(0, 0, 0, 0.25);
+  --text: rgba(0, 0, 0, 0.88);
+  --text-secondary: rgba(0, 0, 0, 0.65);
+  --text-description: rgba(0, 0, 0, 0.45);
+  --text-placeholder: rgba(0, 0, 0, 0.25);
+  --text-disabled: rgba(0, 0, 0, 0.25);
 
-  --antd-border: #d9d9d9;
-  --antd-border-secondary: #f0f0f0;
+  --border: #d9d9d9;
+  --border-secondary: #f0f0f0;
 
-  --antd-bg-container: #ffffff;
-  --antd-bg-layout: #f5f5f5;
+  --bg-container: #ffffff;
+  --bg-layout: #f5f5f5;
 
-  --antd-spacing-xs: 8px;
-  --antd-spacing-sm: 12px;
-  --antd-spacing-md: 16px;
-  --antd-spacing-lg: 24px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
 
-  --antd-radius: 6px;
-  --antd-radius-sm: 4px;
-  --antd-radius-lg: 8px;
+  --radius: 6px;
+  --radius-sm: 4px;
+  --radius-lg: 8px;
 
-  --antd-font-sm: 14px;
-  --antd-font-md: 16px;
-  --antd-font-xl: 24px;
+  --font-sm: 14px;
+  --font-md: 16px;
+  --font-xl: 24px;
 }
 
 /* 确保所有弹窗组件（Modal、Dialog 等）使用标准字体 */

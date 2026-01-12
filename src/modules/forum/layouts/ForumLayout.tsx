@@ -1,5 +1,5 @@
 ﻿import { Outlet } from "react-router-dom";
-import "@/modules/forum/styles/forum.css";
+import "@/modules/forum/forum.css";
 import { useState, useCallback, Suspense } from "react";
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";

@@ -95,9 +95,9 @@ export function MovieCategoriesView() {
                 type="button"
               >
                 {isExpanded ? (
-                  <ChevronDown className="group-hover:text-antd-primary h-4 w-4 text-neutral-400 transition-colors" />
+                  <ChevronDown className="group-hover:text-primary h-4 w-4 text-neutral-400 transition-colors" />
                 ) : (
-                  <ChevronRight className="group-hover:text-antd-primary h-4 w-4 text-neutral-400 transition-colors" />
+                  <ChevronRight className="group-hover:text-primary h-4 w-4 text-neutral-400 transition-colors" />
                 )}
               </button>
             ) : (
@@ -158,7 +158,7 @@ export function MovieCategoriesView() {
           <Button
             variant="text"
             size="sm"
-            className="text-antd-error hover:bg-antd-error/5 hover:text-antd-error-hover text-sm"
+            className="text-error hover:bg-error/5 hover:text-error-hover text-sm"
             onClick={() => handleRemove(record.id)}
           >
             <Trash2 className="mr-1 h-3.5 w-3.5" />

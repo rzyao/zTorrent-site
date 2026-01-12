@@ -34,19 +34,19 @@ const buttonVariants = cva(
       variant: {
         // 🔵 主按钮：蓝色实心背景
         primary: [
-          "bg-antd-primary border border-transparent text-white",
+          "bg-primary border border-transparent text-white",
           "shadow-[0_2px_0_rgba(5,5,5,0.06)]",
-          "hover:bg-antd-primary-hover",
-          "active:bg-antd-primary-active",
-          "focus-visible:ring-antd-primary",
+          "hover:bg-primary-hover",
+          "active:bg-primary-active",
+          "focus-visible:ring-primary",
         ],
         // ⚪ 默认按钮：白色背景 + 灰色边框
         default: [
           "border border-gray-300 bg-white text-neutral-900",
           "shadow-[0_2px_0_rgba(0,0,0,0.02)]",
-          "hover:text-antd-primary hover:border-antd-primary",
-          "active:text-antd-primary-active active:border-antd-primary-active",
-          "focus-visible:ring-antd-primary",
+          "hover:text-primary hover:border-primary",
+          "active:text-primary-active active:border-primary-active",
+          "focus-visible:ring-primary",
         ],
         // 📦 虚线按钮：白色背景 + 虚线边框
         dashed: [
@@ -63,9 +63,9 @@ const buttonVariants = cva(
         ],
         // 🔗 链接按钮：蓝色文字，无边框，无下划线
         link: [
-          "text-antd-primary border-none bg-transparent shadow-none",
-          "hover:text-antd-primary-hover",
-          "active:text-antd-primary-active",
+          "text-primary border-none bg-transparent shadow-none",
+          "hover:text-primary-hover",
+          "active:text-primary-active",
           "h-auto p-0", // 链接按钮无内边距，高度自适应
         ],
       },
@@ -140,9 +140,9 @@ const buttonVariants = cva(
         variant: "primary",
         ghost: true,
         className: [
-          "text-antd-primary border-antd-primary bg-transparent",
-          "hover:text-antd-primary-hover hover:border-antd-primary-hover",
-          "active:text-antd-primary-active active:border-antd-primary-active",
+          "text-primary border-primary bg-transparent",
+          "hover:text-primary-hover hover:border-primary-hover",
+          "active:text-primary-active active:border-primary-active",
         ],
       },
       // 👻 幽灵默认按钮：透明背景 + 白色边框文字
@@ -151,7 +151,7 @@ const buttonVariants = cva(
         ghost: true,
         className: [
           "border-white bg-transparent text-white",
-          "hover:text-antd-primary hover:border-antd-primary",
+          "hover:text-primary hover:border-primary",
         ],
       },
       // 👻 幽灵危险按钮
