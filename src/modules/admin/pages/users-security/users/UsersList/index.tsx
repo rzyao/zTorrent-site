@@ -9,7 +9,7 @@ import { EditUserModal } from "@/modules/admin/shared/users/components/EditUserM
 import { BanUserModal } from "@/modules/admin/shared/users/components/BanUserModal";
 import { AssignRolesModal } from "@/modules/admin/shared/users/components/AssignRolesModal";
 import { Modal, ConfirmModal } from "@/modules/admin/components/ui/modal";
-import { Tag } from "tag";
+import { Tag } from "@/modules/admin/components/ui/tag";
 import type { UserDto } from "@/api/models/UserDto";
 
 const UsersPage: React.FC = () => {
@@ -190,12 +190,12 @@ const UsersPage: React.FC = () => {
             <div className="flex flex-wrap gap-2">
               {Array.isArray(detailData.record.roles) && detailData.record.roles.length > 0 ? (
                 detailData.record.roles.map((role: string) => (
-                  <Tag key={role} variant="primary">
+                  <Tag key={role} color="blue">
                     {role}
                   </Tag>
                 ))
               ) : (
-                <Tag variant="default">未设置</Tag>
+                <Tag color="default">未设置</Tag>
               )}
             </div>
           )}
@@ -204,12 +204,12 @@ const UsersPage: React.FC = () => {
               {Array.isArray(detailData.record.permissions) &&
               detailData.record.permissions.length > 0 ? (
                 detailData.record.permissions.map((perm: string) => (
-                  <Tag key={perm} variant="purple">
+                  <Tag key={perm} color="purple">
                     {perm}
                   </Tag>
                 ))
               ) : (
-                <Tag variant="default">未设置</Tag>
+                <Tag color="default">未设置</Tag>
               )}
             </div>
           )}

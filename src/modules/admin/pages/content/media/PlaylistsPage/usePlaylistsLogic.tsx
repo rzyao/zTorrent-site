@@ -8,7 +8,7 @@ import { formatDate } from "@/modules/admin/utils/formatDate";
 import { Column } from "@/modules/admin/components/ui/data-table";
 import { Switch } from "@/modules/admin/components/ui/switch";
 import { Button } from "@/modules/admin/components/ui/button";
-import { Tag } from "tag";
+import { Tag } from "@/modules/admin/components/ui/tag";
 import {
   PlaylistItem,
   PlaylistQuery,

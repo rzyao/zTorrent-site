@@ -154,7 +154,7 @@ export const componentRegistry: Record<string, LazyComponent> = {
 
   // ==================== Admin 模块 - 用户与安全 (users-security) ====================
   // 用户管理
-  AdminUsers: lazy(() => import("@/modules/admin/pages/users-security/users/list/UsersList")),
+  AdminUsers: lazy(() => import("@/modules/admin/pages/users-security/users/UsersList")),
   AdminPunishmentRecords: lazy(
     () => import("@/modules/admin/pages/users-security/users/punishments"),
   ),

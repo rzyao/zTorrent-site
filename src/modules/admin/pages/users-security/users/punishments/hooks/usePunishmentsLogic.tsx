@@ -7,7 +7,7 @@ import { PunishmentDictsService } from "@/api/services/PunishmentDictsService";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
 import { PunishmentRecord, DEFAULT_QUERY, PunishmentQuery, AdvRule } from "../types";
 import { Column } from "@/modules/admin/components/ui/data-table";
-import { Tag } from "tag";
+import { Tag } from "@/modules/admin/components/ui/tag";
 import { Button } from "@/modules/admin/components/ui/button";
 import { ADV_OP_MAP } from "../constants";
 
@@ -182,7 +182,7 @@ export const usePunishmentsLogic = () => {
         title: "类型",
         dataIndex: "type",
         width: 120,
-        render: (_, record) => <Tag variant="purple">{record.typeLabel || record.type || "-"}</Tag>,
+        render: (_, record) => <Tag color="purple">{record.typeLabel || record.type || "-"}</Tag>,
       },
       {
         key: "reason",
@@ -211,14 +211,14 @@ export const usePunishmentsLogic = () => {
         dataIndex: "recordSource",
         width: 100,
         render: (val) =>
-          val === "active" ? <Tag variant="success">生效</Tag> : <Tag variant="default">失效</Tag>,
+          val === "active" ? <Tag color="success">生效</Tag> : <Tag color="default">失效</Tag>,
       },
       {
         key: "revoked",
         title: "撤销",
         dataIndex: "revoked",
         width: 100,
-        render: (val) => (val ? <Tag variant="warning">已撤销</Tag> : "-"),
+        render: (val) => (val ? <Tag color="warning">已撤销</Tag> : "-"),
       },
       {
         key: "actions",

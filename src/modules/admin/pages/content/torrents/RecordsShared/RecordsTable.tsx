@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { DataTable, Column } from "@/modules/admin/components/ui/data-table";
-import { Tag } from "tag";
+import { Tag } from "@/modules/admin/components/ui/tag";
 import { RecordItem } from "./types";
 
 interface RecordsTableProps {
@@ -60,7 +60,7 @@ export const RecordsTable = ({
                   : s
                     ? "warning"
                     : "default";
-          return <Tag variant={variant}>{s || "-"}</Tag>;
+          return <Tag color={variant}>{s || "-"}</Tag>;
         },
       },
       {

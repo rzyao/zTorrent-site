@@ -64,7 +64,7 @@ export function PermissionItem({
           )
         ) : null}
 
-        <FolderOutlined className="flex-shrink-0 text-lg text-gray-400" />
+        <FolderOutlined className="shrink-0 text-lg text-gray-400" />
 
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex flex-wrap items-center gap-2">

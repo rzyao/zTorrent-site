@@ -1,7 +1,7 @@
 import { ListMoviesDto } from "@/api/models/ListMoviesDto";
 import { MovieItem } from "./types";
 import { Column } from "@/modules/admin/components/ui/data-table";
-import { Tag } from "tag";
+import { Tag } from "@/modules/admin/components/ui/tag";
 import { Button } from "@/modules/admin/components/ui/button";
 
 interface GetColumnsProps {

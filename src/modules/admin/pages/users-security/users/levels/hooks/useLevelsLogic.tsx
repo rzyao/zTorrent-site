@@ -6,7 +6,7 @@ import { UpdateLevelDto } from "@/api/models/UpdateLevelDto";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
 import { LevelItem, LevelsQuery, DEFAULT_QUERY } from "../types";
 import { Column } from "@/modules/admin/components/ui/data-table";
-import { Tag } from "tag";
+import { Tag } from "@/modules/admin/components/ui/tag";
 import { Button } from "@/modules/admin/components/ui/button";
 import { Switch } from "@/modules/admin/components/ui/switch";
 
@@ -126,7 +126,7 @@ export const useLevelsLogic = () => {
         dataIndex: "key",
         key: "key",
         width: 150,
-        render: (val: string) => <Tag variant="primary">{val}</Tag>,
+        render: (val: string) => <Tag color="blue">{val}</Tag>,
       },
       {
         title: "等级名称",

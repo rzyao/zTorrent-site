@@ -52,7 +52,7 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
       {/* 搜索与筛选 */}
       <Card
         size="small"
-        className="flex-shrink-0 border-none bg-white/80 shadow-sm backdrop-blur-sm"
+        className="shrink-0 border-none bg-white/80 shadow-sm backdrop-blur-sm"
       >
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">

@@ -4,7 +4,7 @@ import { formatBytes } from "@/modules/admin/utils/formatBytes";
 import { formatDate } from "@/modules/admin/utils/formatDate";
 import { DataTable, Column, SortOrder } from "@/modules/admin/components/ui/data-table";
 import { Button } from "@/modules/admin/components/ui/button";
-import { Tag } from "tag";
+import { Tag } from "@/modules/admin/components/ui/tag";
 import { ConfirmModal } from "@/modules/admin/components/ui/modal";
 import { TorrentItem } from "../types";
 
@@ -184,7 +184,7 @@ export const TorrentsTable = ({
             rejected: "已驳回",
             pending: "待审核",
           };
-          return <Tag variant={variantMap[text] || "default"}>{labelMap[text] || text || "-"}</Tag>;
+          return <Tag color={variantMap[text] || "default"}>{labelMap[text] || text || "-"}</Tag>;
         },
       },
       {
@@ -199,7 +199,7 @@ export const TorrentsTable = ({
         title: "可见",
         dataIndex: "visible",
         width: 70,
-        render: (v: boolean) => <Tag variant={v ? "success" : "error"}>{v ? "是" : "否"}</Tag>,
+        render: (v: boolean) => <Tag color={v ? "success" : "error"}>{v ? "是" : "否"}</Tag>,
       },
       {
         key: "actions",
