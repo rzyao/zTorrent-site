@@ -1,15 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { App, Modal } from "antd";
+import { toast } from "sonner";
 import { BonusService, CancelablePromise } from "@/api";
-import type {
-  BonusConfigDto,
-  SimulationRequestDto,
-  SimulationResultDto,
-} from "@/api";
+import type { BonusConfigDto, SimulationRequestDto, SimulationResultDto } from "@/api";
 
 export function useBonusRules() {
-  const { message } = App.useApp();
-
   const [volRate, setVolRate] = useState(0.5);
   const [slotMax, setSlotMax] = useState(1);
   const [sigmoidC, setSigmoidC] = useState(20);
@@ -25,6 +19,7 @@ export function useBonusRules() {
   const [saving, setSaving] = useState(false);
   const [baseline, setBaseline] = useState<BonusConfigDto | null>(null);
 
+  // Simulation State
   const [userDays, setUserDays] = useState(30);
   const [userCount, setUserCount] = useState(100);
   const [avgSize, setAvgSize] = useState(5);
@@ -38,12 +33,14 @@ export function useBonusRules() {
   const [simError, setSimError] = useState<string | null>(null);
   const [simResult, setSimResult] = useState<SimulationResultDto | null>(null);
 
+  // Confirmation Dialog State
+  const [saveConfirmOpen, setSaveConfirmOpen] = useState(false);
+
   const configPendingRef = useRef<CancelablePromise<any> | null>(null);
   const simPendingRef = useRef<CancelablePromise<any> | null>(null);
   const debounceRef = useRef<number | null>(null);
 
-  const clamp = (n: number, min: number, max: number) =>
-    Math.min(max, Math.max(min, n));
+  const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n));
   const safeParseNum = (v: any, fallback: number) => {
     if (v === "" || v === null || v === undefined) return fallback;
     const n = typeof v === "number" ? v : parseFloat(String(v));
@@ -69,73 +66,41 @@ export function useBonusRules() {
     p.then((res: any) => {
       const data: BonusConfigDto = (res as any)?.data ?? (res as any);
       if (data) {
-        setVolRate(
-          clamp(safeParseNum(data.storageVolumeCoefficient, volRate), 0, 5)
-        );
+        setVolRate(clamp(safeParseNum(data.storageVolumeCoefficient, volRate), 0, 5));
         setSlotMax(clamp(safeParseNum(data.storageSlotReward, slotMax), 0, 50));
-        setSigmoidC(
-          clamp(safeParseNum(data.storageEfficiencyCurve, sigmoidC), 1, 100)
-        );
-        setBasePrice(
-          clamp(safeParseNum(data.tradingBasePrice, basePrice), 1, 100)
-        );
+        setSigmoidC(clamp(safeParseNum(data.storageEfficiencyCurve, sigmoidC), 1, 100));
+        setBasePrice(clamp(safeParseNum(data.tradingBasePrice, basePrice), 1, 100));
         setKt(clamp(safeParseNum(data.tradingDormantCoefficient, kt), 0, 0.5));
         setKn(clamp(safeParseNum(data.tradingScarcityCoefficient, kn), 0, 2.0));
-        setPMinRatio(
-          clamp(safeParseNum(data.tradingMinPriceRatio, pMinRatio), 0, 1.0)
-        );
-        setKAge(
-          clamp(safeParseNum(data.tradingAgeCoefficient, kAge), 0, 999999)
-        );
-        setCostCurveC(
-          clamp(safeParseNum(data.tradingCostAgeCurve, costCurveC), 0.1, 100)
-        );
+        setPMinRatio(clamp(safeParseNum(data.tradingMinPriceRatio, pMinRatio), 0, 1.0));
+        setKAge(clamp(safeParseNum(data.tradingAgeCoefficient, kAge), 0, 999999));
+        setCostCurveC(clamp(safeParseNum(data.tradingCostAgeCurve, costCurveC), 0.1, 100));
         setBaseline({
           storageVolumeCoefficient: clamp(
             safeParseNum(data.storageVolumeCoefficient, volRate),
             0,
-            5
+            5,
           ),
-          storageSlotReward: clamp(
-            safeParseNum(data.storageSlotReward, slotMax),
-            0,
-            50
-          ),
+          storageSlotReward: clamp(safeParseNum(data.storageSlotReward, slotMax), 0, 50),
           storageEfficiencyCurve: clamp(
             safeParseNum(data.storageEfficiencyCurve, sigmoidC),
             1,
-            100
+            100,
           ),
-          tradingBasePrice: clamp(
-            safeParseNum(data.tradingBasePrice, basePrice),
-            1,
-            100
-          ),
+          tradingBasePrice: clamp(safeParseNum(data.tradingBasePrice, basePrice), 1, 100),
           tradingDormantCoefficient: clamp(
             safeParseNum(data.tradingDormantCoefficient, kt),
             0,
-            0.5
+            0.5,
           ),
           tradingScarcityCoefficient: clamp(
             safeParseNum(data.tradingScarcityCoefficient, kn),
             0,
-            2.0
+            2.0,
           ),
-          tradingMinPriceRatio: clamp(
-            safeParseNum(data.tradingMinPriceRatio, pMinRatio),
-            0,
-            1.0
-          ),
-          tradingAgeCoefficient: clamp(
-            safeParseNum(data.tradingAgeCoefficient, kAge),
-            0,
-            999999
-          ),
-          tradingCostAgeCurve: clamp(
-            safeParseNum(data.tradingCostAgeCurve, costCurveC),
-            0.1,
-            100
-          ),
+          tradingMinPriceRatio: clamp(safeParseNum(data.tradingMinPriceRatio, pMinRatio), 0, 1.0),
+          tradingAgeCoefficient: clamp(safeParseNum(data.tradingAgeCoefficient, kAge), 0, 999999),
+          tradingCostAgeCurve: clamp(safeParseNum(data.tradingCostAgeCurve, costCurveC), 0.1, 100),
           tradingCostDiscount: 1,
           tradingRevenueBonus: 1,
         });
@@ -181,18 +146,7 @@ export function useBonusRules() {
       kAge: kAge !== baseline.tradingAgeCoefficient,
       costCurveC: costCurveC !== baseline.tradingCostAgeCurve,
     };
-  }, [
-    baseline,
-    volRate,
-    slotMax,
-    sigmoidC,
-    basePrice,
-    kt,
-    kn,
-    pMinRatio,
-    kAge,
-    costCurveC,
-  ]);
+  }, [baseline, volRate, slotMax, sigmoidC, basePrice, kt, kn, pMinRatio, kAge, costCurveC]);
 
   const diffList = useMemo(() => {
     if (!baseline) return [];
@@ -232,192 +186,105 @@ export function useBonusRules() {
       }
     });
     return list;
-  }, [
-    baseline,
-    volRate,
-    slotMax,
-    sigmoidC,
-    basePrice,
-    kt,
-    kn,
-    pMinRatio,
-    kAge,
-    costCurveC,
-  ]);
+  }, [baseline, volRate, slotMax, sigmoidC, basePrice, kt, kn, pMinRatio, kAge, costCurveC]);
 
-  const handleSaveConfig = () => {
+  // Just triggers the confirmation dialog
+  const attemptSave = () => {
     if (saving || loadingConfig || diffList.length === 0) return;
-    Modal.confirm({
-      title: "确认保存配置",
-      content: (
-        <div>
-          <p>以下配置将被保存：</p>
-          <div
-            style={{ maxHeight: "300px", overflowY: "auto", marginTop: "10px" }}
-          >
-            {diffList.map((d: any) => (
-              <div
-                key={d.key}
-                style={{ marginBottom: "8px", fontSize: "13px" }}
-              >
-                <strong>{d.name}:</strong>{" "}
-                <span style={{ color: "#999" }}>{fmt(d.before)}</span>
-                {" → "}
-                <span style={{ color: "#52c41a", fontWeight: "bold" }}>
-                  {fmt(d.after)}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      ),
-      okText: "确认保存",
-      cancelText: "取消",
-      width: 500,
-      onOk: () => {
-        const payload: BonusConfigDto = {
-          storageVolumeCoefficient: volRate,
-          storageSlotReward: slotMax,
-          storageEfficiencyCurve: sigmoidC,
-          tradingBasePrice: basePrice,
-          tradingMinPriceRatio: pMinRatio,
-          tradingAgeCoefficient: kAge,
-          tradingDormantCoefficient: kt,
-          tradingScarcityCoefficient: kn,
-          tradingCostAgeCurve: costCurveC,
-          tradingCostDiscount: baseline?.tradingCostDiscount ?? 1,
-          tradingRevenueBonus: baseline?.tradingRevenueBonus ?? 1,
-        };
-        setSaving(true);
-        setConfigError(null);
-        const p = BonusService.bonusConfigControllerUpdate(payload as any);
-        configPendingRef.current?.cancel();
-        configPendingRef.current = p;
-        return p
-          .then(() => {
-            const rp = BonusService.bonusConfigControllerRead();
-            configPendingRef.current = rp;
-            return rp.then((res: any) => {
-              const data: BonusConfigDto = (res as any)?.data ?? (res as any);
-              if (data) {
-                setVolRate(
-                  clamp(
-                    safeParseNum(data.storageVolumeCoefficient, volRate),
-                    0,
-                    5
-                  )
-                );
-                setSlotMax(
-                  clamp(safeParseNum(data.storageSlotReward, slotMax), 0, 50)
-                );
-                setSigmoidC(
-                  clamp(
-                    safeParseNum(data.storageEfficiencyCurve, sigmoidC),
-                    1,
-                    100
-                  )
-                );
-                setBasePrice(
-                  clamp(safeParseNum(data.tradingBasePrice, basePrice), 1, 100)
-                );
-                setKt(
-                  clamp(
-                    safeParseNum(data.tradingDormantCoefficient, kt),
-                    0,
-                    0.5
-                  )
-                );
-                setKn(
-                  clamp(
-                    safeParseNum(data.tradingScarcityCoefficient, kn),
-                    0,
-                    2.0
-                  )
-                );
-                setPMinRatio(
-                  clamp(
-                    safeParseNum(data.tradingMinPriceRatio, pMinRatio),
-                    0,
-                    1.0
-                  )
-                );
-                setKAge(
-                  clamp(
-                    safeParseNum(data.tradingAgeCoefficient, kAge),
-                    0,
-                    999999
-                  )
-                );
-                setCostCurveC(
-                  clamp(
-                    safeParseNum(data.tradingCostAgeCurve, costCurveC),
-                    0.1,
-                    100
-                  )
-                );
-                setBaseline({
-                  storageVolumeCoefficient: clamp(
-                    safeParseNum(data.storageVolumeCoefficient, volRate),
-                    0,
-                    5
-                  ),
-                  storageSlotReward: clamp(
-                    safeParseNum(data.storageSlotReward, slotMax),
-                    0,
-                    50
-                  ),
-                  storageEfficiencyCurve: clamp(
-                    safeParseNum(data.storageEfficiencyCurve, sigmoidC),
-                    1,
-                    100
-                  ),
-                  tradingBasePrice: clamp(
-                    safeParseNum(data.tradingBasePrice, basePrice),
-                    1,
-                    100
-                  ),
-                  tradingDormantCoefficient: clamp(
-                    safeParseNum(data.tradingDormantCoefficient, kt),
-                    0,
-                    0.5
-                  ),
-                  tradingScarcityCoefficient: clamp(
-                    safeParseNum(data.tradingScarcityCoefficient, kn),
-                    0,
-                    2.0
-                  ),
-                  tradingMinPriceRatio: clamp(
-                    safeParseNum(data.tradingMinPriceRatio, pMinRatio),
-                    0,
-                    1.0
-                  ),
-                  tradingAgeCoefficient: clamp(
-                    safeParseNum(data.tradingAgeCoefficient, kAge),
-                    0,
-                    999999
-                  ),
-                  tradingCostAgeCurve: clamp(
-                    safeParseNum(data.tradingCostAgeCurve, costCurveC),
-                    0.1,
-                    100
-                  ),
-                  tradingCostDiscount: data.tradingCostDiscount ?? 1,
-                  tradingRevenueBonus: data.tradingRevenueBonus ?? 1,
-                });
-                message.success("配置保存成功！");
-              }
+    setSaveConfirmOpen(true);
+  };
+
+  // The actual save logic
+  const executeSave = () => {
+    const payload: BonusConfigDto = {
+      storageVolumeCoefficient: volRate,
+      storageSlotReward: slotMax,
+      storageEfficiencyCurve: sigmoidC,
+      tradingBasePrice: basePrice,
+      tradingMinPriceRatio: pMinRatio,
+      tradingAgeCoefficient: kAge,
+      tradingDormantCoefficient: kt,
+      tradingScarcityCoefficient: kn,
+      tradingCostAgeCurve: costCurveC,
+      tradingCostDiscount: baseline?.tradingCostDiscount ?? 1,
+      tradingRevenueBonus: baseline?.tradingRevenueBonus ?? 1,
+    };
+    setSaving(true);
+    setConfigError(null);
+    setSaveConfirmOpen(false); // Close modal potentially or keep open? Usually close.
+
+    const p = BonusService.bonusConfigControllerUpdate(payload as any);
+    configPendingRef.current?.cancel();
+    configPendingRef.current = p;
+    return p
+      .then(() => {
+        const rp = BonusService.bonusConfigControllerRead();
+        configPendingRef.current = rp;
+        return rp.then((res: any) => {
+          const data: BonusConfigDto = (res as any)?.data ?? (res as any);
+          if (data) {
+            setVolRate(clamp(safeParseNum(data.storageVolumeCoefficient, volRate), 0, 5));
+            setSlotMax(clamp(safeParseNum(data.storageSlotReward, slotMax), 0, 50));
+            setSigmoidC(clamp(safeParseNum(data.storageEfficiencyCurve, sigmoidC), 1, 100));
+            setBasePrice(clamp(safeParseNum(data.tradingBasePrice, basePrice), 1, 100));
+            setKt(clamp(safeParseNum(data.tradingDormantCoefficient, kt), 0, 0.5));
+            setKn(clamp(safeParseNum(data.tradingScarcityCoefficient, kn), 0, 2.0));
+            setPMinRatio(clamp(safeParseNum(data.tradingMinPriceRatio, pMinRatio), 0, 1.0));
+            setKAge(clamp(safeParseNum(data.tradingAgeCoefficient, kAge), 0, 999999));
+            setCostCurveC(clamp(safeParseNum(data.tradingCostAgeCurve, costCurveC), 0.1, 100));
+            setBaseline({
+              storageVolumeCoefficient: clamp(
+                safeParseNum(data.storageVolumeCoefficient, volRate),
+                0,
+                5,
+              ),
+              storageSlotReward: clamp(safeParseNum(data.storageSlotReward, slotMax), 0, 50),
+              storageEfficiencyCurve: clamp(
+                safeParseNum(data.storageEfficiencyCurve, sigmoidC),
+                1,
+                100,
+              ),
+              tradingBasePrice: clamp(safeParseNum(data.tradingBasePrice, basePrice), 1, 100),
+              tradingDormantCoefficient: clamp(
+                safeParseNum(data.tradingDormantCoefficient, kt),
+                0,
+                0.5,
+              ),
+              tradingScarcityCoefficient: clamp(
+                safeParseNum(data.tradingScarcityCoefficient, kn),
+                0,
+                2.0,
+              ),
+              tradingMinPriceRatio: clamp(
+                safeParseNum(data.tradingMinPriceRatio, pMinRatio),
+                0,
+                1.0,
+              ),
+              tradingAgeCoefficient: clamp(
+                safeParseNum(data.tradingAgeCoefficient, kAge),
+                0,
+                999999,
+              ),
+              tradingCostAgeCurve: clamp(
+                safeParseNum(data.tradingCostAgeCurve, costCurveC),
+                0.1,
+                100,
+              ),
+              tradingCostDiscount: data.tradingCostDiscount ?? 1,
+              tradingRevenueBonus: data.tradingRevenueBonus ?? 1,
             });
-          })
-          .catch((e: any) => {
-            setConfigError(e?.message ?? "保存配置失败");
-            message.error(`保存失败：${e?.message ?? "保存配置失败"}`);
-          })
-          .finally(() => {
-            setSaving(false);
-            configPendingRef.current = null;
-          });
-      },
-    });
+            toast.success("配置保存成功！");
+          }
+        });
+      })
+      .catch((e: any) => {
+        setConfigError(e?.message ?? "保存配置失败");
+        toast.error(`保存失败：${e?.message ?? "保存配置失败"}`);
+      })
+      .finally(() => {
+        setSaving(false);
+        configPendingRef.current = null;
+      });
   };
 
   const handleSimulate = () => {
@@ -530,8 +397,7 @@ export function useBonusRules() {
     // 计算交易收益分解
     const baseRevenue = basePrice * scarcityFactor * upload;
     const ageRevenue = basePrice * kAge * age * scarcityFactor * upload;
-    const dormantRevenue =
-      basePrice * kt * dormantDays * scarcityFactor * upload;
+    const dormantRevenue = basePrice * kt * dormantDays * scarcityFactor * upload;
     return {
       totalVolTB,
       efficiency,
@@ -599,7 +465,13 @@ export function useBonusRules() {
     setKAge,
     setCostCurveC,
     handleNumberChange,
-    handleSaveConfig,
+
+    // Actions
+    handleSaveConfig: attemptSave, // Rename logic
+    executeSave, // Expose for UI
+    saveConfirmOpen, // Expose State
+    setSaveConfirmOpen,
+
     handleReset,
     userDays,
     userCount,
