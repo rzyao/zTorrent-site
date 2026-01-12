@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Modal } from "@/modules/admin/components/ui/modal";
 import { Input } from "@/modules/admin/components/ui/input";
-import { Select } from "@/modules/admin/components/ui/select";
+import { StandardSelect as Select } from "@/modules/admin/components/ui/select";
 import { Textarea } from "@/modules/admin/components/ui/textarea";
 import { Label } from "@/modules/admin/components/ui/label";
 import { Permission, PermissionScope } from "../types";

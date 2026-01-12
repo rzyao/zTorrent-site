@@ -52,7 +52,7 @@
 
 针对重灾区进行集中攻坚。
 
-- [ ] **Users & Security**:
+- [x] **Users & Security**:
   - [x] `RolesPage` (Table, Modal, Permissions)
   - [x] `PermissionsPage` (Tree Component 重写)
 - [ ] **System Routes**:
