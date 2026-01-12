@@ -81,14 +81,17 @@ export const DetailsPanel = memo(function DetailsPanel({
       reset({
         id: node.id,
         path: node.path,
-        name: typeof node.name === "object" ? (node.name as any).zh || "" : node.name || "",
+        name:
+          typeof node.name === "object"
+            ? (node.name as any).zh || (node.name as any).default || node.name || ""
+            : node.name || "",
         redirect:
           typeof node.redirect === "object"
-            ? (node.redirect as any).url || ""
+            ? (node.redirect as any).url || node.redirect || ""
             : node.redirect || "",
         component:
           typeof node.component === "object"
-            ? (node.component as any).component || ""
+            ? (node.component as any).component || node.component || ""
             : node.component || undefined,
         layout: (node.layout as string) || "none",
         icon: (node as any).icon || "",
@@ -109,7 +112,7 @@ export const DetailsPanel = memo(function DetailsPanel({
       ...node,
       ...values,
       permissions: values.permissions || [],
-    });
+    } as any); // Cast as any to bypass strict checks if RouteTreeNodeDto is complex
   };
 
   const currentIcon = watch("icon");
@@ -132,11 +135,11 @@ export const DetailsPanel = memo(function DetailsPanel({
             <h3 className="text-lg leading-none font-semibold tracking-tight">
               {displayName || "..."}
             </h3>
-            {node.isVisible === false && <Tag variant="destructive">已隐藏</Tag>}
+            {node.isVisible === false && <Tag color="error">已隐藏</Tag>}
           </div>
           <p className="text-muted-foreground mt-1 font-mono text-sm">{node.id}</p>
         </div>
-        <Button variant="destructive" size="sm" onClick={() => onDelete(node.id)} title="删除路由">
+        <Button variant="text" danger size="sm" onClick={() => onDelete(node.id)} title="删除路由">
           <Trash2 className="h-4 w-4" />
         </Button>
       </div>
@@ -316,7 +319,7 @@ export const DetailsPanel = memo(function DetailsPanel({
       {/* Footer */}
       <div className="bg-muted/40 flex justify-end gap-3 border-t px-6 py-4">
         <Button
-          variant="outline"
+          variant="default"
           onClick={() => reset()}
           disabled={isSaving || !isDirty || isTransitioning}
         >

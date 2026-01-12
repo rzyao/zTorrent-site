@@ -8,7 +8,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/modules/admin/components/ui/dialog";
 import { Button } from "@/modules/admin/components/ui/button";
 import { ImportRoutesDto } from "@/api/models/ImportRoutesDto";
@@ -148,7 +147,8 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
           </div>
         </div>
 
-        <DialogFooter className="bg-muted/10 border-t px-6 py-4">
+        {/* Since DialogFooter is not exported by ui/dialog, we use a simple div with same style */}
+        <div className="bg-muted/10 flex justify-end gap-2 border-t px-6 py-4">
           <Button variant="default" onClick={() => onOpenChange(false)}>
             取消
           </Button>
@@ -156,7 +156,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
             {isUploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             确认导入
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

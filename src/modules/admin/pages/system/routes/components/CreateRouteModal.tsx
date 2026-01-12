@@ -7,7 +7,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/modules/admin/components/ui/dialog";
 import { Input } from "@/modules/admin/components/ui/input";
 import { StandardSelect as Select } from "@/modules/admin/components/ui/select";
@@ -151,7 +150,12 @@ export function CreateRouteModal({
                   control={control}
                   name="routeKey"
                   render={({ field }) => (
-                    <Input {...field} placeholder="admin-users" error={errors.routeKey?.message} />
+                    <>
+                      <Input {...field} placeholder="admin-users" />
+                      {errors.routeKey && (
+                        <p className="text-xs text-red-500">{errors.routeKey.message}</p>
+                      )}
+                    </>
                   )}
                 />
                 <p className="text-muted-foreground text-xs">全局唯一标识</p>
@@ -163,7 +167,10 @@ export function CreateRouteModal({
                   control={control}
                   name="path"
                   render={({ field }) => (
-                    <Input {...field} placeholder="/admin/users" error={errors.path?.message} />
+                    <>
+                      <Input {...field} placeholder="/admin/users" />
+                      {errors.path && <p className="text-xs text-red-500">{errors.path.message}</p>}
+                    </>
                   )}
                 />
               </div>
@@ -313,9 +320,6 @@ export function CreateRouteModal({
 
             <div className="mt-4 space-y-2">
               <Label>访问权限 (输入Key回车 - 暂用逗号分隔字符串)</Label>
-              {/* Simplified permissions inpu since we don't have tags input readily available in Admin UI yet or just use text for now */}
-              {/* Or reusable Select tags mode? Admin UI select doesn't support generic tags mode out of box unless Enhanced. */}
-              {/* I will use simple multi-select if possible, but keys are dynamic. Text Input separated by comma is safest MVP */}
               <Controller
                 control={control}
                 name="permissions"
@@ -331,14 +335,14 @@ export function CreateRouteModal({
             </div>
           </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+          <div className="bg-muted/20 -mx-6 -mb-6 flex justify-end gap-3 border-t px-6 py-4">
+            <Button type="button" variant="default" onClick={() => onOpenChange(false)}>
               取消
             </Button>
-            <Button type="submit" loading={isSubmitting}>
+            <Button type="submit" variant="primary" loading={isSubmitting}>
               创建
             </Button>
-          </DialogFooter>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
