@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
-import { AdminDevApp } from "./AdminDevApp";
-import "@/index.css"; // 引入全局样式
+import { AdminDevApp } from "./AdminDevApp.tsx";
+import "@/index.css";
+// Admin 专用样式已在 index.css 中通过 @import 引入
 import { setupAxiosInterceptors } from "@/api/axiosInterceptors";
 import { initOpenAPI } from "@/api/setup";
 import { QueryProvider } from "@/providers/QueryProvider";
@@ -9,7 +10,7 @@ import { QueryProvider } from "@/providers/QueryProvider";
 setupAxiosInterceptors();
 
 initOpenAPI().then(() => {
-  createRoot(document.getElementById("root")!).render(
+  createRoot(document.getElementById("root-admin")!).render(
     <QueryProvider>
       <AdminDevApp />
     </QueryProvider>,

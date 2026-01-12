@@ -1,0 +1,24 @@
+@theme {
+  /* ============== Forum 圆角系统 ============== */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+}
+
+/* Forum 作用域变量 */
+#root-forum {
+  /* Tailwind Radius 基准值 */
+  --radius: 0.5rem;
+
+  /* 示例变量 */
+  --forum-primary: #6366f1;
+}
+
+.dark #root-forum,
+#root-forum.dark {
+  /* Forum 深色模式 */
+}

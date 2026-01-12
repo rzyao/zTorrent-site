@@ -1,3 +1,54 @@
+@theme {
+  /* ============== Admin 圆角系统 ============== */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  /* ============== Admin 模块颜色（Ant Design 风格）============== */
+  --color-admin-primary: #1677ff;
+  --color-admin-primary-hover: #4096ff;
+  --color-admin-primary-active: #0958d9;
+  --color-admin-primary-bg: #e6f4ff;
+  --color-admin-success: #52c41a;
+  --color-admin-warning: #faad14;
+  --color-admin-error: #ff4d4f;
+
+  /* Admin 模块 Ant Design 风格工具类（bg-antd-primary 等）*/
+  --color-antd-primary: #1677ff;
+  --color-antd-primary-hover: #4096ff;
+  --color-antd-primary-active: #0958d9;
+}
+
+/* Admin 作用域变量 */
+#root-admin {
+    /* 基础文字颜色 - 亮色模式 */
+    color: rgba(0, 0, 0, 0.88);
+    background-color: #ffffff;
+
+    /* Tailwind Radius 基准值 (配合 @theme 计算使用) */
+    --radius: 6px;
+
+    /* 定义 Admin 专用的 CSS 变量，可以复用 antd 变量命名习惯 */
+    --antd-primary: #1677ff;
+    --antd-primary-hover: #4096ff;
+    --antd-primary-active: #0958d9;
+    --antd-primary-bg: #e6f4ff;
+
+    /* 可以在这里定义 Admin 自己的 --background 等，如果需要支持 Dark Mode */
+}
+
+/* Admin Dark 模式预留 */
+/*
+.dark #root-admin,
+#root-admin.dark {
+    // 后续添加 Admin 深色模式变量
+}
+*/
+
 /* ============================================================
    Admin 模块专用样式配置
    基于现代后台系统设计规范
@@ -193,4 +244,85 @@
 .table-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #c1c1c1 #fafafa;
+}
+
+/* ============================================================
+   来自 src/modules/admin/layouts/styles.css 的样式
+   ============================================================ */
+#root-admin {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Sider 底部收缩按钮样式：与导航栏白色主题保持一致 */
+.ant-layout-sider-trigger {
+  background: #f5f5f5 !important;
+  color: #333 !important;
+  border-top: 1px solid #f0f0f0;
+}
+
+.ant-layout-sider-trigger:hover {
+  background: #e8e8e8 !important;
+}
+
+/**
+ * Sider 展开/收起动画优化
+ * 1. 缩短过渡时间从默认 200ms 到 150ms
+ * 2. 使用 cubic-bezier 缓动函数提升感知速度
+ * 3. 使用 transform 触发 GPU 加速
+ */
+.ant-layout-sider {
+  transition: width 0.15s cubic-bezier(0.2, 0, 0, 1) !important;
+  transform: translateZ(0); /* 触发 GPU 合成层 */
+}
+
+/* 禁用 Menu 子菜单展开动画，提升响应速度 */
+.ant-menu-inline .ant-menu-submenu-title,
+.ant-menu-inline .ant-menu-item {
+  transition: none !important;
+}
+
+/* 保留 hover 和选中状态的背景过渡 */
+.ant-menu-inline .ant-menu-item:hover,
+.ant-menu-inline .ant-menu-submenu-title:hover,
+.ant-menu-inline .ant-menu-item-selected {
+  transition: background-color 0.15s ease !important;
 }
