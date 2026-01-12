@@ -274,8 +274,6 @@ export function useCategoryManagement(
 
     // Create
     createOpen,
-    // Create
-    createOpen,
     createInitial,
     createKeyPrefix,
     setCreateOpen,
