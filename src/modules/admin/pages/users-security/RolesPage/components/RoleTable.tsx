@@ -127,7 +127,7 @@ export const RoleTable = ({
         </div>
       }
       toolbarRight={
-        <Button onClick={onAdd}>
+        <Button variant="primary" onClick={onAdd}>
           <Plus className="mr-2 h-4 w-4" />
           添加角色
         </Button>

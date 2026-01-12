@@ -160,7 +160,7 @@ export const componentRegistry: Record<string, LazyComponent> = {
   ),
   AdminLevels: lazy(() => import("@/modules/admin/pages/users-security/users/levels")),
   // 权限中心
-  AdminRoles: lazy(() => import("@/modules/admin/pages/users-security/permissions/RolesPage")),
+  AdminRoles: lazy(() => import("@/modules/admin/pages/users-security/RolesPage")),
   AdminWebPermissions: lazy(() =>
     import("@/modules/admin/pages/users-security/PermissionsPage/entry").then((m) => ({
       default: m.WebPermissionsPage,
