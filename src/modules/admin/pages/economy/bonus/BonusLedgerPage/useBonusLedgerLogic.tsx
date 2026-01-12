@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { useLocation } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BonusAdminService } from "@/api/services/BonusAdminService";
@@ -111,10 +112,7 @@ export function useBonusLedgerLogic() {
   );
 
   const handleExport = useCallback(() => {
-    // 暂时保持与原版一致的提示
-    import("antd").then(({ message }) => {
-      message.warning("导出功能暂不可用");
-    });
+    toast.warning("导出功能暂不可用");
   }, []);
 
   return {

@@ -1,8 +1,6 @@
+import { useRef } from "react";
 import { Button } from "@/modules/admin/components/ui/button";
-import { Upload, Button as AntButton } from "antd";
-import type { UploadProps } from "antd";
 import { Upload as UploadIcon, FileJson, Trash2, Play } from "lucide-react";
-import { Input } from "@/modules/admin/components/ui/input";
 import { Textarea } from "@/modules/admin/components/ui/textarea";
 
 interface ImportPanelProps {
@@ -26,10 +24,15 @@ export function ImportPanel({
   loading,
   hasItems,
 }: ImportPanelProps) {
-  const uploadProps: UploadProps = {
-    beforeUpload: onParseCsv,
-    accept: ".csv",
-    showUploadList: false,
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      onParseCsv(file);
+      // Reset input to allow re-selection
+      e.target.value = "";
+    }
   };
 
   return (
@@ -43,9 +46,21 @@ export function ImportPanel({
               <div className="text-muted-foreground mb-2 text-xs">
                 方式一：上传 CSV 文件 (UserId, Delta, Reason...)
               </div>
-              <Upload {...uploadProps}>
-                <AntButton icon={<UploadIcon className="h-4 w-4" />}>选择 CSV 文件</AntButton>
-              </Upload>
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept=".csv"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              <Button
+                variant="default"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full justify-start"
+              >
+                <UploadIcon className="mr-2 h-4 w-4" />
+                选择 CSV 文件
+              </Button>
             </div>
 
             <div className="relative">
@@ -86,7 +101,7 @@ export function ImportPanel({
         </div>
 
         <Button
-          variant="default"
+          variant="primary" // Changed to primary for main action
           size="lg"
           className="w-full"
           onClick={onSubmit}

@@ -34,6 +34,18 @@ export const DialogTitle = DialogPrimitive.Title;
  */
 export const DialogDescription = DialogPrimitive.Description;
 
+/**
+ * 底部操作栏容器
+ */
+export function DialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={`flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 ${className || ""}`}
+      {...props}
+    />
+  );
+}
+
 export interface DialogContentProps extends React.ComponentPropsWithoutRef<
   typeof DialogPrimitive.Content
 > {

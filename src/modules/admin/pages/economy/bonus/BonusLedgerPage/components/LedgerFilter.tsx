@@ -1,45 +1,80 @@
-import { Form, DatePicker } from "antd";
+import { useForm } from "react-hook-form";
 import { Search } from "lucide-react";
 import { useEffect } from "react";
 import { Input } from "@/modules/admin/components/ui/input";
 import { Button } from "@/modules/admin/components/ui/button";
-
-const { RangePicker } = DatePicker;
 
 interface LedgerFilterProps {
   onSearch: (values: any) => void;
   initUserId?: string;
 }
 
+interface FilterFormValues {
+  userId: string;
+  type: string;
+  reason: string;
+  externalRef: string;
+  correlationId: string;
+  rangeStart: string;
+  rangeEnd: string;
+}
+
 export function LedgerFilter({ onSearch, initUserId }: LedgerFilterProps) {
-  const [form] = Form.useForm();
+  const { register, handleSubmit, reset, setValue } = useForm<FilterFormValues>({
+    defaultValues: {
+      userId: initUserId || "",
+      type: "",
+      reason: "",
+      externalRef: "",
+      correlationId: "",
+      rangeStart: "",
+      rangeEnd: "",
+    },
+  });
 
   useEffect(() => {
     if (initUserId) {
-      form.setFieldsValue({ userId: initUserId });
+      setValue("userId", initUserId);
     }
-  }, [initUserId, form]);
+  }, [initUserId, setValue]);
+
+  const onSubmit = (data: FilterFormValues) => {
+    // 转换日期范围以兼容现有的逻辑（toISOString 将在 hook 中调用）
+    const payload = {
+      ...data,
+      range:
+        data.rangeStart || data.rangeEnd
+          ? [
+              data.rangeStart ? new Date(data.rangeStart) : null,
+              data.rangeEnd ? new Date(data.rangeEnd) : null,
+            ]
+          : undefined,
+    };
+    onSearch(payload);
+  };
 
   return (
-    <Form form={form} layout="inline" onFinish={onSearch} className="gap-y-2">
-      <Form.Item name="userId" className="mr-2!">
-        <Input placeholder="用户ID" className="w-[120px]" />
-      </Form.Item>
-      <Form.Item name="type" className="mr-2!">
-        <Input placeholder="类型 (ADMIN_ADJUST...)" className="w-[160px]" />
-      </Form.Item>
-      <Form.Item name="reason" className="mr-2!">
-        <Input placeholder="原因" className="w-[140px]" />
-      </Form.Item>
-      <Form.Item name="externalRef" className="mr-2!">
-        <Input placeholder="幂等键" className="w-[160px]" />
-      </Form.Item>
-      <Form.Item name="correlationId" className="mr-2!">
-        <Input placeholder="关联ID" className="w-[160px]" />
-      </Form.Item>
-      <Form.Item name="range" className="mr-2!">
-        <RangePicker showTime className="w-[340px]" />
-      </Form.Item>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-center gap-2">
+      <Input {...register("userId")} placeholder="用户ID" className="w-[120px]" />
+      <Input {...register("type")} placeholder="类型" className="w-[160px]" />
+      <Input {...register("reason")} placeholder="原因" className="w-[140px]" />
+      <Input {...register("externalRef")} placeholder="幂等键" className="w-[160px]" />
+      <Input {...register("correlationId")} placeholder="关联ID" className="w-[160px]" />
+
+      <div className="flex items-center gap-1 overflow-hidden rounded-md border bg-white px-2 dark:bg-stone-950">
+        <input
+          type="datetime-local"
+          {...register("rangeStart")}
+          className="w-[135px] bg-transparent py-1 text-xs focus:outline-none"
+        />
+        <span className="text-muted-foreground text-xs">-</span>
+        <input
+          type="datetime-local"
+          {...register("rangeEnd")}
+          className="w-[135px] bg-transparent py-1 text-xs focus:outline-none"
+        />
+      </div>
+
       <div className="flex -space-x-px">
         <Button type="submit" className="rounded-r-none" variant="primary">
           <Search className="mr-2 h-4 w-4" />
@@ -50,13 +85,13 @@ export function LedgerFilter({ onSearch, initUserId }: LedgerFilterProps) {
           type="button"
           className="rounded-l-none"
           onClick={() => {
-            form.resetFields();
+            reset();
             onSearch({});
           }}
         >
           重置
         </Button>
       </div>
-    </Form>
+    </form>
   );
 }

@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { App } from "antd";
+import { toast } from "sonner";
 import { BonusAdminService } from "@/api/services/BonusAdminService";
 import type { BatchItem, ResultItem } from "../types";
 import { parseCsv, parseJson } from "../utils/parsers";
 
 export function useBonusBatchAdjustLogic() {
-  const { message } = App.useApp();
   const [text, setText] = useState("");
   const [items, setItems] = useState<BatchItem[]>([]);
   const [results, setResults] = useState<ResultItem[]>([]);
@@ -16,9 +15,9 @@ export function useBonusBatchAdjustLogic() {
       const content = await file.text();
       const parsed = parseCsv(content);
       setItems(parsed);
-      message.success(`已解析 ${parsed.length} 行 CSV 数据`);
+      toast.success(`已解析 ${parsed.length} 行 CSV 数据`);
     } catch (e) {
-      message.error("解析 CSV 失败，请检查文件格式");
+      toast.error("解析 CSV 失败，请检查文件格式");
       console.error(e);
     }
     return false; // Prevent upload
@@ -28,12 +27,12 @@ export function useBonusBatchAdjustLogic() {
     try {
       const arr = parseJson(text);
       setItems(arr);
-      message.success(`已解析 ${arr.length} 行 JSON 数据`);
+      toast.success(`已解析 ${arr.length} 行 JSON 数据`);
     } catch (e: any) {
       if (e.message === "JSON root must be an array") {
-        message.error("JSON 必须是数组格式");
+        toast.error("JSON 必须是数组格式");
       } else {
-        message.error("JSON 解析失败: " + e.message);
+        toast.error("JSON 解析失败: " + e.message);
       }
     }
   };
@@ -46,7 +45,7 @@ export function useBonusBatchAdjustLogic() {
 
   const handleSubmit = async () => {
     if (!items.length) {
-      message.warning("请先导入数据");
+      toast.warning("请先导入数据");
       return;
     }
 
@@ -61,10 +60,10 @@ export function useBonusBatchAdjustLogic() {
 
       const ok = data.okCount || 0;
       const fail = data.failCount || 0;
-      message.success(`批量任务完成：成功 ${ok}，失败 ${fail}`);
+      toast.success(`批量任务完成：成功 ${ok}，失败 ${fail}`);
     } catch (err) {
       console.error(err);
-      message.error("批量调账请求失败");
+      toast.error("批量调账请求失败");
     } finally {
       setLoading(false);
     }
