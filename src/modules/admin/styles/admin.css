@@ -1,18 +1,21 @@
 /* ============================================================
    Admin 模块专用样式配置
-   基于 Ant Design 6.0 Design Tokens
+   基于现代后台系统设计规范
    
    注意：不要在此处导入 tailwindcss，全局已导入
    ============================================================ */
 
 /* Admin 布局容器样式 */
 .admin-layout {
-  /* Ant Design 标准字体栈 */
+  /* 标准字体栈 */
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
-  /* 这些变量供 Ant Design 组件和自定义工具类使用 */
+  /* 显式设置默认文字颜色，防止在全局 Dark 模式下继承浅色文字 */
+  color: rgba(0, 0, 0, 0.88);
+
+  /* 这些变量供 Admin 组件和自定义工具类使用 */
   --antd-primary: #1677ff;
   --antd-primary-hover: #4096ff;
   --antd-primary-active: #0958d9;
@@ -48,19 +51,29 @@
   --antd-font-xl: 24px;
 }
 
-/* 确保所有弹窗组件（Modal、Dialog 等）使用 Admin 字体 */
+/* 确保所有弹窗组件（Modal、Dialog 等）使用标准字体 */
 [role="dialog"] {
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-/* 覆盖 Ant Design 全局链接颜色，确保侧边栏导航颜色正确 */
-.admin-layout aside a {
-  color: inherit !important;
+/* 侧边栏导航链接颜色类 */
+.admin-sidebar-link {
+  color: var(--antd-text-secondary);
+  transition: all 0.2s;
 }
 
-/* 侧边栏导航链接颜色类 - 使用 !important 覆盖 Ant Design */
+.admin-sidebar-link:hover {
+  color: var(--antd-text);
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.admin-sidebar-link.active {
+  color: var(--antd-primary) !important;
+  background-color: var(--antd-primary-bg);
+}
+
 .admin-layout aside a.text-gray-600,
 .admin-layout aside a.text-gray-500,
 .admin-layout aside a.text-gray-400 {
@@ -93,23 +106,8 @@
   padding: 0 !important;
 }
 
-/* Ant Design 组件微调 */
-.ant-layout {
-  background: var(--antd-bg-layout) !important;
-}
-
-/* 分页组件选中页码颜色 */
-.admin-layout .ant-pagination-item-active {
-  border-color: #1677ff !important;
-}
-
-.admin-layout .ant-pagination-item-active a {
-  color: #1677ff !important;
-}
-
 /* ============================================================
    滚动条样式 (Scrollbar Styles)
-   参考 Ant Design 5.x Table 组件滚动条设计
    特性：细长、圆角、hover 显示、平滑过渡
    ============================================================ */
 

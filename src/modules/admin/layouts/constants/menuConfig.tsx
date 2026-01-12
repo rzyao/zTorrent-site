@@ -1,17 +1,17 @@
 import React from "react";
 import {
-  HomeOutlined,
-  SettingOutlined,
-  AppstoreOutlined,
-  TagsOutlined,
-  CloudDownloadOutlined,
-  TeamOutlined,
-  SafetyCertificateOutlined,
-  BookOutlined,
-  ToolOutlined,
-  LayoutOutlined,
-  MenuOutlined,
-} from "@ant-design/icons";
+  Home,
+  Settings,
+  LayoutGrid,
+  Tags,
+  CloudDownload,
+  Users,
+  ShieldCheck,
+  BookOpen,
+  Wrench,
+  Layout,
+  Menu as MenuIcon,
+} from "lucide-react";
 
 /**
  * 菜单项原始配置接口
@@ -29,48 +29,45 @@ export interface RawMenuItem {
 /**
  * 菜单图标映射（静态，只创建一次）
  * 支持多种 key 格式：路由 path、中文名称等
+ * 已全部替换为 Lucide 图标
  */
 export const MENU_ICONS: Record<string, React.ReactNode> = {
   // 按路径匹配
-  dashboard: <HomeOutlined />,
-  system: <SettingOutlined />,
-  "recommendation-config": <LayoutOutlined />,
-  navigation: <MenuOutlined />,
-  categories: <TagsOutlined />,
-  torrents: <CloudDownloadOutlined />,
-  movies: <AppstoreOutlined />,
-  playlists: <AppstoreOutlined />,
-  store: <AppstoreOutlined />,
-  bonus: <AppstoreOutlined />,
-  users: <TeamOutlined />,
-  dictionary: <BookOutlined />,
-  invites: <SafetyCertificateOutlined />,
-  tickets: <ToolOutlined />,
-  routes: <MenuOutlined />,
+  dashboard: <Home size={18} />,
+  system: <Settings size={18} />,
+  "recommendation-config": <Layout size={18} />,
+  navigation: <MenuIcon size={18} />,
+  categories: <Tags size={18} />,
+  torrents: <CloudDownload size={18} />,
+  movies: <LayoutGrid size={18} />,
+  playlists: <LayoutGrid size={18} />,
+  store: <LayoutGrid size={18} />,
+  bonus: <LayoutGrid size={18} />,
+  users: <Users size={18} />,
+  dictionary: <BookOpen size={18} />,
+  invites: <ShieldCheck size={18} />,
+  tickets: <Wrench size={18} />,
+  routes: <MenuIcon size={18} />,
   // 按中文名称匹配（后端动态路由使用）
-  仪表盘: <HomeOutlined />,
-  系统设置: <SettingOutlined />,
-  推荐配置: <LayoutOutlined />,
-  导航管理: <MenuOutlined />,
-  分类管理: <TagsOutlined />,
-  种子管理: <CloudDownloadOutlined />,
-  影片管理: <AppstoreOutlined />,
-  播放列表管理: <AppstoreOutlined />,
-  商城管理: <AppstoreOutlined />,
-  魔力管理: <AppstoreOutlined />,
-  用户管理: <TeamOutlined />,
-  字典管理: <BookOutlined />,
-  邀请管理: <SafetyCertificateOutlined />,
-  工单管理: <ToolOutlined />,
-  路由管理: <MenuOutlined />,
+  仪表盘: <Home size={18} />,
+  系统设置: <Settings size={18} />,
+  推荐配置: <Layout size={18} />,
+  导航管理: <MenuIcon size={18} />,
+  分类管理: <Tags size={18} />,
+  种子管理: <CloudDownload size={18} />,
+  影片管理: <LayoutGrid size={18} />,
+  播放列表管理: <LayoutGrid size={18} />,
+  商城管理: <LayoutGrid size={18} />,
+  魔力管理: <LayoutGrid size={18} />,
+  用户管理: <Users size={18} />,
+  字典管理: <BookOpen size={18} />,
+  邀请管理: <ShieldCheck size={18} />,
+  工单管理: <Wrench size={18} />,
+  路由管理: <MenuIcon size={18} />,
 };
 
 /**
  * 原始菜单配置（静态数据）
- * 优化点：
- * 1. 不包含 React 元素（如 <Link>），只保留纯数据
- * 2. icon 通过 key 从 MENU_ICONS 映射获取
- * 3. 渲染时再动态生成 onClick 导航
  */
 export const RAW_MENU_ITEMS: RawMenuItem[] = [
   {
@@ -301,6 +298,7 @@ export const RAW_MENU_ITEMS: RawMenuItem[] = [
   {
     key: "users",
     label: "用户管理",
+    path: "/users",
     perm: "admin/users",
     children: [
       {

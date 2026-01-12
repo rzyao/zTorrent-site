@@ -63,10 +63,10 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
   return (
     <div className="flex h-full flex-col gap-3 overflow-hidden">
       {/* Search & Filter */}
-      <div className="bg-card text-card-foreground shrink-0 rounded-lg border p-4 shadow-sm">
+      <div className="text-card-foreground shrink-0 rounded-lg border bg-white p-4 shadow-sm">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+            <span className="text-muted-foreground text-xs font-semibold tracking-wider whitespace-nowrap uppercase">
               关键词
             </span>
             <SearchInput
@@ -77,7 +77,7 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
             />
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+            <span className="text-muted-foreground text-xs font-semibold tracking-wider whitespace-nowrap uppercase">
               类型
             </span>
             <div className="bg-muted flex rounded-md p-1">
@@ -106,7 +106,7 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
       </div>
 
       {/* Main Content Card */}
-      <div className="bg-card text-card-foreground flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border shadow-sm">
+      <div className="text-card-foreground flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border bg-white shadow-sm">
         {/* Header */}
         <div className="flex items-center justify-between border-b px-6 py-4">
           <div className="flex items-center gap-2">

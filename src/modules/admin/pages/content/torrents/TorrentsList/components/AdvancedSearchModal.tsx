@@ -1,7 +1,6 @@
-import { Modal } from "antd";
+import { Modal } from "@/modules/admin/components/ui/modal";
 import AdvancedQueryBuilder from "@/modules/admin/components/AdvancedQueryBuilder";
 import { TORRENT_FIELD_OPTIONS } from "../constants";
-import { AdvancedRuleDto } from "@/api/models/AdvancedRuleDto";
 
 interface AdvancedSearchModalProps {
   open: boolean;

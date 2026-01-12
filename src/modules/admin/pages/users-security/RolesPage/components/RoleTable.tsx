@@ -50,7 +50,7 @@ export const RoleTable = ({
     {
       key: "name",
       title: "角色名称",
-      render: (_, record) => <span>{record.name}</span>,
+      render: (_, record) => <span className="text-antd-text font-medium">{record.name}</span>,
     },
     {
       key: "key",

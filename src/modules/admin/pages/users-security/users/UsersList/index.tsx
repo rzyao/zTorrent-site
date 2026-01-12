@@ -24,7 +24,7 @@ const UsersPage: React.FC = () => {
     pageSize,
     setPage,
     setPageSize,
-    columns, // 现有列配置包含 antd 渲染逻辑，我们通过 DataTable 适配
+    columns, // 获取列配置
     can,
     advOpen,
     setAdvOpen,
@@ -62,7 +62,7 @@ const UsersPage: React.FC = () => {
     fetchList,
   } = useUsersLogic();
 
-  // 将 antd 的 columns 转换为 DataTable 的 Column 格式
+  // 将业务逻辑生成的 columns 转换为 DataTable 的 Column 格式
   const adaptedColumns: Column<UserDto>[] = React.useMemo(() => {
     return columns.map((col: any, idx: number) => ({
       key: col.key || col.dataIndex || `col-${idx}`,

@@ -336,7 +336,7 @@ export function DataTable<T extends Record<string, any>>({
   return (
     <div
       className={cn(
-        "flex flex-col overflow-hidden rounded-lg border border-gray-100 bg-white pt-1",
+        "text-antd-text flex flex-col overflow-hidden rounded-lg border border-gray-100 bg-white pt-1",
         className,
       )}
     >

@@ -1,6 +1,5 @@
 ﻿import { Suspense, useState, useCallback } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { ConfigProvider, App } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
 import "@/modules/admin/styles/admin.css";
 import { AdminSidebar } from "./AdminSidebar";
@@ -36,51 +35,40 @@ export function AdminLayout() {
   }, [navigate]);
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: "#1677ff",
-          borderRadius: 6,
-        },
-      }}
-    >
-      <App>
-        <SiteConfigProvider>
-          <FaviconInjector />
-          <div className="admin-layout flex h-screen w-full overflow-hidden bg-gray-50">
-            {/* 侧边栏 */}
-            <AdminSidebar collapsed={collapsed} onCollapse={setCollapsed} />
+    <SiteConfigProvider>
+      <FaviconInjector />
+      <div className="admin-layout text-antd-text flex h-screen w-full overflow-hidden bg-white">
+        {/* 侧边栏 */}
+        <AdminSidebar collapsed={collapsed} onCollapse={setCollapsed} />
 
-            {/* 主内容区域 */}
-            <motion.main
-              initial={false}
-              animate={{ paddingLeft: collapsed ? 64 : 256 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="flex min-h-0 min-w-0 flex-1 flex-col"
-            >
-              {/* 顶部标签页导航 */}
-              <KeepAliveTabs
-                items={items}
-                activeKey={activeKey}
-                onEdit={onEdit}
-                onTabClick={handleTabClick}
-                handleRefresh={handleRefresh}
-                handleLogout={handleLogout}
-              />
+        {/* 主内容区域 */}
+        <motion.main
+          initial={false}
+          animate={{ paddingLeft: collapsed ? 64 : 256 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="flex min-h-0 min-w-0 flex-1 flex-col"
+        >
+          {/* 顶部标签页导航 */}
+          <KeepAliveTabs
+            items={items}
+            activeKey={activeKey}
+            onEdit={onEdit}
+            onTabClick={handleTabClick}
+            handleRefresh={handleRefresh}
+            handleLogout={handleLogout}
+          />
 
-              <div className="flex min-h-0 flex-1 flex-col overflow-auto">
-                <AnimatePresence mode="wait">
-                  <Suspense fallback={<RouteProgressBar />}>
-                    <KeepAliveContent items={items} activeKey={activeKey}>
-                      <Outlet />
-                    </KeepAliveContent>
-                  </Suspense>
-                </AnimatePresence>
-              </div>
-            </motion.main>
+          <div className="flex min-h-0 flex-1 flex-col overflow-auto">
+            <AnimatePresence mode="wait">
+              <Suspense fallback={<RouteProgressBar />}>
+                <KeepAliveContent items={items} activeKey={activeKey}>
+                  <Outlet />
+                </KeepAliveContent>
+              </Suspense>
+            </AnimatePresence>
           </div>
-        </SiteConfigProvider>
-      </App>
-    </ConfigProvider>
+        </motion.main>
+      </div>
+    </SiteConfigProvider>
   );
 }

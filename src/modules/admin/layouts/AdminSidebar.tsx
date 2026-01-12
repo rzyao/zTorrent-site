@@ -146,10 +146,14 @@ function MenuItem({
           <DynamicIcon
             iconName={iconName}
             size={depth === 0 ? 18 : 16}
-            className={isActive ? "text-admin-primary" : "text-gray-600"}
+            className={isActive ? "text-admin-primary" : "text-antd-text-description"}
           />
         )}
-        {!collapsed && <span>{item.name || item.path}</span>}
+        {!collapsed && (
+          <span className={isActive ? "text-admin-primary" : "text-antd-text"}>
+            {item.name || item.path}
+          </span>
+        )}
       </NavLink>
     </div>
   );
@@ -235,7 +239,7 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
         {/* 使用真实 Logo */}
         <img src={logoSvg} alt="GuoYuan" className="h-8 w-8" />
         {!collapsed && (
-          <span className="text-lg font-semibold tracking-tight text-gray-800">GuoYuan</span>
+          <span className="text-antd-text text-lg font-semibold tracking-tight">GuoYuan</span>
         )}
       </div>
 
@@ -267,7 +271,7 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
       <div className="flex h-[49px] shrink-0 items-center justify-center border-t border-gray-100">
         <button
           onClick={() => onCollapse(!collapsed)}
-          className="flex items-center justify-center rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600"
+          className="text-antd-text-description hover:text-antd-text flex items-center justify-center rounded-lg p-2 transition-colors hover:bg-gray-50"
         >
           {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
         </button>

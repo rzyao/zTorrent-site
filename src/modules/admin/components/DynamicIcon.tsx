@@ -1,9 +1,8 @@
 import React, { memo } from "react";
 import * as LucideIcons from "lucide-react";
-import * as AntdIcons from "@ant-design/icons";
 
 interface DynamicIconProps {
-  /** 图标名称，格式为 "Prefix:Name"，如 "Lucide:Home" 或 "Antd:DashboardOutlined" */
+  /** 图标名称，格式为 "Prefix:Name"，如 "Lucide:Home" */
   iconName?: string | null;
   /** 自定义 className */
   className?: string;
@@ -16,11 +15,11 @@ interface DynamicIconProps {
 /**
  * 动态图标组件
  *
- * 根据 "Prefix:Name" 格式的图标名称，自动从 Lucide 或 Ant Design 图标库中加载对应图标。
+ * 根据 "Prefix:Name" 格式的图标名称，自动从 Lucide 图标库中加载对应图标。
+ * (已移除 Ant Design 图标库支持，建议平替为 Lucide)
  *
  * @example
  * <DynamicIcon iconName="Lucide:Home" />
- * <DynamicIcon iconName="Antd:DashboardOutlined" size={16} />
  */
 const DynamicIcon: React.FC<DynamicIconProps> = memo(
   ({ iconName, className, size = 16, style }) => {
@@ -28,10 +27,17 @@ const DynamicIcon: React.FC<DynamicIconProps> = memo(
 
     // 解析 "Prefix:Name" 格式
     const colonIndex = iconName.indexOf(":");
-    if (colonIndex === -1) return null;
+    let prefix = "";
+    let name = "";
 
-    const prefix = iconName.substring(0, colonIndex);
-    const name = iconName.substring(colonIndex + 1);
+    if (colonIndex === -1) {
+      // 兼容旧格式或无前缀格式，默认为 Lucide
+      prefix = "Lucide";
+      name = iconName;
+    } else {
+      prefix = iconName.substring(0, colonIndex);
+      name = iconName.substring(colonIndex + 1);
+    }
 
     if (!name) return null;
 
@@ -44,12 +50,9 @@ const DynamicIcon: React.FC<DynamicIconProps> = memo(
       return null;
     }
 
-    // Ant Design 图标
+    // 已移除 Ant Design 图标支持
     if (prefix === "Antd") {
-      const IconComponent = (AntdIcons as any)[name];
-      if (IconComponent) {
-        return <IconComponent className={className} style={{ fontSize: size, ...style }} />;
-      }
+      console.warn(`[DynamicIcon] 已不再支持 Antd 图标库 (${name})，请更换为 Lucide 格式。`);
       return null;
     }
 

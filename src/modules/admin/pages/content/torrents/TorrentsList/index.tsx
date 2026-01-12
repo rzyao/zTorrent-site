@@ -1,4 +1,3 @@
-import { ReviewDto } from "@/api/models/ReviewDto";
 import { useTorrentsLogic } from "./hooks/useTorrentsLogic";
 import { TorrentsToolbar } from "./components/TorrentsToolbar";
 import { TorrentsTable } from "./components/TorrentsTable";
@@ -6,6 +5,8 @@ import { CreateTorrentModal } from "./components/CreateTorrentModal";
 import { EditTorrentModal } from "./components/EditTorrentModal";
 import { ReviewModal } from "./components/ReviewModal";
 import { AdvancedSearchModal } from "./components/AdvancedSearchModal";
+import { ReviewDto } from "@/api/models/ReviewDto";
+import { toast } from "sonner";
 
 /**
  * 种子列表管理页面
@@ -35,8 +36,6 @@ export default function TorrentsList() {
     setEditOpen,
     editing,
     setEditing,
-    createForm,
-    editForm,
     uploading,
     advOpen,
     setAdvOpen,
@@ -50,7 +49,6 @@ export default function TorrentsList() {
     setReviewOpen,
     reviewAction,
     setReviewAction,
-    reviewForm,
     selectedRowKeys,
     setSelectedRowKeys,
     openCreate,
@@ -60,7 +58,6 @@ export default function TorrentsList() {
     remove,
     doReview,
     fetchAdminWithRules,
-    msg,
   } = useTorrentsLogic();
 
   // 处理分页变化
@@ -93,13 +90,11 @@ export default function TorrentsList() {
     onBatchReview: (action) => {
       setReviewAction(action);
       setReviewOpen(true);
-      reviewForm.resetFields();
     },
   });
 
   return (
     <>
-      {/* 使用 DataTable，自带边框、分页等 */}
       <TorrentsTable
         loading={loading}
         items={items}
@@ -112,19 +107,17 @@ export default function TorrentsList() {
         onPageChange={handlePageChange}
         toolbarLeft={toolbar.left}
         toolbarRight={toolbar.right}
-        onDetail={(id) => msg.info(`查看种子详情: ${id}`)}
+        onDetail={(id) => toast.info(`查看种子详情: ${id}`)}
         onRemove={remove}
         selectedRowKeys={selectedRowKeys}
         onSelectionChange={setSelectedRowKeys}
       />
 
-      {/* 弹窗组件 */}
       <CreateTorrentModal
         open={createOpen}
         onCancel={() => setCreateOpen(false)}
         onOk={submitCreate}
         confirmLoading={uploading}
-        form={createForm}
         categories={categories}
       />
 
@@ -135,7 +128,6 @@ export default function TorrentsList() {
           setEditing(null);
         }}
         onOk={submitEdit}
-        form={editForm}
         editing={editing}
         categories={categories}
       />
@@ -143,18 +135,14 @@ export default function TorrentsList() {
       <ReviewModal
         open={reviewOpen}
         onCancel={() => setReviewOpen(false)}
-        onOk={async () => {
-          const v = await reviewForm.validateFields().catch(() => null);
-          setReviewOpen(false);
+        onOk={async (values) => {
           await doReview(
             editing?.id ? [editing.id] : selectedRowKeys,
-            reviewAction as any,
-            v?.note,
+            reviewAction === "approve" ? ReviewDto.action.APPROVE : ReviewDto.action.REJECT,
+            values.note,
           );
           setEditing(null);
-          setSelectedRowKeys([]); // 批量操作后重置选中状态
         }}
-        form={reviewForm}
         reviewAction={reviewAction as any}
       />
 

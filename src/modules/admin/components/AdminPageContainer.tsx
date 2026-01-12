@@ -11,9 +11,9 @@ interface AdminPageContainerProps {
 /**
  * Admin 模块专用页面容器组件
  *
- * 遵循 Ant Design 规范：
- * - 标准内边距：24px (--antd-spacing-lg)
- * - 背景色：#f5f5f5 (--antd-bg-layout)
+ * 遵循后台设计规范：
+ * - 标准内边距：24px
+ * - 背景色：#FAFAFA
  * - 全宽布局，无 max-width 限制
  */
 export function AdminPageContainer({

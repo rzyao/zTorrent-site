@@ -69,7 +69,7 @@ export default function SendInvitePage() {
               name="userId"
               control={control}
               render={({ field }) => (
-                <Input {...field} placeholder="请输入受邀用户的 UID 或用户名" size="lg" />
+                <Input {...field} placeholder="请输入受邀用户的 UID 或用户名" sz="lg" />
               )}
             />
             {errors.userId && (
@@ -91,7 +91,7 @@ export default function SendInvitePage() {
                     type="number"
                     min={1}
                     onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
-                    size="lg"
+                    sz="lg"
                   />
                 )}
               />
@@ -109,7 +109,7 @@ export default function SendInvitePage() {
               name="reason"
               control={control}
               render={({ field }) => (
-                <Input {...field} placeholder="例如：特殊奖励、补偿等" size="lg" />
+                <Input {...field} placeholder="例如：特殊奖励、补偿等" sz="lg" />
               )}
             />
             {errors.reason && (

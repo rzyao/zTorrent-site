@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { App } from "antd";
+import { toast } from "sonner";
 import { useParams } from "react-router-dom";
 import { TorrentsRecordService } from "@/api/services/TorrentsRecordService";
 import { RecordItem, DownloadTab } from "../../RecordsShared/types";
 
 export const useUserRecordsLogic = () => {
-  const { message } = App.useApp();
   const params = useParams();
   const [userId, setUserId] = useState<string>(String(params.id || ""));
   const [loading, setLoading] = useState(false);
@@ -61,7 +60,7 @@ export const useUserRecordsLogic = () => {
       setItems(list);
       setTotal(Number(resp?.data?.total ?? list.length));
     } catch (e: any) {
-      message.error(e?.message || "加载下载记录失败");
+      toast.error(e?.message || "加载下载记录失败");
     } finally {
       setLoading(false);
     }
