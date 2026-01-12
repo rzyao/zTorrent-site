@@ -1,6 +1,5 @@
 ﻿import React, { useState } from "react";
 import { Modal } from "@/modules/admin/components/ui/modal";
-import { Button } from "@/modules/admin/components/ui/button";
 import PermissionTree from "@/modules/admin/pages/users-security/PermissionsPage/components/PermissionTree";
 import { cn } from "@/utils/cn";
 import type { Role } from "../types";
@@ -51,12 +50,7 @@ export const PermissionAssignModal: React.FC<PermissionAssignModalProps> = ({
     <Modal
       open={isPermissionModalOpen}
       title="分配权限"
-      description={
-        <span>
-          角色：<span className="text-foreground font-medium">{selectedRole.name}</span>
-          <span className="text-muted-foreground ml-2">(已选 {totalSelected} 项)</span>
-        </span>
-      }
+      description={`为角色 ${selectedRole.name} 分配权限`}
       onClose={onCancel}
       onOk={handleOk}
       confirmLoading={loading}
@@ -64,6 +58,11 @@ export const PermissionAssignModal: React.FC<PermissionAssignModalProps> = ({
       width={900}
     >
       <div className="flex h-[600px] flex-col">
+        <div className="text-muted-foreground mb-2 text-sm">
+          角色：<span className="text-foreground font-medium">{selectedRole.name}</span>
+          <span className="ml-2">(已选 {totalSelected} 项)</span>
+        </div>
+
         {/* Tabs Header */}
         <div className="border-border flex border-b">
           <button
