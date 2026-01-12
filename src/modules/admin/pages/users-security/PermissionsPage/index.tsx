@@ -135,7 +135,7 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
           ) : (
             <div className="text-muted-foreground flex flex-1 flex-col items-center justify-center p-12">
               <span className="mb-4">未找到匹配的权限节点</span>
-              <Button variant="outline" onClick={() => handleAdd()}>
+              <Button variant="default" onClick={() => handleAdd()}>
                 <Plus className="mr-2 h-4 w-4" />
                 创建第一个权限
               </Button>
