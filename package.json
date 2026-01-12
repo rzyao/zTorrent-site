@@ -122,6 +122,7 @@
   },
   "scripts": {
     "dev": "npm run client:dev",
+    "dev:admin": "npm run dev --prefix src/modules/admin",
     "build": "vite build --mode production",
     "api:generate": "curl -o openapi.json http://localhost:8890/api-docs-json && npx openapi-typescript-codegen --input ./openapi.json --output src/api --client axios",
     "client:dev": "vite --mode development",
