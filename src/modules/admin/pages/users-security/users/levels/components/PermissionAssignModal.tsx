@@ -1,7 +1,7 @@
 ﻿import React, { useState, memo } from "react";
 import { Modal } from "@/modules/admin/components/ui/modal";
 import { Button } from "@/modules/admin/components/ui/button";
-import PermissionTree from "@/modules/admin/pages/users-security/permissions/perms/PermissionTree";
+import PermissionTree from "@/modules/admin/pages/users-security/PermissionsPage/components/PermissionTree";
 import { usePermissionAssign } from "../hooks/usePermissionAssign";
 import { LevelItem } from "../types";
 
