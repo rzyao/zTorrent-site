@@ -6,14 +6,6 @@ import { ImportDialog } from "./components/ImportDialog";
 import { CreateRouteModal } from "./components/CreateRouteModal";
 import { useRoutesLogic } from "./hooks/useRoutesLogic";
 import { Button } from "@/modules/admin/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/modules/admin/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/modules/admin/components/ui/tabs";
 import { Plus, RefreshCw, Upload, Download, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -22,7 +14,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from "@/modules/admin/components/ui/dialog";
 
 // Fallback Tabs if UI component missing
@@ -150,15 +141,15 @@ export default function RouteManagePage() {
             <p className="text-muted-foreground text-sm">可视化的动态路由配置中心</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleRefresh} disabled={isLoading}>
+            <Button variant="default" size="sm" onClick={handleRefresh} disabled={isLoading}>
               <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
               刷新
             </Button>
-            <Button variant="outline" size="sm" onClick={handleExport}>
+            <Button variant="default" size="sm" onClick={handleExport}>
               <Download className="mr-2 h-4 w-4" />
               导出
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setIsImportOpen(true)}>
+            <Button variant="default" size="sm" onClick={() => setIsImportOpen(true)}>
               <Upload className="mr-2 h-4 w-4" />
               导入
             </Button>
@@ -242,14 +233,14 @@ export default function RouteManagePage() {
                 此操作将永久删除该路由及其所有子节点，操作无法撤销。
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDeleteConfirmOpen(false)}>
+            <div className="flex justify-end gap-2 p-4">
+              <Button variant="default" onClick={() => setIsDeleteConfirmOpen(false)}>
                 取消
               </Button>
-              <Button variant="destructive" onClick={handleConfirmDelete}>
+              <Button danger onClick={handleConfirmDelete}>
                 确认删除
               </Button>
-            </DialogFooter>
+            </div>
           </DialogContent>
         </Dialog>
       </div>

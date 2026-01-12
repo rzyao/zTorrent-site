@@ -55,9 +55,9 @@
 - [x] **Users & Security**:
   - [x] `RolesPage` (Table, Modal, Permissions)
   - [x] `PermissionsPage` (Tree Component 重写)
-- [ ] **System Routes**:
-  - [ ] `RouteTree.tsx` (Tree Component 重写)
-  - [ ] `CreateRouteModal.tsx`
+- [x] **System Routes**:
+  - [x] `RouteTree.tsx` (Tree Component 重写 - 采用 react-arborist)
+  - [x] `CreateRouteModal.tsx`
 
 ### Phase 3: 剩余页面清扫 (Cleanup)
 

@@ -81,10 +81,16 @@ export const DetailsPanel = memo(function DetailsPanel({
       reset({
         id: node.id,
         path: node.path,
-        name: typeof node.name === "string" ? node.name : node.id,
-        redirect: node.redirect || "",
-        component: node.component || undefined,
-        layout: node.layout || "none",
+        name: typeof node.name === "object" ? (node.name as any).zh || "" : node.name || "",
+        redirect:
+          typeof node.redirect === "object"
+            ? (node.redirect as any).url || ""
+            : node.redirect || "",
+        component:
+          typeof node.component === "object"
+            ? (node.component as any).component || ""
+            : node.component || undefined,
+        layout: (node.layout as string) || "none",
         icon: (node as any).icon || "",
         permissions: node.permissions || [],
         isVisible: node.isVisible !== false,
@@ -112,7 +118,10 @@ export const DetailsPanel = memo(function DetailsPanel({
     return <EmptyState />;
   }
 
-  const displayName = typeof node.name === "string" ? node.name : node.id;
+  const displayName =
+    typeof node.name === "object"
+      ? (node.name as any).zh || (node.name as any).default || node.id
+      : node.name || node.id;
 
   return (
     <div className="bg-card flex h-full flex-col overflow-hidden rounded-lg border shadow-sm">
