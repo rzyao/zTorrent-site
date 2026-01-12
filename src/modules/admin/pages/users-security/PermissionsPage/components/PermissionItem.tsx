@@ -1,13 +1,6 @@
-import { Button, Typography, Popconfirm, Space } from "antd";
-import {
-  PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  DownOutlined,
-  RightOutlined,
-  FolderOutlined,
-} from "@ant-design/icons";
+import { Button } from "@/modules/admin/components/ui/button";
 import { Tag } from "@/modules/admin/components/ui/tag";
+import { Plus, Edit2, Trash2, ChevronDown, ChevronRight, FolderOpen } from "lucide-react";
 import { Permission } from "../types";
 import { getTypeTagColor, getTypeLabel } from "../constants";
 import { cn } from "@/utils/cn";
@@ -39,7 +32,7 @@ export function PermissionItem({
   return (
     <div
       className={cn(
-        "group flex items-center gap-2 border-b border-gray-100 px-4 py-3 transition-colors hover:bg-gray-50/50",
+        "group flex items-center gap-2 border-b border-gray-100 px-4 py-3 transition-colors hover:bg-gray-50/50 dark:border-gray-800 dark:hover:bg-gray-900/50",
       )}
       style={{ paddingLeft: indent + 16 }}
     >
@@ -47,35 +40,36 @@ export function PermissionItem({
         {showExpand ? (
           hasChildren ? (
             <Button
-              type="text"
-              size="small"
-              className="flex h-6 w-6 items-center justify-center p-0"
-              icon={
-                expanded ? (
-                  <DownOutlined className="text-xs" />
-                ) : (
-                  <RightOutlined className="text-xs" />
-                )
-              }
+              variant="text"
+              size="sm"
+              className="text-muted-foreground flex h-6 w-6 items-center justify-center p-0"
               onClick={() => onToggleExpand(permission.id)}
-            />
+            >
+              {expanded ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
+            </Button>
           ) : (
             <div className="w-6" />
           )
         ) : null}
 
-        <FolderOutlined className="shrink-0 text-lg text-gray-400" />
+        <FolderOpen className="h-5 w-5 shrink-0 text-gray-400" />
 
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex flex-wrap items-center gap-2">
-            <span className="font-medium text-gray-900">{permission.name}</span>
-            <Tag color={getTypeTagColor(permission.type)}>{getTypeLabel(permission.type)}</Tag>
-            <Typography.Text code className="text-xs">
+            <span className="text-foreground font-medium">{permission.name}</span>
+            <Tag color={getTypeTagColor(permission.type)} className="h-5 px-1 text-[10px]">
+              {getTypeLabel(permission.type)}
+            </Tag>
+            <span className="text-muted-foreground bg-muted rounded px-1 font-mono text-xs">
               {permission.key}
-            </Typography.Text>
+            </span>
           </div>
           {permission.description && (
-            <div className="truncate text-xs text-gray-500" title={permission.description}>
+            <div className="text-muted-foreground truncate text-xs" title={permission.description}>
               {permission.description}
             </div>
           )}
@@ -83,24 +77,18 @@ export function PermissionItem({
       </div>
 
       <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-        <Button type="link" size="small" icon={<PlusOutlined />} onClick={() => onAdd(permission)}>
+        <Button variant="link" size="sm" onClick={() => onAdd(permission)}>
+          <Plus className="mr-1 h-3 w-3" />
           子权限
         </Button>
-        <Button type="link" size="small" icon={<EditOutlined />} onClick={() => onEdit(permission)}>
+        <Button variant="link" size="sm" onClick={() => onEdit(permission)}>
+          <Edit2 className="mr-1 h-3 w-3" />
           编辑
         </Button>
-        <Popconfirm
-          title="确定删除这个权限吗？"
-          description="所有关联的子权限也会被永久删除。"
-          onConfirm={() => onDelete(permission.id)}
-          okText="确认删除"
-          cancelText="取消"
-          okButtonProps={{ danger: true }}
-        >
-          <Button type="link" size="small" danger icon={<DeleteOutlined />}>
-            删除
-          </Button>
-        </Popconfirm>
+        <Button variant="link" size="sm" danger onClick={() => onDelete(permission.id)}>
+          <Trash2 className="mr-1 h-3 w-3" />
+          删除
+        </Button>
       </div>
     </div>
   );

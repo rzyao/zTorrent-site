@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { App } from "antd";
+import { toast } from "sonner";
 import { PermissionsService } from "@/api/services/PermissionsService";
 import { ListPermissionsDto } from "@/api/models/ListPermissionsDto";
 import { CreatePermissionDto } from "@/api/models/CreatePermissionDto";
@@ -12,7 +12,6 @@ interface UsePermissionsLogicProps {
 }
 
 export function usePermissionsLogic({ scope }: UsePermissionsLogicProps) {
-  const { message } = App.useApp();
   const queryClient = useQueryClient();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -152,10 +151,10 @@ export function usePermissionsLogic({ scope }: UsePermissionsLogicProps) {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => PermissionsService.permissionsCoreControllerRemove({ id }),
     onSuccess: () => {
-      message.success("删除成功");
+      toast.success("删除成功");
       queryClient.invalidateQueries({ queryKey: ["permissions", scope] });
     },
-    onError: () => message.error("删除失败"),
+    onError: () => toast.error("删除失败"),
   });
 
   const saveMutation = useMutation({
@@ -191,13 +190,13 @@ export function usePermissionsLogic({ scope }: UsePermissionsLogicProps) {
       }
     },
     onSuccess: () => {
-      message.success("保存成功");
+      toast.success("保存成功");
       setIsModalOpen(false);
       queryClient.invalidateQueries({ queryKey: ["permissions", scope] });
     },
     onError: (err: any) => {
       const msg = err.response?.data?.message || err.message || "保存失败";
-      message.error(msg);
+      toast.error(msg);
     },
   });
 

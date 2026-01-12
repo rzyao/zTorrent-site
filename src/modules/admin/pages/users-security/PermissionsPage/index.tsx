@@ -1,10 +1,13 @@
-import { Card, Typography, Segmented, Button, Skeleton, Empty } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { Plus } from "lucide-react";
 import { SearchInput } from "@/modules/admin/components/ui/search-input";
+import { Button } from "@/modules/admin/components/ui/button";
+import { Modal } from "@/modules/admin/components/ui/modal";
 import { usePermissionsLogic } from "./hooks/usePermissionsLogic";
 import { PermissionItem } from "./components/PermissionItem";
 import { PermissionModal } from "./components/PermissionModal";
 import { PermissionsPageProps, Permission } from "./types";
+import { cn } from "@/utils/cn";
 
 export default function PermissionsPage({ scope, title }: PermissionsPageProps) {
   const {
@@ -26,6 +29,16 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
     handleSubmit,
   } = usePermissionsLogic({ scope });
 
+  // Delete Confirmation State
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const confirmDelete = () => {
+    if (deleteId) {
+      handleDelete(deleteId);
+      setDeleteId(null);
+    }
+  };
+
   const renderTree = (items: Permission[], level = 0): React.ReactNode => {
     return items.map((item) => {
       const isExpanded = expandedIds.has(item.id);
@@ -38,7 +51,7 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
             onToggleExpand={toggleExpand}
             onAdd={handleAdd}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={(id) => setDeleteId(id)}
             showExpand={!typeFilter}
           />
           {item.children && (isExpanded || typeFilter) && renderTree(item.children, level + 1)}
@@ -49,19 +62,13 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
 
   return (
     <div className="flex h-full flex-col gap-3 overflow-hidden">
-      {/* 搜索与筛选 */}
-      <Card
-        size="small"
-        className="shrink-0 border-none bg-white/80 shadow-sm backdrop-blur-sm"
-      >
+      {/* Search & Filter */}
+      <div className="bg-card text-card-foreground shrink-0 rounded-lg border p-4 shadow-sm">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <Typography.Text
-              type="secondary"
-              className="text-xs font-semibold tracking-wider uppercase"
-            >
+            <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
               关键词
-            </Typography.Text>
+            </span>
             <SearchInput
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
@@ -70,76 +77,74 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
             />
           </div>
           <div className="flex items-center gap-2">
-            <Typography.Text
-              type="secondary"
-              className="text-xs font-semibold tracking-wider uppercase"
-            >
+            <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
               类型
-            </Typography.Text>
-            <Segmented
-              value={typeFilter || "all"}
-              onChange={(val) => setTypeFilter(val === "all" ? "" : (val as any))}
-              options={[
+            </span>
+            <div className="bg-muted flex rounded-md p-1">
+              {[
                 { label: "全部", value: "all" },
                 { label: "页面", value: "page" },
                 { label: "按钮", value: "button" },
                 { label: "接口", value: "api" },
-              ]}
-              className="bg-gray-100/50"
-            />
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  className={cn(
+                    "rounded-sm px-3 py-1 text-sm font-medium transition-all",
+                    (typeFilter === "" && opt.value === "all") || typeFilter === opt.value
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:bg-background/50 hover:text-foreground",
+                  )}
+                  onClick={() => setTypeFilter(opt.value === "all" ? "" : (opt.value as any))}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-      </Card>
+      </div>
 
-      {/* 内容展示区 */}
-      <Card
-        title={
+      {/* Main Content Card */}
+      <div className="bg-card text-card-foreground flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border shadow-sm">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b px-6 py-4">
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold">{title || "权限管理"}</span>
-            <span className="mt-1 text-xs font-normal text-gray-400">
+            <span className="text-muted-foreground mt-1 text-xs font-normal">
               ({typeFilter ? "列表视图" : "树形视图"})
             </span>
           </div>
-        }
-        extra={
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => handleAdd()}
-            className="shadow-primary/20 rounded-full px-6 shadow-md"
-          >
+          <Button variant="primary" onClick={() => handleAdd()} className="rounded-full shadow-sm">
+            <Plus className="mr-2 h-4 w-4" />
             添加根权限
           </Button>
-        }
-        className="flex min-h-0 flex-1 flex-col border-none shadow-sm"
-        styles={{
-          body: { flex: 1, padding: 0, overflow: "auto", display: "flex", flexDirection: "column" },
-        }}
-      >
-        {loading && permissions.length === 0 ? (
-          <div className="p-8">
-            <Skeleton active paragraph={{ rows: 10 }} />
-          </div>
-        ) : permissions.length > 0 ? (
-          <div className="divide-y divide-gray-50">{renderTree(permissions)}</div>
-        ) : (
-          <div className="flex flex-1 items-center justify-center p-12">
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={
-                <div className="flex flex-col items-center gap-4">
-                  <span className="text-gray-400">未找到匹配的权限节点</span>
-                  <Button type="primary" ghost icon={<PlusOutlined />} onClick={() => handleAdd()}>
-                    创建第一个权限
-                  </Button>
-                </div>
-              }
-            />
-          </div>
-        )}
-      </Card>
+        </div>
 
-      {/* 编辑/新增弹窗 */}
+        {/* Content Body */}
+        <div className="flex flex-1 flex-col overflow-auto p-0">
+          {loading && permissions.length === 0 ? (
+            <div className="space-y-4 p-8">
+              {/* Skeleton fallback */}
+              <div className="bg-muted/50 h-10 w-full animate-pulse rounded" />
+              <div className="bg-muted/50 h-10 w-full animate-pulse rounded opacity-80" />
+              <div className="bg-muted/50 h-10 w-full animate-pulse rounded opacity-60" />
+            </div>
+          ) : permissions.length > 0 ? (
+            <div className="divide-border/50 divide-y">{renderTree(permissions)}</div>
+          ) : (
+            <div className="text-muted-foreground flex flex-1 flex-col items-center justify-center p-12">
+              <span className="mb-4">未找到匹配的权限节点</span>
+              <Button variant="outline" onClick={() => handleAdd()}>
+                <Plus className="mr-2 h-4 w-4" />
+                创建第一个权限
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Create/Edit Modal */}
       <PermissionModal
         open={isModalOpen}
         editingItem={editingPermission}
@@ -149,6 +154,23 @@ export default function PermissionsPage({ scope, title }: PermissionsPageProps) 
         onCancel={() => setIsModalOpen(false)}
         onOk={handleSubmit}
       />
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        title="确认删除"
+        open={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onOk={confirmDelete}
+        okText="确认删除"
+        cancelText="取消"
+        width={400}
+        okButtonProps={{ danger: true }}
+      >
+        <div className="text-foreground py-4 text-sm">
+          确定要删除这个权限吗？
+          <div className="mt-2 text-red-500">所有关联的子权限也会被永久删除，此操作无法撤销。</div>
+        </div>
+      </Modal>
     </div>
   );
 }
