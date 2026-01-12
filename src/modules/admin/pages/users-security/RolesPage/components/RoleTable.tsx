@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { DataTable, Column } from "@/modules/admin/components/ui/data-table";
 import { Tag } from "@/modules/admin/components/ui/tag";
 import { Button } from "@/modules/admin/components/ui/button";
 import { SearchInput } from "@/modules/admin/components/ui/search-input";
+import { Modal } from "@/modules/admin/components/ui/modal";
 import { Edit2, Trash2, ShieldCheck, Plus } from "lucide-react";
 import { formatDate } from "@/modules/admin/utils/formatDate";
 import type { Role } from "../types";
@@ -35,6 +37,15 @@ export const RoleTable = ({
   onDelete,
   onAssignPermissions,
 }: RoleTableProps) => {
+  const [deletingRole, setDeletingRole] = useState<Role | null>(null);
+
+  const confirmDelete = () => {
+    if (deletingRole) {
+      onDelete(deletingRole);
+      setDeletingRole(null);
+    }
+  };
+
   const columns: Column<Role>[] = [
     {
       key: "name",
@@ -95,7 +106,7 @@ export const RoleTable = ({
             variant="link"
             size="sm"
             danger
-            onClick={() => onDelete(record)}
+            onClick={() => setDeletingRole(record)}
             icon={<Trash2 className="h-4 w-4" />}
           >
             删除
@@ -106,32 +117,50 @@ export const RoleTable = ({
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      dataSource={data}
-      rowKey="id"
-      loading={loading}
-      pagination={{
-        current: page,
-        pageSize: pageSize,
-        total: total,
-        onChange: (p) => onPageChange(p),
-      }}
-      toolbarLeft={
-        <div className="w-80">
-          <SearchInput
-            placeholder="搜索角色名称..."
-            value={searchText}
-            onChange={(e) => onSearchChange(e.target.value)}
-          />
+    <>
+      <DataTable
+        columns={columns}
+        dataSource={data}
+        rowKey="id"
+        loading={loading}
+        pagination={{
+          current: page,
+          pageSize: pageSize,
+          total: total,
+          onChange: (p) => onPageChange(p),
+        }}
+        toolbarLeft={
+          <div className="w-80">
+            <SearchInput
+              placeholder="搜索角色名称..."
+              value={searchText}
+              onChange={(e) => onSearchChange(e.target.value)}
+            />
+          </div>
+        }
+        toolbarRight={
+          <Button variant="primary" onClick={onAdd}>
+            <Plus className="mr-2 h-4 w-4" />
+            添加角色
+          </Button>
+        }
+      />
+
+      <Modal
+        title="确认删除"
+        open={!!deletingRole}
+        onClose={() => setDeletingRole(null)}
+        onOk={confirmDelete}
+        okText="确认删除"
+        cancelText="取消"
+        width={400}
+        okButtonProps={{ danger: true }}
+      >
+        <div className="py-4">
+          确定要删除角色 <span className="font-bold">{deletingRole?.name}</span> 吗？
+          <div className="mt-2 text-sm text-red-500">此操作无法撤销。</div>
         </div>
-      }
-      toolbarRight={
-        <Button variant="primary" onClick={onAdd}>
-          <Plus className="mr-2 h-4 w-4" />
-          添加角色
-        </Button>
-      }
-    />
+      </Modal>
+    </>
   );
 };

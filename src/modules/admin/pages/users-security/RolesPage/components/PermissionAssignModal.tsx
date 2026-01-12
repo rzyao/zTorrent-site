@@ -1,6 +1,8 @@
-﻿import React from "react";
-import { Modal, Space, Typography, Tabs, Button } from "antd";
+﻿import React, { useState } from "react";
+import { Modal } from "@/modules/admin/components/ui/modal";
+import { Button } from "@/modules/admin/components/ui/button";
 import PermissionTree from "@/modules/admin/pages/users-security/PermissionsPage/components/PermissionTree";
+import { cn } from "@/utils/cn";
 import type { Role } from "../types";
 import type { Permission } from "@/modules/admin/pages/users-security/PermissionsPage/types";
 
@@ -32,8 +34,8 @@ export const PermissionAssignModal: React.FC<PermissionAssignModalProps> = ({
   setSelectedWebIds,
 }) => {
   const [loading, setLoading] = React.useState(false);
+  const [activeTab, setActiveTab] = useState<"admin" | "web">("admin");
 
-  // Helper to count total locally
   const totalSelected = selectedAdminIds.length + selectedWebIds.length;
 
   const handleOk = async () => {
@@ -48,60 +50,66 @@ export const PermissionAssignModal: React.FC<PermissionAssignModalProps> = ({
   return (
     <Modal
       open={isPermissionModalOpen}
-      title={
-        <Space orientation="vertical" size={4}>
-          <Typography.Text>分配权限</Typography.Text>
-          <Typography.Text type="secondary">
-            角色：{selectedRole.name}
-            <Typography.Text type="secondary" style={{ marginLeft: 8 }}>
-              (已选 {totalSelected} 项)
-            </Typography.Text>
-          </Typography.Text>
-        </Space>
+      title="分配权限"
+      description={
+        <span>
+          角色：<span className="text-foreground font-medium">{selectedRole.name}</span>
+          <span className="text-muted-foreground ml-2">(已选 {totalSelected} 项)</span>
+        </span>
       }
-      onCancel={onCancel}
-      width={960}
-      destroyOnHidden
-      footer={[
-        <Button key="cancel" onClick={onCancel} disabled={loading}>
-          取消
-        </Button>,
-        <Button key="save" type="primary" onClick={handleOk} loading={loading}>
-          保存配置
-        </Button>,
-      ]}
+      onClose={onCancel}
+      onOk={handleOk}
+      confirmLoading={loading}
+      okText="保存配置"
+      width={900}
     >
-      <Tabs
-        defaultActiveKey="admin"
-        items={[
-          {
-            key: "admin",
-            label: `Admin 权限 (${selectedAdminIds.length})`,
-            children: (
-              <div style={{ maxHeight: "60vh", overflowY: "auto", overflowX: "hidden" }}>
-                <PermissionTree
-                  permissions={permissionsAdmin}
-                  selectedIds={selectedAdminIds}
-                  onChange={setSelectedAdminIds}
-                />
-              </div>
-            ),
-          },
-          {
-            key: "web",
-            label: `Web 权限 (${selectedWebIds.length})`,
-            children: (
-              <div style={{ maxHeight: "60vh", overflowY: "auto", overflowX: "hidden" }}>
-                <PermissionTree
-                  permissions={permissionsWeb}
-                  selectedIds={selectedWebIds}
-                  onChange={setSelectedWebIds}
-                />
-              </div>
-            ),
-          },
-        ]}
-      />
+      <div className="flex h-[600px] flex-col">
+        {/* Tabs Header */}
+        <div className="border-border flex border-b">
+          <button
+            className={cn(
+              "border-b-2 px-4 py-2 text-sm font-medium transition-colors",
+              activeTab === "admin"
+                ? "border-primary text-primary"
+                : "text-muted-foreground hover:text-foreground border-transparent",
+            )}
+            onClick={() => setActiveTab("admin")}
+          >
+            Admin 权限 ({selectedAdminIds.length})
+          </button>
+          <button
+            className={cn(
+              "border-b-2 px-4 py-2 text-sm font-medium transition-colors",
+              activeTab === "web"
+                ? "border-primary text-primary"
+                : "text-muted-foreground hover:text-foreground border-transparent",
+            )}
+            onClick={() => setActiveTab("web")}
+          >
+            Web 权限 ({selectedWebIds.length})
+          </button>
+        </div>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-hidden p-1">
+          <div
+            className={cn("h-full overflow-auto p-2", activeTab === "admin" ? "block" : "hidden")}
+          >
+            <PermissionTree
+              permissions={permissionsAdmin}
+              selectedIds={selectedAdminIds}
+              onChange={setSelectedAdminIds}
+            />
+          </div>
+          <div className={cn("h-full overflow-auto p-2", activeTab === "web" ? "block" : "hidden")}>
+            <PermissionTree
+              permissions={permissionsWeb}
+              selectedIds={selectedWebIds}
+              onChange={setSelectedWebIds}
+            />
+          </div>
+        </div>
+      </div>
     </Modal>
   );
 };

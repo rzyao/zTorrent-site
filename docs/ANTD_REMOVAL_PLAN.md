@@ -39,13 +39,13 @@
 
 优先替换被多处引用的公共组件，具有高杠杆效应。
 
-- [ ] **Users**:
+- [x] **Users**:
   - [x] `EditUserModal.tsx`
   - [x] `BanUserModal.tsx`
   - [x] `AssignRolesModal.tsx`
   - [x] `AdvancedSearchModal.tsx`
   - [x] `UsersTable.tsx` (Table & Pagination)
-- [ ] **Categories**:
+- [x] **Categories**:
   - [x] `CategoryModals.tsx`
 
 ### Phase 2: 复杂业务模块 (Complex Modules)
@@ -53,8 +53,8 @@
 针对重灾区进行集中攻坚。
 
 - [ ] **Users & Security**:
-  - [ ] `RolesPage` (Table, Modal, Permissions)
-  - [ ] `PermissionsPage` (Tree Component 重写)
+  - [x] `RolesPage` (Table, Modal, Permissions)
+  - [x] `PermissionsPage` (Tree Component 重写)
 - [ ] **System Routes**:
   - [ ] `RouteTree.tsx` (Tree Component 重写)
   - [ ] `CreateRouteModal.tsx`

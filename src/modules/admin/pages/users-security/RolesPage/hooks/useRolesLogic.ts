@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { App } from "antd";
+import { toast } from "sonner";
 import { RolesService } from "@/api/services/RolesService";
 import { PermissionsService } from "@/api/services/PermissionsService";
 import { ListPermissionsDto } from "@/api/models/ListPermissionsDto";
@@ -8,7 +8,6 @@ import type { Role } from "../types";
 import type { Permission } from "@/modules/admin/pages/users-security/PermissionsPage/types";
 
 export const useRolesLogic = () => {
-  const { message, modal } = App.useApp();
   const queryClient = useQueryClient();
 
   // --- State ---
@@ -134,12 +133,12 @@ export const useRolesLogic = () => {
         description: data.description,
       }),
     onSuccess: () => {
-      message.success("创建角色成功");
+      toast.success("创建角色成功");
       setIsEditModalOpen(false);
       queryClient.invalidateQueries({ queryKey: ["roles"] });
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "创建失败");
+      toast.error(err.response?.data?.message || "创建失败");
     },
   });
 
@@ -150,23 +149,23 @@ export const useRolesLogic = () => {
         data: { name: data.name, description: data.description },
       }),
     onSuccess: () => {
-      message.success("更新角色成功");
+      toast.success("更新角色成功");
       setIsEditModalOpen(false);
       queryClient.invalidateQueries({ queryKey: ["roles"] });
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "更新失败");
+      toast.error(err.response?.data?.message || "更新失败");
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => RolesService.rolesControllerRemove({ id }),
     onSuccess: () => {
-      message.success("删除成功");
+      toast.success("删除成功");
       queryClient.invalidateQueries({ queryKey: ["roles"] });
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "删除失败");
+      toast.error(err.response?.data?.message || "删除失败");
     },
   });
 
@@ -184,14 +183,14 @@ export const useRolesLogic = () => {
       });
     },
     onSuccess: () => {
-      message.success("权限分配成功");
+      toast.success("权限分配成功");
       // Optionally close modal or just refresh list if needed
       // setIsPermissionModalOpen(false); // Often users want to keep it open or need confirmation.
       // Refetch roles mainly to update perm count if needed
       queryClient.invalidateQueries({ queryKey: ["roles"] });
     },
     onError: (err: any) => {
-      message.error(err.response?.data?.message || "分配失败");
+      toast.error(err.response?.data?.message || "分配失败");
     },
   });
 
@@ -208,12 +207,10 @@ export const useRolesLogic = () => {
   };
 
   const handleDelete = (role: Role) => {
-    modal.confirm({
-      title: "确认删除",
-      content: `确定要删除角色 "${role.name}" 吗？此操作无法撤销。`,
-      okType: "danger",
-      onOk: () => deleteMutation.mutate(role.id),
-    });
+    // Ideally use confirmation dialog from UI.
+    // For now, we will perform mutation immediately if called,
+    // assuming UI handles confirmation (e.g. Popconfirm or AlertDialog wrapper).
+    deleteMutation.mutate(role.id);
   };
 
   const handleOpenPermissions = async (role: Role) => {
@@ -239,7 +236,7 @@ export const useRolesLogic = () => {
       );
     } catch (e) {
       console.error(e);
-      message.error("无法加载该角色的现有权限");
+      toast.error("无法加载该角色的现有权限");
     }
   };
 
@@ -257,7 +254,7 @@ export const useRolesLogic = () => {
     const roleKey = selectedRoleForPerms.key;
 
     if (!roleKey) {
-      message.error("角色数据缺失 Key，无法分配权限");
+      toast.error("角色数据缺失 Key，无法分配权限");
       return;
     }
 
