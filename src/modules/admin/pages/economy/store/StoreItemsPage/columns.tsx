@@ -1,4 +1,3 @@
-import { Popconfirm } from "antd";
 import { StoreItem } from "@/modules/admin/types/store";
 import { formatDate } from "@/modules/admin/utils/formatDate";
 import { Column } from "@/modules/admin/components/ui/data-table";
@@ -56,21 +55,15 @@ export function getColumns({
           <Button variant="link" size="sm" className="h-auto p-0" onClick={() => openEdit(record)}>
             编辑
           </Button>
-          <Popconfirm
-            title={`确认删除商品 ${record.title}？`}
-            onConfirm={() => handleDelete(record)}
-            okText="删除"
-            cancelText="取消"
-            okButtonProps={{ danger: true }}
+          <Button
+            variant="link"
+            size="sm"
+            danger
+            className="h-auto p-0"
+            onClick={() => handleDelete(record)}
           >
-            <Button
-              variant="link"
-              size="sm"
-              className="text-destructive hover:text-destructive/80 h-auto p-0"
-            >
-              删除
-            </Button>
-          </Popconfirm>
+            删除
+          </Button>
           {record.status === "active" ? (
             <Button
               variant="link"

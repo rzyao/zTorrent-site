@@ -1,16 +1,15 @@
-import { useEffect } from "react";
-import { Form, Input, InputNumber } from "antd";
+import { useEffect, useMemo } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Modal } from "@/modules/admin/components/ui/modal";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/modules/admin/components/ui/select";
+import { StandardSelect as Select } from "@/modules/admin/components/ui/select";
+import { Input } from "@/modules/admin/components/ui/input";
+import { Label } from "@/modules/admin/components/ui/label";
 import { StoreItem } from "@/modules/admin/types/store";
 import { StoreService } from "@/api/services/StoreService";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
+import { toast } from "sonner"; // Ensure we use sonner if useAsyncAction doesn't cover validation errors
 
 interface StoreItemModalProps {
   open: boolean;
@@ -19,9 +18,36 @@ interface StoreItemModalProps {
   editingItem: StoreItem | null;
 }
 
+const storeItemSchema = z.object({
+  key: z.string().min(1, "唯一键必填"),
+  title: z.string().min(1, "名称必填"),
+  type: z.enum(["virtual", "privilege", "service"]),
+  pricePoints: z.coerce.number().min(0, "价格必须大于等于0"),
+  stock: z.coerce.number().optional().nullable(),
+  status: z.enum(["active", "inactive"]),
+  id: z.string().optional(),
+});
+
+type StoreItemFormValues = z.infer<typeof storeItemSchema>;
+
 export function StoreItemModal({ open, onClose, onSuccess, editingItem }: StoreItemModalProps) {
-  const [form] = Form.useForm();
   const isEdit = !!editingItem;
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<StoreItemFormValues>({
+    resolver: zodResolver(storeItemSchema),
+    defaultValues: {
+      type: "virtual",
+      status: "inactive",
+      pricePoints: 0,
+      stock: undefined,
+    },
+  });
 
   const { execute: submit, loading } = useAsyncAction({
     successMessage: isEdit ? "更新商品成功" : "新增商品成功",
@@ -34,37 +60,41 @@ export function StoreItemModal({ open, onClose, onSuccess, editingItem }: StoreI
   useEffect(() => {
     if (open) {
       if (editingItem) {
-        form.setFieldsValue({
-          ...editingItem,
-          stock: editingItem.stock ?? undefined,
+        reset({
+          key: editingItem.key,
+          title: editingItem.title,
+          type: editingItem.type,
+          pricePoints: editingItem.pricePoints,
+          stock: editingItem.stock,
+          status: editingItem.status,
+          id: editingItem.id,
         });
       } else {
-        form.resetFields();
-        form.setFieldsValue({
+        reset({
+          key: "",
+          title: "",
           type: "virtual",
+          pricePoints: 0,
+          stock: undefined,
           status: "inactive",
+          id: undefined,
         });
       }
     }
-  }, [open, editingItem, form]);
+  }, [open, editingItem, reset]);
 
-  const handleSubmit = async () => {
-    try {
-      const values = await form.validateFields();
-      await submit(async () => {
-        if (isEdit) {
-          const { key: _omitKey, ...payload } = values;
-          await StoreService.storeControllerUpdateItem({
-            ...payload,
-            id: editingItem.id,
-          } as any);
-        } else {
-          await StoreService.storeControllerCreateItem(values as any);
-        }
-      });
-    } catch (error) {
-      // 表单校验失败不处理
-    }
+  const onFormSubmit = async (values: StoreItemFormValues) => {
+    await submit(async () => {
+      if (isEdit && editingItem?.id) {
+        const { key: _omitKey, ...payload } = values;
+        await StoreService.storeControllerUpdateItem({
+          ...payload,
+          id: editingItem.id,
+        } as any);
+      } else {
+        await StoreService.storeControllerCreateItem(values as any);
+      }
+    });
   };
 
   return (
@@ -72,77 +102,129 @@ export function StoreItemModal({ open, onClose, onSuccess, editingItem }: StoreI
       title={isEdit ? "编辑商品" : "新增商品"}
       open={open}
       onCancel={onClose}
-      onOk={handleSubmit}
+      onOk={handleSubmit(onFormSubmit)}
       confirmLoading={loading}
       width={480}
     >
-      <Form form={form} layout="vertical" initialValues={{ type: "virtual", status: "inactive" }}>
+      <div className="space-y-4">
         {isEdit && (
-          <Form.Item name="id" label="ID">
-            <Input disabled className="bg-stone-50 text-stone-500" />
-          </Form.Item>
+          <div className="space-y-2">
+            <Label>ID</Label>
+            <Input value={editingItem?.id} disabled className="bg-stone-50 text-stone-500" />
+          </div>
         )}
 
-        <Form.Item
-          name="key"
-          label="唯一键"
-          rules={[{ required: true, message: "请输入唯一键" }]}
-          tooltip="商品的唯一标识符，创建后不可修改"
-        >
-          <Input
-            placeholder="如 invite_code"
-            disabled={isEdit}
-            className={isEdit ? "bg-stone-50 text-stone-500" : ""}
+        <div className="space-y-2">
+          <Label>唯一键 (Key) *</Label>
+          <Controller
+            control={control}
+            name="key"
+            render={({ field }) => (
+              <>
+                <Input
+                  {...field}
+                  placeholder="如 invite_code"
+                  disabled={isEdit}
+                  className={isEdit ? "bg-stone-50 text-stone-500" : ""}
+                />
+                {errors.key && <p className="text-xs text-red-500">{errors.key.message}</p>}
+                <p className="text-muted-foreground text-xs">商品的唯一标识符，创建后不可修改</p>
+              </>
+            )}
           />
-        </Form.Item>
+        </div>
 
-        <Form.Item name="title" label="名称" rules={[{ required: true, message: "请输入名称" }]}>
-          <Input placeholder="输入商品展示名称" />
-        </Form.Item>
-
-        <div className="grid grid-cols-2 gap-4">
-          <Form.Item name="type" label="类型" rules={[{ required: true }]}>
-            <Select
-              onValueChange={(value) => form.setFieldValue("type", value)}
-              value={form.getFieldValue("type")}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="请选择类型" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="virtual">Virtual (虚拟物品)</SelectItem>
-                <SelectItem value="privilege">Privilege (特权)</SelectItem>
-                <SelectItem value="service">Service (服务)</SelectItem>
-              </SelectContent>
-            </Select>
-          </Form.Item>
-
-          <Form.Item name="pricePoints" label="价格 (魔力)" rules={[{ required: true }]}>
-            <InputNumber min={0} className="w-full" placeholder="0" />
-          </Form.Item>
+        <div className="space-y-2">
+          <Label>名称 (Title) *</Label>
+          <Controller
+            control={control}
+            name="title"
+            render={({ field }) => (
+              <>
+                <Input {...field} placeholder="输入商品展示名称" />
+                {errors.title && <p className="text-xs text-red-500">{errors.title.message}</p>}
+              </>
+            )}
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <Form.Item name="stock" label="库存 (可选)">
-            <InputNumber min={0} className="w-full" placeholder="不限" />
-          </Form.Item>
+          <div className="space-y-2">
+            <Label>类型 (Type) *</Label>
+            <Controller
+              control={control}
+              name="type"
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  options={[
+                    { value: "virtual", label: "Virtual (虚拟物品)" },
+                    { value: "privilege", label: "Privilege (特权)" },
+                    { value: "service", label: "Service (服务)" },
+                  ]}
+                />
+              )}
+            />
+          </div>
 
-          <Form.Item name="status" label="状态" rules={[{ required: true }]}>
-            <Select
-              onValueChange={(value) => form.setFieldValue("status", value)}
-              value={form.getFieldValue("status")}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="请选择状态" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="active">Active (已上架)</SelectItem>
-                <SelectItem value="inactive">Inactive (已下架)</SelectItem>
-              </SelectContent>
-            </Select>
-          </Form.Item>
+          <div className="space-y-2">
+            <Label>价格 (魔力) *</Label>
+            <Controller
+              control={control}
+              name="pricePoints"
+              render={({ field }) => (
+                <>
+                  <Input {...field} type="number" step="100" min="0" placeholder="0" />
+                  {errors.pricePoints && (
+                    <p className="text-xs text-red-500">{errors.pricePoints.message}</p>
+                  )}
+                </>
+              )}
+            />
+          </div>
         </div>
-      </Form>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>库存 (Stock)</Label>
+            <Controller
+              control={control}
+              name="stock"
+              render={({ field }) => (
+                <Input
+                  value={field.value ?? ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    field.onChange(val === "" ? null : Number(val));
+                  }}
+                  type="number"
+                  min="0"
+                  placeholder="不限"
+                />
+              )}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>状态 (Status) *</Label>
+            <Controller
+              control={control}
+              name="status"
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  options={[
+                    { value: "active", label: "Active (已上架)" },
+                    { value: "inactive", label: "Inactive (已下架)" },
+                  ]}
+                />
+              )}
+            />
+          </div>
+        </div>
+      </div>
     </Modal>
   );
 }

@@ -2,6 +2,14 @@ import { Plus, Search } from "lucide-react";
 import { DataTable } from "@/modules/admin/components/ui/data-table";
 import { Input } from "@/modules/admin/components/ui/input";
 import { Button } from "@/modules/admin/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/modules/admin/components/ui/dialog";
 import { useStoreItemsLogic } from "./useStoreItemsLogic";
 import { StoreItemModal } from "./components/StoreItemModal";
 
@@ -20,6 +28,10 @@ export default function StoreItemsPage() {
     handleSearch,
     openCreate,
     loadList,
+    deleteConfirmOpen,
+    setDeleteConfirmOpen,
+    handleConfirmDelete,
+    isDeleting,
   } = useStoreItemsLogic();
 
   return (
@@ -68,6 +80,23 @@ export default function StoreItemsPage() {
         onSuccess={loadList}
         editingItem={editingItem}
       />
+
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>确认删除商品？</DialogTitle>
+            <DialogDescription>此操作将永久删除该商品，不可拆消。</DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2 p-4">
+            <Button variant="default" onClick={() => setDeleteConfirmOpen(false)}>
+              取消
+            </Button>
+            <Button danger onClick={handleConfirmDelete} loading={isDeleting}>
+              确认删除
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

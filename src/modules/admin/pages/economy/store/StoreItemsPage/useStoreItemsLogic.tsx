@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { App } from "antd";
+import { toast } from "sonner";
 import { StoreItem } from "@/modules/admin/types/store";
 import { StoreService } from "@/api/services/StoreService";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
@@ -7,7 +7,6 @@ import { StoreItemsQuery } from "./types";
 import { getColumns } from "./columns";
 
 export function useStoreItemsLogic() {
-  const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<StoreItem[]>([]);
   const [total, setTotal] = useState(0);
@@ -25,12 +24,21 @@ export function useStoreItemsLogic() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<StoreItem | null>(null);
 
+  // Delete Confirmation State
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<StoreItem | null>(null);
+
   const { execute: executeToggle } = useAsyncAction({
     successMessage: "状态更新成功",
   });
 
-  const { execute: executeDelete } = useAsyncAction({
+  const { execute: executeDelete, loading: isDeleting } = useAsyncAction({
     successMessage: "删除成功",
+    onSuccess: () => {
+      setDeleteConfirmOpen(false);
+      setItemToDelete(null);
+      loadList();
+    },
   });
 
   // 加载数据
@@ -42,11 +50,11 @@ export function useStoreItemsLogic() {
       setItems(data as StoreItem[]);
       setTotal(resp?.data?.total || (data || []).length);
     } catch (err: any) {
-      message.error(err.message || "商品列表加载失败");
+      toast.error(err.message || "商品列表加载失败");
     } finally {
       setLoading(false);
     }
-  }, [message]);
+  }, []);
 
   useEffect(() => {
     loadList();
@@ -85,17 +93,21 @@ export function useStoreItemsLogic() {
     setModalOpen(true);
   }, []);
 
-  const handleDelete = useCallback(
-    async (record: StoreItem) => {
-      await executeDelete(async () => {
-        await StoreService.storeControllerDeleteItem({
-          id: record.id!,
-        });
-        loadList();
+  // Request Delete (Opens Dialog)
+  const handleDeleteRequest = useCallback((record: StoreItem) => {
+    setItemToDelete(record);
+    setDeleteConfirmOpen(true);
+  }, []);
+
+  // Confirm Delete (API Call)
+  const handleConfirmDelete = useCallback(async () => {
+    if (!itemToDelete) return;
+    await executeDelete(async () => {
+      await StoreService.storeControllerDeleteItem({
+        id: itemToDelete.id!,
       });
-    },
-    [executeDelete, loadList],
-  );
+    });
+  }, [executeDelete, itemToDelete]);
 
   const handleToggle = useCallback(
     async (record: StoreItem, toActive: boolean) => {
@@ -115,10 +127,10 @@ export function useStoreItemsLogic() {
     () =>
       getColumns({
         openEdit,
-        handleDelete,
+        handleDelete: handleDeleteRequest, // Pass request handler
         handleToggle,
       }),
-    [openEdit, handleDelete, handleToggle],
+    [openEdit, handleDeleteRequest, handleToggle],
   );
 
   return {
@@ -135,5 +147,11 @@ export function useStoreItemsLogic() {
     handleSearch,
     openCreate,
     loadList,
+    // Delete state
+    deleteConfirmOpen,
+    setDeleteConfirmOpen,
+    itemToDelete,
+    handleConfirmDelete,
+    isDeleting,
   };
 }
