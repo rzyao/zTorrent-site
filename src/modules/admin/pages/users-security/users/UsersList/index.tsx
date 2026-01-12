@@ -35,10 +35,9 @@ const UsersPage: React.FC = () => {
     advFieldOptions,
     editOpen,
     setEditOpen,
-    editForm,
+    editingUser,
     banOpen,
     setBanOpen,
-    banForm,
     banTargetId,
     punishTypeOptions,
     banReasonOptions,
@@ -49,7 +48,7 @@ const UsersPage: React.FC = () => {
     setAssignOpen,
     assigning,
     setAssigning,
-    assignForm,
+    assignData,
     rolesOptions,
     rolesLoading,
     detailOpen,
@@ -148,14 +147,13 @@ const UsersPage: React.FC = () => {
       <EditUserModal
         editOpen={editOpen}
         setEditOpen={setEditOpen}
-        editForm={editForm}
+        editingUser={editingUser}
         fetchList={fetchList}
       />
 
       <BanUserModal
         banOpen={banOpen}
         setBanOpen={setBanOpen}
-        banForm={banForm}
         banTargetId={banTargetId}
         punishTypeOptions={punishTypeOptions}
         banReasonOptions={banReasonOptions}
@@ -168,7 +166,7 @@ const UsersPage: React.FC = () => {
       <AssignRolesModal
         assignOpen={assignOpen}
         setAssignOpen={setAssignOpen}
-        assignForm={assignForm}
+        assignData={assignData}
         assigning={assigning}
         setAssigning={setAssigning}
         rolesOptions={rolesOptions}

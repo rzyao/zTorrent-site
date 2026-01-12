@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal } from "antd";
+import { Modal } from "@/modules/admin/components/ui/modal";
 import AdvancedQueryBuilder from "@/modules/admin/components/AdvancedQueryBuilder";
 import type { AdvRule } from "@/modules/admin/shared/users/types";
 
@@ -24,16 +24,19 @@ export const AdvancedSearchModal: React.FC<AdvancedSearchModalProps> = ({
   advLogic,
   setAdvLogic,
 }) => {
+  const handleOk = () => {
+    setAdvOpen(false);
+    fetchList();
+  };
+
   return (
     <Modal
       title="高级搜索"
       open={advOpen}
-      onCancel={() => setAdvOpen(false)}
-      onOk={() => {
-        setAdvOpen(false);
-        fetchList();
-      }}
-      width={860}
+      onClose={() => setAdvOpen(false)}
+      onOk={handleOk}
+      width={900}
+      okText="应用筛选"
     >
       <AdvancedQueryBuilder
         fieldOptions={fieldOptions}

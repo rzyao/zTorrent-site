@@ -60,14 +60,16 @@ export const useUsersLogic = () => {
   // Modals & Forms State
   const [createOpen, setCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const [editForm] = Form.useForm<UpdateUserBodyDto>();
+  const [editingUser, setEditingUser] = useState<UserDto | null>(null);
   const [banOpen, setBanOpen] = useState(false);
-  const [banForm] = Form.useForm();
   const [banTargetId, setBanTargetId] = useState<string | undefined>(undefined);
 
   const [assignOpen, setAssignOpen] = useState(false);
   const [assigning, setAssigning] = useState(false);
-  const [assignForm] = Form.useForm();
+  const [assignData, setAssignData] = useState<{ userId: string; roles: string[] }>({
+    userId: "",
+    roles: [],
+  });
   const [rolesOptions, setRolesOptions] = useState<{ label: string; value: string }[]>([]);
   const [rolesLoading, setRolesLoading] = useState(false);
 
@@ -411,18 +413,13 @@ export const useUsersLogic = () => {
             break;
           }
           case "edit": {
-            editForm.setFieldsValue({
-              id,
-              email: record?.email,
-              password: undefined,
-            } as any);
+            setEditingUser(record);
             setEditOpen(true);
             break;
           }
           case "assign": {
-            assignForm.resetFields();
             const existingRoles: string[] = Array.isArray(record?.roles) ? record.roles : [];
-            assignForm.setFieldsValue({ userId: id, roles: existingRoles });
+            setAssignData({ userId: id, roles: existingRoles });
             setAssignOpen(true);
             (async () => {
               setRolesLoading(true);
@@ -460,7 +457,6 @@ export const useUsersLogic = () => {
               return;
             }
             setBanTargetId(uid);
-            banForm.resetFields();
             loadBanDictionaries();
             loadPunishTypes();
             setBanOpen(true);
@@ -478,7 +474,7 @@ export const useUsersLogic = () => {
         toast.error(e?.message || "操作失败");
       }
     },
-    [assignForm, banForm, can, editForm, loadBanDictionaries, loadPunishTypes, navigate],
+    [can, loadBanDictionaries, loadPunishTypes, navigate],
   );
 
   const columns = useMemo(
@@ -700,10 +696,9 @@ export const useUsersLogic = () => {
     advFieldOptions,
     editOpen,
     setEditOpen,
-    editForm,
+    editingUser,
     banOpen,
     setBanOpen,
-    banForm,
     banTargetId,
     punishTypeOptions,
     banReasonOptions,
@@ -714,7 +709,7 @@ export const useUsersLogic = () => {
     setAssignOpen,
     assigning,
     setAssigning,
-    assignForm,
+    assignData,
     rolesOptions,
     rolesLoading,
     deleteConfirmOpen,

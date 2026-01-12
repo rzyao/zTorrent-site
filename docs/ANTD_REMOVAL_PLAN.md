@@ -40,10 +40,10 @@
 优先替换被多处引用的公共组件，具有高杠杆效应。
 
 - [ ] **Users**:
-  - [ ] `EditUserModal.tsx`
-  - [ ] `BanUserModal.tsx`
-  - [ ] `AssignRolesModal.tsx`
-  - [ ] `AdvancedSearchModal.tsx`
+  - [x] `EditUserModal.tsx`
+  - [x] `BanUserModal.tsx`
+  - [x] `AssignRolesModal.tsx`
+  - [x] `AdvancedSearchModal.tsx`
   - [x] `UsersTable.tsx` (Table & Pagination)
 - [ ] **Categories**:
   - [ ] `CategoryModals.tsx`
