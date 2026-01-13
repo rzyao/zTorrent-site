@@ -82,15 +82,15 @@ export const DetailsPanel = memo(function DetailsPanel({
         id: node.id,
         path: node.path,
         name:
-          typeof node.name === "object"
+          node.name && typeof node.name === "object"
             ? (node.name as any).zh || (node.name as any).default || node.name || ""
             : node.name || "",
         redirect:
-          typeof node.redirect === "object"
+          node.redirect && typeof node.redirect === "object"
             ? (node.redirect as any).url || node.redirect || ""
             : node.redirect || "",
         component:
-          typeof node.component === "object"
+          node.component && typeof node.component === "object"
             ? (node.component as any).component || node.component || ""
             : node.component || undefined,
         layout: (node.layout as string) || "none",
@@ -122,7 +122,7 @@ export const DetailsPanel = memo(function DetailsPanel({
   }
 
   const displayName =
-    typeof node.name === "object"
+    node.name && typeof node.name === "object"
       ? (node.name as any).zh || (node.name as any).default || node.id
       : node.name || node.id;
 

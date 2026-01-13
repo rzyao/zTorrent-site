@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useOutlet, useNavigate } from "react-router-dom";
+import { RouteConfig } from "@/types/routeConfig";
 
 export interface TabItem {
   key: string;
@@ -8,7 +9,7 @@ export interface TabItem {
   closable?: boolean;
 }
 
-export const useKeepAliveTabs = (menuItems?: any[]) => {
+export const useKeepAliveTabs = (routes: RouteConfig[] = []) => {
   const location = useLocation();
   const outlet = useOutlet();
   const navigate = useNavigate();
@@ -17,47 +18,48 @@ export const useKeepAliveTabs = (menuItems?: any[]) => {
 
   const pathNameMap = useRef<Record<string, string>>({});
 
-  const extractLabelText = (label: any): string => {
-    if (typeof label === "string") return label;
-    if (label && typeof label === "object" && label.props) {
-      const children = label.props.children;
-      if (typeof children === "string") return children;
-    }
-    return "";
-  };
-
-  const extractLinkPath = (label: any): string | null => {
-    if (label && typeof label === "object" && label.props?.to) {
-      return label.props.to;
-    }
-    return null;
-  };
-
+  // 1. Flatten routes to build path -> name map
   useEffect(() => {
-    if (!menuItems) return;
-    const traverse = (items: any[]) => {
+    const map: Record<string, string> = { "/": "首页" };
+    const traverse = (items: any[], parentPath = "") => {
       items.forEach((item) => {
-        const linkPath = extractLinkPath(item.label);
-        const labelText = extractLabelText(item.label);
+        const fullPath = item.path.startsWith("/")
+          ? item.path
+          : `${parentPath}/${item.path}`.replace(/\/+/g, "/");
 
-        if (linkPath && labelText) {
-          pathNameMap.current[linkPath] = labelText;
-        } else if (item.key && labelText) {
-          pathNameMap.current[item.key] = labelText;
+        if (item.name) {
+          map[fullPath] = item.name;
         }
 
-        if (item.children) traverse(item.children);
+        if (item.children) {
+          traverse(item.children, fullPath);
+        }
       });
     };
-    traverse(menuItems);
-  }, [menuItems]);
 
+    if (routes.length > 0) {
+      traverse(routes);
+    }
+    pathNameMap.current = map;
+
+    // Update existing items label if new config loaded or language/name changed
+    setItems((prev) =>
+      prev.map((item) => ({
+        ...item,
+        label: map[item.key] || item.label,
+      })),
+    );
+  }, [routes]);
+
+  // 2. Helper to get page title
   const getPageTitle = (pathname: string) => {
     if (pathNameMap.current[pathname]) return pathNameMap.current[pathname];
+    // Fallback: extract from path
     const parts = pathname.split("/").filter(Boolean);
     return parts.length > 0 ? parts[parts.length - 1] : "首页";
   };
 
+  // 3. Listen to location change and add/update tabs
   useEffect(() => {
     const path = location.pathname;
     setActiveKey(path);
@@ -65,15 +67,19 @@ export const useKeepAliveTabs = (menuItems?: any[]) => {
     setItems((prev) => {
       const existingIndex = prev.findIndex((item) => item.key === path);
       if (existingIndex !== -1) {
-        // 更新已存在标签的 children，确保内容是最新的
+        // Update children of existing tab (to keep content fresh if needed, though usually kept alive)
+        // Note: For true KeepAlive, we might NOT want to always replace children if it destroys state.
+        // But with this simple implementation, we update the outlet content.
         const updated = [...prev];
         updated[existingIndex] = {
           ...updated[existingIndex],
+          label: getPageTitle(path), // Also refresh label in case map updated later
           children: outlet,
         };
         return updated;
       }
 
+      // Add new tab
       return [
         ...prev,
         {
@@ -85,17 +91,6 @@ export const useKeepAliveTabs = (menuItems?: any[]) => {
       ];
     });
   }, [location.pathname, outlet]);
-
-  // Update titles when menuItems load
-  useEffect(() => {
-    if (!menuItems || menuItems.length === 0) return;
-    setItems((prev) =>
-      prev.map((item) => ({
-        ...item,
-        label: getPageTitle(item.key),
-      })),
-    );
-  }, [menuItems]);
 
   const removeTab = (targetKey: string) => {
     let newActiveKey = activeKey;
@@ -123,12 +118,9 @@ export const useKeepAliveTabs = (menuItems?: any[]) => {
     setItems(newItems);
   };
 
-  const onEdit = (
-    targetKey: React.MouseEvent | React.KeyboardEvent | string,
-    action: "add" | "remove",
-  ) => {
+  const onEdit = (targetKey: string, action: "add" | "remove") => {
     if (action === "remove") {
-      removeTab(targetKey as string);
+      removeTab(targetKey);
     }
   };
 

@@ -48,7 +48,7 @@ export default function RolesPage() {
         <h1 className="text-2xl font-semibold tracking-tight">角色管理</h1>
         <p className="text-muted-foreground mt-1 text-sm">管理系统角色及其功能权限分配</p>
       </div>
-      <div className="flex-1 overflow-hidden rounded-md border">
+      <div className="flex-1 overflow-hidden">
         <RoleTable
           data={roles}
           loading={loading}

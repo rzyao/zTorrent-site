@@ -15,19 +15,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/modules/admin/components/ui/dialog";
-
-// Fallback Tabs if UI component missing
-function SimpleTabs({ value, onValueChange, children }: any) {
-  return (
-    <div className="w-full">
-      <div className="border-b">
-        <nav className="flex space-x-4 px-4" aria-label="Tabs">
-          {children}
-        </nav>
-      </div>
-    </div>
-  );
-}
+import { Tabs, TabsList, TabsTrigger } from "@/modules/admin/components/ui/tabs";
 
 // Main Page Component
 export default function RouteManagePage() {
@@ -53,76 +41,8 @@ export default function RouteManagePage() {
     handleConfirmDelete,
     updateMutation,
     moveNodeMutation,
-    findNode,
+    handleTreeMove,
   } = useRoutesLogic();
-
-  // Handle Tree Move (Arborist)
-  const handleTreeMove = useCallback(
-    ({
-      dragIds,
-      parentId,
-      index,
-    }: {
-      dragIds: string[];
-      parentId: string | null;
-      index: number;
-    }) => {
-      const dragId = dragIds[0];
-      if (!dragId) return;
-
-      // Optimistic validation
-      const draggedNode = findNode(fullTreeData, dragId);
-      if (!draggedNode) return;
-
-      // 1. Calculate new SortOrder
-      // We need to find the target siblings (children of parentId)
-      let siblings: any[] = [];
-      if (parentId) {
-        const parent = findNode(fullTreeData, parentId);
-        siblings = parent?.children || [];
-      } else {
-        // Root level siblings (in the current Tab/View context? or global roots?)
-        // Full tree data roots.
-        siblings = fullTreeData.filter((n: any) => !n.parentId);
-        // Wait, data structure might be nested roots.
-        // Actually currentTreeData is what we view. Arborist allows dropping anywhere?
-        // We should use 'fullTreeData' to be safe about global structure,
-        // but 'currentTreeData' reflects what is visible.
-        // If parentId is null, it means root of the tree provided to Arborist.
-
-        // Using currentTreeData because Arborist operates on that.
-        siblings = currentTreeData;
-      }
-
-      // Remove self from siblings if present (to calculate index correctly)
-      // Arborist 'index' is the NEW index.
-      const otherSiblings = siblings.filter((s) => s.id !== dragId);
-
-      // Calculate sortOrder
-      let newSortOrder = 0;
-
-      if (otherSiblings.length === 0) {
-        newSortOrder = 0;
-      } else if (index === 0) {
-        newSortOrder = (otherSiblings[0].sortOrder || 0) - 10;
-      } else if (index >= otherSiblings.length) {
-        const last = otherSiblings[otherSiblings.length - 1];
-        newSortOrder = (last.sortOrder || 0) + 10;
-      } else {
-        const prev = otherSiblings[index - 1];
-        const next = otherSiblings[index];
-        newSortOrder = ((prev.sortOrder || 0) + (next.sortOrder || 0)) / 2;
-      }
-
-      // Call Mutation
-      moveNodeMutation.mutate({
-        id: dragId,
-        parentId: parentId || null,
-        sortOrder: newSortOrder,
-      });
-    },
-    [fullTreeData, currentTreeData, findNode, moveNodeMutation],
-  );
 
   const handleSelect = useCallback(
     (node: any) => {
@@ -153,7 +73,7 @@ export default function RouteManagePage() {
               <Upload className="mr-2 h-4 w-4" />
               导入
             </Button>
-            <Button size="sm" onClick={() => setIsCreateOpen(true)}>
+            <Button variant="primary" size="sm" onClick={() => setIsCreateOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
               新建
             </Button>
@@ -162,56 +82,65 @@ export default function RouteManagePage() {
 
         {/* Tabs & Content */}
         <div className="bg-card flex min-h-0 flex-1 flex-col rounded-lg border shadow-sm">
-          <div className="border-b px-4">
-            <div className="flex space-x-6">
-              {["app", "admin", "forum"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => {
-                    setActiveTab(tab);
-                    setSelectedNodeId(null);
-                  }}
-                  className={`border-b-2 py-4 text-sm font-medium transition-colors ${
-                    activeTab === tab
-                      ? "border-primary text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:border-muted border-transparent"
-                  } `}
+          <Tabs
+            value={activeTab}
+            onValueChange={(val) => {
+              setActiveTab(val);
+              setSelectedNodeId(null);
+            }}
+            className="flex min-h-0 flex-1 flex-col"
+          >
+            <div className="border-b px-4">
+              <TabsList className="bg-transparent p-0">
+                <TabsTrigger
+                  value="app"
+                  className="data-[state=active]:border-primary data-[state=active]:text-primary text-muted-foreground hover:text-foreground rounded-none border-b-2 border-transparent bg-transparent px-4 py-2 shadow-none transition-none focus-visible:ring-0"
                 >
-                  {tab === "app" && "前台应用 (App)"}
-                  {tab === "admin" && "管理后台 (Admin)"}
-                  {tab === "forum" && "论坛社区 (Forum)"}
-                </button>
-              ))}
+                  前台应用 (App)
+                </TabsTrigger>
+                <TabsTrigger
+                  value="admin"
+                  className="data-[state=active]:border-primary data-[state=active]:text-primary text-muted-foreground hover:text-foreground rounded-none border-b-2 border-transparent bg-transparent px-4 py-2 shadow-none transition-none focus-visible:ring-0"
+                >
+                  管理后台 (Admin)
+                </TabsTrigger>
+                <TabsTrigger
+                  value="forum"
+                  className="data-[state=active]:border-primary data-[state=active]:text-primary text-muted-foreground hover:text-foreground rounded-none border-b-2 border-transparent bg-transparent px-4 py-2 shadow-none transition-none focus-visible:ring-0"
+                >
+                  论坛社区 (Forum)
+                </TabsTrigger>
+              </TabsList>
             </div>
-          </div>
 
-          <div className="flex min-h-0 flex-1">
-            {/* Tree Panel */}
-            <div className="bg-muted/10 w-1/3 min-w-[320px] border-r p-4">
-              {isLoading ? (
-                <div className="text-muted-foreground flex h-full items-center justify-center">
-                  加载中...
-                </div>
-              ) : (
-                <RouteTree
-                  data={currentTreeData}
-                  selectedId={selectedNodeId}
-                  onSelect={handleSelect}
-                  onMove={handleTreeMove}
+            <div className="flex min-h-0 flex-1">
+              {/* Tree Panel */}
+              <div className="bg-muted/10 w-1/3 min-w-[320px] border-r p-4">
+                {isLoading ? (
+                  <div className="text-muted-foreground flex h-full items-center justify-center">
+                    加载中...
+                  </div>
+                ) : (
+                  <RouteTree
+                    data={currentTreeData}
+                    selectedId={selectedNodeId}
+                    onSelect={handleSelect}
+                    onMove={handleTreeMove}
+                  />
+                )}
+              </div>
+
+              {/* Details Panel */}
+              <div className="bg-background flex-1 p-4">
+                <DetailsPanel
+                  node={selectedNode}
+                  onSave={(node) => updateMutation.mutate(node)}
+                  onDelete={(id) => handleDeleteRequest(id)}
+                  isSaving={updateMutation.isPending}
                 />
-              )}
+              </div>
             </div>
-
-            {/* Details Panel */}
-            <div className="bg-background flex-1 p-4">
-              <DetailsPanel
-                node={selectedNode}
-                onSave={(node) => updateMutation.mutate(node)}
-                onDelete={(id) => handleDeleteRequest(id)}
-                isSaving={updateMutation.isPending}
-              />
-            </div>
-          </div>
+          </Tabs>
         </div>
 
         {/* Modals */}
@@ -237,7 +166,7 @@ export default function RouteManagePage() {
               <Button variant="default" onClick={() => setIsDeleteConfirmOpen(false)}>
                 取消
               </Button>
-              <Button danger onClick={handleConfirmDelete}>
+              <Button variant="primary" danger onClick={handleConfirmDelete}>
                 确认删除
               </Button>
             </div>

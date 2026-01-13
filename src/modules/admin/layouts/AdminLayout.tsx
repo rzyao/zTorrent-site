@@ -5,8 +5,9 @@ import { AdminSidebar } from "./AdminSidebar";
 import { RouteProgressBar } from "@/modules/app/components/ui/RouteProgressBar";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";
 import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
+import { useRouteConfig } from "@/hooks/useRouteConfig";
 import { useKeepAliveTabs } from "./KeepAlive/useKeepAliveTabs";
-import KeepAliveTabs from "./KeepAlive/KeepAliveTabs";
+import { KeepAliveTabs } from "./KeepAlive/KeepAliveTabs";
 import KeepAliveContent from "./KeepAlive/KeepAliveContent";
 
 function FaviconInjector() {
@@ -18,9 +19,10 @@ export function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const navigate = useNavigate();
+  const { routes } = useRouteConfig();
 
   // KeepAlive 标签页状态管理
-  const { items, activeKey, onEdit, handleTabClick } = useKeepAliveTabs();
+  const { items, activeKey, onEdit, handleTabClick } = useKeepAliveTabs(routes);
 
   // 刷新当前页面
   const handleRefresh = useCallback(() => {

@@ -189,6 +189,66 @@ export function useRoutesLogic() {
   // --- Handlers ---
   const handleRefresh = useCallback(() => refetch(), [refetch]);
 
+  // Handle Tree Move (Arborist)
+  const handleTreeMove = useCallback(
+    ({
+      dragIds,
+      parentId,
+      index,
+    }: {
+      dragIds: string[];
+      parentId: string | null;
+      index: number;
+    }) => {
+      const dragId = dragIds[0];
+      if (!dragId) return;
+
+      // Optimistic validation
+      const draggedNode = findNode(fullTreeData, dragId);
+      if (!draggedNode) return;
+
+      // 1. Calculate new SortOrder
+      // We need to find the target siblings (children of parentId)
+      let siblings: any[] = [];
+      if (parentId) {
+        const parent = findNode(fullTreeData, parentId);
+        siblings = parent?.children || [];
+      } else {
+        // Root level siblings (derived from current Tab view ideally, or just root nodes)
+        // Using currentTreeData because Arborist operates on that.
+        siblings = currentTreeData;
+      }
+
+      // Remove self from siblings if present (to calculate index correctly)
+      // Arborist 'index' is the NEW index, assuming the item is already there conceptually or we are inserting.
+      const otherSiblings = siblings.filter((s) => s.id !== dragId);
+
+      // Calculate sortOrder
+      let newSortOrder = 0;
+
+      if (otherSiblings.length === 0) {
+        newSortOrder = 0;
+      } else if (index === 0) {
+        newSortOrder = (otherSiblings[0].sortOrder || 0) - 10;
+      } else if (index >= otherSiblings.length) {
+        const last = otherSiblings[otherSiblings.length - 1];
+        newSortOrder = (last.sortOrder || 0) + 10;
+      } else {
+        const prev = otherSiblings[index - 1];
+        const next = otherSiblings[index];
+        newSortOrder = ((prev.sortOrder || 0) + (next.sortOrder || 0)) / 2;
+      }
+
+      // Call Mutation
+      moveNodeMutation.mutate({
+        id: dragId,
+        parentId: parentId || null,
+        sortOrder: newSortOrder,
+      });
+    },
+    [fullTreeData, currentTreeData, findNode, moveNodeMutation],
+  );
+
   const handleCreate = useCallback(
     async (values: CreateRouteDto) => {
       // Hook form will call this
@@ -250,8 +310,8 @@ export function useRoutesLogic() {
     handleConfirmDelete,
     updateMutation,
     createMutation, // exposed for pending state
-    sortMutation,
     moveNodeMutation,
     findNode,
+    handleTreeMove, // Export the handler
   };
 }
