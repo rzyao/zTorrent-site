@@ -1,5 +1,6 @@
 import React from "react";
 import { AdminPageContainer } from "@/modules/admin/components/AdminPageContainer";
+import { TabKeyContext } from "./KeepAliveContext";
 
 interface KeepAliveContentProps {
   items: any[];
@@ -17,7 +18,9 @@ const KeepAliveContent: React.FC<KeepAliveContentProps> = ({ items, activeKey, c
               id={item.key === activeKey ? "app-content-scroll-container" : undefined}
               className={`min-h-0 flex-1 overflow-auto ${item.key === activeKey ? "flex flex-col" : "hidden"}`}
             >
-              <AdminPageContainer className="min-h-0 flex-1">{item.children}</AdminPageContainer>
+              <TabKeyContext.Provider value={item.key}>
+                <AdminPageContainer className="min-h-0 flex-1">{item.children}</AdminPageContainer>
+              </TabKeyContext.Provider>
             </div>
           ))
         : children}

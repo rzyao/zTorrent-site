@@ -72,19 +72,6 @@ function MenuItem({
     const normalizedParentPath = parentPath.replace(/\/+$/, ""); // 移除尾部斜杠
     const normalizedCurrentPath = location.pathname.replace(/\/+$/, "");
     isActive = normalizedCurrentPath === normalizedParentPath;
-
-    // 调试日志
-    if (item.name === "仪表盘") {
-      console.log("[AdminSidebar] Dashboard matching:", {
-        itemName: item.name,
-        itemPath: item.path,
-        href,
-        parentPath,
-        currentPath: location.pathname,
-        isIndex: item.index,
-        isActive,
-      });
-    }
   }
 
   const isChildActive = hasChildren && isPathActiveInTree(item, parentPath, location.pathname);

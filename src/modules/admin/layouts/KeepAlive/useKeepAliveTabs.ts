@@ -7,6 +7,7 @@ export interface TabItem {
   label: string;
   children: React.ReactNode;
   closable?: boolean;
+  saved?: boolean; // 是否已保存（true=已保存，false=有未保存修改，undefined=默认已保存）
 }
 
 export const useKeepAliveTabs = (routes: RouteConfig[] = []) => {
@@ -64,6 +65,42 @@ export const useKeepAliveTabs = (routes: RouteConfig[] = []) => {
     const path = location.pathname;
     setActiveKey(path);
 
+    // 检查当前路径是否是重定向路由
+    const isRedirectRoute = routes.some((route) => {
+      // 规范化路由路径（确保以 / 开头）
+      const routePath = route.path.startsWith("/") ? route.path : `/${route.path}`;
+
+      // 检查根路由
+      if (routePath === path && route.redirect) {
+        console.log("[useKeepAliveTabs] ✅ 检测到重定向路由:", path, "->", route.redirect);
+        return true;
+      }
+
+      // 检查子路由
+      if (route.children) {
+        return route.children.some((child) => {
+          const childPath = child.path.startsWith("/")
+            ? child.path
+            : `${routePath}/${child.path}`.replace(/\/+/g, "/");
+
+          if (childPath === path && child.redirect) {
+            console.log("[useKeepAliveTabs] ✅ 检测到子路由重定向:", path, "->", child.redirect);
+            return true;
+          }
+          return false;
+        });
+      }
+      return false;
+    });
+
+    console.log("[useKeepAliveTabs] 路径:", path, "是否重定向:", isRedirectRoute);
+
+    // 如果是重定向路由，不创建标签页
+    if (isRedirectRoute) {
+      console.log("[useKeepAliveTabs] ⏭️  跳过重定向路由，不创建标签页");
+      return;
+    }
+
     setItems((prev) => {
       const existingIndex = prev.findIndex((item) => item.key === path);
       if (existingIndex !== -1) {
@@ -90,7 +127,7 @@ export const useKeepAliveTabs = (routes: RouteConfig[] = []) => {
         },
       ];
     });
-  }, [location.pathname, outlet]);
+  }, [location.pathname, outlet, routes]);
 
   const removeTab = (targetKey: string) => {
     let newActiveKey = activeKey;
@@ -112,7 +149,29 @@ export const useKeepAliveTabs = (routes: RouteConfig[] = []) => {
       }
       navigate(newActiveKey);
     } else if (newItems.length === 0) {
-      navigate("/");
+      navigate("/admin/dashboard");
+    }
+
+    setItems(newItems);
+  };
+
+  /**
+   * 批量删除标签页
+   * @param targetKeys 要删除的标签页 key 数组
+   */
+  const removeTabs = (targetKeys: string[]) => {
+    const keysSet = new Set(targetKeys);
+    const newItems = items.filter((item) => !keysSet.has(item.key));
+
+    // 如果当前激活的标签被删除，需要切换到其他标签
+    if (keysSet.has(activeKey)) {
+      if (newItems.length > 0) {
+        const currentIndex = items.findIndex((item) => item.key === activeKey);
+        const newIndex = Math.min(currentIndex, newItems.length - 1);
+        navigate(newItems[newIndex].key);
+      } else {
+        navigate("/admin/dashboard");
+      }
     }
 
     setItems(newItems);
@@ -128,10 +187,22 @@ export const useKeepAliveTabs = (routes: RouteConfig[] = []) => {
     navigate(key);
   };
 
+  /**
+   * 设置标签页的保存状态
+   * @param saved 是否已保存（true=已保存，false=有未保存修改）
+   * @param path 标签页路径，默认为当前路径
+   */
+  const setTabSaved = (saved: boolean, path?: string) => {
+    const targetPath = path || location.pathname;
+    setItems((prev) => prev.map((item) => (item.key === targetPath ? { ...item, saved } : item)));
+  };
+
   return {
     items,
     activeKey,
     onEdit,
+    removeTabs, // 新增：批量删除方法
     handleTabClick,
+    setTabSaved,
   };
 };

@@ -51,7 +51,7 @@ const REPLACEMENTS = [
     pattern: /-\[var\((--[^)]+)\)\]/g,
     replacement: '-($1)'
   },
-  // 10. Specific: min-w-[8rem] -> min-w-32
+  // 10. Context Menu: min-w-[8rem] -> min-w-32
   {
     pattern: /min-w-\[8rem\]/g,
     replacement: 'min-w-32'
@@ -60,6 +60,11 @@ const REPLACEMENTS = [
   {
     pattern: /bg-\[#e6f4ff\]/g,
     replacement: 'bg-admin-primary-bg'
+  },
+  // 12. Context Menu: data-[disabled] explicit
+  {
+    pattern: /data-\[disabled\]/g,
+    replacement: 'data-disabled'
   }
 ];
 
