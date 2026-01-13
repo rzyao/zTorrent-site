@@ -22,12 +22,13 @@ import { Loader2 } from "lucide-react";
  */
 
 const buttonVariants = cva(
-  // 基础样式
+  // 基础样式 + 默认中等尺寸 (32px)
   [
     "inline-flex cursor-pointer items-center justify-center whitespace-nowrap",
     "rounded-[6px] font-normal transition-all duration-200",
     "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
     "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+    "h-8 px-[15px] text-[14px]", // 默认中等尺寸
   ],
   {
     variants: {
@@ -70,9 +71,8 @@ const buttonVariants = cva(
         ],
       },
       size: {
-        sm: "h-6 px-2 text-[12px]",
-        md: "h-8 px-[15px] text-[14px]",
-        lg: "h-10 px-[15px] text-[16px]",
+        small: "h-6 px-[7px] text-[14px]", // 小号：24px 高度
+        large: "h-10 px-[15px] text-[16px]", // 大号：40px 高度
       },
       // ⚠️ 危险状态
       danger: {
@@ -167,7 +167,6 @@ const buttonVariants = cva(
     ],
     defaultVariants: {
       variant: "default",
-      size: "md",
       danger: false,
       ghost: false,
     },
@@ -187,6 +186,11 @@ export interface ButtonProps
 /**
  * Button 按钮组件
  *
+ * 尺寸规范（与 Ant Design 一致）：
+ * - large: 大号按钮 (40px 高度)
+ * - 默认: 中号按钮 (32px 高度) - 不设置 size 时的默认值
+ * - small: 小号按钮 (24px 高度)
+ *
  * @example
  * ```tsx
  * // 主按钮
@@ -194,6 +198,12 @@ export interface ButtonProps
  *
  * // 默认按钮
  * <Button>取消</Button>
+ *
+ * // 大号按钮
+ * <Button size="large" variant="primary">大按钮</Button>
+ *
+ * // 小号按钮
+ * <Button size="small">小按钮</Button>
  *
  * // 虚线按钮（添加操作）
  * <Button variant="dashed" icon={<Plus />}>添加</Button>

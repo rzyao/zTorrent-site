@@ -13,6 +13,19 @@ import { RouteTreeNodeDto } from "@/api/models/RouteTreeNodeDto";
  * 将 API 返回的 DTO 转换为前端使用的 RouteConfig
  */
 function mapDtoToConfig(dto: RouteTreeNodeDto): RouteConfig {
+  // 调试：查看 admin 路由的原始 DTO
+  if (dto.path === "admin") {
+    console.log("[useRouteConfig] Mapping admin DTO:", {
+      id: dto.id,
+      path: dto.path,
+      name: dto.name,
+      redirect: dto.redirect,
+      redirectType: typeof dto.redirect,
+      children: dto.children?.length,
+      component: dto.component,
+    });
+  }
+
   return {
     id: dto.id,
     path: dto.path,

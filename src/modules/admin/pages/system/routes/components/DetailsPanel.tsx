@@ -25,6 +25,7 @@ const editRouteSchema = z.object({
   isVisible: z.boolean().default(true),
   isEnabled: z.boolean().default(true),
   openInNewTab: z.boolean().default(false),
+  index: z.boolean().default(false),
 });
 
 type EditRouteFormValues = z.infer<typeof editRouteSchema>;
@@ -36,9 +37,12 @@ interface DetailsPanelProps {
   isSaving?: boolean;
 }
 
-const COMPONENT_OPTIONS = Object.keys(componentRegistry)
-  .sort()
-  .map((c) => ({ value: c, label: c }));
+const COMPONENT_OPTIONS = [
+  { value: "__NONE__", label: "无组件 (仅作为容器)" },
+  ...Object.keys(componentRegistry)
+    .sort()
+    .map((c) => ({ value: c, label: c })),
+];
 
 const LAYOUT_OPTIONS = [
   { value: "none", label: "无布局 (None)" },
@@ -91,14 +95,15 @@ export const DetailsPanel = memo(function DetailsPanel({
             : node.redirect || "",
         component:
           node.component && typeof node.component === "object"
-            ? (node.component as any).component || node.component || ""
-            : node.component || undefined,
+            ? (node.component as any).component || node.component || "__NONE__"
+            : node.component || "__NONE__",
         layout: (node.layout as string) || "none",
         icon: (node as any).icon || "",
         permissions: node.permissions || [],
         isVisible: node.isVisible !== false,
         isEnabled: (node as any).isEnabled !== false,
         openInNewTab: (node as any).openInNewTab || false,
+        index: node.index || false,
       });
       // Small delay to simulate smooth transition if needed, or mostly just reset logic
       const t = setTimeout(() => setIsTransitioning(false), 50);
@@ -107,12 +112,20 @@ export const DetailsPanel = memo(function DetailsPanel({
   }, [node, reset]);
 
   const onFormSubmit = (values: EditRouteFormValues) => {
-    if (!node) return;
-    onSave({
+    console.log("Form submitted with values:", values);
+    if (!node) {
+      console.error("No node selected");
+      return;
+    }
+    const updatedNode = {
       ...node,
       ...values,
+      // 将 __NONE__ 转换回空字符串
+      component: values.component === "__NONE__" ? "" : values.component,
       permissions: values.permissions || [],
-    } as any); // Cast as any to bypass strict checks if RouteTreeNodeDto is complex
+    } as any;
+    console.log("Calling onSave with:", updatedNode);
+    onSave(updatedNode);
   };
 
   const currentIcon = watch("icon");
@@ -139,7 +152,13 @@ export const DetailsPanel = memo(function DetailsPanel({
           </div>
           <p className="text-muted-foreground mt-1 font-mono text-sm">{node.id}</p>
         </div>
-        <Button variant="text" danger size="sm" onClick={() => onDelete(node.id)} title="删除路由">
+        <Button
+          variant="text"
+          danger
+          size="small"
+          onClick={() => onDelete(node.id)}
+          title="删除路由"
+        >
           <Trash2 className="h-4 w-4" />
         </Button>
       </div>
@@ -191,6 +210,19 @@ export const DetailsPanel = memo(function DetailsPanel({
                 </div>
 
                 <div className="col-span-2 flex items-center gap-8">
+                  <Controller
+                    control={control}
+                    name="index"
+                    render={({ field }) => (
+                      <div className="flex items-center gap-2">
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        <div className="grid gap-1.5 leading-none">
+                          <Label>索引路由</Label>
+                          <p className="text-muted-foreground text-xs">作为父路由的默认子路由</p>
+                        </div>
+                      </div>
+                    )}
+                  />
                   <Controller
                     control={control}
                     name="openInNewTab"
@@ -327,6 +359,7 @@ export const DetailsPanel = memo(function DetailsPanel({
           重置
         </Button>
         <Button
+          variant="primary"
           onClick={handleSubmit(onFormSubmit)}
           disabled={isSaving || isTransitioning}
           loading={isSaving}

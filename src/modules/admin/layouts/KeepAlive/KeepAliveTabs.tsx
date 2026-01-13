@@ -63,7 +63,7 @@ export function KeepAliveTabs({
   }, [activeKey, items.length]);
 
   return (
-    <div className="z-10 flex h-[49px] w-full items-center gap-1 border-b border-gray-100 bg-white px-4 shadow-sm">
+    <div className="z-10 flex h-[49px] w-full items-center gap-1 border-b border-gray-200 bg-white px-4">
       {/* Scrollable Tabs Area */}
       <div
         ref={containerRef}
@@ -125,7 +125,7 @@ export function KeepAliveTabs({
       <div className="flex h-full items-center border-l bg-transparent pl-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="text" size="sm" className="data-[state=open]:bg-muted h-7 w-7 p-0">
+            <Button variant="text" size="small" className="data-[state=open]:bg-muted h-7 w-7 p-0">
               <MoreHorizontal className="text-muted-foreground h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -163,7 +163,7 @@ export function KeepAliveTabs({
 
         <Button
           variant="text"
-          size="sm"
+          size="small"
           className="text-muted-foreground hover:text-foreground ml-1 h-7 w-7 p-0"
           onClick={handleRefresh}
           title="刷新"

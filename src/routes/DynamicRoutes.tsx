@@ -51,6 +51,18 @@ function getLayoutWrapper(layout: string | undefined) {
 function renderRoute(config: RouteConfig, parentPath: string = ""): React.ReactNode {
   const { id, path, component, children, index, redirect, openInNewTab, isEnabled } = config;
 
+  // 调试：查看 admin 路由的完整配置
+  if (path === "admin") {
+    console.log("[DynamicRoutes] renderRoute called for admin:", {
+      path,
+      redirect,
+      redirectType: typeof redirect,
+      hasChildren: !!children,
+      childrenLength: children?.length,
+      fullConfig: config,
+    });
+  }
+
   // 如果路由未启用,不渲染
   if (isEnabled === false) {
     return null;
@@ -58,8 +70,9 @@ function renderRoute(config: RouteConfig, parentPath: string = ""): React.ReactN
 
   const fullPath = index ? parentPath : path.startsWith("/") ? path : `${parentPath}/${path}`;
 
-  // 处理重定向
+  // 处理重定向 - 优先级最高，即使有 children 也要重定向
   if (redirect) {
+    console.log("[DynamicRoutes] Redirect detected:", { path, redirect, openInNewTab });
     if (openInNewTab) {
       // 新标签页打开:创建一个组件执行 window.open
       return <Route key={id} path={path} element={<NewTabRedirect url={redirect} />} />;
@@ -123,7 +136,7 @@ function renderRoute(config: RouteConfig, parentPath: string = ""): React.ReactN
  * 渲染带布局的路由组
  */
 function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
-  const { id, path, layout, children, component, isEnabled } = config;
+  const { id, path, layout, children, component, isEnabled, redirect, openInNewTab } = config;
 
   // 如果路由未启用,不渲染
   if (isEnabled === false) {
@@ -134,6 +147,38 @@ function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
 
   // 过滤掉未启用的子路由
   const enabledChildren = children?.filter((child) => child.isEnabled !== false);
+
+  // 处理重定向 - 作为索引路由，同时保留子路由
+  if (redirect && !openInNewTab) {
+    console.log("[DynamicRoutes] Layout route redirect detected:", { path, redirect });
+
+    // 如果有布局组件，渲染带重定向索引的布局路由
+    if (LayoutComponent) {
+      return (
+        <Route
+          key={id}
+          path={path}
+          element={
+            <AuthRoute>
+              <LayoutComponent>
+                <Outlet />
+              </LayoutComponent>
+            </AuthRoute>
+          }
+        >
+          {/* 索引路由重定向 */}
+          <Route index element={<Navigate to={redirect} replace />} />
+          {/* 子路由 */}
+          {enabledChildren?.map((child) => renderRoute(child, path))}
+        </Route>
+      );
+    }
+  }
+
+  // 新标签页重定向
+  if (redirect && openInNewTab) {
+    return <Route key={id} path={path} element={<NewTabRedirect url={redirect} />} />;
+  }
 
   // 论坛布局:使用全局加载器触发器
   if (layout === "forum" && component) {

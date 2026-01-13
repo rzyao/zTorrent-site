@@ -64,7 +64,29 @@ function MenuItem({
   const isExpanded = expandedMenus.has(item.id);
 
   // 检查当前项或其子孙项是否激活
-  const isActive = location.pathname === href;
+  // 对于索引路由，需要同时检查父路径
+  let isActive = location.pathname === href;
+
+  // 如果是索引路由，还需要检查父路径是否匹配
+  if (item.index && !isActive) {
+    const normalizedParentPath = parentPath.replace(/\/+$/, ""); // 移除尾部斜杠
+    const normalizedCurrentPath = location.pathname.replace(/\/+$/, "");
+    isActive = normalizedCurrentPath === normalizedParentPath;
+
+    // 调试日志
+    if (item.name === "仪表盘") {
+      console.log("[AdminSidebar] Dashboard matching:", {
+        itemName: item.name,
+        itemPath: item.path,
+        href,
+        parentPath,
+        currentPath: location.pathname,
+        isIndex: item.index,
+        isActive,
+      });
+    }
+  }
+
   const isChildActive = hasChildren && isPathActiveInTree(item, parentPath, location.pathname);
   const isParentActive = isChildActive && !isActive;
 
@@ -228,7 +250,7 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed top-0 bottom-0 left-0 z-50 hidden flex-col border-r border-gray-100 bg-white shadow-sm transition-all duration-300 md:flex",
+        "fixed top-0 bottom-0 left-0 z-50 hidden flex-col border-r border-gray-200 bg-white transition-all duration-300 md:flex",
         collapsed ? "w-16" : "w-64",
       )}
     >
