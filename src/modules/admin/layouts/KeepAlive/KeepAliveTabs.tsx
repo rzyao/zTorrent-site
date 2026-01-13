@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import {
   X,
-  RefreshCw,
+  RotateCw,
   Home,
   MoreHorizontal,
   XCircle,
@@ -205,15 +205,15 @@ export function KeepAliveTabs({
       </div>
 
       {/* Right Actions Area */}
-      <div className="flex h-full items-center border-l bg-transparent pl-2">
+      <div className="flex h-full items-center bg-transparent pl-2">
         <Button
           variant="text"
           size="small"
-          className="text-muted-foreground hover:text-foreground h-7 w-7 p-0"
+          className="hover:text-foreground h-7 w-7 p-0"
           onClick={handleRefresh}
           title="刷新"
         >
-          <RefreshCw className="h-3.5 w-3.5" />
+          <RotateCw className="h-3.5 w-3.5" />
         </Button>
       </div>
     </div>

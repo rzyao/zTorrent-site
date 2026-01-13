@@ -43,7 +43,7 @@ export function TicketInfo({ id, detail, loading, onBack, onClose, onResolve }: 
             <Button
               variant="primary"
               danger
-              size="sm"
+              size="small"
               disabled={detail?.status === "closed"}
               onClick={() => setCloseConfirmOpen(true)}
             >
@@ -51,7 +51,7 @@ export function TicketInfo({ id, detail, loading, onBack, onClose, onResolve }: 
             </Button>
             <Button
               variant="default"
-              size="sm"
+              size="small"
               disabled={detail?.status !== "resolved"}
               onClick={onResolve}
             >
@@ -88,7 +88,7 @@ export function TicketInfo({ id, detail, loading, onBack, onClose, onResolve }: 
           </div>
           <div className="space-y-1">
             <span className="text-muted-foreground text-sm font-medium">创建人</span>
-            <div className="text-sm">{detail?.creatorName}</div>
+            <div className="text-sm">{detail?.createdBy}</div>
           </div>
           <div className="space-y-1">
             <span className="text-muted-foreground text-sm font-medium">创建时间</span>

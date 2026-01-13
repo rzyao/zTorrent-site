@@ -9,7 +9,7 @@ export default function TicketDetailPage() {
     navigate,
     loading,
     detail,
-    replies,
+    messages,
     form,
     files,
     setFiles,
@@ -32,7 +32,7 @@ export default function TicketDetailPage() {
         onResolve={resolveTicket}
       />
 
-      <TicketReplyList replies={replies} />
+      <TicketReplyList messages={messages} />
 
       <TicketReplyForm
         form={form}

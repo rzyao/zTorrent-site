@@ -41,6 +41,8 @@ export interface Column<T> {
   sortOrder?: SortOrder;
   /** 文本溢出时显示省略号 */
   ellipsis?: boolean;
+  /** 自定义类名 */
+  className?: string;
 }
 
 export interface DataTableProps<T> {
@@ -153,7 +155,7 @@ function Pagination({
           {/* 首页 */}
           <Button
             variant="text"
-            size="sm"
+            size="small"
             onClick={() => handlePageChange(1)}
             disabled={current === 1}
             className="hover:text-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
@@ -164,7 +166,7 @@ function Pagination({
           {/* 上一页 */}
           <Button
             variant="text"
-            size="sm"
+            size="small"
             onClick={() => handlePageChange(current - 1)}
             disabled={current === 1}
             className="hover:text-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
@@ -178,7 +180,7 @@ function Pagination({
           {/* 下一页 */}
           <Button
             variant="text"
-            size="sm"
+            size="small"
             onClick={() => handlePageChange(current + 1)}
             disabled={current === totalPages}
             className="hover:text-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
@@ -189,7 +191,7 @@ function Pagination({
           {/* 末页 */}
           <Button
             variant="text"
-            size="sm"
+            size="small"
             onClick={() => handlePageChange(totalPages)}
             disabled={current === totalPages}
             className="hover:text-primary h-8 w-8 p-0 disabled:hover:text-neutral-300"
@@ -386,6 +388,7 @@ export function DataTable<T extends Record<string, any>>({
                       column.align === "center" && "text-center",
                       column.align === "right" && "text-right",
                       column.sorter && "cursor-pointer select-none hover:bg-neutral-100",
+                      column.className,
                     )}
                     onClick={column.sorter ? handleSortClick : undefined}
                   >

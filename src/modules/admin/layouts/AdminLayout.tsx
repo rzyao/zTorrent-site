@@ -18,18 +18,17 @@ function FaviconInjector() {
 
 export function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
   const navigate = useNavigate();
   const { routes } = useRouteConfig();
 
   // KeepAlive 标签页状态管理
-  const { items, activeKey, onEdit, handleTabClick, setTabSaved, removeTabs } =
+  const { items, activeKey, onEdit, handleTabClick, setTabSaved, removeTabs, refreshCurrentTab } =
     useKeepAliveTabs(routes);
 
-  // 刷新当前页面
+  // 刷新当前标签页
   const handleRefresh = useCallback(() => {
-    setRefreshKey((prev) => prev + 1);
-  }, []);
+    refreshCurrentTab();
+  }, [refreshCurrentTab]);
 
   // 退出登录
   const handleLogout = useCallback(() => {
@@ -72,7 +71,7 @@ export function AdminLayout() {
               <div className="flex min-h-0 flex-1 flex-col overflow-auto">
                 <AnimatePresence mode="wait">
                   <Suspense fallback={<RouteProgressBar />}>
-                    <KeepAliveContent key={refreshKey} items={items} activeKey={activeKey}>
+                    <KeepAliveContent items={items} activeKey={activeKey}>
                       <Outlet />
                     </KeepAliveContent>
                   </Suspense>

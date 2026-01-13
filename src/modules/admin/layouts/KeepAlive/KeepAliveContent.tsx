@@ -19,7 +19,12 @@ const KeepAliveContent: React.FC<KeepAliveContentProps> = ({ items, activeKey, c
               className={`min-h-0 flex-1 overflow-auto ${item.key === activeKey ? "flex flex-col" : "hidden"}`}
             >
               <TabKeyContext.Provider value={item.key}>
-                <AdminPageContainer className="min-h-0 flex-1">{item.children}</AdminPageContainer>
+                <AdminPageContainer
+                  key={`${item.key}-${item.refreshKey || 0}`}
+                  className="min-h-0 flex-1"
+                >
+                  {item.children}
+                </AdminPageContainer>
               </TabKeyContext.Provider>
             </div>
           ))

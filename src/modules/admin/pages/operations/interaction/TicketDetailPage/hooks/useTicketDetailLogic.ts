@@ -42,8 +42,8 @@ export function useTicketDetailLogic() {
     queryFn: async () => {
       const res: any = await TicketsService.ticketsControllerDetail({ ticketId: id } as any);
       return {
-        detail: res?.data?.detail || res?.data || {},
-        replies: res?.data?.replies ?? [],
+        detail: res?.data || {},
+        messages: res?.data?.messages ?? [],
       };
     },
     enabled: !!id,
@@ -163,7 +163,7 @@ export function useTicketDetailLogic() {
     navigate,
     loading: isLoading,
     detail: data?.detail,
-    replies: data?.replies,
+    messages: data?.messages,
     form,
     files,
     setFiles,

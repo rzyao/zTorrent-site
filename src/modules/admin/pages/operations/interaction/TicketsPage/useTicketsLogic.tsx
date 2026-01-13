@@ -194,7 +194,7 @@ export function useTicketsLogic() {
         width: 100,
         render: (v: string) => categoryText[v],
       },
-      { key: "creatorName", title: "创建人", dataIndex: "creatorName", width: 120 },
+      { key: "createdBy", title: "创建人", dataIndex: "createdBy", width: 120 },
       {
         key: "createdAt",
         title: "创建时间",
@@ -205,23 +205,25 @@ export function useTicketsLogic() {
       {
         key: "action",
         title: "操作",
+        align: "center",
         width: 240,
         render: (_, record) => (
-          <div className="flex items-center gap-2">
-            <Button variant="default" size="sm" onClick={() => navigate(record.id)}>
+          <div className="flex justify-center gap-2">
+            <Button variant="link" size="small" onClick={() => navigate(record.id)}>
               详情
             </Button>
             <Button
-              variant="text"
+              variant="link"
               danger
-              size="sm"
+              size="small"
               disabled={record.status === "closed"}
               onClick={() => handleCloseClick(record.id)}
             >
               关闭
             </Button>
             <Button
-              size="sm"
+              variant="link"
+              size="small"
               disabled={record.status !== "resolved"}
               onClick={() => handleConfirmResolved(record.id)}
             >

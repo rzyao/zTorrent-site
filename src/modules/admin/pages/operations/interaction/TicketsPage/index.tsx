@@ -1,6 +1,6 @@
 import { DataTable } from "@/modules/admin/components/ui/data-table";
 import { Button } from "@/modules/admin/components/ui/button";
-import { Plus, Search, Loader2 } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useTicketsLogic } from "./useTicketsLogic";
 import { TicketModal } from "./components/TicketModal";
 import { StandardSelect as Select } from "@/modules/admin/components/ui/select";
@@ -71,7 +71,7 @@ export default function TicketsPage() {
           onChange: (page, pageSize) => setQuery((prev) => ({ ...prev, page, pageSize })),
         }}
         toolbarLeft={
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <SearchInput
               placeholder="搜索关键词..."
               value={query.keyword || ""}
@@ -126,7 +126,7 @@ export default function TicketsPage() {
           <DialogHeader>
             <DialogTitle>确认关闭该工单？</DialogTitle>
           </DialogHeader>
-          <div className="py-4 text-sm text-neutral-500">
+          <div className="text-muted-foreground py-4 text-sm">
             关闭后工单将不再接受回复，且状态变更为“已关闭”。
           </div>
           <DialogFooter>
@@ -134,7 +134,6 @@ export default function TicketsPage() {
               取消
             </Button>
             <Button variant="primary" danger onClick={handleConfirmClose} loading={isClosing}>
-              {isClosing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               确认关闭
             </Button>
           </DialogFooter>

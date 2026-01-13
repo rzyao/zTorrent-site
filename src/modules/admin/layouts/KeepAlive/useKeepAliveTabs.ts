@@ -8,6 +8,7 @@ export interface TabItem {
   children: React.ReactNode;
   closable?: boolean;
   saved?: boolean; // 是否已保存（true=已保存，false=有未保存修改，undefined=默认已保存）
+  refreshKey?: number; // 用于强制刷新标签页内容
 }
 
 export const useKeepAliveTabs = (routes: RouteConfig[] = []) => {
@@ -54,8 +55,21 @@ export const useKeepAliveTabs = (routes: RouteConfig[] = []) => {
 
   // 2. Helper to get page title
   const getPageTitle = (pathname: string) => {
+    // 1. 精确匹配
     if (pathNameMap.current[pathname]) return pathNameMap.current[pathname];
-    // Fallback: extract from path
+
+    // 2. 动态路由匹配（支持 :id, :param 等参数）
+    for (const [routePath, name] of Object.entries(pathNameMap.current)) {
+      // 将路由模式转换为正则表达式
+      // 例如: /admin/interaction/tickets/:id -> /admin/interaction/tickets/[^/]+
+      const pattern = routePath.replace(/:[^/]+/g, "[^/]+");
+      const regex = new RegExp(`^${pattern}$`);
+      if (regex.test(pathname)) {
+        return name;
+      }
+    }
+
+    // 3. Fallback: extract from path
     const parts = pathname.split("/").filter(Boolean);
     return parts.length > 0 ? parts[parts.length - 1] : "首页";
   };
@@ -197,6 +211,22 @@ export const useKeepAliveTabs = (routes: RouteConfig[] = []) => {
     setItems((prev) => prev.map((item) => (item.key === targetPath ? { ...item, saved } : item)));
   };
 
+  /**
+   * 刷新当前激活的标签页
+   */
+  const refreshCurrentTab = () => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.key === activeKey
+          ? {
+              ...item,
+              refreshKey: (item.refreshKey || 0) + 1, // 增加 refreshKey 触发重新渲染
+            }
+          : item,
+      ),
+    );
+  };
+
   return {
     items,
     activeKey,
@@ -204,5 +234,6 @@ export const useKeepAliveTabs = (routes: RouteConfig[] = []) => {
     removeTabs, // 新增：批量删除方法
     handleTabClick,
     setTabSaved,
+    refreshCurrentTab, // 新增：刷新当前标签页
   };
 };
