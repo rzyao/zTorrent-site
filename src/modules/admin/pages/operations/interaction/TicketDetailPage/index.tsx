@@ -22,7 +22,7 @@ export default function TicketDetailPage() {
   } = useTicketDetailLogic();
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 space-y-4 duration-500">
+    <div className="animate-in fade-in slide-in-from-bottom-4 space-y-4 pb-6 duration-500">
       <TicketInfo
         id={id}
         detail={detail}
@@ -41,6 +41,7 @@ export default function TicketDetailPage() {
         onRemoveFile={onRemoveFile}
         loading={replying}
         onSubmit={handleReply}
+        disabled={detail?.status === "closed"}
         onReset={() => {
           form.reset();
           setFiles([]);

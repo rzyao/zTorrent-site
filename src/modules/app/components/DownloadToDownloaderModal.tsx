@@ -75,61 +75,48 @@ export function DownloadToDownloaderModal({
   if (!open) return null;
 
   return createPortal(
-    <div className="modal-overlay fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
-      <div className="bg-neutral-900 rounded-2xl border border-neutral-700 w-full max-w-md m-4 flex flex-col shadow-2xl">
+    <div className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+      <div className="m-4 flex w-full max-w-md flex-col rounded-2xl border border-neutral-700 bg-neutral-900 shadow-2xl">
         {/* Header */}
-        <div className="p-6 pb-4 border-b border-neutral-800 flex items-center justify-between">
-          <h3 className="text-white text-lg font-medium flex items-center gap-2">
-            <Upload className="w-5 h-5 text-amber-500" />
+        <div className="flex items-center justify-between border-b border-neutral-800 p-6 pb-4">
+          <h3 className="flex items-center gap-2 text-lg font-medium text-white">
+            <Upload className="h-5 w-5 text-amber-500" />
             发送到下载器
           </h3>
-          <button
-            onClick={onClose}
-            className="text-neutral-400 hover:text-white transition-colors"
-          >
-            <X className="w-5 h-5" />
+          <button onClick={onClose} className="text-neutral-400 transition-colors hover:text-white">
+            <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-6">
+        <div className="space-y-6 p-6">
           {/* 本地下载选项 */}
-          <div className="flex items-center justify-between bg-neutral-800/50 p-3 rounded-xl border border-neutral-700/50">
-            <span className="text-sm text-neutral-400 pl-1">
-              不推送到下载器
-            </span>
+          <div className="flex items-center justify-between rounded-xl border border-neutral-700/50 bg-neutral-800/50 p-3">
+            <span className="pl-1 text-sm text-neutral-400">不推送到下载器</span>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleLocalDownload}
-              className="text-amber-500 hover:text-amber-400 hover:bg-amber-500/10 h-8"
+              className="h-8 text-amber-500 hover:bg-amber-500/10 hover:text-amber-400"
             >
-              <Download className="w-4 h-4 mr-2" />
+              <Download className="mr-2 h-4 w-4" />
               下载到本地
             </Button>
           </div>
 
-          <div className="w-full h-px bg-neutral-800"></div>
+          <div className="h-px w-full bg-neutral-800"></div>
 
           {downloaders.length === 0 ? (
-            <div className="text-center py-2">
-              <p className="text-neutral-400 mb-4">
-                未找到可用的下载器，请先要在控制台添加。
-              </p>
-              <Button
-                onClick={onClose}
-                variant="outline"
-                className="border-neutral-700 text-white"
-              >
+            <div className="py-2 text-center">
+              <p className="mb-4 text-neutral-400">未找到可用的下载器，请先要在控制台添加。</p>
+              <Button onClick={onClose} variant="outline" className="border-neutral-700 text-white">
                 关闭
               </Button>
             </div>
           ) : (
             <>
               <div className="space-y-3">
-                <label className="text-sm text-neutral-400 block">
-                  选择下载器
-                </label>
+                <label className="block text-sm text-neutral-400">选择下载器</label>
                 <NativeSelect
                   value={selectedDownloaderId}
                   onChange={handleDownloaderChange}
@@ -143,9 +130,7 @@ export function DownloadToDownloaderModal({
 
               {pathOptions.length > 0 && (
                 <div className="space-y-3">
-                  <label className="text-sm text-neutral-400 block">
-                    选择下载路径
-                  </label>
+                  <label className="block text-sm text-neutral-400">选择下载路径</label>
                   <NativeSelect
                     value={selectedPath}
                     onChange={setSelectedPath}
@@ -163,15 +148,16 @@ export function DownloadToDownloaderModal({
 
         {/* Footer */}
         {downloaders.length > 0 && (
-          <div className="p-6 pt-0 flex gap-3">
+          <div className="flex gap-3 p-6 pt-0">
             <Button
-              className="flex-1 bg-neutral-800 hover:bg-neutral-700 text-white h-11 rounded-xl"
+              className="h-11 flex-1 rounded-xl bg-neutral-800 text-white hover:bg-neutral-700"
               onClick={onClose}
             >
               取消
             </Button>
             <Button
-              className="flex-1 general-button h-11 rounded-xl"
+              variant="outline"
+              className="h-11 flex-1 rounded-xl border-[#92702a] bg-transparent text-[#d4a733] hover:border-[#d4a733] hover:bg-[#d4a733]/10 hover:text-[#e8bc4a]"
               onClick={handleSubmit}
               disabled={sending || !selectedDownloaderId}
             >
@@ -181,6 +167,6 @@ export function DownloadToDownloaderModal({
         )}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

@@ -236,7 +236,7 @@ export function useSystemSettings() {
       });
     },
     onError: () => {
-      toast.error("保存失败，请重试");
+      console.error("保存失败");
     },
   });
 
@@ -259,11 +259,8 @@ export function useSystemSettings() {
       }
     },
     onError: (error: any) => {
-      if (error?.status === 409 || error?.response?.status === 409) {
-        toast.error("该键已存在，请使用编辑保存");
-      } else {
-        toast.error("创建失败，请稍后重试");
-      }
+      // 409 etc handled globally or here as console
+      console.error(error?.message || "创建失败");
     },
   });
 
@@ -285,7 +282,7 @@ export function useSystemSettings() {
       }
     },
     onError: () => {
-      toast.error("编辑保存失败，请稍后重试");
+      console.error("编辑保存失败");
     },
   });
 
@@ -304,7 +301,7 @@ export function useSystemSettings() {
       }
     },
     onError: () => {
-      toast.error("SMTP 连通性检测失败，请稍后重试");
+      console.error("SMTP 连通性检测失败");
     },
   });
 
@@ -320,7 +317,7 @@ export function useSystemSettings() {
       setMailConfigSnapshot(text);
     },
     onError: () => {
-      toast.error("获取 SMTP 配置失败，请稍后重试");
+      console.error("获取 SMTP 配置失败");
     },
   });
 
@@ -334,7 +331,7 @@ export function useSystemSettings() {
       toast.success("诊断邮件已发送，返回结果已展示");
     },
     onError: () => {
-      toast.error("诊断邮件发送失败，请检查配置或收件人地址");
+      console.error("诊断邮件发送失败");
     },
   });
 

@@ -138,7 +138,7 @@ export const useRolesLogic = () => {
       queryClient.invalidateQueries({ queryKey: ["roles"] });
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.message || "创建失败");
+      console.error(err.response?.data?.message || "创建失败");
     },
   });
 
@@ -154,7 +154,7 @@ export const useRolesLogic = () => {
       queryClient.invalidateQueries({ queryKey: ["roles"] });
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.message || "更新失败");
+      console.error(err.response?.data?.message || "更新失败");
     },
   });
 
@@ -165,7 +165,7 @@ export const useRolesLogic = () => {
       queryClient.invalidateQueries({ queryKey: ["roles"] });
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.message || "删除失败");
+      console.error(err.response?.data?.message || "删除失败");
     },
   });
 
@@ -190,7 +190,7 @@ export const useRolesLogic = () => {
       queryClient.invalidateQueries({ queryKey: ["roles"] });
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.message || "分配失败");
+      console.error(err.response?.data?.message || "分配失败");
     },
   });
 
@@ -236,7 +236,7 @@ export const useRolesLogic = () => {
       );
     } catch (e) {
       console.error(e);
-      toast.error("无法加载该角色的现有权限");
+      console.error("无法加载该角色的现有权限", e);
     }
   };
 

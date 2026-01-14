@@ -118,7 +118,7 @@ export const useUsersLogic = () => {
         .sort((a: any, b: any) => a.value - b.value);
       setBanTimeOptions(timeOpts);
     } catch (e: any) {
-      toast.error(e?.message || "加载封禁字典失败");
+      console.error(e?.message || "加载封禁字典失败");
     } finally {
       setBanDictLoading(false);
     }
@@ -136,7 +136,7 @@ export const useUsersLogic = () => {
       }));
       setPunishTypeOptions(opts);
     } catch (e: any) {
-      toast.error(e?.message || "加载处罚类型失败");
+      console.error(e?.message || "加载处罚类型失败");
     } finally {
       setPunishTypesLoading(false);
     }
@@ -220,7 +220,7 @@ export const useUsersLogic = () => {
             : 0,
       );
     } catch (e: any) {
-      toast.error(e?.message || "加载用户列表失败");
+      console.error(e?.message || "加载用户列表失败");
     } finally {
       setLoading(false);
     }
@@ -470,7 +470,7 @@ export const useUsersLogic = () => {
             break;
         }
       } catch (e: any) {
-        toast.error(e?.message || "操作失败");
+        console.error(e?.message || "操作失败");
       }
     },
     [can, loadBanDictionaries, loadPunishTypes, navigate],
@@ -590,7 +590,7 @@ export const useUsersLogic = () => {
         render: (_: any, r: any) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="text" size="sm" className="h-8 w-8 p-0">
+              <Button variant="text" size="small" className="h-8 w-8 p-0">
                 <span className="sr-only">打开菜单</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -730,6 +730,6 @@ export const handleDeleteUser = async (id: string, fetchList: () => void) => {
     toast.success("删除成功");
     fetchList();
   } catch (e: any) {
-    toast.error(e?.message || "删除失败");
+    console.error(e?.message || "删除失败");
   }
 };

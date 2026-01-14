@@ -1,11 +1,11 @@
-import { useState, useMemo } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { MoviesService } from '@/api/services/MoviesService';
-import { ListMoviesDto } from '@/api/models/ListMoviesDto';
-import { useDictionaryLabels } from '@/hooks/useDictionary';
-import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
-import type { GenreOption, SortKey } from '../types';
+import { useState, useMemo } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { MoviesService } from "@/api/services/MoviesService";
+import { ListMoviesDto } from "@/api/models/ListMoviesDto";
+import { useDictionaryLabels } from "@/hooks/useDictionary";
+import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
+import type { GenreOption, SortKey } from "../types";
 
 /**
  * useMoviesPage
@@ -17,9 +17,9 @@ export function useMoviesPage() {
   const navigate = useNavigate();
 
   // 视图筛选状态
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<SortKey>('rating');
-  const [selectedGenre, setSelectedGenre] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<SortKey>("rating");
+  const [selectedGenre, setSelectedGenre] = useState<string>("all");
 
   const { getCategoryLabel } = useDictionaryLabels();
 
@@ -31,7 +31,7 @@ export function useMoviesPage() {
     const visibleCategories = movieCategories
       .filter((c) => c.show)
       .map((c) => ({ key: c.key, label: c.label || getCategoryLabel(c.key) || c.key }));
-    return [{ key: 'all', label: '全部' }, ...visibleCategories];
+    return [{ key: "all", label: "全部" }, ...visibleCategories];
   }, [movieCategories, getCategoryLabel]);
 
   // 电影列表查询
@@ -41,12 +41,12 @@ export function useMoviesPage() {
     error: queryError,
     isFetching,
   } = useQuery({
-    queryKey: ['movies', { selectedGenre, searchQuery, sortBy }],
+    queryKey: ["movies", { selectedGenre, searchQuery, sortBy }],
     queryFn: async () => {
       const requestBody: ListMoviesDto = {
         page: 1,
         limit: 100,
-        categories: selectedGenre === 'all' ? undefined : [selectedGenre],
+        categories: selectedGenre === "all" ? undefined : [selectedGenre],
         keyword: searchQuery || undefined,
         sortBy: sortBy as ListMoviesDto.sortBy,
         order: ListMoviesDto.order.DESC,
@@ -61,16 +61,16 @@ export function useMoviesPage() {
   });
 
   const movies = moviesData?.items || [];
-  const error = queryError ? (queryError as Error).message || '获取电影列表失败' : null;
+  const error = queryError ? (queryError as Error).message || "获取电影列表失败" : null;
 
   // 点击电影卡片跳转详情
   function handleMovieClick(movie: { id: string }) {
-    navigate(`/movie/${movie.id}`);
+    navigate(`/app/movie/${movie.id}`);
   }
 
   // 重试加载
   function retry() {
-    queryClient.invalidateQueries({ queryKey: ['movies'] });
+    queryClient.invalidateQueries({ queryKey: ["movies"] });
   }
 
   return {

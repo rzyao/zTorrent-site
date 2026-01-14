@@ -53,7 +53,11 @@ export default function SeriesDetailPage() {
           <h2 className="mb-2 text-2xl font-bold text-white">{error || "未找到剧集信息"}</h2>
           <p className="text-neutral-400">该剧集可能已被移除或链接无效</p>
         </div>
-        <Button onClick={() => navigate("/series")} className="general-button">
+        <Button
+          variant="outline"
+          onClick={() => navigate("/series")}
+          className="rounded-lg border-[#92702a] bg-transparent text-[#d4a733] hover:border-[#d4a733] hover:bg-[#d4a733]/10 hover:text-[#e8bc4a]"
+        >
           返回剧集列表
         </Button>
       </div>

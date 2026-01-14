@@ -92,6 +92,7 @@ export function useTicketsLogic() {
       await TicketsService.ticketsControllerClose({
         ticketId,
         reason: "后台关闭",
+        clientRequestId: crypto.randomUUID(),
       } as any);
     },
     onSuccess: () => {
@@ -102,13 +103,16 @@ export function useTicketsLogic() {
       queryClient.invalidateQueries({ queryKey: ["tickets-stats"] });
     },
     onError: (e: any) => {
-      toast.error(e?.response?.data?.message || e?.message || "关闭失败");
+      console.error(e?.message || "关闭失败");
     },
   });
 
   const confirmMutation = useMutation({
     mutationFn: async (ticketId: string) => {
-      await TicketsService.ticketsControllerConfirmResolved({ ticketId } as any);
+      await TicketsService.ticketsControllerConfirmResolved({
+        ticketId,
+        clientRequestId: crypto.randomUUID(),
+      } as any);
     },
     onSuccess: () => {
       toast.success("已确认");
@@ -116,7 +120,7 @@ export function useTicketsLogic() {
       queryClient.invalidateQueries({ queryKey: ["tickets-stats"] });
     },
     onError: (e: any) => {
-      toast.error(e?.response?.data?.message || e?.message || "操作失败");
+      console.error(e?.message || "操作失败");
     },
   });
 
@@ -133,7 +137,7 @@ export function useTicketsLogic() {
       queryClient.invalidateQueries({ queryKey: ["tickets-stats"] });
     },
     onError: (e: any) => {
-      toast.error(e?.response?.data?.message || e?.message || "新建失败");
+      console.error(e?.message || "新建失败");
     },
   });
 

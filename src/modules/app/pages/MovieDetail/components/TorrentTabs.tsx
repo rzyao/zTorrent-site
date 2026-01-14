@@ -71,7 +71,10 @@ export function TorrentTabs({
               rows={4}
               className="input w-full resize-none rounded-lg px-4 py-3 text-white placeholder:text-neutral-500"
             />
-            <Button className="general-button">
+            <Button
+              variant="outline"
+              className="rounded-lg border-[#92702a] bg-transparent text-[#d4a733] hover:border-[#d4a733] hover:bg-[#d4a733]/10 hover:text-[#e8bc4a]"
+            >
               <MessageSquare className="mr-2 h-4 w-4" />
               发布评论
             </Button>

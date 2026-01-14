@@ -149,7 +149,7 @@ export function InfoBar({ series, episodes }: InfoBarProps) {
                   <button
                     key={num}
                     disabled={!isBound}
-                    onClick={() => isBound && ep && navigate(`/episodes/${ep.id}`)}
+                    onClick={() => isBound && ep && navigate(`/app/episodes/${ep.id}`)}
                     className={cn(
                       "flex h-10 min-w-[42px] items-center justify-center rounded-lg border px-3 text-sm font-medium shadow-inner transition-all",
                       isBound

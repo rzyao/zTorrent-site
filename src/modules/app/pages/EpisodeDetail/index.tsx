@@ -105,7 +105,7 @@ export default function EpisodeDetailPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => navigate(`/series/${seriesId}`)}
+                  onClick={() => navigate(`/app/series/${seriesId}`)}
                   className="gap-2 text-gray-400 hover:bg-white/10 hover:text-white"
                 >
                   <ArrowLeft className="h-4 w-4" />
@@ -124,7 +124,7 @@ export default function EpisodeDetailPage() {
                 <div className="max-w-2xl flex-initial space-y-4">
                   <h1 className="text-3xl leading-tight font-bold text-white md:text-4xl">
                     <span
-                      onClick={() => navigate(`/series/${seriesId}`)}
+                      onClick={() => navigate(`/app/series/${seriesId}`)}
                       className="cursor-pointer transition-colors hover:text-amber-400 hover:underline"
                     >
                       {series.title}
@@ -237,8 +237,8 @@ export default function EpisodeDetailPage() {
                       torrents.map((t) => (
                         <div
                           key={t.id}
-                          className="group card card-hover text-parent cursor-pointer overflow-hidden rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/10"
-                          onClick={() => navigate(`/torrent/${t.id}`)}
+                          className="group app-card app-card-hover text-parent cursor-pointer overflow-hidden rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/10"
+                          onClick={() => navigate(`/app/torrent/${t.id}`)}
                         >
                           <div className="flex gap-4 p-4">
                             {/* 缩略图 */}
@@ -264,8 +264,9 @@ export default function EpisodeDetailPage() {
                                   )}
                                 </div>
                                 <Button
+                                  variant="outline"
                                   size="sm"
-                                  className="general-button hidden shrink-0 items-center gap-2 md:flex"
+                                  className="hidden shrink-0 items-center gap-2 rounded-lg border-[#92702a] bg-transparent text-[#d4a733] hover:border-[#d4a733] hover:bg-[#d4a733]/10 hover:text-[#e8bc4a] md:flex"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleDownload(t.id, t.title || t.name);
@@ -347,8 +348,9 @@ export default function EpisodeDetailPage() {
                               {/* 移动端下载按钮 */}
                               <div className="mt-3 md:hidden">
                                 <Button
+                                  variant="outline"
                                   size="sm"
-                                  className="general-button w-full"
+                                  className="w-full rounded-lg border-[#92702a] bg-transparent text-[#d4a733] hover:border-[#d4a733] hover:bg-[#d4a733]/10 hover:text-[#e8bc4a]"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleDownload(t.id, t.title || t.name);
@@ -519,7 +521,7 @@ export default function EpisodeDetailPage() {
                           .map((ep) => (
                             <button
                               key={ep.id}
-                              onClick={() => navigate(`/episodes/${ep.id}`)}
+                              onClick={() => navigate(`/app/episodes/${ep.id}`)}
                               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md border text-sm transition-all hover:scale-105 ${
                                 ep.id === id
                                   ? "border-amber-500 bg-amber-500/80 font-bold text-black shadow-lg shadow-amber-500/20"

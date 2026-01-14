@@ -1,7 +1,7 @@
 ﻿import { useState } from "react";
 import { useFavorite } from "@/modules/app/hooks/useFavorite";
 import { FavoriteActionDto } from "@/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Bell, UserPlus, Heart, Share2 } from "lucide-react";
 import ActionBtn from "@/modules/app/components/ActionBtn";
 import { cn } from "@/utils/cn";
@@ -13,13 +13,22 @@ import { usePlaylistDetail } from "@/modules/app/pages/PlaylistDetail/hooks/useP
 import { PageContainer } from "@/modules/app/components/PageContainer";
 
 interface PlaylistDetailPageProps {
-  playlistId: string;
-  onBack: () => void;
+  playlistId?: string;
+  onBack?: () => void;
   onFilmClick?: (filmId: string) => void;
 }
 
-export default function PlaylistDetailPage({ playlistId, onBack, onFilmClick }: PlaylistDetailPageProps) {
+export default function PlaylistDetailPage({
+  playlistId: propPlaylistId,
+  onBack,
+  onFilmClick,
+}: PlaylistDetailPageProps) {
   const navigate = useNavigate();
+  const { id: paramId } = useParams<{ id: string }>();
+
+  // 优先使用 props 传入的 playlistId，否则从 URL 参数获取
+  const playlistId = propPlaylistId || paramId || "";
+
   // 页面交互状态仅保留视图与排序
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<"order" | "rating" | "year">("order");

@@ -129,7 +129,7 @@ export function useRoutesLogic() {
       toast.success("保存成功");
       queryClient.invalidateQueries({ queryKey: ["adminRouteTree"] });
     },
-    onError: (err: any) => toast.error(err.message || "保存失败"),
+    onError: (err: any) => console.error(err.message || "保存失败"),
   });
 
   const createMutation = useMutation({
@@ -142,7 +142,7 @@ export function useRoutesLogic() {
       setIsCreateOpen(false); // Close modal
       queryClient.invalidateQueries({ queryKey: ["adminRouteTree"] });
     },
-    onError: (err: any) => toast.error(err.message || "创建失败"),
+    onError: (err: any) => console.error(err.message || "创建失败"),
   });
 
   const deleteMutation = useMutation({
@@ -156,7 +156,7 @@ export function useRoutesLogic() {
       setDeleteId(null);
       queryClient.invalidateQueries({ queryKey: ["adminRouteTree"] });
     },
-    onError: (err: any) => toast.error(err.message || "删除失败"),
+    onError: (err: any) => console.error(err.message || "删除失败"),
   });
 
   const sortMutation = useMutation({
@@ -167,7 +167,7 @@ export function useRoutesLogic() {
       toast.success("排序已更新");
       queryClient.invalidateQueries({ queryKey: ["adminRouteTree"] });
     },
-    onError: (err: any) => toast.error(err.message || "排序失败"),
+    onError: (err: any) => console.error(err.message || "排序失败"),
   });
 
   const moveNodeMutation = useMutation({
@@ -183,7 +183,7 @@ export function useRoutesLogic() {
       toast.success("移动成功");
       queryClient.invalidateQueries({ queryKey: ["adminRouteTree"] });
     },
-    onError: (err: any) => toast.error(err.message || "移动失败"),
+    onError: (err: any) => console.error(err.message || "移动失败"),
   });
 
   // --- Handlers ---

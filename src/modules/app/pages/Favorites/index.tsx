@@ -92,13 +92,13 @@ function FavoriteItemCard({ item }: { item: FavoriteItemDto }) {
   const getLink = () => {
     switch (item.targetType) {
       case FavoriteItemDto.targetType.MOVIE:
-        return `/movies/${item.targetId}`;
+        return `/app/movies/${item.targetId}`;
       case FavoriteItemDto.targetType.SERIES:
-        return `/series/${item.targetId}`;
+        return `/app/series/${item.targetId}`;
       case FavoriteItemDto.targetType.TORRENT:
-        return `/torrents/${item.targetId}`;
+        return `/app/torrents/${item.targetId}`;
       case FavoriteItemDto.targetType.PLAYLIST:
-        return `/playlists/${item.targetId}`;
+        return `/app/playlists/${item.targetId}`;
       default:
         return "#";
     }

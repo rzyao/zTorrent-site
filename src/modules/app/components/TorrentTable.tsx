@@ -62,7 +62,7 @@ export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
         // 单个种子卡片容器：hover 边框高亮、过渡细腻
         <div
           key={torrent.id}
-          className="card card-hover cursor-pointer rounded-lg p-4 transition-all duration-300"
+          className="app-card app-card-hover cursor-pointer rounded-lg p-4 transition-all duration-300"
         >
           <div className="flex gap-4">
             {/* 缩略图：统一 w-25 h-25，缺省时不渲染 */}
@@ -83,7 +83,7 @@ export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
                   <h3 className="flex-1 text-white transition-colors hover:text-amber-400">
                     <Link
                       to={{
-                        pathname: `/torrent/${torrent.id}`,
+                        pathname: `/app/torrent/${torrent.id}`,
                         search: mergedSearch,
                         hash: mergedHash,
                       }}
@@ -96,7 +96,7 @@ export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
                     <h3 className="flex-1 text-white transition-colors hover:text-amber-400">
                       <Link
                         to={{
-                          pathname: `/torrent/${torrent.id}`,
+                          pathname: `/app/torrent/${torrent.id}`,
                           search: mergedSearch,
                           hash: mergedHash,
                         }}
@@ -108,8 +108,9 @@ export function TorrentTable({ torrents, filmId }: TorrentTableProps) {
                 </div>
                 {/* 下载按钮：弹出下载选项弹窗 */}
                 <Button
+                  variant="outline"
                   size="sm"
-                  className="general-button shrink-0"
+                  className="shrink-0 rounded-lg border-[#92702a] bg-transparent text-[#d4a733] hover:border-[#d4a733] hover:bg-[#d4a733]/10 hover:text-[#e8bc4a]"
                   onClick={(e) => {
                     e.preventDefault();
                     setDownloadModal({

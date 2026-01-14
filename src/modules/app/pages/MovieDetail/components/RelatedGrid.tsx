@@ -9,14 +9,14 @@ import type { RelatedItem } from "../types";
  */
 export function RelatedGrid({ items }: { items: RelatedItem[] }) {
   return (
-    <div className="card rounded-lg p-6">
+    <div className="app-card rounded-lg p-6">
       <h3 className="mb-4 text-white">相关推荐</h3>
       {Array.isArray(items) && items.length > 0 ? (
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
           {items.map((rec) => (
             <div
               key={rec.id}
-              className="group card-hover cursor-pointer overflow-hidden rounded-lg transition-colors"
+              className="group app-card-hover cursor-pointer overflow-hidden rounded-lg transition-colors"
             >
               <div className="relative aspect-2/3 w-full">
                 <ImageWithFallback

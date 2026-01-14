@@ -54,7 +54,7 @@ export function EpisodeList({ episodes, seriesTitle }: EpisodeListProps) {
             key={episode.id}
             episode={episode}
             index={index}
-            onClick={() => navigate(`/episodes/${episode.id}`)}
+            onClick={() => navigate(`/app/episodes/${episode.id}`)}
           />
         ))}
       </div>
@@ -73,7 +73,7 @@ function EpisodeCard({ episode, index, onClick }: EpisodeCardProps) {
     <div
       onClick={onClick}
       className={cn(
-        "card card-hover group cursor-pointer overflow-hidden rounded-xl transition-all duration-300",
+        "app-card app-card-hover group cursor-pointer overflow-hidden rounded-xl transition-all duration-300",
         "flex flex-col sm:flex-row",
       )}
     >

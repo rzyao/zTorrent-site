@@ -27,7 +27,7 @@ export default function PlaylistsPage() {
   } = usePlaylists();
 
   const handlePlaylistClick = (playlist: Playlist) => {
-    navigate(`/playlist/${playlist.id}`);
+    navigate(`/app/playlist/${playlist.id}`);
   };
 
   return (
@@ -39,7 +39,7 @@ export default function PlaylistsPage() {
         onSearchChange={setSearchQuery}
         sortBy={sortBy}
         onSortChange={setSortBy}
-        onCreate={() => { }}
+        onCreate={() => {}}
       />
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5">

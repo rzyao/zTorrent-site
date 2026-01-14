@@ -1,11 +1,11 @@
-import { useState, useMemo } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { SeriesService } from '@/api/services/SeriesService';
-import { ListSeriesDto } from '@/api/models/ListSeriesDto';
-import { useDictionaryLabels } from '@/hooks/useDictionary';
-import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
-import type { GenreOption, SortKey, SeriesStatus, STATUS_OPTIONS } from '../types';
+import { useState, useMemo } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { SeriesService } from "@/api/services/SeriesService";
+import { ListSeriesDto } from "@/api/models/ListSeriesDto";
+import { useDictionaryLabels } from "@/hooks/useDictionary";
+import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
+import type { GenreOption, SortKey, SeriesStatus, STATUS_OPTIONS } from "../types";
 
 /**
  * useSeriesPage
@@ -17,10 +17,10 @@ export function useSeriesPage() {
   const navigate = useNavigate();
 
   // 视图筛选状态
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<SortKey>('rating');
-  const [selectedGenre, setSelectedGenre] = useState<string>('all');
-  const [selectedStatus, setSelectedStatus] = useState<SeriesStatus | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<SortKey>("rating");
+  const [selectedGenre, setSelectedGenre] = useState<string>("all");
+  const [selectedStatus, setSelectedStatus] = useState<SeriesStatus | "all">("all");
 
   const { getCategoryLabel } = useDictionaryLabels();
 
@@ -32,7 +32,7 @@ export function useSeriesPage() {
     const visibleCategories = seriesCategories
       .filter((c) => c.show)
       .map((c) => ({ key: c.key, label: c.label || getCategoryLabel(c.key) || c.key }));
-    return [{ key: 'all', label: '全部' }, ...visibleCategories];
+    return [{ key: "all", label: "全部" }, ...visibleCategories];
   }, [seriesCategories, getCategoryLabel]);
 
   // 剧集列表查询
@@ -42,16 +42,16 @@ export function useSeriesPage() {
     error: queryError,
     isFetching,
   } = useQuery({
-    queryKey: ['series', { selectedGenre, searchQuery, sortBy, selectedStatus }],
+    queryKey: ["series", { selectedGenre, searchQuery, sortBy, selectedStatus }],
     queryFn: async () => {
       const requestBody: ListSeriesDto = {
         page: 1,
         limit: 100,
-        categories: selectedGenre === 'all' ? undefined : [selectedGenre],
+        categories: selectedGenre === "all" ? undefined : [selectedGenre],
         keyword: searchQuery || undefined,
         sortBy: sortBy as ListSeriesDto.sortBy,
         order: ListSeriesDto.order.DESC,
-        status: selectedStatus === 'all' ? undefined : selectedStatus as ListSeriesDto.status,
+        status: selectedStatus === "all" ? undefined : (selectedStatus as ListSeriesDto.status),
       };
       const response = await SeriesService.seriesBaseControllerList(requestBody);
       return {
@@ -63,16 +63,16 @@ export function useSeriesPage() {
   });
 
   const series = seriesData?.items || [];
-  const error = queryError ? (queryError as Error).message || '获取剧集列表失败' : null;
+  const error = queryError ? (queryError as Error).message || "获取剧集列表失败" : null;
 
   // 点击剧集卡片跳转详情
   function handleSeriesClick(item: { id: string }) {
-    navigate(`/series/${item.id}`);
+    navigate(`/app/series/${item.id}`);
   }
 
   // 重试加载
   function retry() {
-    queryClient.invalidateQueries({ queryKey: ['series'] });
+    queryClient.invalidateQueries({ queryKey: ["series"] });
   }
 
   return {

@@ -84,17 +84,13 @@ export function useSendInviteLogic() {
       return InvitesService.inviteCoreControllerSendOfficial(data);
     },
     onSuccess: (resp) => {
-      const ok = (resp as any)?.code === 1000 || !!(resp as any)?.data?.recordId;
-      if (ok) {
-        const rid = (resp as any)?.data?.recordId;
-        toast.success(`邀请已发送，记录ID：${rid}`);
-        mainForm.reset();
-      } else {
-        toast.error((resp as any)?.message || "发送失败");
-      }
+      // 成功且无业务错误时
+      const rid = (resp as any)?.data?.recordId;
+      toast.success(`邀请已发送，记录ID：${rid}`);
+      mainForm.reset();
     },
     onError: (e: any) => {
-      toast.error(e?.response?.data?.message || e?.message || "发送失败");
+      console.error(e?.message || "发送失败");
     },
   });
 
@@ -158,7 +154,7 @@ export function useSendInviteLogic() {
       toast.success(`匹配用户数：${total}`);
     },
     onError: (e: any) => {
-      toast.error(e?.response?.data?.message || e?.message || "预览失败");
+      console.error(e?.message || "预览失败");
     },
   });
 
@@ -205,7 +201,7 @@ export function useSendInviteLogic() {
       setPreviewCount(null);
     },
     onError: (e: any) => {
-      toast.error(e?.response?.data?.message || e?.message || "批量授予失败");
+      console.error(e?.message || "批量授予失败");
     },
   });
 

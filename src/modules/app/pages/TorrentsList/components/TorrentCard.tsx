@@ -46,11 +46,11 @@ function TorrentCardInner({
   const navigate = useNavigate();
 
   const handleDetailClick = () => {
-    navigate(`/torrent/${id}`);
+    navigate(`/app/torrent/${id}`);
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
-    navigate(`/torrent/${id}`);
+    navigate(`/app/torrent/${id}`);
   };
 
   return (

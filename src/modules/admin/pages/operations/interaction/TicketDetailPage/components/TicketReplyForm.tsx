@@ -14,6 +14,7 @@ interface TicketReplyFormProps {
   onReset: () => void;
   onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   loading: boolean;
+  disabled?: boolean;
 }
 
 export function TicketReplyForm({
@@ -24,6 +25,7 @@ export function TicketReplyForm({
   onReset,
   onSubmit,
   loading,
+  disabled = false,
 }: TicketReplyFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -55,8 +57,9 @@ export function TicketReplyForm({
             <Textarea
               id="content"
               rows={4}
-              placeholder="请输入回复内容..."
+              placeholder={disabled ? "工单已关闭，无法回复" : "请输入回复内容..."}
               className={errors.content ? "border-destructive" : ""}
+              disabled={disabled}
               {...register("content")}
             />
             {errors.content && (
@@ -73,6 +76,7 @@ export function TicketReplyForm({
                 ref={fileInputRef}
                 onChange={handleFileChange}
                 className="hidden"
+                disabled={disabled}
               />
               <Button
                 type="button"
@@ -80,6 +84,7 @@ export function TicketReplyForm({
                 size="sm"
                 className="w-fit"
                 onClick={() => fileInputRef.current?.click()}
+                disabled={disabled}
               >
                 <Paperclip className="mr-2 h-4 w-4" /> 选择附件
               </Button>
@@ -97,6 +102,7 @@ export function TicketReplyForm({
                         type="button"
                         onClick={() => onRemoveFile(file.uid)}
                         className="text-muted-foreground hover:text-destructive"
+                        disabled={disabled}
                       >
                         <X className="h-3 w-3" />
                       </button>
@@ -108,10 +114,10 @@ export function TicketReplyForm({
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="text" onClick={onReset}>
+            <Button type="button" variant="text" onClick={onReset} disabled={disabled}>
               清空
             </Button>
-            <Button type="submit" variant="primary" loading={loading}>
+            <Button type="submit" variant="primary" loading={loading} disabled={disabled}>
               提交回复
             </Button>
           </div>

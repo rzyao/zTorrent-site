@@ -19,7 +19,7 @@ export function ListView({ movies, onOpenFilm }: ListViewProps) {
         <div
           key={movie.id}
           onClick={() => onOpenFilm(movie.id)}
-          className="card card-hover text-parent flex cursor-pointer items-center gap-4 rounded-xl p-4 transition-all duration-300"
+          className="app-card app-card-hover text-parent flex cursor-pointer items-center gap-4 rounded-xl p-4 transition-all duration-300"
         >
           {/* 序号 */}
           <div className="w-8 shrink-0 text-center text-2xl text-neutral-600">{index + 1}</div>

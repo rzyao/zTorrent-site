@@ -24,6 +24,22 @@
   /* 示例变量 */
   --forum-primary: #6366f1;
 
+  /* 补全语义化颜色变量 (防止被 admin.css 的全局 theme 覆盖后变量缺失) */
+  --primary: var(--forum-primary);
+  --primary-hover: #4f46e5;
+  --primary-active: #4338ca;
+  --primary-bg: #eef2ff;
+
+  --error: #ff4d4f;
+  --error-hover: #ff7875;
+  --error-active: #d9363e;
+  --success: #52c41a;
+  --success-hover: #73d13d;
+  --success-active: #389e0d;
+  --warning: #faad14;
+  --warning-hover: #ffc53d;
+  --warning-active: #d48806;
+
   /* ==================== Tailwind 映射变量重定义 ==================== */
   /* 关键：必须在此作用域内重新定义 --radius-* 变量 */
   --radius-sm: calc(var(--radius) - 4px);
@@ -38,6 +54,17 @@
 #root-forum.dark {
   --zhanweifu:var(--forum-primary);
   /* Forum 深色模式 */
+  --primary-bg: #312e81; /* indigo-900 */
+
+  --error: #ff4d4f;
+  --error-hover: #ff7875;
+  --error-active: #d9363e;
+  --success: #52c41a;
+  --success-hover: #73d13d;
+  --success-active: #389e0d;
+  --warning: #faad14;
+  --warning-hover: #ffc53d;
+  --warning-active: #d48806;
 }
 
 /* ============================================================

@@ -1,11 +1,4 @@
-﻿import {
-  Download,
-  Upload,
-  Star,
-  MessageSquare,
-  HardDrive,
-  Calendar,
-} from "lucide-react";
+﻿import { Download, Upload, Star, MessageSquare, HardDrive, Calendar } from "lucide-react";
 import { Button } from "@/modules/app/components/ui/button";
 import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import { Badge } from "@/modules/app/components/ui/badge";
@@ -41,67 +34,55 @@ const tagBadgeColor = (key?: string) => {
  * 职责：列表行视图（复用 `ImageWithFallback`、`Badge` 等）
  * 说明：纯UI组件，所有数据和事件通过 props 输入。
  */
-export function ListView({
-  items,
-  getCategoryLabel,
-  onDownload,
-  getCoverSrc,
-}: ListViewProps) {
+export function ListView({ items, getCategoryLabel, onDownload, getCoverSrc }: ListViewProps) {
   const navigate = useNavigate();
   return (
-    <div className="space-y-4 mb-8">
+    <div className="mb-8 space-y-4">
       {items.map((torrent) => (
         <div
           key={torrent.id}
-          className="card card-hover text-parent rounded-lg transition-all duration-300 cursor-pointer p-4"
+          className="app-card text-parent cursor-pointer rounded-lg border-[0.5px] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-[0.5px] hover:border-amber-500/70"
         >
           <div
             className="flex gap-4"
             onClick={() => {
-              navigate(`/torrent/${torrent.id}`);
+              navigate(`/app/torrent/${torrent.id}`);
             }}
           >
             {/* 缩略图 */}
-            <div className="relative w-25 h-25 shrink-0 rounded overflow-hidden hidden-in-mobile">
+            <div className="hidden-in-mobile relative h-25 w-25 shrink-0 overflow-hidden rounded">
               <ImageWithFallback
                 src={getCoverSrc(torrent)}
                 alt={torrent.title}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
                 loading="lazy"
                 decoding="async"
               />
             </div>
 
             {/* 信息区 */}
-            <div className="flex flex-col justify-between flex-1 min-w-0">
-              <div className="flex items-start gap-3  mb-1">
-                <div className="flex flex-col flex-1 min-w-0">
-                  <h3 className="text-white text truncate">{torrent.title}</h3>
-                  <h3 className="text-white text truncate">
-                    {torrent.subTitle}
-                  </h3>
+            <div className="flex min-w-0 flex-1 flex-col justify-between">
+              <div className="mb-1 flex items-start gap-3">
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <h3 className="text truncate text-[#dadada]">{torrent.title}</h3>
+                  <h3 className="text truncate text-[#dadada]">{torrent.subTitle}</h3>
                 </div>
                 <Button
+                  variant="outline"
                   size="sm"
-                  className="general-button hidden-in-mobile"
+                  className="hidden-in-mobile rounded-lg border-[0.5px] border-[#92702a] bg-transparent text-[#d4a733] hover:border-[0.5px] hover:border-amber-500/70 hover:bg-amber-500/10 hover:text-[#e8bc4a]"
                   onClick={(e) => {
                     e.stopPropagation();
-                    onDownload(
-                      String(torrent.id),
-                      String(torrent.title || "download")
-                    );
+                    onDownload(String(torrent.id), String(torrent.title || "download"));
                   }}
                 >
-                  <Download className="w-4 h-4" />
+                  <Download className="h-4 w-4" />
                   下载
                 </Button>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 mb-1">
-                <Badge
-                  size="sm"
-                  className="bg-amber-500/20 text-amber-400 border-amber-500/30"
-                >
+              <div className="mb-1 flex flex-wrap items-center gap-2">
+                <Badge size="sm" className="border-amber-500/30 bg-amber-500/20 text-amber-400">
                   {getCategoryLabel(torrent.category) || torrent.category}
                 </Badge>
                 {Array.isArray(torrent.tags)
@@ -138,43 +119,35 @@ export function ListView({
                 )}
                 {torrent.rating && (
                   <div className="flex items-center gap-1">
-                    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                    <span className="text-yellow-400 text-xs">
-                      {torrent.rating}
-                    </span>
+                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                    <span className="text-xs text-yellow-400">{torrent.rating}</span>
                   </div>
                 )}
               </div>
 
               <div className="flex flex-wrap items-center gap-6 text-sm text-gray-400">
                 <div className="flex items-center gap-1">
-                  <HardDrive className="w-4 h-4" />
+                  <HardDrive className="h-4 w-4" />
                   <span>{formatSize(torrent.size)}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Upload className="w-4 h-4 text-green-400" />
-                  <span className="text-green-400 hidden-in-mobile">
-                    {torrent.seeders} 做种
-                  </span>
+                  <Upload className="h-4 w-4 text-green-400" />
+                  <span className="hidden-in-mobile text-green-400">{torrent.seeders} 做种</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Download className="w-4 h-4 text-red-400" />
-                  <span className="text-red-400 hidden-in-mobile">
-                    {torrent.leechers} 下载
-                  </span>
+                  <Download className="h-4 w-4 text-red-400" />
+                  <span className="hidden-in-mobile text-red-400">{torrent.leechers} 下载</span>
                 </div>
-                <div className="flex items-center gap-1 hidden-in-mobile">
+                <div className="hidden-in-mobile flex items-center gap-1">
                   <span>{torrent.completed} 完成</span>
                 </div>
-                <div className="flex items-center gap-1 hidden-in-mobile">
-                  <MessageSquare className="w-4 h-4" />
+                <div className="hidden-in-mobile flex items-center gap-1">
+                  <MessageSquare className="h-4 w-4" />
                   <span>{torrent.comments} 评论</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  <span className="whitespace-pre">
-                    {formatDate(torrent.uploadedAt)}
-                  </span>
+                  <Calendar className="h-4 w-4" />
+                  <span className="whitespace-pre">{formatDate(torrent.uploadedAt)}</span>
                 </div>
                 <div className="hidden-in-mobile">
                   <span className="text-[#00A8E1]">{torrent.uploader}</span>

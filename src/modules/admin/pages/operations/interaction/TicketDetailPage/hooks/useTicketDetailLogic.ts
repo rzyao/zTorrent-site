@@ -55,6 +55,7 @@ export function useTicketDetailLogic() {
       await TicketsService.ticketsControllerClose({
         ticketId: id,
         reason: "后台关闭",
+        clientRequestId: crypto.randomUUID(), // 生成唯一请求 ID
       } as any);
     },
     onSuccess: () => {
@@ -64,14 +65,18 @@ export function useTicketDetailLogic() {
       queryClient.invalidateQueries({ queryKey: ["tickets-stats"] });
     },
     onError: (e: any) => {
-      toast.error(e?.response?.data?.message || e?.message || "关闭失败");
+      // 错误由全局拦截器处理，此处仅需保留空回调或移除
+      console.error("Closue failed:", e);
     },
   });
 
   // Resolve Mutation
   const resolveMutation = useMutation({
     mutationFn: async () => {
-      await TicketsService.ticketsControllerConfirmResolved({ ticketId: id } as any);
+      await TicketsService.ticketsControllerConfirmResolved({
+        ticketId: id,
+        clientRequestId: crypto.randomUUID(), // 生成唯一请求 ID
+      } as any);
     },
     onSuccess: () => {
       toast.success("已确认");
@@ -80,7 +85,7 @@ export function useTicketDetailLogic() {
       queryClient.invalidateQueries({ queryKey: ["tickets-stats"] });
     },
     onError: (e: any) => {
-      toast.error(e?.response?.data?.message || e?.message || "操作失败");
+      console.error("Resolve failed:", e);
     },
   });
 
@@ -91,6 +96,7 @@ export function useTicketDetailLogic() {
         ticketId: id,
         content: values.content,
         attachments: values.attachments,
+        clientRequestId: crypto.randomUUID(), // 生成唯一请求 ID
       } as any);
     },
     onSuccess: () => {
@@ -100,7 +106,7 @@ export function useTicketDetailLogic() {
       refetch();
     },
     onError: (e: any) => {
-      toast.error(e?.response?.data?.message || e?.message || "回复失败");
+      console.error("Reply failed:", e);
     },
   });
 
@@ -138,7 +144,8 @@ export function useTicketDetailLogic() {
 
       toast.success(`附件 ${file.name} 上传成功`);
     } catch (e: any) {
-      toast.error(e?.response?.data?.message || e?.message || "上传失败");
+      // 错误由全局拦截器处理
+      console.error("Upload failed:", e);
     }
   };
 
