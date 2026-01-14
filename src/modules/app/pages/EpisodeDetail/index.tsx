@@ -99,7 +99,7 @@ export default function EpisodeDetailPage() {
         <div className="relative mx-auto flex max-w-[1600px] flex-col items-center px-4 md:px-8 lg:px-20">
           <div className="flex w-full flex-col gap-8 lg:flex-row">
             {/* 分集信息区 - 占比 2 */}
-            <div className="min-w-0 flex-[2]">
+            <div className="min-w-0 flex-2">
               {/* 返回按钮 */}
               <div className="pt-6 pb-4">
                 <Button
@@ -371,7 +371,7 @@ export default function EpisodeDetailPage() {
             </div>
 
             {/* 剧集信息区 - 占比 1 */}
-            <div className="min-w-0 flex-[1] pt-16">
+            <div className="min-w-0 flex-1 pt-16">
               <div className="sticky top-24 space-y-6 rounded-xl border border-white/10 bg-white/5 p-6">
                 <h3 className="text-xl font-bold text-white/90">剧集信息</h3>
 

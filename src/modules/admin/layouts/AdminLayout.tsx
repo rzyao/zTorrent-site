@@ -1,4 +1,4 @@
-﻿import { Suspense, useState, useCallback } from "react";
+﻿import { Suspense, useState, useCallback, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { AdminSidebar } from "./AdminSidebar";
@@ -10,6 +10,7 @@ import { useKeepAliveTabs } from "./KeepAlive/useKeepAliveTabs";
 import { KeepAliveTabs } from "./KeepAlive/KeepAliveTabs";
 import KeepAliveContent from "./KeepAlive/KeepAliveContent";
 import { KeepAliveContext } from "./KeepAlive/KeepAliveContext";
+import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 
 function FaviconInjector() {
   useDynamicFavicon();
@@ -24,6 +25,12 @@ export function AdminLayout() {
   // KeepAlive 标签页状态管理
   const { items, activeKey, onEdit, handleTabClick, setTabSaved, removeTabs, refreshCurrentTab } =
     useKeepAliveTabs(routes);
+
+  // 同步当前标签页标题到浏览器标签
+  const currentTab = items.find((it) => it.key === activeKey);
+  const pageTitle = currentTab ? currentTab.label : "管理后台";
+
+  useDynamicTitle(pageTitle);
 
   // 刷新当前标签页
   const handleRefresh = useCallback(() => {

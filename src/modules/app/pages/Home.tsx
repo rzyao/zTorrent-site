@@ -40,6 +40,7 @@ import { Input } from "@/modules/app/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/modules/app/components/ui/avatar";
 import { Separator } from "@/modules/app/components/ui/separator";
 import { PageContainer } from "@/modules/app/components/PageContainer";
+import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 
 interface HotTorrent {
   id: number;
@@ -101,6 +102,7 @@ interface ForumPost {
 }
 
 export default function HomePage() {
+  useDynamicTitle("首页");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
 

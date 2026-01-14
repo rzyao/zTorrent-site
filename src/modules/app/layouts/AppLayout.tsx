@@ -8,6 +8,9 @@ import GoBack from "@/modules/app/components/GoBack";
 import GoForward from "@/modules/app/components/GoForward";
 import { RouteProgressBar } from "@/modules/app/components/ui/RouteProgressBar";
 
+import { TitleInjector } from "@/components/TitleInjector";
+import { useRouteConfig } from "@/hooks/useRouteConfig";
+
 function FaviconInjector() {
   useDynamicFavicon();
   return null;
@@ -35,6 +38,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <SiteConfigProvider>
       <FaviconInjector />
+      <TitleInjector />
       <NavigationStateReset />
       {/* 
         App 样式作用域容器

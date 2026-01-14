@@ -8,6 +8,7 @@ import { DownloadersProvider } from "@/modules/app/context/DownloadersContext";
 import { useDictionaryStore } from "./stores/dictionaryStore";
 import { usePreferenceCategoriesStore } from "./stores/preferenceCategoriesStore";
 import { GlobalLoader } from "@/modules/app/components/ui/GlobalLoader";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
 // 全局认证事件
 declare global {
@@ -35,6 +36,7 @@ export default function App() {
           <DownloadersProvider>
             {/* 全局加载器单例 - 挂载在应用根部 */}
             <GlobalLoader />
+            <ThemeSwitcher />
             <AppToaster />
             <AppRoutes />
           </DownloadersProvider>

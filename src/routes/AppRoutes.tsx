@@ -101,6 +101,14 @@ export default function AppRoutes() {
 const NotFoundPage = lazy(() => import("@/modules/app/pages/NotFoundPage"));
 
 function NotFoundRedirect() {
+  const location = window.location;
+  const isLoggedIn = !!localStorage.getItem("accessToken");
+
+  if (!isLoggedIn) {
+    const from = location.pathname + location.search;
+    return <Navigate to={`/login?from=${encodeURIComponent(from)}`} replace />;
+  }
+
   // 显示 404 页面而非重定向
   return <NotFoundPage />;
 }

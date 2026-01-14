@@ -56,6 +56,7 @@ import { useDownloaders } from "@/modules/app/context/DownloadersContext";
 import { DownloadersService } from "@/api/services/DownloadersService";
 import { customToast } from "@/hooks/useToast";
 import { useSourceTracker } from "@/modules/app/hooks/useSourceTracker";
+import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 
 import {
   DescriptionData,
@@ -122,6 +123,10 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
     description: "",
     downloadUrl: "",
   });
+
+  // 设置页面动态标题
+  useDynamicTitle(torrentData?.title || "种子详情");
+
   const [descriptionData, setDescriptionData] = useState<DescriptionData>({
     SourceInfo: [],
     MovieInfo: {} as EnglishMovieInfo,

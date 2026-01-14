@@ -1,4 +1,12 @@
 ﻿import { Outlet } from "react-router-dom";
+import { SiteConfigProvider } from "@/context/SiteConfigContext";
+import { TitleInjector } from "@/components/TitleInjector";
+import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
+
+function FaviconInjector() {
+  useDynamicFavicon();
+  return null;
+}
 import "@/modules/forum/forum.css";
 import { useState, useCallback, Suspense } from "react";
 import { Header } from "./Header";
@@ -81,9 +89,13 @@ function ForumLayoutInner() {
  */
 export function ForumLayout() {
   return (
-    <ForumThemeProvider>
-      <ForumLayoutInner />
-    </ForumThemeProvider>
+    <SiteConfigProvider>
+      <FaviconInjector />
+      <TitleInjector />
+      <ForumThemeProvider>
+        <ForumLayoutInner />
+      </ForumThemeProvider>
+    </SiteConfigProvider>
   );
 }
 

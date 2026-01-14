@@ -12,6 +12,7 @@ import { SuggestedTopics } from "./components/SuggestedTopics";
 import { useTopicDetail } from "./hooks/useTopicDetail";
 import { Loader2 } from "lucide-react";
 import { TopicDetailSkeleton } from "./components/TopicDetailSkeleton";
+import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 
 export function TopicDetail({
   topicId: propTopicId,
@@ -47,6 +48,9 @@ export function TopicDetail({
     isFetchingPreviousPage,
     updateTopic, // 使用新增的 updateTopic
   } = useTopicDetail(topicId, { nearPost: targetPostNumber });
+
+  // 设置页面动态标题
+  useDynamicTitle(topicData?.title || "话题详情");
 
   // NProgress 联动
   useEffect(() => {

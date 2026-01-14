@@ -10,6 +10,7 @@ import { DownloadToDownloaderModal } from "@/modules/app/components/DownloadToDo
 import type { Torrent, ViewMode } from "@/modules/app/pages/TorrentsList/types";
 import { usePreferenceStore } from "@/modules/app/stores/preferenceStore";
 import { TorrentGridSkeleton } from "@/modules/app/components/skeletons/TorrentGridSkeleton";
+import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 
 /**
  * TorrentsPage（容器组件）
@@ -17,6 +18,7 @@ import { TorrentGridSkeleton } from "@/modules/app/components/skeletons/TorrentG
  * - 保持原有功能与UI行为一致：下载、分类词典、搜索过滤、排序、分页
  */
 export default function TorrentsPage() {
+  useDynamicTitle("种子列表");
   // 业务状态与派生数据由 hook 管理
   const {
     displayTorrents,

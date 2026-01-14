@@ -155,6 +155,18 @@ function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
           <Route index element={<Navigate to={redirect} replace />} />
           {/* 子路由 */}
           {enabledChildren?.map((child) => renderRoute(child, path))}
+
+          {/* Admin 局部 404 - 捕获 layout 内的未知路径 */}
+          {layout === "admin" && (
+            <Route
+              path="*"
+              element={
+                <Suspense fallback={<RouteProgressBar />}>
+                  <AdminNotFoundPage />
+                </Suspense>
+              }
+            />
+          )}
         </Route>
       );
     }
@@ -184,6 +196,16 @@ function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
           }
         >
           {enabledChildren?.map((child) => renderRoute(child, path))}
+
+          {/* Forum 局部 404 */}
+          <Route
+            path="*"
+            element={
+              <Suspense fallback={<RouteProgressBar />}>
+                <ForumNotFoundPage />
+              </Suspense>
+            }
+          />
         </Route>
       );
     }
@@ -266,3 +288,5 @@ function NotFoundRedirect() {
 // 懒加载 404 页面
 import { lazy } from "react";
 const NotFoundPage = lazy(() => import("@/modules/app/pages/NotFoundPage"));
+const AdminNotFoundPage = lazy(() => import("@/modules/admin/pages/AdminNotFoundPage"));
+const ForumNotFoundPage = lazy(() => import("@/modules/forum/pages/ForumNotFoundPage"));

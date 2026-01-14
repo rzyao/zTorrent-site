@@ -59,7 +59,7 @@
 }
 
 /* App 作用域变量 - 锁定为深色模式 (Global Dark Theme) */
-#root-app {
+:root[data-theme="app"] {
   /* App 圆角系统 (Scoped) */
   --radius: 0.625rem;
   --radius-sm: calc(var(--radius) - 4px);
