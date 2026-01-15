@@ -76,6 +76,7 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
   });
 
   // 4. 计算最终显示的列表项
+  // 4. 计算最终显示的列表项
   const displayedCategories = useMemo(() => {
     const sidebarCategories = userPreferences?.forumSidebarCategories;
     // 如果没有偏好设置（如访客）或偏好设置为空数组
@@ -83,8 +84,10 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
     if (!sidebarCategories || sidebarCategories.length === 0) {
       return allCategories.slice(0, 10);
     }
-    // 否则仅显示用户选中的分类
-    return allCategories.filter((cat) => sidebarCategories.includes(cat.id));
+    // 否则仅显示用户选中的分类，并且严格按照用户的顺序
+    return sidebarCategories
+      .map((id) => allCategories.find((cat) => cat.id === id))
+      .filter((cat): cat is ExtendedForumCategory => !!cat);
   }, [allCategories, userPreferences?.forumSidebarCategories]);
 
   const displayedTags = useMemo(() => {
@@ -94,8 +97,10 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
     if (!sidebarTags || sidebarTags.length === 0) {
       return allTags.slice(0, 20);
     }
-    // 否则仅显示用户选中的标签
-    return allTags.filter((tag) => sidebarTags.includes(tag.id));
+    // 否则仅显示用户选中的标签，并且严格按照用户的顺序
+    return sidebarTags
+      .map((id) => allTags.find((tag) => tag.id === id))
+      .filter((tag): tag is ExtendedForumTag => !!tag);
   }, [allTags, userPreferences?.forumSidebarTags]);
 
   // 事件处理函数

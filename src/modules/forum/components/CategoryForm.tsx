@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, Undo2 } from "lucide-react";
 import { useForumTheme } from "../context/ForumThemeContext";
 import { ColorPicker } from "@/modules/forum/components/ui/color-picker";
@@ -37,6 +38,7 @@ interface CategoryFormProps {
  */
 export function CategoryForm({ mode, initialData, categoryId, onSuccess }: CategoryFormProps) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { colors } = useForumTheme();
 
   // 表单状态
@@ -71,9 +73,17 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess }: Categ
     };
 
     await execute(async () => {
+      // 无论创建还是更新，都需要刷新侧边栏的类别列表
+      // 我们在请求完成后立即刷新，确保跳转后的页面能看到最新数据
+      // 注意：这里放在同一个 execute 块中，如果失败会抛出异常，不会执行后续 logic
+
       if (mode === "create") {
         const response = await ForumsCategoriesService.categoriesControllerCreate(data);
         const newId = (response.data as any)?.id;
+
+        // 刷新缓存
+        await queryClient.invalidateQueries({ queryKey: ["forums", "categories"] });
+
         onSuccess?.(newId);
         // 跳转到编辑页面
         navigate(`/forum/category/${newId}/edit`);
@@ -83,6 +93,17 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess }: Categ
           id: categoryId!,
           ...data,
         });
+
+        // 刷新缓存
+        await queryClient.invalidateQueries({ queryKey: ["forums", "categories"] });
+        // 如果我们是基于 ID 获取单个类别的（比如在 EditCategoryPage 中），
+        // 最好也刷新该类别的详情缓存，虽然我们这里没直接用到，但好习惯
+        if (categoryId) {
+          await queryClient.invalidateQueries({
+            queryKey: ["forum", "category", "by-id", categoryId],
+          });
+        }
+
         onSuccess?.(categoryId!);
       }
     });
