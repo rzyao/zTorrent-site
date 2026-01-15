@@ -3,6 +3,7 @@ import { Bookmark } from "lucide-react";
 import { ForumsBookmarksService } from "@/api";
 import { cn } from "@/utils/cn";
 import { toast } from "sonner";
+import { ActionButton } from "../ui/ActionButton";
 
 interface BookmarkButtonProps {
   topicId: string;
@@ -47,21 +48,21 @@ export function BookmarkButton({
   };
 
   return (
-    <button
+    <ActionButton
       onClick={handleToggle}
       disabled={isLoading}
       className={cn(
-        "flex cursor-pointer items-center justify-center rounded-full transition-all duration-200",
-        iconOnly ? "p-2" : "gap-2 px-3 py-2 text-sm font-semibold",
+        "rounded-full shadow-none",
+        iconOnly ? "p-2" : "gap-2 px-3 py-2 font-semibold",
         bookmarked
           ? "bg-blue-50 text-blue-500 dark:bg-blue-950/20"
-          : "text-[#A6A6A6] hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200",
+          : "bg-transparent text-[#A6A6A6] hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200",
         className,
       )}
       title={bookmarked ? "取消收藏" : "收藏话题"}
     >
       <Bookmark className={cn("h-5 w-5", bookmarked && "fill-current")} />
       {!iconOnly && <span>{bookmarked ? "已收藏" : "收藏"}</span>}
-    </button>
+    </ActionButton>
   );
 }

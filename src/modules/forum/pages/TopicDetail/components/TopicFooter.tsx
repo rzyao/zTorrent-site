@@ -7,6 +7,7 @@ import { ReportDialog } from "../../../components/Interaction/ReportDialog";
 import { LikeButton } from "../../../components/Interaction/LikeButton";
 
 import { useForumTheme } from "../../../context/ForumThemeContext";
+import { ActionButton } from "../../../components/ui/ActionButton";
 
 interface TopicFooterProps {
   topicData?: TopicData;
@@ -55,16 +56,17 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
       {/* Topic Action Buttons */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
-          <button
+          <ActionButton
+            icon={Share2}
             className={cn(
-              "hidden cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium select-none hover:border-[#0088CC] sm:flex",
+              "hidden h-auto rounded-full border border-transparent px-4 py-2 font-medium shadow-none hover:border-[#0088CC] sm:flex",
               colors.footerButtonBg,
               colors.footerButtonText,
             )}
+            color="custom" // 使用 custom 以获得正确的颜色变量或在 className 中覆盖
           >
-            <Share2 className="h-4 w-4 text-[#0088CC]" />
             <span>Share</span>
-          </button>
+          </ActionButton>
 
           {topicData?.id && (
             <>
@@ -92,21 +94,21 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
                 targetType="topic"
                 targetId={topicData.id}
                 trigger={
-                  <button
+                  <ActionButton
+                    icon={Flag}
                     className={cn(
-                      "hidden cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium select-none hover:border-[#0088CC] sm:flex",
+                      "hidden h-auto rounded-full border border-transparent px-4 py-2 font-medium shadow-none hover:border-[#0088CC] sm:flex",
                       colors.footerButtonBg,
                       colors.footerButtonText,
                     )}
                   >
-                    <Flag className="h-4 w-4 text-[#0088CC]" />
                     <span>Flag</span>
-                  </button>
+                  </ActionButton>
                 }
               />
             </>
           )}
-          <button
+          <ActionButton
             onClick={() => {
               // Get topic ID from props if available
               const topicId = topicData?.id;
@@ -117,11 +119,11 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
                 });
               });
             }}
-            className="flex cursor-pointer items-center gap-2 rounded-full border border-transparent bg-[#0088CC] px-5 py-2 text-sm font-bold text-white select-none hover:border-white hover:bg-[#0088CC]"
+            icon={Reply}
+            className="h-auto rounded-full border border-transparent px-3 py-2 shadow-none"
           >
-            <Reply className="h-4 w-4" />
-            <span>Reply</span>
-          </button>
+            Reply
+          </ActionButton>
         </div>
 
         {/* Notification Status Selector */}

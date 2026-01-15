@@ -37,6 +37,7 @@ export default defineConfig(({ mode }) => {
       dedupe: ["react", "react-dom"],
     },
     server: {
+      port: 3000,
       watch: {
         usePolling: true,
         interval: 300,

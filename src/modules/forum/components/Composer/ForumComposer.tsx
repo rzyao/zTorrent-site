@@ -6,6 +6,7 @@ import { ComposerPreview } from "./ComposerPreview";
 import { cn } from "@/utils/cn";
 import { Minimize2, Maximize2, X, ChevronsDown, ChevronsUp, Send } from "lucide-react";
 import { Button } from "@/modules/forum/components/ui/button";
+import { ActionButton } from "@/modules/forum/components/ui/ActionButton";
 import { ForumsTopicsService, ForumsPostsService } from "@/api";
 import { toast } from "sonner";
 import { useNavigate, Link } from "react-router-dom";
@@ -100,6 +101,8 @@ export const ForumComposer: React.FC = () => {
     };
   }, [isResizing, setHeight]);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Handle Submit
   const handleSubmit = async () => {
     if (!draft.body.trim()) {
@@ -108,10 +111,11 @@ export const ForumComposer: React.FC = () => {
     }
 
     if (mode === "CREATE_TOPIC" && (!draft.title.trim() || !draft.categoryId)) {
-      toast.error("请输入タイトル并选择分类");
+      toast.error("请输入标题并选择分类");
       return;
     }
 
+    setIsSubmitting(true);
     try {
       if (mode === "CREATE_TOPIC") {
         const res = await ForumsTopicsService.topicsControllerCreate({
@@ -131,6 +135,7 @@ export const ForumComposer: React.FC = () => {
       } else if (mode === "REPLY") {
         if (!draft.replyToTopicId) {
           toast.error("回复目标丢失（Topic ID missing）");
+          setIsSubmitting(false);
           return;
         }
 
@@ -199,6 +204,8 @@ export const ForumComposer: React.FC = () => {
     } catch (error: any) {
       // 错误提示已由 Axios 拦截器统一处理，此处仅记录日志
       console.error("[ForumComposer] 发布失败:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -384,13 +391,15 @@ export const ForumComposer: React.FC = () => {
               <Button variant="ghost" onClick={() => discardDraft()}>
                 舍弃
               </Button>
-              <Button
+              <ActionButton
                 onClick={handleSubmit}
-                className="gap-2 bg-[#0088CC]! text-white! hover:bg-[#007bb5]!"
+                icon={Send}
+                loading={isSubmitting}
+                size="md"
+                className="rounded-md"
               >
-                <Send className="h-5 w-5" />
                 发布 {isCreateTopic ? "话题" : "回复"}
-              </Button>
+              </ActionButton>
             </div>
           </div>
         </div>

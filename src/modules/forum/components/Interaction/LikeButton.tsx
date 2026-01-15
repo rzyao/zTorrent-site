@@ -3,6 +3,7 @@ import { Heart } from "lucide-react";
 import { ForumsLikesService } from "@/api";
 import { cn } from "@/utils/cn";
 import { toast } from "sonner";
+import { ActionButton } from "../ui/ActionButton";
 
 interface LikeButtonProps {
   type: "topic" | "post";
@@ -58,13 +59,13 @@ export function LikeButton({
   };
 
   return (
-    <button
+    <ActionButton
       onClick={handleToggle}
       className={cn(
-        "flex cursor-pointer items-center gap-1.5 rounded-full p-2 transition-all duration-200",
+        "gap-1.5 rounded-full p-2 shadow-none",
         liked
           ? "bg-red-50 text-red-500 dark:bg-red-950/20"
-          : "text-[#A6A6A6] hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200",
+          : "bg-transparent text-[#A6A6A6] hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200",
         className,
       )}
       title={liked ? "取消点赞" : "点赞"}
@@ -76,7 +77,7 @@ export function LikeButton({
           isAnimating && "animate-bounce",
         )}
       />
-      {count > 0 && <span className="text-sm font-medium">{count}</span>}
-    </button>
+      {count > 0 && <span className="text-sm">{count}</span>}
+    </ActionButton>
   );
 }

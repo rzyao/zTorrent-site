@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Logo from "@/assets/logo.svg";
 import { useForumTheme } from "../context/ForumThemeContext";
 import { ForumsTopicsService, ForumTopic } from "@/api";
+import { ActionButton } from "../components/ui/ActionButton";
 
 interface HeaderProps {
   onSearch: (query: string) => void;
@@ -138,17 +139,19 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
           {/* Right Actions */}
           <div className="flex items-center gap-2">
             {/* New Topic Button */}
-            <button
+            {/* New Topic Button */}
+            <ActionButton
               onClick={() => {
                 import("../components/Composer/ComposerStore").then(({ useComposerStore }) => {
                   useComposerStore.getState().open("CREATE_TOPIC");
                 });
               }}
-              className={`hidden items-center gap-2 rounded-lg bg-[#0088CC] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#007bb5] sm:flex`}
+              size="sm"
+              icon={MessageSquare}
+              className="hidden h-8 px-3 font-medium sm:flex"
             >
-              <MessageSquare className="h-4 w-4" />
-              <span>新话题</span>
-            </button>
+              新话题
+            </ActionButton>
 
             {/* Theme Toggle Button */}
             <button

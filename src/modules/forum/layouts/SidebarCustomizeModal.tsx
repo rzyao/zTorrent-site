@@ -25,6 +25,7 @@ import {
 } from "@/modules/forum/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/modules/forum/components/ui/tabs";
 import { useForumTheme } from "../context/ForumThemeContext";
+import { ActionButton } from "../components/ui/ActionButton";
 
 interface SortableItemProps {
   id: string;
@@ -358,13 +359,14 @@ export function SidebarCustomizeModal({
             >
               取消
             </button>
-            <button
+            <ActionButton
               onClick={handleSave}
-              disabled={isLoading}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              loading={isLoading}
+              size="md"
+              className="rounded-md" // 保持原有圆角风格或与其他模态框一致，这里根据上下文使用圆角
             >
-              {isLoading ? "保存中..." : "保存变更"}
-            </button>
+              保存变更
+            </ActionButton>
           </div>
         </div>
       </DialogContent>

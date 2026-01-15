@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { Button } from "@/modules/forum/components/ui/button";
+import { ActionButton } from "@/modules/forum/components/ui/ActionButton";
 import { Popover, PopoverContent, PopoverTrigger } from "@/modules/forum/components/ui/popover";
 import {
   Command,
@@ -261,7 +262,8 @@ export function ForumFilterBar({
         )}
 
         {/* Create Topic Button - 使用 Composer 组件 */}
-        <button
+        {/* Create Topic Button - 使用 Composer 组件 */}
+        <ActionButton
           onClick={() => {
             import("../../Composer/ComposerStore").then(({ useComposerStore }) => {
               useComposerStore.getState().open("CREATE_TOPIC", {
@@ -269,14 +271,12 @@ export function ForumFilterBar({
               });
             });
           }}
-          className={cn(
-            "flex items-center gap-2 rounded-lg bg-[#0088CC] px-4 py-2 text-sm font-medium text-white hover:bg-[#007bb5]",
-          )}
+          icon={Plus}
+          className="font-medium"
         >
-          <Plus className="h-4 w-4" />
           <span className="hidden sm:inline">新建话题</span>
           <span className="sm:hidden">新建</span>
-        </button>
+        </ActionButton>
       </div>
     </div>
   );
