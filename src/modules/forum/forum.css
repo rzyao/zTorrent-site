@@ -52,7 +52,7 @@
 }
 
 :root[data-theme="forum"].dark {
-  --zhanweifu:var(--forum-primary);
+  --zhanweifu: var(--forum-primary);
   /* Forum 深色模式 */
   --primary-bg: #312e81; /* indigo-900 */
 
@@ -133,4 +133,57 @@
 .dark .scrollbar-sidebar::-webkit-scrollbar-thumb:hover,
 :root[data-theme="forum"].dark .scrollbar-sidebar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================================
+   Forum 全局滚动条样式 (与 App 保持一致)
+   Target: #root-forum
+   ============================================================ */
+#root-forum::-webkit-scrollbar {
+  width: 14px; /* 整体宽度（感应区） */
+  height: 14px;
+  background-color: transparent;
+}
+
+#root-forum::-webkit-scrollbar-track {
+  background: transparent; /* 轨道完全透明 */
+}
+
+#root-forum::-webkit-scrollbar-thumb {
+  background-color: #3c3c3c; /* 深灰色滑块 */
+  background-clip: padding-box;
+  border: 3px solid transparent; /* 利用透明边框制造间距，使滑块视觉变细 */
+  border-radius: 99px;
+  min-height: 40px;
+}
+
+#root-forum::-webkit-scrollbar-thumb:hover {
+  background-color: #4a4a4a; /* 悬停高亮 */
+}
+
+#root-forum::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* 向上箭头 */
+#root-forum::-webkit-scrollbar-button:vertical:start:decrement {
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 9px solid #3c3c3c;
+  margin-bottom: 2px;
+}
+
+/* 向下箭头 */
+#root-forum::-webkit-scrollbar-button:vertical:end:increment {
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 9px solid #3c3c3c;
+  margin-top: 2px;
+}
+
+/* 按钮悬停时 - 箭头颜色变亮 */
+#root-forum::-webkit-scrollbar-button:vertical:decrement:single-button:hover,
+#root-forum::-webkit-scrollbar-button:vertical:increment:single-button:hover {
+  border-bottom-color: #4a4a4a;
+  border-top-color: #4a4a4a;
 }

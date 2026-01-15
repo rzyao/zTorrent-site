@@ -37,8 +37,8 @@ function ForumLayoutInner() {
 
   return (
     <div
-      id="forum-scroll-container"
-      className={`flex h-screen flex-col overflow-y-auto ${colors.pageBg} ${mainScrollbarClass}`}
+      id="root-forum"
+      className={`flex h-screen flex-col overflow-y-auto ${colors.pageBg}`}
       style={{ scrollbarGutter: "stable" }}
     >
       {/* 顶部导航栏 - 固定在顶部 */}
