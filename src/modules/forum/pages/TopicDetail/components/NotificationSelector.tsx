@@ -76,7 +76,7 @@ export const NotificationSelector = ({ minimal, className }: NotificationSelecto
         ) : (
           <button
             className={cn(
-              "group flex cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-[15px] font-medium select-none hover:border-[#0088CC]",
+              "group flex cursor-pointer items-center gap-2 rounded-full border border-transparent px-4 py-2 text-[15px] font-medium select-none group-data-[state=open]:border-[#0088CC] hover:border-[#0088CC]",
               colors.footerButtonBg,
               colors.footerButtonText,
               className,

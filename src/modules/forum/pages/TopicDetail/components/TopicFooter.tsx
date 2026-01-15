@@ -85,7 +85,7 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
                 topicId={topicData.id}
                 initialBookmarked={topicData.isBookmarked}
                 className={cn(
-                  "hidden border border-transparent px-4 py-2 hover:border-[#0088CC] sm:flex",
+                  "hidden h-auto border border-transparent px-4 py-2 hover:border-[#0088CC] sm:flex",
                   colors.footerButtonBg,
                   colors.footerButtonText,
                 )}
@@ -97,7 +97,7 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
                   <ActionButton
                     icon={Flag}
                     className={cn(
-                      "hidden h-auto rounded-full border border-transparent px-4 py-2 font-medium shadow-none hover:border-[#0088CC] sm:flex",
+                      "hidden h-auto rounded-full border border-transparent px-4 py-2 shadow-none hover:border-[#0088CC] sm:flex",
                       colors.footerButtonBg,
                       colors.footerButtonText,
                     )}

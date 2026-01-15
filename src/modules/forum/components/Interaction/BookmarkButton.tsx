@@ -52,8 +52,8 @@ export function BookmarkButton({
       onClick={handleToggle}
       disabled={isLoading}
       className={cn(
-        "rounded-full shadow-none",
-        iconOnly ? "p-2" : "gap-2 px-3 py-2 font-semibold",
+        "h-auto rounded-full border border-transparent shadow-none",
+        iconOnly ? "p-2" : "gap-2 px-3 py-2",
         bookmarked
           ? "bg-blue-50 text-blue-500 dark:bg-blue-950/20"
           : "bg-transparent text-[#A6A6A6] hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200",
