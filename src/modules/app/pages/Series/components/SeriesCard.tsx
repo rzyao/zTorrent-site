@@ -1,5 +1,6 @@
 ﻿import { Star, BookmarkPlus, Tv, Eye, Play } from "lucide-react";
 import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
+import { ToggleButton } from "@/modules/app/components/ui/ToggleButton";
 import type { SeriesCardData, SeriesStatus } from "../types";
 
 interface SeriesCardProps {
@@ -55,21 +56,14 @@ export function SeriesCard({ series, onClick, onToggleCollect }: SeriesCardProps
 
         {/* 收藏按钮 */}
         {onToggleCollect && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleCollect(series.id);
-            }}
-            className={`absolute right-3 bottom-3 flex h-10 w-10 items-center justify-center rounded-lg backdrop-blur-sm transition-all md:h-8 md:w-8 ${
-              series.isCollected
-                ? "bg-purple-500/80 text-white"
-                : "bg-black/60 text-neutral-400 hover:bg-black/80 hover:text-white"
-            }`}
-          >
-            <BookmarkPlus
-              className={`h-5 w-5 md:h-4 md:w-4 ${series.isCollected ? "fill-current" : ""}`}
-            />
-          </button>
+          <ToggleButton
+            pressed={series.isCollected}
+            onPressedChange={() => onToggleCollect(series.id)}
+            activeIcon={<BookmarkPlus className="h-5 w-5 fill-current md:h-4 md:w-4" />}
+            inactiveIcon={<BookmarkPlus className="h-5 w-5 md:h-4 md:w-4" />}
+            className="absolute right-3 bottom-3"
+            tooltip={series.isCollected ? "取消收藏" : "收藏"}
+          />
         )}
 
         {/* 底部标题 */}

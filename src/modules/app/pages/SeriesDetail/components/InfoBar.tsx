@@ -2,8 +2,9 @@
 import { useNavigate } from "react-router-dom";
 import { FavoriteActionDto } from "@/api";
 import { useFavorite } from "@/modules/app/hooks/useFavorite";
-import { Film, Bell, UserPlus, Heart, Share2, Tv, Clock } from "lucide-react";
+import { Film, Bell, UserPlus, Heart, Share2, Tv, Clock, Check } from "lucide-react";
 import ActionBtn from "@/modules/app/components/ActionBtn";
+import { ToggleButton } from "@/modules/app/components/ui/ToggleButton";
 import { cn } from "@/utils/cn";
 import type { EpisodeItem, SeriesDetail } from "../types";
 
@@ -40,49 +41,44 @@ export function InfoBar({ series, episodes }: InfoBarProps) {
         {/* 第一组：用户交互 */}
         <div className="flex items-center gap-3">
           {/* 订阅 (Primary CTA) */}
-          <ActionBtn
-            onClick={() => setIsSubscribed(!isSubscribed)}
-            variant="amber"
-            mode={isSubscribed ? "solid" : "ghost"}
-            size="md"
-            className="px-8"
-            icon={
-              <Bell className={cn("h-5 w-5 transition-colors", isSubscribed && "fill-current")} />
-            }
+          <ToggleButton
+            pressed={isSubscribed}
+            onPressedChange={setIsSubscribed}
+            activeIcon={<Bell className="h-5 w-5 fill-current" />}
+            inactiveIcon={<Bell className="h-5 w-5" />}
+            activeClassName="border-[0.5px] border-amber-500 bg-amber-500/10 text-amber-500"
+            inactiveClassName="bg-gray-700/40 text-neutral-300 hover:bg-gray-700/60 shadow-none backdrop-blur-md"
+            tooltip={isSubscribed ? "已订阅" : "订阅"}
           >
             {isSubscribed ? "已订阅" : "订阅"}
-          </ActionBtn>
+          </ToggleButton>
 
           {/* 关注 (Secondary) */}
-          <ActionBtn
-            onClick={() => setIsFollowing(!isFollowing)}
-            variant="blue"
-            mode={isFollowing ? "solid" : "ghost"}
-            size="md"
-            className="px-6"
-            icon={
-              <UserPlus
-                className={cn("h-5 w-5 transition-colors", isFollowing && "fill-current")}
-              />
-            }
+          <ToggleButton
+            pressed={isFollowing}
+            onPressedChange={setIsFollowing}
+            activeIcon={<Check className="h-5 w-5" />}
+            inactiveIcon={<UserPlus className="h-5 w-5" />}
+            activeClassName="border-[0.5px] border-blue-400 bg-blue-400/10 text-blue-400"
+            inactiveClassName="bg-gray-700/40 text-neutral-300 hover:bg-gray-700/60 shadow-none backdrop-blur-md"
+            tooltip={isFollowing ? "已关注" : "关注"}
           >
             {isFollowing ? "已关注" : "关注"}
-          </ActionBtn>
+          </ToggleButton>
 
           {/* 收藏 (Secondary) */}
-          <ActionBtn
-            onClick={() => toggleFavorite()}
-            variant="red"
-            mode={isFavorite ? "solid" : "ghost"}
-            size="md"
-            className="px-6"
-            disabled={isFavoriteLoading}
-            icon={
-              <Heart className={cn("h-5 w-5 transition-colors", isFavorite && "fill-current")} />
-            }
+          <ToggleButton
+            pressed={isFavorite}
+            onPressedChange={() => toggleFavorite()}
+            isLoading={isFavoriteLoading}
+            activeIcon={<Heart className="h-5 w-5 fill-current" />}
+            inactiveIcon={<Heart className="h-5 w-5" />}
+            activeClassName="border-[0.5px] border-red-400 bg-red-400/10 text-red-400"
+            inactiveClassName="bg-gray-700/40 text-neutral-300 hover:bg-gray-700/60 shadow-none backdrop-blur-md"
+            tooltip={isFavorite ? "取消收藏" : "点击收藏"}
           >
             {isFavorite ? "已收藏" : "收藏"}
-          </ActionBtn>
+          </ToggleButton>
         </div>
 
         {/* 垂直分割线 */}
@@ -94,7 +90,7 @@ export function InfoBar({ series, episodes }: InfoBarProps) {
             variant="neutral"
             mode="ghost"
             size="md"
-            className="px-6"
+            className="px-4"
             icon={<Share2 className="h-5 w-5" />}
           >
             分享

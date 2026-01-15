@@ -77,7 +77,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  
+
   /* App Primary Brand Color (Amber/Yellow) - 用于下载按钮等品牌强调色 */
   --primary: #f59e0b; /* Amber 500 */
   --primary-foreground: #1c1917; /* Stone 900 */
@@ -165,14 +165,104 @@
     @apply rounded-xl border border-neutral-700/50 bg-neutral-800/40;
     color: var(--card-foreground);
   }
-  
+
   .app-card-hover {
     @apply transition-all duration-300;
   }
-  
+
   .app-card-hover:hover {
-    background-color: var(--accent); 
-    @apply -translate-y-1 shadow-md border-border/20; 
+    background-color: var(--accent);
+    @apply border-border/20 -translate-y-1 shadow-md;
   }
 
+  /* 响应式隐藏：移动端隐藏，md 断点及以上显示 */
+  .hidden-in-mobile {
+    display: none !important;
+  }
+
+  @media (min-width: 768px) {
+    .hidden-in-mobile {
+      display: flex !important;
+    }
+  }
+}
+
+/* Animations for ActionButton */
+@keyframes ripple {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+.animate-ripple {
+  animation: ripple 600ms linear forwards;
+}
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-slide-up {
+  animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ============================================================
+   App 滚动条样式 - 极简深色 + CSS 生成的实心箭头
+   ============================================================ */
+#root-app::-webkit-scrollbar {
+  width: 14px; /* 整体宽度（感应区） */
+  height: 14px;
+  background-color: transparent;
+}
+
+#root-app::-webkit-scrollbar-track {
+  background: transparent; /* 轨道完全透明 */
+}
+
+#root-app::-webkit-scrollbar-thumb {
+  background-color: #323232; /* 深灰色滑块 */
+  background-clip: padding-box;
+  border: 3px solid transparent; /* 利用透明边框制造间距，使滑块视觉变细 */
+  border-radius: 99px;
+  min-height: 40px;
+}
+
+#root-app::-webkit-scrollbar-thumb:hover {
+  background-color: #4a4a4a; /* 悬停高亮 */
+}
+
+#root-app::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* 向上箭头 */
+#root-app::-webkit-scrollbar-button:vertical:start:decrement {
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 9px solid #323232;
+  margin-bottom: 2px;
+}
+
+/* 向下箭头 */
+#root-app::-webkit-scrollbar-button:vertical:end:increment {
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 9px solid #323232;
+  margin-top: 2px;
+}
+
+/* 按钮悬停时 - 箭头颜色变亮 */
+#root-app::-webkit-scrollbar-button:vertical:decrement:single-button:hover,
+#root-app::-webkit-scrollbar-button:vertical:increment:single-button:hover {
+  border-bottom-color: #4a4a4a;
+  border-top-color: #4a4a4a;
 }

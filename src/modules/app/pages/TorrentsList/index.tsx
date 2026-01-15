@@ -11,6 +11,7 @@ import type { Torrent, ViewMode } from "@/modules/app/pages/TorrentsList/types";
 import { usePreferenceStore } from "@/modules/app/stores/preferenceStore";
 import { TorrentGridSkeleton } from "@/modules/app/components/skeletons/TorrentGridSkeleton";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useDownloadStatusStore } from "@/modules/app/stores/downloadStatusStore";
 
 /**
  * TorrentsPage（容器组件）
@@ -69,18 +70,28 @@ export default function TorrentsPage() {
     id: string;
     title: string;
   } | null>(null);
+  // 下载状态管理 Store
+  const setDownloadStatus = useDownloadStatusStore((state) => state.setStatus);
 
   /**
    * 处理下载按钮点击
-   * - 有下载器：打开弹窗选择
-   * - 无下载器：直接下载种子文件
+   * - 有下载器：打开弹窗选择（状态由弹窗组件管理）
+   * - 无下载器：直接下载种子文件（状态在此处管理）
    */
-  const handleDownload = (id: string, title: string) => {
+  const handleDownload = async (id: string, title: string) => {
     if (downloaders.length > 0) {
+      // 弹窗模式：打开弹窗，状态由弹窗组件管理
       setSelectedTorrent({ id, title });
       setDownloadModalOpen(true);
     } else {
-      downloadByTorrentId(id, title);
+      // 直接下载模式：在此处管理状态
+      setDownloadStatus(id, "loading");
+      try {
+        await downloadByTorrentId(id, title);
+        setDownloadStatus(id, "success");
+      } catch {
+        setDownloadStatus(id, "idle");
+      }
     }
   };
 

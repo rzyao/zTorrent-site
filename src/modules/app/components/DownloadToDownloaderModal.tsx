@@ -6,6 +6,7 @@ import { useSendToDownloader } from "@/modules/app/hooks/useSendToDownloader";
 import { useTorrentDownload } from "@/modules/app/hooks/useTorrentDownload";
 import { Button } from "@/modules/app/components/ui/button";
 import { NativeSelect } from "@/modules/app/components/ui/native-select";
+import { useDownloadStatusStore } from "@/modules/app/stores/downloadStatusStore";
 
 interface Props {
   open: boolean;
@@ -28,6 +29,7 @@ export function DownloadToDownloaderModal({
   const { downloaders } = useDownloaders();
   const { sendToDownloader, sending } = useSendToDownloader();
   const { downloadByTorrentId } = useTorrentDownload();
+  const setDownloadStatus = useDownloadStatusStore((state) => state.setStatus);
 
   const [selectedDownloaderId, setSelectedDownloaderId] = useState<string>("");
   const [selectedPath, setSelectedPath] = useState<string>("");
@@ -56,19 +58,33 @@ export function DownloadToDownloaderModal({
   };
 
   const handleSubmit = async () => {
-    const success = await sendToDownloader({
-      torrentId,
-      source,
-      downloaderId: selectedDownloaderId,
-      path: selectedPath || undefined,
-    });
-    if (success) {
-      onClose();
+    setDownloadStatus(torrentId, "loading");
+    try {
+      const success = await sendToDownloader({
+        torrentId,
+        source,
+        downloaderId: selectedDownloaderId,
+        path: selectedPath || undefined,
+      });
+      if (success) {
+        setDownloadStatus(torrentId, "success");
+        onClose();
+      } else {
+        setDownloadStatus(torrentId, "idle");
+      }
+    } catch {
+      setDownloadStatus(torrentId, "idle");
     }
   };
 
-  const handleLocalDownload = () => {
-    downloadByTorrentId(torrentId, torrentTitle || "download");
+  const handleLocalDownload = async () => {
+    setDownloadStatus(torrentId, "loading");
+    try {
+      await downloadByTorrentId(torrentId, torrentTitle || "download");
+      setDownloadStatus(torrentId, "success");
+    } catch {
+      setDownloadStatus(torrentId, "idle");
+    }
     onClose();
   };
 

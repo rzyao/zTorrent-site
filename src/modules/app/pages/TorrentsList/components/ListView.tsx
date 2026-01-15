@@ -1,5 +1,5 @@
 ﻿import { Download, Upload, Star, MessageSquare, HardDrive, Calendar } from "lucide-react";
-import { Button } from "@/modules/app/components/ui/button";
+import { DownloadButton } from "@/modules/app/components/ui/DownloadButton";
 import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
 import { Badge } from "@/modules/app/components/ui/badge";
 import { formatSize } from "@/utils/format";
@@ -41,7 +41,7 @@ export function ListView({ items, getCategoryLabel, onDownload, getCoverSrc }: L
       {items.map((torrent) => (
         <div
           key={torrent.id}
-          className="app-card text-parent cursor-pointer rounded-lg border-[0.5px] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-[0.5px] hover:border-amber-500/70"
+          className="app-card text-parent hover: cursor-pointer rounded-lg border-[0.5px] p-4 transition-all duration-300 hover:border-[0.5px] hover:border-amber-500/70"
         >
           <div
             className="flex gap-4"
@@ -67,18 +67,13 @@ export function ListView({ items, getCategoryLabel, onDownload, getCoverSrc }: L
                   <h3 className="text truncate text-[#dadada]">{torrent.title}</h3>
                   <h3 className="text truncate text-[#dadada]">{torrent.subTitle}</h3>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="hidden-in-mobile rounded-lg border-[0.5px] border-[#92702a] bg-transparent text-[#d4a733] hover:border-[0.5px] hover:border-amber-500/70 hover:bg-amber-500/10 hover:text-[#e8bc4a]"
-                  onClick={(e) => {
-                    e.stopPropagation();
+                <DownloadButton
+                  className="hidden-in-mobile"
+                  torrentId={String(torrent.id)}
+                  onDownload={() => {
                     onDownload(String(torrent.id), String(torrent.title || "download"));
                   }}
-                >
-                  <Download className="h-4 w-4" />
-                  下载
-                </Button>
+                />
               </div>
 
               <div className="mb-1 flex flex-wrap items-center gap-2">

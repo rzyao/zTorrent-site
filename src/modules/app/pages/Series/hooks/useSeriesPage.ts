@@ -1,8 +1,10 @@
 import { useState, useMemo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { SeriesService } from "@/api/services/SeriesService";
+import { Service } from "@/api/services/Service";
 import { ListSeriesDto } from "@/api/models/ListSeriesDto";
+import { FavoriteActionDto } from "@/api/models/FavoriteActionDto";
 import { useDictionaryLabels } from "@/hooks/useDictionary";
 import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
 import type { GenreOption, SortKey, SeriesStatus, STATUS_OPTIONS } from "../types";
@@ -23,6 +25,30 @@ export function useSeriesPage() {
   const [selectedStatus, setSelectedStatus] = useState<SeriesStatus | "all">("all");
 
   const { getCategoryLabel } = useDictionaryLabels();
+  const { mutate: toggleFavorite } = useMutation({
+    mutationFn: async ({ id, isCollected }: { id: string; isCollected: boolean }) => {
+      const action: FavoriteActionDto = {
+        targetType: FavoriteActionDto.targetType.SERIES,
+        targetId: id,
+      };
+      if (isCollected) {
+        await Service.favoritesControllerRemove(action);
+      } else {
+        await Service.favoritesControllerAdd(action);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["series"] });
+    },
+  });
+
+  // 处理收藏切换
+  const handleToggleCollect = (id: string) => {
+    const item = series.find((s) => s.id === id);
+    if (item) {
+      toggleFavorite({ id, isCollected: !!(item as any).isCollected });
+    }
+  };
 
   // 从全局 store 获取剧集分类数据
   const seriesCategories = usePreferenceCategoriesStore((state) => state.series || []);
@@ -94,6 +120,7 @@ export function useSeriesPage() {
     setSelectedStatus,
     // 行为
     handleSeriesClick,
+    handleToggleCollect,
     retry,
   };
 }

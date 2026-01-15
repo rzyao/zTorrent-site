@@ -101,6 +101,16 @@ export const componentRegistry: Record<string, LazyComponent> = {
   EditCategoryPage: lazy(() =>
     import("@/modules/forum/pages/EditCategoryPage").then((m) => ({ default: m.EditCategoryPage })),
   ),
+  ForumResourceMappingPage: lazy(() =>
+    import("@/modules/admin/pages/community/forum/ResourceMappingPage").then((m) => ({
+      default: m.ResourceMappingPage,
+    })),
+  ),
+  "community/forum/ResourceMappingPage": lazy(() =>
+    import("@/modules/admin/pages/community/forum/ResourceMappingPage").then((m) => ({
+      default: m.ResourceMappingPage,
+    })),
+  ),
   TagsPage: lazy(() =>
     import("@/modules/forum/pages/TagsPage").then((m) => ({ default: m.TagsPage })),
   ),

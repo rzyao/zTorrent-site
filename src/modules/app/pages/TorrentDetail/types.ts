@@ -3,7 +3,7 @@ export interface TorrentDetailPageProps {
 }
 
 export interface TorrentData {
-  id: number;
+  id: number | string;
   title: string;
   subTitle: string;
   category: string;
@@ -35,12 +35,12 @@ export interface TorrentData {
 export interface FileItem {
   name: string;
   size: string;
-  type: 'file' | 'folder';
+  type: "file" | "folder";
   children?: FileItem[];
 }
 
 export interface Comment {
-  id: number;
+  id: number | string;
   user: string;
   userLevel: string;
   avatar: string;
@@ -50,7 +50,7 @@ export interface Comment {
 }
 
 export interface RelatedTorrent {
-  id: number;
+  id: number | string;
   title: string;
   size: string;
   seeders: number;
@@ -91,24 +91,24 @@ export interface DescriptionData {
  * 原始中文键名接口 (假设的输入结构)。
  */
 export interface ChineseMovieInfo {
-  "译名"?: string;
-  "片名"?: string;
-  "年代"?: string;
-  "产地"?: string;
-  "类别"?: string[];
-  "语言"?: string;
-  "上映日期"?: string;
-  "豆瓣评分"?: string;
-  "豆瓣链接"?: string;
-  "集数"?: string;
-  "片长"?: string;
-  "导演"?: string[];
-  "编剧"?: string[];
-  "主演"?: string[];
+  译名?: string;
+  片名?: string;
+  年代?: string;
+  产地?: string;
+  类别?: string[];
+  语言?: string;
+  上映日期?: string;
+  豆瓣评分?: string;
+  豆瓣链接?: string;
+  集数?: string;
+  片长?: string;
+  导演?: string[];
+  编剧?: string[];
+  主演?: string[];
 }
 
 export interface ChineseInputData {
-  "引用信息": string[];
-  "影片信息": ChineseMovieInfo;
-  "简介"?: string;
+  引用信息: string[];
+  影片信息: ChineseMovieInfo;
+  简介?: string;
 }

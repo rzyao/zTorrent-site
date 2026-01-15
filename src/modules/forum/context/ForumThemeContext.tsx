@@ -11,33 +11,38 @@ const ForumThemeContext = createContext<ForumThemeContextType | undefined>(undef
 
 const THEME_STORAGE_KEY = "forum-theme-preference";
 
-export function ForumThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => {
+export function ForumThemeProvider({
+  children,
+  forceTheme,
+}: {
+  children: ReactNode;
+  forceTheme?: Theme;
+}) {
+  const [themeState, setThemeState] = useState<Theme>(() => {
     // 这是一个惰性初始化函数，只在首次渲染时运行
-    // 我们可以直接在这里读取 localStorage，避免 useEffect 导致的二次渲染（闪烁）
     if (typeof window !== "undefined") {
       const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) as Theme;
       if (savedTheme === "dark" || savedTheme === "light") {
         return savedTheme;
       }
-      // 如果没有保存的主题，跟随系统偏好 (System Preference)
-      // 这与 index.html 中的阻塞脚本逻辑保持一致
       if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
         return "dark";
       }
     }
-    // 默认回退到深色 (Dark) - 如果无法判断系统偏好
     return "dark";
   });
 
-  // 同步更新 html 元素的 class，使 Tailwind 的 dark: 前缀生效
-  // 使用 useLayoutEffect 确保在浏览器绘制前样式已就绪，消除切换时的闪烁/延迟
+  // 如果提供了 forceTheme，优先使用它
+  const activeTheme = forceTheme || themeState;
+
+  // 同步更新 html 元素的 class
   useLayoutEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-  }, [theme]);
+    document.documentElement.classList.toggle("dark", activeTheme === "dark");
+  }, [activeTheme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => {
+    if (forceTheme) return; // 如果是强制模式，禁止切换
+    setThemeState((prev) => {
       const newTheme = prev === "light" ? "dark" : "light";
       localStorage.setItem(THEME_STORAGE_KEY, newTheme);
       return newTheme;
@@ -45,9 +50,9 @@ export function ForumThemeProvider({ children }: { children: ReactNode }) {
   };
 
   const value = {
-    theme,
+    theme: activeTheme,
     toggleTheme,
-    colors: themeConfig[theme], // themeConfig[theme] 现在指向同一个对象 FORUM_THEME
+    colors: themeConfig[activeTheme],
   };
 
   return <ForumThemeContext.Provider value={value}>{children}</ForumThemeContext.Provider>;

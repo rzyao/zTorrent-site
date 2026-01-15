@@ -6,7 +6,7 @@ export default function GoForward() {
   const { canGoForward, goForward } = useNavigationState();
 
   return (
-    <div className="group fixed top-16 right-0 bottom-0 z-50" onClick={goForward}>
+    <div className="group relative flex h-full w-full flex-col items-end" onClick={goForward}>
       <div className="h-1/3"></div>
       {/* 前进按钮 */}
       <Button

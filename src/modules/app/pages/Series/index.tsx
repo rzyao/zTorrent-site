@@ -21,6 +21,7 @@ export default function SeriesPage() {
     setSelectedGenre,
     setSelectedStatus,
     handleSeriesClick,
+    handleToggleCollect,
     retry,
   } = useSeriesPage();
 
@@ -50,7 +51,11 @@ export default function SeriesPage() {
       {error && <ErrorState error={error} onRetry={retry} />}
 
       {!loading && !error && (
-        <SeriesGrid series={cardSeries} onOpen={(s) => handleSeriesClick(s)} />
+        <SeriesGrid
+          series={cardSeries}
+          onOpen={(s) => handleSeriesClick(s)}
+          onToggleCollect={handleToggleCollect}
+        />
       )}
     </PageContainer>
   );

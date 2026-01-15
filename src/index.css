@@ -9,26 +9,43 @@
 @plugin "@tailwindcss/typography";
 @variant dark (&:where(.dark, .dark *));
 
-
-
-
-
 /* ============================================================
    全局通用样式 (Reset & Global)
    ============================================================ */
 
 @layer base {
-  /* 注意：不再设置全局 * border-color，由各模块自己负责，或者在 globals 中设置一个默认 */
+  /* 注意：不再设置全局 * border-color，由各模块自己负责或者在 globals 中设置一个默认 */
   * {
     border-color: #e5e7eb; /* 默认灰色边框，避免 undefined 变量 */
   }
-  
-  body {
+
+  /* 
+    架构调整：应用级滚动容器模式
+    禁止 html/body 滚动，将滚动权交给 #root-app
+  */
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
     overscroll-behavior-x: none;
-    /* 移除全局背景色设置，改由各 root 负责 */
   }
 }
 
+/* ============================================================
+   禁用 Radix UI 滚动锁定的所有副作用
+   防止打开 Select/Dialog 等组件时页面抖动或 fixed 元素偏移
+   ============================================================ */
+body[data-radix-scroll-lock],
+body[data-scroll-locked] {
+  overflow: unset !important;
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
+/* 针对 Radix 自动添加的 padding 进行修正 */
+body[data-radix-scroll-locked] {
+  padding-right: 0 !important;
+}
 /* Custom nprogress styles */
 #nprogress {
   pointer-events: none;
@@ -50,7 +67,9 @@
   right: 0px;
   width: 100px;
   height: 100%;
-  box-shadow: 0 0 10px #f59e0b, 0 0 5px #f59e0b;
+  box-shadow:
+    0 0 10px #f59e0b,
+    0 0 5px #f59e0b;
   opacity: 1;
   transform: rotate(3deg) translate(0px, -4px);
 }

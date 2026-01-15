@@ -6,7 +6,7 @@ export default function GoBack() {
   const { canGoBack, goBack } = useNavigationState();
 
   return (
-    <div className="group fixed top-16 bottom-0 left-0 z-50" onClick={goBack}>
+    <div className="group relative h-full w-full" onClick={goBack}>
       <div className="h-1/3"></div>
       {/* 后退按钮 */}
       <Button
