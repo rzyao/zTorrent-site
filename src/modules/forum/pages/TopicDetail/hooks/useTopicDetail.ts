@@ -119,23 +119,23 @@ function transformPost(apiPost: ExtendedApiPost, index: number): PostData {
     stats:
       index === 0
         ? {
-            created: formatDate(apiPost.created_at),
-            lastReply: "刚刚", // 暂时硬编码，应当从 topic 获取
-            replies: apiPost.replies_count || 0,
-            views: "0",
-            users: 0,
-            likes: apiPost.like_count || 0,
-            links: 0,
-          }
+          created: formatDate(apiPost.created_at),
+          lastReply: "刚刚", // 暂时硬编码，应当从 topic 获取
+          replies: apiPost.replies_count || 0,
+          views: "0",
+          users: 0,
+          likes: apiPost.like_count || 0,
+          links: 0,
+        }
         : undefined,
     replyTo: apiPost.replyTo
       ? {
-          id: apiPost.replyTo.id,
-          floor: apiPost.replyTo.floor,
-          username: apiPost.replyTo.author?.username || "unknown",
-          avatar: apiPost.replyTo.author?.avatar,
-          content: apiPost.replyTo.content,
-        }
+        id: apiPost.replyTo.id,
+        floor: apiPost.replyTo.floor,
+        username: apiPost.replyTo.author?.username || "unknown",
+        avatar: apiPost.replyTo.author?.avatar,
+        content: apiPost.replyTo.content,
+      }
       : undefined,
     // 直接使用后端返回的引用关系
     incomingReplies: incomingReplies?.map((reply) => ({
@@ -347,6 +347,7 @@ export function useTopicDetail(topicId: string | undefined, options?: { nearPost
       id: String(thread.id),
       title: thread.title || "",
       category: thread.category?.name || "常规",
+      categoryId: thread.category?.id,
       categoryColor: thread.category?.color || "#999",
       categoryIcon: thread.category?.icon,
       tags: thread.tags?.map((t) => t.name) || [],

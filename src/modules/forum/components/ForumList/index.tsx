@@ -168,7 +168,7 @@ export function ForumList({
   const itemSizesRef = useRef<Map<number, number>>(new Map());
   const listRef = useRef<List>(null);
   const getItemSize = useCallback(
-    (index: number) => itemSizesRef.current.get(index) ?? 96,
+    (index: number) => itemSizesRef.current.get(index) ?? 80,
     [],
   );
   const handleItemsRendered = useCallback(
@@ -256,7 +256,11 @@ export function ForumList({
                         }
                       };
                       return (
-                        <div ref={rowRef} style={style}>
+                        <div
+                          ref={rowRef}
+                          style={style}
+                          className={index < topics.length - 1 ? `border-b ${colors.dividerColor}` : ""}
+                        >
                           <div
                             onClick={() => onTopicClick(topic.id)}
                             className={`group flex items-center px-4 py-4 cursor-pointer gap-3 hover:bg-gray-50 dark:hover:bg-neutral-800/50`}
@@ -351,9 +355,6 @@ export function ForumList({
                               <span className="text-xs text-neutral-500">{topic.lastReplyTime}</span>
                             </div>
                           </div>
-                          {index < topics.length - 1 && (
-                            <div className="h-px w-full bg-gray-200 dark:bg-neutral-700" />
-                          )}
                         </div>
                       );
                     }}

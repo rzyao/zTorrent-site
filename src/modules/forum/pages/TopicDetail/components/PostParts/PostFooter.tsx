@@ -1,4 +1,4 @@
-import { Link as LinkIcon, Reply } from "lucide-react";
+import { Link as LinkIcon, Reply, Pencil } from "lucide-react";
 import { PostData } from "../../types";
 import { useComposerStore } from "../../../../components/Composer/ComposerStore";
 import { LikeButton } from "../../../../components/Interaction/LikeButton";
@@ -12,6 +12,8 @@ interface PostFooterProps {
   onToggleIncomingReplies: () => void;
   topicTitle?: string;
   topicId?: string;
+  canEdit?: boolean;
+  onEdit?: () => void;
 }
 
 export function PostFooter({
@@ -21,6 +23,8 @@ export function PostFooter({
   onToggleIncomingReplies,
   topicTitle,
   topicId,
+  canEdit,
+  onEdit,
 }: PostFooterProps) {
   const handleReply = () => {
     useComposerStore.getState().open("REPLY", {
@@ -53,6 +57,16 @@ export function PostFooter({
             initialLiked={post.isLiked}
             initialCount={post.likes}
           />
+
+          {canEdit && (
+            <button
+              onClick={onEdit}
+              className={`flex cursor-pointer items-center justify-center rounded-full p-2 text-[#A6A6A6] hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
+              title="编辑"
+            >
+              <Pencil className="h-5 w-5" />
+            </button>
+          )}
 
           <button
             className={`flex cursor-pointer items-center justify-center rounded-full p-2 text-[#A6A6A6] hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}

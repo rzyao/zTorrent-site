@@ -1,0 +1,242 @@
+﻿diff --git a/src/modules/forum/components/ForumList/index.tsx b/src/modules/forum/components/ForumList/index.tsx
+index 40e872c..b7a9ee3 100644
+--- a/src/modules/forum/components/ForumList/index.tsx
++++ b/src/modules/forum/components/ForumList/index.tsx
+@@ -168,7 +168,7 @@ export function ForumList({
+   const itemSizesRef = useRef<Map<number, number>>(new Map());
+   const listRef = useRef<List>(null);
+   const getItemSize = useCallback(
+-    (index: number) => itemSizesRef.current.get(index) ?? 96,
++    (index: number) => itemSizesRef.current.get(index) ?? 80,
+     [],
+   );
+   const handleItemsRendered = useCallback(
+@@ -256,7 +256,11 @@ export function ForumList({
+                         }
+                       };
+                       return (
+-                        <div ref={rowRef} style={style}>
++                        <div
++                          ref={rowRef}
++                          style={style}
++                          className={index < topics.length - 1 ? `border-b ${colors.dividerColor}` : ""}
++                        >
+                           <div
+                             onClick={() => onTopicClick(topic.id)}
+                             className={`group flex items-center px-4 py-4 cursor-pointer gap-3 hover:bg-gray-50 dark:hover:bg-neutral-800/50`}
+@@ -351,9 +355,6 @@ export function ForumList({
+                               <span className="text-xs text-neutral-500">{topic.lastReplyTime}</span>
+                             </div>
+                           </div>
+-                          {index < topics.length - 1 && (
+-                            <div className="h-px w-full bg-gray-200 dark:bg-neutral-700" />
+-                          )}
+                         </div>
+                       );
+                     }}
+diff --git a/src/modules/forum/components/ui/input.tsx b/src/modules/forum/components/ui/input.tsx
+index 09b435e..822b510 100644
+--- a/src/modules/forum/components/ui/input.tsx
++++ b/src/modules/forum/components/ui/input.tsx
+@@ -8,8 +8,8 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+       type={type}
+       data-slot="input"
+       className={cn(
+-        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3",
++        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-10 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
++        "hover:border-[#0088CC] focus-visible:ring-1 focus-visible:ring-[#0088CC]",
+         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+         className,
+       )}
+diff --git a/src/modules/forum/components/ui/scroll-area.tsx b/src/modules/forum/components/ui/scroll-area.tsx
+index ef57d3c..d53e849 100644
+--- a/src/modules/forum/components/ui/scroll-area.tsx
++++ b/src/modules/forum/components/ui/scroll-area.tsx
+@@ -1,4 +1,4 @@
+-锘?use client";
++"use client";
+ 
+ import * as React from "react";
+ import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
+@@ -8,15 +8,42 @@ import { cn } from "@/utils/cn";
+ function ScrollArea({
+   className,
+   children,
++  type = "auto",
+   ...props
+ }: React.ComponentProps<typeof ScrollAreaPrimitive.Root>) {
++  const viewportRef = React.useRef<HTMLDivElement | null>(null);
++
++  React.useEffect(() => {
++    const viewport = viewportRef.current;
++    if (!viewport) return;
++
++    const onWheel = (event: WheelEvent) => {
++      if (event.deltaY === 0) return;
++      if (viewport.scrollHeight <= viewport.clientHeight) return;
++
++      viewport.scrollTop = viewport.scrollTop + event.deltaY;
++
++      if (event.cancelable) {
++        event.preventDefault();
++      }
++      event.stopPropagation();
++    };
++
++    viewport.addEventListener("wheel", onWheel, { passive: false });
++    return () => {
++      viewport.removeEventListener("wheel", onWheel);
++    };
++  }, []);
++
+   return (
+     <ScrollAreaPrimitive.Root
+       data-slot="scroll-area"
+-      className={cn("relative", className)}
++      type={type}
++      className={cn("relative overflow-hidden", className)}
+       {...props}
+     >
+       <ScrollAreaPrimitive.Viewport
++        ref={viewportRef}
+         data-slot="scroll-area-viewport"
+         className="focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-3 focus-visible:outline-1"
+       >
+@@ -36,20 +63,21 @@ function ScrollBar({
+   return (
+     <ScrollAreaPrimitive.ScrollAreaScrollbar
+       data-slot="scroll-area-scrollbar"
++      forceMount
+       orientation={orientation}
+       className={cn(
+         "flex touch-none p-px transition-colors select-none",
+         orientation === "vertical" &&
+-          "h-full w-2.5 border-l border-l-transparent",
++        "h-full w-2.5 border-l border-l-transparent bg-neutral-100/70 dark:bg-neutral-800/60",
+         orientation === "horizontal" &&
+-          "h-2.5 flex-col border-t border-t-transparent",
++        "h-2.5 flex-col border-t border-t-transparent bg-neutral-100/70 dark:bg-neutral-800/60",
+         className,
+       )}
+       {...props}
+     >
+       <ScrollAreaPrimitive.ScrollAreaThumb
+         data-slot="scroll-area-thumb"
+-        className="bg-border relative flex-1 rounded-full"
++        className="relative flex-1 rounded-full bg-neutral-500/60 dark:bg-neutral-500/70"
+       />
+     </ScrollAreaPrimitive.ScrollAreaScrollbar>
+   );
+diff --git a/src/modules/forum/hooks/useForumsTagsQuery.ts b/src/modules/forum/hooks/useForumsTagsQuery.ts
+index 380e265..92179d5 100644
+--- a/src/modules/forum/hooks/useForumsTagsQuery.ts
++++ b/src/modules/forum/hooks/useForumsTagsQuery.ts
+@@ -5,12 +5,21 @@ export function useForumsTagsQuery() {
+   return useQuery({
+     queryKey: ["forums", "tags", "all"],
+     queryFn: async () => {
+-      // Fetch all tags (limit 100 for now or implement scrolling in modal if needed)
+-      // Since default list is paginated, we use a large limit to simulate getting 'all'
+-      // or we can just fetch top tags. For customization we probably want *all*.
+-      // Let's assume fetching top 100 is enough for now given typical usage.
+-      const response = await ForumsTagsService.tagsControllerFindAll({ page: 1, limit: 100 });
+-      return response.data?.items || [];
++      const limit = 200;
++      const first = await ForumsTagsService.tagsControllerFindAll({ page: 1, limit });
++      const firstData = first.data;
++      const items = Array.isArray(firstData?.items) ? [...firstData.items] : [];
++      const totalPages = Number(firstData?.totalPages || 1);
++
++      const safeTotalPages = Number.isFinite(totalPages) ? Math.max(1, totalPages) : 1;
++      for (let page = 2; page <= safeTotalPages; page++) {
++        const res = await ForumsTagsService.tagsControllerFindAll({ page, limit });
++        const pageItems = res.data?.items;
++        if (!Array.isArray(pageItems) || pageItems.length === 0) break;
++        items.push(...pageItems);
++      }
++
++      return items;
+     },
+     staleTime: 1000 * 60 * 60, // 1 hour
+   });
+diff --git a/src/modules/forum/pages/TopicDetail/components/Post.tsx b/src/modules/forum/pages/TopicDetail/components/Post.tsx
+index 4260929..90f1301 100644
+--- a/src/modules/forum/pages/TopicDetail/components/Post.tsx
++++ b/src/modules/forum/pages/TopicDetail/components/Post.tsx
+@@ -1,5 +1,5 @@
+ import { useState, memo } from "react";
+-import { User as UserIcon } from "lucide-react";
++import { User as UserIcon, Pencil } from "lucide-react";
+ import { PostData } from "../types";
+ import { SelectionPopover } from "./SelectionPopover";
+ import { usePostSelection } from "../hooks/usePostSelection";
+@@ -10,6 +10,8 @@ import { PostFooter } from "./PostParts/PostFooter";
+ import { IncomingReplies } from "./PostParts/IncomingReplies";
+ import { PostSmallAction } from "./PostParts/PostSmallAction";
+ import { UserCard } from "@/modules/app/components/UserCard";
++import { useAccess } from "@/context/AccessContext";
++import { PostInlineEditor } from "./PostParts/PostInlineEditor";
+ 
+ interface PostProps {
+   post: PostData;
+@@ -33,6 +35,9 @@ export const Post = memo(function Post({
+   const isSmallAction = post.isSmallAction;
+   const [isReplyExpanded, setIsReplyExpanded] = useState(false);
+   const [areIncomingRepliesExpanded, setAreIncomingRepliesExpanded] = useState(false);
++  const [isEditing, setIsEditing] = useState(false);
++  const { access } = useAccess();
++  const canEdit = access?.username && access.username === post.username;
+ 
+   const { selectionMenu, setSelectionMenu, handleMouseUp, handleQuote } = usePostSelection(
+     post,
+@@ -71,9 +76,8 @@ export const Post = memo(function Post({
+     <>
+       {post.replyTo && (
+         <div
+-          className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+-            isReplyExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+-          }`}
++          className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${isReplyExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
++            }`}
+         >
+           <div className="overflow-hidden">
+             <PostReplyContext replyTo={post.replyTo} colors={colors} />
+@@ -113,12 +117,22 @@ export const Post = memo(function Post({
+             onToggleReply={() => setIsReplyExpanded(!isReplyExpanded)}
+           />
+ 
+-          <PostContent
+-            content={post.content}
+-            className={`prose dark:prose-invert max-w-none text-base leading-normal ${colors.textPrimary} dark:[&_blockquote]:rounded dark:[&_blockquote]:bg-[#3d3d3d] dark:[&_blockquote]:p-2 [&_img]:my-4 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-lg [&_img]:shadow-md`}
+-            onMouseUp={handleMouseUp}
+-            colors={colors}
+-          />
++          {!isEditing ? (
++            <PostContent
++              content={post.content}
++              className={`prose dark:prose-invert max-w-none text-base leading-normal ${colors.textPrimary} dark:[&_blockquote]:rounded dark:[&_blockquote]:bg-[#3d3d3d] dark:[&_blockquote]:p-2 [&_img]:my-4 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-lg [&_img]:shadow-md`}
++              onMouseUp={handleMouseUp}
++              colors={colors}
++            />
++          ) : (
++            <PostInlineEditor
++              postId={post.id}
++              topicId={topicId!}
++              initialContent={post.content}
++              onCancel={() => setIsEditing(false)}
++              onSaved={() => setIsEditing(false)}
++            />
++          )}
+ 
+           {selectionMenu && (
+             <SelectionPopover
+@@ -138,6 +152,8 @@ export const Post = memo(function Post({
+             }
+             topicTitle={topicTitle}
+             topicId={topicId}
++            canEdit={Boolean(canEdit && !isEditing)}
++            onEdit={() => setIsEditing(true)}
+           />
+ 
+           <IncomingReplies

@@ -48,6 +48,7 @@ export interface TopicData {
   id: string;
   title: string;
   category: string;
+  categoryId?: string;
   categoryColor: string;
   categoryIcon?: string;
   tags: string[];

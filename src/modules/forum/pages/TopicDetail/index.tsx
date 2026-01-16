@@ -7,6 +7,8 @@ import { TopicDetailProps } from "./types";
 import { Post } from "./components/Post";
 import { Timeline } from "./components/Timeline";
 import { TopicHeader } from "./components/TopicHeader";
+import { TopicEditModal } from "./components/TopicEditModal";
+import { useAccess } from "@/context/AccessContext";
 import { TopicFooter } from "./components/TopicFooter";
 import { SuggestedTopics } from "./components/SuggestedTopics";
 import { useTopicDetail } from "./hooks/useTopicDetail";
@@ -26,6 +28,8 @@ export function TopicDetail({
   }>();
   const navigate = useNavigate();
   const { theme, colors } = useForumTheme();
+  const { access } = useAccess();
+  const [editOpen, setEditOpen] = useState(false);
   const [currentPost, setCurrentPost] = useState(1);
   const [scrollPercentage, setScrollPercentage] = useState(0); // 新增：基于距离的百分比
   const [isProgrammaticScroll, setIsProgrammaticScroll] = useState(false);
@@ -385,7 +389,11 @@ export function TopicDetail({
     <div className={`min-h-screen pb-20 ${colors.pageBg}`}>
       <div className="mx-auto max-w-[1100px] px-4 pt-6 sm:px-6">
         {/* Title Section */}
-        <TopicHeader topicData={topicData} />
+        <TopicHeader
+          topicData={topicData}
+          canEdit={Boolean(access?.username && access.username === (topicData.posts?.[0]?.username || ""))}
+          onEdit={() => setEditOpen(true)}
+        />
 
         {/* Header Divider */}
         <div className={cn("mt-2 mb-2 border-t", colors.dividerColor)}></div>
@@ -497,6 +505,19 @@ export function TopicDetail({
           />
         </div>
       </div>
+      {topicData && (
+        <TopicEditModal
+          isOpen={editOpen}
+          onClose={() => setEditOpen(false)}
+          topicId={topicData.id}
+          initial={{
+            title: topicData.title,
+            categoryId: topicData.categoryId,
+            tags: topicData.tags || [],
+            content: topicData.posts?.[0]?.content || "",
+          }}
+        />
+      )}
     </div>
   );
 }

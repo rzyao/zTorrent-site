@@ -1,4 +1,4 @@
-﻿import { TopicData } from "../types";
+import { TopicData } from "../types";
 import { getIconByName } from "@/modules/forum/components/ui/icon-picker";
 import { Square } from "lucide-react";
 
@@ -6,9 +6,11 @@ import { useForumTheme } from "../../../context/ForumThemeContext";
 
 interface TopicHeaderProps {
   topicData?: TopicData;
+  canEdit?: boolean;
+  onEdit?: () => void;
 }
 
-export const TopicHeader = ({ topicData }: TopicHeaderProps) => {
+export const TopicHeader = ({ topicData, canEdit, onEdit }: TopicHeaderProps) => {
   const { colors } = useForumTheme();
   // 如果没有传入 topicData，显示占位符
   if (!topicData) {
@@ -27,9 +29,19 @@ export const TopicHeader = ({ topicData }: TopicHeaderProps) => {
 
   return (
     <div className="pb-2">
-      <h1 className={`mb-3 text-[24px] leading-tight font-bold ${colors.titleColor}`}>
-        {topicData.title}
-      </h1>
+      <div className="mb-3 flex items-center justify-between">
+        <h1 className={`text-[24px] leading-tight font-bold ${colors.titleColor}`}>
+          {topicData.title}
+        </h1>
+        {canEdit && (
+          <button
+            onClick={onEdit}
+            className="inline-flex items-center gap-2 rounded-md border px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+          >
+            编辑话题
+          </button>
+        )}
+      </div>
       <div className="flex flex-wrap items-center gap-2">
         <a href="#" className="group flex items-center gap-1.5">
           {/* 类别图标或颜色方块 */}
