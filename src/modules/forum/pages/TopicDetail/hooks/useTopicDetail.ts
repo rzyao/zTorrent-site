@@ -266,32 +266,36 @@ export function useTopicDetail(topicId: string | undefined, options?: { nearPost
 
   if (threadQuery.data && postsQuery.data) {
     const thread = threadQuery.data;
-    // 合并所有页面的帖子
-    const allPosts = postsQuery.data.pages.flatMap((page) => page.items || []) as ExtendedApiPost[];
+    // 按 requestedPage 升序增量合并，避免每次全量排序带来的 CPU 开销
+    const orderedPages = [...postsQuery.data.pages].sort(
+      (a, b) => (a.requestedPage ?? 0) - (b.requestedPage ?? 0),
+    );
+    const seen = new Set<string>();
+    const posts: ExtendedApiPost[] = [];
+    orderedPages.forEach((page) => {
+      (page.items || []).forEach((post) => {
+        const id = String(post.id);
+        if (!seen.has(id)) {
+          seen.add(id);
+          posts.push(post);
+        }
+      });
+    });
 
     // 调试日志：输出 pages 信息
     console.log("[useTopicDetail] Pages info:", {
-      pageCount: postsQuery.data.pages.length,
-      pagesDetails: postsQuery.data.pages.map((p, i) => ({
+      pageCount: orderedPages.length,
+      pagesDetails: orderedPages.map((p, i) => ({
         index: i,
         requestedPage: p.requestedPage,
         itemCount: p.items?.length,
         firstFloor: p.items?.[0]?.floor,
         lastFloor: p.items?.[p.items.length - 1]?.floor,
       })),
-      totalPostsBeforeDedup: allPosts.length,
+      totalPostsBeforeDedup: orderedPages.reduce((acc, p) => acc + (p.items?.length || 0), 0),
     });
 
-    // 去重：使用 Map 根据 ID 去重，保留最后出现的版本
-    const postsMap = new Map<string, ExtendedApiPost>();
-    allPosts.forEach((post) => {
-      postsMap.set(String(post.id), post);
-    });
-
-    // 按 floor 排序，确保楼层顺序正确
-    const posts: ExtendedApiPost[] = Array.from(postsMap.values()).sort(
-      (a, b) => a.floor - b.floor,
-    );
+    // posts 已按页顺序与楼层顺序增量合并，无需再次排序
 
     // 调试日志：输出合并后的 posts 信息
     console.log("[useTopicDetail] Merged posts:", {

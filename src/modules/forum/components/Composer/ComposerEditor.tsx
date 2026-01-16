@@ -1,5 +1,5 @@
-﻿import React, { useRef, useEffect, useMemo } from "react";
-import { marked } from "marked";
+import React, { useRef, useEffect, useMemo } from "react";
+import { parseMarkdownCached } from "@/modules/forum/utils/markdownCache";
 import TurndownService from "turndown";
 import { useComposerStore } from "./ComposerStore";
 import { EditorToggleSwitch } from "./EditorToggleSwitch";
@@ -170,8 +170,8 @@ export const ComposerEditor: React.FC<ComposerEditorProps> = ({ className }) => 
           return placeholder;
         });
 
-        // 使用 marked 转换其他 Markdown 内容
-        let html = marked.parse(processedBody, { async: false }) as string;
+        // 使用缓存的 Markdown 转换，减少重复解析开销
+        let html = parseMarkdownCached(processedBody);
 
         // 将占位符替换回 HTML
         quotePlaceholders.forEach(({ placeholder, html: quoteHtml }) => {
@@ -580,7 +580,7 @@ export const ComposerEditor: React.FC<ComposerEditorProps> = ({ className }) => 
               return draft.body;
             }
             // 否则转换 Markdown 为 HTML
-            return marked.parse(draft.body, { async: false }) as string;
+            return parseMarkdownCached(draft.body);
           })()}
           onChange={(value) => updateDraft({ body: value })}
           placeholder="开始输入您的内容..."

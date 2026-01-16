@@ -54,6 +54,7 @@ import {
   useDeleteTagGroupMutation,
   ForumTagGroupWithId,
 } from "../hooks/useTagGroups";
+import { ManageGroupTagsDialog } from "../components/TagGroups/ManageGroupTagsDialog";
 
 // Schema definition
 const formSchema = z.object({
@@ -74,6 +75,7 @@ export function TagGroupsPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<ForumTagGroupWithId | null>(null);
   const [deletingGroup, setDeletingGroup] = useState<ForumTagGroupWithId | null>(null);
+  const [manageTagsGroup, setManageTagsGroup] = useState<ForumTagGroupWithId | null>(null);
 
   // Mutations
   const createMutation = useCreateTagGroupMutation();
@@ -219,6 +221,16 @@ export function TagGroupsPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
+                      {/* 添加标签到该组 */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className={cn("h-8 w-8", colors.textSecondary, colors.buttonHover)}
+                        onClick={() => setManageTagsGroup(group)}
+                        title="为该标签组添加标签"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -247,6 +259,20 @@ export function TagGroupsPage() {
           </TableBody>
         </Table>
       </div>
+
+      {/* 添加标签对话框 */}
+      {manageTagsGroup && (
+        <ManageGroupTagsDialog
+          groupId={manageTagsGroup.id}
+          groupName={manageTagsGroup.name}
+          open={!!manageTagsGroup}
+          onClose={() => setManageTagsGroup(null)}
+          onSaved={() => {
+            // 刷新列表以反映可能的数量/展示变化
+            refetch();
+          }}
+        />
+      )}
 
       {/* Create Dialog */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>

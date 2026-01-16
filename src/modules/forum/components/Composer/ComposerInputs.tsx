@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useComposerStore } from "./ComposerStore";
 import { Input } from "@/modules/forum/components/ui/input";
 import {
@@ -10,6 +10,7 @@ import {
 } from "@/modules/forum/components/ui/select";
 import { useForumsCategories } from "../../hooks/useForumsCategories";
 import { useForumsTagsQuery } from "../../hooks/useForumsTagsQuery";
+import { ForumsCategoriesService } from "@/api";
 import { cn } from "@/utils/cn";
 import { Hash, Tag, Plus, X } from "lucide-react";
 import { useForumTheme } from "../../context/ForumThemeContext";
@@ -29,6 +30,52 @@ export const ComposerInputs: React.FC = () => {
 
   // 获取标签列表 (hook 返回的 data 直接是数组)
   const { data: tags = [] } = useForumsTagsQuery();
+  const [allowedTagNames, setAllowedTagNames] = useState<Set<string> | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!draft.categoryId) {
+        setAllowedTagNames(null);
+        return;
+      }
+      try {
+        const res = await ForumsCategoriesService.categoriesControllerFindCategoryTags({
+          categoryId: draft.categoryId,
+          grouped: true,
+          page: 1,
+          limit: 100000,
+        } as any);
+        const d: any = res.data || {};
+        const names: string[] = [];
+        if (Array.isArray(d?.groups)) {
+          d.groups.forEach((g: any) => {
+            if (Array.isArray(g?.tags)) {
+              names.push(...g.tags.map((t: any) => String(t?.name)));
+            }
+          });
+        }
+        if (Array.isArray(d?.ungroupedTags)) {
+          names.push(...d.ungroupedTags.map((t: any) => String(t?.name)));
+        }
+        if (names.length === 0 && Array.isArray(tags)) {
+          setAllowedTagNames(new Set(tags.map((t: any) => String(t?.name))));
+        } else {
+          setAllowedTagNames(new Set(names));
+        }
+        const cur = (draft.tags || []).filter((n) => (names.length ? names.includes(n) : true));
+        updateDraft({ tags: cur });
+      } catch {
+        setAllowedTagNames(null);
+      }
+    };
+    load();
+  }, [draft.categoryId]);
+
+  const selectableTags = useMemo(() => {
+    const base = tags.filter((tag) => !(draft.tags || []).includes(tag.name));
+    if (!allowedTagNames) return base;
+    return base.filter((t) => allowedTagNames.has(t.name));
+  }, [tags, draft.tags, allowedTagNames]);
 
   // 处理标签选择
   const handleTagToggle = (tagId: string) => {
@@ -157,9 +204,7 @@ export const ComposerInputs: React.FC = () => {
               <span>可选标签</span>
             </SelectTrigger>
             <SelectContent className="border-gray-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
-              {tags
-                .filter((tag) => !(draft.tags || []).includes(tag.name))
-                .map((tag) => (
+              {selectableTags.map((tag) => (
                   <SelectItem
                     key={tag.name}
                     value={tag.name}
@@ -171,7 +216,7 @@ export const ComposerInputs: React.FC = () => {
                     </div>
                   </SelectItem>
                 ))}
-              {tags.filter((tag) => !(draft.tags || []).includes(tag.name)).length === 0 && (
+              {selectableTags.length === 0 && (
                 <div className="px-2 py-1.5 text-xs text-neutral-500">没有更多标签</div>
               )}
             </SelectContent>

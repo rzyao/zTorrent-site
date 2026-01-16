@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState, memo } from "react";
 import { User as UserIcon } from "lucide-react";
 import { PostData } from "../types";
 import { SelectionPopover } from "./SelectionPopover";
@@ -21,7 +21,7 @@ interface PostProps {
   incomingReplies?: PostData[];
 }
 
-export function Post({
+export const Post = memo(function Post({
   post,
   postIndex,
   isLast,
@@ -150,4 +150,4 @@ export function Post({
       </div>
     </>
   );
-}
+});

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Film,
   Tv,
@@ -126,10 +126,20 @@ export default function HomePage() {
 
   const announcements: Announcement[] =
     announcementData?.data?.items?.map((item: any) => {
+      const tags: string[] =
+        Array.isArray(item?.tags)
+          ? item.tags.map((t: any) => String(t?.name ?? t))
+          : Array.isArray(item?.tagNames)
+          ? item.tagNames.map((n: any) => String(n))
+          : [];
       let type: "system" | "event" | "notice" = "notice";
-      if (item.isGlobalPinned) type = "system";
-      else if (item.title.includes("活动")) type = "event";
-
+      if (item.isGlobalPinned) {
+        type = "system";
+      } else if (tags.includes("活动")) {
+        type = "event";
+      } else if (tags.includes("通知")) {
+        type = "notice";
+      }
       return {
         id: item.id,
         title: item.title,

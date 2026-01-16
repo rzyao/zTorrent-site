@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo, forwardRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import NProgress from "nprogress";
 import { useForumTheme } from "../../context/ForumThemeContext";
@@ -13,6 +13,8 @@ import { useTopicDetail } from "./hooks/useTopicDetail";
 import { Loader2 } from "lucide-react";
 import { TopicDetailSkeleton } from "./components/TopicDetailSkeleton";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { VariableSizeList as List, ListOnItemsRenderedProps } from "react-window";
 
 export function TopicDetail({
   topicId: propTopicId,
@@ -28,6 +30,17 @@ export function TopicDetail({
   const [scrollPercentage, setScrollPercentage] = useState(0); // 新增：基于距离的百分比
   const [isProgrammaticScroll, setIsProgrammaticScroll] = useState(false);
   const [hasJumpedToPost, setHasJumpedToPost] = useState(false); // 防止重复跳转
+  // 虚拟化列表引用与行高缓存映射（index -> height）
+  const listRef = useRef<List>(null);
+  const itemSizesRef = useRef<Map<number, number>>(new Map());
+  // 自定义外层滚动容器以复用现有滚动百分比逻辑与联动（设置统一 id）
+  const CustomOuterElement = useMemo(
+    () =>
+      forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>((props, ref) => (
+        <div {...props} ref={ref} id="forum-scroll-container" />
+      )),
+    [],
+  );
 
   const topicId = propTopicId || paramTopicId;
   const targetPostNumber = paramPostNumber ? parseInt(paramPostNumber, 10) : undefined;
@@ -66,6 +79,68 @@ export function TopicDetail({
 
   // 计算当前加载的帖子中的非系统操作帖子
   const regularPosts = topicData?.posts?.filter((p) => !p.isSmallAction) ?? [];
+  // 预计算每个 index 对应的“非系统操作楼层号”（系统操作返回 -1）
+  const regularIndexByPostIndex = useMemo(() => {
+    if (!topicData?.posts) return [];
+    let count = 0;
+    return topicData.posts.map((p) => (p.isSmallAction ? -1 : ++count));
+  }, [topicData?.posts]);
+  // 获取行高：未测量返回估算值，已测量返回缓存值
+  const getItemSize = useCallback(
+    (index: number) => itemSizesRef.current.get(index) ?? 380,
+    [],
+  );
+  // 使用 react-window 的 onItemsRendered 触发向上/向下分页并同步当前帖子
+  const handleItemsRendered = useCallback(
+    ({ visibleStartIndex, visibleStopIndex }: ListOnItemsRenderedProps) => {
+      // 触发向下分页：接近底部时加载更多
+      if (hasNextPage && !isFetchingNextPage && visibleStopIndex >= (topicData?.posts.length || 0) - 5) {
+        fetchNextPage();
+      }
+      // 触发向上分页：接近顶部时加载上一页
+      if (hasPreviousPage && !isFetchingPreviousPage && visibleStartIndex <= 5) {
+        const container = document.getElementById("forum-scroll-container");
+        const prevScrollHeight = container?.scrollHeight || 0;
+        fetchPreviousPage().then(() => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              if (container) {
+                const newScrollHeight = container.scrollHeight;
+                const diff = newScrollHeight - prevScrollHeight;
+                container.scrollTop += diff;
+              }
+            });
+          });
+        });
+      }
+      // 同步当前帖子楼层（选择第一个可见且为非系统操作的帖子）
+      if (regularIndexByPostIndex.length) {
+        let active = regularIndexByPostIndex[visibleStartIndex];
+        if (active === -1) {
+          for (let i = visibleStartIndex + 1; i <= visibleStopIndex; i++) {
+            if (regularIndexByPostIndex[i] !== -1) {
+              active = regularIndexByPostIndex[i];
+              break;
+            }
+          }
+        }
+        if (active !== -1 && active !== currentPost) {
+          setCurrentPost(active);
+        }
+      }
+    },
+    [
+      hasNextPage,
+      isFetchingNextPage,
+      hasPreviousPage,
+      isFetchingPreviousPage,
+      topicData?.posts.length,
+      regularIndexByPostIndex,
+      currentPost,
+      fetchNextPage,
+      fetchPreviousPage,
+    ],
+  );
 
   // Discourse 风格跳转：数据加载后跳转到目标楼层
   useEffect(() => {
@@ -331,30 +406,57 @@ export function TopicDetail({
               </div>
             )}
 
-            {(() => {
-              let regularPostIndex = 0;
-
-              return topicData.posts.map((post, index) => {
-                // 非系统操作帖子才分配索引
-                if (!post.isSmallAction) {
-                  regularPostIndex++;
-                }
-
-                return (
-                  <Post
-                    key={post.id}
-                    post={post}
-                    postIndex={post.isSmallAction ? -1 : regularPostIndex}
-                    isLast={index === topicData.posts.length - 1}
-                    colors={colors}
-                    topicTitle={topicData.title}
-                    topicId={topicId}
-                    // 直接使用后端返回的引用关系，无需前端计算
-                    incomingReplies={post.incomingReplies}
-                  />
-                );
-              });
-            })()}
+            {/* 使用虚拟化列表替换原始全量渲染 */}
+            <div className="h-[70vh]">
+              <AutoSizer>
+                {({ height, width }) => {
+                  const H = Math.max(300, height || 0);
+                  const W = Math.max(300, width || 0);
+                  return (
+                    <List
+                      ref={listRef}
+                      height={H}
+                      width={W}
+                      itemCount={topicData.posts.length}
+                      itemSize={getItemSize}
+                      itemKey={(index) => topicData.posts[index].id}
+                      overscanCount={6}
+                      outerElementType={CustomOuterElement as any}
+                      onItemsRendered={handleItemsRendered}
+                    >
+                      {({ index, style }) => {
+                        const post = topicData.posts[index];
+                        // 行容器用于测量真实高度并缓存
+                        const rowRef = (node: HTMLDivElement | null) => {
+                          if (!node) return;
+                          const rect = node.getBoundingClientRect();
+                          const prev = itemSizesRef.current.get(index) ?? 0;
+                          if (Math.abs(prev - rect.height) > 1) {
+                            itemSizesRef.current.set(index, rect.height);
+                            listRef.current?.resetAfterIndex(index);
+                          }
+                        };
+                        const postIndex = regularIndexByPostIndex[index] ?? -1;
+                        return (
+                          <div ref={rowRef} style={style}>
+                            <Post
+                              key={post.id}
+                              post={post}
+                              postIndex={postIndex}
+                              isLast={index === topicData.posts.length - 1}
+                              colors={colors}
+                              topicTitle={topicData.title}
+                              topicId={topicId}
+                              incomingReplies={post.incomingReplies}
+                            />
+                          </div>
+                        );
+                      }}
+                    </List>
+                  );
+                }}
+              </AutoSizer>
+            </div>
 
             {/* 无限滚动加载更多帖子 */}
             <div ref={loadMoreRef} className="h-px w-full">

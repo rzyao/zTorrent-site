@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -23,7 +23,8 @@ import {
   Image as ImageIcon,
   Smile, // Added Smile icon for emoji button
 } from "lucide-react";
-import EmojiPicker, { Theme as EmojiTheme } from "emoji-picker-react";
+import { Suspense, lazy } from "react";
+const EmojiPickerLazy = lazy(() => import("emoji-picker-react"));
 import * as Popover from "@radix-ui/react-popover";
 import { LinkModal } from "./LinkModal";
 import { useForumTheme } from "../../context/ForumThemeContext"; // Assuming this path is correct
@@ -382,15 +383,24 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               align="start"
               sideOffset={5}
             >
-              <EmojiPicker
-                theme={theme === "dark" ? EmojiTheme.DARK : EmojiTheme.LIGHT}
-                onEmojiClick={(emojiData) => {
-                  editor.chain().focus().insertContent(emojiData.emoji).run();
-                }}
-                autoFocusSearch={false}
-                lazyLoadEmojis={true}
-                searchPlaceHolder="搜索表情..."
-              />
+              <Suspense
+                fallback={
+                  <div className="min-w-[280px] rounded-md border bg-white p-3 text-sm text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
+                    正在加载表情...
+                  </div>
+                }
+              >
+                <EmojiPickerLazy
+                  // 运行时传递字符串主题，避免类型耦合
+                  theme={theme === "dark" ? ("dark" as any) : ("light" as any)}
+                  onEmojiClick={(emojiData: any) => {
+                    editor.chain().focus().insertContent(emojiData.emoji).run();
+                  }}
+                  autoFocusSearch={false}
+                  lazyLoadEmojis={true}
+                  searchPlaceHolder="搜索表情..."
+                />
+              </Suspense>
             </Popover.Content>
           </Popover.Portal>
         </Popover.Root>

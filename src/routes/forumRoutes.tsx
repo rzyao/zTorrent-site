@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 论坛模块路由配置
  * 独立于主路由，使用 ForumLayout 布局
  */
@@ -79,6 +79,7 @@ export function ForumRoutes() {
       <Route path="new-category" element={<NewCategoryPage />} />
       {/* 编辑类别 */}
       <Route path="category/:categoryId/edit" element={<EditCategoryPage />} />
+      <Route path="category/:categoryId/edit/:section" element={<EditCategoryPage />} />
       {/* 发布话题 */}
       <Route path="create" element={<CreateTopicPage />} />
       {/* 我的收藏 */}

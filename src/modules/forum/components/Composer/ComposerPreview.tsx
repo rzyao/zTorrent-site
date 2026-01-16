@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React, { useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -14,8 +14,10 @@ interface ComposerPreviewProps {
 export const ComposerPreview: React.FC<ComposerPreviewProps> = ({ className }) => {
   const { draft } = useComposerStore();
   const { theme } = useForumTheme();
+  // 使用 useMemo 缓存 body，避免不必要的重渲染传值变化
+  const body = useMemo(() => draft.body, [draft.body]);
 
-  if (!draft.body) {
+  if (!body) {
     return (
       <div
         className={cn(
@@ -73,7 +75,7 @@ export const ComposerPreview: React.FC<ComposerPreviewProps> = ({ className }) =
           },
         }}
       >
-        {draft.body}
+        {body}
       </ReactMarkdown>
     </div>
   );

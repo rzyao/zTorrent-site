@@ -1,9 +1,11 @@
-﻿import { useState } from "react";
-import { Plus, Search, Hash } from "lucide-react";
+import { useState } from "react";
+import { Plus, Search, Hash, Layers, Pencil } from "lucide-react";
 import { useForumsTagsQuery } from "../hooks/useForumsTagsQuery";
 import { CreateTagModal } from "../components/CreateTagModal";
+import { EditTagModal } from "../components/EditTagModal";
 import { Input } from "@/modules/forum/components/ui/input";
 import { Button } from "@/modules/forum/components/ui/button";
+import { ActionButton } from "@/modules/forum/components/ui/ActionButton";
 import { useNavigate } from "react-router-dom";
 import { useForumTheme } from "../context/ForumThemeContext";
 
@@ -14,6 +16,7 @@ export function TagsPage() {
   const { data: tags, isLoading } = useForumsTagsQuery();
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editTagId, setEditTagId] = useState<string | null>(null);
 
   const filteredTags = Array.isArray(tags)
     ? tags.filter((tag: any) => tag.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -27,10 +30,20 @@ export function TagsPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <h1 className={`text-2xl font-bold ${colors.titleColor}`}>所有标签</h1>
-        <Button onClick={() => setIsCreateModalOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          创建标签
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => navigate("/forum/tag-groups")}
+            variant="outline"
+            className="gap-2"
+          >
+            <Layers className="h-4 w-4" />
+            标签组管理
+          </Button>
+          <ActionButton onClick={() => setIsCreateModalOpen(true)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            创建标签
+          </ActionButton>
+        </div>
       </div>
 
       <div className="relative">
@@ -45,22 +58,32 @@ export function TagsPage() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {filteredTags.map((tag: any) => (
-          <button
+          <div
             key={tag.id || tag.name}
-            onClick={() => navigate(`/forum/tag/${tag.id || tag.name}`)}
-            className={`flex items-center gap-3 rounded-xl border p-4 text-left transition-all ${colors.cardBg} ${colors.cardBorder} ${colors.cardHover}`}
+            className={`flex items-center justify-between rounded-xl border p-4 transition-all ${colors.cardBg} ${colors.cardBorder} ${colors.cardHover}`}
           >
-            <div
-              className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800"
-              style={{ color: tag.color || "inherit" }}
+            <button
+              onClick={() => navigate(`/forum/tag/${tag.id || tag.name}`)}
+              className="flex items-center gap-3 text-left"
             >
-              <Hash className="h-5 w-5" />
-            </div>
-            <div>
-              <div className={`font-medium ${colors.textPrimary}`}>{tag.name}</div>
-              <div className={`text-xs ${colors.textMuted}`}>{tag.usageCount || 0} 个话题</div>
-            </div>
-          </button>
+              <div
+                className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800"
+                style={{ color: tag.color || "inherit" }}
+              >
+                <Hash className="h-5 w-5" />
+              </div>
+              <div>
+                <div className={`font-medium ${colors.textPrimary}`}>{tag.name}</div>
+                <div className={`text-xs ${colors.textMuted}`}>{tag.usageCount || 0} 个话题</div>
+              </div>
+            </button>
+            <button
+              onClick={() => setEditTagId(String(tag.id || tag.name))}
+              className="inline-flex items-center cursor-pointer text-sm hover:bg-gray-50 hover:text-primary dark:hover:bg-neutral-800"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+          </div>
         ))}
       </div>
 
@@ -69,6 +92,7 @@ export function TagsPage() {
       )}
 
       <CreateTagModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+      {editTagId && <EditTagModal isOpen={!!editTagId} onClose={() => setEditTagId(null)} tagId={editTagId} />}
     </div>
   );
 }

@@ -1,5 +1,5 @@
-﻿import { memo, useMemo, useCallback, Fragment } from "react";
-import { marked } from "marked";
+import { memo, useMemo, useCallback, Fragment } from "react";
+import { parseMarkdownCached } from "@/modules/forum/utils/markdownCache";
 import { QuoteBlock } from "../QuoteBlock";
 import { processBBCodeQuotes, parseContentWithQuotes } from "../../utils/quoteParser";
 
@@ -19,7 +19,7 @@ export const PostContent = memo(
     // 2. 将 Markdown 解析为 HTML
     const html = useMemo(() => {
       const processed = processBBCodeQuotes(content);
-      return marked.parse(processed) as string;
+      return parseMarkdownCached(processed);
     }, [content]);
 
     const segments = useMemo(() => parseContentWithQuotes(html), [html]);
