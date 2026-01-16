@@ -37,6 +37,9 @@ const TagsPage = lazy(() =>
 const BookmarksPage = lazy(() =>
   import("@/modules/forum/pages/BookmarksPage").then((m) => ({ default: m.BookmarksPage })),
 );
+const TagGroupsPage = lazy(() =>
+  import("@/modules/forum/pages/TagGroupsPage").then((m) => ({ default: m.TagGroupsPage })),
+);
 
 /**
  * 论坛路由组件
@@ -79,7 +82,10 @@ export function ForumRoutes() {
       {/* 发布话题 */}
       <Route path="create" element={<CreateTopicPage />} />
       {/* 我的收藏 */}
+      {/* 我的收藏 */}
       <Route path="bookmarks" element={<BookmarksPage />} />
+      {/* 标签组管理 */}
+      <Route path="admin/tag-groups" element={<TagGroupsPage />} />
     </Route>
   );
 }

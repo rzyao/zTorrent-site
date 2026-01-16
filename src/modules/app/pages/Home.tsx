@@ -41,6 +41,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/modules/app/components/ui
 import { Separator } from "@/modules/app/components/ui/separator";
 import { PageContainer } from "@/modules/app/components/PageContainer";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useQuery } from "@tanstack/react-query";
+import { ForumsTopicsService } from "@/api/services/ForumsTopicsService";
+import dayjs from "dayjs";
 
 interface HotTorrent {
   id: number;
@@ -57,7 +60,7 @@ interface HotTorrent {
 }
 
 interface Announcement {
-  id: number;
+  id: string | number;
   title: string;
   type: "system" | "event" | "notice";
   time: string;
@@ -115,41 +118,26 @@ export default function HomePage() {
     onlineUsers: 856,
   };
 
-  // 公告数据
-  const announcements: Announcement[] = [
-    {
-      id: 1,
-      title: "【重要】关于加强版权保护的公告",
-      type: "system",
-      time: "2024-12-14 10:30",
-      isTop: true,
-    },
-    {
-      id: 2,
-      title: "【活动】圣诞节双倍上传活动开启",
-      type: "event",
-      time: "2024-12-13 15:20",
-      isTop: true,
-    },
-    {
-      id: 3,
-      title: "【通知】服务器维护 - 12月20日凌晨2点",
-      type: "notice",
-      time: "2024-12-12 18:45",
-    },
-    {
-      id: 4,
-      title: "【公告】新增4K专区，欢迎上传优质资源",
-      type: "notice",
-      time: "2024-12-10 09:15",
-    },
-    {
-      id: 5,
-      title: "【活动】邀请好友送魔力值活动",
-      type: "event",
-      time: "2024-12-08 14:20",
-    },
-  ];
+  // 公告数据 SWR
+  const { data: announcementData } = useQuery({
+    queryKey: ["home", "announcements"],
+    queryFn: () => ForumsTopicsService.topicsControllerAnnouncements({ limit: 5 }),
+  });
+
+  const announcements: Announcement[] =
+    announcementData?.data?.items?.map((item: any) => {
+      let type: "system" | "event" | "notice" = "notice";
+      if (item.isGlobalPinned) type = "system";
+      else if (item.title.includes("活动")) type = "event";
+
+      return {
+        id: item.id,
+        title: item.title,
+        type,
+        time: dayjs(item.createdAt).format("YYYY-MM-DD HH:mm"),
+        isTop: item.isPinned,
+      };
+    }) || [];
 
   // 最热种子轮播数据
   const hotTorrents: HotTorrent[] = [

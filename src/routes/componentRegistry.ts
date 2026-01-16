@@ -117,6 +117,9 @@ export const componentRegistry: Record<string, LazyComponent> = {
   BookmarksPage: lazy(() =>
     import("@/modules/forum/pages/BookmarksPage").then((m) => ({ default: m.BookmarksPage })),
   ),
+  TagGroupsPage: lazy(() =>
+    import("@/modules/forum/pages/TagGroupsPage").then((m) => ({ default: m.TagGroupsPage })),
+  ),
 
   // ==================== Admin 模块 - 核心概览 ====================
   DashboardPage: lazy(() => import("@/modules/admin/pages/Dashboard")),

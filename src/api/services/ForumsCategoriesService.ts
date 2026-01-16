@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { CategoryBySlugDto } from '../models/CategoryBySlugDto';
 import type { CategoryPaginatedResponseDto } from '../models/CategoryPaginatedResponseDto';
+import type { CategoryTagsDto } from '../models/CategoryTagsDto';
 import type { CreateCategoryDto } from '../models/CreateCategoryDto';
 import type { ForumCategory } from '../models/ForumCategory';
 import type { IdParamDto } from '../models/IdParamDto';
@@ -11,6 +12,7 @@ import type { Object } from '../models/Object';
 import type { PaginationParamDto } from '../models/PaginationParamDto';
 import type { UpdateCategoryParamDto } from '../models/UpdateCategoryParamDto';
 import type { UpdateCategorySortDto } from '../models/UpdateCategorySortDto';
+import type { UpdateCategoryVisibilityDto } from '../models/UpdateCategoryVisibilityDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -86,6 +88,35 @@ export class ForumsCategoriesService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/forums/categories/by-slug',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 获取分类可用标签
+     * @param requestBody
+     * @returns any 分类可用标签
+     * @throws ApiError
+     */
+    public static categoriesControllerFindCategoryTags(
+        requestBody: CategoryTagsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Object;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/categories/tags',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -289,6 +320,35 @@ export class ForumsCategoriesService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/forums/categories/update-sort',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 更新分类标签可见性配置 (管理员)
+     * @param requestBody
+     * @returns any 更新成功
+     * @throws ApiError
+     */
+    public static categoriesControllerUpdateVisibility(
+        requestBody: UpdateCategoryVisibilityDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Object;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/categories/update-visibility',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

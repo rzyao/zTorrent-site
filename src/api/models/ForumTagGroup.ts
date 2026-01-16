@@ -2,18 +2,18 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type UpdateTagDto = {
+export type ForumTagGroup = {
     /**
-     * 标签唯一标识符
-     */
-    id: string;
-    /**
-     * 新的标签名称
+     * 标签组名称
      */
     name: string;
     /**
-     * 所属标签组 ID 列表
+     * 标签组颜色 (Hex)
      */
-    groupIds?: Array<string>;
+    color: string;
+    /**
+     * 排序权重
+     */
+    sortOrder: number;
 };
 

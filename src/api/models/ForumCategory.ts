@@ -31,5 +31,9 @@ export type ForumCategory = {
      * 是否激活
      */
     isActive: boolean;
+    /**
+     * 允许其他公共标签
+     */
+    allowOtherTags: boolean;
 };
 

@@ -2,14 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type CreateTagDto = {
+export type AnnouncementDto = {
     /**
-     * 标签名称
+     * 每页数量
      */
-    name: string;
-    /**
-     * 所属标签组 ID 列表
-     */
-    groupIds?: Array<string>;
+    limit?: number;
 };
 
