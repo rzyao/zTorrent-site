@@ -3,9 +3,11 @@ import { Button } from "@/modules/app/components/ui/button";
 import { SearchInput } from "@/modules/app/components/SearchInput";
 import { CategoryNav } from "@/modules/app/layouts/CategoryNav";
 import { NativeSelect } from "@/modules/app/components/ui/native-select";
+import { cn } from "@/utils/cn";
 import type { CategoryItem, SortOption, ViewMode } from "../types";
 
 interface ToolbarProps {
+  className?: string;
   /** 分类导航数据（已映射中文标签） */
   categories: CategoryItem[];
   /** 当前选中的分类标签 */
@@ -50,6 +52,7 @@ const sortOptions: SortOption[] = [
  */
 export function Toolbar(props: ToolbarProps) {
   const {
+    className,
     categories,
     selectedCategory,
     onSelectCategory,
@@ -65,11 +68,11 @@ export function Toolbar(props: ToolbarProps) {
   } = props;
 
   return (
-    <div className="sticky top-0 z-30 border-b border-gray-800 bg-[#0F171E]">
+    <div className={cn("sticky top-0 z-30 border-b border-gray-800 bg-[#0F171E]", className)}>
       <div className="w-full px-4 pt-4 pb-3 md:px-8">
         <div className="flex flex-col flex-wrap gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
           {/* 分类导航 */}
-          <div className="w-full overflow-x-auto md:w-auto md:min-w-0 md:flex-auto md:pr-2">
+          <div className="w-full overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] md:w-auto md:min-w-0 md:flex-auto md:pr-2 [&::-webkit-scrollbar]:hidden">
             <CategoryNav
               inline
               active={selectedCategory}

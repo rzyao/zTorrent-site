@@ -38,7 +38,7 @@ export function SidebarTags({
               isExpanded ? "" : "-rotate-90"
             }`}
           />
-          <span className="text-base font-medium">热门标签</span>
+          <span className="text-base">热门标签</span>
         </div>
         {showEditButton && onEditClick && (
           <span
@@ -81,7 +81,7 @@ export function SidebarTags({
             >
               <div className="flex items-center gap-3">
                 <Hash className="h-3 w-3 opacity-50" />
-                <span className="text-base font-medium">{tag.name}</span>
+                <span className="text-base">{tag.name}</span>
               </div>
             </button>
           );
@@ -93,7 +93,7 @@ export function SidebarTags({
         >
           <div className="flex items-center gap-3">
             <LayoutGrid className="h-4 w-4" />
-            <span className="text-base font-medium">所有标签</span>
+            <span className="text-base">所有标签</span>
           </div>
         </button>
       </div>

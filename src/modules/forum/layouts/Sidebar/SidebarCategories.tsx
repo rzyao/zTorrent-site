@@ -39,7 +39,7 @@ export function SidebarCategories({
               isExpanded ? "" : "-rotate-90"
             }`}
           />
-          <span className="text-base font-medium">话题分类</span>
+          <span className="text-base">话题分类</span>
         </div>
         {showEditButton && onEditClick && (
           <span
@@ -97,7 +97,7 @@ export function SidebarCategories({
                     <Square className="h-3 w-3 text-gray-400" />
                   );
                 })()}
-                <span className="text-base font-medium">{cat.name}</span>
+                <span className="text-base">{cat.name}</span>
               </div>
             </button>
           );
@@ -109,7 +109,7 @@ export function SidebarCategories({
         >
           <div className="flex items-center gap-3">
             <LayoutGrid className="h-4 w-4" />
-            <span className="text-base font-medium">所有类别</span>
+            <span className="text-base">所有类别</span>
           </div>
         </button>
       </div>

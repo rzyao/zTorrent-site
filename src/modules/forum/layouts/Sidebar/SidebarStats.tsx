@@ -19,15 +19,15 @@ export function SidebarStats() {
       <div className="space-y-2 text-sm">
         <div className="flex justify-between">
           <span className={colors.textSecondary}>总用户数</span>
-          <span className={`font-medium ${colors.textPrimary}`}>128,456</span>
+          <span className={` ${colors.textPrimary}`}>128,456</span>
         </div>
         <div className="flex justify-between">
           <span className={colors.textSecondary}>今日活跃</span>
-          <span className={`font-medium ${colors.textPrimary}`}>12,345</span>
+          <span className={` ${colors.textPrimary}`}>12,345</span>
         </div>
         <div className="flex justify-between">
           <span className={colors.textSecondary}>总帖子数</span>
-          <span className={`font-medium ${colors.textPrimary}`}>456,789</span>
+          <span className={` ${colors.textPrimary}`}>456,789</span>
         </div>
       </div>
     </div>

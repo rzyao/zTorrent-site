@@ -6,6 +6,7 @@ import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
 import { useNavigationState } from "@/hooks/useNavigationState";
 import GoBack from "@/modules/app/components/GoBack";
 import GoForward from "@/modules/app/components/GoForward";
+
 import { RouteProgressBar } from "@/modules/app/components/ui/RouteProgressBar";
 
 import { TitleInjector } from "@/components/TitleInjector";

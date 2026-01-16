@@ -5,7 +5,7 @@ import { useForumTheme } from "../../context/ForumThemeContext";
 const NAV_ITEMS = [
   { id: "topics", name: "话题", icon: Home, path: "/forum/latest" },
   { id: "bookmarks", name: "我的收藏", icon: Bookmark, path: "/forum/bookmarks" },
-  { id: "announcements", name: "公告", icon: Megaphone, path: "/announcements" },
+  { id: "announcements", name: "公告", icon: Megaphone, path: "/forum/announcements" },
 ];
 
 /**
@@ -47,7 +47,7 @@ export function SidebarNav() {
             className={`flex w-full cursor-pointer items-center gap-3 rounded-lg py-1.5 pr-4 pl-8 ${buttonClass}`}
           >
             <Icon className="h-4 w-4" />
-            <span className="text-base font-medium">{item.name}</span>
+            <span className="text-base">{item.name}</span>
           </button>
         );
       })}

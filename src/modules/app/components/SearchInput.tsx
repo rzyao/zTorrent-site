@@ -84,7 +84,7 @@ const SearchInput = React.forwardRef<HTMLDivElement, SearchInputProps>(
           onChange={(e) => setKeyword(e.target.value)}
           onKeyDown={handleKeyDown}
           className={cn(
-            "input w-full rounded-full py-2 pr-11 pl-4 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1] md:py-4",
+            "input w-full rounded-full py-2 pr-11 pl-4 text-white placeholder:text-gray-500 md:py-4",
             inputClassName,
           )}
           {...inputProps}

@@ -113,6 +113,7 @@ export default function TorrentsPage() {
     <div>
       {/* 顶部工具栏 */}
       <Toolbar
+        className="md:px-12"
         categories={categories}
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}

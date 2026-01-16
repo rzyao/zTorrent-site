@@ -1,4 +1,5 @@
 import { Button } from "@/modules/forum/components/ui/button";
+import { ActionButton } from "@/modules/forum/components/ui/ActionButton";
 import { useNavigate } from "react-router-dom";
 
 export default function ForumNotFoundPage() {
@@ -19,7 +20,7 @@ export default function ForumNotFoundPage() {
         <Button variant="ghost" onClick={() => navigate(-1)}>
           返回
         </Button>
-        <Button onClick={() => navigate("/forum")}>去论坛首页看看</Button>
+        <ActionButton onClick={() => navigate("/forum")}>去论坛首页看看</ActionButton>
       </div>
     </div>
   );
