@@ -79,7 +79,7 @@ export function TagsPage() {
             </button>
             <button
               onClick={() => setEditTagId(String(tag.id || tag.name))}
-              className="inline-flex items-center cursor-pointer text-sm hover:bg-gray-50 hover:text-primary dark:hover:bg-neutral-800"
+              className="inline-flex items-center cursor-pointer text-sm hover:bg-gray-50 hover:text-primary dark:text-[#999] dark:hover:bg-neutral-800"
             >
               <Pencil className="h-4 w-4" />
             </button>

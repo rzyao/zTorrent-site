@@ -259,7 +259,7 @@ export function ForumList({
                         <div ref={rowRef} style={style}>
                           <div
                             onClick={() => onTopicClick(topic.id)}
-                            className={`group flex items-center border-b px-4 py-4 ${colors.dividerColor} cursor-pointer gap-3 last:border-0 hover:bg-gray-50 dark:hover:bg-neutral-800/50`}
+                            className={`group flex items-center px-4 py-4 cursor-pointer gap-3 hover:bg-gray-50 dark:hover:bg-neutral-800/50`}
                           >
                             {/* Left: Info */}
                             <div className="min-w-0 flex-1">
@@ -351,6 +351,9 @@ export function ForumList({
                               <span className="text-xs text-neutral-500">{topic.lastReplyTime}</span>
                             </div>
                           </div>
+                          {index < topics.length - 1 && (
+                            <div className="h-px w-full bg-gray-200 dark:bg-neutral-700" />
+                          )}
                         </div>
                       );
                     }}
