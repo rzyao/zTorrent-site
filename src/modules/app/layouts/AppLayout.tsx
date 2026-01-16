@@ -7,7 +7,7 @@ import { useNavigationState } from "@/hooks/useNavigationState";
 import GoBack from "@/modules/app/components/GoBack";
 import GoForward from "@/modules/app/components/GoForward";
 
-import { RouteProgressBar } from "@/modules/app/components/ui/RouteProgressBar";
+import { RouteProgressBar, GlobalProgressBar } from "@/modules/app/components/ui/RouteProgressBar";
 
 import { TitleInjector } from "@/components/TitleInjector";
 import { useRouteConfig } from "@/hooks/useRouteConfig";
@@ -44,6 +44,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <FaviconInjector />
         <TitleInjector />
         <NavigationStateReset />
+        <GlobalProgressBar />
         {/* 
           App 样式作用域容器
           ID 必须与 app.css 中的选择器 #root-app 匹配
