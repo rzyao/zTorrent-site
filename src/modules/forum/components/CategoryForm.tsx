@@ -1,10 +1,11 @@
 ﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { Loader2, Undo2 } from "lucide-react";
+import { Undo2 } from "lucide-react";
 import { useForumTheme } from "../context/ForumThemeContext";
 import { ColorPicker } from "@/modules/forum/components/ui/color-picker";
 import { IconPicker } from "@/modules/forum/components/ui/icon-picker";
+import { ActionButton } from "@/modules/forum/components/ui/ActionButton";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
 import { ForumsCategoriesService, type CreateCategoryDto } from "@/api";
 
@@ -123,7 +124,7 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess }: Categ
           <button
             type="button"
             onClick={() => navigate(`/forum/category/${categoryId}`)}
-            className={`flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-100 dark:bg-amber-500/10 dark:text-amber-500 dark:hover:bg-amber-500/20`}
+            className={`flex items-center gap-2 rounded-lg bg-[#0088CC]/10 px-3 py-2 text-sm font-medium text-[#0088CC] transition-colors hover:bg-[#0088CC]/20 dark:bg-amber-500/10 dark:text-amber-500 dark:hover:bg-amber-500/20`}
             title="返回话题列表"
           >
             <Undo2 className="h-4 w-4" />
@@ -194,14 +195,9 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess }: Categ
 
         {/* 提交按钮 */}
         <div className="flex items-center gap-3">
-          <button
-            type="submit"
-            disabled={!isValid || loading}
-            className={`flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-amber-500 dark:hover:bg-amber-600`}
-          >
-            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+          <ActionButton type="submit" disabled={!isValid} loading={loading} className="h-11 px-6">
             {mode === "create" ? "创建类别" : "保存更改"}
-          </button>
+          </ActionButton>
           <button
             type="button"
             onClick={() => navigate(-1)}

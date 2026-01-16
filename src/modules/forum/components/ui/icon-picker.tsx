@@ -265,25 +265,31 @@ export function IconPicker({ value, onChange, className }: IconPickerProps) {
           type="button"
           className={cn(
             "flex h-10 w-full items-center gap-3 rounded-lg border px-3 transition-colors",
-            "border-neutral-700 bg-neutral-800 hover:border-neutral-600",
-            "focus:ring-2 focus:ring-amber-500/50 focus:outline-none",
+            "border-gray-300 bg-white hover:border-gray-400",
+            "dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600",
+            "focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 focus:outline-none dark:focus:border-amber-500 dark:focus:ring-amber-500/50",
             className,
           )}
         >
           {/* 图标预览 */}
-          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-neutral-700">
+          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-gray-100 dark:bg-neutral-700">
             {SelectedIcon ? (
-              <SelectedIcon className="h-4 w-4 text-neutral-200" />
+              <SelectedIcon className="h-4 w-4 text-gray-700 dark:text-neutral-200" />
             ) : (
-              <span className="text-xs text-neutral-500">--</span>
+              <span className="text-xs text-gray-400 dark:text-neutral-500">--</span>
             )}
           </div>
           {/* 图标名称 */}
-          <span className="text-sm text-neutral-300">{value || "选择图标..."}</span>
+          <span className="text-sm text-gray-700 dark:text-neutral-300">
+            {value || "选择图标..."}
+          </span>
         </button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-72 border-neutral-700 bg-neutral-900 p-3" align="start">
+      <PopoverContent
+        className="w-72 border-gray-200 bg-white p-3 shadow-lg dark:border-neutral-700 dark:bg-neutral-900"
+        align="start"
+      >
         {/* 搜索框 */}
         <div className="mb-3">
           <input
@@ -291,7 +297,7 @@ export function IconPicker({ value, onChange, className }: IconPickerProps) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="搜索图标..."
-            className="h-9 w-full rounded-md border border-neutral-700 bg-neutral-800 px-3 text-sm text-neutral-200 placeholder-neutral-500 focus:border-amber-500 focus:outline-none"
+            className="h-9 w-full rounded-md border border-gray-300 bg-white px-3 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:placeholder-neutral-500 dark:focus:border-amber-500"
           />
         </div>
 
@@ -300,15 +306,15 @@ export function IconPicker({ value, onChange, className }: IconPickerProps) {
           <button
             type="button"
             onClick={handleClear}
-            className="mb-3 w-full rounded-md border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-xs text-neutral-400 transition-colors hover:border-neutral-600 hover:text-neutral-200"
+            className="mb-3 w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs text-gray-500 transition-colors hover:border-gray-300 hover:text-gray-900 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:border-neutral-600 dark:hover:text-neutral-200"
           >
             清除图标
           </button>
         )}
 
         {/* 图标网格 */}
-        <div className="max-h-48 overflow-y-auto">
-          <div className="grid grid-cols-6 gap-1.5">
+        <div className="max-h-48 overflow-x-hidden overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-700 [&::-webkit-scrollbar-track]:bg-transparent dark:[&::-webkit-scrollbar-track]:bg-transparent">
+          <div className="grid grid-cols-6 gap-1.5 p-1">
             {filteredIcons.map(({ name, icon: Icon }) => (
               <button
                 key={name}
@@ -317,8 +323,8 @@ export function IconPicker({ value, onChange, className }: IconPickerProps) {
                 className={cn(
                   "flex h-9 w-9 items-center justify-center rounded-md transition-all hover:scale-105",
                   value === name
-                    ? "bg-amber-500/20 text-amber-400 ring-1 ring-amber-500"
-                    : "bg-neutral-800 text-neutral-400 hover:bg-neutral-700 hover:text-neutral-200",
+                    ? "bg-blue-100 text-blue-600 ring-1 ring-blue-500 dark:bg-amber-500/20 dark:text-amber-400 dark:ring-amber-500"
+                    : "bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200",
                 )}
                 title={name}
               >
@@ -329,7 +335,9 @@ export function IconPicker({ value, onChange, className }: IconPickerProps) {
 
           {/* 无结果 */}
           {filteredIcons.length === 0 && (
-            <div className="py-4 text-center text-sm text-neutral-500">未找到匹配的图标</div>
+            <div className="py-4 text-center text-sm text-gray-500 dark:text-neutral-500">
+              未找到匹配的图标
+            </div>
           )}
         </div>
       </PopoverContent>

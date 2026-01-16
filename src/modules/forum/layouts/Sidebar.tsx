@@ -144,6 +144,7 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
         onToggleExpand={() => setIsCategoriesExpanded(!isCategoriesExpanded)}
         showEditButton={!!userPreferences}
         onEditClick={() => setIsCategoryModalOpen(true)}
+        isLoading={isPrefsLoading}
       />
 
       <SidebarDivider />

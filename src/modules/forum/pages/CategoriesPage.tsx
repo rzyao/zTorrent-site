@@ -1,7 +1,8 @@
 import { useForumsCategories } from "../hooks/useForumsCategories";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForumTheme } from "../context/ForumThemeContext";
 import { MessageSquare, TrendingUp, Plus } from "lucide-react";
+import { ActionButton } from "../components/ui/ActionButton";
 
 /**
  * 所有类别页面 - 参考 linux.do/categories 风格设计
@@ -10,6 +11,7 @@ import { MessageSquare, TrendingUp, Plus } from "lucide-react";
 export function CategoriesPage() {
   const { data: categories, isLoading } = useForumsCategories();
   const { theme, colors } = useForumTheme();
+  const navigate = useNavigate();
 
   // 加载状态
   if (isLoading) {
@@ -36,26 +38,21 @@ export function CategoriesPage() {
         <div className="flex items-center gap-3">
           <span className={`text-sm ${colors.textMuted}`}>{categories?.length || 0} 个类别</span>
           {/* 新话题（全局） */}
-          <button
+          <ActionButton
             onClick={() => {
               import("../components/Composer/ComposerStore").then(({ useComposerStore }) => {
                 useComposerStore.getState().open("CREATE_TOPIC");
               });
             }}
-            className={`flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-amber-600 dark:hover:bg-amber-700`}
+            icon={MessageSquare}
           >
-            <MessageSquare className="h-4 w-4" />
             新话题
-          </button>
+          </ActionButton>
 
           {/* 新增类别按钮 - TODO: 添加管理员权限判断 */}
-          <Link
-            to="/forum/new-category"
-            className={`flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600`}
-          >
-            <Plus className="h-4 w-4" />
+          <ActionButton onClick={() => navigate("/forum/new-category")} icon={Plus}>
             新增类别
-          </Link>
+          </ActionButton>
         </div>
       </div>
 

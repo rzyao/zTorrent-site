@@ -76,25 +76,32 @@ export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
           type="button"
           className={cn(
             "flex h-10 w-full items-center gap-3 rounded-lg border px-3 transition-colors",
-            "border-neutral-700 bg-neutral-800 hover:border-neutral-600",
-            "focus:ring-2 focus:ring-amber-500/50 focus:outline-none",
+            "border-gray-300 bg-white hover:border-gray-400",
+            "dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600",
+            "focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 focus:outline-none",
+            "dark:focus:border-amber-500 dark:focus:ring-amber-500/50",
             className,
           )}
         >
           {/* 颜色预览 */}
           <div
-            className="h-6 w-6 shrink-0 rounded border border-neutral-600"
+            className="h-6 w-6 shrink-0 rounded border border-gray-200 dark:border-neutral-600"
             style={{ backgroundColor: value || "#6b7280" }}
           />
           {/* 颜色值 */}
-          <span className="text-sm text-neutral-300">{value || "#6b7280"}</span>
+          <span className="text-sm text-gray-700 dark:text-neutral-300">{value || "#6b7280"}</span>
         </button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-64 border-neutral-700 bg-neutral-900 p-3" align="start">
+      <PopoverContent
+        className="w-64 border-gray-200 bg-white p-3 shadow-lg dark:border-neutral-700 dark:bg-neutral-900"
+        align="start"
+      >
         {/* 预设颜色网格 */}
         <div className="mb-3">
-          <div className="mb-2 text-xs font-medium text-neutral-400">预设颜色</div>
+          <div className="mb-2 text-xs font-medium text-gray-400 dark:text-neutral-400">
+            预设颜色
+          </div>
           <div className="grid grid-cols-5 gap-2">
             {PRESET_COLORS.map((color) => (
               <button
@@ -104,8 +111,8 @@ export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
                 className={cn(
                   "h-8 w-8 rounded-md border-2 transition-all hover:scale-110",
                   value === color
-                    ? "border-amber-500 ring-2 ring-amber-500/30"
-                    : "border-transparent hover:border-neutral-500",
+                    ? "border-blue-500 ring-2 ring-blue-500/30 dark:border-amber-500 dark:ring-amber-500/30"
+                    : "border-transparent hover:border-gray-500 dark:hover:border-neutral-500",
                 )}
                 style={{ backgroundColor: color }}
                 title={color}
@@ -115,11 +122,13 @@ export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
         </div>
 
         {/* 分割线 */}
-        <div className="mb-3 border-t border-neutral-700" />
+        <div className="mb-3 border-t border-gray-100 dark:border-neutral-700" />
 
         {/* 自定义颜色输入 */}
         <div>
-          <div className="mb-2 text-xs font-medium text-neutral-400">自定义颜色</div>
+          <div className="mb-2 text-xs font-medium text-gray-400 dark:text-neutral-400">
+            自定义颜色
+          </div>
           <div className="flex items-center gap-2">
             {/* 原生颜色选择器 */}
             <input
@@ -127,7 +136,7 @@ export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
               type="color"
               value={customColor}
               onChange={handleNativePickerChange}
-              className="h-10 w-10 shrink-0 cursor-pointer rounded border border-neutral-600 bg-transparent"
+              className="h-10 w-10 shrink-0 cursor-pointer rounded border border-gray-300 bg-transparent dark:border-neutral-600"
             />
             {/* Hex 输入框 */}
             <input
@@ -135,7 +144,7 @@ export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
               value={customColor}
               onChange={handleCustomChange}
               placeholder="#000000"
-              className="h-10 flex-1 rounded-md border border-neutral-700 bg-neutral-800 px-3 text-sm text-neutral-200 placeholder-neutral-500 focus:border-amber-500 focus:outline-none"
+              className="h-10 flex-1 rounded-md border border-gray-300 bg-white px-3 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:placeholder-neutral-500 dark:focus:border-amber-500"
             />
           </div>
         </div>

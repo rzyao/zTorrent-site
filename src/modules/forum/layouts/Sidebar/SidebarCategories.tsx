@@ -10,6 +10,7 @@ interface SidebarCategoriesProps {
   onToggleExpand: () => void;
   onEditClick?: () => void;
   showEditButton?: boolean;
+  isLoading?: boolean;
 }
 
 /**
@@ -21,6 +22,7 @@ export function SidebarCategories({
   onToggleExpand,
   onEditClick,
   showEditButton = false,
+  isLoading = false,
 }: SidebarCategoriesProps) {
   const { colors, theme } = useForumTheme();
   const navigate = useNavigate();
@@ -61,47 +63,61 @@ export function SidebarCategories({
           isExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        {categories.map((cat) => {
-          // 使用路由路径判断激活状态
-          const categoryPath = `/forum/category/${cat.id}`;
-          const isActive =
-            location.pathname === categoryPath || location.pathname.startsWith(categoryPath + "/");
-
-          let buttonClass: string;
-          if (isActive) {
-            buttonClass =
-              theme === "dark" ? "bg-[#31566c] text-white" : "bg-[#d1f0ff] text-[#0088CC]";
-          } else {
-            buttonClass = `${colors.textSecondary} ${colors.buttonHover}`;
-          }
-
-          return (
-            <button
-              key={cat.id}
-              onClick={() => navigate(categoryPath)}
-              className={`flex w-full cursor-pointer items-center justify-between rounded-lg py-1.5 pr-4 pl-8 ${buttonClass}`}
-            >
-              <div className="flex items-center gap-3">
-                {/* Category Icon or Color Block */}
-                {(() => {
-                  const IconComponent = cat.icon ? getIconByName(cat.icon) : null;
-                  if (IconComponent) {
-                    return <IconComponent className="h-3.5 w-3.5" style={{ color: cat.color }} />;
-                  }
-                  return cat.color ? (
-                    <span
-                      className="h-3 w-3 rounded-[2px]"
-                      style={{ backgroundColor: cat.color }}
-                    />
-                  ) : (
-                    <Square className="h-3 w-3 text-gray-400" />
-                  );
-                })()}
-                <span className="text-base">{cat.name}</span>
+        {isLoading
+          ? // 骨架屏状态
+            Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="mx-4 mb-2 ml-8 flex h-9 w-40 animate-pulse items-center gap-3 rounded-lg"
+              >
+                <div className="h-3 w-3 rounded bg-neutral-200 dark:bg-neutral-800" />
+                <div className="h-4 w-24 rounded bg-neutral-200 dark:bg-neutral-800" />
               </div>
-            </button>
-          );
-        })}
+            ))
+          : categories.map((cat) => {
+              // 使用路由路径判断激活状态
+              const categoryPath = `/forum/category/${cat.id}`;
+              const isActive =
+                location.pathname === categoryPath ||
+                location.pathname.startsWith(categoryPath + "/");
+
+              let buttonClass: string;
+              if (isActive) {
+                buttonClass =
+                  theme === "dark" ? "bg-[#31566c] text-white" : "bg-[#d1f0ff] text-[#0088CC]";
+              } else {
+                buttonClass = `${colors.textSecondary} ${colors.buttonHover}`;
+              }
+
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => navigate(categoryPath)}
+                  className={`flex w-full cursor-pointer items-center justify-between rounded-lg py-1.5 pr-4 pl-8 ${buttonClass}`}
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Category Icon or Color Block */}
+                    {(() => {
+                      const IconComponent = cat.icon ? getIconByName(cat.icon) : null;
+                      if (IconComponent) {
+                        return (
+                          <IconComponent className="h-3.5 w-3.5" style={{ color: cat.color }} />
+                        );
+                      }
+                      return cat.color ? (
+                        <span
+                          className="h-3 w-3 rounded-[2px]"
+                          style={{ backgroundColor: cat.color }}
+                        />
+                      ) : (
+                        <Square className="h-3 w-3 text-gray-400" />
+                      );
+                    })()}
+                    <span className="text-base">{cat.name}</span>
+                  </div>
+                </button>
+              );
+            })}
 
         <button
           onClick={() => navigate("/forum/categories")}

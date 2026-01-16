@@ -93,7 +93,9 @@ export function ForumFilterBar({
   const getSortTabClass = (isActive: boolean) =>
     cn(
       "cursor-pointer rounded-md px-3 py-1.5 text-sm",
-      isActive ? colors.navItemActive : colors.navItemInactive,
+      isActive
+        ? "bg-[#0088CC]/10 text-[#0088CC] dark:bg-amber-500/10 dark:text-amber-500"
+        : colors.navItemInactive,
     );
 
   // 下拉菜单项样式 - 类别和标签通用
