@@ -5,7 +5,6 @@ import { CreateTagModal } from "../components/CreateTagModal";
 import { EditTagModal } from "../components/EditTagModal";
 import { Input } from "@/modules/forum/components/ui/input";
 import { Button } from "@/modules/forum/components/ui/button";
-import { ActionButton } from "@/modules/forum/components/ui/ActionButton";
 import { useNavigate } from "react-router-dom";
 import { useForumTheme } from "../context/ForumThemeContext";
 
@@ -31,18 +30,14 @@ export function TagsPage() {
       <div className="flex items-center justify-between">
         <h1 className={`text-2xl font-bold ${colors.titleColor}`}>所有标签</h1>
         <div className="flex items-center gap-2">
-          <Button
-            onClick={() => navigate("/forum/tag-groups")}
-            variant="outline"
-            className="gap-2"
-          >
+          <Button onClick={() => navigate("/forum/tag-groups")} variant="default" className="gap-2">
             <Layers className="h-4 w-4" />
             标签组管理
           </Button>
-          <ActionButton onClick={() => setIsCreateModalOpen(true)} className="gap-2">
+          <Button variant="primary" onClick={() => setIsCreateModalOpen(true)} className="gap-2">
             <Plus className="h-4 w-4" />
             创建标签
-          </ActionButton>
+          </Button>
         </div>
       </div>
 
@@ -79,7 +74,7 @@ export function TagsPage() {
             </button>
             <button
               onClick={() => setEditTagId(String(tag.id || tag.name))}
-              className="inline-flex items-center cursor-pointer text-sm hover:bg-gray-50 hover:text-primary dark:text-[#999] dark:hover:bg-neutral-800"
+              className="hover:text-primary inline-flex cursor-pointer items-center text-sm hover:bg-gray-50 dark:text-[#999] dark:hover:bg-neutral-800"
             >
               <Pencil className="h-4 w-4" />
             </button>
@@ -92,7 +87,9 @@ export function TagsPage() {
       )}
 
       <CreateTagModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
-      {editTagId && <EditTagModal isOpen={!!editTagId} onClose={() => setEditTagId(null)} tagId={editTagId} />}
+      {editTagId && (
+        <EditTagModal isOpen={!!editTagId} onClose={() => setEditTagId(null)} tagId={editTagId} />
+      )}
     </div>
   );
 }

@@ -14,6 +14,11 @@ import { useGlobalLoader } from "@/stores/globalLoaderStore";
 import AppLayout from "@/modules/app/layouts/AppLayout";
 import { AdminLayout } from "@/modules/admin/layouts/AdminLayout";
 
+// [开发专用] 测试页面
+const TestButtonPage = React.lazy(() =>
+  import("@/modules/forum/pages/TestButtonPage").then((m) => ({ default: m.ButtonTestPage })),
+);
+
 /**
  * 新标签页重定向组件
  */
@@ -196,6 +201,16 @@ function renderLayoutRoutes(config: RouteConfig): React.ReactNode {
           }
         >
           {enabledChildren?.map((child) => renderRoute(child, path))}
+
+          {/* [开发专用] 按钮测试页 */}
+          <Route
+            path="test/buttons"
+            element={
+              <Suspense fallback={<RouteProgressBar />}>
+                <TestButtonPage />
+              </Suspense>
+            }
+          />
 
           {/* Forum 局部 404 */}
           <Route

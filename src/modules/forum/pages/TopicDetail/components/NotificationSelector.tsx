@@ -17,29 +17,26 @@ interface NotificationOption {
 const options: NotificationOption[] = [
   {
     id: "watching",
-    name: "Watching",
-    description:
-      "You will be notified of every new reply in this topic, and a count of new replies will be shown.",
+    name: "关注",
+    description: "您将在此话题有新回复时收到通知，并且会显示新回复数量。",
     icon: BellRing,
   },
   {
     id: "tracking",
-    name: "Tracking",
-    description:
-      "A count of new replies will be shown for this topic. You will be notified if someone mentions your @name or replies to you.",
+    name: "跟踪",
+    description: "将显示此话题的新回复数量。您会在别人 @ 您或回复您时收到通知。",
     icon: Bell,
   },
   {
     id: "normal",
-    name: "Normal",
-    description: "You will be notified if someone mentions your @name or replies to you.",
+    name: "常规",
+    description: "您会在别人 @ 您或回复您时收到通知。",
     icon: Bell,
   },
   {
     id: "muted",
-    name: "Muted",
-    description:
-      "You will never be notified of anything about this topic, and it will not appear in latest.",
+    name: "已设为免打扰",
+    description: "您永远不会收到有关此话题的任何通知，它也不会出现在最新话题中。",
     icon: BellOff,
   },
 ];
@@ -66,7 +63,7 @@ export const NotificationSelector = ({ minimal, className }: NotificationSelecto
         {minimal ? (
           <button
             className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 text-[#0088CC] transition-colors hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700",
+              "flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-neutral-200 text-[#0088CC] transition-colors hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700",
               className,
             )}
             title={currentOption.name}

@@ -7,7 +7,7 @@ import { ReportDialog } from "../../../components/Interaction/ReportDialog";
 import { LikeButton } from "../../../components/Interaction/LikeButton";
 
 import { useForumTheme } from "../../../context/ForumThemeContext";
-import { ActionButton } from "../../../components/ui/ActionButton";
+import { Button } from "../../../components/ui/button";
 
 interface TopicFooterProps {
   topicData?: TopicData;
@@ -56,61 +56,46 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
       {/* Topic Action Buttons */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
-          <ActionButton
-            icon={Share2}
-            className={cn(
-              "hidden h-auto rounded-full border border-transparent px-4 py-2 font-medium shadow-none hover:border-[#0088CC] sm:flex",
-              colors.footerButtonBg,
-              colors.footerButtonText,
-            )}
-            color="custom" // 使用 custom 以获得正确的颜色变量或在 className 中覆盖
-          >
-            <span>Share</span>
-          </ActionButton>
+          {/* Share 按钮 */}
+          <Button variant="default" className={cn("hidden rounded-full sm:flex")}>
+            <Share2 className="size-4" />
+            <span>分享</span>
+          </Button>
 
           {topicData?.id && (
             <>
+              {/* Like 按钮 */}
               <LikeButton
                 type="topic"
                 targetId={topicData.id}
                 initialLiked={topicData.isLiked}
                 initialCount={topicData.stats.likes}
-                className={cn(
-                  "hidden h-auto rounded-full border border-transparent px-4 py-2 transition-all duration-200 hover:border-[#0088CC] sm:flex",
-                  colors.footerButtonBg,
-                  colors.footerButtonText,
-                )}
+                className="hidden sm:flex"
               />
+              {/* Bookmark 按钮 */}
               <BookmarkButton
                 topicId={topicData.id}
                 initialBookmarked={topicData.isBookmarked}
-                className={cn(
-                  "hidden h-auto border border-transparent px-4 py-2 hover:border-[#0088CC] sm:flex",
-                  colors.footerButtonBg,
-                  colors.footerButtonText,
-                )}
+                className="hidden sm:flex"
               />
+              {/* Flag 按钮 */}
               <ReportDialog
                 targetType="topic"
                 targetId={topicData.id}
                 trigger={
-                  <ActionButton
-                    icon={Flag}
-                    className={cn(
-                      "hidden h-auto rounded-full border border-transparent px-4 py-2 shadow-none hover:border-[#0088CC] sm:flex",
-                      colors.footerButtonBg,
-                      colors.footerButtonText,
-                    )}
-                  >
-                    <span>Flag</span>
-                  </ActionButton>
+                  <Button variant="default" className={cn("hidden rounded-full sm:flex")}>
+                    <Flag className="size-4" />
+                    <span>举报</span>
+                  </Button>
                 }
               />
             </>
           )}
-          <ActionButton
+          {/* Reply 按钮 */}
+          <Button
+            variant="primary"
+            className="rounded-full"
             onClick={() => {
-              // Get topic ID from props if available
               const topicId = topicData?.id;
               import("../../../components/Composer/ComposerStore").then(({ useComposerStore }) => {
                 useComposerStore.getState().open("REPLY", {
@@ -119,15 +104,14 @@ export const TopicFooter = ({ topicData }: TopicFooterProps) => {
                 });
               });
             }}
-            icon={Reply}
-            className="h-auto rounded-full border border-transparent px-3 py-2 shadow-none"
           >
+            <Reply className="size-4" />
             Reply
-          </ActionButton>
+          </Button>
         </div>
 
         {/* Notification Status Selector */}
-        <NotificationSelector />
+        <NotificationSelector className="h-9" />
       </div>
     </div>
   );

@@ -38,14 +38,27 @@ interface TopicAdminMenuProps {
   bounty?: import("../../../types/bounty").ForumTopicBounty;
 }
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/modules/forum/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/modules/forum/components/ui/dialog";
 import { useBountyActions } from "../hooks/useBountyActions";
 import { useForumTheme } from "../../../context/ForumThemeContext";
 import { Input } from "@/modules/forum/components/ui/input";
 import ConfirmDialog from "@/modules/forum/components/ui/ConfirmDialog";
 import { Textarea } from "@/modules/forum/components/ui/textarea";
 
-export function TopicAdminMenu({ topicId, status, onUpdate, className, isAuthor, bounty }: TopicAdminMenuProps) {
+export function TopicAdminMenu({
+  topicId,
+  status,
+  onUpdate,
+  className,
+  isAuthor,
+  bounty,
+}: TopicAdminMenuProps) {
   const navigate = useNavigate();
   const { access } = useAccess();
   const isAdminOrMod = access?.roles?.includes("admin") || access?.roles?.includes("moderator");
@@ -108,7 +121,7 @@ export function TopicAdminMenu({ topicId, status, onUpdate, className, isAuthor,
         <DropdownMenuTrigger asChild>
           <button
             className={cn(
-              "flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-200 dark:text-neutral-400 dark:hover:bg-neutral-800",
+              "flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-200 dark:text-neutral-400 dark:hover:bg-neutral-800",
               className,
             )}
             disabled={isLoading}
@@ -260,7 +273,7 @@ export function TopicAdminMenu({ topicId, status, onUpdate, className, isAuthor,
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="2000"
-                className={` h-9 ${colors.inputBg} ${colors.inputBorder}`}
+                className={`h-9 ${colors.inputBg} ${colors.inputBorder}`}
               />
               <div className={`mt-1 text-xs ${colors.textMuted}`}>最低 2000，建议按百位递增</div>
             </div>
@@ -276,7 +289,7 @@ export function TopicAdminMenu({ topicId, status, onUpdate, className, isAuthor,
                   onChange={(e) =>
                     setDurationDays(e.target.value ? parseInt(e.target.value, 10) : undefined)
                   }
-                  className={` h-9 ${colors.inputBg} ${colors.inputBorder}`}
+                  className={`h-9 ${colors.inputBg} ${colors.inputBorder}`}
                 />
                 <div className={`mt-1 text-xs ${colors.textMuted}`}>建议 7 天，上限 30 天</div>
               </div>
@@ -290,7 +303,7 @@ export function TopicAdminMenu({ topicId, status, onUpdate, className, isAuthor,
               取消
             </button>
             <button
-              className={`rounded px-3 py-1 text-sm ${colors.buttonPrimary} disabled:opacity-60 disabled:cursor-not-allowed`}
+              className={`rounded px-3 py-1 text-sm ${colors.buttonPrimary} disabled:cursor-not-allowed disabled:opacity-60`}
               onClick={async () => {
                 const amt = parseInt(amount, 10);
                 if (!amount || !/^[0-9]+$/.test(amount) || isNaN(amt) || amt < 2000) {
@@ -337,7 +350,7 @@ export function TopicAdminMenu({ topicId, status, onUpdate, className, isAuthor,
                 value={increaseAmount}
                 onChange={(e) => setIncreaseAmount(e.target.value)}
                 placeholder="2000"
-                className={` h-9 ${colors.inputBg} ${colors.inputBorder}`}
+                className={`h-9 ${colors.inputBg} ${colors.inputBorder}`}
               />
               <div className={`mt-1 text-xs ${colors.textMuted}`}>最低 2000，建议按百位递增</div>
             </div>
@@ -350,7 +363,7 @@ export function TopicAdminMenu({ topicId, status, onUpdate, className, isAuthor,
               取消
             </button>
             <button
-              className={`rounded px-3 py-1 text-sm ${colors.buttonPrimary} disabled:opacity-60 disabled:cursor-not-allowed`}
+              className={`rounded px-3 py-1 text-sm ${colors.buttonPrimary} disabled:cursor-not-allowed disabled:opacity-60`}
               onClick={async () => {
                 const delta = parseInt(increaseAmount, 10);
                 if (!increaseAmount || isNaN(delta) || delta < 2000) {
@@ -361,7 +374,11 @@ export function TopicAdminMenu({ topicId, status, onUpdate, className, isAuthor,
                 setIncreaseOpen(false);
                 setIncreaseAmount("2000");
               }}
-              disabled={!increaseAmount || isNaN(parseInt(increaseAmount, 10)) || parseInt(increaseAmount, 10) < 2000}
+              disabled={
+                !increaseAmount ||
+                isNaN(parseInt(increaseAmount, 10)) ||
+                parseInt(increaseAmount, 10) < 2000
+              }
             >
               提交
             </button>
@@ -398,7 +415,9 @@ export function TopicAdminMenu({ topicId, status, onUpdate, className, isAuthor,
               className={`${colors.inputBg} ${colors.inputBorder}`}
               maxLength={CANCEL_REASON_MAX}
             />
-            <div className={`text-xs ${colors.textMuted}`}>{cancelReason.length}/{CANCEL_REASON_MAX}</div>
+            <div className={`text-xs ${colors.textMuted}`}>
+              {cancelReason.length}/{CANCEL_REASON_MAX}
+            </div>
           </div>
         }
         confirmText="提交申请"

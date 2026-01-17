@@ -272,7 +272,7 @@ export const Timeline = ({
       {/* 底部操作按钮 */}
       <div className="mt-4 ml-10 flex items-center justify-center gap-3">
         <button
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 text-[#0088CC] transition-colors hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-neutral-200 text-[#0088CC] transition-colors hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700"
           onClick={() => {
             if (topicId) {
               useComposerStore.getState().open("REPLY", {

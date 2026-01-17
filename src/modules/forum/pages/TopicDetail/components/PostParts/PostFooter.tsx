@@ -91,6 +91,7 @@ export function PostFooter({
             targetId={post.isOp && topicId ? topicId : post.id}
             initialLiked={post.isLiked}
             initialCount={post.likes}
+            iconOnly
           />
 
           {canEdit && (
@@ -124,16 +125,16 @@ export function PostFooter({
             targetType={post.isOp ? "topic" : "post"}
             targetId={post.isOp && topicId ? topicId : post.id}
           />
-        </div>
 
-        {/* 帖子主回复按钮 */}
-        <button
-          onClick={handleReply}
-          className={`flex cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-[#A6A6A6] hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
-        >
-          <Reply className="h-5 w-5" />
-          <span>回复</span>
-        </button>
+          {/* 帖子主回复按钮 */}
+          <button
+            onClick={handleReply}
+            className={`text-md flex cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-[#A6A6A6] hover:bg-[#e9e9e9] hover:text-[#222] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
+          >
+            <Reply className="h-5 w-5" />
+            <span>回复</span>
+          </button>
+        </div>
       </div>
     </div>
   );

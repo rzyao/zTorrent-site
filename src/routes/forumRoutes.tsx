@@ -46,6 +46,10 @@ const TopicBountyCancelRequestsAdminPage = lazy(() =>
   })),
 );
 
+const TestButtonPage = lazy(() =>
+  import("@/modules/forum/pages/TestButtonPage").then((m) => ({ default: m.ButtonTestPage })),
+);
+
 /**
  * 论坛路由组件
  * 使用 ForumLayout 作为布局容器
@@ -94,6 +98,8 @@ export function ForumRoutes() {
       <Route path="admin/tag-groups" element={<TagGroupsPage />} />
       {/* 悬赏取消申请审核（管理员） */}
       <Route path="admin/bounty-cancel-requests" element={<TopicBountyCancelRequestsAdminPage />} />
+      {/* 按钮组件测试页 */}
+      <Route path="test/buttons" element={<TestButtonPage />} />
     </Route>
   );
 }
