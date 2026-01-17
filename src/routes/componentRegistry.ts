@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 组件注册表
  * 建立 componentKey → lazy component 映射
  * 用于动态路由系统根据后端配置加载对应组件
@@ -119,6 +119,11 @@ export const componentRegistry: Record<string, LazyComponent> = {
   ),
   TagGroupsPage: lazy(() =>
     import("@/modules/forum/pages/TagGroupsPage").then((m) => ({ default: m.TagGroupsPage })),
+  ),
+  TopicBountyCancelRequestsAdminPage: lazy(() =>
+    import("@/modules/forum/pages/Admin/TopicBountyCancelRequests").then((m) => ({
+      default: m.TopicBountyCancelRequestsAdminPage,
+    })),
   ),
 
   // ==================== Admin 模块 - 核心概览 ====================

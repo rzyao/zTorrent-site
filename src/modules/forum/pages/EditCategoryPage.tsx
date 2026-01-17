@@ -1,11 +1,17 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ForumsCategoriesService } from "@/api";
 import { CategoryForm } from "../components/CategoryForm";
 import { CategoryEditLayout } from "../components/CategoryEditLayout";
-import { Undo2 } from "lucide-react";
+import { Undo2, Trash2 } from "lucide-react";
 import { useForumTheme } from "../context/ForumThemeContext";
 import { Loader2 } from "lucide-react";
+import { ActionButton } from "../components/ui/ActionButton";
+import ConfirmDialog from "../components/ui/ConfirmDialog";
+import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAccess } from "@/context/AccessContext";
 
 /**
  * 编辑类别页面
@@ -16,6 +22,19 @@ export function EditCategoryPage() {
   const { categoryId } = useParams<{ categoryId: string }>();
   const { colors } = useForumTheme();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { access } = useAccess();
+  // 权限判定：仅 admin 或具备相应权限的用户显示删除入口
+  const canManage =
+    access?.username === "admin" ||
+    (Array.isArray(access?.roles) && access.roles.includes("admin")) ||
+    (Array.isArray(access?.permissions) &&
+      (access.permissions.includes("forums:categories:delete") ||
+        access.permissions.includes("forum:category:delete")));
+  // 删除确认弹窗状态
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  // 通用异步操作（带 loading 与 toast），删除成功提示“删除成功”
+  const { execute, loading } = useAsyncAction({ successMessage: "删除成功" });
   type SectionKey = "basic" | "appearance" | "visibility" | "advanced";
   const rawSection = useParams<{ section?: string }>().section;
   const section: SectionKey =
@@ -37,6 +56,16 @@ export function EditCategoryPage() {
       return response.data;
     },
     enabled: !!categoryId,
+    // 删除后该详情会返回 404，不属于可重试的瞬时错误
+    // 为避免重复请求，这里关闭 404 的自动重试
+    retry: (failureCount, error: any) => {
+      const status =
+        error?.response?.status ||
+        error?.status ||
+        error?.body?.statuscode ||
+        error?.data?.statuscode;
+      return status !== 404 && failureCount < 2;
+    },
   });
 
   // 加载状态
@@ -112,6 +141,51 @@ export function EditCategoryPage() {
           allowOtherTags: (category as any)?.allowOtherTags ?? false,
         }}
         activeSection={section}
+      />
+      {section === "advanced" && canManage && (
+        <div className="mt-8 max-w-3xl rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900/40 dark:bg-red-900/20">
+          <h2 className={`mb-2 text-lg font-semibold text-red-700 dark:text-red-400`}>危险操作</h2>
+          <p className={`mb-4 text-sm ${colors.textSecondary}`}>
+            删除此类别后，将从类别列表中移除，并可能影响其下的话题显示。请谨慎操作。
+          </p>
+          <ActionButton
+            color="ghost-red"
+            icon={Trash2}
+            onClick={() => setConfirmOpen(true)}
+            aria-label="删除此类别"
+          >
+            删除此类别
+          </ActionButton>
+        </div>
+      )}
+      {/* 删除确认弹窗：确认后删除并失效相关缓存，随后导航回类别列表 */}
+      <ConfirmDialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        title="删除类别"
+        content={
+          <div>
+            确定要删除
+            <span className="mx-1 font-semibold text-gray-900 dark:text-neutral-100">
+              {(category as any)?.name ?? ""}
+            </span>
+            吗？此操作可能影响该类别下的话题。
+          </div>
+        }
+        confirmText="确定删除"
+        cancelText="取消"
+        confirmLoading={loading}
+        onConfirm={async () => {
+          if (!categoryId) return;
+          await execute(async () => {
+            await ForumsCategoriesService.categoriesControllerRemove({ id: categoryId });
+            await queryClient.invalidateQueries({ queryKey: ["forums", "categories"] });
+            // 删除后不再需要此详情，直接移除缓存，避免触发不必要的 404 拉取
+            await queryClient.removeQueries({ queryKey: ["forum", "category", "by-id", categoryId] });
+          });
+          setConfirmOpen(false);
+          navigate("/forum/categories");
+        }}
       />
     </CategoryEditLayout>
   );

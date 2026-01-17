@@ -68,6 +68,7 @@ export interface TopicData {
     isBanner?: boolean;
     isTrending?: boolean;
   };
+  bounty?: import("../../types/bounty").ForumTopicBounty;
 }
 
 export interface SuggestedTopic {

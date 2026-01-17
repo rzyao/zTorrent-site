@@ -21,6 +21,7 @@ interface ExtendedApiTopicListResponse {
 
 // 复用 useTopicDetail 中定义的 ExtendedApiTopic 接口 (理想情况下应该提取到公共 types 文件)
 // 在这里重新定义一次以保持独立性，或者放入 common types
+import { ForumTopicBounty } from "../types/bounty";
 export interface ExtendedApiTopic extends Omit<ForumTopic, "tags"> {
   id: string;
   title: string;
@@ -55,6 +56,7 @@ export interface ExtendedApiTopic extends Omit<ForumTopic, "tags"> {
     username: string;
     avatar?: string;
   };
+  bounty?: ForumTopicBounty;
 }
 
 import { QueryTopicDto } from "@/api/models/QueryTopicDto";

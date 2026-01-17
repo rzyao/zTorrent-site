@@ -2,7 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AdminListTopicBountyCancelRequestsDto } from '../models/AdminListTopicBountyCancelRequestsDto';
+import type { AdminReviewTopicBountyCancelRequestDto } from '../models/AdminReviewTopicBountyCancelRequestDto';
 import type { AnnouncementDto } from '../models/AnnouncementDto';
+import type { AwardTopicBountyDto } from '../models/AwardTopicBountyDto';
+import type { CancelTopicBountyRequestDto } from '../models/CancelTopicBountyRequestDto';
 import type { CreateTopicDto } from '../models/CreateTopicDto';
 import type { ForumTopic } from '../models/ForumTopic';
 import type { IdParamDto } from '../models/IdParamDto';
@@ -10,6 +14,7 @@ import type { MoveTopicDto } from '../models/MoveTopicDto';
 import type { Object } from '../models/Object';
 import type { PaginationParamDto } from '../models/PaginationParamDto';
 import type { QueryTopicDto } from '../models/QueryTopicDto';
+import type { SetTopicBountyDto } from '../models/SetTopicBountyDto';
 import type { TopicPaginatedResponseDto } from '../models/TopicPaginatedResponseDto';
 import type { UpdateTopicParamDto } from '../models/UpdateTopicParamDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -237,6 +242,93 @@ export class ForumsTopicsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/forums/topics/my-list',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 设置话题悬赏
+     * @param requestBody
+     * @returns any 设置成功
+     * @throws ApiError
+     */
+    public static topicsControllerSetBounty(
+        requestBody: SetTopicBountyDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ForumTopic;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/topics/bounty/set',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 提交取消悬赏申请（需管理员审核）
+     * @param requestBody
+     * @returns any 提交成功
+     * @throws ApiError
+     */
+    public static topicsControllerRequestCancelBounty(
+        requestBody: CancelTopicBountyRequestDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ForumTopic;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/topics/bounty/cancel-request',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 采纳回复并发放悬赏
+     * @param requestBody
+     * @returns any 采纳成功
+     * @throws ApiError
+     */
+    public static topicsControllerAwardBounty(
+        requestBody: AwardTopicBountyDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ForumTopic;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/topics/bounty/award',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -522,6 +614,64 @@ export class ForumsTopicsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/forums/topics/admin/restore',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 取消悬赏申请列表 (管理员)
+     * @param requestBody
+     * @returns any 取消悬赏申请分页列表
+     * @throws ApiError
+     */
+    public static topicsControllerAdminListCancelRequests(
+        requestBody: AdminListTopicBountyCancelRequestsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Object;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/topics/admin/bounty/cancel-requests/list',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 审核取消悬赏申请 (管理员)
+     * @param requestBody
+     * @returns any 审核成功
+     * @throws ApiError
+     */
+    public static topicsControllerAdminReviewCancelRequest(
+        requestBody: AdminReviewTopicBountyCancelRequestDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ForumTopic;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/topics/admin/bounty/cancel-requests/review',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

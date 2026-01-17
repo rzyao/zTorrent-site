@@ -13,6 +13,7 @@ import { UserCard } from "@/modules/app/components/UserCard";
 import { useAccess } from "@/context/AccessContext";
 import { PostInlineEditor } from "./PostParts/PostInlineEditor";
 
+import { ForumTopicBounty } from "../../../types/bounty";
 interface PostProps {
   post: PostData;
   postIndex: number; // 从 1 开始的帖子索引
@@ -21,6 +22,9 @@ interface PostProps {
   topicTitle?: string;
   topicId?: string;
   incomingReplies?: PostData[];
+  bounty?: ForumTopicBounty;
+  isAuthor?: boolean;
+  onUpdated?: () => void;
 }
 
 export const Post = memo(function Post({
@@ -31,6 +35,9 @@ export const Post = memo(function Post({
   topicTitle,
   topicId,
   incomingReplies,
+  bounty,
+  isAuthor,
+  onUpdated,
 }: PostProps) {
   const isSmallAction = post.isSmallAction;
   const [isReplyExpanded, setIsReplyExpanded] = useState(false);
@@ -38,6 +45,7 @@ export const Post = memo(function Post({
   const [isEditing, setIsEditing] = useState(false);
   const { access } = useAccess();
   const canEdit = access?.username && access.username === post.username;
+  const isAuthorComputed = access?.username && access.username === (postIndex === 1 ? post.username : undefined);
 
   const { selectionMenu, setSelectionMenu, handleMouseUp, handleQuote } = usePostSelection(
     post,
@@ -154,6 +162,9 @@ export const Post = memo(function Post({
             topicId={topicId}
             canEdit={Boolean(canEdit && !isEditing)}
             onEdit={() => setIsEditing(true)}
+            bounty={bounty}
+            isAuthor={Boolean(isAuthor ?? isAuthorComputed)}
+            onUpdated={onUpdated}
           />
 
           <IncomingReplies

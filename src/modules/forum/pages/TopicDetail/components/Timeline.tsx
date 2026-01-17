@@ -1,4 +1,4 @@
-﻿import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 import { cn } from "@/utils/cn";
 
@@ -20,6 +20,8 @@ interface TimelineProps {
     isArchived: boolean;
   };
   onTopicUpdate?: () => void;
+  isAuthor?: boolean;
+  bounty?: import("../../../types/bounty").ForumTopicBounty;
 }
 
 import { Reply, Bell } from "lucide-react";
@@ -44,6 +46,8 @@ export const Timeline = ({
   topicTitle,
   topicStatus,
   onTopicUpdate,
+  isAuthor,
+  bounty,
 }: TimelineProps) => {
   const [percentage, setPercentage] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -183,7 +187,13 @@ export const Timeline = ({
       {/* 话题管理菜单 (仅管理员可见) - 放在时间轴顶部 */}
       {topicId && topicStatus && onTopicUpdate && (
         <div className="mb-4 ml-10 flex justify-center">
-          <TopicAdminMenu topicId={topicId} status={topicStatus} onUpdate={onTopicUpdate} />
+          <TopicAdminMenu
+            topicId={topicId}
+            status={topicStatus}
+            onUpdate={onTopicUpdate}
+            isAuthor={Boolean(isAuthor)}
+            bounty={bounty}
+          />
         </div>
       )}
 

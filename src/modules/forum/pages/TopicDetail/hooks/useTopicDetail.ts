@@ -56,6 +56,7 @@ interface ExtendedApiPost {
   }>;
 }
 
+import { ForumTopicBounty } from "../../../types/bounty";
 interface ExtendedApiTopic {
   id: string;
   title: string;
@@ -90,6 +91,7 @@ interface ExtendedApiTopic {
     avatar?: string;
   };
   tags?: Array<{ id: string; name: string }>;
+  bounty?: ForumTopicBounty;
 }
 
 /**
@@ -375,6 +377,7 @@ export function useTopicDetail(topicId: string | undefined, options?: { nearPost
         isBanner: thread.isBanner,
         isTrending: thread.isTrending,
       },
+      bounty: thread.bounty,
     };
   }
 

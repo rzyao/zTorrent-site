@@ -1,9 +1,11 @@
-import { Link as LinkIcon, Reply, Pencil } from "lucide-react";
+import { Link as LinkIcon, Reply, Pencil, CheckCircle2 } from "lucide-react";
 import { PostData } from "../../types";
 import { useComposerStore } from "../../../../components/Composer/ComposerStore";
 import { LikeButton } from "../../../../components/Interaction/LikeButton";
 import { BookmarkButton } from "../../../../components/Interaction/BookmarkButton";
 import { ReportDialog } from "../../../../components/Interaction/ReportDialog";
+import { ForumTopicBounty } from "../../../../types/bounty";
+import { useBountyActions } from "../../hooks/useBountyActions";
 
 interface PostFooterProps {
   post: PostData;
@@ -14,6 +16,9 @@ interface PostFooterProps {
   topicId?: string;
   canEdit?: boolean;
   onEdit?: () => void;
+  bounty?: ForumTopicBounty;
+  isAuthor?: boolean;
+  onUpdated?: () => void;
 }
 
 export function PostFooter({
@@ -25,6 +30,9 @@ export function PostFooter({
   topicId,
   canEdit,
   onEdit,
+  bounty,
+  isAuthor,
+  onUpdated,
 }: PostFooterProps) {
   const handleReply = () => {
     useComposerStore.getState().open("REPLY", {
@@ -33,6 +41,18 @@ export function PostFooter({
       replyToTopicId: topicId,
     });
   };
+
+  const { award } = useBountyActions(topicId, { onUpdated });
+  const isWinner = bounty?.winnerPostId && String(bounty.winnerPostId) === String(post.id);
+  const canAward =
+    Boolean(
+      isAuthor &&
+      bounty &&
+      bounty.status === "open" &&
+      bounty.cancelRequestStatus !== "pending" &&
+      topicId &&
+      post.username !== undefined,
+    ) && !post.isOp;
 
   return (
     <div className="mt-4 flex items-center gap-4 select-none">
@@ -50,6 +70,21 @@ export function PostFooter({
       {/* 右侧：操作按钮 + 回复 */}
       <div className="ml-auto flex items-center gap-4">
         <div className="flex items-center gap-1">
+          {isWinner && (
+            <span className="flex items-center gap-1 rounded-full bg-green-100 px-2 py-1 text-xs text-green-700 dark:bg-green-900/40 dark:text-green-400">
+              <CheckCircle2 className="h-4 w-4" />
+              已采纳
+            </span>
+          )}
+          {canAward && (
+            <button
+              onClick={() => award(post.id)}
+              className="flex cursor-pointer items-center justify-center rounded-full px-3 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50 dark:text-amber-400 dark:hover:bg-neutral-800"
+              title="采纳并发放悬赏"
+            >
+              采纳
+            </button>
+          )}
           {/* 点赞 */}
           <LikeButton
             type={post.isOp ? "topic" : "post"}

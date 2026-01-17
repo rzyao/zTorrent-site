@@ -30,9 +30,35 @@ export const TopicHeader = ({ topicData, canEdit, onEdit }: TopicHeaderProps) =>
   return (
     <div className="pb-2">
       <div className="mb-3 flex items-center justify-between">
-        <h1 className={`text-[24px] leading-tight font-bold ${colors.titleColor}`}>
-          {topicData.title}
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className={`text-[24px] leading-tight font-bold ${colors.titleColor}`}>
+            {topicData.title}
+          </h1>
+          {topicData.bounty && (
+            <>
+              {topicData.bounty.status === "open" && (
+                <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+                  悬赏 {topicData.bounty.amount}
+                </span>
+              )}
+              {topicData.bounty.status === "awarded" && (
+                <span className="rounded bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300">
+                  已采纳
+                </span>
+              )}
+              {topicData.bounty.status === "expired" && (
+                <span className="rounded bg-neutral-200 px-2 py-0.5 text-xs font-semibold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                  已到期
+                </span>
+              )}
+              {topicData.bounty.status === "canceled" && (
+                <span className="rounded bg-neutral-200 px-2 py-0.5 text-xs font-semibold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                  已取消
+                </span>
+              )}
+            </>
+          )}
+        </div>
         {canEdit && (
           <button
             onClick={onEdit}

@@ -1,8 +1,9 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, Megaphone, Bookmark } from "lucide-react";
+import { Home, Megaphone, Bookmark, ShieldCheck } from "lucide-react";
 import { useForumTheme } from "../../context/ForumThemeContext";
+import { useAccess } from "@/context/AccessContext";
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { id: "topics", name: "话题", icon: Home, path: "/forum/latest" },
   { id: "bookmarks", name: "我的收藏", icon: Bookmark, path: "/forum/bookmarks" },
   { id: "announcements", name: "公告", icon: Megaphone, path: "/forum/announcements" },
@@ -16,6 +17,14 @@ export function SidebarNav() {
   const { colors, theme } = useForumTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const { access } = useAccess();
+  const isAdminOrMod = access?.roles?.includes("admin") || access?.roles?.includes("moderator");
+  const NAV_ITEMS = isAdminOrMod
+    ? [
+        ...BASE_NAV_ITEMS,
+        { id: "admin-bounty-cancel", name: "悬赏取消审核", icon: ShieldCheck, path: "/forum/admin/bounty-cancel-requests" },
+      ]
+    : BASE_NAV_ITEMS;
 
   return (
     <nav className="py-1.5">

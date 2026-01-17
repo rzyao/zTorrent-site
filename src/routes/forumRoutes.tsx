@@ -40,6 +40,11 @@ const BookmarksPage = lazy(() =>
 const TagGroupsPage = lazy(() =>
   import("@/modules/forum/pages/TagGroupsPage").then((m) => ({ default: m.TagGroupsPage })),
 );
+const TopicBountyCancelRequestsAdminPage = lazy(() =>
+  import("@/modules/forum/pages/Admin/TopicBountyCancelRequests").then((m) => ({
+    default: m.TopicBountyCancelRequestsAdminPage,
+  })),
+);
 
 /**
  * 论坛路由组件
@@ -87,6 +92,8 @@ export function ForumRoutes() {
       <Route path="bookmarks" element={<BookmarksPage />} />
       {/* 标签组管理 */}
       <Route path="admin/tag-groups" element={<TagGroupsPage />} />
+      {/* 悬赏取消申请审核（管理员） */}
+      <Route path="admin/bounty-cancel-requests" element={<TopicBountyCancelRequestsAdminPage />} />
     </Route>
   );
 }

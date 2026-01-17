@@ -31,6 +31,8 @@ interface UiTopic {
   lastReplyTime: string;
   participants: Participant[];
   lastReplier: Participant;
+  bountyStatus?: 'open' | 'awarded' | 'expired' | 'canceled';
+  bountyAmount?: string;
 }
 
 interface ForumListProps {
@@ -104,6 +106,8 @@ function transformTopic(apiTopic: ExtendedApiTopic): UiTopic {
     lastReplyTime: formatDate(apiTopic.lastReplyAt || apiTopic.updatedAt),
     participants: participants.slice(0, 3),
     lastReplier: lastReplier,
+    bountyStatus: apiTopic.bounty?.status,
+    bountyAmount: apiTopic.bounty?.amount,
   };
 }
 
@@ -273,6 +277,26 @@ export function ForumList({
                                 )}
                                 {topic.isTrending && (
                                   <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
+                                )}
+                                {topic.bountyStatus === "open" && (
+                                  <span className="rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+                                    悬赏 {topic.bountyAmount}
+                                  </span>
+                                )}
+                                {topic.bountyStatus === "awarded" && (
+                                  <span className="rounded bg-green-100 px-1.5 py-0.5 text-xs font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300">
+                                    已采纳
+                                  </span>
+                                )}
+                                {topic.bountyStatus === "expired" && (
+                                  <span className="rounded bg-neutral-200 px-1.5 py-0.5 text-xs font-semibold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                    已到期
+                                  </span>
+                                )}
+                                {topic.bountyStatus === "canceled" && (
+                                  <span className="rounded bg-neutral-200 px-1.5 py-0.5 text-xs font-semibold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                    已取消
+                                  </span>
                                 )}
                                 <h3
                                   className={`line-clamp-2 text-sm font-medium ${colors.textPrimary} group-hover:text-blue-600 dark:group-hover:text-amber-400`}

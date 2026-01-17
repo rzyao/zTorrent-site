@@ -360,6 +360,19 @@ export function TopicDetail({
     return () => observer.disconnect();
   }, [handlePrevObserver]);
 
+  useEffect(() => {
+    const b = topicData?.bounty;
+    let timer: any;
+    if (b && b.status === "open" && new Date(b.expiresAt).getTime() < Date.now()) {
+      timer = setInterval(() => {
+        updateTopic();
+      }, 45000);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [topicData?.bounty?.status, topicData?.bounty?.expiresAt, updateTopic]);
+
   // 话题不存在
   if (!topicId) {
     return <div className="flex h-64 items-center justify-center text-neutral-400">话题不存在</div>;
@@ -456,6 +469,9 @@ export function TopicDetail({
                               topicTitle={topicData.title}
                               topicId={topicId}
                               incomingReplies={post.incomingReplies}
+                              bounty={topicData.bounty}
+                              isAuthor={Boolean(access?.username && access.username === (topicData.posts?.[0]?.username || ""))}
+                              onUpdated={updateTopic}
                             />
                           </div>
                         );
@@ -502,6 +518,8 @@ export function TopicDetail({
             topicTitle={topicData.title}
             topicStatus={topicData.status}
             onTopicUpdate={updateTopic}
+            isAuthor={Boolean(access?.username && access.username === (topicData.posts?.[0]?.username || ""))}
+            bounty={topicData.bounty}
           />
         </div>
       </div>
