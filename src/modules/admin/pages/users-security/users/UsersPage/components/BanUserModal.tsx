@@ -19,33 +19,33 @@ const formSchema = z.object({
   punishType: z.string().min(1, "请选择处罚类型"),
   reason: z.string().min(1, "请选择封禁原因"),
   detailReason: z.string().optional(),
-  banDays: z.string().min(1, "请选择封禁时长"), // Select value is string
+  banDays: z.string().min(1, "请选择封禁时长"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 interface BanUserModalProps {
-  banOpen: boolean;
-  setBanOpen: (v: boolean) => void;
-  banTargetId: string | undefined;
+  open: boolean;
+  onClose: (v: boolean) => void;
+  targetId: string | undefined;
   punishTypeOptions: { label: string; value: string }[];
   banReasonOptions: { label: string; value: string }[];
   banTimeOptions: { label: string; value: number }[];
   banDictLoading: boolean;
   punishTypesLoading: boolean;
-  fetchList: () => void;
+  onSuccess: () => void;
 }
 
 export const BanUserModal: React.FC<BanUserModalProps> = ({
-  banOpen,
-  setBanOpen,
-  banTargetId,
+  open,
+  onClose,
+  targetId,
   punishTypeOptions,
   banReasonOptions,
   banTimeOptions,
   banDictLoading,
   punishTypesLoading,
-  fetchList,
+  onSuccess,
 }) => {
   const {
     setValue,
@@ -64,15 +64,12 @@ export const BanUserModal: React.FC<BanUserModalProps> = ({
     },
   });
 
-  // Watch values for controlled components if needed, or rely on RHF Controller logic.
-  // Shadcn Select needs explicit onValueChange binding.
-
   const punishType = watch("punishType");
   const reason = watch("reason");
   const banDays = watch("banDays");
 
   useEffect(() => {
-    if (banOpen) {
+    if (open) {
       reset({
         punishType: "",
         reason: "",
@@ -80,21 +77,21 @@ export const BanUserModal: React.FC<BanUserModalProps> = ({
         banDays: "",
       });
     }
-  }, [banOpen, reset]);
+  }, [open, reset]);
 
   const onSubmit = async (values: FormValues) => {
-    if (!banTargetId) return;
+    if (!targetId) return;
     try {
       await PunishmentsService.punishmentsControllerApplyPunishment({
-        userId: banTargetId,
+        userId: targetId,
         type: values.punishType,
         reason: values.reason,
         detailReason: values.detailReason,
         durationDays: Number(values.banDays),
       } as any);
       toast.success("封禁成功");
-      setBanOpen(false);
-      fetchList();
+      onClose(false);
+      onSuccess();
     } catch (e: any) {
       toast.error(e?.message || "封禁失败");
     }
@@ -103,8 +100,8 @@ export const BanUserModal: React.FC<BanUserModalProps> = ({
   return (
     <Modal
       title="封禁用户"
-      open={banOpen}
-      onClose={() => setBanOpen(false)}
+      open={open}
+      onClose={() => onClose(false)}
       onOk={handleSubmit(onSubmit)}
       confirmLoading={isSubmitting}
     >
@@ -156,19 +153,7 @@ export const BanUserModal: React.FC<BanUserModalProps> = ({
           <Textarea
             placeholder="可选，输入封禁的详细原因"
             className="resize-none"
-            {
-              // Register props for textarea
-              ...{
-                onChange: (e) => setValue("detailReason", e.target.value),
-                onBlur: () => {},
-                name: "detailReason",
-                ref: () => {},
-              }
-            }
-            // Better: use register directly
-            {...{
-              ...register("detailReason"),
-            }}
+            {...register("detailReason")}
           />
         </div>
 

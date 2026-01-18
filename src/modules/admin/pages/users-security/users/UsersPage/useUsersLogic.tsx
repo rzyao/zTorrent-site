@@ -1,6 +1,21 @@
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
-import { Button } from "@/modules/admin/components/ui/button";
+import { MoreHorizontal } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { UsersService } from "@/api/services/UsersService";
+import { RolesService } from "@/api/services/RolesService";
+import { PunishmentDictsService } from "@/api/services/PunishmentDictsService";
+import { LevelsService } from "@/api/services/LevelsService";
+import { formatDate, formatDuration } from "@/modules/admin/utils/formatDate";
+import { ListUsersDto } from "@/api/models/ListUsersDto";
+import { AdvancedRuleDto } from "@/api/models/AdvancedRuleDto";
+import type { UserDto } from "@/api/models/UserDto";
+import type { UserIdDto } from "@/api/models/UserIdDto";
+import { STATUS_OPTIONS, VIP_LEVEL_OPTIONS } from "./constants";
+import type { AdvRule } from "./types";
+import { Column } from "@/modules/admin/components/ui/data-table";
 import { Tag } from "@/modules/admin/components/ui/tag";
+import { Button } from "@/modules/admin/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,28 +24,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/modules/admin/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { UsersService } from "@/api/services/UsersService";
-import { RolesService } from "@/api/services/RolesService";
-import { PunishmentDictsService } from "@/api/services/PunishmentDictsService";
-import { LevelsService } from "@/api/services/LevelsService";
-import { useAutoTableScroll } from "@/modules/admin/hooks/useAutoTableScroll";
-import { formatDate } from "@/modules/admin/utils/formatDate";
-import { ListUsersDto } from "@/api/models/ListUsersDto";
-import { AdvancedRuleDto } from "@/api/models/AdvancedRuleDto";
-import type { UpdateUserBodyDto } from "@/api/models/UpdateUserBodyDto";
-import type { UserIdDto } from "@/api/models/UserIdDto";
-import type { UserDto } from "@/api/models/UserDto";
-import { STATUS_OPTIONS, VIP_LEVEL_OPTIONS } from "@/modules/admin/shared/users/constants";
-import type { AdvRule } from "@/modules/admin/shared/users/types";
-import { toast } from "sonner";
 
 export const useUsersLogic = () => {
-  const { scrollY, tableContainerRef } = useAutoTableScroll(60);
   const navigate = useNavigate();
 
-  // State
+  // 状态管理
   const [query, setQuery] = useState("");
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -44,7 +42,7 @@ export const useUsersLogic = () => {
     pageOffsetRef.current = (page - 1) * pageSize;
   }, [page, pageSize]);
 
-  // Permission check
+  // 权限检查
   const can = useCallback((key: string): boolean => {
     try {
       const raw = localStorage.getItem("permissions");
@@ -56,13 +54,11 @@ export const useUsersLogic = () => {
     }
   }, []);
 
-  // Modals & Forms State
-  const [createOpen, setCreateOpen] = useState(false);
+  // 弹窗状态
   const [editOpen, setEditOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<UserDto | null>(null);
   const [banOpen, setBanOpen] = useState(false);
   const [banTargetId, setBanTargetId] = useState<string | undefined>(undefined);
-
   const [assignOpen, setAssignOpen] = useState(false);
   const [assigning, setAssigning] = useState(false);
   const [assignData, setAssignData] = useState<{ userId: string; roles: string[] }>({
@@ -71,8 +67,12 @@ export const useUsersLogic = () => {
   });
   const [rolesOptions, setRolesOptions] = useState<{ label: string; value: string }[]>([]);
   const [rolesLoading, setRolesLoading] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | undefined>(undefined);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailData, setDetailData] = useState<any>(null);
 
-  // Dictionary Options
+  // 字典数据
   const [banReasonOptions, setBanReasonOptions] = useState<{ label: string; value: string }[]>([]);
   const [banTimeOptions, setBanTimeOptions] = useState<{ label: string; value: number }[]>([]);
   const [banDictLoading, setBanDictLoading] = useState(false);
@@ -80,18 +80,14 @@ export const useUsersLogic = () => {
     [],
   );
   const [punishTypesLoading, setPunishTypesLoading] = useState(false);
+  const [levelOptions, setLevelOptions] = useState<{ label: string; value: string }[]>([]);
 
-  // Advanced Search
+  // 高级搜索
   const [advOpen, setAdvOpen] = useState(false);
   const [advRules, setAdvRules] = useState<AdvRule[]>([]);
   const [advLogic, setAdvLogic] = useState<"AND" | "OR">("AND");
-  const [levelOptions, setLevelOptions] = useState<{ label: string; value: string }[]>([]);
 
-  // Delete Confirm
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [deleteTargetId, setDeleteTargetId] = useState<string | undefined>(undefined);
-
-  // Load Dictionaries
+  // 加载字典
   const loadBanDictionaries = useCallback(async () => {
     setBanDictLoading(true);
     try {
@@ -142,10 +138,27 @@ export const useUsersLogic = () => {
     }
   }, []);
 
-  // Fetch List
-  const fetchListRef = useRef<null | (() => Promise<void>)>(null);
+  const loadLevelOptions = useCallback(async () => {
+    try {
+      const resp = await LevelsService.levelsCoreControllerList({
+        page: 1,
+        limit: 200,
+      });
+      const items: any[] = resp?.data?.items ?? [];
+      const opts = items.map((x: any) => ({
+        label: String(x.label || x.key || ""),
+        value: String(x.key || ""),
+      }));
+      setLevelOptions(opts);
+    } catch {}
+  }, []);
 
-  const fetchList = async () => {
+  useEffect(() => {
+    loadLevelOptions();
+  }, [loadLevelOptions]);
+
+  // 获取列表
+  const fetchList = useCallback(async () => {
     setLoading(true);
     try {
       const rulesMapped = advRules.map((r) => {
@@ -224,178 +237,32 @@ export const useUsersLogic = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchListRef.current = fetchList;
-  });
+  }, [advLogic, advRules, page, pageSize, query]);
 
   useEffect(() => {
     fetchList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, page, pageSize]);
+  }, [fetchList]);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const resp = await LevelsService.levelsCoreControllerList({
-          page: 1,
-          limit: 200,
-        });
-        const items: any[] = resp?.data?.items ?? [];
-        const opts = items.map((x: any) => ({
-          label: String(x.label || x.key || ""),
-          value: String(x.key || ""),
-        }));
-        setLevelOptions(opts);
-      } catch {}
-    })();
-  }, []);
+  // 搜索处理
+  const handleSearch = () => {
+    setPage(1);
+    setQuery(searchText);
+  };
 
-  const expandCacheRef = useRef<WeakMap<any, string>>(new WeakMap());
+  const handleClear = () => {
+    setSearchText("");
+    setQuery("");
+    setAdvRules([]);
+    setAdvLogic("AND");
+    setPage(1);
+  };
 
-  // Helper modals
-  const renderDetailContent = useCallback((d: any) => {
-    const roles: string[] = Array.isArray(d.roles) ? d.roles : d.roles ? [d.roles] : [];
-    const permissions: string[] = Array.isArray(d.permissions)
-      ? d.permissions
-      : d.permissions
-        ? [d.permissions]
-        : [];
-    const statusTag = (() => {
-      const s = d.status as UserDto["status"];
-      const color = s === "banned" ? "red" : s === "active" ? "green" : "gold";
-      const text = s === "banned" ? "已封禁" : s === "active" ? "正常" : "待激活";
-      return <Tag color={color}>{text}</Tag>;
-    })();
-
-    const vipNode = (
-      <div className="flex gap-1">
-        <Tag color={d.isVip ? "magenta" : "default"}>{d.isVip ? "VIP" : "非VIP"}</Tag>
-        {d.isVip && d.vipLevel && <Tag color="magenta">{d.vipLevel}</Tag>}
-      </div>
-    );
-    const lastLoginIp =
-      typeof d.lastLoginIp === "string"
-        ? d.lastLoginIp
-        : d.lastLoginIp
-          ? String(d.lastLoginIp)
-          : "-";
-
-    return (
-      <div className="space-y-6">
-        <div>
-          <h3 className="mb-2 font-medium">基础信息</h3>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            <div className="flex bg-neutral-50 px-3 py-2">
-              <span className="w-24 text-neutral-500">用户名</span>
-              <span>{d.username || "-"}</span>
-            </div>
-            <div className="flex bg-neutral-50 px-3 py-2">
-              <span className="w-24 text-neutral-500">邮箱</span>
-              <span>{d.email || "-"}</span>
-            </div>
-            <div className="flex bg-neutral-50 px-3 py-2">
-              <span className="w-24 text-neutral-500">角色</span>
-              <div className="flex flex-wrap gap-1">
-                {roles.length ? roles.map((x) => <Tag key={x}>{x}</Tag>) : <Tag>未设置</Tag>}
-              </div>
-            </div>
-            <div className="flex bg-neutral-50 px-3 py-2">
-              <span className="w-24 text-neutral-500">权限</span>
-              <div className="flex flex-wrap gap-1">
-                {permissions.length ? (
-                  permissions.map((x) => (
-                    <Tag key={x} color="purple">
-                      {x}
-                    </Tag>
-                  ))
-                ) : (
-                  <Tag>未设置</Tag>
-                )}
-              </div>
-            </div>
-            <div className="flex bg-neutral-50 px-3 py-2">
-              <span className="w-24 text-neutral-500">等级</span>
-              {d.level ? <Tag color="blue">{d.level}</Tag> : "-"}
-            </div>
-            <div className="flex bg-neutral-50 px-3 py-2">
-              <span className="w-24 text-neutral-500">VIP</span>
-              {vipNode}
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <h3 className="mb-2 font-medium">账号状态</h3>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            <div className="flex bg-neutral-50 px-3 py-2">
-              <span className="w-24 text-neutral-500">状态</span>
-              {statusTag}
-            </div>
-            <div className="flex bg-neutral-50 px-3 py-2">
-              <span className="w-24 text-neutral-500">下载权限</span>
-              <Tag color={d.hasDownloadPermission ? "green" : "red"}>
-                {d.hasDownloadPermission ? "允许" : "禁止"}
-              </Tag>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <h3 className="mb-2 font-medium">活跃信息</h3>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            <div className="flex bg-neutral-50 px-3 py-2">
-              <span className="w-24 text-neutral-500">最后访问</span>
-              <span>{formatDate(d.lastVisitAt || d.lastVisitTime)}</span>
-            </div>
-            <div className="flex bg-neutral-50 px-3 py-2">
-              <span className="w-24 text-neutral-500">最后登录</span>
-              <span>{formatDate(d.lastLoginAt || d.lastLoginTime)}</span>
-            </div>
-            <div className="flex bg-neutral-50 px-3 py-2">
-              <span className="w-24 text-neutral-500">最后登录IP</span>
-              <span>{lastLoginIp}</span>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <h3 className="mb-2 font-medium">时间</h3>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            <div className="flex bg-neutral-50 px-3 py-2">
-              <span className="w-24 text-neutral-500">创建时间</span>
-              <span>{formatDate(d.createdAt || d.createTime)}</span>
-            </div>
-            <div className="flex bg-neutral-50 px-3 py-2">
-              <span className="w-24 text-neutral-500">更新时间</span>
-              <span>{formatDate(d.updatedAt || d.updateTime)}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }, []);
-
-  const [detailOpen, setDetailOpen] = useState(false);
-  const [detailData, setDetailData] = useState<any>(null);
-
-  const openRolesModal = useCallback((record: any) => {
-    setDetailData({ title: "角色列表", type: "roles", record });
-    setDetailOpen(true);
-  }, []);
-
-  const openPermissionsModal = useCallback((record: any) => {
-    setDetailData({ title: "权限列表", type: "permissions", record });
-    setDetailOpen(true);
-  }, []);
-
+  // 操作处理
   const onAction = useCallback(
-    async (actionKey: string, record: any) => {
+    async (actionKey: string, record: UserDto) => {
       try {
-        const id = String(record?.id ?? record?._id ?? "");
-        const uid = id;
-        const uname = String(record?.username ?? record?.name ?? "");
+        const id = String(record.id);
+        const uname = String(record.username || "");
         switch (actionKey) {
           case "detail": {
             const resp = await UsersService.usersControllerDetail({
@@ -407,8 +274,8 @@ export const useUsersLogic = () => {
             break;
           }
           case "downloads": {
-            if (!uid) return;
-            navigate(`/torrents/user-records/${uid}`);
+            if (!id) return;
+            navigate(`/torrents/user-records/${id}`);
             break;
           }
           case "edit": {
@@ -417,7 +284,9 @@ export const useUsersLogic = () => {
             break;
           }
           case "assign": {
-            const existingRoles: string[] = Array.isArray(record?.roles) ? record.roles : [];
+            const existingRoles: string[] = Array.isArray(record?.roles)
+              ? (record.roles as any)
+              : [];
             setAssignData({ userId: id, roles: existingRoles });
             setAssignOpen(true);
             (async () => {
@@ -455,7 +324,7 @@ export const useUsersLogic = () => {
               toast.info("无封禁权限");
               return;
             }
-            setBanTargetId(uid);
+            setBanTargetId(id);
             loadBanDictionaries();
             loadPunishTypes();
             setBanOpen(true);
@@ -466,8 +335,6 @@ export const useUsersLogic = () => {
             navigate(`/users/punishments?username=${encodeURIComponent(uname)}`);
             break;
           }
-          default:
-            break;
         }
       } catch (e: any) {
         console.error(e?.message || "操作失败");
@@ -476,23 +343,48 @@ export const useUsersLogic = () => {
     [can, loadBanDictionaries, loadPunishTypes, navigate],
   );
 
-  const columns = useMemo(
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    try {
+      await UsersService.usersControllerRemove({ id: deleteTargetId } as UserIdDto);
+      toast.success("删除成功");
+      setDeleteConfirmOpen(false);
+      fetchList();
+    } catch (e: any) {
+      console.error(e?.message || "删除失败");
+    }
+  };
+
+  const openRolesModal = useCallback((record: any) => {
+    setDetailData({ title: "角色列表", type: "roles", record });
+    setDetailOpen(true);
+  }, []);
+
+  const openPermissionsModal = useCallback((record: any) => {
+    setDetailData({ title: "权限列表", type: "permissions", record });
+    setDetailOpen(true);
+  }, []);
+
+  // 列定义
+  const columns: Column<UserDto>[] = useMemo(
     () => [
       {
+        key: "index",
         title: "#",
         width: 50,
-        align: "center" as const,
+        align: "center",
         render: (_: any, __: any, index: number) => pageOffsetRef.current + index + 1,
       },
       {
+        key: "username",
         title: "用户",
-        dataIndex: "username" as const,
-        render: (_: any, r: any) => r.username || r.name,
+        dataIndex: "username",
         width: 150,
       },
       {
+        key: "status",
         title: "状态",
-        dataIndex: "status" as const,
+        dataIndex: "status",
         width: 100,
         render: (status: UserDto["status"]) => {
           const color = status === "banned" ? "red" : status === "active" ? "green" : "gold";
@@ -501,8 +393,8 @@ export const useUsersLogic = () => {
         },
       },
       {
+        key: "roles",
         title: "角色",
-        dataIndex: "roles" as const,
         width: 120,
         render: (_: any, r: any) => {
           const list: string[] = Array.isArray(r?.roles) ? r.roles : r?.roles ? [r.roles] : [];
@@ -520,8 +412,8 @@ export const useUsersLogic = () => {
         },
       },
       {
+        key: "permissions",
         title: "权限",
-        dataIndex: "permissions" as const,
         width: 120,
         render: (_: any, r: any) => {
           const list: string[] = Array.isArray(r?.permissions)
@@ -543,15 +435,16 @@ export const useUsersLogic = () => {
         },
       },
       {
+        key: "level",
         title: "等级",
-        dataIndex: "level" as const,
+        dataIndex: "level",
         width: 100,
-        render: (level: UserDto["level"]) =>
+        render: (level: string) =>
           level ? <Tag color="blue">{level}</Tag> : <Tag color="default">未设置</Tag>,
       },
       {
+        key: "vip",
         title: "VIP",
-        dataIndex: "isVip" as const,
         width: 150,
         render: (_: any, r: any) => {
           const isVip = Boolean(r.isVip);
@@ -565,29 +458,41 @@ export const useUsersLogic = () => {
         },
       },
       {
+        key: "download",
         title: "下载",
-        dataIndex: "hasDownloadPermission" as const,
+        dataIndex: "hasDownloadPermission",
         width: 100,
         render: (v: boolean) => <Tag color={v ? "green" : "red"}>{v ? "允许" : "禁止"}</Tag>,
       },
       {
+        key: "createdAt",
         title: "创建时间",
-        dataIndex: "createdAt" as const,
-        width: 160,
-        render: (_: any, r: any) => formatDate(r.createdAt || r.createTime),
+        dataIndex: "createdAt",
+        width: 120,
+        render: (v: string) => (
+          <span title={formatDate(v)} className="cursor-help">
+            {formatDuration(v)}
+          </span>
+        ),
       },
       {
+        key: "lastVisitAt",
         title: "访问时间",
-        dataIndex: "lastVisitAt" as const,
-        width: 160,
-        render: (_: any, r: any) => formatDate(r.lastVisitAt || r.lastVisitTime),
+        dataIndex: "lastVisitAt",
+        width: 120,
+        render: (v: string) => (
+          <span title={formatDate(v)} className="cursor-help">
+            {formatDuration(v)}
+          </span>
+        ),
       },
       {
+        key: "actions",
         title: "操作",
         width: 80,
-        align: "center" as const,
-        fixed: "right" as const,
-        render: (_: any, r: any) => (
+        align: "center",
+        fixed: "right",
+        render: (_: any, r: UserDto) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="text" size="small" className="h-8 w-8 p-0">
@@ -669,11 +574,10 @@ export const useUsersLogic = () => {
   );
 
   return {
-    scrollY,
-    tableContainerRef,
     searchText,
     setSearchText,
-    setQuery,
+    handleSearch,
+    handleClear,
     loading,
     data,
     total,
@@ -681,18 +585,10 @@ export const useUsersLogic = () => {
     pageSize,
     setPage,
     setPageSize,
-    expandCacheRef,
     columns,
     fetchList,
     can,
-    // Modals state
-    advOpen,
-    setAdvOpen,
-    advRules,
-    setAdvRules,
-    advLogic,
-    setAdvLogic,
-    advFieldOptions,
+    // Modals
     editOpen,
     setEditOpen,
     editingUser,
@@ -706,30 +602,23 @@ export const useUsersLogic = () => {
     punishTypesLoading,
     assignOpen,
     setAssignOpen,
+    assignData,
     assigning,
     setAssigning,
-    assignData,
     rolesOptions,
     rolesLoading,
     deleteConfirmOpen,
     setDeleteConfirmOpen,
-    deleteTargetId,
-    setDeleteTargetId,
+    handleDelete,
     detailOpen,
     setDetailOpen,
     detailData,
-    renderDetailContent,
-    createOpen,
-    setCreateOpen,
+    advOpen,
+    setAdvOpen,
+    advRules,
+    setAdvRules,
+    advLogic,
+    setAdvLogic,
+    advFieldOptions,
   };
-};
-
-export const handleDeleteUser = async (id: string, fetchList: () => void) => {
-  try {
-    await UsersService.usersControllerRemove({ id } as UserIdDto);
-    toast.success("删除成功");
-    fetchList();
-  } catch (e: any) {
-    console.error(e?.message || "删除失败");
-  }
 };

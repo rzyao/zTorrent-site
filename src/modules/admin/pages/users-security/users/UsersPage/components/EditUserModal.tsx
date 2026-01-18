@@ -12,24 +12,24 @@ import type { UpdateUserBodyDto } from "@/api/models/UpdateUserBodyDto";
 
 const formSchema = z.object({
   id: z.string().min(1, "缺少用户ID"),
-  email: z.string().email("邮箱格式不忽略").optional().or(z.literal("")),
+  email: z.string().email("邮箱格式不正确").optional().or(z.literal("")),
   password: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 interface EditUserModalProps {
-  editOpen: boolean;
-  setEditOpen: (v: boolean) => void;
+  open: boolean;
+  onClose: (v: boolean) => void;
   editingUser: UserDto | null;
-  fetchList: () => void;
+  onSuccess: () => void;
 }
 
 export const EditUserModal: React.FC<EditUserModalProps> = ({
-  editOpen,
-  setEditOpen,
+  open,
+  onClose,
   editingUser,
-  fetchList,
+  onSuccess,
 }) => {
   const {
     register,
@@ -46,14 +46,14 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({
   });
 
   useEffect(() => {
-    if (editOpen && editingUser) {
+    if (open && editingUser) {
       reset({
         id: editingUser.id || "",
         email: editingUser.email || "",
         password: "",
       });
     }
-  }, [editOpen, editingUser, reset]);
+  }, [open, editingUser, reset]);
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -64,8 +64,8 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({
       };
       await UsersService.usersControllerUpdate(payload);
       toast.success("更新成功");
-      setEditOpen(false);
-      fetchList();
+      onClose(false);
+      onSuccess();
     } catch (e: any) {
       toast.error(e?.message || "更新失败");
     }
@@ -74,8 +74,8 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({
   return (
     <Modal
       title="编辑用户"
-      open={editOpen}
-      onClose={() => setEditOpen(false)}
+      open={open}
+      onClose={() => onClose(false)}
       onOk={handleSubmit(onSubmit)}
       confirmLoading={isSubmitting}
     >

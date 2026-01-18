@@ -172,7 +172,7 @@ export const componentRegistry: Record<string, LazyComponent> = {
 
   // ==================== Admin 模块 - 用户与安全 (users-security) ====================
   // 用户管理
-  UsersPage: lazy(() => import("@/modules/admin/pages/users-security/users/UsersList")),
+  UsersPage: lazy(() => import("@/modules/admin/pages/users-security/users/UsersPage")),
   PunishmentsPage: lazy(() => import("@/modules/admin/pages/users-security/users/punishments")),
   LevelsPage: lazy(() => import("@/modules/admin/pages/users-security/users/levels")),
   // 权限中心

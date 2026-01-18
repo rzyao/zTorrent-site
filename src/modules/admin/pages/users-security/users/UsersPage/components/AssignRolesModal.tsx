@@ -20,25 +20,25 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface AssignRolesModalProps {
-  assignOpen: boolean;
-  setAssignOpen: (v: boolean) => void;
+  open: boolean;
+  onClose: (v: boolean) => void;
   assignData: { userId: string; roles: string[] };
   assigning: boolean;
   setAssigning: (v: boolean) => void;
   rolesOptions: { label: string; value: string }[];
   rolesLoading: boolean;
-  fetchList: () => void;
+  onSuccess: () => void;
 }
 
 export const AssignRolesModal: React.FC<AssignRolesModalProps> = ({
-  assignOpen,
-  setAssignOpen,
+  open,
+  onClose,
   assignData,
   assigning,
   setAssigning,
   rolesOptions,
   rolesLoading,
-  fetchList,
+  onSuccess,
 }) => {
   const { register, control, handleSubmit, reset } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -50,14 +50,14 @@ export const AssignRolesModal: React.FC<AssignRolesModalProps> = ({
   });
 
   useEffect(() => {
-    if (assignOpen) {
+    if (open) {
       reset({
         userId: assignData.userId,
         roles: assignData.roles,
         permissionKeys: "",
       });
     }
-  }, [assignOpen, assignData, reset]);
+  }, [open, assignData, reset]);
 
   const onSubmit = async (values: FormValues) => {
     setAssigning(true);
@@ -85,8 +85,8 @@ export const AssignRolesModal: React.FC<AssignRolesModalProps> = ({
       }
 
       toast.success("分配完成");
-      setAssignOpen(false);
-      fetchList();
+      onClose(false);
+      onSuccess();
     } catch (e: any) {
       toast.error(e?.message || "分配失败");
     } finally {
@@ -97,8 +97,8 @@ export const AssignRolesModal: React.FC<AssignRolesModalProps> = ({
   return (
     <Modal
       title="分配角色/权限到用户（覆盖式）"
-      open={assignOpen}
-      onClose={() => setAssignOpen(false)}
+      open={open}
+      onClose={() => onClose(false)}
       onOk={handleSubmit(onSubmit)}
       confirmLoading={assigning}
     >
@@ -153,6 +153,9 @@ export const AssignRolesModal: React.FC<AssignRolesModalProps> = ({
 
         <div className="space-y-2">
           <Label>权限键列表</Label>
+          <span className="ml-2 text-xs font-normal text-neutral-400">
+            (注意：这将覆盖该用户的所有独立权限)
+          </span>
           <Textarea
             {...register("permissionKeys")}
             placeholder="输入权限键，支持逗号或换行分隔"
