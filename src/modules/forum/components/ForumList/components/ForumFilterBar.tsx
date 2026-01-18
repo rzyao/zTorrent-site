@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { Button } from "@/modules/forum/components/ui/button";
-import { ActionButton } from "@/modules/forum/components/ui/ActionButton";
 import { Popover, PopoverContent, PopoverTrigger } from "@/modules/forum/components/ui/popover";
 import {
   Command,
@@ -114,11 +113,11 @@ export function ForumFilterBar({
         {/* Category Dropdown */}
         <Popover open={openCategory} onOpenChange={setOpenCategory}>
           <PopoverTrigger asChild>
-            <button className={filterButtonClass}>
+            <Button variant="none" className={filterButtonClass}>
               <LayoutGrid className="h-4 w-4 opacity-50" />
               <span className="max-w-[100px] truncate">{currentCategoryName}</span>
               <ChevronsUpDown className="h-3.5 w-3.5 opacity-50" />
-            </button>
+            </Button>
           </PopoverTrigger>
           <PopoverContent
             className={cn(
@@ -173,11 +172,11 @@ export function ForumFilterBar({
         {/* Tag Dropdown */}
         <Popover open={openTag} onOpenChange={setOpenTag}>
           <PopoverTrigger asChild>
-            <button className={filterButtonClass}>
+            <Button variant="none" className={filterButtonClass}>
               <Hash className="h-4 w-4 opacity-50" />
               <span className="max-w-[80px] truncate">{currentTagName}</span>
               <ChevronsUpDown className="h-3.5 w-3.5 opacity-50" />
-            </button>
+            </Button>
           </PopoverTrigger>
           <PopoverContent
             className={cn(
@@ -220,7 +219,8 @@ export function ForumFilterBar({
 
         {/* Sort Tabs */}
         <div className="flex items-center gap-1">
-          <button
+          <Button
+            variant="none"
             className={getSortTabClass(sortBy === "latest")}
             onClick={() => {
               if (selectedCategory && selectedCategory !== "all") {
@@ -231,8 +231,9 @@ export function ForumFilterBar({
             }}
           >
             最新
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="none"
             className={getSortTabClass(sortBy === "hot")}
             onClick={() => {
               if (selectedCategory && selectedCategory !== "all") {
@@ -243,7 +244,7 @@ export function ForumFilterBar({
             }}
           >
             热门
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -251,21 +252,20 @@ export function ForumFilterBar({
       <div className="flex items-center gap-3">
         {/* Edit Category Button - Only show when a specific category is selected */}
         {selectedCategory && selectedCategory !== "all" && (
-          <Link to={`/forum/category/${selectedCategory}/edit`}>
-            <button
-              className={cn(
-                "flex items-center justify-center rounded-lg border border-gray-200 bg-white p-2 text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200",
-              )}
-              title="编辑类别"
-            >
-              <Wrench className="h-4 w-4" />
-            </button>
-          </Link>
+          <Button
+            variant="default"
+            size="icon"
+            title="编辑类别"
+            onClick={() => navigate(`/forum/category/${selectedCategory}/edit`)}
+          >
+            <Wrench className="h-4 w-4" />
+          </Button>
         )}
 
         {/* Create Topic Button - 使用 Composer 组件 */}
         {/* Create Topic Button - 使用 Composer 组件 */}
-        <ActionButton
+        <Button
+          variant="primary"
           onClick={() => {
             import("../../Composer/ComposerStore").then(({ useComposerStore }) => {
               useComposerStore.getState().open("CREATE_TOPIC", {
@@ -273,12 +273,11 @@ export function ForumFilterBar({
               });
             });
           }}
-          icon={Plus}
-          className="font-medium"
         >
+          <Plus className="h-4 w-4" />
           <span className="hidden sm:inline">新建话题</span>
           <span className="sm:hidden">新建</span>
-        </ActionButton>
+        </Button>
       </div>
     </div>
   );

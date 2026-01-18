@@ -10,6 +10,7 @@ import type { CancelTopicBountyRequestDto } from '../models/CancelTopicBountyReq
 import type { CreateTopicDto } from '../models/CreateTopicDto';
 import type { ForumTopic } from '../models/ForumTopic';
 import type { IdParamDto } from '../models/IdParamDto';
+import type { IncreaseTopicBountyDto } from '../models/IncreaseTopicBountyDto';
 import type { MoveTopicDto } from '../models/MoveTopicDto';
 import type { Object } from '../models/Object';
 import type { PaginationParamDto } from '../models/PaginationParamDto';
@@ -329,6 +330,35 @@ export class ForumsTopicsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/forums/topics/bounty/award',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 追加话题悬赏金额
+     * @param requestBody
+     * @returns any 追加成功
+     * @throws ApiError
+     */
+    public static topicsControllerIncreaseBounty(
+        requestBody: IncreaseTopicBountyDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: ForumTopic;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/forums/topics/bounty/increase',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

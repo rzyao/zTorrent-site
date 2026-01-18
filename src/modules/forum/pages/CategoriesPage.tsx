@@ -74,7 +74,7 @@ export function CategoriesPage() {
               });
             }}
           >
-            <MessageSquare className="mr-2 h-4 w-4" />
+            <MessageSquare className="h-4 w-4" />
             新话题
           </Button>
 
@@ -85,7 +85,7 @@ export function CategoriesPage() {
               setCreateOpen(true);
             }}
           >
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="h-4 w-4" />
             新增类别
           </Button>
         </div>

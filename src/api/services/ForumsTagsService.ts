@@ -10,6 +10,7 @@ import type { MergeTagDto } from '../models/MergeTagDto';
 import type { Object } from '../models/Object';
 import type { PaginationParamDto } from '../models/PaginationParamDto';
 import type { SearchTagDto } from '../models/SearchTagDto';
+import type { TagDetailResponseDto } from '../models/TagDetailResponseDto';
 import type { TagPaginatedResponseDto } from '../models/TagPaginatedResponseDto';
 import type { UpdateTagDto } from '../models/UpdateTagDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -114,7 +115,7 @@ export class ForumsTagsService {
     ): CancelablePromise<{
         code?: number;
         message?: string;
-        data?: ForumTag;
+        data?: TagDetailResponseDto;
         path?: string;
         timestamp?: string;
     }> {

@@ -357,7 +357,7 @@ export const ForumComposer: React.FC = () => {
           {isCreateTopic && <ComposerInputs />}
 
           {/* Editor & Preview Split View - 富文本模式不显示预览 */}
-          <div className="flex min-h-0 flex-1 gap-4">
+          <div className={cn("flex min-h-0 flex-1", showPreview && !isRichText ? "gap-4" : "")}>
             <div
               className={cn(
                 "h-full min-w-0 transition-all duration-300 ease-in-out",
@@ -391,8 +391,8 @@ export const ForumComposer: React.FC = () => {
                 舍弃
               </Button>
               <Button variant="primary" size="sm" onClick={handleSubmit} loading={isSubmitting}>
-                <Send className="mr-2 h-4 w-4" />
-                发布 {isCreateTopic ? "话题" : "回复"}
+                <Send className="h-4 w-4" />
+                发布{isCreateTopic ? "话题" : "回复"}
               </Button>
             </div>
           </div>

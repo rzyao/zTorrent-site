@@ -205,6 +205,7 @@ export type { IdDto } from './models/IdDto';
 export type { IdParamDto } from './models/IdParamDto';
 export type { ImportNavigationDto } from './models/ImportNavigationDto';
 export type { ImportRoutesDto } from './models/ImportRoutesDto';
+export type { IncreaseTopicBountyDto } from './models/IncreaseTopicBountyDto';
 export type { IncrementViewsDto } from './models/IncrementViewsDto';
 export type { IncrementViewsResponseDto } from './models/IncrementViewsResponseDto';
 export type { InviteStatusDto } from './models/InviteStatusDto';
@@ -463,6 +464,7 @@ export type { SubscriptionCheckResponseDto } from './models/SubscriptionCheckRes
 export type { SubscriptionPaginatedResponseDto } from './models/SubscriptionPaginatedResponseDto';
 export type { SuccessCountDto } from './models/SuccessCountDto';
 export type { SuccessDto } from './models/SuccessDto';
+export type { TagDetailResponseDto } from './models/TagDetailResponseDto';
 export type { TagGroupPaginatedResponseDto } from './models/TagGroupPaginatedResponseDto';
 export type { TagPaginatedResponseDto } from './models/TagPaginatedResponseDto';
 export type { TicketDetailDto } from './models/TicketDetailDto';

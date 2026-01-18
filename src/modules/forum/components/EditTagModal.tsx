@@ -67,10 +67,11 @@ export function EditTagModal({ isOpen, onClose, tagId }: EditTagModalProps) {
 
   useEffect(() => {
     if (!isOpen) return;
-    const name = String(tagDetail?.name || "");
-    const groupIds = Array.isArray(tagDetail?.groupIds)
-      ? (tagDetail?.groupIds as any[]).map((x) => String(x))
-      : Array.isArray(tagDetail?.groups)
+    // 统一依据后端返回的 groups 字段计算默认选中
+    // 说明：后端已将 /forums/tags/detail 的返回补齐 groups: ForumTagGroup[]
+    // 因此这里不再兼容旧的 groupIds 字段，直接使用 groups[].id
+    const name = String(tagDetail?.name ?? "");
+    const groupIds = Array.isArray(tagDetail?.groups)
       ? (tagDetail?.groups as any[]).map((g: any) => String(g?.id))
       : [];
     form.reset({ name, groupIds });
@@ -115,8 +116,10 @@ export function EditTagModal({ isOpen, onClose, tagId }: EditTagModalProps) {
                   <FormLabel className={colors.textSecondary}>名称</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="输入标签名称..."
+                      placeholder="标签名称不可修改"
                       {...field}
+                      disabled
+                      readOnly
                       className={cn("focus-visible:ring-2", colors.inputBg, colors.inputBorder)}
                     />
                   </FormControl>
@@ -148,24 +151,23 @@ export function EditTagModal({ isOpen, onClose, tagId }: EditTagModalProps) {
                                 <FormItem className="flex flex-row items-start space-y-0 space-x-3">
                                   <FormControl>
                                     <Checkbox
-                                      checked={field.value?.includes(group.id)}
+                                      checked={field.value?.includes(String(group.id))}
                                       onCheckedChange={(checked) =>
                                         checked
-                                          ? field.onChange([...field.value, group.id])
-                                          : field.onChange(field.value?.filter((v) => v !== group.id))
+                                          ? field.onChange([...field.value, String(group.id)])
+                                          : field.onChange(field.value?.filter((v) => v !== String(group.id)))
                                       }
                                       className={cn(
-                                        "data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground border-gray-400",
+                                        // 将选中态统一为 #0088CC，满足视觉规范
+                                        "data-[state=checked]:bg-[#0088CC] data-[state=checked]:text-white data-[state=checked]:border-[#0088CC] border-gray-400",
                                         colors.borderColor,
                                       )}
-                                      style={group.color ? { borderColor: group.color } : {}}
+                                    /* 边框不再继承标签组颜色，避免出现红色/其他色的边框
+                                       说明：组色指示通过右侧的小圆点展示；未选中时边框保持中性灰，选中时为 #0088CC */
                                     />
                                   </FormControl>
                                   <FormLabel className={cn("flex cursor-pointer items-center gap-2 font-normal", colors.textPrimary)}>
                                     <span>{group.name}</span>
-                                    {group.color && (
-                                      <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: group.color }} />
-                                    )}
                                   </FormLabel>
                                 </FormItem>
                               )}
@@ -182,7 +184,10 @@ export function EditTagModal({ isOpen, onClose, tagId }: EditTagModalProps) {
               )}
             />
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={onClose} className={cn(colors.buttonSecondary, "border-transparent")}>
+              {/* 使用 Button 的语义化变体“cancel”，替代不受支持的“outline”
+                 原因：Button 组件的 variant 类型为 "none" | "default" | "primary" | "cancel" | "danger" | "destructive"
+                 而 "outline" 不在允许范围内，导致类型错误。这里选择 "cancel" 以符合“取消”按钮语义与样式 */}
+              <Button type="button" variant="cancel" onClick={onClose} >
                 取消
               </Button>
               <Button type="submit" disabled={updateMutation.isPending} className={colors.buttonPrimary}>
@@ -195,4 +200,3 @@ export function EditTagModal({ isOpen, onClose, tagId }: EditTagModalProps) {
     </Dialog>
   );
 }
-

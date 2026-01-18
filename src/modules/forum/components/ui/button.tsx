@@ -127,47 +127,60 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           // Primary 变体自动启用 ripple，需要 overflow-hidden
           variant === "primary" && animation !== "bounce" && "overflow-hidden",
         )}
+        {...props}
         ref={combinedRef}
         onClick={handleClick}
         disabled={loading || props.disabled}
-        {...props}
       >
-        {/* Ripple Effect Layer */}
-        {ripples.map((ripple) => (
-          <span
-            key={ripple.id}
-            className="animate-ripple pointer-events-none absolute rounded-full bg-white/30"
-            style={{
-              top: ripple.y,
-              left: ripple.x,
-              width: ripple.size,
-              height: ripple.size,
-            }}
-          />
-        ))}
+        {asChild ? (
+          props.children
+        ) : (
+          <>
+            {/* Ripple Effect Layer */}
+            {ripples.map((ripple) => (
+              <span
+                key={ripple.id}
+                className="animate-ripple pointer-events-none absolute rounded-full bg-white/30"
+                style={{
+                  top: ripple.y,
+                  left: ripple.x,
+                  width: ripple.size,
+                  height: ripple.size,
+                }}
+              />
+            ))}
 
-        {/* Bounce 动画: Ping 波纹特效 (照抄 ToggleButton) */}
-        {showBounce && (
-          <span className="pointer-events-none absolute inset-0 animate-ping rounded-[inherit] border-2 border-current opacity-40" />
+            {/* Bounce 动画: Ping 波纹特效 (照抄 ToggleButton) */}
+            {showBounce && (
+              <span className="pointer-events-none absolute inset-0 animate-ping rounded-[inherit] border-2 border-current opacity-40" />
+            )}
+
+            {loading && <Loader2 className="mr-2 size-4 animate-spin" />}
+            {props.children}
+
+            {/* 注入动画样式 */}
+            <style
+              dangerouslySetInnerHTML={{
+                __html: `
+                  @keyframes bounce-subtle {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-3px); }
+                  }
+                  .animate-bounce-subtle {
+                    animation: bounce-subtle 0.4s ease-out;
+                  }
+                  @keyframes ripple {
+                    from { transform: scale(0); opacity: 1; }
+                    to { transform: scale(4); opacity: 0; }
+                  }
+                  .animate-ripple {
+                    animation: ripple 600ms linear forwards;
+                  }
+                `,
+              }}
+            />
+          </>
         )}
-
-        {loading && <Loader2 className="mr-2 size-4 animate-spin" />}
-        {props.children}
-
-        {/* 局部样式注入 - 微弹跳动画 */}
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              @keyframes bounce-subtle {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-3px); }
-              }
-              .animate-bounce-subtle {
-                animation: bounce-subtle 0.4s ease-out;
-              }
-            `,
-          }}
-        />
       </Comp>
     );
   },

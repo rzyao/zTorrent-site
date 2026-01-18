@@ -1,4 +1,4 @@
-﻿import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -158,14 +158,16 @@ export function CreateTagModal({ isOpen, onClose }: CreateTagModalProps) {
                                           return checked
                                             ? field.onChange([...field.value, group.id])
                                             : field.onChange(
-                                                field.value?.filter((value) => value !== group.id),
-                                              );
+                                              field.value?.filter((value) => value !== group.id),
+                                            );
                                         }}
                                         className={cn(
-                                          "data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground border-gray-400",
+                                          // 将选中态统一为 #0088CC，满足视觉规范
+                                          "data-[state=checked]:bg-[#0088CC] data-[state=checked]:text-white data-[state=checked]:border-[#0088CC] border-gray-400",
                                           colors.borderColor,
                                         )}
-                                        style={group.color ? { borderColor: group.color } : {}}
+                                      /* 边框不再继承标签组颜色，避免出现红色/其他色的边框
+                                         说明：组色指示通过右侧的小圆点展示；未选中时边框保持中性灰，选中时为 #0088CC */
                                       />
                                     </FormControl>
                                     <FormLabel
@@ -175,12 +177,6 @@ export function CreateTagModal({ isOpen, onClose }: CreateTagModalProps) {
                                       )}
                                     >
                                       <span>{group.name}</span>
-                                      {group.color && (
-                                        <span
-                                          className="inline-block h-2 w-2 rounded-full"
-                                          style={{ backgroundColor: group.color }}
-                                        />
-                                      )}
                                     </FormLabel>
                                   </FormItem>
                                 );
@@ -203,7 +199,7 @@ export function CreateTagModal({ isOpen, onClose }: CreateTagModalProps) {
             <DialogFooter>
               <Button
                 type="button"
-                variant="outline"
+                variant="cancel"
                 onClick={onClose}
                 className={cn(colors.buttonSecondary, "border-transparent")}
               >
