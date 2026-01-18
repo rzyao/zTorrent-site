@@ -25,7 +25,8 @@ import {
 } from "@/modules/forum/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/modules/forum/components/ui/tabs";
 import { useForumTheme } from "../context/ForumThemeContext";
-import { ActionButton } from "../components/ui/ActionButton";
+import { Button } from "../components/ui/button";
+import { cn } from "@/utils/cn";
 
 interface SortableItemProps {
   id: string;
@@ -344,29 +345,26 @@ export function SidebarCustomizeModal({
 
         {/* Footer */}
         <div className="mt-4 flex items-center justify-between">
-          <button
+          <Button
+            variant="none"
+            size="none"
             onClick={onReset}
-            className={`flex items-center gap-1.5 text-sm ${colors.textSecondary} transition-colors hover:text-blue-500`}
+            className={cn(
+              "flex items-center gap-1.5 text-sm transition-colors hover:text-blue-500",
+              colors.textSecondary,
+            )}
           >
             <RotateCcw className="h-4 w-4" />
             重置为默认值
-          </button>
+          </Button>
 
           <div className="flex gap-3">
-            <button
-              onClick={onClose}
-              className={`rounded-md px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 dark:text-neutral-400 dark:hover:bg-white/5`}
-            >
+            <Button variant="cancel" size="sm" onClick={onClose}>
               取消
-            </button>
-            <ActionButton
-              onClick={handleSave}
-              loading={isLoading}
-              size="md"
-              className="rounded-md" // 保持原有圆角风格或与其他模态框一致，这里根据上下文使用圆角
-            >
+            </Button>
+            <Button variant="primary" size="sm" onClick={handleSave} loading={isLoading}>
               保存变更
-            </ActionButton>
+            </Button>
           </div>
         </div>
       </DialogContent>

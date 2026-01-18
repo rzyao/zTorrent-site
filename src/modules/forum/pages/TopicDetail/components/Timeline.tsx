@@ -28,6 +28,7 @@ import { Reply, Bell } from "lucide-react";
 import { useComposerStore } from "../../../components/Composer/ComposerStore";
 import { NotificationSelector } from "./NotificationSelector";
 import { TopicAdminMenu } from "./TopicAdminMenu";
+import { Button } from "@/modules/forum/components/ui/button";
 
 const SCROLLER_HEIGHT = 60; // 滚动滑块高度
 const SCROLL_AREA_HEIGHT = 300; // 滚动区域总高度
@@ -271,8 +272,10 @@ export const Timeline = ({
 
       {/* 底部操作按钮 */}
       <div className="mt-4 ml-10 flex items-center justify-center gap-3">
-        <button
-          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-neutral-200 text-[#0088CC] transition-colors hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+        <Button
+          variant="none"
+          size="icon"
+          className="h-9 w-9 rounded-full bg-neutral-200 text-[#0088CC] hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700"
           onClick={() => {
             if (topicId) {
               useComposerStore.getState().open("REPLY", {
@@ -284,7 +287,7 @@ export const Timeline = ({
           title="回复话题"
         >
           <Reply className="h-5 w-5" />
-        </button>
+        </Button>
         <NotificationSelector minimal />
       </div>
     </div>

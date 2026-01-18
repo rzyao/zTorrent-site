@@ -6,7 +6,6 @@ import { ComposerPreview } from "./ComposerPreview";
 import { cn } from "@/utils/cn";
 import { Minimize2, Maximize2, X, ChevronsDown, ChevronsUp, Send } from "lucide-react";
 import { Button } from "@/modules/forum/components/ui/button";
-import { ActionButton } from "@/modules/forum/components/ui/ActionButton";
 import { ForumsTopicsService, ForumsPostsService } from "@/api";
 import { toast } from "sonner";
 import { useNavigate, Link } from "react-router-dom";
@@ -388,18 +387,13 @@ export const ForumComposer: React.FC = () => {
               <span className="text-green-600/80">Draft saved</span>
             </div>
             <div className="flex gap-2">
-              <Button variant="ghost" onClick={() => discardDraft()}>
+              <Button variant="destructive" size="sm" onClick={() => discardDraft()}>
                 舍弃
               </Button>
-              <ActionButton
-                onClick={handleSubmit}
-                icon={Send}
-                loading={isSubmitting}
-                size="md"
-                className="rounded-md"
-              >
+              <Button variant="primary" size="sm" onClick={handleSubmit} loading={isSubmitting}>
+                <Send className="mr-2 h-4 w-4" />
                 发布 {isCreateTopic ? "话题" : "回复"}
-              </ActionButton>
+              </Button>
             </div>
           </div>
         </div>

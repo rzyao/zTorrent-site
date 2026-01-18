@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react"; // Import Loader for loading state
 import { cn } from "@/utils/cn";
 
 const buttonVariants = cva(
-  "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-200 outline-none focus-visible:ring-3 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg text-sm whitespace-nowrap transition-all duration-200 outline-none focus-visible:ring-3 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -19,7 +19,7 @@ const buttonVariants = cva(
 
         // === Legacy/Standard Variants (Keep for compatibility) ===
         default:
-          "border border-neutral-200 bg-white text-neutral-700 hover:bg-[#F3F4F6] focus-visible:ring-neutral-400 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700",
+          "border border-neutral-200 bg-white text-gray-600 hover:bg-[#F3F4F6] focus-visible:ring-neutral-400 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700",
         destructive:
           "text-neutral-900 hover:bg-red-50 hover:text-red-600 focus-visible:ring-red-500 dark:text-neutral-100 dark:hover:bg-red-900/20 dark:hover:text-red-400",
 

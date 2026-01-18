@@ -50,6 +50,7 @@ import { useForumTheme } from "../../../context/ForumThemeContext";
 import { Input } from "@/modules/forum/components/ui/input";
 import ConfirmDialog from "@/modules/forum/components/ui/ConfirmDialog";
 import { Textarea } from "@/modules/forum/components/ui/textarea";
+import { Button } from "@/modules/forum/components/ui/button";
 
 export function TopicAdminMenu({
   topicId,
@@ -119,9 +120,11 @@ export function TopicAdminMenu({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button
+          <Button
+            variant="none"
+            size="icon"
             className={cn(
-              "flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-200 dark:text-neutral-400 dark:hover:bg-neutral-800",
+              "h-8 w-8 rounded-full text-neutral-500 hover:bg-neutral-200 dark:text-neutral-400 dark:hover:bg-neutral-800",
               className,
             )}
             disabled={isLoading}
@@ -131,7 +134,7 @@ export function TopicAdminMenu({
             ) : (
               <Wrench className="h-4 w-4" />
             )}
-          </button>
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="start"
@@ -296,14 +299,12 @@ export function TopicAdminMenu({
             </div>
           </div>
           <DialogFooter>
-            <button
-              className={`rounded px-3 py-1 text-sm ${colors.buttonSecondary}`}
-              onClick={() => setOpenBountyDialog(false)}
-            >
+            <Button variant="cancel" size="sm" onClick={() => setOpenBountyDialog(false)}>
               取消
-            </button>
-            <button
-              className={`rounded px-3 py-1 text-sm ${colors.buttonPrimary} disabled:cursor-not-allowed disabled:opacity-60`}
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
               onClick={async () => {
                 const amt = parseInt(amount, 10);
                 if (!amount || !/^[0-9]+$/.test(amount) || isNaN(amt) || amt < 2000) {
@@ -329,7 +330,7 @@ export function TopicAdminMenu({
               }
             >
               提交
-            </button>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -356,14 +357,12 @@ export function TopicAdminMenu({
             </div>
           </div>
           <DialogFooter>
-            <button
-              className={`rounded px-3 py-1 text-sm ${colors.buttonSecondary}`}
-              onClick={() => setIncreaseOpen(false)}
-            >
+            <Button variant="cancel" size="sm" onClick={() => setIncreaseOpen(false)}>
               取消
-            </button>
-            <button
-              className={`rounded px-3 py-1 text-sm ${colors.buttonPrimary} disabled:cursor-not-allowed disabled:opacity-60`}
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
               onClick={async () => {
                 const delta = parseInt(increaseAmount, 10);
                 if (!increaseAmount || isNaN(delta) || delta < 2000) {
@@ -381,7 +380,7 @@ export function TopicAdminMenu({
               }
             >
               提交
-            </button>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -398,14 +397,16 @@ export function TopicAdminMenu({
             </div>
             <div className="flex flex-wrap gap-2">
               {QUICK_REASONS.map((r) => (
-                <button
+                <Button
                   key={r}
                   type="button"
+                  variant="default"
+                  size="none"
                   onClick={() => setCancelReason(r)}
                   className="rounded border px-2 py-0.5 text-xs text-gray-600 hover:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
                 >
                   {r}
-                </button>
+                </Button>
               ))}
             </div>
             <Textarea

@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "./dialog";
-import { ActionButton } from "./ActionButton";
+import { Button } from "./button";
 import { cn } from "@/utils/cn";
 import { useForumTheme } from "../../context/ForumThemeContext";
 
@@ -31,6 +31,8 @@ interface ConfirmDialogProps {
   cancelText?: string;
   /** 确认按钮 loading 状态（由外部控制） */
   confirmLoading?: boolean;
+  /** 确认按钮变体，默认为 danger */
+  confirmVariant?: "primary" | "danger" | "destructive";
   /** 自定义类名 */
   className?: string;
 }
@@ -50,6 +52,7 @@ export function ConfirmDialog({
   confirmText = "确定",
   cancelText = "取消",
   confirmLoading = false,
+  confirmVariant = "danger",
   className,
 }: ConfirmDialogProps) {
   const { colors } = useForumTheme();
@@ -57,10 +60,7 @@ export function ConfirmDialog({
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent
-        className={cn(
-          "bg-white dark:border-neutral-800 dark:bg-[#1E1E1E]",
-          className,
-        )}
+        className={cn("bg-white dark:border-neutral-800 dark:bg-[#1E1E1E]", className)}
       >
         <DialogHeader>
           <DialogTitle className={cn("text-base font-semibold", colors.textPrimary)}>
@@ -69,30 +69,23 @@ export function ConfirmDialog({
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
 
-        <div className={cn("text-sm", colors.textSecondary)}>
-          {content}
-        </div>
+        <div className={cn("text-sm", colors.textSecondary)}>{content}</div>
 
         <DialogFooter>
           <DialogClose asChild>
-            <ActionButton
-              color="ghost-slate"
-              size="md"
-              onClick={onClose}
-              aria-label="取消"
-            >
+            <Button variant="cancel" size="sm" onClick={onClose} aria-label="取消">
               {cancelText}
-            </ActionButton>
+            </Button>
           </DialogClose>
-          <ActionButton
-            color="ghost-red"
-            size="md"
+          <Button
+            variant={confirmVariant}
+            size="sm"
             onClick={onConfirm}
             loading={confirmLoading}
             aria-label="确定"
           >
             {confirmText}
-          </ActionButton>
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

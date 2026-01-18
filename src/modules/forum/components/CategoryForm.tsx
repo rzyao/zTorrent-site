@@ -35,13 +35,14 @@ interface CategoryFormProps {
   categoryId?: string; // 编辑模式下需要
   onSuccess?: (id: string) => void;
   activeSection?: "basic" | "appearance" | "visibility" | "advanced";
+  onCancel?: () => void;
 }
 
 /**
  * 类别表单组件
  * 用于新建和编辑类别，复用相同的表单结构
  */
-export function CategoryForm({ mode, initialData, categoryId, onSuccess, activeSection = "basic" }: CategoryFormProps) {
+export function CategoryForm({ mode, initialData, categoryId, onSuccess, activeSection = "basic", onCancel }: CategoryFormProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { colors } = useForumTheme();
@@ -352,7 +353,7 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess, activeS
           </ActionButton>
           <button
             type="button"
-            onClick={() => navigate(-1)}
+            onClick={() => (onCancel ? onCancel() : navigate(-1))}
             className={`h-11 rounded-lg px-6 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
           >
             取消

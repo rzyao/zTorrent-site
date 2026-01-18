@@ -9,10 +9,23 @@ import { useForumsCategories } from "../../../hooks/useForumsCategories";
 import { useForumsTagsQuery } from "../../../hooks/useForumsTagsQuery";
 import { useAllowedTagsForCategory } from "../../../hooks/useAllowedTagsForCategory";
 import { cn } from "@/utils/cn";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/modules/forum/components/ui/dialog";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/modules/forum/components/ui/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/modules/forum/components/ui/dialog";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/modules/forum/components/ui/form";
 import { Input } from "@/modules/forum/components/ui/input";
-import { ActionButton } from "@/modules/forum/components/ui/ActionButton";
+import { Button } from "@/modules/forum/components/ui/button";
 import { RichTextEditor } from "@/modules/forum/components/Composer/RichTextEditor";
 import { toast } from "sonner";
 import {
@@ -149,7 +162,10 @@ export function TopicEditModal({ isOpen, onClose, topicId, initial }: TopicEditM
                     <FormLabel className={colors.textSecondary}>标签（多选）</FormLabel>
                     <FormControl>
                       <MultiSelect
-                        options={filterByAllowed(tags).map((t: any) => ({ label: t.name, value: t.name }))}
+                        options={filterByAllowed(tags).map((t: any) => ({
+                          label: t.name,
+                          value: t.name,
+                        }))}
                         value={field.value}
                         onChange={field.onChange}
                         placeholder="请选择标签"
@@ -173,7 +189,7 @@ export function TopicEditModal({ isOpen, onClose, topicId, initial }: TopicEditM
                       placeholder="编辑话题正文..."
                       className="min-h-[220px]"
                       isUploading={false}
-                      onImageUploadClick={() => { }}
+                      onImageUploadClick={() => {}}
                       toolbarPrefix={null}
                     />
                   </FormControl>
@@ -182,16 +198,12 @@ export function TopicEditModal({ isOpen, onClose, topicId, initial }: TopicEditM
               )}
             />
             <DialogFooter>
-              <button
-                type="button"
-                onClick={onClose}
-                className="h-9 rounded-md px-4 text-sm text-gray-600 hover:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
-              >
+              <Button type="button" variant="cancel" size="sm" onClick={onClose}>
                 取消
-              </button>
-              <ActionButton type="submit" loading={mutation.isPending} className="h-9 px-4">
+              </Button>
+              <Button type="submit" variant="primary" size="sm" loading={mutation.isPending}>
                 保存更改
-              </ActionButton>
+              </Button>
             </DialogFooter>
           </form>
         </Form>

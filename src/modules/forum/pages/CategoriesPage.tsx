@@ -3,8 +3,9 @@ import { useForumsCategories } from "../hooks/useForumsCategories";
 import { Link, useNavigate } from "react-router-dom";
 import { useForumTheme } from "../context/ForumThemeContext";
 import { MessageSquare, TrendingUp, Plus, Trash2, Pencil } from "lucide-react";
-import { ActionButton } from "../components/ui/ActionButton";
+import { Button } from "../components/ui/button";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
+import { CategoryCreateModal } from "../components/CategoryCreateModal";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
 import { useQueryClient } from "@tanstack/react-query";
 import { ForumsCategoriesService } from "@/api";
@@ -30,7 +31,11 @@ export function CategoriesPage() {
   // 删除确认弹窗状态
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   // 待删除的类别（保存 id 与 name 仅用于确认文案显示）
-  const [pendingDelete, setPendingDelete] = React.useState<{ id: string; name: string } | null>(null);
+  const [pendingDelete, setPendingDelete] = React.useState<{ id: string; name: string } | null>(
+    null,
+  );
+  // 新增类别弹窗状态
+  const [createOpen, setCreateOpen] = React.useState(false);
   // 通用异步操作（带 loading 与 toast），删除成功提示“删除成功”
   const { execute, loading } = useAsyncAction({
     successMessage: "删除成功",
@@ -61,21 +66,30 @@ export function CategoriesPage() {
         <div className="flex items-center gap-3">
           <span className={`text-sm ${colors.textMuted}`}>{categories?.length || 0} 个类别</span>
           {/* 新话题（全局） */}
-          <ActionButton
+          <Button
+            variant="primary"
+            size="sm"
             onClick={() => {
               import("../components/Composer/ComposerStore").then(({ useComposerStore }) => {
                 useComposerStore.getState().open("CREATE_TOPIC");
               });
             }}
-            icon={MessageSquare}
           >
+            <MessageSquare className="mr-2 h-4 w-4" />
             新话题
-          </ActionButton>
+          </Button>
 
-          {/* 新增类别按钮 - TODO: 添加管理员权限判断 */}
-          <ActionButton onClick={() => navigate("/forum/new-category")} icon={Plus}>
+          {/* 新增类别按钮 */}
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => {
+              setCreateOpen(true);
+            }}
+          >
+            <Plus className="mr-2 h-4 w-4" />
             新增类别
-          </ActionButton>
+          </Button>
         </div>
       </div>
 
@@ -146,10 +160,9 @@ export function CategoriesPage() {
                 </div>
                 {canManageCategories && (
                   <div className="ml-auto flex items-center gap-2">
-                    <ActionButton
-                      color="ghost-blue"
+                    <Button
+                      variant="destructive"
                       size="icon"
-                      icon={Pencil}
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -157,11 +170,13 @@ export function CategoriesPage() {
                       }}
                       title="编辑类别"
                       aria-label="编辑类别"
-                    />
-                    <ActionButton
-                      color="ghost-red"
+                      className="h-8 w-8 text-blue-500 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="destructive"
                       size="icon"
-                      icon={Trash2}
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -173,7 +188,10 @@ export function CategoriesPage() {
                       }}
                       title="删除类别"
                       aria-label="删除类别"
-                    />
+                      className="h-8 w-8"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 )}
               </div>
@@ -216,6 +234,13 @@ export function CategoriesPage() {
           });
           setConfirmOpen(false);
           setPendingDelete(null);
+        }}
+      />
+      {/* 新增类别弹窗 */}
+      <CategoryCreateModal
+        open={createOpen}
+        onClose={() => {
+          setCreateOpen(false);
         }}
       />
     </div>

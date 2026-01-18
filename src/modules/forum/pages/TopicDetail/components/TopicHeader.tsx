@@ -1,6 +1,7 @@
 import { TopicData } from "../types";
 import { getIconByName } from "@/modules/forum/components/ui/icon-picker";
 import { Square } from "lucide-react";
+import { Button } from "@/modules/forum/components/ui/button";
 
 import { useForumTheme } from "../../../context/ForumThemeContext";
 
@@ -60,12 +61,9 @@ export const TopicHeader = ({ topicData, canEdit, onEdit }: TopicHeaderProps) =>
           )}
         </div>
         {canEdit && (
-          <button
-            onClick={onEdit}
-            className="inline-flex items-center gap-2 rounded-md border px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
-          >
+          <Button variant="default" size="sm" onClick={onEdit}>
             编辑话题
-          </button>
+          </Button>
         )}
       </div>
       <div className="flex flex-wrap items-center gap-2">
