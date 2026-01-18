@@ -30,11 +30,11 @@ export function TagsPage() {
       <div className="flex items-center justify-between">
         <h1 className={`text-2xl font-bold ${colors.titleColor}`}>所有标签</h1>
         <div className="flex items-center gap-2">
-          <Button onClick={() => navigate("/forum/tag-groups")} variant="default" className="gap-2">
+          <Button onClick={() => navigate("/forum/admin/tag-groups")} variant="default">
             <Layers className="h-4 w-4" />
             标签组管理
           </Button>
-          <Button variant="primary" onClick={() => setIsCreateModalOpen(true)} className="gap-2">
+          <Button variant="primary" onClick={() => setIsCreateModalOpen(true)}>
             <Plus className="h-4 w-4" />
             创建标签
           </Button>
@@ -72,12 +72,14 @@ export function TagsPage() {
                 <div className={`text-xs ${colors.textMuted}`}>{tag.usageCount || 0} 个话题</div>
               </div>
             </button>
-            <button
+            <Button
+              variant="none"
+              size="icon"
               onClick={() => setEditTagId(String(tag.id || tag.name))}
-              className="hover:text-primary inline-flex cursor-pointer items-center text-sm hover:bg-gray-50 dark:text-[#999] dark:hover:bg-neutral-800"
+              className="text-neutral-400 hover:text-[#0088CC] dark:text-neutral-500 dark:hover:text-[#0088CC]"
             >
               <Pencil className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         ))}
       </div>

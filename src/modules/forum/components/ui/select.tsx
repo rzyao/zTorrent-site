@@ -59,7 +59,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "data-placeholder:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground aria-invalid:border-destructive group flex w-full items-center justify-between gap-2 rounded-md border border-transparent bg-white px-3 py-2 text-sm whitespace-nowrap text-gray-700 transition-[color,border-color] outline-none hover:border-[#0088CC]/50 focus:border-[#0088CC] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 data-[state=open]:border-[#0088CC] dark:border-transparent dark:bg-neutral-900/50 dark:text-white dark:hover:border-[#0088CC]/50 dark:focus:border-[#0088CC] dark:data-[state=open]:border-[#0088CC] [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "data-placeholder:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground aria-invalid:border-destructive group flex w-full items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm whitespace-nowrap text-gray-700 transition-[color,border-color] outline-none hover:border-[#0088CC]/50 focus:border-[#0088CC] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 data-[state=open]:border-[#0088CC] dark:border-neutral-800 dark:bg-neutral-900/50 dark:text-white dark:hover:border-[#0088CC]/50 dark:focus:border-[#0088CC] dark:data-[state=open]:border-[#0088CC] [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -67,7 +67,7 @@ function SelectTrigger({
       {children}
       {!hideChevron && (
         <SelectPrimitive.Icon asChild>
-          <ChevronDown className="size-4 text-[#0088CC] transition-transform duration-200 group-data-[state=open]:rotate-180" />
+          <ChevronDown className="size-4 text-neutral-400 transition-colors duration-200 group-hover:text-neutral-600 group-data-[state=open]:rotate-180 group-data-[state=open]:text-[#0088CC] dark:text-neutral-500 dark:group-hover:text-neutral-200 dark:group-data-[state=open]:text-[#0088CC]" />
         </SelectPrimitive.Icon>
       )}
     </SelectPrimitive.Trigger>
@@ -86,7 +86,7 @@ function SelectContent({
         data-slot="select-content"
         className={cn(
           // 下拉内容区域：保留动画与定位，同时增加明确的深色背景与边框作为回退样式
-          "text-popover-foreground data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 relative z-50 max-h-(--radix-select-content-available-height) min-w-32 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border border-neutral-200 bg-white shadow-md dark:border-neutral-700 dark:bg-[#262626] dark:text-neutral-200",
+          "text-popover-foreground data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 relative z-50 max-h-(--radix-select-content-available-height) min-w-32 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border border-neutral-300 bg-white shadow-md dark:border-neutral-700 dark:bg-[#262626] dark:text-neutral-200",
           position === "popper" &&
             "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
           className,

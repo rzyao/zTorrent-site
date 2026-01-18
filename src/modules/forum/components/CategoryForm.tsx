@@ -5,7 +5,7 @@ import { Undo2 } from "lucide-react";
 import { useForumTheme } from "../context/ForumThemeContext";
 import { ColorPicker } from "@/modules/forum/components/ui/color-picker";
 import { IconPicker } from "@/modules/forum/components/ui/icon-picker";
-import { ActionButton } from "@/modules/forum/components/ui/ActionButton";
+import { Button } from "@/modules/forum/components/ui/button";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
 import { ForumsCategoriesService, type CreateCategoryDto } from "@/api";
 import { useForumsTagsQuery } from "../hooks/useForumsTagsQuery";
@@ -42,7 +42,14 @@ interface CategoryFormProps {
  * 类别表单组件
  * 用于新建和编辑类别，复用相同的表单结构
  */
-export function CategoryForm({ mode, initialData, categoryId, onSuccess, activeSection = "basic", onCancel }: CategoryFormProps) {
+export function CategoryForm({
+  mode,
+  initialData,
+  categoryId,
+  onSuccess,
+  activeSection = "basic",
+  onCancel,
+}: CategoryFormProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { colors } = useForumTheme();
@@ -53,7 +60,9 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess, activeS
   const [description, setDescription] = useState(initialData?.description || "");
   const [icon, setIcon] = useState(initialData?.icon || "");
   const [color, setColor] = useState(initialData?.color || "#6b7280");
-  const [allowOtherTags, setAllowOtherTags] = useState<boolean>(initialData?.allowOtherTags ?? false);
+  const [allowOtherTags, setAllowOtherTags] = useState<boolean>(
+    initialData?.allowOtherTags ?? false,
+  );
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([]);
   const { data: tags = [] } = useForumsTagsQuery();
@@ -77,9 +86,7 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess, activeS
           groupIds = d.groups.map((g: any) => String(g?.id));
           d.groups.forEach((g: any) => {
             if (Array.isArray(g?.tags)) {
-              tagIds.push(
-                ...g.tags.map((t: any) => String(t?.id ?? t?.name ?? "")),
-              );
+              tagIds.push(...g.tags.map((t: any) => String(t?.id ?? t?.name ?? "")));
             }
           });
         }
@@ -87,23 +94,25 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess, activeS
           tagIds.push(...d.ungroupedTags.map((t: any) => String(t?.id ?? t?.name ?? "")));
         }
         if (tagIds.length === 0) {
-          const fallbackTagIds =
-            Array.isArray(d?.allowedTags) ? d.allowedTags : Array.isArray(d?.allowed_tag_ids) ? d.allowed_tag_ids : [];
+          const fallbackTagIds = Array.isArray(d?.allowedTags)
+            ? d.allowedTags
+            : Array.isArray(d?.allowed_tag_ids)
+              ? d.allowed_tag_ids
+              : [];
           tagIds = fallbackTagIds.map(String);
         }
         if (groupIds.length === 0) {
-          const fallbackGroupIds =
-            Array.isArray(d?.allowedGroups)
-              ? d.allowedGroups
-              : Array.isArray(d?.allowed_group_ids)
-                ? d.allowed_group_ids
-                : [];
+          const fallbackGroupIds = Array.isArray(d?.allowedGroups)
+            ? d.allowedGroups
+            : Array.isArray(d?.allowed_group_ids)
+              ? d.allowed_group_ids
+              : [];
           groupIds = fallbackGroupIds.map(String);
         }
         if (tagIds.length > 0) setSelectedTagIds(Array.from(new Set(tagIds)));
         if (groupIds.length > 0) setSelectedGroupIds(Array.from(new Set(groupIds)));
         if (typeof d?.allowOtherTags === "boolean") setAllowOtherTags(d.allowOtherTags);
-      } catch { }
+      } catch {}
     };
     run();
   }, [categoryId, activeSection, mode]);
@@ -183,13 +192,6 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess, activeS
 
   return (
     <div className="py-6">
-
-      {mode === "create" && (
-        <div className="mb-6 flex max-w-3xl items-center justify-between gap-4">
-          <h1 className={`text-xl font-bold ${colors.textPrimary}`}>新建类别</h1>
-        </div>
-      )}
-
       <form onSubmit={handleSubmit} className="max-w-3xl space-y-6">
         {activeSection === "basic" && (
           <div>
@@ -251,8 +253,6 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess, activeS
           </div>
         )}
 
-
-
         {/* visibility section anchor removed (route controls sections) */}
         {mode === "edit" && activeSection === "visibility" && (
           <div className="space-y-4">
@@ -294,7 +294,9 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess, activeS
                           />
                           <span className={colors.textPrimary}>{t.name}</span>
                         </label>
-                        <span className={`text-xs ${colors.textMuted}`}>{t.usageCount ?? 0} 个话题</span>
+                        <span className={`text-xs ${colors.textMuted}`}>
+                          {t.usageCount ?? 0} 个话题
+                        </span>
                       </li>
                     );
                   })}
@@ -304,7 +306,9 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess, activeS
                 </ul>
               </div>
               <div className={`rounded-md border p-3 ${colors.cardBorder}`}>
-                <div className={`mb-2 text-sm font-medium ${colors.textSecondary}`}>限制的标签组</div>
+                <div className={`mb-2 text-sm font-medium ${colors.textSecondary}`}>
+                  限制的标签组
+                </div>
                 <ul className="max-h-[240px] overflow-auto">
                   {tagGroups.map((g: ForumTagGroupWithId) => {
                     const id = String((g as any).id ?? "");
@@ -332,7 +336,9 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess, activeS
                             className="inline-block h-3 w-3 rounded"
                             style={{ backgroundColor: g.color || "#6b7280" }}
                           />
-                          <span className={`text-xs ${colors.textMuted}`}>权重 {g.sortOrder ?? 0}</span>
+                          <span className={`text-xs ${colors.textMuted}`}>
+                            权重 {g.sortOrder ?? 0}
+                          </span>
                         </span>
                       </li>
                     );
@@ -347,17 +353,17 @@ export function CategoryForm({ mode, initialData, categoryId, onSuccess, activeS
         )}
 
         {/* advanced section anchor removed (route controls sections) */}
-        <div className="flex items-center gap-3">
-          <ActionButton type="submit" disabled={!isValid} loading={loading} className="h-11 px-6">
-            {mode === "create" ? "创建类别" : "保存更改"}
-          </ActionButton>
-          <button
+        <div className="flex items-center justify-end gap-3">
+          <Button
             type="button"
+            variant="cancel"
             onClick={() => (onCancel ? onCancel() : navigate(-1))}
-            className={`h-11 rounded-lg px-6 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200`}
           >
             取消
-          </button>
+          </Button>
+          <Button type="submit" disabled={!isValid} loading={loading} variant="primary">
+            {mode === "create" ? "创建类别" : "保存更改"}
+          </Button>
         </div>
       </form>
     </div>

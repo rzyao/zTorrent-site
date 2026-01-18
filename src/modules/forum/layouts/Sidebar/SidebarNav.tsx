@@ -6,7 +6,6 @@ import { useAccess } from "@/context/AccessContext";
 const BASE_NAV_ITEMS = [
   { id: "topics", name: "话题", icon: Home, path: "/forum/latest" },
   { id: "bookmarks", name: "我的收藏", icon: Bookmark, path: "/forum/bookmarks" },
-  { id: "announcements", name: "公告", icon: Megaphone, path: "/forum/announcements" },
 ];
 
 /**
@@ -22,7 +21,12 @@ export function SidebarNav() {
   const NAV_ITEMS = isAdminOrMod
     ? [
         ...BASE_NAV_ITEMS,
-        { id: "admin-bounty-cancel", name: "悬赏取消审核", icon: ShieldCheck, path: "/forum/admin/bounty-cancel-requests" },
+        {
+          id: "admin-bounty-cancel",
+          name: "悬赏取消审核",
+          icon: ShieldCheck,
+          path: "/forum/admin/bounty-cancel-requests",
+        },
       ]
     : BASE_NAV_ITEMS;
 

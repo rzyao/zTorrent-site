@@ -5,6 +5,14 @@ import { AdminReviewTopicBountyCancelRequestDto } from "@/api/models/AdminReview
 import { useForumTheme } from "../../context/ForumThemeContext";
 import { useAccess } from "@/context/AccessContext";
 import { customToast } from "@/hooks/useToast";
+import { Button } from "@/modules/forum/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/modules/forum/components/ui/select";
 
 type Item = {
   id: string;
@@ -22,7 +30,9 @@ export function TopicBountyCancelRequestsAdminPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<"pending" | "approved" | "rejected" | "all">("pending");
+  const [statusFilter, setStatusFilter] = useState<"pending" | "approved" | "rejected" | "all">(
+    "pending",
+  );
 
   const load = async (p = 1) => {
     setLoading(true);
@@ -39,7 +49,12 @@ export function TopicBountyCancelRequestsAdminPage() {
               : AdminListTopicBountyCancelRequestsDto.cancelRequestStatus.REJECTED,
     };
     const res = await ForumsTopicsService.topicsControllerAdminListCancelRequests(body);
-    const data = res.data as unknown as { items: Item[]; total: number; page: number; limit: number };
+    const data = res.data as unknown as {
+      items: Item[];
+      total: number;
+      page: number;
+      limit: number;
+    };
     setItems(data.items || []);
     setTotal(data.total || 0);
     setPage(data.page || p);
@@ -75,16 +90,17 @@ export function TopicBountyCancelRequestsAdminPage() {
       <h2 className={`mb-4 text-lg font-bold ${colors.titleColor}`}>悬赏取消申请审核</h2>
       <div className="mb-3 flex items-center gap-2">
         <label className={`text-sm ${colors.textMuted}`}>状态筛选</label>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as any)}
-          className={`rounded border px-2 py-1 text-sm ${colors.inputBg} ${colors.inputBorder}`}
-        >
-          <option value="pending">待审核</option>
-          <option value="approved">已同意</option>
-          <option value="rejected">已拒绝</option>
-          <option value="all">全部</option>
-        </select>
+        <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val as any)}>
+          <SelectTrigger className="w-[120px]">
+            <SelectValue placeholder="选择状态" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="pending">待审核</SelectItem>
+            <SelectItem value="approved">已同意</SelectItem>
+            <SelectItem value="rejected">已拒绝</SelectItem>
+            <SelectItem value="all">全部</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       {loading && <div className="p-4">加载中...</div>}
       {!loading && items.length === 0 && <div className="p-4">暂无待审核申请</div>}
@@ -104,21 +120,20 @@ export function TopicBountyCancelRequestsAdminPage() {
               <tr key={it.id} className={`border-b ${colors.dividerColor}`}>
                 <td className="p-2">{it.topic?.title || it.topicId}</td>
                 <td className="p-2">{it.amount}</td>
-                <td className="p-2 break-words">{it.cancelRequestReason || "-"}</td>
+                <td className="p-2 wrap-break-word">{it.cancelRequestReason || "-"}</td>
                 <td className="p-2">{it.cancelRequestStatus}</td>
                 <td className="p-2">
-                  <button
+                  <Button
+                    variant="primary"
+                    size="sm"
                     onClick={() => review(it.topicId, "approve")}
-                    className="mr-2 rounded border px-2 py-1 text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:bg-neutral-800"
+                    className="mr-2"
                   >
                     同意
-                  </button>
-                  <button
-                    onClick={() => review(it.topicId, "reject")}
-                    className="rounded border px-2 py-1 text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-neutral-800"
-                  >
+                  </Button>
+                  <Button variant="danger" size="sm" onClick={() => review(it.topicId, "reject")}>
                     拒绝
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -127,20 +142,17 @@ export function TopicBountyCancelRequestsAdminPage() {
       )}
       {total > 0 && (
         <div className="mt-3 flex items-center justify-end gap-2">
-          <button
-            disabled={page <= 1}
-            onClick={() => load(page - 1)}
-            className="rounded border px-2 py-1 text-sm"
-          >
+          <Button variant="default" size="sm" disabled={page <= 1} onClick={() => load(page - 1)}>
             上一页
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
             disabled={items.length < 20}
             onClick={() => load(page + 1)}
-            className="rounded border px-2 py-1 text-sm"
           >
             下一页
-          </button>
+          </Button>
         </div>
       )}
     </div>

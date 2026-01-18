@@ -68,7 +68,6 @@ export function CategoriesPage() {
           {/* 新话题（全局） */}
           <Button
             variant="primary"
-            size="sm"
             onClick={() => {
               import("../components/Composer/ComposerStore").then(({ useComposerStore }) => {
                 useComposerStore.getState().open("CREATE_TOPIC");
@@ -82,7 +81,6 @@ export function CategoriesPage() {
           {/* 新增类别按钮 */}
           <Button
             variant="primary"
-            size="sm"
             onClick={() => {
               setCreateOpen(true);
             }}

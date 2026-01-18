@@ -4,10 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { ForumsCategoriesService } from "@/api";
 import { CategoryForm } from "../components/CategoryForm";
 import { CategoryEditLayout } from "../components/CategoryEditLayout";
-import { Undo2, Trash2 } from "lucide-react";
+import { Undo2, Trash2, Loader2 } from "lucide-react";
 import { useForumTheme } from "../context/ForumThemeContext";
-import { Loader2 } from "lucide-react";
-import { ActionButton } from "../components/ui/ActionButton";
+import { Button } from "../components/ui/button";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
 import { useQueryClient } from "@tanstack/react-query";
@@ -99,7 +98,13 @@ export function EditCategoryPage() {
         { id: "advanced", label: "高级设置" },
       ]}
       activeId={
-        section === "basic" ? "basic-info" : section === "appearance" ? "appearance" : section === "visibility" ? "visibility" : "advanced"
+        section === "basic"
+          ? "basic-info"
+          : section === "appearance"
+            ? "appearance"
+            : section === "visibility"
+              ? "visibility"
+              : "advanced"
       }
       onSelect={(id) => {
         const map: Record<string, string> = {
@@ -114,22 +119,43 @@ export function EditCategoryPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <h1 className={`text-xl font-bold ${colors.textPrimary}`}>编辑类别 :</h1>
-            <span className={`text-xl font-bold ${colors.textPrimary}`}>{(category as any)?.name}</span>
+            <span className={`text-xl font-bold ${colors.textPrimary}`}>
+              {(category as any)?.name}
+            </span>
           </div>
           {categoryId && (
-            <button
+            <Button
               type="button"
+              variant="none"
+              size="sm"
               onClick={() => navigate(`/forum/category/${categoryId}`)}
-              className={`flex items-center gap-2 rounded-lg bg-[#0088CC]/10 px-3 py-2 text-sm font-medium text-[#0088CC] transition-colors hover:bg-[#0088CC]/20 dark:bg-amber-500/10 dark:text-amber-500 dark:hover:bg-amber-500/20`}
+              className="flex items-center gap-2 bg-[#0088CC]/10 px-3 font-medium text-[#0088CC] transition-colors hover:bg-[#0088CC]/20 dark:bg-amber-500/10 dark:text-amber-500 dark:hover:bg-amber-500/20"
               title="返回话题列表"
             >
               <Undo2 className="h-4 w-4" />
               <span>返回话题</span>
-            </button>
+            </Button>
           )}
         </div>
       }
     >
+      {section === "advanced" && canManage && (
+        <div className="mt-8 max-w-3xl rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900/40 dark:bg-red-900/20">
+          <h2 className={`mb-2 text-lg font-semibold text-red-700 dark:text-red-400`}>危险操作</h2>
+          <p className={`mb-4 text-sm ${colors.textSecondary}`}>
+            删除此类别后，将从类别列表中移除，并可能影响其下的话题显示。请谨慎操作。
+          </p>
+          <Button
+            variant="danger"
+            size="sm"
+            onClick={() => setConfirmOpen(true)}
+            aria-label="删除此类别"
+          >
+            <Trash2 className="h-4 w-4" />
+            删除此类别
+          </Button>
+        </div>
+      )}
       <CategoryForm
         mode="edit"
         categoryId={categoryId}
@@ -142,22 +168,7 @@ export function EditCategoryPage() {
         }}
         activeSection={section}
       />
-      {section === "advanced" && canManage && (
-        <div className="mt-8 max-w-3xl rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900/40 dark:bg-red-900/20">
-          <h2 className={`mb-2 text-lg font-semibold text-red-700 dark:text-red-400`}>危险操作</h2>
-          <p className={`mb-4 text-sm ${colors.textSecondary}`}>
-            删除此类别后，将从类别列表中移除，并可能影响其下的话题显示。请谨慎操作。
-          </p>
-          <ActionButton
-            color="ghost-red"
-            icon={Trash2}
-            onClick={() => setConfirmOpen(true)}
-            aria-label="删除此类别"
-          >
-            删除此类别
-          </ActionButton>
-        </div>
-      )}
+
       {/* 删除确认弹窗：确认后删除并失效相关缓存，随后导航回类别列表 */}
       <ConfirmDialog
         open={confirmOpen}
@@ -181,7 +192,9 @@ export function EditCategoryPage() {
             await ForumsCategoriesService.categoriesControllerRemove({ id: categoryId });
             await queryClient.invalidateQueries({ queryKey: ["forums", "categories"] });
             // 删除后不再需要此详情，直接移除缓存，避免触发不必要的 404 拉取
-            await queryClient.removeQueries({ queryKey: ["forum", "category", "by-id", categoryId] });
+            await queryClient.removeQueries({
+              queryKey: ["forum", "category", "by-id", categoryId],
+            });
           });
           setConfirmOpen(false);
           navigate("/forum/categories");

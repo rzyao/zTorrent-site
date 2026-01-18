@@ -1,5 +1,4 @@
 import { Button } from "@/modules/forum/components/ui/button";
-import { ActionButton } from "@/modules/forum/components/ui/ActionButton";
 import { useNavigate } from "react-router-dom";
 
 export default function ForumNotFoundPage() {
@@ -17,10 +16,12 @@ export default function ForumNotFoundPage() {
         看起来您要找的帖子或板块已经去流浪了。
       </p>
       <div className="mt-8 flex gap-4">
-        <Button variant="ghost" onClick={() => navigate(-1)}>
+        <Button variant="cancel" onClick={() => navigate(-1)}>
           返回
         </Button>
-        <ActionButton onClick={() => navigate("/forum")}>去论坛首页看看</ActionButton>
+        <Button variant="primary" onClick={() => navigate("/forum")}>
+          去论坛首页看看
+        </Button>
       </div>
     </div>
   );
