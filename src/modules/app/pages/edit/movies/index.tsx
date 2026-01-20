@@ -1,4 +1,5 @@
 ﻿import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Film, Plus } from "lucide-react";
 import { Button } from "@/modules/app/components/ui/button";
 import { useEditMovie } from "@/modules/app/pages/Edit/movies/hooks/useEditMovie";
@@ -10,7 +11,8 @@ import { TorrentSearchPanel } from "@/modules/app/pages/Edit/movies/components/T
 import { TorrentList } from "@/modules/app/pages/Edit/movies/components/TorrentList";
 
 export default function EditMoviePage() {
-  useDynamicTitle("影片编辑");
+  const { t } = useLanguage();
+  useDynamicTitle(t('edit.movieTitle'));
   const {
     movies,
     filteredMovies,
@@ -61,9 +63,9 @@ export default function EditMoviePage() {
               <Film className="w-5 h-5 text-white" />
             </div>
             <div className="flex items-end gap-1">
-              <h1 className="text-white text-3xl">影片编辑</h1>
+              <h1 className="text-white text-3xl">{t('editMovie.pageTitle')}</h1>
               <p className="text-neutral-400 text-sm mt-1">
-                管理影片信息和关联的种子版本
+                {t('editMovie.pageDesc')}
               </p>
             </div>
           </div>
@@ -72,7 +74,7 @@ export default function EditMoviePage() {
             className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
           >
             <Plus className="w-4 h-4 mr-2" />
-            添加影片
+            {t('editMovie.addMovie')}
           </Button>
         </div>
       </div>
@@ -156,16 +158,16 @@ export default function EditMoviePage() {
             {!isCreating && !isEditing && !selectedMovie && (
               <div className="text-center py-20">
                 <Film className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
-                <h3 className="text-white text-lg mb-2">选择一部影片</h3>
+                <h3 className="text-white text-lg mb-2">{t('editMovie.selectMovie')}</h3>
                 <p className="text-neutral-400 text-sm mb-6">
-                  从左侧列表选择影片进行编辑，或添加新影片
+                  {t('editMovie.selectMovieHint')}
                 </p>
                 <Button
                   onClick={handleCreateNew}
                   className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  添加新影片
+                  {t('editMovie.addNewMovie')}
                 </Button>
               </div>
             )}

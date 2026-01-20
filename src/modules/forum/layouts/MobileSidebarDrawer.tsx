@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useForumTheme } from "../context/ForumThemeContext";
 import { Sidebar } from "./Sidebar";
 
@@ -20,6 +21,7 @@ export function MobileSidebarDrawer({
   selectedCategory,
   onCategoryChange,
 }: MobileSidebarDrawerProps) {
+  const { t } = useTranslation();
   const { colors } = useForumTheme();
   const scrollbarClass = "scrollbar-sidebar";
 
@@ -74,11 +76,11 @@ export function MobileSidebarDrawer({
           <div
             className={`flex h-16 items-center justify-between border-b px-4 ${colors.borderColor}`}
           >
-            <span className={`text-lg font-semibold ${colors.textPrimary}`}>导航菜单</span>
+            <span className={`text-lg font-semibold ${colors.textPrimary}`}>{t('forum.sidebar.navigationMenu')}</span>
             <button
               onClick={onClose}
               className={`rounded-lg p-2 ${colors.buttonHover} transition-colors`}
-              aria-label="关闭菜单"
+              aria-label={t('forum.sidebar.closeMenu')}
             >
               <X className={`h-5 w-5 ${colors.textSecondary}`} />
             </button>

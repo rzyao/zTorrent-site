@@ -3,6 +3,7 @@ import { cn } from "@/utils/cn";
 import { Button } from "@/modules/app/components/ui/button";
 import { Badge } from "@/modules/app/components/ui/badge";
 import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
+import { useLanguage } from "@/hooks/useLanguage";
 import {
   ArrowLeft,
   Play,
@@ -29,6 +30,7 @@ interface HeroProps {
  */
 export function Hero({ series, firstEpisode }: HeroProps) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const posterUrl = series.posterUrl || "https://via.placeholder.com/300x450";
 
   // 判断是否有外部评分
@@ -46,7 +48,7 @@ export function Hero({ series, firstEpisode }: HeroProps) {
           className="gap-2 text-neutral-400 hover:bg-neutral-800/50 hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" />
-          返回剧集列表
+          {t('series.backToList')}
         </Button>
       </div>
 
@@ -99,7 +101,7 @@ export function Hero({ series, firstEpisode }: HeroProps) {
                       <span className="text-sm font-bold text-green-400">豆</span>
                     </div>
                     <div>
-                      <div className="text-[10px] text-neutral-500">豆瓣</div>
+                      <div className="text-[10px] text-neutral-500">{t('series.douban')}</div>
                       {series.doubanRatingAverage !== undefined ? (
                         <div className="flex items-center gap-1">
                           <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
@@ -108,7 +110,7 @@ export function Hero({ series, firstEpisode }: HeroProps) {
                           </span>
                         </div>
                       ) : (
-                        <span className="text-xs text-neutral-500">暂无</span>
+                        <span className="text-xs text-neutral-500">{t('series.noRating')}</span>
                       )}
                     </div>
                     {series.doubanLink && (
@@ -143,7 +145,7 @@ export function Hero({ series, firstEpisode }: HeroProps) {
                           </span>
                         </div>
                       ) : (
-                        <span className="text-xs text-neutral-500">暂无</span>
+                        <span className="text-xs text-neutral-500">{t('series.noRating')}</span>
                       )}
                     </div>
                     {series.imdbLink && (
@@ -184,11 +186,11 @@ export function Hero({ series, firstEpisode }: HeroProps) {
                 )}
               >
                 {series.status === "ended" || series.status === "完结"
-                  ? "已完结"
+                  ? t('series.statusEnded')
                   : series.status === "airing" || series.status === "连载中"
-                    ? "连载中"
+                    ? t('series.statusAiring')
                     : series.status === "upcoming"
-                      ? "即将上映"
+                      ? t('series.statusUpcoming')
                       : series.status}
               </Badge>
             )}
@@ -220,13 +222,13 @@ export function Hero({ series, firstEpisode }: HeroProps) {
           <div className="space-y-2 text-sm">
             {series.director && (
               <div className="flex items-start gap-3">
-                <span className="min-w-[50px] font-medium text-neutral-500">导演</span>
+                <span className="min-w-[50px] font-medium text-neutral-500">{t('series.director')}</span>
                 <span className="text-amber-400">{series.director}</span>
               </div>
             )}
             {series.cast && series.cast.length > 0 && (
               <div className="flex items-start gap-3">
-                <span className="min-w-[50px] font-medium text-neutral-500">主演</span>
+                <span className="min-w-[50px] font-medium text-neutral-500">{t('series.cast')}</span>
                 <span className="line-clamp-2 text-neutral-300">
                   {series.cast.slice(0, 8).join(" / ")}
                 </span>
@@ -235,7 +237,7 @@ export function Hero({ series, firstEpisode }: HeroProps) {
           </div>
 
           {/* 剧情简介 */}
-          {series.description && <InlineSynopsis description={series.description} />}
+          {series.description && <InlineSynopsis description={series.description} t={t} />}
         </div>
       </div>
     </div>
@@ -248,7 +250,7 @@ export function Hero({ series, firstEpisode }: HeroProps) {
  * - 采用微妙的垂直边框标识
  * - 交互更自然
  */
-function InlineSynopsis({ description }: { description: string }) {
+function InlineSynopsis({ description, t }: { description: string; t: (key: string) => string }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isLongText = description.length > 200;
 
@@ -258,7 +260,7 @@ function InlineSynopsis({ description }: { description: string }) {
       <div className="flex items-center gap-2">
         <div className="h-1 w-4 rounded-full bg-amber-500/50" />
         <span className="text-[14px] font-bold tracking-widest text-neutral-300 uppercase">
-          剧集简介
+          {t('series.synopsis')}
         </span>
       </div>
 
@@ -283,12 +285,12 @@ function InlineSynopsis({ description }: { description: string }) {
             >
               {isExpanded ? (
                 <>
-                  <span>收起详情</span>
+                  <span>{t('series.collapse')}</span>
                   <ChevronUp className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5" />
                 </>
               ) : (
                 <>
-                  <span>阅读完整简介</span>
+                  <span>{t('series.readMore')}</span>
                   <ChevronDown className="h-3.5 w-3.5 transition-transform group-hover:translate-y-0.5" />
                 </>
               )}

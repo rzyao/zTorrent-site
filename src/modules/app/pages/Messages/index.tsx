@@ -1,5 +1,6 @@
 ﻿import { useMemo, useState } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Mail, Archive, Send, Star, Trash2, Bell } from "lucide-react";
 import { Button } from "@/modules/app/components/ui/button";
 import { Badge } from "@/modules/app/components/ui/badge";
@@ -30,7 +31,8 @@ import { usePollingUnread } from "./hooks/usePollingUnread";
  * - 目标：保持原有 UI，不改动路由，对外导出同名组件以确保引用路径稳定
  */
 export default function MessagesPage() {
-  useDynamicTitle("消息");
+  const { t } = useLanguage();
+  useDynamicTitle(t('messages.title'));
   const { activeTab, setActiveTab } = useTabState();
 
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
@@ -122,12 +124,12 @@ export default function MessagesPage() {
               </div>
               <div>
                 <h1 className="flex items-center gap-2 text-3xl text-white">
-                  消息中心{" "}
+                  {t('messages.title')}{" "}
                   {unreadTotalCount > 0 && (
                     <Badge className="bg-red-500 text-white">{unreadTotalCount}</Badge>
                   )}
                 </h1>
-                <p className="mt-1 text-sm text-neutral-400">管理您的系统通知和私人消息</p>
+                <p className="mt-1 text-sm text-neutral-400">{t('messages.subtitle')}</p>
               </div>
             </div>
             <Button
@@ -135,7 +137,7 @@ export default function MessagesPage() {
               className="bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:from-amber-600 hover:to-orange-700"
             >
               <Send className="mr-2 h-4 w-4" />
-              发送消息
+              {t('messages.send')}
             </Button>
           </div>
         </div>
@@ -162,12 +164,12 @@ export default function MessagesPage() {
                   className="text-neutral-400 hover:bg-neutral-700/30 hover:text-white"
                   onClick={() => {
                     const unreadIds = notifications.items.filter((n) => !n.readAt).map((n) => n.id);
-                    if (unreadIds.length === 0) toast.info("暂无未读通知");
+                    if (unreadIds.length === 0) toast.info(t('messages.noUnreadNotification'));
                     else markNotificationsRead(unreadIds);
                   }}
                 >
                   <Bell className="mr-2 h-4 w-4" />
-                  全部已读
+                  {t('messages.markAllRead')}
                 </Button>
               )}
               <Button
@@ -176,7 +178,7 @@ export default function MessagesPage() {
                 className="text-neutral-400 hover:bg-neutral-700/30 hover:text-white"
               >
                 <Archive className="mr-2 h-4 w-4" />
-                归档
+                {t('messages.archive')}
               </Button>
               <Button
                 variant="ghost"
@@ -184,7 +186,7 @@ export default function MessagesPage() {
                 className="text-neutral-400 hover:bg-neutral-700/30 hover:text-white"
               >
                 <Star className="mr-2 h-4 w-4" />
-                星标
+                {t('messages.star')}
               </Button>
               <Button
                 variant="ghost"
@@ -192,7 +194,7 @@ export default function MessagesPage() {
                 className="text-neutral-400 hover:bg-neutral-700/30 hover:text-white"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                回收站
+                {t('messages.trash')}
               </Button>
             </div>
           </div>
@@ -231,7 +233,7 @@ export default function MessagesPage() {
               onDeleteMessage={async (id) => {
                 try {
                   await MessagesService.messagesControllerDeleteMessage({ id });
-                  toast.success("消息已删除");
+                  toast.success(t('messages.deleted'));
                   setSelectedMessage(null);
                   if (activeTab === "inbox") await inbox.load();
                   if (activeTab === "sent") await outbox.load();

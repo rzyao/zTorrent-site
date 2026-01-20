@@ -2,6 +2,7 @@ import { Music } from "lucide-react";
 import { useMusicData } from "./hooks/useMusicData";
 import { useMusicInteractions } from "./hooks/useMusicInteractions";
 import { useViewState } from "./hooks/useViewState";
+import { useLanguage } from "@/hooks/useLanguage";
 import { SearchBar } from "./components/SearchBar";
 import { TabNav } from "./components/TabNav";
 import { ViewToggle } from "./components/ViewToggle";
@@ -13,6 +14,7 @@ import { PlaylistsSection } from "./components/PlaylistsSection";
 import { AddToPlaylistModal } from "./components/AddToPlaylistModal";
 
 export default function MusicPage() {
+  const { t } = useLanguage();
   const { activeTab, setActiveTab, viewMode, setViewMode, searchQuery, deferredSearchQuery, setSearchQuery } =
     useViewState();
   const {
@@ -49,8 +51,8 @@ export default function MusicPage() {
                 <Music className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-white text-3xl">音乐</h1>
-                <p className="text-neutral-400 text-sm mt-1">发现你喜欢的音乐，探索无限可能</p>
+                <h1 className="text-white text-3xl">{t('music.title')}</h1>
+                <p className="text-neutral-400 text-sm mt-1">{t('music.subtitle')}</p>
               </div>
             </div>
             {/* 搜索框 */}

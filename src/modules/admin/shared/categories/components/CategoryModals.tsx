@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Modal } from "@/modules/admin/components/ui/modal";
 import { Input } from "@/modules/admin/components/ui/input";
 import { Switch } from "@/modules/admin/components/ui/switch";
@@ -22,7 +23,7 @@ import type { CategoryItem } from "../types";
 const createSchema = z.object({
   key: z.string().optional(),
   keySuffix: z.string().optional(),
-  label: z.string().min(1, "名称必填"),
+  label: z.string().min(1, "Name is required"),
   description: z.string().optional(),
   sort: z.coerce.number().min(0).default(0),
   enabled: z.boolean().default(true),
@@ -30,7 +31,7 @@ const createSchema = z.object({
 });
 
 const editSchema = z.object({
-  label: z.string().min(1, "名称必填"),
+  label: z.string().min(1, "Name is required"),
   description: z.string().optional(),
   sort: z.coerce.number().min(0).default(0),
   enabled: z.boolean().default(true),
@@ -72,6 +73,7 @@ function CreateCategoryModal({
   initial?: any;
   keyPrefix?: string;
 }) {
+  const { t } = useLanguage();
   const {
     register,
     control,
@@ -112,7 +114,7 @@ function CreateCategoryModal({
 
   return (
     <Modal
-      title={keyPrefix ? "新增子分类" : "新增分类"}
+      title={keyPrefix ? t("admin.category.addSubCategory") : t("admin.category.addCategory")}
       open={open}
       onClose={onClose}
       onOk={handleSubmit(onSubmit)}
@@ -123,35 +125,35 @@ function CreateCategoryModal({
         {keyPrefix ? (
           <div className="space-y-1.5">
             <Label>
-              键后缀 <span className="text-muted-foreground font-normal">(父类: {keyPrefix})</span>
+              {t("admin.category.keySuffix")} <span className="text-muted-foreground font-normal">({t("admin.category.parent")}: {keyPrefix})</span>
             </Label>
-            <Input placeholder="如 action 或 classic" {...register("keySuffix")} />
+            <Input placeholder={t("admin.category.keySuffixPlaceholder")} {...register("keySuffix")} />
           </div>
         ) : (
           <div className="space-y-1.5">
             <Label>
-              唯一键 <span className="text-red-500">*</span>
+              {t("admin.category.uniqueKey")} <span className="text-red-500">*</span>
             </Label>
-            <Input placeholder="如 movies" {...register("key")} />
+            <Input placeholder={t("admin.category.keyPlaceholder")} {...register("key")} />
             {errors.key && <p className="text-sm text-red-500">{errors.key.message}</p>}
           </div>
         )}
-
+  
         <div className="space-y-1.5">
           <Label>
-            名称 <span className="text-red-500">*</span>
+            {t("admin.category.name")} <span className="text-red-500">*</span>
           </Label>
-          <Input placeholder="分类名称" {...register("label")} />
+          <Input placeholder={t("admin.category.namePlaceholder")} {...register("label")} />
           {errors.label && <p className="text-sm text-red-500">{errors.label.message}</p>}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label>排序</Label>
+            <Label>{t("admin.category.sort")}</Label>
             <Input type="number" min={0} {...register("sort")} />
           </div>
           <div className="space-y-1.5">
-            <Label>启用</Label>
+            <Label>{t("admin.category.enabled")}</Label>
             <div className="flex h-10 items-center">
               <Controller
                 control={control}
@@ -166,7 +168,7 @@ function CreateCategoryModal({
 
         <div className="space-y-1.5">
           <Label>
-            分区 <span className="text-red-500">*</span>
+            {t("admin.category.genre")} <span className="text-red-500">*</span>
           </Label>
           <Controller
             control={control}
@@ -174,11 +176,11 @@ function CreateCategoryModal({
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger>
-                  <SelectValue placeholder="选择分区" />
+                  <SelectValue placeholder={t("admin.category.selectGenre")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={UpdateCategoryDto.genre.GENERAL}>普通</SelectItem>
-                  <SelectItem value={UpdateCategoryDto.genre.ADULT}>成人</SelectItem>
+                  <SelectItem value={UpdateCategoryDto.genre.GENERAL}>{t("admin.category.genreGeneral")}</SelectItem>
+                  <SelectItem value={UpdateCategoryDto.genre.ADULT}>{t("admin.category.genreAdult")}</SelectItem>
                 </SelectContent>
               </Select>
             )}
@@ -186,8 +188,8 @@ function CreateCategoryModal({
         </div>
 
         <div className="space-y-1.5">
-          <Label>描述</Label>
-          <Textarea placeholder="分类描述（可选）" {...register("description")} />
+          <Label>{t("admin.category.description")}</Label>
+          <Textarea placeholder={t("admin.category.descriptionPlaceholder")} {...register("description")} />
         </div>
       </div>
     </Modal>
@@ -207,6 +209,7 @@ function EditCategoryModal({
   initial?: any;
   editing: CategoryItem | null;
 }) {
+  const { t } = useLanguage();
   const {
     register,
     control,
@@ -238,7 +241,7 @@ function EditCategoryModal({
 
   return (
     <Modal
-      title="编辑分类"
+      title={t("admin.category.editCategory")}
       open={open}
       onClose={onClose}
       onOk={handleSubmit(onOk)}
@@ -247,25 +250,25 @@ function EditCategoryModal({
     >
       <div className="space-y-4">
         <div className="space-y-1.5">
-          <Label>唯一键</Label>
+          <Label>{t("admin.category.uniqueKey")}</Label>
           <Input value={editing?.key || ""} disabled />
         </div>
 
         <div className="space-y-1.5">
           <Label>
-            名称 <span className="text-red-500">*</span>
+            {t("admin.category.name")} <span className="text-red-500">*</span>
           </Label>
-          <Input placeholder="分类名称" {...register("label")} />
+          <Input placeholder={t("admin.category.namePlaceholder")} {...register("label")} />
           {errors.label && <p className="text-sm text-red-500">{errors.label.message}</p>}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label>排序</Label>
+            <Label>{t("admin.category.sort")}</Label>
             <Input type="number" min={0} {...register("sort")} />
           </div>
           <div className="space-y-1.5">
-            <Label>启用</Label>
+            <Label>{t("admin.category.enabled")}</Label>
             <div className="flex h-10 items-center">
               <Controller
                 control={control}
@@ -279,18 +282,18 @@ function EditCategoryModal({
         </div>
 
         <div className="space-y-1.5">
-          <Label>分区</Label>
+          <Label>{t("admin.category.genre")}</Label>
           <Controller
             control={control}
             name="genre"
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger>
-                  <SelectValue placeholder="选择分区" />
+                  <SelectValue placeholder={t("admin.category.selectGenre")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={UpdateCategoryDto.genre.GENERAL}>普通</SelectItem>
-                  <SelectItem value={UpdateCategoryDto.genre.ADULT}>成人</SelectItem>
+                  <SelectItem value={UpdateCategoryDto.genre.GENERAL}>{t("admin.category.genreGeneral")}</SelectItem>
+                  <SelectItem value={UpdateCategoryDto.genre.ADULT}>{t("admin.category.genreAdult")}</SelectItem>
                 </SelectContent>
               </Select>
             )}
@@ -298,8 +301,8 @@ function EditCategoryModal({
         </div>
 
         <div className="space-y-1.5">
-          <Label>描述</Label>
-          <Textarea placeholder="分类描述（可选）" {...register("description")} />
+          <Label>{t("admin.category.description")}</Label>
+          <Textarea placeholder={t("admin.category.descriptionPlaceholder")} {...register("description")} />
         </div>
       </div>
     </Modal>

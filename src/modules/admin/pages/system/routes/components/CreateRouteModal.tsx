@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useLanguage } from "@/hooks/useLanguage";
 import {
   Dialog,
   DialogContent,
@@ -20,9 +21,9 @@ import { componentRegistry } from "@/routes/componentRegistry";
 const createRouteSchema = z.object({
   routeKey: z
     .string()
-    .min(1, "其中包含必填项")
-    .regex(/^[a-zA-Z0-9_-]+$/, "仅支持字母、数字、下划线和连字符"),
-  path: z.string().min(1, "其中包含必填项"),
+    .min(1, "Required field")
+    .regex(/^[a-zA-Z0-9_-]+$/, "Only letters, numbers, underscores and hyphens are allowed"),
+  path: z.string().min(1, "Required field"),
   name: z.string().optional(),
   parentId: z.string().optional().nullable(),
   component: z.string().optional(),
@@ -34,7 +35,7 @@ const createRouteSchema = z.object({
   isVisible: z.boolean().default(true),
   isEnabled: z.boolean().default(true),
   isIndex: z.boolean().default(false),
-  openInNewTab: z.boolean().default(false),
+    openInNewTab: z.boolean().default(false),
 });
 
 type CreateRouteFormValues = z.infer<typeof createRouteSchema>;
@@ -78,6 +79,7 @@ export function CreateRouteModal({
   onSubmit,
   initialLayout = "app",
 }: CreateRouteModalProps) {
+  const { t } = useLanguage();
   const {
     control,
     handleSubmit,
@@ -136,16 +138,16 @@ export function CreateRouteModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>新建路由节点</DialogTitle>
+          <DialogTitle>{t("admin.routes.createRoute")}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
-          {/* 基础信息 */}
+          {/* Basic Info */}
           <div>
-            <h4 className="text-muted-foreground mb-3 text-xs font-bold uppercase">基础信息</h4>
+            <h4 className="text-muted-foreground mb-3 text-xs font-bold uppercase">{t("admin.routes.basicInfo")}</h4>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>路由标识 (routeKey) *</Label>
+                <Label>{t("admin.routes.routeKey")} *</Label>
                 <Controller
                   control={control}
                   name="routeKey"
@@ -158,11 +160,11 @@ export function CreateRouteModal({
                     </>
                   )}
                 />
-                <p className="text-muted-foreground text-xs">全局唯一标识</p>
+                <p className="text-muted-foreground text-xs">{t("admin.routes.globalUniqueKey")}</p>
               </div>
 
               <div className="space-y-2">
-                <Label>路由路径 (path) *</Label>
+                <Label>{t("admin.routes.routePath")} *</Label>
                 <Controller
                   control={control}
                   name="path"
@@ -176,16 +178,16 @@ export function CreateRouteModal({
               </div>
 
               <div className="space-y-2">
-                <Label>显示名称</Label>
+                <Label>{t("admin.routes.displayName")}</Label>
                 <Controller
                   control={control}
                   name="name"
-                  render={({ field }) => <Input {...field} placeholder="用户管理" />}
+                  render={({ field }) => <Input {...field} placeholder={t("admin.routes.displayNamePlaceholder")} />}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>父级节点</Label>
+                <Label>{t("admin.routes.parentNode")}</Label>
                 <Controller
                   control={control}
                   name="parentId"
@@ -194,7 +196,7 @@ export function CreateRouteModal({
                       value={field.value || undefined}
                       onValueChange={field.onChange}
                       options={parentOptions}
-                      placeholder="根节点 (无父级)"
+                      placeholder={t("admin.routes.rootNode")}
                       className="w-full"
                     />
                   )}
@@ -204,10 +206,10 @@ export function CreateRouteModal({
           </div>
 
           <div className="border-t pt-4">
-            <h4 className="text-muted-foreground mb-3 text-xs font-bold uppercase">渲染配置</h4>
+            <h4 className="text-muted-foreground mb-3 text-xs font-bold uppercase">{t("admin.routes.renderConfig")}</h4>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>渲染组件</Label>
+                <Label>{t("admin.routes.component")}</Label>
                 <Controller
                   control={control}
                   name="component"
@@ -216,14 +218,14 @@ export function CreateRouteModal({
                       value={field.value}
                       onValueChange={field.onChange}
                       options={componentList.map((c) => ({ value: c, label: c }))}
-                      placeholder="选择组件"
+                      placeholder={t("admin.routes.selectComponent")}
                     />
                   )}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>所属布局</Label>
+                <Label>{t("admin.routes.layout")}</Label>
                 <Controller
                   control={control}
                   name="layout"
@@ -232,10 +234,10 @@ export function CreateRouteModal({
                       value={field.value}
                       onValueChange={field.onChange}
                       options={[
-                        { value: "none", label: "无布局 (None)" },
-                        { value: "app", label: "前台布局 (AppLayout)" },
-                        { value: "forum", label: "论坛布局 (ForumLayout)" },
-                        { value: "admin", label: "后台布局 (AdminLayout)" },
+                        { value: "none", label: t("admin.routes.layoutNone") },
+                        { value: "app", label: t("admin.routes.layoutApp") },
+                        { value: "forum", label: t("admin.routes.layoutForum") },
+                        { value: "admin", label: t("admin.routes.layoutAdmin") },
                       ]}
                     />
                   )}
@@ -243,16 +245,16 @@ export function CreateRouteModal({
               </div>
 
               <div className="space-y-2">
-                <Label>重定向</Label>
+                <Label>{t("admin.routes.redirect")}</Label>
                 <Controller
                   control={control}
                   name="redirect"
-                  render={({ field }) => <Input {...field} placeholder="可选" />}
+                  render={({ field }) => <Input {...field} placeholder={t("admin.routes.optional")} />}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>排序权重</Label>
+                <Label>{t("admin.routes.sortOrder")}</Label>
                 <Controller
                   control={control}
                   name="sortOrder"
@@ -263,7 +265,7 @@ export function CreateRouteModal({
               </div>
 
               <div className="col-span-2 space-y-2">
-                <Label>图标 (Lucide:Home)</Label>
+                <Label>{t("admin.routes.icon")}</Label>
                 <Controller
                   control={control}
                   name="icon"
@@ -274,7 +276,7 @@ export function CreateRouteModal({
           </div>
 
           <div className="border-t pt-4">
-            <h4 className="text-muted-foreground mb-3 text-xs font-bold uppercase">控制选项</h4>
+            <h4 className="text-muted-foreground mb-3 text-xs font-bold uppercase">{t("admin.routes.controlOptions")}</h4>
             <div className="flex flex-wrap gap-6">
               <Controller
                 control={control}
@@ -282,7 +284,7 @@ export function CreateRouteModal({
                 render={({ field }) => (
                   <div className="flex items-center space-x-2">
                     <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    <Label>菜单可见</Label>
+                    <Label>{t("admin.routes.menuVisible")}</Label>
                   </div>
                 )}
               />
@@ -292,7 +294,7 @@ export function CreateRouteModal({
                 render={({ field }) => (
                   <div className="flex items-center space-x-2">
                     <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    <Label>启用</Label>
+                    <Label>{t("admin.routes.enabled")}</Label>
                   </div>
                 )}
               />
@@ -302,7 +304,7 @@ export function CreateRouteModal({
                 render={({ field }) => (
                   <div className="flex items-center space-x-2">
                     <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    <Label>索引路由</Label>
+                    <Label>{t("admin.routes.indexRoute")}</Label>
                   </div>
                 )}
               />
@@ -312,14 +314,14 @@ export function CreateRouteModal({
                 render={({ field }) => (
                   <div className="flex items-center space-x-2">
                     <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    <Label>新签页</Label>
+                    <Label>{t("admin.routes.openInNewTab")}</Label>
                   </div>
                 )}
               />
             </div>
 
             <div className="mt-4 space-y-2">
-              <Label>访问权限 (输入Key回车 - 暂用逗号分隔字符串)</Label>
+              <Label>{t("admin.routes.permissions")}</Label>
               <Controller
                 control={control}
                 name="permissions"
@@ -331,16 +333,16 @@ export function CreateRouteModal({
                   />
                 )}
               />
-              <p className="text-muted-foreground text-xs">多个权限请用逗号分隔</p>
+              <p className="text-muted-foreground text-xs">{t("admin.routes.permissionsHint")}</p>
             </div>
           </div>
 
           <div className="bg-muted/20 -mx-6 -mb-6 flex justify-end gap-3 border-t px-6 py-4">
             <Button type="button" variant="default" onClick={() => onOpenChange(false)}>
-              取消
+              {t("app.cancel")}
             </Button>
             <Button type="submit" variant="primary" loading={isSubmitting}>
-              创建
+              {t("admin.routes.create")}
             </Button>
           </div>
         </form>

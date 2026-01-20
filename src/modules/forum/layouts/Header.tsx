@@ -1,6 +1,7 @@
 import { Search, MessageSquare, Bell, User, Menu, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Logo from "@/assets/logo.svg";
 import { useForumTheme } from "../context/ForumThemeContext";
 import { ForumsTopicsService, ForumTopic } from "@/api";
@@ -14,6 +15,7 @@ interface HeaderProps {
 }
 
 export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProps) {
+  const { t } = useTranslation();
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const { theme, toggleTheme, colors } = useForumTheme();
 
@@ -74,13 +76,13 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
             <button
               className={`rounded-lg p-2 lg:hidden ${colors.buttonHover}`}
               onClick={handleMenuClick}
-              aria-label="打开菜单"
+              aria-label={t('forum.header.openMenu')}
             >
               <Menu className={`h-5 w-5 ${colors.textSecondary}`} />
             </button>
             <Link to="/forum" className="flex items-center gap-2">
               <img src={Logo} alt="Logo" className="h-7 md:h-9" />
-              <span className={`text-xl font-semibold ${colors.textPrimary}`}>论坛社区</span>
+              <span className={`text-xl font-semibold ${colors.textPrimary}`}>{t('forum.header.forumCommunity')}</span>
             </Link>
           </div>
 
@@ -92,7 +94,7 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
               />
               <input
                 type="text"
-                placeholder="搜索话题..."
+                placeholder={t('forum.header.searchTopics')}
                 value={searchQuery}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setTimeout(() => setIsFocused(false), 200)} // 延迟 blur 以便点击结果
@@ -128,7 +130,7 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
                     <div
                       className={`border-t bg-gray-50 px-4 py-2 text-center text-xs text-gray-500 dark:border-neutral-700 dark:bg-neutral-900 ${colors.borderColor}`}
                     >
-                      仅显示前 5 条结果
+                      {t('forum.header.showingTop5')}
                     </div>
                   )}
                 </div>
@@ -150,14 +152,14 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
               icon={MessageSquare}
               className="hidden h-8 px-3 font-medium sm:flex"
             >
-              新话题
+              {t('forum.header.newTopic')}
             </ActionButton>
 
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
               className={`rounded-lg p-2 ${colors.buttonHover} transition-colors`}
-              title={theme === "light" ? "切换到深色模式" : "切换到浅色模式"}
+              title={theme === "light" ? t('forum.header.switchToDark') : t('forum.header.switchToLight')}
             >
               {theme === "light" ? (
                 <Moon className={`h-5 w-5 ${colors.textSecondary}`} />
@@ -185,7 +187,7 @@ export function Header({ onSearch, searchQuery, onMobileMenuToggle }: HeaderProp
             />
             <input
               type="text"
-              placeholder="搜索话题、帖子..."
+              placeholder={t('forum.header.searchTopicsPosts')}
               value={searchQuery}
               onChange={(e) => onSearch(e.target.value)}
               className={`focus:ring-opacity-50 w-full rounded-lg border py-2 pr-4 pl-10 focus:ring-2 focus:outline-none ${colors.inputBg} ${colors.inputBorder} ${colors.textPrimary} focus:ring-blue-500 dark:focus:ring-amber-500`}

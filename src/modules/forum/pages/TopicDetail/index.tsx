@@ -15,6 +15,7 @@ import { useTopicDetail } from "./hooks/useTopicDetail";
 import { Loader2 } from "lucide-react";
 import { TopicDetailSkeleton } from "./components/TopicDetailSkeleton";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Button } from "@/modules/forum/components/ui/button";
 
 export function TopicDetail({
@@ -27,6 +28,7 @@ export function TopicDetail({
   }>();
   const navigate = useNavigate();
   const { theme, colors } = useForumTheme();
+  const { t } = useLanguage();
   const { access } = useAccess();
   const [editOpen, setEditOpen] = useState(false);
   const [currentPost, setCurrentPost] = useState(1);
@@ -56,7 +58,7 @@ export function TopicDetail({
   } = useTopicDetail(topicId, { nearPost: targetPostNumber });
 
   // 设置页面动态标题
-  useDynamicTitle(topicData?.title || "话题详情");
+  useDynamicTitle(topicData?.title || t('forum.topic.topicDetail'));
 
   // NProgress 联动
   useEffect(() => {
@@ -366,7 +368,7 @@ export function TopicDetail({
 
   // 话题不存在
   if (!topicId) {
-    return <div className="flex h-64 items-center justify-center text-neutral-400">话题不存在</div>;
+    return <div className="flex h-64 items-center justify-center text-neutral-400">{t('forum.topic.notExist')}</div>;
   }
 
   // 加载中状态
@@ -378,9 +380,9 @@ export function TopicDetail({
   if (isError || !topicData) {
     return (
       <div className="flex h-64 flex-col items-center justify-center gap-4 text-neutral-400">
-        <span>{(error as any)?.message || "加载失败，请重试"}</span>
+        <span>{(error as any)?.message || t('forum.topic.loadFailed')}</span>
         <Button variant="primary" onClick={() => window.location.reload()}>
-          重试
+          {t('app.retry')}
         </Button>
       </div>
     );
@@ -409,7 +411,7 @@ export function TopicDetail({
                 {isFetchingPreviousPage && (
                   <div className="flex items-center justify-center gap-2 py-4">
                     <Loader2 className="h-5 w-5 animate-spin text-blue-600 dark:text-amber-400" />
-                    <span className={colors.textMuted}>加载更早的回复...</span>
+                    <span className={colors.textMuted}>{t('forum.topic.loadEarlier')}</span>
                   </div>
                 )}
               </div>
@@ -445,12 +447,12 @@ export function TopicDetail({
               {isFetchingNextPage && (
                 <div className="flex items-center justify-center gap-2 py-4">
                   <Loader2 className="h-5 w-5 animate-spin text-blue-600 dark:text-amber-400" />
-                  <span className={colors.textMuted}>加载更多回复...</span>
+                  <span className={colors.textMuted}>{t('forum.topic.loadMore')}</span>
                 </div>
               )}
               {!hasNextPage && topicData.posts.length > 20 && (
                 <div className={`py-4 text-center text-sm ${colors.textMuted}`}>
-                  — 已加载全部回复 —
+                  — {t('forum.topic.allLoaded')} —
                 </div>
               )}
             </div>

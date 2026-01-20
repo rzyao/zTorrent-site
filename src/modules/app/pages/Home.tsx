@@ -41,6 +41,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/modules/app/components/ui
 import { Separator } from "@/modules/app/components/ui/separator";
 import { PageContainer } from "@/modules/app/components/PageContainer";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { useQuery } from "@tanstack/react-query";
 import { ForumsTopicsService } from "@/api/services/ForumsTopicsService";
 import { ForumsStatisticsService } from "@/api/services/ForumsStatisticsService";
@@ -111,7 +112,8 @@ interface ForumPost {
 }
 
 export default function HomePage() {
-  useDynamicTitle("首页");
+  const { t } = useLanguage();
+  useDynamicTitle(t('home.title'));
   const [searchQuery, setSearchQuery] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -337,13 +339,13 @@ export default function HomePage() {
   const getStatusText = (status: string) => {
     switch (status) {
       case "open":
-        return "求种中";
+        return t('home.requestOpen');
       case "filled":
-        return "已完成";
+        return t('home.requestFilled');
       case "closed":
-        return "已关闭";
+        return t('home.requestClosed');
       default:
-        return "未知";
+        return t('error.unknown');
     }
   };
   /* 卡片背景色从bg-linear-to-br from-neutral-800/60 to-stone-900/60修改为bg-neutral-800/40 */
@@ -357,7 +359,7 @@ export default function HomePage() {
             <div className="mb-4 flex items-center justify-between">
               <h2 className="flex items-center gap-2 text-lg text-white">
                 <Bell className="h-5 w-5 text-amber-400" />
-                站点公告
+                {t('home.siteAnnouncements')}
               </h2>
             </div>
 
@@ -373,12 +375,12 @@ export default function HomePage() {
                         announcement.type,
                       )} text-xs whitespace-nowrap`}
                     >
-                      {announcement.type === "system" && "系统"}
-                      {announcement.type === "event" && "活动"}
-                      {announcement.type === "notice" && "通知"}
+                      {announcement.type === "system" && t('home.system')}
+                      {announcement.type === "event" && t('home.event')}
+                      {announcement.type === "notice" && t('home.notice')}
                     </Badge>
                     {announcement.isTop && (
-                      <Badge className="border-0 bg-red-500 text-xs text-white">置顶</Badge>
+                      <Badge className="border-0 bg-red-500 text-xs text-white">{t('home.pinned')}</Badge>
                     )}
                   </div>
                   <h4 className="mb-2 text-sm text-white transition-colors group-hover:text-amber-400">
@@ -406,12 +408,12 @@ export default function HomePage() {
               )}
               {!!carouselError && (
                 <div className="flex h-full items-center justify-center text-sm text-red-400">
-                  加载失败：{String((carouselError as any)?.message || "请稍后重试")}
+                  {t('home.loadFailed')}：{String((carouselError as any)?.message || t('home.retryLater'))}
                 </div>
               )}
               {!carouselLoading && !carouselError && hotTorrents.length === 0 && (
                 <div className="flex h-full items-center justify-center text-sm text-neutral-400">
-                  暂无轮播数据
+                  {t('home.noCarouselData')}
                 </div>
               )}
               {hotTorrents.map((torrent, index) => (
@@ -457,13 +459,13 @@ export default function HomePage() {
 
                     <div className="flex items-center gap-6 text-sm">
                       <span className="text-neutral-400">
-                        大小: <span className="text-white">{torrent.size}</span>
+                        {t('torrent.size')}: <span className="text-white">{torrent.size}</span>
                       </span>
                       <span className="text-neutral-400">
-                        做种: <span className="text-green-400">{torrent.seeders}</span>
+                        {t('torrent.seeders')}: <span className="text-green-400">{torrent.seeders}</span>
                       </span>
                       <span className="text-neutral-400">
-                        下载: <span className="text-red-400">{torrent.leechers}</span>
+                        {t('torrent.leechers')}: <span className="text-red-400">{torrent.leechers}</span>
                       </span>
                       <span className="flex items-center gap-1">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -508,7 +510,7 @@ export default function HomePage() {
           <div className="h-full rounded-xl border border-neutral-700/50 bg-neutral-800/40 p-5">
             <h2 className="mb-4 flex items-center gap-2 text-lg text-white">
               <TrendingUp className="h-5 w-5 text-amber-400" />
-              站点统计
+              {t('home.siteStats')}
             </h2>
 
             {statsLoading && (
@@ -526,7 +528,7 @@ export default function HomePage() {
             )}
             {!!statsError && (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
-                加载失败：{String((statsError as any)?.message || "请稍后重试")}
+                {t('home.loadFailed')}：{String((statsError as any)?.message || t('home.retryLater'))}
               </div>
             )}
             {!statsLoading && !statsError && (
@@ -535,7 +537,7 @@ export default function HomePage() {
                   <div className="mb-1 text-3xl text-blue-400">
                     {siteStats.totalUsers.toLocaleString()}
                   </div>
-                  <div className="text-sm text-neutral-400">注册用户</div>
+                  <div className="text-sm text-neutral-400">{t('home.registeredUsers')}</div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -543,25 +545,25 @@ export default function HomePage() {
                     <div className="mb-1 text-xl text-green-400">
                       {siteStats.torrents.toLocaleString()}
                     </div>
-                    <div className="text-xs text-neutral-500">种子数</div>
+                    <div className="text-xs text-neutral-500">{t('home.totalTorrents')}</div>
                   </div>
                   <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 text-center">
                     <div className="mb-1 text-xl text-purple-400">
                       {siteStats.seeders.toLocaleString()}
                     </div>
-                    <div className="text-xs text-neutral-500">做种者</div>
+                    <div className="text-xs text-neutral-500">{t('home.totalSeeders')}</div>
                   </div>
                   <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 text-center">
                     <div className="mb-1 text-xl text-red-400">
                       {siteStats.peers.toLocaleString()}
                     </div>
-                    <div className="text-xs text-neutral-500">下载者</div>
+                    <div className="text-xs text-neutral-500">{t('home.totalLeechers')}</div>
                   </div>
                   <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 text-center">
                     <div className="mb-1 text-xl text-amber-400">
                       {siteStats.onlineUsers.toLocaleString()}
                     </div>
-                    <div className="text-xs text-neutral-500">在线用户</div>
+                    <div className="text-xs text-neutral-500">{t('home.onlineUsers')}</div>
                   </div>
                 </div>
               </div>
@@ -577,9 +579,9 @@ export default function HomePage() {
           <div className="mb-4 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-lg text-white">
               <Gift className="h-5 w-5 text-amber-400" />
-              资源悬赏
+              {t('home.bountyRequests')}
               <Badge className="border-amber-500/30 bg-amber-500/20 text-xs text-amber-400">
-                {bountyTotal} 个进行中
+                {t('home.countInProgress', { count: bountyTotal })}
               </Badge>
             </h2>
           </div>
@@ -598,12 +600,12 @@ export default function HomePage() {
             )}
             {!!bountyError && (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
-                加载失败：{String((bountyError as any)?.message || "请稍后重试")}
+                {t('home.loadFailed')}：{String((bountyError as any)?.message || t('home.retryLater'))}
               </div>
             )}
             {!bountyLoading && !bountyError && bountyTopics.length === 0 && (
               <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-4 text-sm text-neutral-400">
-                暂无进行中的悬赏话题
+                {t('home.noBountyTopics')}
               </div>
             )}
             {bountyTopics.map((topic) => (
@@ -616,7 +618,7 @@ export default function HomePage() {
                     {topic.title}
                   </h3>
                   <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-                    进行中
+                    {t('home.inProgress')}
                   </Badge>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-neutral-500">
@@ -644,7 +646,7 @@ export default function HomePage() {
               <div className="pt-2">
                 <Link to="/forum/latest">
                   <Button variant="outline" className="w-full border-amber-500/30 text-amber-400">
-                    查看更多悬赏话题
+                    {t('home.viewMoreBounty')}
                   </Button>
                 </Link>
               </div>
@@ -657,7 +659,7 @@ export default function HomePage() {
           <div className="mb-4 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-lg text-white">
               <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
-              精华推荐
+              {t('home.featuredRecommend')}
             </h2>
           </div>
 
@@ -674,12 +676,12 @@ export default function HomePage() {
             )}
             {!!featuredError && (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
-                加载失败：{String((featuredError as any)?.message || "请稍后重试")}
+                {t('home.loadFailed')}：{String((featuredError as any)?.message || t('home.retryLater'))}
               </div>
             )}
             {!featuredLoading && !featuredError && recommendations.length === 0 && (
               <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-4 text-sm text-neutral-400">
-                暂无精选片单
+                {t('home.noFeaturedPlaylists')}
               </div>
             )}
             {recommendations.map((rec) => (
@@ -725,7 +727,7 @@ export default function HomePage() {
           <div className="mb-4 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-lg text-white">
               <Flame className="h-5 w-5 text-red-400" />
-              论坛热帖
+              {t('home.forumHotTopics')}
             </h2>
           </div>
 
@@ -742,12 +744,12 @@ export default function HomePage() {
             )}
             {!!hotError && (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
-                加载失败：{String((hotError as any)?.message || "请稍后重试")}
+                {t('home.loadFailed')}：{String((hotError as any)?.message || t('home.retryLater'))}
               </div>
             )}
             {!hotLoading && !hotError && hotTopicItems.length === 0 && (
               <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-4 text-sm text-neutral-400">
-                暂无热门话题（最近1小时）
+                {t('home.noHotTopics')}
               </div>
             )}
             {hotTopicItems.map((post) => (
@@ -788,7 +790,7 @@ export default function HomePage() {
               <div className="pt-2">
                 <Link to="/forum/hot">
                   <Button variant="outline" className="w-full border-amber-500/30 text-amber-400">
-                    查看更多热帖
+                    {t('home.viewMoreHotTopics')}
                   </Button>
                 </Link>
               </div>

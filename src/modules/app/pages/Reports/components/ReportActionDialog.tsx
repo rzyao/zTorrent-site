@@ -12,6 +12,7 @@ import {
 } from "@/modules/app/components/ui/dialog";
 import { Button } from "@/modules/app/components/ui/button";
 import { Textarea } from "@/modules/app/components/ui/textarea";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface ReportActionDialogProps {
   report: ForumReport | null;
@@ -26,19 +27,20 @@ export function ReportActionDialog({
   onClose,
   onSuccess,
 }: ReportActionDialogProps) {
+  const { t } = useLanguage();
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
 
   const getActionTitle = () => {
     switch (action) {
       case "resolve":
-        return "标记已解决";
+        return t('reports.actions.resolve');
       case "reject":
-        return "驳回举报";
+        return t('reports.actions.reject');
       case "delete_content":
-        return "删除内容并解决";
+        return t('reports.actions.deleteContent');
       case "ban_user":
-        return "封禁用户";
+        return t('reports.actions.banUser');
       default:
         return "";
     }
@@ -47,13 +49,13 @@ export function ReportActionDialog({
   const getActionDescription = () => {
     switch (action) {
       case "resolve":
-        return "确认该举报已得到妥善处理？这会将状态更新为已解决。";
+        return t('reports.descriptions.resolve');
       case "reject":
-        return "确认忽略该举报？这将标记为已驳回。";
+        return t('reports.descriptions.reject');
       case "delete_content":
-        return "确认删除相关内容？该操作不可逆，并会自动将举报标记为已解决。";
+        return t('reports.descriptions.deleteContent');
       case "ban_user":
-        return "确认封禁该用户？请在下方填写封禁原因和时长备注。";
+        return t('reports.descriptions.banUser');
       default:
         return "";
     }
@@ -88,7 +90,7 @@ export function ReportActionDialog({
 
       await ForumsReportsService.reportsControllerHandle(dto);
 
-      toast.success("操作成功");
+      toast.success(t('reports.success'));
       onSuccess();
       onClose();
     } catch (error: any) {
@@ -110,11 +112,11 @@ export function ReportActionDialog({
         </DialogHeader>
 
         <div className="py-4">
-          <label className="mb-2 block text-sm font-medium text-neutral-300">处理备注 (可选)</label>
+          <label className="mb-2 block text-sm font-medium text-neutral-300">{t('reports.handlerNote')}</label>
           <Textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="请输入处理说明..."
+            placeholder={t('reports.notePlaceholder')}
             className="min-h-[100px] border-neutral-700 bg-[#0F171E] text-neutral-200"
           />
         </div>
@@ -126,7 +128,7 @@ export function ReportActionDialog({
             disabled={loading}
             className="border-neutral-700 hover:bg-neutral-800 hover:text-neutral-200"
           >
-            取消
+            {t('app.cancel')}
           </Button>
           <Button
             onClick={handleConfirm}
@@ -137,7 +139,7 @@ export function ReportActionDialog({
                 : "bg-blue-600 text-white hover:bg-blue-700"
             }
           >
-            {loading ? "处理中..." : "确认"}
+            {loading ? t('reports.processing') : t('app.confirm')}
           </Button>
         </DialogFooter>
       </DialogContent>

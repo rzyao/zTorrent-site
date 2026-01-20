@@ -3,6 +3,7 @@ import { TorrentRow } from "@/modules/app/components/TorrentRow";
 import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const featuredTorrent = {
   title: "星际穿越 Interstellar (2014)",
@@ -340,18 +341,19 @@ const movieTorrents = [
 ];
 
 export default function AdultPage() {
-  useDynamicTitle("首页");
+  const { t } = useLanguage();
+  useDynamicTitle(t('home.title'));
   const [params, setParams] = useSearchParams();
-  const initial = params.get("category") || "全部";
+  const initial = params.get("category") || t('home.categories.all');
   const [activeCategory, setActiveCategory] = useState(initial);
   return (
     <>
       <FeaturedTorrent {...featuredTorrent} />
       <div className="relative -mt-24 space-y-8 pb-16">
-        <TorrentRow title="免费下载" torrents={freeTorrents} />
-        <TorrentRow title="本周热门" torrents={hotTorrents} />
-        <TorrentRow title="VIP专享" torrents={vipTorrents} />
-        <TorrentRow title="精选电影" torrents={movieTorrents} />
+        <TorrentRow title={t('home.sections.free')} torrents={freeTorrents} />
+        <TorrentRow title={t('home.sections.hot')} torrents={hotTorrents} />
+        <TorrentRow title={t('home.sections.vip')} torrents={vipTorrents} />
+        <TorrentRow title={t('home.sections.featured')} torrents={movieTorrents} />
       </div>
     </>
   );

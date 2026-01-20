@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { UsersService } from "@/api";
 // Hooks
 import { useForumsCategories } from "../hooks/useForumsCategories";
@@ -31,6 +32,7 @@ interface SidebarProps {
  * 4. 负责数据的过滤与展示逻辑
  */
 export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   // 模态框控制状态
@@ -163,7 +165,7 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
 
       {/* Modals */}
       <SidebarCustomizeModal
-        title="编辑类别导航"
+        title={t('forum.sidebar.editCategoryNav')}
         isOpen={isCategoryModalOpen}
         onClose={() => setIsCategoryModalOpen(false)}
         items={allCategories.map((c) => ({
@@ -181,7 +183,7 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
       />
 
       <SidebarCustomizeModal
-        title="编辑标签导航"
+        title={t('forum.sidebar.editTagNav')}
         isOpen={isTagModalOpen}
         onClose={() => setIsTagModalOpen(false)}
         items={allTags.map((t) => ({

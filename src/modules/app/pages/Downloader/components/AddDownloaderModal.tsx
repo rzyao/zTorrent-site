@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/modules/app/components/ui/select";
 import { DownloaderForm, DownloaderType } from "../types";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface Props {
   open: boolean;
@@ -41,6 +42,7 @@ export function AddDownloaderModal({
   onSubmit,
   onClose,
 }: Props) {
+  const { t } = useLanguage();
   if (!open) return null;
   return createPortal(
     <div className="modal-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -49,7 +51,7 @@ export function AddDownloaderModal({
         <div className="sticky top-0 bg-linear-to-r from-amber-500 to-orange-600 p-6 flex items-center justify-between rounded-t-2xl">
           <h2 className="text-white text-xl flex items-center gap-2">
             <Plus className="w-6 h-6" />
-            添加下载器
+            {t('downloader.addTitle')}
           </h2>
           <button
             onClick={onClose}
@@ -65,13 +67,13 @@ export function AddDownloaderModal({
           <div>
             <label className="block text-neutral-300 mb-2 text-sm">
               <Server className="w-4 h-4 inline mr-2" />
-              下载器名称 *
+              {t('downloader.name')} *
             </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => onChangeForm({ name: e.target.value })}
-              placeholder="例如：主服务器 qBittorrent"
+              placeholder={t('downloader.namePlaceholder')}
               className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500"
             />
           </div>
@@ -80,7 +82,7 @@ export function AddDownloaderModal({
           <div>
             <label className="block text-neutral-300 mb-2 text-sm">
               <MonitorDown className="w-4 h-4 inline mr-2" />
-              下载器类型 *
+              {t('downloader.type')} *
             </label>
             <Select
               value={formData.type}
@@ -89,7 +91,7 @@ export function AddDownloaderModal({
               }
             >
               <SelectTrigger className="w-full h-12 px-4 bg-neutral-800 border border-neutral-700 rounded-xl text-white focus:border-amber-500">
-                <SelectValue placeholder="选择下载器类型" />
+                <SelectValue placeholder={t('downloader.typePlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="qBittorrent">qBittorrent</SelectItem>
@@ -105,19 +107,19 @@ export function AddDownloaderModal({
             <div className="col-span-2">
               <label className="block text-neutral-300 mb-2 text-sm">
                 <Server className="w-4 h-4 inline mr-2" />
-                主机地址 *
+                {t('downloader.host')} *
               </label>
               <input
                 type="text"
                 value={formData.host}
                 onChange={(e) => onChangeForm({ host: e.target.value })}
-                placeholder="只支持公网地址，暂不支持局域网"
+                placeholder={t('downloader.hostPlaceholder')}
                 className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500"
               />
             </div>
             <div>
               <label className="block text-neutral-300 mb-2 text-sm">
-                端口 *
+                {t('downloader.port')} *
               </label>
               <input
                 type="number"
@@ -135,26 +137,26 @@ export function AddDownloaderModal({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-neutral-300 mb-2 text-sm">
-                用户名
+                {t('downloader.username')}
               </label>
               <input
                 type="text"
                 value={formData.username}
                 onChange={(e) => onChangeForm({ username: e.target.value })}
-                placeholder="输入用户名"
+                placeholder={t('downloader.usernamePlaceholder')}
                 className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500"
               />
             </div>
             <div>
               <label className="block text-neutral-300 mb-2 text-sm">
-                密码
+                {t('downloader.password')}
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={(e) => onChangeForm({ password: e.target.value })}
-                  placeholder="输入密码"
+                  placeholder={t('downloader.passwordPlaceholder')}
                   className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500"
                 />
                 <button
@@ -185,7 +187,7 @@ export function AddDownloaderModal({
               className="text-neutral-300 text-sm flex items-center gap-2"
             >
               <Lock className="w-4 h-4 text-green-400" />
-              使用 SSL/TLS 加密连接
+              {t('downloader.useSSL')}
             </label>
           </div>
 
@@ -194,16 +196,16 @@ export function AddDownloaderModal({
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
               <div className="text-sm text-blue-300">
-                <p className="mb-1">配置提示：</p>
+                <p className="mb-1">{t('downloader.configTips')}:</p>
                 <ul className="space-y-1 text-blue-400/80">
                   {/* <li>• qBittorrent 默认端口：8080，需在 Web UI 设置中启用</li>
                   <li>• Transmission 默认端口：9091</li> */}
-                  <li>• 确保下载器的 Web UI 已启用并允许远程访问</li>
-                  <li>• 如果使用内网地址，需要安装浏览器插件</li>
+                  <li>• {t('downloader.tip1')}</li>
+                  <li>• {t('downloader.tip2')}</li>
                   <li>
-                    • Transmission不能同时支持IPv4+IPv6双栈协议:
+                    • {t('downloader.tip3')}:
                     <a href="" className="text-green-400 hover:underline">
-                      详情
+                      {t('downloader.details')}
                     </a>
                   </li>
                 </ul>
@@ -219,13 +221,13 @@ export function AddDownloaderModal({
               className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-xl text-white transition-all shadow-lg shadow-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Plus className="w-5 h-5" />
-              添加下载器
+              {t('downloader.addTitle')}
             </button>
             <button
               onClick={onClose}
               className="px-6 py-3 bg-neutral-800 hover:bg-neutral-700 rounded-xl text-white transition-all"
             >
-              取消
+              {t('app.cancel')}
             </button>
           </div>
         </div>

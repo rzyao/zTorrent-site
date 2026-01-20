@@ -1,5 +1,6 @@
 ﻿import { Grid, List as ListIcon, Film } from "lucide-react";
 import { NativeSelect } from "@/modules/app/components/ui/native-select";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface ToolbarProps {
   sortBy: "order" | "rating" | "year";
@@ -9,11 +10,7 @@ interface ToolbarProps {
   moviesCount: number;
 }
 
-const sortOptions = [
-  { value: "order", label: "默认排序" },
-  { value: "rating", label: "评分排序" },
-  { value: "year", label: "年份排序" },
-];
+
 
 export function Toolbar({
   sortBy,
@@ -22,15 +19,23 @@ export function Toolbar({
   onChangeViewMode,
   moviesCount,
 }: ToolbarProps) {
+  const { t } = useLanguage();
+
+  const sortOptions = [
+    { value: "order", label: t('playlists.sortDefault') },
+    { value: "rating", label: t('playlists.sortByRating') },
+    { value: "year", label: t('playlists.sortByYear') },
+  ];
+
   return (
     <div className="mb-6 flex items-center justify-between">
       {/* ... (left part) ... */}
       <div className="flex items-center gap-4">
         <h2 className="flex items-center gap-2 text-2xl text-white">
           <Film className="h-6 w-6 text-amber-500" />
-          影片列表
+          {t('playlists.moviesTitle')}
         </h2>
-        <span className="text-neutral-400">共 {moviesCount} 部</span>
+        <span className="text-neutral-400">{t('playlists.moviesCount', { count: moviesCount })}</span>
       </div>
 
       <div className="flex items-center gap-3">

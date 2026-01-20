@@ -23,12 +23,14 @@
 } from "lucide-react";
 import { Button } from "@/modules/app/components/ui/button";
 import { useState, useEffect } from "react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 /**
  * HomeActionBar - 首页底部操作栏
  * 包含多种颜色类型的功能按钮
  */
 export function HomeActionBar() {
+  const { t } = useLanguage();
   const [canGoBack, setCanGoBack] = useState(false);
   const [canGoForward, setCanGoForward] = useState(false);
 
@@ -79,7 +81,7 @@ export function HomeActionBar() {
               onClick={handleGoBack}
               disabled={!canGoBack}
               className="h-auto border border-neutral-700/50 bg-neutral-900/50 px-3 py-2 text-gray-300 transition-all duration-300 hover:border-blue-500/50 hover:bg-neutral-800/70 hover:text-blue-400 hover:shadow-lg hover:shadow-blue-500/20 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-neutral-700/50 disabled:hover:text-gray-300 disabled:hover:shadow-none"
-              title="后退"
+              title={t('actionBar.back')}
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
@@ -88,7 +90,7 @@ export function HomeActionBar() {
             <Button
               onClick={handleGoForward}
               className="h-auto border border-neutral-700/50 bg-neutral-900/50 px-3 py-2 text-gray-300 transition-all duration-300 hover:border-blue-500/50 hover:bg-neutral-800/70 hover:text-blue-400 hover:shadow-lg hover:shadow-blue-500/20"
-              title="前进"
+              title={t('actionBar.forward')}
             >
               <ChevronRight className="h-5 w-5" />
             </Button>
@@ -97,7 +99,7 @@ export function HomeActionBar() {
             <Button
               onClick={handleGoHome}
               className="h-auto border border-neutral-700/50 bg-neutral-900/50 px-3 py-2 text-gray-300 transition-all duration-300 hover:border-amber-500/50 hover:bg-neutral-800/70 hover:text-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
-              title="返回首页"
+              title={t('actionBar.home')}
             >
               <Home className="h-5 w-5" />
             </Button>
@@ -111,25 +113,25 @@ export function HomeActionBar() {
             {/* 上传种子 - 绿色 */}
             <Button className="h-auto border border-green-500 bg-linear-to-r from-green-500 to-emerald-500 px-4 py-2 text-white shadow-lg shadow-green-500/30 transition-all duration-300 hover:from-green-600 hover:to-emerald-600">
               <Upload className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">上传</span>
+              <span className="hidden md:inline">{t('actionBar.upload')}</span>
             </Button>
 
             {/* 发布求种 - 琥珀色 */}
             <Button className="h-auto border border-amber-500 bg-linear-to-r from-amber-500 to-orange-500 px-4 py-2 text-white shadow-lg shadow-amber-500/30 transition-all duration-300 hover:from-amber-600 hover:to-orange-600">
               <Gift className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">求种</span>
+              <span className="hidden md:inline">{t('actionBar.request')}</span>
             </Button>
 
             {/* 最新种子 - 蓝色 */}
             <Button className="h-auto border border-blue-500 bg-linear-to-r from-blue-500 to-indigo-500 px-4 py-2 text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:from-blue-600 hover:to-indigo-600">
               <Clock className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">最新</span>
+              <span className="hidden md:inline">{t('actionBar.latest')}</span>
             </Button>
 
             {/* 热门推荐 - 红色 */}
             <Button className="h-auto border border-neutral-700/50 bg-neutral-900/50 px-4 py-2 text-gray-300 transition-all duration-300 hover:border-red-500/50 hover:bg-neutral-800/70 hover:text-red-400 hover:shadow-lg hover:shadow-red-500/20">
               <TrendingUp className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">热门</span>
+              <span className="hidden md:inline">{t('actionBar.trending')}</span>
             </Button>
           </div>
 
@@ -141,25 +143,25 @@ export function HomeActionBar() {
             {/* 社区论坛 - 紫色 */}
             <Button className="h-auto border border-neutral-700/50 bg-neutral-900/50 px-4 py-2 text-gray-300 transition-all duration-300 hover:border-purple-500/50 hover:bg-neutral-800/70 hover:text-purple-400 hover:shadow-lg hover:shadow-purple-500/20">
               <MessageSquare className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">论坛</span>
+              <span className="hidden md:inline">{t('actionBar.forum')}</span>
             </Button>
 
             {/* 限时活动 - 粉色 */}
             <Button className="h-auto border border-neutral-700/50 bg-neutral-900/50 px-4 py-2 text-gray-300 transition-all duration-300 hover:border-pink-500/50 hover:bg-neutral-800/70 hover:text-pink-400 hover:shadow-lg hover:shadow-pink-500/20">
               <Sparkles className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">活动</span>
+              <span className="hidden md:inline">{t('actionBar.events')}</span>
             </Button>
 
             {/* 排行榜 - 黄色 */}
             <Button className="h-auto border border-neutral-700/50 bg-neutral-900/50 px-4 py-2 text-gray-300 transition-all duration-300 hover:border-yellow-500/50 hover:bg-neutral-800/70 hover:text-yellow-400 hover:shadow-lg hover:shadow-yellow-500/20">
               <Award className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">排行</span>
+              <span className="hidden md:inline">{t('actionBar.ranking')}</span>
             </Button>
 
             {/* 在线用户 - 青色 */}
             <Button className="hidden h-auto border border-neutral-700/50 bg-neutral-900/50 px-4 py-2 text-gray-300 transition-all duration-300 hover:border-cyan-500/50 hover:bg-neutral-800/70 hover:text-cyan-400 hover:shadow-lg hover:shadow-cyan-500/20 sm:flex">
               <Users className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">用户</span>
+              <span className="hidden md:inline">{t('actionBar.users')}</span>
             </Button>
           </div>
 
@@ -190,7 +192,7 @@ export function HomeActionBar() {
             <Button
               onClick={handleRefresh}
               className="hidden h-auto border border-neutral-700/50 bg-neutral-900/50 px-4 py-2 text-gray-300 transition-all duration-300 hover:border-orange-500/50 hover:bg-neutral-800/70 hover:text-orange-400 hover:shadow-lg hover:shadow-orange-500/20 sm:flex"
-              title="刷新"
+              title={t('actionBar.refresh')}
             >
               <RefreshCw className="h-4 w-4" />
             </Button>

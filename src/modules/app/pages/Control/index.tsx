@@ -27,20 +27,22 @@ import { DownloaderTab } from "./components/tabs/DownloaderTab";
 import { useControlState } from "./hooks/useControlState";
 import { usePasswordForm } from "./hooks/usePasswordForm";
 import type { TabType } from "./types";
+import { useLanguage } from "@/hooks/useLanguage";
 
 // 控制台页面入口
 // 职责：拼装左右布局、Tab 切换与保存区，承载公共状态 Hook 并向各 Tab 下发
 export default function ControlPage() {
   const state = useControlState();
   const passwordForm = usePasswordForm();
+  const { t } = useLanguage();
 
   const tabs = [
-    { id: "profile" as TabType, label: "个人信息", icon: User },
-    { id: "preferences" as TabType, label: "网站偏好", icon: Settings },
-    { id: "security" as TabType, label: "安全设置", icon: Shield },
-    { id: "notifications" as TabType, label: "通知设置", icon: Bell },
-    { id: "privacy" as TabType, label: "隐私设置", icon: Eye },
-    { id: "downloader" as TabType, label: "下载器", icon: Download },
+    { id: "profile" as TabType, label: t('settings.profileTab'), icon: User },
+    { id: "preferences" as TabType, label: t('settings.preferencesTab'), icon: Settings },
+    { id: "security" as TabType, label: t('settings.securityTab'), icon: Shield },
+    { id: "notifications" as TabType, label: t('settings.notificationsTab'), icon: Bell },
+    { id: "privacy" as TabType, label: t('settings.privacyTab'), icon: Eye },
+    { id: "downloader" as TabType, label: t('settings.downloaderTab'), icon: Download },
   ];
 
   return (
@@ -53,9 +55,9 @@ export default function ControlPage() {
               <Settings className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-white text-3xl">控制面板</h1>
+              <h1 className="text-white text-3xl">{t('settings.controlPanel')}</h1>
               <p className="text-neutral-400 text-sm mt-1">
-                管理您的账户设置和个人偏好
+                {t('settings.controlPanelDesc')}
               </p>
             </div>
           </div>
@@ -156,7 +158,7 @@ export default function ControlPage() {
                             : "bg-neutral-700 text-neutral-300 hover:bg-neutral-600"
                         }
                       >
-                        <Save className="w-4 h-4 mr-2" /> 保存设置
+                        <Save className="w-4 h-4 mr-2" /> {t('settings.saveSettings')}
                       </Button>
                     </div>
                   </div>

@@ -1,7 +1,9 @@
 import { Gamepad2, Star, Trophy, TrendingUp } from 'lucide-react';
 import type { UserStats } from '../types';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export function StatsCards({ userStats }: { userStats: UserStats }) {
+  const { t } = useLanguage();
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
       <div className="bg-linear-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20 rounded-xl p-6 hover:border-purple-500/40 transition-all">
@@ -11,7 +13,7 @@ export function StatsCards({ userStats }: { userStats: UserStats }) {
           </div>
           <div>
             <div className="text-2xl text-white">{userStats.totalPlays}</div>
-            <div className="text-sm text-neutral-400">游戏次数</div>
+            <div className="text-sm text-neutral-400">{t('games.stats.plays')}</div>
           </div>
         </div>
       </div>
@@ -23,7 +25,7 @@ export function StatsCards({ userStats }: { userStats: UserStats }) {
           </div>
           <div>
             <div className="text-2xl text-white">{userStats.totalRewards}</div>
-            <div className="text-sm text-neutral-400">累计奖励</div>
+            <div className="text-sm text-neutral-400">{t('games.stats.rewards')}</div>
           </div>
         </div>
       </div>
@@ -35,7 +37,7 @@ export function StatsCards({ userStats }: { userStats: UserStats }) {
           </div>
           <div>
             <div className="text-2xl text-white">#{userStats.rank}</div>
-            <div className="text-sm text-neutral-400">排行榜</div>
+            <div className="text-sm text-neutral-400">{t('games.stats.ranking')}</div>
           </div>
         </div>
       </div>
@@ -47,7 +49,7 @@ export function StatsCards({ userStats }: { userStats: UserStats }) {
           </div>
           <div>
             <div className="text-2xl text-white">Lv.{userStats.level}</div>
-            <div className="text-sm text-neutral-400">当前等级</div>
+            <div className="text-sm text-neutral-400">{t('games.stats.level')}</div>
           </div>
         </div>
       </div>

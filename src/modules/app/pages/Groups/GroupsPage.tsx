@@ -13,8 +13,10 @@ import { GroupsHeader } from './components/GroupsHeader';
 import { StatsSummary } from './components/StatsSummary';
 import { FeaturedGroupCard } from './components/FeaturedGroupCard';
 import { GroupCard } from './components/GroupCard';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export default function GroupsPage() {
+  const { t } = useLanguage();
   // 将数据按是否精选进行划分，便于渲染
   const featuredGroups: Group[] = mockGroups.filter((g) => g.featured);
   const normalGroups: Group[] = mockGroups.filter((g) => !g.featured);
@@ -34,7 +36,7 @@ export default function GroupsPage() {
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <Star className="w-5 h-5 text-amber-400" />
-              <h2 className="text-amber-50">精选制作组</h2>
+              <h2 className="text-amber-50">{t('groups.featured')}</h2>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {featuredGroups.map((group) => (
@@ -48,7 +50,7 @@ export default function GroupsPage() {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Shield className="w-5 h-5 text-amber-400" />
-            <h2 className="text-amber-50">全部制作组</h2>
+            <h2 className="text-amber-50">{t('groups.all')}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {normalGroups.map((group) => (

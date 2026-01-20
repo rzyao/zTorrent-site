@@ -1,8 +1,8 @@
 ﻿import { ResponsiveSortSelect } from "@/modules/app/components/ResponsiveSortSelect";
 import { CategoryNav } from "@/modules/app/layouts/CategoryNav";
 import { SearchInput } from "@/modules/app/components/SearchInput";
+import { useLanguage } from "@/hooks/useLanguage";
 import type { GenreOption, SortKey, SeriesStatus } from "../types";
-import { STATUS_OPTIONS } from "../types";
 
 interface ToolbarProps {
   searchQuery: string;
@@ -16,11 +16,7 @@ interface ToolbarProps {
   onChangeStatus: (key: SeriesStatus | "all") => void;
 }
 
-const sortOptions: { value: SortKey; label: string }[] = [
-  { value: "rating", label: "评分最高" },
-  { value: "year", label: "最新上映" },
-  { value: "viewsCount", label: "最受欢迎" },
-];
+
 
 /**
  * Toolbar
@@ -37,6 +33,21 @@ export function Toolbar({
   selectedStatus,
   onChangeStatus,
 }: ToolbarProps) {
+  const { t } = useLanguage();
+
+  const sortOptions: { value: SortKey; label: string }[] = [
+    { value: "rating", label: t('series.sortByRating') },
+    { value: "year", label: t('series.sortByYear') },
+    { value: "viewsCount", label: t('series.sortByViews') },
+  ];
+
+  const statusOptions = [
+    { key: 'all' as const, label: t('series.statusAll') },
+    { key: 'airing' as SeriesStatus, label: t('series.statusAiring') },
+    { key: 'ended' as SeriesStatus, label: t('series.statusEnded') },
+    { key: 'upcoming' as SeriesStatus, label: t('series.statusUpcoming') },
+  ];
+
   return (
     <div>
       {/* 搜索与排序 */}
@@ -44,7 +55,7 @@ export function Toolbar({
         <SearchInput
           value={searchQuery}
           onSearch={onSearchChange}
-          placeholder="搜索剧集名称..."
+          placeholder={t('series.searchPlaceholder')}
           inputClassName="md:py-5 rounded-lg focus:border-purple-500/50 focus:ring-purple-500/50"
         />
 
@@ -59,7 +70,7 @@ export function Toolbar({
       {/* 播出状态筛选 */}
       <CategoryNav
         inline
-        items={STATUS_OPTIONS.map((s) => ({ label: s.label, value: s.key }))}
+        items={statusOptions.map((s) => ({ label: s.label, value: s.key }))}
         active={selectedStatus}
         onSelect={(value) => onChangeStatus(value as SeriesStatus | "all")}
         className="mb-3"

@@ -3,6 +3,7 @@ import { Button } from "@/modules/app/components/ui/button";
 import { SearchInput } from "@/modules/app/components/SearchInput";
 import { CategoryNav } from "@/modules/app/layouts/CategoryNav";
 import { NativeSelect } from "@/modules/app/components/ui/native-select";
+import { useLanguage } from "@/hooks/useLanguage";
 import { cn } from "@/utils/cn";
 import type { CategoryItem, SortOption, ViewMode } from "../types";
 
@@ -38,12 +39,7 @@ interface ToolbarProps {
   onToggleFilters: () => void;
 }
 
-const sortOptions: SortOption[] = [
-  { value: "latest", label: "最新发布" },
-  { value: "seeders", label: "最多做种" },
-  { value: "completed", label: "最多完成" },
-  { value: "rating", label: "最高评分" },
-];
+
 
 /**
  * Toolbar
@@ -51,6 +47,15 @@ const sortOptions: SortOption[] = [
  * 说明：纯UI组件，不包含业务副作用；所有数据与事件由容器传入。
  */
 export function Toolbar(props: ToolbarProps) {
+  const { t } = useLanguage();
+  
+  const sortOptions: SortOption[] = [
+    { value: "latest", label: t('torrents.sortLatest') },
+    { value: "seeders", label: t('torrents.sortSeeders') },
+    { value: "completed", label: t('torrents.sortCompleted') },
+    { value: "rating", label: t('torrents.sortRating') },
+  ];
+
   const {
     className,
     categories,
@@ -94,7 +99,7 @@ export function Toolbar(props: ToolbarProps) {
                 onChangeSearch(val);
                 onSearch(val);
               }}
-              placeholder="搜索种子、标题..."
+              placeholder={t('torrents.searchPlaceholder')}
             />
 
             {/* 排序选择（移动端图标触发） */}
@@ -121,7 +126,7 @@ export function Toolbar(props: ToolbarProps) {
                   value: o.value,
                   label: o.label,
                 }))}
-                placeholder="选择排序方式"
+                placeholder={t('torrents.selectSortPlaceholder')}
                 className="w-[140px]"
                 variant="cyan"
                 triggerClassName="rounded-full text-neutral-300"

@@ -1,5 +1,6 @@
 import { Users } from "lucide-react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { RoleFilter } from "./components/RoleFilter";
 import { IntroBanner } from "./components/IntroBanner";
 import { RecruitmentSection } from "./components/RecruitmentSection";
@@ -14,7 +15,8 @@ import { useStaffFilters } from "./hooks/useStaffFilters";
  * 说明：组合拆分后的子组件与业务 Hook，保持原有页面布局与交互。
  */
 export default function StaffPage() {
-  useDynamicTitle("管理组");
+  const { t } = useLanguage();
+  useDynamicTitle(t('staff.title'));
   const { selectedRole, setSelectedRole, filteredMembers, roleStats } =
     useStaffFilters(staffMembers);
 
@@ -27,9 +29,9 @@ export default function StaffPage() {
               <Users className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-white text-3xl">管理组</h1>
+              <h1 className="text-white text-3xl">{t('staff.title')}</h1>
               <p className="text-neutral-400 text-sm mt-1">
-                认识我们的管理团队，他们为站点的运营贡献力量
+                {t('staff.subtitle')}
               </p>
             </div>
           </div>

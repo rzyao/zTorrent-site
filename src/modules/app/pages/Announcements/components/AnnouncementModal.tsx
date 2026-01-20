@@ -1,6 +1,7 @@
 import { X, Bell, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import type { Announcement } from '../types';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface AnnouncementModalProps {
   announcements: Announcement[];
@@ -8,23 +9,24 @@ interface AnnouncementModalProps {
   onViewAll: () => void;
 }
 
-const typeLabel = {
-  system: '系统公告',
-  event: '活动公告',
-  rule: '规则更新',
-  maintenance: '维护通知',
-} as const;
-
-const typeColor = {
-  system: 'from-blue-500 to-blue-600',
-  event: 'from-amber-500 to-orange-600',
-  rule: 'from-red-500 to-red-600',
-  maintenance: 'from-purple-500 to-purple-600',
-} as const;
-
 export function AnnouncementModal({ announcements, onClose, onViewAll }: AnnouncementModalProps) {
+  const { t } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentAnnouncement = announcements[currentIndex];
+
+  const typeLabel = {
+    system: t('announcements.types.system'),
+    event: t('announcements.types.event'),
+    rule: t('announcements.types.rule'),
+    maintenance: t('announcements.types.maintenance'),
+  } as const;
+
+  const typeColor = {
+    system: 'from-blue-500 to-blue-600',
+    event: 'from-amber-500 to-orange-600',
+    rule: 'from-red-500 to-red-600',
+    maintenance: 'from-purple-500 to-purple-600',
+  } as const;
 
   const handleNext = () => {
     if (currentIndex < announcements.length - 1) setCurrentIndex(currentIndex + 1);
@@ -41,7 +43,7 @@ export function AnnouncementModal({ announcements, onClose, onViewAll }: Announc
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
               <Bell className="w-6 h-6 text-amber-400" />
-              <h2 className="text-amber-50">最新公告</h2>
+              <h2 className="text-amber-50">{t('announcements.latest')}</h2>
             </div>
             <button onClick={onClose} className="text-amber-400 hover:text-amber-300 transition-colors">
               <X className="w-6 h-6" />
@@ -100,13 +102,13 @@ export function AnnouncementModal({ announcements, onClose, onViewAll }: Announc
             onClick={onViewAll}
             className="flex-1 px-4 py-2 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all"
           >
-            查看所有公告
+            {t('announcements.viewAll')}
           </button>
           <button
             onClick={onClose}
             className="px-4 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all"
           >
-            {announcements.length > 1 && currentIndex < announcements.length - 1 ? '稍后查看' : '关闭'}
+            {announcements.length > 1 && currentIndex < announcements.length - 1 ? t('announcements.viewLater') : t('app.close')}
           </button>
         </div>
       </div>

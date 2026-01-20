@@ -1,5 +1,12 @@
+import {
+  Music as MusicIcon,
+  User as UserIcon,
+  Disc as DiscIcon,
+  ListMusic as ListMusicIcon,
+  Sparkles as SparklesIcon,
+} from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 import type { TabType } from "../types";
-import { tabs } from "../hooks/useViewState";
 
 interface TabNavProps {
   activeTab: TabType;
@@ -11,6 +18,16 @@ interface TabNavProps {
  * - 仅负责展示与切换，不持有数据
  */
 export function TabNav({ activeTab, onChange }: TabNavProps) {
+  const { t } = useLanguage();
+
+  const tabs = [
+    { id: "hall", label: t('music.hall'), icon: SparklesIcon },
+    { id: "songs", label: t('music.songs'), icon: MusicIcon },
+    { id: "artists", label: t('music.artists'), icon: UserIcon },
+    { id: "albums", label: t('music.albums'), icon: DiscIcon },
+    { id: "playlists", label: t('music.playlists'), icon: ListMusicIcon },
+  ] as const;
+
   return (
     <div className="flex items-center gap-2 bg-neutral-800/40 rounded-xl p-1 border border-neutral-700/50">
       {tabs.map((tab) => {

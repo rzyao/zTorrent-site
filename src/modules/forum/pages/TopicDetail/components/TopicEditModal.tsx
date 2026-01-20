@@ -8,6 +8,7 @@ import { useForumTheme } from "../../../context/ForumThemeContext";
 import { useForumsCategories } from "../../../hooks/useForumsCategories";
 import { useForumsTagsQuery } from "../../../hooks/useForumsTagsQuery";
 import { useAllowedTagsForCategory } from "../../../hooks/useAllowedTagsForCategory";
+import { useLanguage } from "@/hooks/useLanguage";
 import { cn } from "@/utils/cn";
 import {
   Dialog,
@@ -40,10 +41,10 @@ import { ScrollArea } from "@/modules/forum/components/ui/scroll-area";
 import { MultiSelect } from "@/modules/forum/components/ui/MultiSelect";
 
 const schema = z.object({
-  title: z.string().min(1, "标题不能为空"),
-  categoryId: z.string().min(1, "请选择分类"),
+  title: z.string().min(1),
+  categoryId: z.string().min(1),
   tagNames: z.array(z.string()).default([]),
-  content: z.string().min(1, "正文不能为空"),
+  content: z.string().min(1),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -57,6 +58,7 @@ interface TopicEditModalProps {
 
 export function TopicEditModal({ isOpen, onClose, topicId, initial }: TopicEditModalProps) {
   const { colors } = useForumTheme();
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
   const { data: categories = [] } = useForumsCategories();
   const { data: tags = [] } = useForumsTagsQuery();
@@ -97,7 +99,7 @@ export function TopicEditModal({ isOpen, onClose, topicId, initial }: TopicEditM
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["forum", "topic", topicId] });
       await queryClient.invalidateQueries({ queryKey: ["forum", "posts", topicId] });
-      toast.success("保存成功");
+      toast.success(t('forum.topic.saveSuccess'));
       onClose();
     },
   });
@@ -106,7 +108,7 @@ export function TopicEditModal({ isOpen, onClose, topicId, initial }: TopicEditM
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={cn("sm:max-w-[720px]", colors.cardBg, colors.textPrimary)}>
         <DialogHeader>
-          <DialogTitle className={colors.titleColor}>编辑话题</DialogTitle>
+          <DialogTitle className={colors.titleColor}>{t('forum.topic.editTopic')}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit((data) => mutation.mutate(data))} className="space-y-4">
@@ -115,7 +117,7 @@ export function TopicEditModal({ isOpen, onClose, topicId, initial }: TopicEditM
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={colors.textSecondary}>标题</FormLabel>
+                  <FormLabel className={colors.textSecondary}>{t('forum.topic.title')}</FormLabel>
                   <FormControl>
                     <Input {...field} className={cn(colors.inputBg, colors.inputBorder)} />
                   </FormControl>
@@ -129,11 +131,11 @@ export function TopicEditModal({ isOpen, onClose, topicId, initial }: TopicEditM
                 name="categoryId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={colors.textSecondary}>分类</FormLabel>
+                    <FormLabel className={colors.textSecondary}>{t('forum.topic.category')}</FormLabel>
                     <FormControl>
                       <Select value={field.value} onValueChange={field.onChange}>
                         <SelectTrigger className={cn("h-10 w-full", colors.inputBorder)}>
-                          <SelectValue placeholder="请选择分类" />
+                          <SelectValue placeholder={t('forum.topic.selectCategory')} />
                         </SelectTrigger>
                         <SelectContent className={cn(colors.borderColor, colors.inputBg)}>
                           {categories.map((c: any) => (
@@ -159,7 +161,7 @@ export function TopicEditModal({ isOpen, onClose, topicId, initial }: TopicEditM
                 name="tagNames"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={colors.textSecondary}>标签（多选）</FormLabel>
+                    <FormLabel className={colors.textSecondary}>{t('forum.topic.tagsMulti')}</FormLabel>
                     <FormControl>
                       <MultiSelect
                         options={filterByAllowed(tags).map((t: any) => ({
@@ -168,7 +170,7 @@ export function TopicEditModal({ isOpen, onClose, topicId, initial }: TopicEditM
                         }))}
                         value={field.value}
                         onChange={field.onChange}
-                        placeholder="请选择标签"
+                        placeholder={t('forum.topic.selectTags')}
                       />
                     </FormControl>
                     <FormMessage />
@@ -181,12 +183,12 @@ export function TopicEditModal({ isOpen, onClose, topicId, initial }: TopicEditM
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={colors.textSecondary}>正文</FormLabel>
+                  <FormLabel className={colors.textSecondary}>{t('forum.topic.content')}</FormLabel>
                   <FormControl>
                     <RichTextEditor
                       value={field.value}
                       onChange={(v) => field.onChange(v)}
-                      placeholder="编辑话题正文..."
+                      placeholder={t('forum.topic.editContentPlaceholder')}
                       className="min-h-[220px]"
                       isUploading={false}
                       onImageUploadClick={() => {}}
@@ -199,10 +201,10 @@ export function TopicEditModal({ isOpen, onClose, topicId, initial }: TopicEditM
             />
             <DialogFooter>
               <Button type="button" variant="cancel" size="sm" onClick={onClose}>
-                取消
+                {t('app.cancel')}
               </Button>
               <Button type="submit" variant="primary" size="sm" loading={mutation.isPending}>
-                保存更改
+                {t('forum.topic.saveChanges')}
               </Button>
             </DialogFooter>
           </form>

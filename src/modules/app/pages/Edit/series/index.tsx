@@ -1,5 +1,6 @@
 ﻿import { useState } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Tv, Plus } from "lucide-react";
 import { Button } from "@/modules/app/components/ui/button";
 import { useEditSeries } from "@/modules/app/pages/Edit/series/hooks/useEditSeries";
@@ -13,7 +14,8 @@ import { BindTorrentDialog } from "@/modules/app/pages/Edit/series/components/Bi
 import type { Episode } from "@/modules/app/pages/Edit/series/types";
 
 export default function EditSeriesPage() {
-  useDynamicTitle("剧集编辑");
+  const { t } = useLanguage();
+  useDynamicTitle(t('edit.seriesTitle'));
   const {
     seriesList,
     filteredSeries,
@@ -96,8 +98,8 @@ export default function EditSeriesPage() {
               <Tv className="h-5 w-5 text-white" />
             </div>
             <div className="flex items-end gap-1">
-              <h1 className="text-3xl text-white">剧集编辑</h1>
-              <p className="mt-1 text-sm text-neutral-400">管理剧集信息、分集与种子关联</p>
+              <h1 className="text-3xl text-white">{t('editSeries.pageTitle')}</h1>
+              <p className="mt-1 text-sm text-neutral-400">{t('editSeries.pageDesc')}</p>
             </div>
           </div>
           <Button
@@ -105,7 +107,7 @@ export default function EditSeriesPage() {
             className="bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:from-amber-600 hover:to-orange-700"
           >
             <Plus className="mr-2 h-4 w-4" />
-            添加剧集
+            {t('editSeries.addSeries')}
           </Button>
         </div>
       </div>
@@ -158,7 +160,7 @@ export default function EditSeriesPage() {
                 />
 
                 <div className="border-t border-neutral-700/50 pt-6">
-                  <h3 className="mb-4 text-lg font-medium text-white">分集管理</h3>
+                  <h3 className="mb-4 text-lg font-medium text-white">{t('editSeries.episodeManagement')}</h3>
                   <EpisodeList
                     seriesId={selectedSeries.id}
                     episodes={episodes}
@@ -204,16 +206,16 @@ export default function EditSeriesPage() {
             {!isCreating && !isEditing && !selectedSeries && (
               <div className="py-20 text-center">
                 <Tv className="mx-auto mb-4 h-16 w-16 text-neutral-600" />
-                <h3 className="mb-2 text-lg text-white">选择一部剧集</h3>
+                <h3 className="mb-2 text-lg text-white">{t('editSeries.selectSeries')}</h3>
                 <p className="mb-6 text-sm text-neutral-400">
-                  从左侧列表选择剧集进行编辑，或添加新剧集
+                  {t('editSeries.selectSeriesHint')}
                 </p>
                 <Button
                   onClick={handleCreateNew}
                   className="bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:from-amber-600 hover:to-orange-700"
                 >
                   <Plus className="mr-2 h-4 w-4" />
-                  添加新剧集
+                  {t('editSeries.addNewSeries')}
                 </Button>
               </div>
             )}

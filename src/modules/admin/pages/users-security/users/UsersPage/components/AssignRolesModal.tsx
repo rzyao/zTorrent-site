@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Modal } from "@/modules/admin/components/ui/modal";
 import { Input } from "@/modules/admin/components/ui/input";
 import { Label } from "@/modules/admin/components/ui/label";
@@ -12,7 +13,7 @@ import { RolesService } from "@/api/services/RolesService";
 import { PermissionsService } from "@/api/services/PermissionsService";
 
 const formSchema = z.object({
-  userId: z.string().min(1, "缺少用户ID"),
+  userId: z.string().min(1, "Missing user ID"),
   roles: z.array(z.string()).optional(),
   permissionKeys: z.string().optional(),
 });
@@ -40,6 +41,7 @@ export const AssignRolesModal: React.FC<AssignRolesModalProps> = ({
   rolesLoading,
   onSuccess,
 }) => {
+  const { t } = useLanguage();
   const { register, control, handleSubmit, reset } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -84,11 +86,11 @@ export const AssignRolesModal: React.FC<AssignRolesModalProps> = ({
         });
       }
 
-      toast.success("分配完成");
+      toast.success(t("admin.roles.assignSuccess"));
       onClose(false);
       onSuccess();
     } catch (e: any) {
-      toast.error(e?.message || "分配失败");
+      toast.error(e?.message || t("admin.roles.assignFailed"));
     } finally {
       setAssigning(false);
     }
@@ -96,7 +98,7 @@ export const AssignRolesModal: React.FC<AssignRolesModalProps> = ({
 
   return (
     <Modal
-      title="分配角色/权限到用户（覆盖式）"
+      title={t("admin.roles.assignRolesTitle")}
       open={open}
       onClose={() => onClose(false)}
       onOk={handleSubmit(onSubmit)}
@@ -104,15 +106,15 @@ export const AssignRolesModal: React.FC<AssignRolesModalProps> = ({
     >
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label>用户ID</Label>
+          <Label>{t("admin.roles.userId")}</Label>
           <Input {...register("userId")} disabled />
         </div>
 
         <div className="space-y-2">
-          <Label>角色列表</Label>
+          <Label>{t("admin.roles.rolesList")}</Label>
           <div className="max-h-48 overflow-y-auto rounded-md border p-2">
             {rolesLoading ? (
-              <div className="p-2 text-sm text-gray-500">加载中...</div>
+              <div className="p-2 text-sm text-gray-500">{t("app.loading")}</div>
             ) : (
               <Controller
                 control={control}
@@ -152,13 +154,13 @@ export const AssignRolesModal: React.FC<AssignRolesModalProps> = ({
         </div>
 
         <div className="space-y-2">
-          <Label>权限键列表</Label>
+          <Label>{t("admin.roles.permissionKeys")}</Label>
           <span className="ml-2 text-xs font-normal text-neutral-400">
-            (注意：这将覆盖该用户的所有独立权限)
+            ({t("admin.roles.permissionOverwriteNote")})
           </span>
           <Textarea
             {...register("permissionKeys")}
-            placeholder="输入权限键，支持逗号或换行分隔"
+            placeholder={t("admin.roles.permissionPlaceholder")}
             className="min-h-[100px]"
           />
         </div>

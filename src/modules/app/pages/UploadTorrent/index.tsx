@@ -1,5 +1,6 @@
 import React from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { useNavigate } from "react-router-dom";
 import { Upload, Info } from "lucide-react";
 import { BasicInfo } from "@/modules/app/pages/UploadTorrent/components/BasicInfo";
@@ -18,7 +19,8 @@ import { useUploadTorrent } from "@/modules/app/pages/UploadTorrent/hooks/useUpl
  * - 不直接包含业务逻辑，所有状态与方法来源于 `useUploadTorrent`。
  */
 export default function UploadTorrentPage() {
-  useDynamicTitle("上传");
+  const { t } = useLanguage();
+  useDynamicTitle(t('upload.title'));
   const navigate = useNavigate();
   const U = useUploadTorrent();
 
@@ -32,9 +34,9 @@ export default function UploadTorrentPage() {
               <Upload className="w-5 h-5 text-white" />
             </div>
             <div className="flex flex-row items-center gap-3">
-              <h1 className="text-white text-3xl">发布种子</h1>
+              <h1 className="text-white text-3xl">{t('upload.title')}</h1>
               <p className="text-neutral-400 text-sm mt-1">
-                <span className="text-red-400">*</span> 标记为必填项
+                <span className="text-red-400">*</span> {t('upload.requiredHint').replace('* ', '')}
               </p>
             </div>
           </div>
@@ -102,19 +104,19 @@ export default function UploadTorrentPage() {
           <div className="bg-neutral-800/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 shadow-2xl overflow-hidden">
             <div className="bg-linear-to-r from-red-500/20 to-orange-500/20 border-b border-neutral-700/50 px-6 py-3.5">
               <h2 className="text-white flex items-center gap-2">
-                简介 <span className="text-red-400 text-sm ml-1">*</span>
+                {t('upload.description')} <span className="text-red-400 text-sm ml-1">*</span>
               </h2>
             </div>
             <div className="p-6">
               <textarea
                 rows={15}
-                placeholder="请输入资源简介，支持BBCode格式...&#10;&#10;例如：&#10;[b]粗体文字[/b]&#10;[i]斜体文字[/i]&#10;[img]图片链接[/img]&#10;[url]链接地址[/url]"
+                placeholder={t('upload.descriptionPlaceholder')}
                 className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-3 text-white text-sm placeholder:text-neutral-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/30 outline-none resize-none transition-all scrollbar-themed"
                 value={U.description}
                 onChange={(e) => U.handleDescriptionChange(e.target.value)}
               />
               <p className="text-neutral-500 text-xs mt-3">
-                支持BBCode格式，如 [b]粗体[/b] [i]斜体[/i] [img]图片链接[/img]
+                {t('upload.descriptionHelp')}
               </p>
             </div>
           </div>
@@ -149,30 +151,28 @@ export default function UploadTorrentPage() {
         <div className="mt-8 bg-neutral-800/30 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
           <h3 className="text-white flex items-center gap-2 mb-4">
             <Info className="w-5 h-5 text-amber-400" />
-            发布须知
+            {t('upload.notice')}
           </h3>
           <ul className="space-y-2.5 text-neutral-400 text-sm">
             <li className="flex items-start gap-3">
               <span className="text-amber-400 mt-0.5">•</span>
-              <span>请确保上传的种子文件来源合法，不包含违法违规内容</span>
+              <span>{t('upload.noticeList.item1')}</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-amber-400 mt-0.5">•</span>
-              <span>种子标题应准确描述资源内容，包含必要的技术信息</span>
+              <span>{t('upload.noticeList.item2')}</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-amber-400 mt-0.5">•</span>
-              <span>
-                建议填写 MediaInfo 或 BDInfo 技术信息，便于用户了解资源质量
-              </span>
+              <span>{t('upload.noticeList.item3')}</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-amber-400 mt-0.5">•</span>
-              <span>请在发布后至少保持做种 7 天，确保其他用户能够下载</span>
+              <span>{t('upload.noticeList.item4')}</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-amber-400 mt-0.5">•</span>
-              <span>违规发布内容可能导致账号被封禁，请遵守站点规则</span>
+              <span>{t('upload.noticeList.item5')}</span>
             </li>
           </ul>
         </div>

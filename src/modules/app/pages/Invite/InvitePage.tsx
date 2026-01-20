@@ -1,5 +1,6 @@
 ﻿import { useState } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Send, Users } from "lucide-react";
 import { InviteHeader } from "./components/Header";
 import { StatsCards } from "./components/StatsCards";
@@ -21,7 +22,8 @@ import { useInvitedUsers } from "./hooks/useInvitedUsers";
 import { useInviteStoreQuota } from "./hooks/useInviteStoreQuota";
 
 export default function InvitePage() {
-  useDynamicTitle("邀请管理");
+  const { t } = useLanguage();
+  useDynamicTitle(t('invite.title'));
   const [activeTab, setActiveTab] = useState<"codes" | "records" | "users">("codes");
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [showCode, setShowCode] = useState<{ [key: string]: boolean }>({});
@@ -118,7 +120,7 @@ export default function InvitePage() {
             <div>
               <h3 className="mb-4 flex items-center gap-2 text-lg text-white">
                 <span className="h-5 w-1 rounded-full bg-linear-to-b from-amber-500 to-orange-600"></span>
-                获取邀请码
+                {t('invite.getInviteCode')}
               </h3>
               <AcquireSection
                 quotaItems={quotaItems}
@@ -147,7 +149,7 @@ export default function InvitePage() {
               <div className="flex items-start gap-3">
                 <Send className="mt-0.5 h-5 w-5 shrink-0 text-blue-400" />
                 <div className="text-sm text-neutral-300">
-                  <p>这里显示您已发送给他人的所有邀请记录，包括已注册、待注册和已过期的邀请。</p>
+                  <p>{t('invite.recordsDescription')}</p>
                 </div>
               </div>
             </div>
@@ -165,12 +167,9 @@ export default function InvitePage() {
                   <Users className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="mb-2 text-lg text-white">后宫成就</h3>
+                  <h3 className="mb-2 text-lg text-white">{t('invite.achievement')}</h3>
                   <p className="text-sm text-neutral-400">
-                    您已成功邀请 <span className="text-purple-400">{invitedUsers.length}</span>{" "}
-                    位用户加入社区， 他们的总上传量达到{" "}
-                    <span className="text-green-400">39.4 TB</span>， 平均分享率{" "}
-                    <span className="text-blue-400">3.04</span>。感谢您为社区做出的贡献！
+                    {t('invite.achievementDesc', { count: invitedUsers.length, upload: '39.4 TB', ratio: '3.04' })}
                   </p>
                 </div>
               </div>

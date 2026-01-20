@@ -7,6 +7,7 @@ import { useTorrentDownload } from "@/modules/app/hooks/useTorrentDownload";
 import { Button } from "@/modules/app/components/ui/button";
 import { NativeSelect } from "@/modules/app/components/ui/native-select";
 import { useDownloadStatusStore } from "@/modules/app/stores/downloadStatusStore";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface Props {
   open: boolean;
@@ -26,6 +27,7 @@ export function DownloadToDownloaderModal({
   torrentTitle,
   source,
 }: Props) {
+  const { t } = useLanguage();
   const { downloaders } = useDownloaders();
   const { sendToDownloader, sending } = useSendToDownloader();
   const { downloadByTorrentId } = useTorrentDownload();
@@ -97,7 +99,7 @@ export function DownloadToDownloaderModal({
         <div className="flex items-center justify-between border-b border-neutral-800 p-6 pb-4">
           <h3 className="flex items-center gap-2 text-lg font-medium text-white">
             <Upload className="h-5 w-5 text-amber-500" />
-            发送到下载器
+            {t('downloader.sendToDownloader')}
           </h3>
           <button onClick={onClose} className="text-neutral-400 transition-colors hover:text-white">
             <X className="h-5 w-5" />
@@ -108,7 +110,7 @@ export function DownloadToDownloaderModal({
         <div className="space-y-6 p-6">
           {/* 本地下载选项 */}
           <div className="flex items-center justify-between rounded-xl border border-neutral-700/50 bg-neutral-800/50 p-3">
-            <span className="pl-1 text-sm text-neutral-400">不推送到下载器</span>
+            <span className="pl-1 text-sm text-neutral-400">{t('downloader.skipDownloader')}</span>
             <Button
               variant="ghost"
               size="sm"
@@ -116,7 +118,7 @@ export function DownloadToDownloaderModal({
               className="h-8 text-amber-500 hover:bg-amber-500/10 hover:text-amber-400"
             >
               <Download className="mr-2 h-4 w-4" />
-              下载到本地
+              {t('downloader.downloadLocal')}
             </Button>
           </div>
 
@@ -124,37 +126,37 @@ export function DownloadToDownloaderModal({
 
           {downloaders.length === 0 ? (
             <div className="py-2 text-center">
-              <p className="mb-4 text-neutral-400">未找到可用的下载器，请先要在控制台添加。</p>
+              <p className="mb-4 text-neutral-400">{t('downloader.noDownloadersHint')}</p>
               <Button onClick={onClose} variant="outline" className="border-neutral-700 text-white">
-                关闭
+                {t('app.close')}
               </Button>
             </div>
           ) : (
             <>
               <div className="space-y-3">
-                <label className="block text-sm text-neutral-400">选择下载器</label>
+                <label className="block text-sm text-neutral-400">{t('downloader.selectDownloader')}</label>
                 <NativeSelect
                   value={selectedDownloaderId}
                   onChange={handleDownloaderChange}
                   options={downloaders.map((d) => ({
                     value: d.id || "",
-                    label: d.name || "未命名",
+                    label: d.name || t('downloader.unnamed'),
                   }))}
-                  placeholder="选择下载器"
+                  placeholder={t('downloader.selectDownloader')}
                 />
               </div>
 
               {pathOptions.length > 0 && (
                 <div className="space-y-3">
-                  <label className="block text-sm text-neutral-400">选择下载路径</label>
+                  <label className="block text-sm text-neutral-400">{t('downloader.selectPath')}</label>
                   <NativeSelect
                     value={selectedPath}
                     onChange={setSelectedPath}
                     options={pathOptions.map((p) => ({
                       value: p.path || "",
-                      label: p.name || p.path || "默认路径",
+                      label: p.name || p.path || t('downloader.defaultPath'),
                     }))}
-                    placeholder="选择路径"
+                    placeholder={t('downloader.selectPath')}
                   />
                 </div>
               )}
@@ -169,7 +171,7 @@ export function DownloadToDownloaderModal({
               className="h-11 flex-1 rounded-xl bg-neutral-800 text-white hover:bg-neutral-700"
               onClick={onClose}
             >
-              取消
+              {t('app.cancel')}
             </Button>
             <Button
               variant="outline"
@@ -177,7 +179,7 @@ export function DownloadToDownloaderModal({
               onClick={handleSubmit}
               disabled={sending || !selectedDownloaderId}
             >
-              {sending ? "发送中..." : "确定发送"}
+              {sending ? t('downloader.sending') : t('downloader.confirmSend')}
             </Button>
           </div>
         )}

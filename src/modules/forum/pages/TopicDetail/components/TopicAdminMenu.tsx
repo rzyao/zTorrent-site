@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { ForumsTopicsService } from "@/api";
 import { useAccess } from "@/context/AccessContext";
+import { useLanguage } from "@/hooks/useLanguage";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,6 +65,7 @@ export function TopicAdminMenu({
 }: TopicAdminMenuProps) {
   const navigate = useNavigate();
   const { access } = useAccess();
+  const { t } = useLanguage();
   const isAdminOrMod = access?.roles?.includes("admin") || access?.roles?.includes("moderator");
 
   const [isLoading, setIsLoading] = useState(false);
@@ -75,7 +77,7 @@ export function TopicAdminMenu({
   const [cancelOpen, setCancelOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const CANCEL_REASON_MAX = 200;
-  const QUICK_REASONS = ["误操作", "需求变更", "重复发帖", "预算调整"];
+  const QUICK_REASONS = [t('forum.bounty.quickReasonMistake'), t('forum.bounty.quickReasonChange'), t('forum.bounty.quickReasonDuplicate'), t('forum.bounty.quickReasonBudget')];
   const bountyActions = useBountyActions(topicId, { onUpdated: onUpdate, categoryKey });
   const { colors } = useForumTheme();
 
@@ -115,7 +117,7 @@ export function TopicAdminMenu({
       }
     } catch (error: any) {
       // 错误提示已由 Axios 拦截器统一处理，此处仅记录日志
-      console.error(`${actionName}失败:`, error);
+      console.error(`${actionName}${t('forum.admin.failed')}:`, error);
     } finally {
       setIsLoading(false);
     }
@@ -123,11 +125,11 @@ export function TopicAdminMenu({
 
   const handleDelete = () => {
     // 双重确认
-    if (window.confirm("确定要删除此话题吗？此操作将不可恢复。")) {
+    if (window.confirm(t('forum.admin.confirmDelete'))) {
       handleAction(
-        "删除",
+        t('forum.admin.delete'),
         () => ForumsTopicsService.topicsControllerAdminRemove({ id: topicId }),
-        "话题已删除",
+        t('forum.admin.topicDeleted'),
         "/forum/latest",
       );
     }
@@ -168,7 +170,7 @@ export function TopicAdminMenu({
                 setOpenBountyDialog(true);
               }}
             >
-              <Pin className="mr-2 h-4 w-4" /> 设置悬赏
+              <Pin className="mr-2 h-4 w-4" /> {t('forum.bounty.setBounty')}
             </DropdownMenuItem>
           )}
           {/* 作者：追加悬赏入口（进行中时显示，且分类为 bounty） */}
@@ -179,7 +181,7 @@ export function TopicAdminMenu({
                 setIncreaseOpen(true);
               }}
             >
-              <Pin className="mr-2 h-4 w-4" /> 追加悬赏
+              <Pin className="mr-2 h-4 w-4" /> {t('forum.bounty.increaseBounty')}
             </DropdownMenuItem>
           )}
           {/* 作者：取消悬赏入口（进行中且未在审核时显示，且分类为 bounty） */}
@@ -188,7 +190,7 @@ export function TopicAdminMenu({
                 className="hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
                 onClick={() => setCancelOpen(true)}
               >
-                <PinOff className="mr-2 h-4 w-4" /> 取消悬赏
+                <PinOff className="mr-2 h-4 w-4" /> {t('forum.bounty.cancelBounty')}
               </DropdownMenuItem>
             )}
 
@@ -202,19 +204,19 @@ export function TopicAdminMenu({
             className="hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
             onClick={() =>
               handleAction(
-                status.isLocked ? "打开" : "关闭",
+                status.isLocked ? t('forum.admin.open') : t('forum.admin.close'),
                 () => ForumsTopicsService.topicsControllerToggleLock({ id: topicId }),
-                status.isLocked ? "话题已打开" : "话题已关闭",
+                status.isLocked ? t('forum.admin.topicOpened') : t('forum.admin.topicClosed'),
               )
             }
           >
             {status.isLocked ? (
               <>
-                <Unlock className="mr-2 h-4 w-4" /> 打开话题
+                <Unlock className="mr-2 h-4 w-4" /> {t('forum.admin.openTopic')}
               </>
             ) : (
               <>
-                <Lock className="mr-2 h-4 w-4" /> 关闭话题
+                <Lock className="mr-2 h-4 w-4" /> {t('forum.admin.closeTopic')}
               </>
             )}
           </DropdownMenuItem>
@@ -224,19 +226,19 @@ export function TopicAdminMenu({
             className="hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
             onClick={() =>
               handleAction(
-                status.isArchived ? "取消归档" : "归档",
+                status.isArchived ? t('forum.admin.unarchive') : t('forum.admin.archive'),
                 () => ForumsTopicsService.topicsControllerToggleArchive({ id: topicId }),
-                status.isArchived ? "话题已取消归档" : "话题已归档",
+                status.isArchived ? t('forum.admin.topicUnarchived') : t('forum.admin.topicArchived'),
               )
             }
           >
             {status.isArchived ? (
               <>
-                <ArchiveRestore className="mr-2 h-4 w-4" /> 取消归档
+                <ArchiveRestore className="mr-2 h-4 w-4" /> {t('forum.admin.unarchiveTopic')}
               </>
             ) : (
               <>
-                <Archive className="mr-2 h-4 w-4" /> 归档话题
+                <Archive className="mr-2 h-4 w-4" /> {t('forum.admin.archiveTopic')}
               </>
             )}
           </DropdownMenuItem>
@@ -246,19 +248,19 @@ export function TopicAdminMenu({
             className="hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
             onClick={() =>
               handleAction(
-                status.isPinned ? "取消置顶" : "置顶",
+                status.isPinned ? t('forum.admin.unpin') : t('forum.admin.pin'),
                 () => ForumsTopicsService.topicsControllerTogglePin({ id: topicId }),
-                status.isPinned ? "话题已取消置顶" : "话题已置顶",
+                status.isPinned ? t('forum.admin.topicUnpinned') : t('forum.admin.topicPinned'),
               )
             }
           >
             {status.isPinned ? (
               <>
-                <PinOff className="mr-2 h-4 w-4" /> 取消置顶
+                <PinOff className="mr-2 h-4 w-4" /> {t('forum.admin.unpinTopic')}
               </>
             ) : (
               <>
-                <Pin className="mr-2 h-4 w-4" /> 置顶话题
+                <Pin className="mr-2 h-4 w-4" /> {t('forum.admin.pinTopic')}
               </>
             )}
           </DropdownMenuItem>
@@ -270,7 +272,7 @@ export function TopicAdminMenu({
             className="text-red-500 hover:bg-red-50 focus:bg-red-50 focus:text-red-600 dark:text-red-400 dark:hover:bg-red-950/20 dark:focus:bg-red-950/20"
             onClick={handleDelete}
           >
-            <Trash2 className="mr-2 h-4 w-4" /> 删除话题
+            <Trash2 className="mr-2 h-4 w-4" /> {t('forum.admin.deleteTopic')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -279,11 +281,11 @@ export function TopicAdminMenu({
       <Dialog open={openBountyDialog} onOpenChange={setOpenBountyDialog}>
         <DialogContent className={`rounded-lg ${colors.cardBg} ${colors.cardBorder}`}>
           <DialogHeader>
-            <DialogTitle className={colors.titleColor}>设置悬赏</DialogTitle>
+            <DialogTitle className={colors.titleColor}>{t('forum.bounty.setBounty')}</DialogTitle>
           </DialogHeader>
           <div className="flex flex-col gap-3">
             <div>
-              <label className={`block text-xs ${colors.textMuted}`}>金额（正整数）</label>
+              <label className={`block text-xs ${colors.textMuted}`}>{t('forum.bounty.amountLabel')}</label>
               <Input
                 type="number"
                 min={2000}
@@ -293,11 +295,11 @@ export function TopicAdminMenu({
                 placeholder="2000"
                 className={`h-9 ${colors.inputBg} ${colors.inputBorder}`}
               />
-              <div className={`mt-1 text-xs ${colors.textMuted}`}>最低 2000，建议按百位递增</div>
+              <div className={`mt-1 text-xs ${colors.textMuted}`}>{t('forum.bounty.minAmountTip')}</div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className={`block text-xs ${colors.textMuted}`}>期限（天）</label>
+                <label className={`block text-xs ${colors.textMuted}`}>{t('forum.bounty.durationLabel')}</label>
                 <Input
                   type="number"
                   max={30}
@@ -309,13 +311,13 @@ export function TopicAdminMenu({
                   }
                   className={`h-9 ${colors.inputBg} ${colors.inputBorder}`}
                 />
-                <div className={`mt-1 text-xs ${colors.textMuted}`}>建议 7 天，上限 30 天</div>
+                <div className={`mt-1 text-xs ${colors.textMuted}`}>{t('forum.bounty.durationTip')}</div>
               </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="cancel" size="sm" onClick={() => setOpenBountyDialog(false)}>
-              取消
+              {t('app.cancel')}
             </Button>
             <Button
               variant="primary"
@@ -323,11 +325,11 @@ export function TopicAdminMenu({
               onClick={async () => {
                 const amt = parseInt(amount, 10);
                 if (!amount || !/^[0-9]+$/.test(amount) || isNaN(amt) || amt < 2000) {
-                  toast.error("金额不能低于 2000");
+                  toast.error(t('forum.bounty.minAmountError'));
                   return;
                 }
                 if (typeof durationDays !== "number" || durationDays < 1 || durationDays > 30) {
-                  toast.error("期限需在 1-30 天范围内");
+                  toast.error(t('forum.bounty.durationError'));
                   return;
                 }
                 await bountyActions.setBounty({ amount, durationDays });
@@ -344,7 +346,7 @@ export function TopicAdminMenu({
                 (typeof durationDays === "number" && (durationDays < 1 || durationDays > 30))
               }
             >
-              提交
+              {t('app.submit')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -354,11 +356,11 @@ export function TopicAdminMenu({
       <Dialog open={increaseOpen} onOpenChange={setIncreaseOpen}>
         <DialogContent className={`rounded-lg ${colors.cardBg} ${colors.cardBorder}`}>
           <DialogHeader>
-            <DialogTitle className={colors.titleColor}>追加悬赏</DialogTitle>
+            <DialogTitle className={colors.titleColor}>{t('forum.bounty.increaseBounty')}</DialogTitle>
           </DialogHeader>
           <div className="flex flex-col gap-3">
             <div>
-              <label className={`block text-xs ${colors.textMuted}`}>追加金额（正整数）</label>
+              <label className={`block text-xs ${colors.textMuted}`}>{t('forum.bounty.increaseAmountLabel')}</label>
               <Input
                 type="number"
                 min={2000}
@@ -368,12 +370,12 @@ export function TopicAdminMenu({
                 placeholder="2000"
                 className={`h-9 ${colors.inputBg} ${colors.inputBorder}`}
               />
-              <div className={`mt-1 text-xs ${colors.textMuted}`}>最低 2000，建议按百位递增</div>
+              <div className={`mt-1 text-xs ${colors.textMuted}`}>{t('forum.bounty.minAmountTip')}</div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="cancel" size="sm" onClick={() => setIncreaseOpen(false)}>
-              取消
+              {t('app.cancel')}
             </Button>
             <Button
               variant="primary"
@@ -381,7 +383,7 @@ export function TopicAdminMenu({
               onClick={async () => {
                 const delta = parseInt(increaseAmount, 10);
                 if (!increaseAmount || isNaN(delta) || delta < 2000) {
-                  toast.error("追加金额不能低于 2000");
+                  toast.error(t('forum.bounty.increaseMinError'));
                   return;
                 }
                 await bountyActions.increase(String(delta));
@@ -394,7 +396,7 @@ export function TopicAdminMenu({
                 parseInt(increaseAmount, 10) < 2000
               }
             >
-              提交
+              {t('app.submit')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -404,11 +406,11 @@ export function TopicAdminMenu({
       <ConfirmDialog
         open={cancelOpen}
         onClose={() => setCancelOpen(false)}
-        title="取消悬赏"
+        title={t('forum.bounty.cancelBounty')}
         content={
           <div className="flex flex-col gap-2">
             <div className={`${colors.textSecondary}`}>
-              提交取消申请后需管理员审核通过才会退回预占金额。请填写取消理由：
+              {t('forum.bounty.cancelDesc')}
             </div>
             <div className="flex flex-wrap gap-2">
               {QUICK_REASONS.map((r) => (
@@ -427,7 +429,7 @@ export function TopicAdminMenu({
             <Textarea
               value={cancelReason}
               onChange={(e) => setCancelReason(e.target.value)}
-              placeholder="请输入取消理由（不少于 5 个字）"
+              placeholder={t('forum.bounty.cancelReasonPlaceholder')}
               className={`${colors.inputBg} ${colors.inputBorder}`}
               maxLength={CANCEL_REASON_MAX}
             />
@@ -436,11 +438,11 @@ export function TopicAdminMenu({
             </div>
           </div>
         }
-        confirmText="提交申请"
+        confirmText={t('forum.bounty.submitRequest')}
         onConfirm={async () => {
           const reason = cancelReason.trim();
           if (reason.length < 5) {
-            toast.error("请填写至少 5 个字的取消理由");
+            toast.error(t('forum.bounty.cancelReasonMinError'));
             return;
           }
           await bountyActions.requestCancel(reason);

@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/modules/app/components/ui/select";
 import { DownloaderForm, DownloaderType } from "../types";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface Props {
   open: boolean;
@@ -32,6 +33,7 @@ export function EditDownloaderModal({
   onSubmit,
   onClose,
 }: Props) {
+  const { t } = useLanguage();
   if (!open) return null;
   return createPortal(
     <div className="modal-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -40,7 +42,7 @@ export function EditDownloaderModal({
         <div className="sticky top-0 bg-linear-to-r from-amber-500 to-orange-600 p-6 flex items-center justify-between rounded-t-2xl">
           <h2 className="text-white text-xl flex items-center gap-2">
             <Edit className="w-6 h-6" />
-            编辑下载器
+            {t('downloader.editTitle')}
           </h2>
           <button
             onClick={onClose}
@@ -56,13 +58,13 @@ export function EditDownloaderModal({
           <div>
             <label className="block text-neutral-300 mb-2 text-sm">
               <Server className="w-4 h-4 inline mr-2" />
-              下载器名称 *
+              {t('downloader.name')} *
             </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => onChangeForm({ name: e.target.value })}
-              placeholder="例如：主服务器 qBittorrent"
+              placeholder={t('downloader.editNamePlaceholder')}
               className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500"
             />
           </div>
@@ -71,7 +73,7 @@ export function EditDownloaderModal({
           <div>
             <label className="block text-neutral-300 mb-2 text-sm">
               <MonitorDown className="w-4 h-4 inline mr-2" />
-              下载器类型 *
+              {t('downloader.type')} *
             </label>
             <Select
               value={formData.type}
@@ -80,7 +82,7 @@ export function EditDownloaderModal({
               }
             >
               <SelectTrigger className="w-full h-12 px-4 bg-neutral-800 border border-neutral-700 rounded-xl text-white focus:border-amber-500">
-                <SelectValue placeholder="选择下载器类型" />
+                <SelectValue placeholder={t('downloader.typePlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="qBittorrent">qBittorrent</SelectItem>
@@ -96,19 +98,19 @@ export function EditDownloaderModal({
             <div className="col-span-2">
               <label className="block text-neutral-300 mb-2 text-sm">
                 <Server className="w-4 h-4 inline mr-2" />
-                主机地址 *
+                {t('downloader.host')} *
               </label>
               <input
                 type="text"
                 value={formData.host}
                 onChange={(e) => onChangeForm({ host: e.target.value })}
-                placeholder="192.168.1.100 或 example.com"
+                placeholder={t('downloader.editHostPlaceholder')}
                 className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500"
               />
             </div>
             <div>
               <label className="block text-neutral-300 mb-2 text-sm">
-                端口 *
+                {t('downloader.port')} *
               </label>
               <input
                 type="number"
@@ -126,7 +128,7 @@ export function EditDownloaderModal({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-neutral-300 mb-2 text-sm">
-                用户名
+                {t('downloader.username')}
               </label>
               <input
                 type="text"
@@ -138,7 +140,7 @@ export function EditDownloaderModal({
             </div>
             <div>
               <label className="block text-neutral-300 mb-2 text-sm">
-                密码
+                {t('downloader.password')}
               </label>
               <div className="relative">
                 <input
@@ -176,7 +178,7 @@ export function EditDownloaderModal({
               className="text-neutral-300 text-sm flex items-center gap-2"
             >
               <Lock className="w-4 h-4 text-green-400" />
-              使用 SSL/TLS 加密连接
+              {t('downloader.useSSL')}
             </label>
           </div>
 
@@ -188,13 +190,13 @@ export function EditDownloaderModal({
               className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-xl text-white transition-all shadow-lg shadow-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Edit className="w-5 h-5" />
-              保存修改
+              {t('downloader.saveChanges')}
             </button>
             <button
               onClick={onClose}
               className="px-6 py-3 bg-neutral-800 hover:bg-neutral-700 rounded-xl text-white transition-all"
             >
-              取消
+              {t('app.cancel')}
             </button>
           </div>
         </div>

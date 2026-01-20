@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronDown, Pencil, LayoutGrid, Hash } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useForumTheme } from "../../context/ForumThemeContext";
 import { ExtendedForumTag } from "./types";
 
@@ -21,6 +22,7 @@ export function SidebarTags({
   onEditClick,
   showEditButton = false,
 }: SidebarTagsProps) {
+  const { t } = useTranslation();
   const { colors, theme } = useForumTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,7 +40,7 @@ export function SidebarTags({
               isExpanded ? "" : "-rotate-90"
             }`}
           />
-          <span className="text-base">热门标签</span>
+          <span className="text-base">{t('forum.sidebar.popularTags')}</span>
         </div>
         {showEditButton && onEditClick && (
           <span
@@ -47,7 +49,7 @@ export function SidebarTags({
               onEditClick();
             }}
             className={`rounded p-1 text-neutral-500 opacity-0 group-hover:opacity-100 hover:bg-neutral-200 dark:hover:bg-neutral-700`}
-            title="编辑标签"
+            title={t('forum.sidebar.editTags')}
           >
             <Pencil className="h-3.5 w-3.5" />
           </span>
@@ -93,7 +95,7 @@ export function SidebarTags({
         >
           <div className="flex items-center gap-3">
             <LayoutGrid className="h-4 w-4" />
-            <span className="text-base">所有标签</span>
+            <span className="text-base">{t('forum.sidebar.allTags')}</span>
           </div>
         </button>
       </div>

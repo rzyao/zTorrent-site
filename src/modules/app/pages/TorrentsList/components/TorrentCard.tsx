@@ -5,6 +5,7 @@ import { Badge } from "@/modules/app/components/ui/badge";
 import { memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatSize } from "@/utils/format";
+import { useLanguage } from "@/hooks/useLanguage";
 import { cn } from "@/utils/cn";
 
 interface TorrentCardProps {
@@ -42,6 +43,7 @@ function TorrentCardInner({
   onDownloadByIdTitle,
 }: TorrentCardProps) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleDetailClick = () => {
     navigate(`/app/torrent/${id}`);
@@ -140,14 +142,14 @@ function TorrentCardInner({
                     onDownload();
                   }
                 }}
-                title={!onDownload && !onDownloadByIdTitle ? "无下载权限" : undefined}
+                title={!onDownload && !onDownloadByIdTitle ? t('torrents.noDownloadPermission') : undefined}
                 style={{
                   fontFamily: '"Source Han Serif CN", "STSong", "SimSun", serif',
                   fontWeight: 700,
                 }}
               >
                 <CloudDownload className="h-5 w-5" />
-                <span>下载</span>
+                <span>{t('torrents.download')}</span>
               </Button>
             </div>
           </div>

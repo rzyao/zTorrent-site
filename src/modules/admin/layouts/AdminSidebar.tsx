@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useMemo } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/utils/cn";
 import { useRouteConfig } from "@/hooks/useRouteConfig";
 import { RouteConfig } from "@/types/routeConfig";
@@ -167,6 +168,7 @@ function MenuItem({
 }
 
 export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
+  const { t } = useTranslation();
   const { routes } = useRouteConfig();
   const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
   const location = useLocation();
@@ -269,7 +271,7 @@ export function AdminSidebar({ collapsed, onCollapse }: AdminSidebarProps) {
               />
             ))
           ) : (
-            <div className="px-3 py-2 text-sm text-gray-400">加载中...</div>
+            <div className="px-3 py-2 text-sm text-gray-400">{t('common.loading')}</div>
           )}
         </div>
       </nav>

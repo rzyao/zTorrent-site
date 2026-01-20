@@ -8,6 +8,7 @@ import {
   ArrowLeftToLine,
   ArrowRightToLine,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/utils/cn";
 import { Button } from "@/modules/admin/components/ui/button";
 import {
@@ -51,6 +52,7 @@ export function KeepAliveTabs({
   handleRefresh,
   handleLogout,
 }: KeepAliveTabsProps) {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const activeTabRef = useRef<HTMLDivElement>(null);
 
@@ -106,7 +108,7 @@ export function KeepAliveTabs({
                     {item.saved === false && (
                       <span
                         className="h-1.5 w-1.5 rounded-full bg-orange-500"
-                        title="有未保存的修改"
+                        title={t('admin.tabs.unsavedChanges')}
                       />
                     )}
                     <span className={cn("truncate", isHome && "hidden sm:block")}>
@@ -144,7 +146,7 @@ export function KeepAliveTabs({
                 {item.closable && (
                   <>
                     <ContextMenuItem onClick={() => onEdit(item.key, "remove")}>
-                      关闭
+                      {t('admin.tabs.close')}
                     </ContextMenuItem>
                     <ContextMenuSeparator />
                   </>
@@ -159,7 +161,7 @@ export function KeepAliveTabs({
                     removeTabs(keysToClose);
                   }}
                 >
-                  关闭其他
+                  {t('admin.tabs.closeOthers')}
                 </ContextMenuItem>
 
                 {/* 关闭右侧标签页 */}
@@ -172,7 +174,7 @@ export function KeepAliveTabs({
                   }}
                   disabled={index >= items.length - 1}
                 >
-                  关闭右侧标签页
+                  {t('admin.tabs.closeRight')}
                 </ContextMenuItem>
 
                 <ContextMenuSeparator />
@@ -186,7 +188,7 @@ export function KeepAliveTabs({
                     removeTabs(keysToClose);
                   }}
                 >
-                  关闭已保存
+                  {t('admin.tabs.closeSaved')}
                 </ContextMenuItem>
 
                 {/* 全部关闭 */}
@@ -196,7 +198,7 @@ export function KeepAliveTabs({
                     removeTabs(keysToClose);
                   }}
                 >
-                  全部关闭
+                  {t('admin.tabs.closeAll')}
                 </ContextMenuItem>
               </ContextMenuContent>
             </ContextMenu>
@@ -211,7 +213,7 @@ export function KeepAliveTabs({
           size="small"
           className="hover:text-foreground h-7 w-7 p-0"
           onClick={handleRefresh}
-          title="刷新"
+          title={t('admin.tabs.refresh')}
         >
           <RotateCw className="h-3.5 w-3.5" />
         </Button>

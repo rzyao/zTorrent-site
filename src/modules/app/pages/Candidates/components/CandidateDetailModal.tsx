@@ -12,6 +12,7 @@
 import type { Candidate } from "../types";
 import { StatusBadge } from "./StatusBadge";
 import { getTimeRemaining, getVotePercentage } from "../utils";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export function CandidateDetailModal({
   candidate,
@@ -24,6 +25,7 @@ export function CandidateDetailModal({
   onVote: (id: string, vote: "up" | "down") => void;
   userVote?: "up" | "down";
 }) {
+  const { t } = useLanguage();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
       <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl border border-neutral-700 bg-linear-to-br from-neutral-800 to-stone-900">
@@ -47,7 +49,7 @@ export function CandidateDetailModal({
             <StatusBadge status={candidate.status} />
             {candidate.status === "voting" && (
               <div className="text-right">
-                <p className="mb-1 text-xs text-neutral-400">剩余时间</p>
+                <p className="mb-1 text-xs text-neutral-400">{t('candidates.timeRemaining')}</p>
                 <p className="flex items-center gap-1 text-amber-400">
                   <Clock className="h-4 w-4" />
                   {getTimeRemaining(candidate.deadline)}
@@ -64,40 +66,40 @@ export function CandidateDetailModal({
               <div>
                 <h3 className="mb-2 flex items-center gap-2 text-amber-400">
                   <FileText className="h-4 w-4" />
-                  资源描述
+                  {t('candidates.description')}
                 </h3>
                 <p className="text-sm leading-relaxed text-neutral-300">{candidate.description}</p>
               </div>
 
               <div>
-                <h3 className="mb-2 text-amber-400">基本信息</h3>
+                <h3 className="mb-2 text-amber-400">{t('candidates.basicInfo')}</h3>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <span className="text-neutral-400">分类：</span>
+                    <span className="text-neutral-400">{t('candidates.category')}：</span>
                     <span className="text-white">{candidate.category}</span>
                   </div>
                   <div>
-                    <span className="text-neutral-400">质量：</span>
+                    <span className="text-neutral-400">{t('candidates.quality')}：</span>
                     <span className="text-white">{candidate.quality}</span>
                   </div>
                   <div>
-                    <span className="text-neutral-400">提交者：</span>
+                    <span className="text-neutral-400">{t('candidates.submitter')}：</span>
                     <span className="text-white">{candidate.submittedBy}</span>
                   </div>
                   <div>
-                    <span className="text-neutral-400">提交时间：</span>
+                    <span className="text-neutral-400">{t('candidates.submitTime')}：</span>
                     <span className="text-white">{candidate.submittedAt}</span>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="mb-2 text-amber-400">投票统计</h3>
+                <h3 className="mb-2 text-amber-400">{t('candidates.voteStats')}</h3>
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
                     <div className="flex flex-1 items-center gap-2">
                       <ThumbsUp className="h-4 w-4 text-green-400" />
-                      <span className="text-sm text-neutral-400">支持</span>
+                      <span className="text-sm text-neutral-400">{t('candidates.support')}</span>
                     </div>
                     <span className="text-white">{candidate.votesUp}</span>
                     <div className="h-2 w-32 overflow-hidden rounded-full bg-neutral-700">
@@ -112,7 +114,7 @@ export function CandidateDetailModal({
                   <div className="flex items-center gap-3">
                     <div className="flex flex-1 items-center gap-2">
                       <ThumbsDown className="h-4 w-4 text-red-400" />
-                      <span className="text-sm text-neutral-400">反对</span>
+                      <span className="text-sm text-neutral-400">{t('candidates.oppose')}</span>
                     </div>
                     <span className="text-white">{candidate.votesDown}</span>
                     <div className="h-2 w-32 overflow-hidden rounded-full bg-neutral-700">
@@ -150,7 +152,7 @@ export function CandidateDetailModal({
                 }`}
               >
                 <ThumbsUp className="h-5 w-5" />
-                支持上传
+                {t('candidates.supportUpload')}
               </button>
               <button
                 onClick={() => onVote(candidate.id, "down")}
@@ -161,7 +163,7 @@ export function CandidateDetailModal({
                 }`}
               >
                 <ThumbsDown className="h-5 w-5" />
-                反对上传
+                {t('candidates.opposeUpload')}
               </button>
             </div>
           )}
@@ -174,19 +176,18 @@ export function CandidateDetailModal({
                     <CheckCheck className="h-5 w-5 text-green-400" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="mb-2 text-green-400">系统通知：候选已通过审核并自动发布</h4>
+                    <h4 className="mb-2 text-green-400">{t('candidates.approvedNotice')}</h4>
                     <p className="mb-3 text-sm leading-relaxed text-green-300">
-                      恭喜！您的候选资源已获得社区支持（支持率 {getVotePercentage(candidate)}
-                      %），系统已自动将其发布为正式种子，现在所有用户都可以搜索和下载该资源。
+                      {t('candidates.approvedMessage', { votePercentage: getVotePercentage(candidate) })}
                     </p>
                     <div className="border-t border-green-500/20 pt-3">
                       <div className="grid grid-cols-2 gap-3 text-xs">
                         <div>
-                          <p className="mb-1 text-green-400">发布时间</p>
+                          <p className="mb-1 text-green-400">{t('candidates.publishTime')}</p>
                           <p className="text-green-200">{candidate.deadline}</p>
                         </div>
                         <div>
-                          <p className="mb-1 text-green-400">种子ID</p>
+                          <p className="mb-1 text-green-400">{t('candidates.torrentId')}</p>
                           <p className="font-mono text-green-200">
                             #{candidate.publishedTorrentId || "N/A"}
                           </p>
@@ -198,7 +199,7 @@ export function CandidateDetailModal({
               </div>
               <button className="flex w-full items-center justify-center gap-2 rounded-lg bg-linear-to-r from-green-500 to-emerald-600 px-4 py-3 text-white shadow-lg shadow-green-500/30 transition-all hover:from-green-600 hover:to-emerald-700">
                 <ArrowRight className="h-5 w-5" />
-                查看种子详情页
+                {t('candidates.viewTorrentDetail')}
               </button>
             </div>
           )}
@@ -211,14 +212,13 @@ export function CandidateDetailModal({
                     <Ban className="h-5 w-5 text-red-400" />
                   </div>
                   <div>
-                    <h4 className="mb-1 text-red-400">系统通知：候选已被驳回</h4>
+                    <h4 className="mb-1 text-red-400">{t('candidates.rejectedNotice')}</h4>
                     <p className="mb-2 text-sm leading-relaxed text-red-300">
-                      您的候选资源未通过社区审核（支持率 {getVotePercentage(candidate)}
-                      %），请查看驳回原因后重新提交。
+                      {t('candidates.rejectedMessage', { votePercentage: getVotePercentage(candidate) })}
                     </p>
                     {candidate.reason && (
                       <div className="mt-2 border-t border-red-500/30 pt-2">
-                        <p className="mb-1 text-xs text-red-400">驳回原因：</p>
+                        <p className="mb-1 text-xs text-red-400">{t('candidates.rejectReason')}：</p>
                         <p className="text-sm text-red-200">{candidate.reason}</p>
                       </div>
                     )}
@@ -226,7 +226,7 @@ export function CandidateDetailModal({
                 </div>
               </div>
               <button className="flex w-full items-center justify-center gap-2 rounded-lg bg-linear-to-r from-amber-500 to-orange-600 px-4 py-3 text-white shadow-lg shadow-amber-500/30 transition-all hover:from-amber-600 hover:to-orange-700">
-                重新提交候选
+                {t('candidates.resubmit')}
               </button>
             </div>
           )}

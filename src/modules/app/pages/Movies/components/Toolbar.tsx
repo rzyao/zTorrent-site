@@ -1,6 +1,7 @@
 ﻿import { ResponsiveSortSelect } from "@/modules/app/components/ResponsiveSortSelect";
 import { CategoryNav } from "@/modules/app/layouts/CategoryNav";
 import { SearchInput } from "@/modules/app/components/SearchInput";
+import { useLanguage } from "@/hooks/useLanguage";
 import type { GenreOption, SortKey } from "../types";
 
 interface ToolbarProps {
@@ -13,11 +14,7 @@ interface ToolbarProps {
   onChangeGenre: (key: string) => void;
 }
 
-const sortOptions: { value: SortKey; label: string }[] = [
-  { value: "rating", label: "评分最高" },
-  { value: "year", label: "最新上映" },
-  { value: "viewsCount", label: "最受欢迎" },
-];
+
 
 /**
  * Toolbar
@@ -32,6 +29,14 @@ export function Toolbar({
   selectedGenre,
   onChangeGenre,
 }: ToolbarProps) {
+  const { t } = useLanguage();
+
+  const sortOptions: { value: SortKey; label: string }[] = [
+    { value: "rating", label: t('movies.sortByRating') },
+    { value: "year", label: t('movies.sortByYear') },
+    { value: "viewsCount", label: t('movies.sortByViews') },
+  ];
+
   return (
     <div>
       {/* 搜索与排序 */}
@@ -39,7 +44,7 @@ export function Toolbar({
         <SearchInput
           value={searchQuery}
           onSearch={onSearchChange}
-          placeholder="搜索电影名称、导演..."
+          placeholder={t('movies.searchPlaceholder')}
           inputClassName="md:py-5 rounded-lg focus:border-amber-500/50 focus:ring-amber-500/50"
         />
 

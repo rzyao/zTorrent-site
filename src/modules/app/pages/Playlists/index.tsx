@@ -6,9 +6,11 @@ import { PlaylistCard } from "@/modules/app/pages/Playlists/components/PlaylistC
 import { PlaylistsControls } from "@/modules/app/pages/Playlists/components/PlaylistsControls";
 import { EmptyState } from "@/modules/app/pages/Playlists/components/EmptyState";
 import { PageContainer } from "@/modules/app/components/PageContainer";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function PlaylistsPage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const {
     activeTab,
     setActiveTab,
@@ -66,8 +68,8 @@ export default function PlaylistsPage() {
           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl border border-neutral-700 bg-neutral-900">
             <Clock className="h-10 w-10 text-neutral-600" />
           </div>
-          <h3 className="mb-2 text-xl text-white">加载中...</h3>
-          <p className="text-neutral-500">正在获取片单列表</p>
+          <h3 className="mb-2 text-xl text-white">{t('playlists.loading')}</h3>
+          <p className="text-neutral-500">{t('playlists.loadingList')}</p>
         </div>
       )}
       {error && <div className="py-6 text-center text-red-400">{error}</div>}

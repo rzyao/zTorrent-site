@@ -1,4 +1,5 @@
 import { X, Plus, ListMusic } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 import type { MyPlaylist, Song } from "../types";
 
 interface AddToPlaylistModalProps {
@@ -20,12 +21,13 @@ export function AddToPlaylistModal({
   onClose,
   onAdd,
 }: AddToPlaylistModalProps) {
+  const { t } = useLanguage();
   if (!open || !song) return null;
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-linear-to-br from-neutral-800 to-stone-900 rounded-2xl border border-neutral-700 p-6 max-w-md w-full shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-white text-xl">添加到歌单</h3>
+          <h3 className="text-white text-xl">{t('music.addToPlaylist')}</h3>
           <button
             onClick={onClose}
             className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-all"
@@ -46,8 +48,8 @@ export function AddToPlaylistModal({
           {myPlaylists.length === 0 ? (
             <div className="p-8 text-center text-neutral-500">
               <ListMusic className="w-12 h-12 mx-auto mb-3 opacity-30" />
-              <p>还没有创建歌单</p>
-              <p className="text-sm mt-1">请前往播放器页面创建歌单</p>
+              <p>{t('music.noPlaylists')}</p>
+              <p className="text-sm mt-1">{t('music.createPlaylistHint')}</p>
             </div>
           ) : (
             myPlaylists.map((playlist) => (
@@ -59,7 +61,7 @@ export function AddToPlaylistModal({
                 <img src={playlist.cover} alt={playlist.title} className="w-12 h-12 rounded-lg object-cover" />
                 <div className="flex-1 text-left min-w-0">
                   <p className="text-white truncate">{playlist.title}</p>
-                  <p className="text-neutral-400 text-sm">{playlist.songs.length} 首歌曲</p>
+                  <p className="text-neutral-400 text-sm">{t('music.songsCount', { count: playlist.songs.length })}</p>
                 </div>
                 <Plus className="w-5 h-5 text-neutral-400" />
               </button>

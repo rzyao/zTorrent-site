@@ -5,6 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/modules/app/components/ui/button";
 import { PageContainer } from "@/modules/app/components/PageContainer";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { useSeriesDetail } from "./hooks/useSeriesDetail";
 import { Hero } from "./components/Hero";
 import { InfoBar } from "./components/InfoBar";
@@ -23,6 +24,7 @@ export default function SeriesDetailPage() {
   const navigate = useNavigate();
   const { series, episodes, loading, error } = useSeriesDetail(id);
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
 
   // 同步收藏状态到缓存
   useEffect(() => {
@@ -35,7 +37,7 @@ export default function SeriesDetailPage() {
   }, [series?.isFavorited, id, queryClient]);
 
   // 设置页面标题
-  useDynamicTitle(series?.title || "剧集详情");
+  useDynamicTitle(series?.title || t('series.detailTitle'));
 
   // UI 状态
 
@@ -50,15 +52,15 @@ export default function SeriesDetailPage() {
       <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-[#0F171E] text-white">
         <div className="text-center">
           <div className="mb-4 text-6xl">📺</div>
-          <h2 className="mb-2 text-2xl font-bold text-white">{error || "未找到剧集信息"}</h2>
-          <p className="text-neutral-400">该剧集可能已被移除或链接无效</p>
+          <h2 className="mb-2 text-2xl font-bold text-white">{error || t('series.notFound')}</h2>
+          <p className="text-neutral-400">{t('series.notFoundDesc')}</p>
         </div>
         <Button
           variant="outline"
           onClick={() => navigate("/series")}
           className="rounded-lg border-[#92702a] bg-transparent text-[#d4a733] hover:border-[#d4a733] hover:bg-[#d4a733]/10 hover:text-[#e8bc4a]"
         >
-          返回剧集列表
+          {t('series.backToList')}
         </Button>
       </div>
     );

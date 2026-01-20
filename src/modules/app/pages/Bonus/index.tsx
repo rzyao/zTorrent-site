@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import { useDynamicTitle } from '@/hooks/useDynamicTitle';
+import { useLanguage } from '@/hooks/useLanguage';
 import type { StoreItem } from '@/api/custom/store';
 import { getBonusBalance } from '@/api/custom/bonus';
 import { getProfile } from '@/api/custom/auth';
@@ -19,7 +20,8 @@ import type { MagicRecord } from './types';
 
 
 export default function BonusPage() {
-  useDynamicTitle('魔力值');
+  const { t } = useLanguage();
+  useDynamicTitle(t('bonus.title'));
   const [activeTab, setActiveTab] = useState<'overview' | 'records' | 'shop'>('overview');
 
   const { overview } = useBonusOverview(activeTab === 'overview');
@@ -94,7 +96,7 @@ export default function BonusPage() {
               : 'text-neutral-400 hover:text-white'
               }`}
           >
-            获取方式
+            {t('bonus.tabOverview')}
           </button>
           <button
             onClick={() => setActiveTab('records')}
@@ -103,7 +105,7 @@ export default function BonusPage() {
               : 'text-neutral-400 hover:text-white'
               }`}
           >
-            收支记录
+            {t('bonus.tabRecords')}
           </button>
           <button
             onClick={() => setActiveTab('shop')}
@@ -112,7 +114,7 @@ export default function BonusPage() {
               : 'text-neutral-400 hover:text-white'
               }`}
           >
-            魔力商城
+            {t('bonus.tabShop')}
           </button>
         </div>
 
@@ -160,7 +162,7 @@ export default function BonusPage() {
               setPurchaseOpen(false);
               setSuccessOpen(true);
             } catch (e: any) {
-              setErrorMsg(e?.message || '购买失败');
+              setErrorMsg(e?.message || t('bonus.purchaseFailed'));
             } finally {
               setSubmitting(false);
             }
@@ -181,7 +183,7 @@ export default function BonusPage() {
               setPurchaseOpen(false);
               setSuccessOpen(true);
             } catch (e: any) {
-              setErrorMsg(e?.message || '购买失败');
+              setErrorMsg(e?.message || t('bonus.purchaseFailed'));
               console.info('[store_purchase_failure]', { reason: e?.message });
             } finally {
               setSubmitting(false);

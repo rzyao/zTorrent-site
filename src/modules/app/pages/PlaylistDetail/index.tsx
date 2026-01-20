@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Bell, UserPlus, Heart, Share2 } from "lucide-react";
 import ActionBtn from "@/modules/app/components/ActionBtn";
 import { cn } from "@/utils/cn";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Hero } from "@/modules/app/pages/PlaylistDetail/components/Hero";
 import { Toolbar } from "@/modules/app/pages/PlaylistDetail/components/Toolbar";
 import { GridView } from "@/modules/app/pages/PlaylistDetail/components/GridView";
@@ -25,6 +26,7 @@ export default function PlaylistDetailPage({
 }: PlaylistDetailPageProps) {
   const navigate = useNavigate();
   const { id: paramId } = useParams<{ id: string }>();
+  const { t } = useLanguage();
 
   // 优先使用 props 传入的 playlistId，否则从 URL 参数获取
   const playlistId = propPlaylistId || paramId || "";
@@ -97,7 +99,7 @@ export default function PlaylistDetailPage({
                 <Bell className={cn("h-5 w-5 transition-colors", isSubscribed && "fill-current")} />
               }
             >
-              {isSubscribed ? "已订阅" : "订阅"}
+              {isSubscribed ? t('playlists.subscribed') : t('playlists.subscribe')}
             </ActionBtn>
 
             {/* 关注 (Secondary) - 映射到 API 的 isFollowing */}
@@ -113,7 +115,7 @@ export default function PlaylistDetailPage({
                 />
               }
             >
-              {isFollowing ? "已关注" : "关注"}
+              {isFollowing ? t('playlists.following') : t('playlists.follow')}
             </ActionBtn>
 
             {/* 收藏 (Secondary) */}
@@ -132,11 +134,11 @@ export default function PlaylistDetailPage({
             >
               {isFavoriteLoading
                 ? isFavorite
-                  ? "取消中"
-                  : "收藏中"
+                  ? t('playlists.unfavoriting')
+                  : t('playlists.favoriting')
                 : isFavorite
-                  ? "已收藏"
-                  : "收藏"}
+                  ? t('playlists.favorited')
+                  : t('playlists.favorite')}
             </ActionBtn>
           </div>
 
@@ -152,7 +154,7 @@ export default function PlaylistDetailPage({
               className="px-4"
               icon={<Share2 className="h-5 w-5" />}
             >
-              分享
+              {t('playlists.share')}
             </ActionBtn>
           </div>
         </div>
@@ -172,11 +174,11 @@ export default function PlaylistDetailPage({
               onClick={() => reload()}
               className="rounded border border-red-500/50 bg-red-500/20 px-3 py-1 text-red-200 transition-colors hover:bg-red-500/30"
             >
-              重试
+              {t('app.retry')}
             </button>
           </div>
         )}
-        {loading && <div className="mb-6 text-neutral-400">正在加载片单数据…</div>}
+        {loading && <div className="mb-6 text-neutral-400">{t('playlists.loadingData')}</div>}
 
         {/* 网格视图 */}
         {viewMode === "grid" && !loading && (

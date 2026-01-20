@@ -11,6 +11,7 @@ import type { Torrent, ViewMode } from "@/modules/app/pages/TorrentsList/types";
 import { usePreferenceStore } from "@/modules/app/stores/preferenceStore";
 import { TorrentGridSkeleton } from "@/modules/app/components/skeletons/TorrentGridSkeleton";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { useDownloadStatusStore } from "@/modules/app/stores/downloadStatusStore";
 
 /**
@@ -19,7 +20,8 @@ import { useDownloadStatusStore } from "@/modules/app/stores/downloadStatusStore
  * - 保持原有功能与UI行为一致：下载、分类词典、搜索过滤、排序、分页
  */
 export default function TorrentsPage() {
-  useDynamicTitle("种子列表");
+  const { t } = useLanguage();
+  useDynamicTitle(t('torrents.title'));
   // 业务状态与派生数据由 hook 管理
   const {
     displayTorrents,

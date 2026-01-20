@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronDown, Pencil, LayoutGrid, Square } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useForumTheme } from "../../context/ForumThemeContext";
 import { getIconByName } from "@/modules/forum/components/ui/icon-picker";
 import { ExtendedForumCategory } from "./types";
@@ -24,6 +25,7 @@ export function SidebarCategories({
   showEditButton = false,
   isLoading = false,
 }: SidebarCategoriesProps) {
+  const { t } = useTranslation();
   const { colors, theme } = useForumTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,7 +43,7 @@ export function SidebarCategories({
               isExpanded ? "" : "-rotate-90"
             }`}
           />
-          <span className="text-base">话题分类</span>
+          <span className="text-base">{t('forum.sidebar.categories')}</span>
         </div>
         {showEditButton && onEditClick && (
           <span
@@ -50,7 +52,7 @@ export function SidebarCategories({
               onEditClick();
             }}
             className={`rounded p-1 text-neutral-500 opacity-0 group-hover:opacity-100 hover:bg-neutral-200 dark:hover:bg-neutral-700`}
-            title="编辑分类"
+            title={t('forum.sidebar.editCategories')}
           >
             <Pencil className="h-3.5 w-3.5" />
           </span>
@@ -126,7 +128,7 @@ export function SidebarCategories({
         >
           <div className="flex items-center gap-3">
             <LayoutGrid className="h-4 w-4" />
-            <span className="text-base">所有类别</span>
+            <span className="text-base">{t('forum.sidebar.allCategories')}</span>
           </div>
         </button>
       </div>

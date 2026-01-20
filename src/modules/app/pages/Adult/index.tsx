@@ -3,6 +3,7 @@ import { CategoryNav } from "@/modules/app/layouts/CategoryNav";
 import { FeaturedTorrent } from "@/modules/app/components/FeaturedTorrent";
 import { TorrentRow } from "@/modules/app/components/TorrentRow";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 
 /**
  * 首页容器页（参考 TorrentsList 结构）
@@ -11,10 +12,11 @@ import { useDynamicTitle } from "@/hooks/useDynamicTitle";
  * - 权限守卫仍在路由层生效，本页仅负责展示与导航
  */
 export default function HomePage() {
-  useDynamicTitle("首页");
+  const { t } = useLanguage();
+  useDynamicTitle(t('home.title'));
   const { category } = useParams();
   const navigate = useNavigate();
-  const active = category ? decodeURIComponent(category) : "全部";
+  const active = category ? decodeURIComponent(category) : t('home.categories.all');
 
   /**
    * 分类选择映射规则：
@@ -23,8 +25,8 @@ export default function HomePage() {
    * - 其他中文标签 → /home/{中文编码}
    */
   const handleSelect = (label: string) => {
-    if (label === "全部") navigate("/home");
-    else if (label === "电影") navigate("/home/movie");
+    if (label === t('home.categories.all')) navigate("/home");
+    else if (label === t('home.categories.movie')) navigate("/home/movie");
     else navigate(`/home/${encodeURIComponent(label)}`);
   };
 
@@ -32,10 +34,10 @@ export default function HomePage() {
     <>
       <CategoryNav
         items={[
-          { label: "全部", value: "全部" },
-          { label: "电影", value: "电影" },
-          { label: "动漫", value: "动漫" },
-          { label: "剧集", value: "剧集" },
+          { label: t('home.categories.all'), value: t('home.categories.all') },
+          { label: t('home.categories.movie'), value: t('home.categories.movie') },
+          { label: t('home.categories.anime'), value: t('home.categories.anime') },
+          { label: t('home.categories.series'), value: t('home.categories.series') },
         ]}
         active={active}
         onSelect={handleSelect}
@@ -44,10 +46,10 @@ export default function HomePage() {
       />
       <FeaturedTorrent {...featuredTorrent} />
       <div className="relative -mt-24 space-y-8 pb-16">
-        <TorrentRow title="免费下载" torrents={freeTorrents} />
-        <TorrentRow title="本周热门" torrents={hotTorrents} />
-        <TorrentRow title="VIP专享" torrents={vipTorrents} />
-        <TorrentRow title="精选电影" torrents={movieTorrents} />
+        <TorrentRow title={t('home.sections.free')} torrents={freeTorrents} />
+        <TorrentRow title={t('home.sections.hot')} torrents={hotTorrents} />
+        <TorrentRow title={t('home.sections.vip')} torrents={vipTorrents} />
+        <TorrentRow title={t('home.sections.featured')} torrents={movieTorrents} />
       </div>
     </>
   );

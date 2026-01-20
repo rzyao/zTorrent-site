@@ -1,5 +1,6 @@
 ﻿import { Search, RotateCcw, GripVertical } from "lucide-react";
 import { useState, useMemo } from "react";
+import { useLanguage } from "@/hooks/useLanguage";
 import {
   DndContext,
   closestCenter,
@@ -82,6 +83,7 @@ export function SidebarCustomizeModal({
   isLoading,
 }: SidebarCustomizeModalProps) {
   const { colors, theme } = useForumTheme();
+  const { t } = useLanguage();
   // Local state for edits before save
   const [currentSelectedIds, setCurrentSelectedIds] = useState<string[]>(selectedIds);
   // Search state
@@ -182,7 +184,7 @@ export function SidebarCustomizeModal({
         {/* Description / Hint */}
         {currentSelectedIds.length === 0 && (
           <div className="mb-2 text-sm text-amber-500">
-            已取消全选，我们将自动显示此网站最受欢迎的类别/标签。
+            {t('forum.sidebar.emptySelectionHint')}
           </div>
         )}
 
@@ -193,13 +195,13 @@ export function SidebarCustomizeModal({
                 value="select"
                 className="rounded-none border-b-2 border-transparent bg-transparent px-4 pb-2 text-gray-500 shadow-none hover:text-gray-700 data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:text-blue-600 data-[state=active]:shadow-none dark:text-gray-400 dark:hover:text-gray-200 dark:data-[state=active]:border-blue-400 dark:data-[state=active]:text-blue-400"
               >
-                选择
+                {t('forum.sidebar.select')}
               </TabsTrigger>
               <TabsTrigger
                 value="sort"
                 className="rounded-none border-b-2 border-transparent bg-transparent px-4 pb-2 text-gray-500 shadow-none hover:text-gray-700 data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:text-blue-600 data-[state=active]:shadow-none dark:text-gray-400 dark:hover:text-gray-200 dark:data-[state=active]:border-blue-400 dark:data-[state=active]:text-blue-400"
               >
-                排序 ({currentSelectedIds.length})
+                {t('forum.sidebar.sort')} ({currentSelectedIds.length})
               </TabsTrigger>
             </TabsList>
           </div>
@@ -212,7 +214,7 @@ export function SidebarCustomizeModal({
               />
               <input
                 type="text"
-                placeholder="搜索类别..."
+                placeholder={t('forum.sidebar.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={`w-full rounded-md border border-gray-200 bg-white px-9 py-2 text-sm focus:ring-2 focus:ring-blue-500/50 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:ring-blue-500/50`}
@@ -225,7 +227,7 @@ export function SidebarCustomizeModal({
             >
               {filteredAllItems.length === 0 ? (
                 <div className="flex h-full items-center justify-center text-sm text-gray-500">
-                  没有找到匹配项
+                  {t('forum.sidebar.noMatch')}
                 </div>
               ) : (
                 <div className="divide-y divide-gray-100 dark:divide-neutral-800">
@@ -277,7 +279,7 @@ export function SidebarCustomizeModal({
 
           <TabsContent value="sort" className="mt-0">
             <div className="mb-2 text-xs text-gray-500 dark:text-gray-400">
-              拖拽项目以调整侧边栏由于顺序。
+              {t('forum.sidebar.dragHint')}
             </div>
             {/* List Area for Sorting */}
             <div
@@ -285,7 +287,7 @@ export function SidebarCustomizeModal({
             >
               {sortedSelectedItems.length === 0 ? (
                 <div className="flex h-full items-center justify-center text-sm text-gray-500">
-                  尚未选择任何项目
+                  {t('forum.sidebar.noSelection')}
                 </div>
               ) : (
                 <div className="divide-y divide-gray-100 dark:divide-neutral-800">
@@ -355,15 +357,15 @@ export function SidebarCustomizeModal({
             )}
           >
             <RotateCcw className="h-4 w-4" />
-            重置为默认值
+            {t('forum.sidebar.resetDefault')}
           </Button>
 
           <div className="flex gap-3">
             <Button variant="cancel" size="sm" onClick={onClose}>
-              取消
+              {t('app.cancel')}
             </Button>
             <Button variant="primary" size="sm" onClick={handleSave} loading={isLoading}>
-              保存变更
+              {t('forum.sidebar.saveChanges')}
             </Button>
           </div>
         </div>

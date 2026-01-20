@@ -1,12 +1,14 @@
 import { TrendingUp, Clock, Award } from 'lucide-react';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export function Sidebar() {
+  const { t } = useLanguage();
   return (
     <div className="space-y-6">
       <div className="bg-white border rounded-lg p-4">
         <div className="flex items-center gap-2 mb-3 pb-3 border-b">
           <TrendingUp className="w-5 h-5 text-red-500" />
-          <h3 className="text-gray-900">热门种子</h3>
+          <h3 className="text-gray-900">{t('sidebar.hotTorrents')}</h3>
         </div>
         <div className="space-y-2">
           {[
@@ -35,7 +37,7 @@ export function Sidebar() {
       <div className="bg-white border rounded-lg p-4">
         <div className="flex items-center gap-2 mb-3 pb-3 border-b">
           <Clock className="w-5 h-5 text-blue-500" />
-          <h3 className="text-gray-900">最新种子</h3>
+          <h3 className="text-gray-900">{t('sidebar.latestTorrents')}</h3>
         </div>
         <div className="space-y-2">
           {[
@@ -61,7 +63,7 @@ export function Sidebar() {
       <div className="bg-white border rounded-lg p-4">
         <div className="flex items-center gap-2 mb-3 pb-3 border-b">
           <Award className="w-5 h-5 text-yellow-500" />
-          <h3 className="text-gray-900">本月排行</h3>
+          <h3 className="text-gray-900">{t('sidebar.monthlyRanking')}</h3>
         </div>
         <div className="space-y-3">
           {[
@@ -83,7 +85,7 @@ export function Sidebar() {
               </div>
               <div className="flex-1">
                 <p className="text-sm text-gray-900">{user.name}</p>
-                <p className="text-xs text-gray-500">上传 {user.uploaded}</p>
+                <p className="text-xs text-gray-500">{t('sidebar.uploaded')} {user.uploaded}</p>
               </div>
             </div>
           ))}

@@ -9,6 +9,7 @@ import {
 } from "@/modules/app/components/ui/select";
 import { Palette, Globe, Monitor } from "lucide-react";
 import type { PreferencesData, KeyLabelOption } from "../../types";
+import { useLanguage, SUPPORTED_LANGUAGES, type SupportedLanguage } from "@/hooks/useLanguage";
 
 interface PreferencesTabProps {
   adultMode: boolean;
@@ -45,6 +46,15 @@ export function PreferencesTab(props: PreferencesTabProps) {
     setSelectedSeriesGenres,
   } = props;
 
+  const { changeLanguage, t } = useLanguage();
+
+  // 语言切换处理：同时更新偏好设置和 i18n
+  const handleLanguageChange = (value: string) => {
+    setPreferences({ ...preferences, language: value });
+    // 同步更新 i18n 语言
+    changeLanguage(value as SupportedLanguage);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-6">
@@ -52,17 +62,17 @@ export function PreferencesTab(props: PreferencesTabProps) {
           <Palette className="w-4 h-4 text-white" />
         </div>
         <div>
-          <h2 className="text-white text-xl">网站偏好</h2>
-          <p className="text-neutral-400 text-sm">自定义您的浏览体验</p>
+          <h2 className="text-white text-xl">{t('settings.preferences')}</h2>
+          <p className="text-neutral-400 text-sm">{t('settings.preferencesDesc')}</p>
         </div>
       </div>
 
       {/* 成人模式 */}
       <div className="flex items-center justify-between p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
         <div className="flex-1">
-          <div className="text-neutral-300 text-sm mb-1">显示成人模式</div>
+          <div className="text-neutral-300 text-sm mb-1">{t('preferences.adultMode')}</div>
           <p className="text-neutral-500 text-xs">
-            开启后允许展示成人分级的分类与内容（保存后生效）
+            {t('preferences.adultModeDesc')}
           </p>
         </div>
         <Switch checked={adultMode} onCheckedChange={setAdultMode} />
@@ -73,20 +83,24 @@ export function PreferencesTab(props: PreferencesTabProps) {
       {/* 语言 */}
       <div className="space-y-2">
         <label className="text-neutral-300 text-sm flex items-center gap-2">
-          <Globe className="w-4 h-4" /> 语言
+          <Globe className="w-4 h-4" /> {t('settings.language')}
         </label>
         <Select
           value={preferences.language}
-          onValueChange={(v) => setPreferences({ ...preferences, language: v })}
+          onValueChange={handleLanguageChange}
         >
           <SelectTrigger>
-            <SelectValue placeholder="选择语言" />
+            <SelectValue placeholder={t('settings.languageDesc')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="zh-CN">简体中文</SelectItem>
-            <SelectItem value="zh-TW">繁體中文</SelectItem>
-            <SelectItem value="en-US">English</SelectItem>
-            <SelectItem value="ja-JP">日本語</SelectItem>
+            {SUPPORTED_LANGUAGES.map((lang) => (
+              <SelectItem key={lang.code} value={lang.code}>
+                <span className="flex items-center gap-2">
+                  <span>{lang.flag}</span>
+                  <span>{lang.label}</span>
+                </span>
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -96,19 +110,19 @@ export function PreferencesTab(props: PreferencesTabProps) {
       {/* 主题 */}
       <div className="space-y-2">
         <label className="text-neutral-300 text-sm flex items-center gap-2">
-          <Monitor className="w-4 h-4" /> 主题
+          <Monitor className="w-4 h-4" /> {t('settings.theme')}
         </label>
         <Select
           value={preferences.theme}
           onValueChange={(v) => setPreferences({ ...preferences, theme: v })}
         >
           <SelectTrigger>
-            <SelectValue placeholder="选择主题" />
+            <SelectValue placeholder={t('settings.themeDesc')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="dark">深色模式</SelectItem>
-            <SelectItem value="light">浅色模式</SelectItem>
-            <SelectItem value="auto">跟随系统</SelectItem>
+            <SelectItem value="dark">{t('settings.themeDark')}</SelectItem>
+            <SelectItem value="light">{t('settings.themeLight')}</SelectItem>
+            <SelectItem value="auto">{t('settings.themeSystem')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -117,7 +131,7 @@ export function PreferencesTab(props: PreferencesTabProps) {
 
       {/* 默认视图 */}
       <div className="space-y-2">
-        <label className="text-neutral-300 text-sm">默认视图</label>
+        <label className="text-neutral-300 text-sm">{t('settings.defaultView')}</label>
         <Select
           value={preferences.defaultView}
           onValueChange={(v) =>
@@ -128,11 +142,11 @@ export function PreferencesTab(props: PreferencesTabProps) {
           }
         >
           <SelectTrigger>
-            <SelectValue placeholder="选择默认视图" />
+            <SelectValue placeholder={t('settings.defaultViewDesc')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="grid">网格视图</SelectItem>
-            <SelectItem value="list">列表视图</SelectItem>
+            <SelectItem value="grid">{t('settings.viewGrid')}</SelectItem>
+            <SelectItem value="list">{t('settings.viewList')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -142,12 +156,12 @@ export function PreferencesTab(props: PreferencesTabProps) {
       {/* 种子分类多选 */}
       <div className="space-y-2">
         <label className="text-neutral-300 text-sm">
-          种子分类默认展示（多选）
+          {t('preferences.torrentCategories')}
         </label>
         <div className="flex items-center justify-between p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
           <div className="flex-1">
             <div className="text-neutral-400 text-xs mb-2">
-              共 {torrentCategoryOptions.length} 项，可点击选择
+              {t('preferences.itemsClickToSelect', { count: torrentCategoryOptions.length })}
             </div>
             <div className="flex flex-wrap gap-2">
               {torrentCategoryOptions.map((opt) => {
@@ -173,7 +187,7 @@ export function PreferencesTab(props: PreferencesTabProps) {
                 );
               })}
               {torrentCategoryOptions.length === 0 && (
-                <span className="text-neutral-500 text-xs">暂无可选分类</span>
+                <span className="text-neutral-500 text-xs">{t('preferences.noCategories')}</span>
               )}
             </div>
           </div>
@@ -184,12 +198,12 @@ export function PreferencesTab(props: PreferencesTabProps) {
       {/* 电影分类多选 */}
       <div className="space-y-2">
         <label className="text-neutral-300 text-sm">
-          电影分类默认展示（多选）
+          {t('preferences.movieGenres')}
         </label>
         <div className="flex items-center justify-between p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
           <div className="flex-1">
             <div className="text-neutral-400 text-xs mb-2">
-              共 {movieGenreOptions.length} 项，可点击选择
+              {t('preferences.itemsClickToSelect', { count: movieGenreOptions.length })}
             </div>
             <div className="flex flex-wrap gap-2">
               {movieGenreOptions.map((opt) => {
@@ -215,7 +229,7 @@ export function PreferencesTab(props: PreferencesTabProps) {
                 );
               })}
               {movieGenreOptions.length === 0 && (
-                <span className="text-neutral-500 text-xs">暂无可选分类</span>
+                <span className="text-neutral-500 text-xs">{t('preferences.noCategories')}</span>
               )}
             </div>
           </div>
@@ -226,12 +240,12 @@ export function PreferencesTab(props: PreferencesTabProps) {
       {/* 剧集分类多选 */}
       <div className="space-y-2">
         <label className="text-neutral-300 text-sm">
-          剧集分类默认展示（多选）
+          {t('preferences.seriesGenres')}
         </label>
         <div className="flex items-center justify-between p-4 rounded-lg bg-neutral-900/30 border border-neutral-700/50">
           <div className="flex-1">
             <div className="text-neutral-400 text-xs mb-2">
-              共 {seriesGenreOptions.length} 项，可点击选择
+              {t('preferences.itemsClickToSelect', { count: seriesGenreOptions.length })}
             </div>
             <div className="flex flex-wrap gap-2">
               {seriesGenreOptions.map((opt) => {
@@ -257,7 +271,7 @@ export function PreferencesTab(props: PreferencesTabProps) {
                 );
               })}
               {seriesGenreOptions.length === 0 && (
-                <span className="text-neutral-500 text-xs">暂无可选分类</span>
+                <span className="text-neutral-500 text-xs">{t('preferences.noCategories')}</span>
               )}
             </div>
           </div>

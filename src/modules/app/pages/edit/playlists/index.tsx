@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState, useRef } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import {
   ListVideo,
   Plus,
@@ -29,7 +30,8 @@ import { PlaylistForm } from "@/modules/app/pages/Edit/playlists/components/Play
 import { PlaylistDetails } from "@/modules/app/pages/Edit/playlists/components/PlaylistDetails";
 
 export default function EditPlaylistPage() {
-  useDynamicTitle("片单编辑");
+  const { t } = useLanguage();
+  useDynamicTitle(t('edit.playlistTitle'));
   // 接入拆分后的业务逻辑 Hook
   const {
     playlists,
@@ -80,9 +82,9 @@ export default function EditPlaylistPage() {
               <ListVideo className="w-5 h-5 text-white" />
             </div>
             <div className="flex items-end gap-1">
-              <h1 className="text-white text-3xl">片单编辑</h1>
+              <h1 className="text-white text-3xl">{t('editPlaylist.pageTitle')}</h1>
               <p className="text-neutral-400 text-sm mt-1">
-                创建和管理您的影片收藏片单
+                {t('editPlaylist.pageDesc')}
               </p>
             </div>
           </div>
@@ -91,7 +93,7 @@ export default function EditPlaylistPage() {
             className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
           >
             <Plus className="w-4 h-4 mr-2" />
-            创建片单
+            {t('editPlaylist.createPlaylist')}
           </Button>
         </div>
       </div>
@@ -561,16 +563,16 @@ export default function EditPlaylistPage() {
             {!isCreating && !isEditing && !selectedPlaylist && (
               <div className="text-center py-20">
                 <ListVideo className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
-                <h3 className="text-white text-lg mb-2">选择一个片单</h3>
+                <h3 className="text-white text-lg mb-2">{t('editPlaylist.selectPlaylist')}</h3>
                 <p className="text-neutral-400 text-sm mb-6">
-                  从左侧列表选择片单进行编辑，或创建新的片单
+                  {t('editPlaylist.selectPlaylistHint')}
                 </p>
                 <Button
                   onClick={handleCreateNew}
                   className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  创建新片单
+                  {t('editPlaylist.createNewPlaylist')}
                 </Button>
               </div>
             )}

@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { FavoriteActionDto } from "@/api";
 import { useParams } from "react-router-dom";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { PageContainer } from "@/modules/app/components/PageContainer";
 import { Hero } from "./components/Hero";
 import { Stills } from "./components/Stills";
@@ -24,7 +25,8 @@ interface FilmDetailPageProps {
  * - 数据获取通过自定义 Hook `useFilmDetail` 完成，保证展示层与业务逻辑分离
  */
 export default function MovieDetailPage({ filmId }: FilmDetailPageProps) {
-  useDynamicTitle("影片详情");
+  const { t } = useLanguage();
+  useDynamicTitle(t('movieDetail.title'));
   const params = useParams();
   const effectiveFilmId = filmId ?? (params?.id ? String(params.id) : undefined);
 

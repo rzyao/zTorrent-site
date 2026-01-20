@@ -10,6 +10,7 @@ import { useUserSummary } from "@/modules/app/context/UserSummaryContext";
 import { DesktopNav } from "./header/DesktopNav";
 import { MobileNav } from "./header/MobileNav";
 import { UserMenu } from "./header/components/UserMenu";
+import { useLanguage } from "@/hooks/useLanguage";
 
 // 格式化字节数为人类可读格式
 function formatBytes(bytes: number): string {
@@ -37,6 +38,7 @@ export function Header() {
   const { access, loading: accessLoading } = useAccess();
   const { title } = useSiteConfig();
   const { data: userSummary } = useUserSummary();
+  const { t } = useLanguage();
 
   // 控制移动端导航菜单显示状态
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -55,7 +57,7 @@ export function Header() {
             <button
               className="flex h-10 w-10 items-center justify-center rounded-lg text-white transition-colors hover:bg-white/10 md:hidden"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              aria-label={showMobileMenu ? "关闭菜单" : "打开菜单"}
+              aria-label={showMobileMenu ? t('app.close') : t('nav.menu')}
             >
               {showMobileMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>

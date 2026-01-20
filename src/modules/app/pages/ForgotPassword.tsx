@@ -1,5 +1,6 @@
 ﻿import { useState } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { isValidPassword, passwordErrorMessage } from "@/utils/validation";
 import { Mail, Lock, ArrowLeft, Clock, CheckCircle } from "lucide-react";
 import { Button } from "@/modules/app/components/ui/button";
@@ -11,7 +12,8 @@ interface ForgotPasswordPageProps {
 }
 
 export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) {
-  useDynamicTitle("找回密码");
+  const { t } = useLanguage();
+  useDynamicTitle(t('auth.resetPassword'));
   const [step, setStep] = useState<"email" | "verify" | "reset" | "success">("email");
   const [countdown, setCountdown] = useState(0);
   const [email, setEmail] = useState("");
@@ -58,7 +60,7 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
       errs.newPassword = passwordErrorMessage();
     }
     if (confirmPassword !== newPassword) {
-      errs.confirmPassword = "两次输入的密码不一致";
+      errs.confirmPassword = t('auth.passwordMismatch');
     }
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
@@ -93,7 +95,7 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
                 className="mb-6 flex items-center gap-2 text-gray-400 transition-colors hover:text-white"
               >
                 <ArrowLeft className="h-4 w-4" />
-                <span className="text-xs">返回登录</span>
+                <span className="text-xs">{t('auth.backToLogin')}</span>
               </Button>
             )}
 
@@ -126,30 +128,30 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
             {step === "email" && (
               <>
                 <div className="mb-8 text-center">
-                  <h1 className="mb-2 text-3xl text-white">找回密码</h1>
-                  <p className="text-sm text-gray-400">通过邮箱验证重置密码</p>
+                  <h1 className="mb-2 text-3xl text-white">{t('auth.resetPassword')}</h1>
+                  <p className="text-sm text-gray-400">{t('auth.resetByEmail')}</p>
                 </div>
                 <form onSubmit={handleSendCode} className="space-y-5">
                   <div className="space-y-2">
-                    <label className="text-sm text-white">注册邮箱</label>
+                    <label className="text-sm text-white">{t('auth.registeredEmail')}</label>
                     <div className="relative">
                       <Mail className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                       <Input
                         type="email"
-                        placeholder="输入您的注册邮箱"
+                        placeholder={t('auth.inputRegisteredEmail')}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                         className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1]"
                       />
                     </div>
-                    <p className="text-xs text-gray-500">请输入您注册时使用的邮箱地址</p>
+                    <p className="text-xs text-gray-500">{t('auth.inputRegisteredEmailHint')}</p>
                   </div>
                   <Button
                     type="submit"
                     className="w-full rounded-md bg-[#00A8E1] py-6 text-lg text-white transition-colors hover:bg-[#00A8E1]/90"
                   >
-                    发送验证码
+                    {t('auth.sendCode')}
                   </Button>
                 </form>
               </>
@@ -158,17 +160,17 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
             {step === "verify" && (
               <>
                 <div className="mb-8 text-center">
-                  <h1 className="mb-2 text-3xl text-white">验证身份</h1>
-                  <p className="text-sm text-gray-400">验证码已发送至</p>
+                  <h1 className="mb-2 text-3xl text-white">{t('auth.verifyIdentity')}</h1>
+                  <p className="text-sm text-gray-400">{t('auth.codeSentTo')}</p>
                   <p className="mt-1 text-sm text-[#00A8E1]">{email}</p>
                 </div>
                 <form onSubmit={handleVerifyCode} className="space-y-5">
                   <div className="space-y-2">
-                    <label className="text-sm text-white">验证码</label>
+                    <label className="text-sm text-white">{t('auth.verificationCode')}</label>
                     <div className="flex gap-2">
                       <Input
                         type="text"
-                        placeholder="输入6位验证码"
+                        placeholder={t('auth.input6DigitCode')}
                         maxLength={6}
                         required
                         className="flex-1 rounded-md border-gray-700 bg-gray-900/50 px-4 py-6 text-center text-2xl tracking-widest text-white placeholder:text-base placeholder:tracking-normal placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1]"
@@ -178,7 +180,7 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2 text-gray-400">
                       <Clock className="h-4 w-4" />
-                      <span>{countdown > 0 ? `${countdown}秒后可重发` : "验证码已过期"}</span>
+                      <span>{countdown > 0 ? t('auth.canResendIn', { seconds: countdown }) : t('auth.codeExpired')}</span>
                     </div>
                     <Button
                       type="button"
@@ -186,14 +188,14 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
                       disabled={countdown > 0}
                       className={`${countdown > 0 ? "cursor-not-allowed text-gray-600" : "text-[#00A8E1] hover:text-[#00A8E1]/80"} transition-colors`}
                     >
-                      重新发送
+                      {t('auth.resend')}
                     </Button>
                   </div>
                   <Button
                     type="submit"
                     className="w-full rounded-md bg-[#00A8E1] py-6 text-lg text-white transition-colors hover:bg-[#00A8E1]/90"
                   >
-                    验证并继续
+                    {t('auth.verifyAndContinue')}
                   </Button>
                 </form>
               </>
@@ -202,17 +204,17 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
             {step === "reset" && (
               <>
                 <div className="mb-8 text-center">
-                  <h1 className="mb-2 text-3xl text-white">设置新密码</h1>
-                  <p className="text-sm text-gray-400">请设置一个安全的新密码</p>
+                  <h1 className="mb-2 text-3xl text-white">{t('auth.setNewPassword')}</h1>
+                  <p className="text-sm text-gray-400">{t('auth.setSecurePassword')}</p>
                 </div>
                 <form onSubmit={handleResetPassword} className="space-y-5">
                   <div className="space-y-2">
-                    <label className="text-sm text-white">新密码</label>
+                    <label className="text-sm text-white">{t('auth.newPassword')}</label>
                     <div className="relative">
                       <Lock className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                       <Input
                         type="password"
-                        placeholder="输入新密码"
+                        placeholder={t('auth.inputNewPassword')}
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         required
@@ -222,15 +224,15 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
                     {errors.newPassword && (
                       <p className="text-xs text-red-400">{errors.newPassword}</p>
                     )}
-                    <p className="text-xs text-gray-500">至少8个字符，包含字母和数字</p>
+                    <p className="text-xs text-gray-500">{t('auth.passwordHint')}</p>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm text-white">确认新密码</label>
+                    <label className="text-sm text-white">{t('auth.confirmNewPassword')}</label>
                     <div className="relative">
                       <Lock className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                       <Input
                         type="password"
-                        placeholder="再次输入新密码"
+                        placeholder={t('auth.reInputNewPassword')}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
@@ -243,17 +245,17 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
                   </div>
                   <div className="rounded-md border border-blue-800/30 bg-blue-900/20 p-4">
                     <p className="text-xs text-blue-300">
-                      <strong>密码安全提示：</strong>
-                      <br />• 使用大小写字母、数字和特殊符号组合
-                      <br />• 避免使用常见密码或个人信息
-                      <br />• 定期更换密码以保障账号安全
+                      <strong>{t('auth.passwordSecurityTip')}</strong>
+                      <br />• {t('auth.passwordTip1')}
+                      <br />• {t('auth.passwordTip2')}
+                      <br />• {t('auth.passwordTip3')}
                     </p>
                   </div>
                   <Button
                     type="submit"
                     className="w-full rounded-md bg-[#00A8E1] py-6 text-lg text-white transition-colors hover:bg-[#00A8E1]/90"
                   >
-                    重置密码
+                    {t('auth.resetPasswordBtn')}
                   </Button>
                 </form>
               </>
@@ -265,17 +267,17 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
                   <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full bg-green-500/20">
                     <CheckCircle className="h-12 w-12 text-green-500" />
                   </div>
-                  <h1 className="mb-3 text-3xl text-white">密码重置成功</h1>
+                  <h1 className="mb-3 text-3xl text-white">{t('auth.passwordResetSuccess')}</h1>
                   <p className="mb-8 text-sm text-gray-400">
-                    您的密码已成功重置
+                    {t('auth.passwordResetSuccessDesc1')}
                     <br />
-                    现在可以使用新密码登录了
+                    {t('auth.passwordResetSuccessDesc2')}
                   </p>
                   <Button
                     onClick={onBack}
                     className="w-full rounded-md bg-[#00A8E1] py-6 text-lg text-white transition-colors hover:bg-[#00A8E1]/90"
                   >
-                    返回登录
+                    {t('auth.backToLogin')}
                   </Button>
                 </div>
               </>
@@ -284,9 +286,9 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
           {step !== "success" && (
             <div className="mt-6 text-center text-xs text-gray-500">
               <p>
-                出于安全考虑，找回密码需要邮箱验证
+                {t('auth.securityNote1')}
                 <br />
-                请确保您的邮箱地址准确无误
+                {t('auth.securityNote2')}
               </p>
             </div>
           )}

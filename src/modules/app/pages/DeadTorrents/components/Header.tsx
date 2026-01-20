@@ -1,7 +1,9 @@
 // 页面头部组件：展示主标题与说明文案，保持与视觉规范一致
 import { AlertTriangle } from 'lucide-react';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export function Header() {
+  const { t } = useLanguage();
   return (
     <div className="mb-8">
       <div className="flex items-center gap-3 mb-2">
@@ -9,8 +11,8 @@ export function Header() {
           <AlertTriangle className="w-5 h-5 text-white" />
         </div>
         <div>
-          <h1 className="text-white text-3xl">断种列表</h1>
-          <p className="text-neutral-400 text-sm mt-1">已停止做种的资源，提供悬赏可吸引做种者恢复</p>
+          <h1 className="text-white text-3xl">{t('deadTorrents.title')}</h1>
+          <p className="text-neutral-400 text-sm mt-1">{t('deadTorrents.subtitle')}</p>
         </div>
       </div>
     </div>

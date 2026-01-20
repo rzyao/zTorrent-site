@@ -17,6 +17,7 @@ import { customToast } from "@/hooks/useToast";
 import { DownloadsService } from "@/api/services/DownloadsService";
 import { DownloadersService } from "@/api/services/DownloadersService";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { useTorrentDetailLogic } from "./hooks/useTorrentDetailLogic";
 import { TorrentHeader } from "./components/TorrentHeader";
 import { TorrentDescription } from "./components/TorrentDescription";
@@ -31,6 +32,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
   const { downloadByTorrentId } = useTorrentDownload();
   const { downloaders } = useDownloaders();
   const { sourcePayload } = useSourceTracker();
+  const { t } = useLanguage();
 
   // 默认空数据结构以防 crash，等待 loading 结束
   const safeData: TorrentData =
@@ -64,7 +66,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
       downloadUrl: "",
     } as TorrentData);
 
-  useDynamicTitle(safeData.title || "种子详情");
+  useDynamicTitle(safeData.title || t('torrents.detailTitle'));
 
   // 发送到下载器逻辑
   const handleSendToDownloader = async (downloaderId: string, path?: string) => {
@@ -80,7 +82,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
       const downloadTokenUrl = String(resData?.url ?? "");
 
       if (!downloadTokenUrl) {
-        customToast.error("无法生成下载链接");
+        customToast.error(t('torrents.cannotGenerateLink'));
         return;
       }
 
@@ -90,9 +92,9 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
         path: path,
       });
 
-      customToast.success("已发送至下载器");
+      customToast.success(t('torrents.sentToDownloader'));
     } catch (e: any) {
-      customToast.error(e?.message || "发送失败");
+      customToast.error(e?.message || t('torrents.sendFailed'));
     }
   };
 
@@ -150,7 +152,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
             }
           }}
         >
-          <Download className="mr-2 h-4 w-4" /> 下载种子
+          <Download className="mr-2 h-4 w-4" /> {t('torrents.downloadTorrent')}
         </ContextMenuItem>
 
         <ContextMenuSeparator />
@@ -158,7 +160,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
         {/* 发送到下载器逻辑 */}
         {downloaders.length === 0 ? (
           <ContextMenuItem disabled>
-            <Upload className="mr-2 h-4 w-4" /> 无可用下载器
+            <Upload className="mr-2 h-4 w-4" /> {t('torrents.noDownloaders')}
           </ContextMenuItem>
         ) : downloaders.length === 1 ? (
           (() => {
@@ -168,7 +170,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
               return (
                 <ContextMenuSub>
                   <ContextMenuSubTrigger>
-                    <Upload className="mr-2 h-4 w-4" /> 发送到下载器
+                    <Upload className="mr-2 h-4 w-4" /> {t('torrents.sendToDownloader')}
                   </ContextMenuSubTrigger>
                   <ContextMenuSubContent className="w-48">
                     {paths.map((p, idx) => (
@@ -185,7 +187,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
             } else {
               return (
                 <ContextMenuItem onSelect={() => handleSendToDownloader(String(downloader.id))}>
-                  <Upload className="mr-2 h-4 w-4" /> 发送到 {downloader.name}
+                  <Upload className="mr-2 h-4 w-4" /> {t('torrents.sendTo', { name: downloader.name })}
                 </ContextMenuItem>
               );
             }
@@ -193,7 +195,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
         ) : (
           <ContextMenuSub>
             <ContextMenuSubTrigger>
-              <Upload className="mr-2 h-4 w-4" /> 发送到下载器
+              <Upload className="mr-2 h-4 w-4" /> {t('torrents.sendToDownloader')}
             </ContextMenuSubTrigger>
             <ContextMenuSubContent className="w-48">
               {downloaders.map((d) => {

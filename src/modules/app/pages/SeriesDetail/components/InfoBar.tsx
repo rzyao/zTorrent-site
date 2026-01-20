@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { FavoriteActionDto } from "@/api";
 import { useFavorite } from "@/modules/app/hooks/useFavorite";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Film, Bell, UserPlus, Heart, Share2, Tv, Clock, Check } from "lucide-react";
 import ActionBtn from "@/modules/app/components/ActionBtn";
 import { ToggleButton } from "@/modules/app/components/ui/ToggleButton";
@@ -19,6 +20,7 @@ interface InfoBarProps {
  */
 export function InfoBar({ series, episodes }: InfoBarProps) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   // 本地 Mock 状态，仅用于演示
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -48,9 +50,9 @@ export function InfoBar({ series, episodes }: InfoBarProps) {
             inactiveIcon={<Bell className="h-5 w-5" />}
             activeClassName="border-[0.5px] border-amber-500 bg-amber-500/10 text-amber-500"
             inactiveClassName="bg-gray-700/40 text-neutral-300 hover:bg-gray-700/60 shadow-none backdrop-blur-md"
-            tooltip={isSubscribed ? "已订阅" : "订阅"}
+            tooltip={isSubscribed ? t('series.subscribed') : t('series.subscribe')}
           >
-            {isSubscribed ? "已订阅" : "订阅"}
+            {isSubscribed ? t('series.subscribed') : t('series.subscribe')}
           </ToggleButton>
 
           {/* 关注 (Secondary) */}
@@ -61,9 +63,9 @@ export function InfoBar({ series, episodes }: InfoBarProps) {
             inactiveIcon={<UserPlus className="h-5 w-5" />}
             activeClassName="border-[0.5px] border-blue-400 bg-blue-400/10 text-blue-400"
             inactiveClassName="bg-gray-700/40 text-neutral-300 hover:bg-gray-700/60 shadow-none backdrop-blur-md"
-            tooltip={isFollowing ? "已关注" : "关注"}
+            tooltip={isFollowing ? t('series.following') : t('series.follow')}
           >
-            {isFollowing ? "已关注" : "关注"}
+            {isFollowing ? t('series.following') : t('series.follow')}
           </ToggleButton>
 
           {/* 收藏 (Secondary) */}
@@ -75,9 +77,9 @@ export function InfoBar({ series, episodes }: InfoBarProps) {
             inactiveIcon={<Heart className="h-5 w-5" />}
             activeClassName="border-[0.5px] border-red-400 bg-red-400/10 text-red-400"
             inactiveClassName="bg-gray-700/40 text-neutral-300 hover:bg-gray-700/60 shadow-none backdrop-blur-md"
-            tooltip={isFavorite ? "取消收藏" : "点击收藏"}
+            tooltip={isFavorite ? t('series.unfavorite') : t('series.clickToFavorite')}
           >
-            {isFavorite ? "已收藏" : "收藏"}
+            {isFavorite ? t('series.favorited') : t('series.favorite')}
           </ToggleButton>
         </div>
 
@@ -93,7 +95,7 @@ export function InfoBar({ series, episodes }: InfoBarProps) {
             className="px-4"
             icon={<Share2 className="h-5 w-5" />}
           >
-            分享
+            {t('series.share')}
           </ActionBtn>
         </div>
       </div>
@@ -104,22 +106,22 @@ export function InfoBar({ series, episodes }: InfoBarProps) {
           <div className="mb-4 flex items-center gap-5">
             <h3 className="flex items-center gap-2 text-base font-semibold text-white">
               <Film className="h-4 w-4 text-amber-500" />
-              快速选集
+              {t('series.quickSelect')}
             </h3>
             {/* 剧集详情信息 - 横向排列 */}
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
               {series.episodeCount !== undefined && (
                 <div className="flex items-center gap-1.5">
                   <Tv className="h-4 w-4 text-blue-400/70" />
-                  <span className="text-neutral-400">共</span>
-                  <span className="font-medium text-white">{series.episodeCount} 集</span>
+                  <span className="text-neutral-400">{t('series.totalEpisodes')}</span>
+                  <span className="font-medium text-white">{series.episodeCount} {t('series.episodes')}</span>
                 </div>
               )}
               {Number(series.episodeDuration) > 0 && (
                 <div className="flex items-center gap-1.5">
                   <Clock className="h-4 w-4 text-green-400/70" />
-                  <span className="text-neutral-400">单集时长</span>
-                  <span className="font-medium text-white">约 {series.episodeDuration} 分钟</span>
+                  <span className="text-neutral-400">{t('series.episodeDuration')}</span>
+                  <span className="font-medium text-white">{t('series.aboutMinutes', { minutes: series.episodeDuration })}</span>
                 </div>
               )}
             </div>

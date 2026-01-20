@@ -2,6 +2,7 @@
 import { Button } from '@/modules/app/components/ui/button';
 import { AccessControl } from '@/permissions/AccessControl';
 import { Info, Upload } from 'lucide-react';
+import { useLanguage } from '@/hooks/useLanguage';
 
 /**
  * SubmitBar
@@ -16,30 +17,31 @@ export interface SubmitBarProps {
 
 export const SubmitBar = memo(function SubmitBar(props: SubmitBarProps) {
   const { submitting, onCancel } = props;
+  const { t } = useLanguage();
   return (
     <div className="flex items-center justify-between pt-2">
       <div className="flex items-center gap-2 text-sm text-neutral-400">
         <Info className="w-4 h-4 text-amber-400" />
-        <span>发布前请仔细检查信息，确保准确无误</span>
+        <span>{t('uploadTorrent.checkBeforeSubmit')}</span>
       </div>
       <div className="flex gap-3">
         <Button type="button" variant="outline" className="border-neutral-700 text-neutral-300 hover:bg-neutral-800 hover:text-white" onClick={onCancel}>
-          取消
+          {t('app.cancel')}
         </Button>
         {/* 发布种子按钮：需要上传权限 */}
         <AccessControl
           requiredPermissions={['torrent:create']}
-          name="发布种子"
+          name={t('uploadTorrent.publishTorrent')}
           fallback={
             <Button type="button" disabled className="bg-neutral-700 text-neutral-400 px-8">
               <Upload className="w-4 h-4 mr-2" />
-              {submitting ? '发布中...' : '发布种子'}
+              {submitting ? t('uploadTorrent.publishing') : t('uploadTorrent.publishTorrent')}
             </Button>
           }
         >
           <Button type="submit" className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-8 shadow-lg shadow-amber-500/25" disabled={submitting}>
             <Upload className="w-4 h-4 mr-2" />
-            {submitting ? '发布中...' : '发布种子'}
+            {submitting ? t('uploadTorrent.publishing') : t('uploadTorrent.publishTorrent')}
           </Button>
         </AccessControl>
       </div>

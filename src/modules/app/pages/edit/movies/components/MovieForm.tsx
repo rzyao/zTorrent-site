@@ -3,6 +3,7 @@ import { Button } from "@/modules/app/components/ui/button";
 import { AccessControl } from "@/permissions/AccessControl";
 import { Checkbox } from "@/modules/app/components/ui/checkbox";
 import { Edit, X, Image as ImageIcon, Save } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 import type { MovieFormState } from "@/modules/app/pages/Edit/movies/types";
 import { isValidUrl } from "@/modules/app/pages/Edit/movies/utils";
 import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
@@ -36,6 +37,7 @@ export function MovieForm({
   ptGenError,
   onFetchPtGen,
 }: MovieFormProps) {
+  const { t } = useLanguage();
   // 从全局状态获取影片分类数据
   const categories = usePreferenceCategoriesStore((state) => state.movie);
   const isLoaded = usePreferenceCategoriesStore((state) => state.isLoaded);
@@ -56,7 +58,7 @@ export function MovieForm({
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-amber-500 to-orange-600">
             <Edit className="h-4 w-4 text-white" />
           </div>
-          <h2 className="text-xl text-white">{isCreating ? "添加影片" : "编辑影片"}</h2>
+          <h2 className="text-xl text-white">{isCreating ? t('movieForm.addMovie') : t('movieForm.editMovie')}</h2>
         </div>
         <Button
           variant="ghost"
@@ -75,7 +77,7 @@ export function MovieForm({
               type="text"
               value={ptGenUrl}
               onChange={(e) => onPtGenUrlChange(e.target.value)}
-              placeholder="输入 Douban/IMDb 页面链接，例：https://movie.douban.com/subject/4092781/"
+              placeholder={t('movieForm.ptGenPlaceholder')}
               className="flex-1 rounded-lg border border-neutral-700 bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
             />
             <Button
@@ -83,7 +85,7 @@ export function MovieForm({
               disabled={ptGenLoading}
               className="bg-linear-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700"
             >
-              {ptGenLoading ? "获取中..." : "获取并填充"}
+              {ptGenLoading ? t('movieForm.fetching') : t('movieForm.fetchAndFill')}
             </Button>
           </div>
           {ptGenError && <p className="mt-2 text-xs text-red-500">{ptGenError}</p>}
@@ -93,13 +95,13 @@ export function MovieForm({
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm text-neutral-300">
-            中文标题 <span className="text-red-500">*</span>
+            {t('movieForm.chineseTitle')} <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             value={form.title}
             onChange={(e) => onChange({ ...form, title: e.target.value })}
-            placeholder="例如: 星际穿越"
+            placeholder={t('movieForm.chineseTitlePlaceholder')}
             aria-invalid={Boolean(errors.title)}
             className={`w-full rounded-lg border bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none ${
               errors.title ? "border-red-500" : "border-neutral-700"
@@ -109,30 +111,30 @@ export function MovieForm({
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm text-neutral-300">原始标题</label>
+          <label className="text-sm text-neutral-300">{t('movieForm.originalTitle')}</label>
           <input
             type="text"
             value={form.originalTitle}
             onChange={(e) => onChange({ ...form, originalTitle: e.target.value })}
-            placeholder="例如: Interstellar"
+            placeholder={t('movieForm.originalTitlePlaceholder')}
             className="w-full rounded-lg border border-neutral-700 bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm text-neutral-300">年份</label>
+          <label className="text-sm text-neutral-300">{t('movieForm.year')}</label>
           <input
             type="text"
             value={form.year}
             onChange={(e) => onChange({ ...form, year: e.target.value })}
-            placeholder="例如: 2014 或 2014-2020"
+            placeholder={t('movieForm.yearPlaceholder')}
             className="w-full rounded-lg border border-neutral-700 bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
           />
         </div>
 
         <div className="space-y-2 md:col-span-2">
           <label className="text-sm text-neutral-300">
-            分类 (多选) <span className="text-red-500">*</span>
+            {t('movieForm.categories')} <span className="text-red-500">*</span>
           </label>
           <div className="grid grid-cols-4 gap-x-2 gap-y-3 rounded-lg border border-neutral-700 bg-neutral-900/50 p-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-10">
             {categories.map((cat) => {
@@ -165,7 +167,7 @@ export function MovieForm({
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm text-neutral-300">评分</label>
+          <label className="text-sm text-neutral-300">{t('movieForm.rating')}</label>
           <input
             type="number"
             step="0.1"
@@ -173,7 +175,7 @@ export function MovieForm({
             max="10"
             value={form.rating}
             onChange={(e) => onChange({ ...form, rating: parseFloat(e.target.value) })}
-            placeholder="例如: 9.8"
+            placeholder={t('movieForm.ratingPlaceholder')}
             aria-invalid={Boolean(errors.rating)}
             className={`w-full rounded-lg border bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none ${
               errors.rating ? "border-red-500" : "border-neutral-700"
@@ -183,30 +185,30 @@ export function MovieForm({
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm text-neutral-300">时长/集数</label>
+          <label className="text-sm text-neutral-300">{t('movieForm.duration')}</label>
           <input
             type="text"
             value={form.duration}
             onChange={(e) => onChange({ ...form, duration: e.target.value })}
-            placeholder="例如: 169分钟 或 全8季"
+            placeholder={t('movieForm.durationPlaceholder')}
             className={`w-full rounded-lg border border-neutral-700 bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none`}
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm text-neutral-300">导演</label>
+        <label className="text-sm text-neutral-300">{t('movieForm.director')}</label>
         <input
           type="text"
           value={form.director}
           onChange={(e) => onChange({ ...form, director: e.target.value })}
-          placeholder="例如: 克里斯托弗·诺兰"
+          placeholder={t('movieForm.directorPlaceholder')}
           className="w-full rounded-lg border border-neutral-700 bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm text-neutral-300">主演（用逗号分隔）</label>
+        <label className="text-sm text-neutral-300">{t('movieForm.cast')}</label>
         <input
           type="text"
           value={form.cast.join(", ")}
@@ -216,14 +218,14 @@ export function MovieForm({
               cast: e.target.value.split(",").map((s) => s.trim()),
             })
           }
-          placeholder="例如: 马修·麦康纳, 安妮·海瑟薇"
+          placeholder={t('movieForm.castPlaceholder')}
           className="w-full rounded-lg border border-neutral-700 bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
         />
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="space-y-2">
-          <label className="text-sm text-neutral-300">语言（用逗号分隔）</label>
+          <label className="text-sm text-neutral-300">{t('movieForm.language')}</label>
           <input
             type="text"
             value={form.language.join(", ")}
@@ -236,12 +238,12 @@ export function MovieForm({
                   .filter(Boolean),
               })
             }
-            placeholder="例如: 韩语, 英语"
+            placeholder={t('movieForm.languagePlaceholder')}
             className="w-full rounded-lg border border-neutral-700 bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm text-neutral-300">地区（用逗号分隔）</label>
+          <label className="text-sm text-neutral-300">{t('movieForm.region')}</label>
           <input
             type="text"
             value={form.region.join(", ")}
@@ -254,17 +256,17 @@ export function MovieForm({
                   .filter(Boolean),
               })
             }
-            placeholder="例如: 韩国"
+            placeholder={t('movieForm.regionPlaceholder')}
             className="w-full rounded-lg border border-neutral-700 bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm text-neutral-300">豆瓣链接</label>
+          <label className="text-sm text-neutral-300">{t('movieForm.doubanLink')}</label>
           <input
             type="text"
             value={form.doubanLink}
             onChange={(e) => onChange({ ...form, doubanLink: e.target.value })}
-            placeholder="例如: https://movie.douban.com/subject/4092781/"
+            placeholder={t('movieForm.doubanLinkPlaceholder')}
             aria-invalid={Boolean(form.doubanLink && !isValidUrl(form.doubanLink))}
             className={`w-full rounded-lg border bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none ${
               form.doubanLink && !isValidUrl(form.doubanLink)
@@ -275,12 +277,12 @@ export function MovieForm({
           {errors.doubanLink && <p className="text-xs text-red-500">{errors.doubanLink}</p>}
         </div>
         <div className="space-y-2">
-          <label className="text-sm text-neutral-300">IMDb 链接</label>
+          <label className="text-sm text-neutral-300">{t('movieForm.imdbLink')}</label>
           <input
             type="text"
             value={form.imdbLink}
             onChange={(e) => onChange({ ...form, imdbLink: e.target.value })}
-            placeholder="例如: https://www.imdb.com/title/tt1527793/"
+            placeholder={t('movieForm.imdbLinkPlaceholder')}
             aria-invalid={Boolean(form.imdbLink && !isValidUrl(form.imdbLink))}
             className={`w-full rounded-lg border bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none ${
               form.imdbLink && !isValidUrl(form.imdbLink) ? "border-red-500" : "border-neutral-700"
@@ -289,7 +291,7 @@ export function MovieForm({
           {errors.imdbLink && <p className="text-xs text-red-500">{errors.imdbLink}</p>}
         </div>
         <div className="space-y-2">
-          <label className="text-sm text-neutral-300">豆瓣评分（平均）</label>
+          <label className="text-sm text-neutral-300">{t('movieForm.doubanRating')}</label>
           <input
             type="number"
             step="0.1"
@@ -302,7 +304,7 @@ export function MovieForm({
                 doubanRatingAverage: parseFloat(e.target.value),
               })
             }
-            placeholder="例如: 7.3"
+            placeholder={t('movieForm.ratingPlaceholder')}
             className={`w-full rounded-lg border bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none`}
           />
           {errors.doubanRatingAverage && (
@@ -310,7 +312,7 @@ export function MovieForm({
           )}
         </div>
         <div className="space-y-2">
-          <label className="text-sm text-neutral-300">IMDb 评分（平均）</label>
+          <label className="text-sm text-neutral-300">{t('movieForm.imdbRating')}</label>
           <input
             type="number"
             step="0.1"
@@ -323,7 +325,7 @@ export function MovieForm({
                 imdbRatingAverage: parseFloat(e.target.value),
               })
             }
-            placeholder="例如: 7.6"
+            placeholder={t('movieForm.ratingPlaceholder')}
             className={`w-full rounded-lg border bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none`}
           />
           {errors.imdbRatingAverage && (
@@ -333,7 +335,7 @@ export function MovieForm({
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm text-neutral-300">获奖情况（每行一条）</label>
+        <label className="text-sm text-neutral-300">{t('movieForm.awards')}</label>
         <textarea
           value={form.awards.join("\n")}
           onChange={(e) =>
@@ -346,32 +348,32 @@ export function MovieForm({
             })
           }
           rows={4}
-          placeholder="例如: 第82届威尼斯电影节 主竞赛单元 金狮奖(提名)"
+          placeholder={t('movieForm.awardsPlaceholder')}
           className="w-full resize-none rounded-lg border border-neutral-700 bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm text-neutral-300">简介</label>
+        <label className="text-sm text-neutral-300">{t('movieForm.description')}</label>
         <textarea
           value={form.description}
           onChange={(e) => onChange({ ...form, description: e.target.value })}
           rows={4}
-          placeholder="输入影片简介..."
+          placeholder={t('movieForm.descriptionPlaceholder')}
           className="w-full resize-none rounded-lg border border-neutral-700 bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
         />
       </div>
 
       <div className="space-y-2">
         <label className="text-sm text-neutral-300">
-          海报图片 <span className="text-red-500">*</span>
+          {t('movieForm.poster')} <span className="text-red-500">*</span>
         </label>
         <div className="flex gap-3">
           <input
             type="text"
             value={form.poster}
             onChange={(e) => onChange({ ...form, poster: e.target.value })}
-            placeholder="输入图片URL..."
+            placeholder={t('movieForm.imageUrlPlaceholder')}
             aria-invalid={Boolean(errors.poster)}
             className={`flex-1 rounded-lg border bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none ${
               errors.poster ? "border-red-500" : "border-neutral-700"
@@ -383,19 +385,19 @@ export function MovieForm({
             className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
           >
             <ImageIcon className="mr-2 h-4 w-4" />
-            上传
+            {t('app.upload')}
           </Button>
         </div>
         {errors.poster && <p className="text-xs text-red-500">{errors.poster}</p>}
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm text-neutral-300">背景图片</label>
+        <label className="text-sm text-neutral-300">{t('movieForm.backdrop')}</label>
         <input
           type="text"
           value={form.backdrop}
           onChange={(e) => onChange({ ...form, backdrop: e.target.value })}
-          placeholder="输入图片URL..."
+          placeholder={t('movieForm.imageUrlPlaceholder')}
           className="w-full rounded-lg border border-neutral-700 bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
         />
       </div>
@@ -404,11 +406,11 @@ export function MovieForm({
         {/* 保存影片按钮：需要影片更新权限 */}
         <AccessControl
           requiredPermissions={["movie:update"]}
-          name="保存影片"
+          name={t('movieForm.saveMovie')}
           fallback={
             <Button disabled className="flex-1 bg-neutral-700 text-neutral-400">
               <Save className="mr-2 h-4 w-4" />
-              保存影片
+              {t('movieForm.saveMovie')}
             </Button>
           }
         >
@@ -423,7 +425,7 @@ export function MovieForm({
             className="flex-1 bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:from-amber-600 hover:to-orange-700"
           >
             <Save className="mr-2 h-4 w-4" />
-            保存影片
+            {t('movieForm.saveMovie')}
           </Button>
         </AccessControl>
         <Button
@@ -431,7 +433,7 @@ export function MovieForm({
           variant="outline"
           className="border-neutral-700 text-neutral-400 hover:bg-neutral-700/30 hover:text-white"
         >
-          取消
+          {t('app.cancel')}
         </Button>
       </div>
     </div>

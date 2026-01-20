@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect } from "react";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Mail, Lock, UserPlus, ArrowLeft, User, AlertCircle } from "lucide-react";
 import { Button } from "@/modules/app/components/ui/button";
 import { Input } from "@/modules/app/components/ui/input";
@@ -22,7 +23,8 @@ interface FormData {
 }
 
 export default function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProps) {
-  useDynamicTitle("注册");
+  const { t } = useLanguage();
+  useDynamicTitle(t('auth.register'));
   const { register, sendVerificationCode, isLoading: hookLoading, error: hookError } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,12 +55,12 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
 
   const handleRequestEmailCode = async () => {
     if (!formData.email) {
-      setErrors((prev) => ({ ...prev, email: "请输入邮箱地址" }));
+      setErrors((prev) => ({ ...prev, email: t('auth.pleaseInputEmail') }));
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setErrors((prev) => ({ ...prev, email: "请输入有效的邮箱地址" }));
+      setErrors((prev) => ({ ...prev, email: t('auth.invalidEmail') }));
       return;
     }
     setIsSendingCode(true);
@@ -76,9 +78,9 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
         setExpiryMinutes(minutes);
       }
       setCountdown(60);
-      toast.success(`验证码已发送到您的邮箱，请查收（有效期${minutes ?? 10}分钟）`);
+      toast.success(t('auth.codeSent', { minutes: minutes ?? 10 }));
     } catch (error: any) {
-      toast.error(error.message || "发送验证码失败，请重试");
+      toast.error(error.message || t('auth.sendCodeFailed'));
     } finally {
       setIsSendingCode(false);
     }
@@ -129,15 +131,15 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
   const validateStep1 = (): boolean => {
     const newErrors: Partial<FormData> = {};
     if (!formData.email) {
-      newErrors.email = "请输入邮箱地址";
+      newErrors.email = t('auth.pleaseInputEmail');
     } else {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.email)) {
-        newErrors.email = "请输入有效的邮箱地址";
+        newErrors.email = t('auth.invalidEmail');
       }
     }
     if (!formData.emailCode) {
-      newErrors.emailCode = "请输入邮箱验证码";
+      newErrors.emailCode = t('auth.pleaseInputCode');
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -145,10 +147,10 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
   const validateStep2 = (): boolean => {
     const newErrors: Partial<FormData> = {};
     if (!formData.username) {
-      newErrors.username = "请输入用户名";
+      newErrors.username = t('auth.pleaseInputUsername');
     }
     if (!formData.password) {
-      newErrors.password = "请输入密码";
+      newErrors.password = t('auth.pleaseInputPassword');
     } else if (!isValidPassword(formData.password)) {
       newErrors.password = passwordErrorMessage();
     }
@@ -168,7 +170,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
       });
       const ok = res?.code === 1000;
       if (!ok) {
-        const msg = res?.message || "验证码错误或已过期";
+        const msg = res?.message || t('auth.codeErrorOrExpired');
         toast.error(msg);
         setErrors((prev) => ({ ...prev, emailCode: msg }));
         return;
@@ -183,7 +185,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
           (err as any).response.data &&
           (err as any).response.data.message) ||
         err?.message ||
-        "验证码错误或已过期";
+        t('auth.codeErrorOrExpired');
       toast.error(msg);
       setErrors((prev) => ({ ...prev, emailCode: msg }));
     } finally {
@@ -211,7 +213,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
           (error as any).response.data &&
           (error as any).response.data.message) ||
         error?.message ||
-        "注册失败，请重试";
+        t('auth.registerFailed');
       toast.error(msg);
     } finally {
       setIsSubmitting(false);
@@ -223,7 +225,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
       <div className="flex min-h-screen items-center justify-center bg-[#0F171E]">
         <div className="flex flex-col items-center gap-3 text-white">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-white"></div>
-          <span className="text-sm text-gray-300">正在检查注册状态...</span>
+          <span className="text-sm text-gray-300">{t('auth.checkingStatus')}</span>
         </div>
       </div>
     );
@@ -233,10 +235,10 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0F171E] px-4">
         <div className="w-full max-w-md rounded-md border border-gray-800 bg-black/60 p-6 text-center">
-          <h1 className="mb-2 text-2xl text-white">目前仅支持邀请注册</h1>
-          <p className="text-sm text-gray-400">请使用邀请链接或邀请码访问该页面。</p>
+          <h1 className="mb-2 text-2xl text-white">{t('auth.inviteOnly')}</h1>
+          <p className="text-sm text-gray-400">{t('auth.inviteOnlyDesc')}</p>
           <Button onClick={onBack} className="mt-6 text-sm text-[#00A8E1] hover:text-[#00A8E1]/80">
-            返回登录
+            {t('auth.backToLogin')}
           </Button>
         </div>
       </div>
@@ -247,10 +249,10 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0F171E] px-4">
         <div className="w-full max-w-md rounded-md border border-gray-800 bg-black/60 p-6 text-center">
-          <h1 className="mb-2 text-2xl text-white">邀请码错误</h1>
-          <p className="text-sm text-gray-400">请确认链接或邀请码是否正确与未过期。</p>
+          <h1 className="mb-2 text-2xl text-white">{t('auth.invalidInviteCode')}</h1>
+          <p className="text-sm text-gray-400">{t('auth.invalidInviteCodeDesc')}</p>
           <Button onClick={onBack} className="mt-6 text-sm text-[#00A8E1] hover:text-[#00A8E1]/80">
-            返回登录
+            {t('auth.backToLogin')}
           </Button>
         </div>
       </div>
@@ -284,8 +286,8 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
           <div className="rounded-lg border border-gray-800 bg-black/60 p-8 md:p-10">
             {/* 标题 */}
             <div className="mb-8 text-center">
-              <h1 className="mb-2 text-3xl text-white">注册</h1>
-              <p className="text-sm text-gray-400">加入最优质的PT资源分享社区</p>
+              <h1 className="mb-2 text-3xl text-white">{t('auth.register')}</h1>
+              <p className="text-sm text-gray-400">{t('auth.joinCommunity')}</p>
             </div>
             {hookError && (
               <div className="mb-4 rounded-md border border-red-800 bg-red-900/20 p-3">
@@ -306,7 +308,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                 <span
                   className={`text-xs ${currentStep === 1 ? "text-[#00A8E1]" : "text-green-500"}`}
                 >
-                  邮箱验证
+                  {t('auth.stepEmailVerify')}
                 </span>
               </div>
               <div
@@ -321,7 +323,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                 <span
                   className={`text-xs ${currentStep === 2 ? "text-[#00A8E1]" : "text-gray-400"}`}
                 >
-                  设置账号
+                  {t('auth.stepSetupAccount')}
                 </span>
               </div>
             </div>
@@ -331,14 +333,14 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                 <>
                   {/* 邮箱地址 */}
                   <div className="space-y-2">
-                    <label className="text-sm text-white">邮箱地址</label>
+                    <label className="text-sm text-white">{t('auth.emailAddress')}</label>
                     <div className="relative">
                       <Mail className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                       <Input
                         type="email"
                         value={formData.email}
                         onChange={(e) => handleFieldChange("email", e.target.value)}
-                        placeholder="输入您的邮箱地址"
+                        placeholder={t('auth.emailPlaceholder')}
                         className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1] ${errors.email ? "border-red-500" : ""}`}
                         required
                       />
@@ -347,7 +349,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                   </div>
                   {/* 邮箱验证码 */}
                   <div className="space-y-2">
-                    <label className="text-sm text-white">邮箱验证码</label>
+                    <label className="text-sm text-white">{t('auth.emailCode')}</label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Mail className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
@@ -355,7 +357,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                           type="text"
                           value={formData.emailCode}
                           onChange={(e) => handleFieldChange("emailCode", e.target.value)}
-                          placeholder="输入验证码"
+                          placeholder={t('auth.inputCode')}
                           className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1] ${errors.emailCode ? "border-red-500" : ""}`}
                           required
                         />
@@ -367,10 +369,10 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                         className="rounded-md bg-gray-700 px-4 py-6 whitespace-nowrap text-white transition-colors hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {isSendingCode
-                          ? "发送中..."
+                          ? t('auth.sending')
                           : countdown > 0
                             ? countdown + "s"
-                            : "发送验证码"}
+                            : t('auth.sendCode')}
                       </Button>
                     </div>
                     {errors.emailCode && <p className="text-xs text-red-400">{errors.emailCode}</p>}
@@ -382,7 +384,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                     disabled={isVerifyingCode}
                     className="w-full rounded-md bg-[#00A8E1] py-6 text-lg text-white transition-colors hover:bg-[#00A8E1]/90 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {isVerifyingCode ? "验证中..." : "下一步"}
+                    {isVerifyingCode ? t('auth.verifying') : t('auth.nextStep')}
                   </Button>
                 </>
               )}
@@ -391,37 +393,37 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                 <>
                   {/* 用户名 */}
                   <div className="space-y-2">
-                    <label className="text-sm text-white">用户名</label>
+                    <label className="text-sm text-white">{t('auth.username')}</label>
                     <div className="relative">
                       <User className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                       <Input
                         type="text"
                         value={formData.username}
                         onChange={(e) => handleFieldChange("username", e.target.value)}
-                        placeholder="选择一个用户名"
+                        placeholder={t('auth.chooseUsername')}
                         className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-3 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1] ${errors.username ? "border-red-500" : ""}`}
                         required
                       />
                     </div>
                     {errors.username && <p className="text-xs text-red-400">{errors.username}</p>}
-                    <p className="text-xs text-gray-500">4-16个字符，支持字母、数字和下划线</p>
+                    <p className="text-xs text-gray-500">{t('auth.usernameHint')}</p>
                   </div>
                   {/* 密码 */}
                   <div className="space-y-2">
-                    <label className="text-sm text-white">密码</label>
+                    <label className="text-sm text-white">{t('auth.password')}</label>
                     <div className="relative">
                       <Lock className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                       <Input
                         type="password"
                         value={formData.password}
                         onChange={(e) => handleFieldChange("password", e.target.value)}
-                        placeholder="设置登录密码"
+                        placeholder={t('auth.setPassword')}
                         className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-3 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1] ${errors.password ? "border-red-500" : ""}`}
                         required
                       />
                     </div>
                     {errors.password && <p className="text-xs text-red-400">{errors.password}</p>}
-                    <p className="text-xs text-gray-500">至少8个字符，包含字母和数字</p>
+                    <p className="text-xs text-gray-500">{t('auth.passwordHint')}</p>
                   </div>
                   <div className="text-xs text-gray-400">
                     <label className="flex cursor-pointer items-start gap-2">
@@ -431,13 +433,13 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                         required
                       />
                       <span>
-                        我已阅读并同意{" "}
+                        {t('auth.agreeTerms')}{" "}
                         <a href="#" className="text-[#00A8E1] hover:underline">
-                          用户协议
+                          {t('auth.userAgreement')}
                         </a>{" "}
-                        和{" "}
+                        {t('auth.and')}{" "}
                         <a href="#" className="text-[#00A8E1] hover:underline">
-                          隐私政策
+                          {t('auth.privacyPolicy')}
                         </a>
                       </span>
                     </label>
@@ -450,7 +452,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                       className="flex-1 rounded-md bg-gray-700 py-3 text-white transition-colors hover:bg-gray-600"
                     >
                       <ArrowLeft className="mr-2 inline h-4 w-4" />
-                      上一步
+                      {t('auth.prevStep')}
                     </Button>
                     {/* 注册按钮 */}
                     <Button
@@ -461,12 +463,12 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                       {isSubmitting || hookLoading ? (
                         <>
                           <div className="mr-2 h-5 w-5 animate-spin rounded-full border-b-2 border-white"></div>
-                          注册中...
+                          {t('auth.registering')}
                         </>
                       ) : (
                         <>
                           <UserPlus className="mr-2 h-5 w-5" />
-                          创建账号
+                          {t('auth.createAccount')}
                         </>
                       )}
                     </Button>
@@ -476,20 +478,20 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
             </form>
             {/* 登录提示 */}
             <div className="mt-8 text-center text-sm">
-              <span className="text-gray-400">已有账号？</span>
+              <span className="text-gray-400">{t('auth.hasAccount')}</span>
               <Button
                 onClick={onBack}
                 className="ml-2 text-[#00A8E1] transition-colors hover:text-[#00A8E1]/80"
               >
-                前往登录
+                {t('auth.goToLogin')}
               </Button>
             </div>
           </div>
           <div className="mt-6 text-center text-xs text-gray-500">
             <p>
-              本站为私有PT站点，仅限注册用户访问。
+              {t('auth.sitePrivateRegister')}
               <br />
-              未经许可禁止分享账号或邀请码。
+              {t('auth.noShareAccount')}
             </p>
           </div>
         </div>

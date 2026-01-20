@@ -1,5 +1,6 @@
 import { Heart, FolderHeart, Library } from 'lucide-react';
 import type { LibraryView } from '@/modules/app/pages/PlayerPage/types';
+import { useLanguage } from '@/hooks/useLanguage';
 
 /**
  * LibrarySidebar
@@ -18,10 +19,11 @@ export interface LibrarySidebarProps {
 
 export function LibrarySidebar(props: LibrarySidebarProps) {
   const { view, likedCount, albumsCount, playlistsCount, onSelectAlbums, onSelectLiked, onSelectPlaylists } = props;
+  const { t } = useLanguage();
   return (
     <div className="w-56 shrink-0">
       <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 rounded-2xl border border-neutral-700/50 p-4 sticky top-24">
-        <h3 className="text-neutral-400 text-sm mb-3 px-2">我的音乐</h3>
+        <h3 className="text-neutral-400 text-sm mb-3 px-2">{t('player.myMusic')}</h3>
         <nav className="space-y-1">
           <button
             onClick={onSelectLiked}
@@ -31,7 +33,7 @@ export function LibrarySidebar(props: LibrarySidebarProps) {
               }`}
           >
             <Heart className={`w-4 h-4 ${view === 'liked' ? 'fill-current' : ''}`} />
-            <span className="text-sm">我喜欢</span>
+            <span className="text-sm">{t('player.liked')}</span>
             <span className="ml-auto text-xs">{likedCount}</span>
           </button>
           <button
@@ -42,7 +44,7 @@ export function LibrarySidebar(props: LibrarySidebarProps) {
               }`}
           >
             <FolderHeart className="w-4 h-4" />
-            <span className="text-sm">我的收藏</span>
+            <span className="text-sm">{t('player.favorites')}</span>
             <span className="ml-auto text-xs">{albumsCount}</span>
           </button>
           <button
@@ -53,7 +55,7 @@ export function LibrarySidebar(props: LibrarySidebarProps) {
               }`}
           >
             <Library className="w-4 h-4" />
-            <span className="text-sm">我的歌单</span>
+            <span className="text-sm">{t('player.playlists')}</span>
             <span className="ml-auto text-xs">{playlistsCount}</span>
           </button>
         </nav>

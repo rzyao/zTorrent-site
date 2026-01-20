@@ -1,6 +1,7 @@
 ﻿import { useState } from "react";
 import Logo from "@/assets/logo.svg";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Eye, EyeOff, User, Lock, LogIn, Clock } from "lucide-react";
 import { Button } from "@/modules/app/components/ui/button";
 import { Input } from "@/modules/app/components/ui/input";
@@ -22,7 +23,8 @@ export default function LoginPage({
   onLoginSuccess,
   onTestApi,
 }: LoginPageProps) {
-  useDynamicTitle("登录");
+  const { t } = useLanguage();
+  useDynamicTitle(t('auth.login'));
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -33,10 +35,10 @@ export default function LoginPage({
     e.preventDefault();
     try {
       await login(username, password, autoLogout);
-      toast.success("登录成功");
+      toast.success(t('auth.loginSuccess'));
       onLoginSuccess();
     } catch (err: any) {
-      toast.error("登录失败: " + (err.message || "未知错误"));
+      toast.error(t('auth.loginFailed') + ": " + (err.message || t('auth.unknownError')));
     }
   };
 
@@ -64,20 +66,20 @@ export default function LoginPage({
         <div className="w-full max-w-md">
           <div className="rounded-lg border border-gray-800 bg-black/60 p-8 backdrop-blur-md md:p-10">
             <div className="mb-8 text-center">
-              <h1 className="mb-2 text-3xl text-white">登录</h1>
-              <p className="text-sm text-gray-400">欢迎回到 PTTracker</p>
+              <h1 className="mb-2 text-3xl text-white">{t('auth.login')}</h1>
+              <p className="text-sm text-gray-400">{t('auth.welcomeBack')}</p>
             </div>
 
             <form className="space-y-5" onSubmit={handleLogin}>
               <div className="space-y-2">
-                <label className="text-sm text-white">用户名</label>
+                <label className="text-sm text-white">{t('auth.username')}</label>
                 <div className="relative">
                   <User className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                   <Input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="输入您的用户名"
+                    placeholder={t('auth.usernamePlaceholder')}
                     className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1]"
                     required
                   />
@@ -85,14 +87,14 @@ export default function LoginPage({
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm text-white">密码</label>
+                <label className="text-sm text-white">{t('auth.password')}</label>
                 <div className="relative">
                   <Lock className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                   <Input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="输入您的密码"
+                    placeholder={t('auth.passwordPlaceholder')}
                     className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-12 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1]"
                     required
                   />
@@ -120,7 +122,7 @@ export default function LoginPage({
                   className="flex cursor-pointer items-center gap-2 text-sm text-gray-300"
                 >
                   <Clock className="h-4 w-4" />
-                  30分钟无操作自动退出
+                  {t('auth.autoLogout')}
                 </label>
               </div>
 
@@ -132,7 +134,7 @@ export default function LoginPage({
                   variant="link"
                   size="sm"
                 >
-                  忘记密码？
+                  {t('auth.forgotPassword')}
                 </Button>
               </div>
 
@@ -150,19 +152,19 @@ export default function LoginPage({
                 {isLoading ? (
                   <>
                     <div className="mr-2 h-5 w-5 animate-spin rounded-full border-b-2 border-white"></div>
-                    登录中...
+                    {t('auth.loggingIn')}
                   </>
                 ) : (
                   <>
                     <LogIn className="mr-2 h-5 w-5" />
-                    登录
+                    {t('auth.login')}
                   </>
                 )}
               </Button>
             </form>
 
             <div className="mt-8 text-center text-sm">
-              <span className="text-gray-400">还没有账号？</span>
+              <span className="text-gray-400">{t('auth.noAccount')}</span>
               <Button
                 type="button"
                 onClick={onRegister}
@@ -170,7 +172,7 @@ export default function LoginPage({
                 variant="link"
                 size="sm"
               >
-                立即注册
+                {t('auth.registerNow')}
               </Button>
             </div>
 
@@ -181,7 +183,7 @@ export default function LoginPage({
                   onClick={onTestApi}
                   className="text-sm text-blue-400 transition-colors hover:text-blue-300"
                 >
-                  API测试 (开发者)
+                  {t('auth.apiTest')}
                 </Button>
               </div>
             )}
@@ -189,9 +191,9 @@ export default function LoginPage({
 
           <div className="mt-6 text-center text-xs text-gray-500">
             <p>
-              本站为私有PT站点，仅限邀请注册。
+              {t('auth.sitePrivate')}
               <br />
-              未经许可禁止分享账号或邀请码。
+              {t('auth.noShareAccount')}
             </p>
           </div>
         </div>

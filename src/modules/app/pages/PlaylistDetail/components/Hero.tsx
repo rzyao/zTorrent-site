@@ -1,4 +1,5 @@
 import { ArrowLeft, Heart, Eye, Film, Star } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 import type { PlaylistDetail } from "../types";
 
 interface HeroProps {
@@ -17,6 +18,7 @@ interface HeroProps {
 // - 将页面的头部展示（封面、标题、统计、按钮）独立为纯展示组件，便于复用与维护
 // - 降低主页面文件体积与复杂度
 export function Hero({ playlist, isFollowing, onToggleFollow, onBack }: HeroProps) {
+  const { t } = useLanguage();
   return (
     <div className="relative pt-24 pb-8 md:pt-32">
       {/* 返回按钮：相对于 Hero 容器定位，或者 sticky */}
@@ -26,7 +28,7 @@ export function Hero({ playlist, isFollowing, onToggleFollow, onBack }: HeroProp
           className="pointer-events-auto sticky top-0 z-50 flex items-center gap-2 rounded-lg border border-white/10 bg-black/50 px-4 py-2 text-white backdrop-blur-sm transition-all hover:bg-black/70"
         >
           <ArrowLeft className="h-5 w-5" />
-          <span>返回片单</span>
+          <span>{t('playlists.backToPlaylists')}</span>
         </button>
       </div>
 
@@ -57,15 +59,15 @@ export function Hero({ playlist, isFollowing, onToggleFollow, onBack }: HeroProp
           </div>
           <div className="flex items-center gap-2">
             <Film className="h-4 w-4" />
-            <span>{playlist?.moviesCount ?? 0} 部影片</span>
+            <span>{playlist?.moviesCount ?? 0} {t('playlists.films')}</span>
           </div>
           <div className="flex items-center gap-2">
             <Heart className="h-4 w-4" />
-            <span>{Number(playlist?.followersCount ?? 0).toLocaleString()} 关注</span>
+            <span>{Number(playlist?.followersCount ?? 0).toLocaleString()} {t('playlists.followers')}</span>
           </div>
           <div className="flex items-center gap-2">
             <Eye className="h-4 w-4" />
-            <span>{Number(playlist?.viewsCount ?? 0).toLocaleString()} 浏览</span>
+            <span>{Number(playlist?.viewsCount ?? 0).toLocaleString()} {t('playlists.views')}</span>
           </div>
           <div className="flex items-center gap-2">
             <Star className="h-4 w-4 fill-amber-500 text-amber-500" />

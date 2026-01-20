@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useHallQuery } from '@/modules/app/pages/Requests/hooks/useHallQuery';
 import { useRequestActions } from '@/modules/app/pages/Requests/hooks/useRequestActions';
 import { Search, SlidersHorizontal, TrendingUp, Clock, MessageSquare, ThumbsUp, Award, CheckCircle2, XCircle, AlertCircle, Bell } from 'lucide-react';
+import { useLanguage } from '@/hooks/useLanguage';
 
 // 后端返回的 Request 结构可能比 UI 更丰富，这里定义最小展示模型并提供映射函数
 interface UiRequest {
@@ -24,6 +25,7 @@ type SortOption = 'latest' | 'bounty' | 'comments' | 'votes';
 type StatusFilter = 'all' | 'active' | 'completed' | 'expired';
 
 export function RequestsHall() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('latest');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
@@ -37,7 +39,7 @@ export function RequestsHall() {
   });
   const actions = useRequestActions();
 
-  const categories = ['全部', '电影', '剧集', '纪录片', '音乐', '动漫', '其他'];
+  const categories = [t('requests.categories.all'), t('requests.categories.movie'), t('requests.categories.series'), t('requests.categories.documentary'), t('requests.categories.music'), t('requests.categories.anime'), t('requests.categories.other')];
 
   const filteredRequests = (items as any[])
     .map((r) => ({
@@ -82,7 +84,7 @@ export function RequestsHall() {
       case 'active':
         return {
           icon: AlertCircle,
-          text: '进行中',
+          text: t('requests.status.active'),
           color: 'text-amber-400',
           bg: 'bg-amber-500/20',
           border: 'border-amber-500/30'
@@ -90,7 +92,7 @@ export function RequestsHall() {
       case 'completed':
         return {
           icon: CheckCircle2,
-          text: '已完成',
+          text: t('requests.status.completed'),
           color: 'text-green-400',
           bg: 'bg-green-500/20',
           border: 'border-green-500/30'
@@ -98,7 +100,7 @@ export function RequestsHall() {
       case 'expired':
         return {
           icon: XCircle,
-          text: '已过期',
+          text: t('requests.status.expired'),
           color: 'text-red-400',
           bg: 'bg-red-500/20',
           border: 'border-red-500/30'
@@ -106,7 +108,7 @@ export function RequestsHall() {
       default:
         return {
           icon: AlertCircle,
-          text: '进行中',
+          text: t('requests.status.active'),
           color: 'text-amber-400',
           bg: 'bg-amber-500/20',
           border: 'border-amber-500/30'
@@ -124,7 +126,7 @@ export function RequestsHall() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-amber-400/60" />
             <input
               type="text"
-              placeholder="搜索求种标题或描述..."
+              placeholder={t('requests.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-[#0F171E]/50 border border-amber-500/30 rounded-lg text-amber-50 placeholder-amber-400/40 focus:outline-none focus:border-amber-400 transition-colors"
@@ -138,10 +140,10 @@ export function RequestsHall() {
               onChange={(e) => setSortBy(e.target.value as SortOption)}
               className="px-4 py-2.5 bg-[#0F171E]/50 border border-amber-500/30 rounded-lg text-amber-50 focus:outline-none focus:border-amber-400 transition-colors"
             >
-              <option value="latest">最新发布</option>
-              <option value="bounty">最高悬赏</option>
-              <option value="comments">最热评论</option>
-              <option value="votes">最多投票</option>
+              <option value="latest">{t('requests.sort.latest')}</option>
+              <option value="bounty">{t('requests.sort.bounty')}</option>
+              <option value="comments">{t('requests.sort.comments')}</option>
+              <option value="votes">{t('requests.sort.votes')}</option>
             </select>
 
             <button
@@ -152,7 +154,7 @@ export function RequestsHall() {
                 }`}
             >
               <SlidersHorizontal className="w-4 h-4" />
-              筛选
+              {t('requests.filter')}
             </button>
           </div>
         </div>
@@ -162,7 +164,7 @@ export function RequestsHall() {
           <div className="mt-4 pt-4 border-t border-amber-500/20 space-y-3">
             {/* Status Filter */}
             <div>
-              <label className="block text-amber-300/80 mb-2">状态筛选</label>
+              <label className="block text-amber-300/80 mb-2">{t('requests.statusFilter')}</label>
               <div className="flex flex-wrap gap-2">
                 {(['all', 'active', 'completed', 'expired'] as StatusFilter[]).map((status) => (
                   <button
@@ -173,7 +175,7 @@ export function RequestsHall() {
                         : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                       }`}
                   >
-                    {status === 'all' ? '全部' : status === 'active' ? '进行中' : status === 'completed' ? '已完成' : '已过期'}
+                    {status === 'all' ? t('app.all') : status === 'active' ? t('requests.status.active') : status === 'completed' ? t('requests.status.completed') : t('requests.status.expired')}
                   </button>
                 ))}
               </div>
@@ -181,13 +183,13 @@ export function RequestsHall() {
 
             {/* Category Filter */}
             <div>
-              <label className="block text-amber-300/80 mb-2">分类筛选</label>
+              <label className="block text-amber-300/80 mb-2">{t('requests.categoryFilter')}</label>
               <div className="flex flex-wrap gap-2">
                 {categories.map((cat) => (
                   <button
                     key={cat}
-                    onClick={() => setCategoryFilter(cat === '全部' ? 'all' : cat)}
-                    className={`px-4 py-2 rounded-lg transition-all ${categoryFilter === (cat === '全部' ? 'all' : cat)
+                    onClick={() => setCategoryFilter(cat === t('requests.categories.all') ? 'all' : cat)}
+                    className={`px-4 py-2 rounded-lg transition-all ${categoryFilter === (cat === t('requests.categories.all') ? 'all' : cat)
                         ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
                         : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
                       }`}
@@ -211,10 +213,10 @@ export function RequestsHall() {
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: '进行中', value: filteredRequests.filter(r => r.status === 'active').length, color: 'amber' },
-          { label: '已完成', value: filteredRequests.filter(r => r.status === 'completed').length, color: 'green' },
-          { label: '总悬赏', value: filteredRequests.reduce((sum, r) => sum + r.bounty + r.additionalBounty, 0).toLocaleString(), color: 'orange' },
-          { label: '参与用户', value: '127', color: 'amber' },
+          { label: t('requests.status.active'), value: filteredRequests.filter(r => r.status === 'active').length, color: 'amber' },
+          { label: t('requests.status.completed'), value: filteredRequests.filter(r => r.status === 'completed').length, color: 'green' },
+          { label: t('requests.stats.totalBounty'), value: filteredRequests.reduce((sum, r) => sum + r.bounty + r.additionalBounty, 0).toLocaleString(), color: 'orange' },
+          { label: t('requests.stats.participants'), value: '127', color: 'amber' },
         ].map((stat, index) => (
           <div
             key={index}
@@ -228,13 +230,13 @@ export function RequestsHall() {
 
       {/* Results Count */}
       <div className="text-amber-300/60">
-        找到 <span className="text-amber-400">{filteredRequests.length}</span> 条求种信息
+        {t('requests.found')} <span className="text-amber-400">{filteredRequests.length}</span> {t('requests.requestsUnit')}
       </div>
 
       {/* Requests List */}
       <div className="space-y-4">
         {isLoading ? (
-          <div className="text-amber-300/60">加载中...</div>
+          <div className="text-amber-300/60">{t('app.loading')}</div>
         ) : filteredRequests.map((request) => {
           const statusConfig = getStatusConfig(request.status);
           const StatusIcon = statusConfig.icon;
@@ -271,15 +273,15 @@ export function RequestsHall() {
                         {request.category}
                       </span>
                     </span>
-                    <span>发布者: {request.author}</span>
+                    <span>{t('requests.publisher')}: {request.author}</span>
                     <span className="flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />
                       {request.createdAt}
                     </span>
-                    <span>截止: {request.deadline}</span>
+                    <span>{t('requests.deadline')}: {request.deadline}</span>
                     {request.claimedBy && (
                       <span className="text-green-400">
-                        已认领 by {request.claimedBy}
+                        {t('requests.claimed')} by {request.claimedBy}
                       </span>
                     )}
                   </div>
@@ -302,12 +304,12 @@ export function RequestsHall() {
                   <div className="flex-1 bg-linear-to-br from-amber-500/20 to-orange-500/20 border border-amber-400/30 rounded-lg p-4">
                     <div className="flex items-center gap-2 text-amber-400/70 mb-1">
                       <Award className="w-4 h-4" />
-                      <span className="text-sm">悬赏金额</span>
+                      <span className="text-sm">{t('requests.bountyAmount')}</span>
                     </div>
                     <div className="text-amber-50 mb-1">{totalBounty.toLocaleString()}</div>
                     {request.additionalBounty > 0 && (
                       <div className="text-xs text-orange-400">
-                        +{request.additionalBounty.toLocaleString()} 追加
+                        +{request.additionalBounty.toLocaleString()} {t('requests.additional')}
                       </div>
                     )}
                   </div>
@@ -319,7 +321,7 @@ export function RequestsHall() {
                       className="px-4 py-2 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                     >
                       <TrendingUp className="w-4 h-4" />
-                      {actions.claim.isPending ? '认领中...' : '立即认领'}
+                      {actions.claim.isPending ? t('requests.claiming') : t('requests.claimNow')}
                     </button>
                   )}
                 </div>
@@ -332,7 +334,7 @@ export function RequestsHall() {
       {!isLoading && filteredRequests.length === 0 && (
         <div className="text-center py-12 text-amber-300/60">
           <Bell className="w-12 h-12 mx-auto mb-4 opacity-40" />
-          <p>暂无符合条件的求种信息</p>
+          <p>{t('requests.noResults')}</p>
         </div>
       )}
     </div>

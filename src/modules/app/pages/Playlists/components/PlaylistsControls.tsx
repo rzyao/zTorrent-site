@@ -2,6 +2,7 @@
 import { ResponsiveSortSelect } from "@/modules/app/components/ResponsiveSortSelect";
 import { CategoryNav, type CategoryNavItem } from "@/modules/app/layouts/CategoryNav";
 import { SearchInput } from "@/modules/app/components/SearchInput";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface Props {
   activeTab: "all" | "mine" | "following";
@@ -13,21 +14,7 @@ interface Props {
   onCreate: () => void;
 }
 
-const sortOptions = [
-  { value: "latest", label: "最新创建" },
-  { value: "popular", label: "最受欢迎" },
-  { value: "rating", label: "评分最高" },
-];
 
-const navItems: CategoryNavItem[] = [
-  { label: "所有片单", value: "all", icon: <List className="h-4 w-4" /> },
-  { label: "我的片单", value: "mine", icon: <Film className="h-4 w-4" /> },
-  {
-    label: "我关注的",
-    value: "following",
-    icon: <Heart className="h-4 w-4" />,
-  },
-];
 
 export function PlaylistsControls({
   activeTab,
@@ -38,6 +25,24 @@ export function PlaylistsControls({
   onSortChange,
   onCreate,
 }: Props) {
+  const { t } = useLanguage();
+
+  const sortOptions = [
+    { value: "latest", label: t('playlists.sortLatest') },
+    { value: "popular", label: t('playlists.sortPopular') },
+    { value: "rating", label: t('playlists.sortRating') },
+  ];
+
+  const navItems: CategoryNavItem[] = [
+    { label: t('playlists.allPlaylists'), value: "all", icon: <List className="h-4 w-4" /> },
+    { label: t('playlists.myPlaylists'), value: "mine", icon: <Film className="h-4 w-4" /> },
+    {
+      label: t('playlists.followingPlaylists'),
+      value: "following",
+      icon: <Heart className="h-4 w-4" />,
+    },
+  ];
+
   return (
     <>
       <CategoryNav
@@ -53,7 +58,7 @@ export function PlaylistsControls({
         <SearchInput
           value={searchQuery}
           onSearch={onSearchChange}
-          placeholder="搜索片单..."
+          placeholder={t('playlists.searchPlaceholder')}
           inputClassName="md:py-5 rounded-lg focus:border-amber-500/50 focus:ring-amber-500/50" // 保持页面的琥珀色主题
         />
 

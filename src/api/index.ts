@@ -608,6 +608,7 @@ export { PermissionsService } from './services/PermissionsService';
 export { PlatformAdminRoutesService } from './services/PlatformAdminRoutesService';
 export { PlatformRoutesService } from './services/PlatformRoutesService';
 export { PlaylistsService } from './services/PlaylistsService';
+export { PlaylistsFeaturedService } from './services/PlaylistsFeaturedService';
 export { PlaylistsInteractionService } from './services/PlaylistsInteractionService';
 export { PlaylistsItemsService } from './services/PlaylistsItemsService';
 export { PlaylistsReviewService } from './services/PlaylistsReviewService';
