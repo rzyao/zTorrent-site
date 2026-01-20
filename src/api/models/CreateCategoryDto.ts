@@ -8,9 +8,9 @@ export type CreateCategoryDto = {
      */
     name: string;
     /**
-     * URL slug
+     * Category key
      */
-    slug: string;
+    key: string;
     /**
      * Description
      */

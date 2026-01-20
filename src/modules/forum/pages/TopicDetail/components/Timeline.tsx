@@ -22,6 +22,7 @@ interface TimelineProps {
   onTopicUpdate?: () => void;
   isAuthor?: boolean;
   bounty?: import("../../../types/bounty").ForumTopicBounty;
+  categoryKey?: string;
 }
 
 import { Reply, Bell } from "lucide-react";
@@ -49,6 +50,7 @@ export const Timeline = ({
   onTopicUpdate,
   isAuthor,
   bounty,
+  categoryKey,
 }: TimelineProps) => {
   const [percentage, setPercentage] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -163,6 +165,9 @@ export const Timeline = ({
       onPercentageChange(newPercentage);
     }
 
+    const newIndex = Math.round(newPercentage * (totalPosts - 1)) + 1;
+    if (onChange) onChange(newIndex);
+
     // 动画更新滑块位置
     if (requestRef.current === null) {
       requestRef.current = requestAnimationFrame(animate);
@@ -194,6 +199,7 @@ export const Timeline = ({
             onUpdate={onTopicUpdate}
             isAuthor={Boolean(isAuthor)}
             bounty={bounty}
+            categoryKey={categoryKey}
           />
         </div>
       )}

@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useComposerStore } from "./ComposerStore";
 import { ComposerInputs } from "./ComposerInputs";
 import { ComposerEditor } from "./ComposerEditor";
@@ -181,7 +181,7 @@ export const ForumComposer: React.FC = () => {
             } else {
               // 如果后端没有返回 postNumber，滚动到底部
               setTimeout(() => {
-                const scrollContainer = document.getElementById("forum-scroll-container");
+                const scrollContainer = document.getElementById("root-forum");
                 if (scrollContainer) {
                   scrollContainer.scrollTo({
                     top: scrollContainer.scrollHeight,

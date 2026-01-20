@@ -36,6 +36,7 @@ interface TopicAdminMenuProps {
   className?: string;
   isAuthor?: boolean;
   bounty?: import("../../../types/bounty").ForumTopicBounty;
+  categoryKey?: string;
 }
 
 import {
@@ -59,6 +60,7 @@ export function TopicAdminMenu({
   className,
   isAuthor,
   bounty,
+  categoryKey,
 }: TopicAdminMenuProps) {
   const navigate = useNavigate();
   const { access } = useAccess();
@@ -74,11 +76,26 @@ export function TopicAdminMenu({
   const [cancelReason, setCancelReason] = useState("");
   const CANCEL_REASON_MAX = 200;
   const QUICK_REASONS = ["误操作", "需求变更", "重复发帖", "预算调整"];
-  const bountyActions = useBountyActions(topicId, { onUpdated: onUpdate });
+  const bountyActions = useBountyActions(topicId, { onUpdated: onUpdate, categoryKey });
   const { colors } = useForumTheme();
 
   // 如果没有权限，直接不渲染
   if (!isAdminOrMod && !isAuthor) return null;
+
+  const showSetBounty =
+    Boolean(isAuthor && !status.isArchived && !bounty) && categoryKey === "bounty";
+  const showIncreaseBounty =
+    Boolean(isAuthor && !status.isArchived && bounty && bounty.status === "open") &&
+    categoryKey === "bounty";
+  const showCancelBounty =
+    Boolean(
+      isAuthor &&
+        !status.isArchived &&
+        bounty &&
+        bounty.status === "open" &&
+        bounty.cancelRequestStatus !== "pending",
+    ) && categoryKey === "bounty";
+  const showAdminSeparator = isAdminOrMod && (showSetBounty || showIncreaseBounty || showCancelBounty);
 
   const handleAction = async (
     actionName: string,
@@ -140,8 +157,8 @@ export function TopicAdminMenu({
           align="start"
           className="border-[#0088CC]/30 bg-white text-neutral-800 shadow-xl dark:bg-[#222222] dark:text-neutral-200"
         >
-          {/* 作者：设置悬赏入口（仅在未设置悬赏时可见） */}
-          {isAuthor && !status.isArchived && !bounty && (
+          {/* 作者：设置悬赏入口（仅在未设置悬赏时可见，且分类为 bounty） */}
+          {showSetBounty && (
             <DropdownMenuItem
               className="hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
               onClick={() => {
@@ -154,8 +171,8 @@ export function TopicAdminMenu({
               <Pin className="mr-2 h-4 w-4" /> 设置悬赏
             </DropdownMenuItem>
           )}
-          {/* 作者：追加悬赏入口（进行中时显示） */}
-          {isAuthor && !status.isArchived && bounty && bounty.status === "open" && (
+          {/* 作者：追加悬赏入口（进行中时显示，且分类为 bounty） */}
+          {showIncreaseBounty && (
             <DropdownMenuItem
               className="hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
               onClick={() => {
@@ -165,12 +182,8 @@ export function TopicAdminMenu({
               <Pin className="mr-2 h-4 w-4" /> 追加悬赏
             </DropdownMenuItem>
           )}
-          {/* 作者：取消悬赏入口（进行中且未在审核时显示） */}
-          {isAuthor &&
-            !status.isArchived &&
-            bounty &&
-            bounty.status === "open" &&
-            bounty.cancelRequestStatus !== "pending" && (
+          {/* 作者：取消悬赏入口（进行中且未在审核时显示，且分类为 bounty） */}
+          {showCancelBounty && (
               <DropdownMenuItem
                 className="hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
                 onClick={() => setCancelOpen(true)}
@@ -180,7 +193,9 @@ export function TopicAdminMenu({
             )}
 
           {/* 管理员操作分隔 */}
-          {isAdminOrMod && <DropdownMenuSeparator className="bg-neutral-200 dark:bg-neutral-700" />}
+          {showAdminSeparator && (
+            <DropdownMenuSeparator className="bg-neutral-200 dark:bg-neutral-700" />
+          )}
 
           {/* 锁定/解锁 */}
           <DropdownMenuItem

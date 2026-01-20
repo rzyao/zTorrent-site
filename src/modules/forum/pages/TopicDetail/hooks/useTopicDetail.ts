@@ -81,7 +81,7 @@ interface ExtendedApiTopic {
   category?: {
     id: string;
     name: string;
-    slug: string;
+    key: string;
     color?: string;
     icon?: string;
   };
@@ -350,6 +350,7 @@ export function useTopicDetail(topicId: string | undefined, options?: { nearPost
       title: thread.title || "",
       category: thread.category?.name || "常规",
       categoryId: thread.category?.id,
+      categoryKey: (thread as any)?.category?.key,
       categoryColor: thread.category?.color || "#999",
       categoryIcon: thread.category?.icon,
       tags: thread.tags?.map((t) => t.name) || [],

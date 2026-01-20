@@ -1,4 +1,4 @@
-﻿import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { useEffect } from "react";
 import { AppToaster } from "@/modules/app/components/ui/sonner";
 import AppRoutes from "./routes/AppRoutes";
@@ -9,6 +9,7 @@ import { useDictionaryStore } from "./stores/dictionaryStore";
 import { usePreferenceCategoriesStore } from "./stores/preferenceCategoriesStore";
 import { GlobalLoader } from "@/modules/app/components/ui/GlobalLoader";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { AppGlobalErrorBoundary } from "@/modules/app/layouts/GlobalErrorBoundary";
 
 // 全局认证事件
 declare global {
@@ -38,7 +39,10 @@ export default function App() {
             <GlobalLoader />
             <ThemeSwitcher />
             <AppToaster />
-            <AppRoutes />
+            {/* 顶层错误边界：捕获子树渲染错误并展示友好兜底 UI */}
+            <AppGlobalErrorBoundary>
+              <AppRoutes />
+            </AppGlobalErrorBoundary>
           </DownloadersProvider>
         </UserSummaryProvider>
       </AccessProvider>

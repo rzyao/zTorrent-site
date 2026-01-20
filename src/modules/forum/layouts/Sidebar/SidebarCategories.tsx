@@ -1,4 +1,4 @@
-﻿import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronDown, Pencil, LayoutGrid, Square } from "lucide-react";
 import { useForumTheme } from "../../context/ForumThemeContext";
 import { getIconByName } from "@/modules/forum/components/ui/icon-picker";
@@ -76,7 +76,8 @@ export function SidebarCategories({
             ))
           : categories.map((cat) => {
               // 使用路由路径判断激活状态
-              const categoryPath = `/forum/category/${cat.id}`;
+              // 路由使用类别 key 作为唯一标识
+              const categoryPath = `/forum/category/${(cat as any).key}`;
               const isActive =
                 location.pathname === categoryPath ||
                 location.pathname.startsWith(categoryPath + "/");
@@ -91,7 +92,7 @@ export function SidebarCategories({
 
               return (
                 <button
-                  key={cat.id}
+                  key={(cat as any).key ?? cat.id}
                   onClick={() => navigate(categoryPath)}
                   className={`flex w-full cursor-pointer items-center justify-between rounded-lg py-1.5 pr-4 pl-8 ${buttonClass}`}
                 >

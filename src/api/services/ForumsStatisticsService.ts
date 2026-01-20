@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { ForumStatistic } from '../models/ForumStatistic';
 import type { ForumTopic } from '../models/ForumTopic';
-import type { LimitParamDto } from '../models/LimitParamDto';
+import type { HotTopicsDto } from '../models/HotTopicsDto';
 import type { QueryStatisticsDto } from '../models/QueryStatisticsDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -35,13 +35,13 @@ export class ForumsStatisticsService {
         });
     }
     /**
-     * 获取热门话题榜
+     * 获取热议话题榜
      * @param requestBody
      * @returns any 话题列表
      * @throws ApiError
      */
     public static statisticsControllerGetHotTopics(
-        requestBody: LimitParamDto,
+        requestBody: HotTopicsDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;

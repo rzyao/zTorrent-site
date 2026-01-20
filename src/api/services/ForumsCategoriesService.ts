@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CategoryBySlugDto } from '../models/CategoryBySlugDto';
+import type { CategoryByKeyDto } from '../models/CategoryByKeyDto';
 import type { CategoryPaginatedResponseDto } from '../models/CategoryPaginatedResponseDto';
 import type { CategoryTagsDto } from '../models/CategoryTagsDto';
 import type { CreateCategoryDto } from '../models/CreateCategoryDto';
@@ -71,13 +71,13 @@ export class ForumsCategoriesService {
         });
     }
     /**
-     * 根据 slug 获取分类
+     * 根据 key 获取分类
      * @param requestBody
      * @returns any 分类详情
      * @throws ApiError
      */
-    public static categoriesControllerFindBySlug(
-        requestBody: CategoryBySlugDto,
+    public static categoriesControllerFindByKey(
+        requestBody: CategoryByKeyDto,
     ): CancelablePromise<{
         code?: number;
         message?: string;
@@ -87,7 +87,7 @@ export class ForumsCategoriesService {
     }> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/forums/categories/by-slug',
+            url: '/forums/categories/by-key',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

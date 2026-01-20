@@ -1,5 +1,6 @@
 import { Reply, Shield } from "lucide-react";
 import { PostData } from "../../types";
+import { ForumImage } from "@/modules/forum/components/ui/image";
 
 interface PostHeaderProps {
   post: PostData;
@@ -29,7 +30,7 @@ export function PostHeader({ post, colors, isReplyExpanded, onToggleReply }: Pos
           >
             <Reply className="h-3.5 w-3.5 scale-x-[-1]" />
             {post.replyTo.avatar && (
-              <img src={post.replyTo.avatar} className="h-4 w-4 rounded-full" alt="" />
+              <ForumImage src={post.replyTo.avatar} className="h-4 w-4 rounded-full" alt="" />
             )}
             <span className="font-medium">{post.replyTo.username}</span>
           </button>

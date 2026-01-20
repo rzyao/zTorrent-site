@@ -20,14 +20,14 @@ export function SidebarNav() {
   const isAdminOrMod = access?.roles?.includes("admin") || access?.roles?.includes("moderator");
   const NAV_ITEMS = isAdminOrMod
     ? [
-        ...BASE_NAV_ITEMS,
-        {
-          id: "admin-bounty-cancel",
-          name: "悬赏取消审核",
-          icon: ShieldCheck,
-          path: "/forum/admin/bounty-cancel-requests",
-        },
-      ]
+      ...BASE_NAV_ITEMS,
+      {
+        id: "admin-audit-center",
+        name: "审核",
+        icon: ShieldCheck,
+        path: "/forum/admin/audit-center",
+      },
+    ]
     : BASE_NAV_ITEMS;
 
   return (

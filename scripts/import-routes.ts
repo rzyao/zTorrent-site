@@ -397,7 +397,7 @@ const routesData = [
       },
       {
         routeKey: "forum-category",
-        path: "category/:categoryId",
+        path: "category/:categoryKey",
         component: "CategoryPage",
         name: "分类",
         layout: "forum",
@@ -405,7 +405,7 @@ const routesData = [
       },
       {
         routeKey: "forum-category-sort",
-        path: "category/:categoryId/:sortBy",
+        path: "category/:categoryKey/:sortBy",
         component: "CategoryPage",
         name: "分类",
         layout: "forum",
@@ -443,7 +443,7 @@ const routesData = [
       },
       {
         routeKey: "forum-edit-category",
-        path: "category/:categoryId/edit",
+        path: "category/:categoryKey/edit",
         component: "EditCategoryPage",
         name: "编辑类别",
         layout: "forum",

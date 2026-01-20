@@ -2,24 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ForumTagGroup } from './ForumTagGroup';
 export type TagDetailResponseDto = {
     /**
-     * 标签 ID
+     * 标签ID
      */
     id: string;
-    /**
-     * 创建时间
-     */
-    createdAt: string;
-    /**
-     * 更新时间
-     */
-    updatedAt: string;
-    /**
-     * 删除时间 (软删除)
-     */
-    deletedAt: Record<string, any> | null;
     /**
      * 标签名称
      */
@@ -29,8 +16,16 @@ export type TagDetailResponseDto = {
      */
     usageCount: number;
     /**
-     * 标签归属的标签组列表
+     * 创建时间
      */
-    groups: Array<ForumTagGroup>;
+    createdAt: string;
+    /**
+     * 更新时间
+     */
+    updatedAt: string;
+    /**
+     * 删除时间
+     */
+    deletedAt?: string;
 };
 

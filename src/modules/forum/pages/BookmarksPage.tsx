@@ -1,9 +1,10 @@
-﻿import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ForumsBookmarksService } from "@/api";
 import { useForumTheme } from "../context/ForumThemeContext";
 import { Loader2, Bookmark, User, Clock, MessageSquare, Eye } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { Separator } from "@/modules/forum/components/ui/separator";
 
 /**
  * 我的收藏页面
@@ -51,6 +52,8 @@ export function BookmarksPage() {
         </h1>
         <p className={cn("mt-1 text-sm", colors.textMuted)}>共 {data?.total || 0} 个收藏的话题</p>
       </div>
+
+      <Separator className={cn("mx-4 mb-2 bg-gray-200 dark:bg-neutral-600/60")} />
 
       <div className="space-y-0">
         {items.length === 0 ? (

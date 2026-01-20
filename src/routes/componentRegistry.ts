@@ -120,6 +120,11 @@ export const componentRegistry: Record<string, LazyComponent> = {
   TagGroupsPage: lazy(() =>
     import("@/modules/forum/pages/TagGroupsPage").then((m) => ({ default: m.TagGroupsPage })),
   ),
+  ForumAuditCenterPage: lazy(() =>
+    import("@/modules/forum/pages/Admin/ForumAuditCenter").then((m) => ({
+      default: m.ForumAuditCenter,
+    })),
+  ),
   TopicBountyCancelRequestsAdminPage: lazy(() =>
     import("@/modules/forum/pages/Admin/TopicBountyCancelRequests").then((m) => ({
       default: m.TopicBountyCancelRequestsAdminPage,

@@ -1,8 +1,11 @@
-import { Pin, TrendingUp, Loader2 } from "lucide-react";
+import { Pin, TrendingUp, Loader2, Square } from "lucide-react";
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import NProgress from "nprogress";
 import { useForumTheme } from "../../context/ForumThemeContext";
 import { useForumsTopicsQuery, ExtendedApiTopic } from "../../hooks/useForumsTopicsQuery";
+import { useForumsCategories } from "../../hooks/useForumsCategories";
+import { getIconByName } from "@/modules/forum/components/ui/icon-picker";
+import { ForumImage } from "@/modules/forum/components/ui/image";
 import { ForumFilterBar } from "./components/ForumFilterBar";
 import { ForumListSkeleton } from "./components/ForumListSkeleton";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -20,6 +23,8 @@ interface UiTopic {
   title: string;
   author: Participant;
   category: string;
+  categoryId?: string;
+  categoryColor?: string;
   tags: string[];
   excerpt: string;
   views: number;
@@ -35,13 +40,14 @@ interface UiTopic {
   bountyAmount?: string;
 }
 
-interface ForumListProps {
+interface TopicListProps {
   selectedCategory: string;
   categoryName?: string;
   selectedTag?: string;
   searchQuery: string;
   sortBy?: "latest" | "hot";
   onTopicClick: (id: string) => void;
+  titleClassName?: string;
 }
 
 function formatDate(dateStr: string | undefined): string {
@@ -93,6 +99,8 @@ function transformTopic(apiTopic: ExtendedApiTopic): UiTopic {
       avatar: author.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${author.username}`,
     },
     category: apiTopic.category?.name || "常规",
+    categoryId: apiTopic.category?.id,
+    categoryColor: apiTopic.category?.color,
     tags: apiTopic.tags?.map((t) => t.name) || [],
     excerpt: apiTopic.content
       ? apiTopic.content.substring(0, 100).replace(/[#*`]/g, "") + "..."
@@ -111,14 +119,15 @@ function transformTopic(apiTopic: ExtendedApiTopic): UiTopic {
   };
 }
 
-export function ForumList({
+export function TopicList({
   selectedCategory,
   categoryName,
   selectedTag,
   searchQuery,
   sortBy = "latest",
   onTopicClick,
-}: ForumListProps) {
+  titleClassName,
+}: TopicListProps) {
   const { colors } = useForumTheme();
   const apiSortBy = sortBy === "hot" ? "popular" : "latest";
 
@@ -130,6 +139,14 @@ export function ForumList({
       limit: 20,
       sortBy: apiSortBy as "latest" | "popular" | "trending",
     });
+  const { data: categories = [] } = useForumsCategories();
+  const categoryMetaById = useMemo(() => {
+    const map = new Map<string, { icon?: string; color?: string }>();
+    categories.forEach((c: any) => {
+      map.set(String(c.id), { icon: c.icon, color: c.color });
+    });
+    return map;
+  }, [categories]);
 
   // NProgress 联动：仅在首屏加载时显示，分页加载采用局部轻量提示
   useEffect(() => {
@@ -299,15 +316,28 @@ export function ForumList({
                                   </span>
                                 )}
                                 <h3
-                                  className={`line-clamp-2 text-sm font-medium ${colors.textPrimary} group-hover:text-blue-600 dark:group-hover:text-amber-400`}
+                                  className={`line-clamp-2 ${titleClassName ?? "text-base"} font-medium ${colors.textPrimary} group-hover:text-blue-600 dark:group-hover:text-amber-400`}
                                 >
                                   {topic.title}
                                 </h3>
                               </div>
                               <div className="flex flex-wrap items-center gap-2 text-xs">
-                                <span className="rounded border border-gray-200 bg-gray-100 px-1.5 py-0.5 font-medium text-gray-600 dark:border-blue-500/30 dark:bg-blue-500/20 dark:text-blue-400">
-                                  {topic.category}
-                                </span>
+                                {/* 当处于“全部分类”列表页时显示分类徽标；在具体分类页（/forum/category/:id）隐藏以避免冗余 */}
+                                {selectedCategory === "all" && (() => {
+                                  const meta = topic.categoryId ? categoryMetaById.get(String(topic.categoryId)) : undefined;
+                                  const IconComp = meta?.icon ? getIconByName(meta.icon) : null;
+                                  const color = meta?.color || topic.categoryColor || "#999999";
+                                  return (
+                                    <span className="inline-flex items-center gap-1.5 rounded border border-gray-200 bg-gray-100 px-1.5 py-0.5 font-medium text-gray-600 dark:border-blue-500/30 dark:bg-blue-500/20 dark:text-blue-400">
+                                      {IconComp ? (
+                                        <IconComp className="h-3.5 w-3.5" style={{ color }} />
+                                      ) : (
+                                        <Square className="h-3 w-3 opacity-70" style={{ color }} />
+                                      )}
+                                      {topic.category}
+                                    </span>
+                                  );
+                                })()}
                                 {topic.tags.slice(0, 2).map((tag) => (
                                   <span key={tag} className={colors.textMuted}>
                                     #{tag}
@@ -326,7 +356,7 @@ export function ForumList({
                                 className="h-6 w-6 overflow-hidden rounded-full border border-white dark:border-neutral-700"
                                 title={`楼主: ${topic.author.name}`}
                               >
-                                <img
+                                <ForumImage
                                   src={topic.author.avatar}
                                   alt={topic.author.name}
                                   className="h-full w-full object-cover"
@@ -338,14 +368,14 @@ export function ForumList({
                                   className="h-6 w-6 overflow-hidden rounded-full border border-white dark:border-neutral-700"
                                   title={`参与者: ${p.name}`}
                                 >
-                                  <img src={p.avatar} alt={p.name} className="h-full w-full object-cover" />
+                                  <ForumImage src={p.avatar} alt={p.name} className="h-full w-full object-cover" />
                                 </div>
                               ))}
                               <div
                                 className="h-6 w-6 overflow-hidden rounded-full border border-white dark:border-neutral-700"
                                 title={`最新回复: ${topic.lastReplier.name}`}
                               >
-                                <img
+                                <ForumImage
                                   src={topic.lastReplier.avatar}
                                   alt={topic.lastReplier.name}
                                   className="h-full w-full object-cover"
@@ -372,7 +402,7 @@ export function ForumList({
 
                             {/* Mobile Stats */}
                             <div className="flex shrink-0 items-center gap-2 md:hidden">
-                              <img src={topic.lastReplier.avatar} alt="Last" className="h-6 w-6 rounded-full" />
+                              <ForumImage src={topic.lastReplier.avatar} alt="Last" className="h-6 w-6 rounded-full" />
                               <span className="text-sm font-bold text-blue-600 dark:text-amber-400">
                                 {topic.replies}
                               </span>

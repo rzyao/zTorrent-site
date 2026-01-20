@@ -3,10 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { GetTorrentDto } from '../models/GetTorrentDto';
+import type { HotCarouselTorrentsDto } from '../models/HotCarouselTorrentsDto';
 import type { ListTorrentsDto } from '../models/ListTorrentsDto';
 import type { Object } from '../models/Object';
 import type { SearchTorrentsDto } from '../models/SearchTorrentsDto';
 import type { SearchTorrentsResponseDto } from '../models/SearchTorrentsResponseDto';
+import type { Torrent } from '../models/Torrent';
 import type { UserListTorrentsDto } from '../models/UserListTorrentsDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -88,6 +90,35 @@ export class TorrentsSearchService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/torrents/search/detail',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 最热种子轮播列表
+     * @param requestBody
+     * @returns any 最热种子列表
+     * @throws ApiError
+     */
+    public static torrentSearchControllerHotCarousel(
+        requestBody: HotCarouselTorrentsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Array<Torrent>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/torrents/search/hot-carousel',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

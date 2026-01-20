@@ -19,6 +19,7 @@ interface PostFooterProps {
   bounty?: ForumTopicBounty;
   isAuthor?: boolean;
   onUpdated?: () => void;
+  categoryKey?: string;
 }
 
 export function PostFooter({
@@ -33,6 +34,7 @@ export function PostFooter({
   bounty,
   isAuthor,
   onUpdated,
+  categoryKey,
 }: PostFooterProps) {
   const handleReply = () => {
     useComposerStore.getState().open("REPLY", {
@@ -42,7 +44,7 @@ export function PostFooter({
     });
   };
 
-  const { award } = useBountyActions(topicId, { onUpdated });
+  const { award } = useBountyActions(topicId, { onUpdated, categoryKey });
   const isWinner = bounty?.winnerPostId && String(bounty.winnerPostId) === String(post.id);
   const canAward =
     Boolean(
@@ -52,7 +54,9 @@ export function PostFooter({
       bounty.cancelRequestStatus !== "pending" &&
       topicId &&
       post.username !== undefined,
-    ) && !post.isOp;
+    ) &&
+    categoryKey === "bounty" &&
+    !post.isOp;
 
   return (
     <div className="mt-4 flex items-center gap-4 select-none">

@@ -50,6 +50,11 @@ export default defineConfig(({ mode }) => {
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, ""),
         },
+        "/uploads": {
+          target: "http://localhost:8890",
+          changeOrigin: true,
+          secure: false,
+        },
       },
     },
     build: {

@@ -12,6 +12,7 @@ import { PostSmallAction } from "./PostParts/PostSmallAction";
 import { UserCard } from "@/modules/app/components/UserCard";
 import { useAccess } from "@/context/AccessContext";
 import { PostInlineEditor } from "./PostParts/PostInlineEditor";
+import { ForumImage } from "@/modules/forum/components/ui/image";
 
 import { ForumTopicBounty } from "../../../types/bounty";
 interface PostProps {
@@ -25,6 +26,7 @@ interface PostProps {
   bounty?: ForumTopicBounty;
   isAuthor?: boolean;
   onUpdated?: () => void;
+  categoryKey?: string;
 }
 
 export const Post = memo(function Post({
@@ -38,6 +40,7 @@ export const Post = memo(function Post({
   bounty,
   isAuthor,
   onUpdated,
+  categoryKey,
 }: PostProps) {
   const isSmallAction = post.isSmallAction;
   const [isReplyExpanded, setIsReplyExpanded] = useState(false);
@@ -107,7 +110,7 @@ export const Post = memo(function Post({
             side="right"
             className="flex items-center justify-center select-none"
             trigger={
-              <img
+              <ForumImage
                 src={post.avatar}
                 alt={post.username}
                 className={`h-[45px] w-[45px] cursor-pointer rounded-full border-2 object-cover shadow-sm hover:opacity-90 ${colors.avatarBorder}`}
@@ -165,6 +168,7 @@ export const Post = memo(function Post({
             bounty={bounty}
             isAuthor={Boolean(isAuthor ?? isAuthorComputed)}
             onUpdated={onUpdated}
+            categoryKey={categoryKey}
           />
 
           <IncomingReplies

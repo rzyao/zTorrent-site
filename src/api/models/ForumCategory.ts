@@ -8,9 +8,9 @@ export type ForumCategory = {
      */
     name: string;
     /**
-     * URL 别名
+     * 分类 Key
      */
-    slug: string;
+    key: string;
     /**
      * 分类描述
      */
@@ -35,5 +35,9 @@ export type ForumCategory = {
      * 允许其他公共标签
      */
     allowOtherTags: boolean;
+    /**
+     * 是否锁定（锁定后禁止修改 key）
+     */
+    isLocked: boolean;
 };
 

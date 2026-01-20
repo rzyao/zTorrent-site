@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Film,
   Tv,
@@ -43,7 +43,22 @@ import { PageContainer } from "@/modules/app/components/PageContainer";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { useQuery } from "@tanstack/react-query";
 import { ForumsTopicsService } from "@/api/services/ForumsTopicsService";
+import { ForumsStatisticsService } from "@/api/services/ForumsStatisticsService";
 import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/zh-cn";
+import { useBountyTopics } from "./Home/hooks/useBountyTopics";
+import { ListBountyTopicsDto } from "@/api/models/ListBountyTopicsDto";
+import { Link } from "react-router-dom";
+import { SiteStatsService } from "@/api/services/SiteStatsService";
+import type { SiteStatsOverviewVo } from "@/api/models/SiteStatsOverviewVo";
+import { TorrentsSearchService } from "@/api/services/TorrentsSearchService";
+import { HotCarouselTorrentsDto } from "@/api/models/HotCarouselTorrentsDto";
+import { PlaylistsFeaturedService } from "@/api/services/PlaylistsFeaturedService";
+import type { FeaturedPlaylistsDto } from "@/api/models/FeaturedPlaylistsDto";
+
+dayjs.extend(relativeTime);
+dayjs.locale("zh-cn");
 
 interface HotTorrent {
   id: number;
@@ -67,16 +82,7 @@ interface Announcement {
   isTop?: boolean;
 }
 
-interface Request {
-  id: number;
-  title: string;
-  category: string;
-  requester: string;
-  reward: number;
-  replies: number;
-  status: "open" | "filled" | "closed";
-  time: string;
-}
+// 首页“资源悬赏”改为后端悬赏进行中话题数据，移除本地 Request 类型
 
 interface Recommendation {
   id: number;
@@ -109,13 +115,22 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // 站点统计数据
-  const siteStats = {
-    totalUsers: 28547,
-    torrents: 15680,
-    seeders: 8234,
-    peers: 1245,
-    onlineUsers: 856,
+  // 站点统计数据 - 接入后端接口 POST /site/stats/overview
+  const {
+    data: statsResponse,
+    isLoading: statsLoading,
+    error: statsError,
+  } = useQuery({
+    queryKey: ["home", "siteStatsOverview"],
+    queryFn: () => SiteStatsService.siteStatsControllerOverview({}),
+    staleTime: 60_000,
+  });
+  const siteStats: SiteStatsOverviewVo = (statsResponse?.data as SiteStatsOverviewVo) ?? {
+    totalUsers: 0,
+    torrents: 0,
+    seeders: 0,
+    peers: 0,
+    onlineUsers: 0,
   };
 
   // 公告数据 SWR
@@ -130,8 +145,8 @@ export default function HomePage() {
         Array.isArray(item?.tags)
           ? item.tags.map((t: any) => String(t?.name ?? t))
           : Array.isArray(item?.tagNames)
-          ? item.tagNames.map((n: any) => String(n))
-          : [];
+            ? item.tagNames.map((n: any) => String(n))
+            : [];
       let type: "system" | "event" | "notice" = "notice";
       if (item.isGlobalPinned) {
         type = "system";
@@ -149,188 +164,133 @@ export default function HomePage() {
       };
     }) || [];
 
-  // 最热种子轮播数据
-  const hotTorrents: HotTorrent[] = [
-    {
-      id: 1,
-      title: "星际穿越 Interstellar (2014)",
-      subtitle: "4K HDR REMUX 国英双语 杜比全景声",
-      image: "https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=800",
-      category: "电影",
-      size: "68.5 GB",
-      seeders: 2847,
-      leechers: 156,
-      rating: 9.8,
-      isFree: true,
-    },
-    {
-      id: 2,
-      title: "沙丘2 Dune: Part Two (2024)",
-      subtitle: "IMAX 4K UHD HDR 杜比视界 国英双语",
-      image: "https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=800",
-      category: "电影",
-      size: "92.3 GB",
-      seeders: 1876,
-      leechers: 543,
-      rating: 9.1,
-      isVip: true,
-    },
-    {
-      id: 3,
-      title: "奥本海默 Oppenheimer (2023)",
-      subtitle: "4K UHD IMAX版本 HDR 杜比全景声",
-      image: "https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=800",
-      category: "电影",
-      size: "98.7 GB",
-      seeders: 2145,
-      leechers: 687,
-      rating: 9.4,
-      isFree: true,
-    },
-    {
-      id: 4,
-      title: "权力的游戏 Game of Thrones",
-      subtitle: "S01-S08 Complete 1080p BluRay x265 HEVC",
-      image: "https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=800",
-      category: "电视剧",
-      size: "124.8 GB",
-      seeders: 2156,
-      leechers: 89,
-      rating: 9.5,
-    },
-  ];
+  // 论坛热帖数据（真实接口）- 使用统计接口 POST /forums/statistics/hot-topics
+  // 说明：
+  // - windowHours=1 按小时级窗口计算近期新增回复数，满足“最近1小时热度”要求
+  // - limit=6 控制首页展示条数
+  // - includeArchived=false 默认不包含归档话题
+  const {
+    data: hotTopicsResponse,
+    isLoading: hotLoading,
+    error: hotError,
+  } = useQuery({
+    queryKey: ["home", "hotTopics", 6, 1],
+    queryFn: () =>
+      ForumsStatisticsService.statisticsControllerGetHotTopics({
+        limit: 6,
+        windowHours: 1,
+        includeArchived: false,
+      }),
+  });
 
-  // 求种信息
-  const requests: Request[] = [
-    {
-      id: 1,
-      title: "求 诺兰电影合集 4K UHD 原盘",
-      category: "电影",
-      requester: "MovieFan",
-      reward: 5000,
-      replies: 12,
-      status: "open",
-      time: "2小时前",
-    },
-    {
-      id: 2,
-      title: "求 宫崎骏动画全集 日语原盘 高码率",
-      category: "动漫",
-      requester: "AnimeLover",
-      reward: 3000,
-      replies: 8,
-      status: "open",
-      time: "5小时前",
-    },
-    {
-      id: 3,
-      title: "求 Pink Floyd 无损专辑合集",
-      category: "音乐",
-      requester: "MusicGeek",
-      reward: 2000,
-      replies: 15,
-      status: "filled",
-      time: "1天前",
-    },
-    {
-      id: 4,
-      title: "求 BBC Earth 纪录片系列 4K HDR",
-      category: "纪录片",
-      requester: "DocuFan",
-      reward: 4000,
-      replies: 6,
-      status: "open",
-      time: "1天前",
-    },
-  ];
+  // 将接口返回的 ForumTopic[] 映射为首页展示所需的轻量字段
+  // 保留：标题、回复数、浏览量、置顶/热门状态、最后回复时间
+  const hotTopics = (hotTopicsResponse?.data ?? []) as any[];
+  const hotTopicItems: ForumPost[] = useMemo(
+    () =>
+      hotTopics.map((t: any, idx: number) => ({
+        id: Number(t?.id ?? idx + 1),
+        title: String(t?.title ?? ""),
+        forum: "", // 接口未返回分类名称，这里留空，不做兼容显示
+        author: "", // 接口未返回作者名称，这里留空，不做兼容显示
+        authorAvatar: "", // 接口未返回头像，这里留空
+        replies: Number(t?.replyCount ?? 0),
+        views: Number(t?.views ?? 0),
+        lastReply: t?.lastReplyAt ? dayjs(t.lastReplyAt).fromNow() : "-",
+        isPinned: Boolean(t?.isPinned ?? false),
+        isHot: Boolean(t?.isTrending ?? false),
+      })),
+    [hotTopics],
+  );
 
-  // 精华推荐
-  const recommendations: Recommendation[] = [
-    {
-      id: 1,
-      title: "【强烈推荐】沙丘2 IMAX版本观影体验分享",
-      category: "电影推荐",
-      description:
-        "刚看完沙丘2的IMAX版本，视听效果震撼！特别是杜比全景声的音效设计，配合IMAX画幅...",
-      poster: "https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=400",
-      recommender: "CinemaExpert",
-      rating: 9.5,
-      likes: 234,
-      comments: 67,
-      time: "3小时前",
-    },
-    {
-      id: 2,
-      title: "【精品】2024年度最佳纪录片TOP10",
-      category: "纪录片推荐",
-      description: "整理了今年最值得看的十部纪录片，从自然到人文，从历史到科技，每一部都是精品...",
-      poster: "https://images.unsplash.com/photo-1613399421098-f943ea81f1c4?w=400",
-      recommender: "DocsCollector",
-      rating: 9.8,
-      likes: 456,
-      comments: 89,
-      time: "1天前",
-    },
-    {
-      id: 3,
-      title: "【音乐】黑胶唱片入坑指南及设备推荐",
-      category: "音乐推荐",
-      description: "作为一个玩黑胶五年的老烧友，今天给大家分享一下入门到进阶的设备选择心得...",
-      poster: "https://images.unsplash.com/photo-1587731556938-38755b4803a6?w=400",
-      recommender: "VinylMaster",
-      rating: 9.2,
-      likes: 189,
-      comments: 45,
-      time: "2天前",
-    },
-  ];
+  // 最热种子轮播数据 - 接入后端接口 POST /torrents/search/hot-carousel
+  const {
+    data: hotCarouselResponse,
+    isLoading: carouselLoading,
+    error: carouselError,
+  } = useQuery({
+    queryKey: ["home", "hotCarousel", 4, HotCarouselTorrentsDto.orderBy.HOT_DOWNLOADS, 7],
+    queryFn: () =>
+      TorrentsSearchService.torrentSearchControllerHotCarousel({
+        limit: 4,
+        orderBy: HotCarouselTorrentsDto.orderBy.HOT_DOWNLOADS,
+        days: 7,
+      }),
+    staleTime: 60_000,
+  });
+  const carouselItems = (hotCarouselResponse?.data ?? []) as any[];
+  const hotTorrents: HotTorrent[] = useMemo(
+    () =>
+      carouselItems.map((t: any, idx: number) => ({
+        id: Number(t?.id ?? idx + 1),
+        title: String(t?.title ?? t?.name ?? ""),
+        subtitle: String(t?.subTitle ?? t?.subtitle ?? ""),
+        image:
+          String(
+            t?.poster ??
+            t?.coverUrl ??
+            t?.thumbnailUrl ??
+            "https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=800",
+          ),
+        category: String(t?.category?.name ?? t?.categoryName ?? ""),
+        size: String(t?.sizeHuman ?? t?.size ?? ""),
+        seeders: Number(t?.seeders ?? t?.seederCount ?? 0),
+        leechers: Number(t?.leechers ?? t?.leecherCount ?? 0),
+        rating: Number(t?.rating ?? t?.score ?? 0),
+        isFree: Boolean(t?.isFree ?? t?.freeleech ?? false),
+        isVip: Boolean(t?.isVip ?? t?.vipOnly ?? false),
+      })),
+    [carouselItems],
+  );
 
-  // 论坛热帖
-  const forumPosts: ForumPost[] = [
-    {
-      id: 1,
-      title: "【公告】圣诞节双倍上传活动细则及注意事项",
-      forum: "站点公告",
-      author: "Admin",
-      authorAvatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100",
-      replies: 234,
-      views: 5678,
-      lastReply: "10分钟前",
-      isPinned: true,
-    },
-    {
-      id: 2,
-      title: "4K HDR电影的正确播放姿势 - 从硬件到软件全面解析",
-      forum: "技术交流",
-      author: "TechGuru",
-      authorAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100",
-      replies: 456,
-      views: 12345,
-      lastReply: "30分钟前",
-      isHot: true,
-    },
-    {
-      id: 3,
-      title: "分享率低怎么办？提升分享率的十个实用技巧",
-      forum: "新手指南",
-      author: "HelpfulUser",
-      authorAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100",
-      replies: 789,
-      views: 23456,
-      lastReply: "1小时前",
-      isHot: true,
-    },
-    {
-      id: 4,
-      title: "【资源】蓝光原盘 vs REMUX vs Web-DL 画质对比详解",
-      forum: "资源讨论",
-      author: "QualityExpert",
-      authorAvatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100",
-      replies: 234,
-      views: 8901,
-      lastReply: "2小时前",
-    },
-  ];
+  // 资源悬赏（悬赏进行中话题）- 后端数据
+  // 默认页码=1、limit=8、sort=latest；由后端统一判定“进行中”
+  const {
+    items: bountyTopics,
+    total: bountyTotal,
+    isLoading: bountyLoading,
+    error: bountyError,
+  } = useBountyTopics({ page: 1, limit: 8, sort: ListBountyTopicsDto.sort.LATEST });
+
+  // 精华片单推荐 - 接入后端接口 POST /playlists/featured/list
+  const {
+    data: featuredResponse,
+    isLoading: featuredLoading,
+    error: featuredError,
+  } = useQuery({
+    queryKey: ["home", "featuredPlaylists", 3, "featured", "movie", "sort"],
+    queryFn: () =>
+      PlaylistsFeaturedService.playlistFeaturedControllerList({
+        limit: 3,
+        categoryKey: "featured",
+        type: "movie",
+        orderBy: "sort",
+      } as FeaturedPlaylistsDto),
+    staleTime: 300_000,
+  });
+  const featuredItems = (featuredResponse?.data ?? []) as any[];
+  const recommendations: Recommendation[] = useMemo(
+    () =>
+      featuredItems.map((p: any, idx: number) => ({
+        id: Number(p?.id ?? idx + 1),
+        title: String(p?.title ?? ""),
+        category: String(p?.categoryKey ?? p?.type ?? "精选"),
+        description: String(p?.description ?? ""),
+        poster: String(p?.poster ?? p?.coverUrl ?? p?.thumbnailUrl ?? ""),
+        recommender: String(p?.ownerName ?? p?.recommender ?? "编辑精选"),
+        rating: Number(p?.rating ?? 0),
+        likes: Number(p?.likes ?? 0),
+        comments: Number(p?.comments ?? 0),
+        time: p?.updatedAt
+          ? dayjs(p.updatedAt).fromNow()
+          : p?.createdAt
+            ? dayjs(p.createdAt).fromNow()
+            : "",
+      })),
+    [featuredItems],
+  );
+
+  // 原本的“论坛热帖”本地数据已移除，改为使用 hotTopicItems（真实接口数据）
 
   // 自动轮播
   useEffect(() => {
@@ -439,12 +399,26 @@ export default function HomePage() {
           <div className="group relative h-full overflow-hidden rounded-xl border border-neutral-700/50 bg-neutral-800/40">
             {/* 轮播内容 */}
             <div className="relative h-[400px]">
+              {carouselLoading && (
+                <div className="flex h-full items-center justify-center">
+                  <div className="h-40 w-3/4 animate-pulse rounded-xl border border-neutral-700/50 bg-neutral-900/30" />
+                </div>
+              )}
+              {!!carouselError && (
+                <div className="flex h-full items-center justify-center text-sm text-red-400">
+                  加载失败：{String((carouselError as any)?.message || "请稍后重试")}
+                </div>
+              )}
+              {!carouselLoading && !carouselError && hotTorrents.length === 0 && (
+                <div className="flex h-full items-center justify-center text-sm text-neutral-400">
+                  暂无轮播数据
+                </div>
+              )}
               {hotTorrents.map((torrent, index) => (
                 <div
                   key={torrent.id}
-                  className={`absolute inset-0 transition-opacity duration-700 ${
-                    index === currentSlide ? "opacity-100" : "opacity-0"
-                  }`}
+                  className={`absolute inset-0 transition-opacity duration-700 ${index === currentSlide ? "opacity-100" : "opacity-0"
+                    }`}
                 >
                   <div
                     className="absolute inset-0 bg-cover bg-center"
@@ -520,9 +494,8 @@ export default function HomePage() {
                   <button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
-                    className={`h-2 w-2 rounded-full transition-all ${
-                      index === currentSlide ? "w-8 bg-amber-400" : "bg-white/50 hover:bg-white/70"
-                    }`}
+                    className={`h-2 w-2 rounded-full transition-all ${index === currentSlide ? "w-8 bg-amber-400" : "bg-white/50 hover:bg-white/70"
+                      }`}
                   />
                 ))}
               </div>
@@ -538,93 +511,144 @@ export default function HomePage() {
               站点统计
             </h2>
 
-            <div className="space-y-4">
-              <div className="rounded-lg border border-blue-500/30 bg-linear-to-br from-blue-500/20 to-cyan-600/20 p-4 text-center">
-                <div className="mb-1 text-3xl text-blue-400">
-                  {siteStats.totalUsers.toLocaleString()}
+            {statsLoading && (
+              <div className="space-y-4">
+                <div className="h-20 animate-pulse rounded-lg border border-neutral-700/50 bg-neutral-900/30" />
+                <div className="grid grid-cols-2 gap-3">
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={`stats-skeleton-${i}`}
+                      className="h-16 animate-pulse rounded-lg border border-neutral-700/50 bg-neutral-900/30"
+                    />
+                  ))}
                 </div>
-                <div className="text-sm text-neutral-400">注册用户</div>
               </div>
+            )}
+            {!!statsError && (
+              <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+                加载失败：{String((statsError as any)?.message || "请稍后重试")}
+              </div>
+            )}
+            {!statsLoading && !statsError && (
+              <div className="space-y-4">
+                <div className="rounded-lg border border-blue-500/30 bg-linear-to-br from-blue-500/20 to-cyan-600/20 p-4 text-center">
+                  <div className="mb-1 text-3xl text-blue-400">
+                    {siteStats.totalUsers.toLocaleString()}
+                  </div>
+                  <div className="text-sm text-neutral-400">注册用户</div>
+                </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 text-center">
-                  <div className="mb-1 text-xl text-green-400">
-                    {siteStats.torrents.toLocaleString()}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 text-center">
+                    <div className="mb-1 text-xl text-green-400">
+                      {siteStats.torrents.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-neutral-500">种子数</div>
                   </div>
-                  <div className="text-xs text-neutral-500">种子数</div>
-                </div>
-                <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 text-center">
-                  <div className="mb-1 text-xl text-purple-400">
-                    {siteStats.seeders.toLocaleString()}
+                  <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 text-center">
+                    <div className="mb-1 text-xl text-purple-400">
+                      {siteStats.seeders.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-neutral-500">做种者</div>
                   </div>
-                  <div className="text-xs text-neutral-500">做种者</div>
-                </div>
-                <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 text-center">
-                  <div className="mb-1 text-xl text-red-400">
-                    {siteStats.peers.toLocaleString()}
+                  <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 text-center">
+                    <div className="mb-1 text-xl text-red-400">
+                      {siteStats.peers.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-neutral-500">下载者</div>
                   </div>
-                  <div className="text-xs text-neutral-500">下载者</div>
-                </div>
-                <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 text-center">
-                  <div className="mb-1 text-xl text-amber-400">
-                    {siteStats.onlineUsers.toLocaleString()}
+                  <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 text-center">
+                    <div className="mb-1 text-xl text-amber-400">
+                      {siteStats.onlineUsers.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-neutral-500">在线用户</div>
                   </div>
-                  <div className="text-xs text-neutral-500">在线用户</div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* 底部三列布局 */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* 求种信息 */}
+        {/* 资源悬赏 */}
         <section className="rounded-xl border border-neutral-700/50 bg-neutral-800/40 p-5">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-lg text-white">
               <Gift className="h-5 w-5 text-amber-400" />
-              求种信息
+              资源悬赏
               <Badge className="border-amber-500/30 bg-amber-500/20 text-xs text-amber-400">
-                {requests.filter((r) => r.status === "open").length} 个待完成
+                {bountyTotal} 个进行中
               </Badge>
             </h2>
           </div>
 
           <div className="space-y-3">
-            {requests.map((request) => (
+            {bountyLoading && (
+              <>
+                {/* 加载骨架：占位卡片 */}
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={`skeleton-${i}`}
+                    className="h-16 animate-pulse rounded-lg border border-neutral-700/50 bg-neutral-900/30"
+                  />
+                ))}
+              </>
+            )}
+            {!!bountyError && (
+              <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+                加载失败：{String((bountyError as any)?.message || "请稍后重试")}
+              </div>
+            )}
+            {!bountyLoading && !bountyError && bountyTopics.length === 0 && (
+              <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-4 text-sm text-neutral-400">
+                暂无进行中的悬赏话题
+              </div>
+            )}
+            {bountyTopics.map((topic) => (
               <div
-                key={request.id}
+                key={topic.id}
                 className="group cursor-pointer rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-4 transition-all hover:border-amber-500/30"
               >
                 <div className="mb-2 flex items-start justify-between gap-3">
                   <h3 className="line-clamp-2 flex-1 text-sm text-white transition-colors group-hover:text-amber-400">
-                    {request.title}
+                    {topic.title}
                   </h3>
-                  <Badge className={getStatusColor(request.status)}>
-                    {getStatusText(request.status)}
+                  <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
+                    进行中
                   </Badge>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-neutral-500">
-                  <span className="flex items-center gap-1">
-                    <User className="h-3 w-3" />
-                    {request.requester}
-                  </span>
                   <span className="flex items-center gap-1 text-amber-400">
                     <Award className="h-3 w-3" />
-                    {request.reward}
+                    {topic.bounty?.amount ?? "-"}
                   </span>
                   <span className="flex items-center gap-1">
                     <MessageSquare className="h-3 w-3" />
-                    {request.replies}
+                    {topic.replyCount ?? 0}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Eye className="h-3 w-3" />
+                    {topic.views ?? 0}
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {request.time}
+                    {topic.updatedAt ? dayjs(topic.updatedAt).fromNow() : "-"}
                   </span>
                 </div>
               </div>
             ))}
+            {/* 查看更多：跳转到论坛最新话题页 */}
+            {!bountyLoading && !bountyError && bountyTopics.length > 0 && (
+              <div className="pt-2">
+                <Link to="/forum/latest">
+                  <Button variant="outline" className="w-full border-amber-500/30 text-amber-400">
+                    查看更多悬赏话题
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         </section>
 
@@ -638,6 +662,26 @@ export default function HomePage() {
           </div>
 
           <div className="space-y-4">
+            {featuredLoading && (
+              <>
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={`featured-skeleton-${i}`}
+                    className="h-28 animate-pulse rounded-lg border border-neutral-700/50 bg-neutral-900/30"
+                  />
+                ))}
+              </>
+            )}
+            {!!featuredError && (
+              <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+                加载失败：{String((featuredError as any)?.message || "请稍后重试")}
+              </div>
+            )}
+            {!featuredLoading && !featuredError && recommendations.length === 0 && (
+              <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-4 text-sm text-neutral-400">
+                暂无精选片单
+              </div>
+            )}
             {recommendations.map((rec) => (
               <div
                 key={rec.id}
@@ -686,7 +730,27 @@ export default function HomePage() {
           </div>
 
           <div className="space-y-3">
-            {forumPosts.map((post) => (
+            {hotLoading && (
+              <>
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={`hot-skeleton-${i}`}
+                    className="h-16 animate-pulse rounded-lg border border-neutral-700/50 bg-neutral-900/30"
+                  />
+                ))}
+              </>
+            )}
+            {!!hotError && (
+              <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+                加载失败：{String((hotError as any)?.message || "请稍后重试")}
+              </div>
+            )}
+            {!hotLoading && !hotError && hotTopicItems.length === 0 && (
+              <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-4 text-sm text-neutral-400">
+                暂无热门话题（最近1小时）
+              </div>
+            )}
+            {hotTopicItems.map((post) => (
               <div
                 key={post.id}
                 className="group cursor-pointer rounded-lg bg-neutral-900/30 p-3 transition-all hover:bg-neutral-800/50"
@@ -698,18 +762,14 @@ export default function HomePage() {
                     {post.title}
                   </h3>
                 </div>
-
-                <Badge className="mb-2 border-blue-500/30 bg-blue-500/20 text-xs text-blue-400">
-                  {post.forum}
-                </Badge>
-
                 <div className="flex items-center justify-between text-xs text-neutral-500">
                   <div className="flex items-center gap-2">
-                    <Avatar className="h-5 w-5">
-                      <AvatarImage src={post.authorAvatar} />
-                      <AvatarFallback>{post.author.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <span>{post.author}</span>
+                    {post.lastReply !== "-" && (
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {post.lastReply}
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="flex items-center gap-1">
@@ -724,6 +784,15 @@ export default function HomePage() {
                 </div>
               </div>
             ))}
+            {!hotLoading && !hotError && hotTopicItems.length > 0 && (
+              <div className="pt-2">
+                <Link to="/forum/hot">
+                  <Button variant="outline" className="w-full border-amber-500/30 text-amber-400">
+                    查看更多热帖
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         </section>
       </div>

@@ -74,10 +74,10 @@ export function ForumRoutes() {
       <Route path="topic/:topicId" element={<TopicDetail />} />
       {/* 话题详情 - 带楼层号跳转 */}
       <Route path="topic/:topicId/:postNumber" element={<TopicDetail />} />
-      {/* 分类页面（默认排序） */}
-      <Route path="category/:categoryId" element={<CategoryPage />} />
-      {/* 分类页面（带排序） */}
-      <Route path="category/:categoryId/:sortBy" element={<CategoryPage />} />
+      {/* 分类页面（默认排序） - 使用 key 作为唯一标识 */}
+      <Route path="category/:categoryKey" element={<CategoryPage />} />
+      {/* 分类页面（带排序） - 使用 key 作为唯一标识 */}
+      <Route path="category/:categoryKey/:sortBy" element={<CategoryPage />} />
       {/* 标签页面 */}
       <Route path="tag/:tagName" element={<CategoryPage />} />
       {/* 类别概览页 */}
@@ -86,9 +86,9 @@ export function ForumRoutes() {
       <Route path="tags" element={<TagsPage />} />
       {/* 新建类别 */}
       <Route path="new-category" element={<NewCategoryPage />} />
-      {/* 编辑类别 */}
-      <Route path="category/:categoryId/edit" element={<EditCategoryPage />} />
-      <Route path="category/:categoryId/edit/:section" element={<EditCategoryPage />} />
+      {/* 编辑类别 - 使用 key 作为唯一标识 */}
+      <Route path="category/:categoryKey/edit" element={<EditCategoryPage />} />
+      <Route path="category/:categoryKey/edit/:section" element={<EditCategoryPage />} />
       {/* 发布话题 */}
       <Route path="create" element={<CreateTopicPage />} />
       {/* 我的收藏 */}

@@ -14,11 +14,12 @@ import { useAccess } from "@/context/AccessContext";
 
 /**
  * 编辑类别页面
- * 路由: /forum/category/:categoryId/edit
+ * 路由: /forum/category/:categoryKey/edit
  * 权限: 仅管理员可访问
  */
 export function EditCategoryPage() {
-  const { categoryId } = useParams<{ categoryId: string }>();
+  const { categoryKey, categoryId } = useParams<{ categoryKey?: string; categoryId?: string }>();
+  const categoryKeyParam = categoryKey ?? categoryId;
   const { colors } = useForumTheme();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -41,20 +42,20 @@ export function EditCategoryPage() {
       ? (rawSection as SectionKey)
       : "basic";
 
-  // 通过 ID 获取类别数据
+  // 通过 key 获取类别数据
   const {
     data: category,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["forum", "category", "by-id", categoryId],
+    queryKey: ["forum", "category", "by-key", categoryKeyParam],
     queryFn: async () => {
-      const response = await ForumsCategoriesService.categoriesControllerFindOne({
-        id: categoryId!,
+      const response = await ForumsCategoriesService.categoriesControllerFindByKey({
+        key: categoryKeyParam!,
       });
       return response.data;
     },
-    enabled: !!categoryId,
+    enabled: !!categoryKeyParam,
     // 删除后该详情会返回 404，不属于可重试的瞬时错误
     // 为避免重复请求，这里关闭 404 的自动重试
     retry: (failureCount, error: any) => {
@@ -113,7 +114,7 @@ export function EditCategoryPage() {
           visibility: "visibility",
           advanced: "advanced",
         };
-        navigate(`/forum/category/${categoryId}/edit/${map[id]}`);
+        navigate(`/forum/category/${(category as any)?.key}/edit/${map[id]}`);
       }}
       header={
         <div className="flex items-center justify-between">
@@ -123,12 +124,12 @@ export function EditCategoryPage() {
               {(category as any)?.name}
             </span>
           </div>
-          {categoryId && (
+          {category && (
             <Button
               type="button"
               variant="none"
               size="sm"
-              onClick={() => navigate(`/forum/category/${categoryId}`)}
+              onClick={() => navigate(`/forum/category/${(category as any)?.key}`)}
               className="flex items-center gap-2 bg-[#0088CC]/10 px-3 font-medium text-[#0088CC] transition-colors hover:bg-[#0088CC]/20 dark:bg-amber-500/10 dark:text-amber-500 dark:hover:bg-amber-500/20"
               title="返回话题列表"
             >
@@ -158,13 +159,16 @@ export function EditCategoryPage() {
       )}
       <CategoryForm
         mode="edit"
-        categoryId={categoryId}
+        // 更新/删除等操作仍需使用内部 ID，这里从详情中提取
+        categoryId={String((category as any)?.id ?? "")}
         initialData={{
           name: category.name,
+          key: (category as any)?.key ?? "",
           description: category.description,
           icon: category.icon,
           color: category.color,
           allowOtherTags: (category as any)?.allowOtherTags ?? false,
+          isLocked: Boolean((category as any)?.isLocked),
         }}
         activeSection={section}
       />
@@ -187,13 +191,14 @@ export function EditCategoryPage() {
         cancelText="取消"
         confirmLoading={loading}
         onConfirm={async () => {
+          const categoryId = String((category as any)?.id ?? "");
           if (!categoryId) return;
           await execute(async () => {
             await ForumsCategoriesService.categoriesControllerRemove({ id: categoryId });
             await queryClient.invalidateQueries({ queryKey: ["forums", "categories"] });
             // 删除后不再需要此详情，直接移除缓存，避免触发不必要的 404 拉取
             await queryClient.removeQueries({
-              queryKey: ["forum", "category", "by-id", categoryId],
+              queryKey: ["forum", "category", "by-key", categoryKeyParam],
             });
           });
           setConfirmOpen(false);

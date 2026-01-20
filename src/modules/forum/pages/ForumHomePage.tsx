@@ -1,5 +1,5 @@
 import { useNavigate, useOutletContext, useLocation } from "react-router-dom";
-import { ForumList } from "../components/ForumList";
+import { TopicList } from "../components/TopicList";
 import { type ForumOutletContext } from "../layouts/ForumLayout";
 
 /**
@@ -14,7 +14,7 @@ export function ForumHomePage() {
   const sortBy = location.pathname.endsWith("/hot") ? "hot" : "latest";
 
   return (
-    <ForumList
+    <TopicList
       selectedCategory={selectedCategory}
       searchQuery={searchQuery}
       sortBy={sortBy}

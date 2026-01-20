@@ -6,31 +6,35 @@ import { useForumTheme } from "../context/ForumThemeContext";
 import { ColorPicker } from "@/modules/forum/components/ui/color-picker";
 import { IconPicker } from "@/modules/forum/components/ui/icon-picker";
 import { Button } from "@/modules/forum/components/ui/button";
+import { Input } from "@/modules/forum/components/ui/input";
+import { Textarea } from "@/modules/forum/components/ui/textarea";
+import { Checkbox } from "@/modules/forum/components/ui/checkbox";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
-import { ForumsCategoriesService, type CreateCategoryDto } from "@/api";
+import { ForumsCategoriesService, type CreateCategoryDto, type UpdateCategoryParamDto } from "@/api";
 import { useForumsTagsQuery } from "../hooks/useForumsTagsQuery";
 import { useTagGroupsQuery, ForumTagGroupWithId } from "../hooks/useTagGroups";
 
-// 将中文转为 slug（简化版，实际可能需要 pinyin 库）
-function generateSlug(name: string): string {
-  return name
+// 规范化类别 key：仅保留小写字母与短横线，并合并多余短横线
+// 说明：前端做基础校验与规范化，后端仍会进行二次校验
+function sanitizeKey(input: string): string {
+  return input
     .toLowerCase()
-    .trim()
-    .replace(/[\s_]+/g, "-") // 空格转连字符
-    .replace(/[^\w\u4e00-\u9fa5-]/g, "") // 移除特殊字符，保留中文
-    .replace(/--+/g, "-") // 合并多个连字符
-    .replace(/^-+|-+$/g, ""); // 移除首尾连字符
+    .replace(/[^a-z-]/g, "")
+    .replace(/-{2,}/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 interface CategoryFormProps {
   mode: "create" | "edit";
   initialData?: {
     name: string;
-    // slug: string; // 移除 slug
+    // key 为唯一标识字段
+    key?: string;
     description?: string;
     icon?: string;
     color?: string;
     allowOtherTags?: boolean;
+    isLocked?: boolean;
   };
   categoryId?: string; // 编辑模式下需要
   onSuccess?: (id: string) => void;
@@ -56,13 +60,15 @@ export function CategoryForm({
 
   // 表单状态
   const [name, setName] = useState(initialData?.name || "");
-  // const [slug, setSlug] = useState(initialData?.slug || ""); // Slug 不再使用
+  // 类别唯一标识 key（仅小写字母与短横线）
+  const [key, setKey] = useState<string>(initialData?.key || "");
   const [description, setDescription] = useState(initialData?.description || "");
   const [icon, setIcon] = useState(initialData?.icon || "");
   const [color, setColor] = useState(initialData?.color || "#6b7280");
   const [allowOtherTags, setAllowOtherTags] = useState<boolean>(
     initialData?.allowOtherTags ?? false,
   );
+  const [isLocked, setIsLocked] = useState<boolean>(Boolean(initialData?.isLocked));
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([]);
   const { data: tags = [] } = useForumsTagsQuery();
@@ -112,7 +118,7 @@ export function CategoryForm({
         if (tagIds.length > 0) setSelectedTagIds(Array.from(new Set(tagIds)));
         if (groupIds.length > 0) setSelectedGroupIds(Array.from(new Set(groupIds)));
         if (typeof d?.allowOtherTags === "boolean") setAllowOtherTags(d.allowOtherTags);
-      } catch {}
+      } catch { }
     };
     run();
   }, [categoryId, activeSection, mode]);
@@ -124,8 +130,11 @@ export function CategoryForm({
     successMessage: mode === "create" ? "类别创建成功" : "类别保存成功",
   });
 
-  // 表单验证
-  const isValid = name.trim().length > 0;
+  // 表单验证：名称必填，key 必须只包含小写字母与短横线
+  const keyPattern = /^[a-z-]+$/;
+  const isKeyValid = keyPattern.test(key) && key.length > 0;
+  const isValid =
+    name.trim().length > 0 && (mode === "edit" && isLocked ? true : isKeyValid);
 
   // 提交处理
   const handleSubmit = async (e: React.FormEvent) => {
@@ -134,7 +143,7 @@ export function CategoryForm({
 
     const data: CreateCategoryDto = {
       name: name.trim(),
-      slug: generateSlug(name), // 内部自动生成，不展示给用户
+      key: key,
       description: description.trim() || undefined,
       icon: icon || undefined,
       color: color || undefined,
@@ -148,20 +157,28 @@ export function CategoryForm({
 
       if (mode === "create") {
         const response = await ForumsCategoriesService.categoriesControllerCreate(data);
-        const newId = (response.data as any)?.id;
+        // 创建成功后，使用返回的 key 作为路由参数
+        const newKey = String((response.data as any)?.key || key);
+        const newId = String((response.data as any)?.id ?? newKey);
 
         // 刷新缓存
         await queryClient.invalidateQueries({ queryKey: ["forums", "categories"] });
 
         onSuccess?.(newId);
         // 跳转到编辑页面
-        navigate(`/forum/category/${newId}/edit`);
+        navigate(`/forum/category/${newKey}/edit`);
       } else {
-        // 编辑模式
-        await ForumsCategoriesService.categoriesControllerUpdate({
+        const updateData: UpdateCategoryParamDto = {
           id: categoryId!,
-          ...data,
-        });
+          name: name.trim() || undefined,
+          description: description.trim() || undefined,
+          icon: icon || undefined,
+          color: color || undefined,
+        };
+        if (!isLocked) {
+          (updateData as any).key = key;
+        }
+        await ForumsCategoriesService.categoriesControllerUpdate(updateData);
         // 追加：更新该类别的标签可见性配置
         try {
           await ForumsCategoriesService.categoriesControllerUpdateVisibility({
@@ -201,16 +218,44 @@ export function CategoryForm({
             >
               类别名称 <span className="text-red-500">*</span>
             </label>
-            <input
+            <Input
               id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="输入类别名称..."
               maxLength={50}
-              className={`h-11 w-full rounded-lg border border-gray-300 bg-white px-4 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:placeholder-neutral-500 dark:focus:border-amber-500 dark:focus:ring-amber-500/30`}
+              aria-invalid={name.trim().length === 0}
             />
-            {/* 自动生成的 slug 预览 (已隐藏) */}
+          </div>
+        )}
+
+        {activeSection === "basic" && (
+          <div>
+            <label
+              htmlFor="key"
+              className={`mb-2 block text-sm font-medium ${colors.textSecondary}`}
+            >
+              唯一标识 Key <span className="text-red-500">*</span>
+            </label>
+            <Input
+              id="key"
+              type="text"
+              value={key}
+              onChange={(e) => setKey(sanitizeKey(e.target.value))}
+              placeholder="例如：general、tech-news，仅小写字母与短横线"
+              maxLength={64}
+              aria-invalid={!isKeyValid}
+              disabled={mode === "edit" && isLocked}
+            />
+            {!isKeyValid && (
+              <div className="mt-1 text-xs text-red-500">
+                仅允许使用小写字母 a-z 与短横线 -
+              </div>
+            )}
+            {mode === "edit" && isLocked && (
+              <div className="mt-1 text-xs text-neutral-500">该类别已锁定，不能修改 Key</div>
+            )}
           </div>
         )}
 
@@ -222,14 +267,13 @@ export function CategoryForm({
             >
               类别描述
             </label>
-            <textarea
+            <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="输入类别描述（可选）..."
               rows={3}
               maxLength={500}
-              className={`w-full resize-none rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:placeholder-neutral-500 dark:focus:border-amber-500 dark:focus:ring-amber-500/30`}
             />
           </div>
         )}
@@ -261,11 +305,9 @@ export function CategoryForm({
               配置该分类允许使用的标签与标签组。启用“也允许其他标签”时，除白名单外还允许公共标签。
             </p>
             <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={allowOtherTags}
-                onChange={(e) => setAllowOtherTags(e.target.checked)}
-                className="h-4 w-4"
+                onCheckedChange={(val) => setAllowOtherTags(Boolean(val))}
               />
               <span className={colors.textSecondary}>也允许其他标签</span>
             </label>
@@ -282,15 +324,13 @@ export function CategoryForm({
                         className={`flex items-center justify-between border-b px-2 py-2 last:border-b-0 ${colors.dividerColor}`}
                       >
                         <label className="flex cursor-pointer items-center gap-3">
-                          <input
-                            type="checkbox"
+                          <Checkbox
                             checked={checked}
-                            onChange={() =>
+                            onCheckedChange={() =>
                               setSelectedTagIds((prev) =>
                                 checked ? prev.filter((x) => x !== key) : [...prev, key],
                               )
                             }
-                            className="h-4 w-4"
                           />
                           <span className={colors.textPrimary}>{t.name}</span>
                         </label>
@@ -319,15 +359,13 @@ export function CategoryForm({
                         className={`flex items-center justify-between border-b px-2 py-2 last:border-b-0 ${colors.dividerColor}`}
                       >
                         <label className="flex cursor-pointer items-center gap-3">
-                          <input
-                            type="checkbox"
+                          <Checkbox
                             checked={checked}
-                            onChange={() =>
+                            onCheckedChange={() =>
                               setSelectedGroupIds((prev) =>
                                 checked ? prev.filter((x) => x !== id) : [...prev, id],
                               )
                             }
-                            className="h-4 w-4"
                           />
                           <span className={colors.textPrimary}>{g.name}</span>
                         </label>

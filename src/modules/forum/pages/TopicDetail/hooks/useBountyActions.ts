@@ -3,14 +3,27 @@ import { ForumsTopicsService } from "@/api";
 import { SetTopicBountyDto } from "@/api/models/SetTopicBountyDto";
 import { CancelTopicBountyRequestDto } from "@/api/models/CancelTopicBountyRequestDto";
 import { AwardTopicBountyDto } from "@/api/models/AwardTopicBountyDto";
+import { IncreaseTopicBountyDto } from "@/api/models/IncreaseTopicBountyDto";
 import { customToast } from "@/hooks/useToast";
-import axios from "axios";
+import { FORUM_BOUNTY_NOT_ALLOWED } from "../../../constants/messages";
 
-export function useBountyActions(topicId: string | undefined, opts?: { onUpdated?: () => void }) {
+export function useBountyActions(
+  topicId: string | undefined,
+  opts?: { onUpdated?: () => void; categoryKey?: string },
+) {
   const onUpdated = opts?.onUpdated;
+  const categoryKey = opts?.categoryKey;
+
+  const ensureAllowed = () => {
+    if (categoryKey !== "bounty") {
+      customToast.error(FORUM_BOUNTY_NOT_ALLOWED);
+      throw new Error(FORUM_BOUNTY_NOT_ALLOWED);
+    }
+  };
 
   const setBounty = useCallback(
     async (payload: Omit<SetTopicBountyDto, "topicId"> & { topicId?: string }) => {
+      ensureAllowed();
       const body: SetTopicBountyDto = {
         topicId: payload.topicId || topicId!,
         amount: payload.amount,
@@ -22,11 +35,12 @@ export function useBountyActions(topicId: string | undefined, opts?: { onUpdated
       onUpdated?.();
       return res.data;
     },
-    [topicId, onUpdated],
+    [topicId, onUpdated, categoryKey],
   );
 
   const requestCancel = useCallback(
     async (reason?: string) => {
+      ensureAllowed();
       const body: CancelTopicBountyRequestDto = {
         topicId: topicId!,
         reason,
@@ -36,11 +50,12 @@ export function useBountyActions(topicId: string | undefined, opts?: { onUpdated
       onUpdated?.();
       return res.data;
     },
-    [topicId, onUpdated],
+    [topicId, onUpdated, categoryKey],
   );
 
   const award = useCallback(
     async (postId: string) => {
+      ensureAllowed();
       const body: AwardTopicBountyDto = {
         topicId: topicId!,
         postId,
@@ -50,21 +65,23 @@ export function useBountyActions(topicId: string | undefined, opts?: { onUpdated
       onUpdated?.();
       return res.data;
     },
-    [topicId, onUpdated],
+    [topicId, onUpdated, categoryKey],
   );
 
   const increase = useCallback(
     async (amountDelta: string) => {
-      const res = await axios.post("/forums/topics/bounty/increase", {
+      ensureAllowed();
+      const body: IncreaseTopicBountyDto = {
         topicId: topicId!,
         amountDelta,
-      });
-      const data = (res.data as any)?.data;
+      };
+      const res = await ForumsTopicsService.topicsControllerIncreaseBounty(body);
+      const data = res.data;
       customToast.success("已追加悬赏金额");
       onUpdated?.();
       return data;
     },
-    [topicId, onUpdated],
+    [topicId, onUpdated, categoryKey],
   );
 
   return { setBounty, requestCancel, award, increase };

@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   ChevronsUpDown,
@@ -27,7 +27,7 @@ import { useForumTheme } from "../../../context/ForumThemeContext";
 import { getIconByName } from "@/modules/forum/components/ui/icon-picker";
 
 interface ForumFilterBarProps {
-  selectedCategory: string; // "all" or category ID
+  selectedCategory: string; // "all" 或分类内部 ID（用于数据筛选）
   categoryName?: string; // Category name for display
   selectedTag?: string; // Tag name
   sortBy: "latest" | "hot";
@@ -62,18 +62,19 @@ export function ForumFilterBar({
     selectedCategory === "all"
       ? "所有类别"
       : categoryName ||
-        categories.find((c) => (c as any).id === selectedCategory)?.name ||
-        selectedCategory;
+      categories.find((c) => (c as any).id === selectedCategory)?.name ||
+      selectedCategory;
 
   const currentTagName = selectedTag ? selectedTag : "所有标签";
 
   // Handlers
-  const handleCategorySelect = (categoryId: string) => {
+  // 选择分类后跳转：使用 category.key 作为路由参数
+  const handleCategorySelect = (categoryKey: string) => {
     setOpenCategory(false);
-    if (categoryId === "all") {
+    if (categoryKey === "all") {
       navigate("/forum");
     } else {
-      navigate(`/forum/category/${categoryId}`);
+      navigate(`/forum/category/${categoryKey}`);
     }
   };
 
@@ -132,12 +133,12 @@ export function ForumFilterBar({
                 <CommandEmpty className={colors.textMuted}>无结果.</CommandEmpty>
                 <CommandGroup>
                   {categories.map((category) => {
-                    const isSelected = selectedCategory === (category as any).id;
+                    const isSelected = selectedCategory === String((category as any).id);
                     return (
                       <CommandItem
-                        key={(category as any).id}
+                        key={(category as any).key ?? (category as any).id}
                         value={category.name}
-                        onSelect={() => handleCategorySelect((category as any).id)}
+                        onSelect={() => handleCategorySelect(String((category as any).key))}
                         className={getMenuItemClass(isSelected)}
                       >
                         {(() => {
@@ -224,7 +225,15 @@ export function ForumFilterBar({
             className={getSortTabClass(sortBy === "latest")}
             onClick={() => {
               if (selectedCategory && selectedCategory !== "all") {
-                navigate(`/forum/category/${selectedCategory}/latest`);
+                // 这里的 selectedCategory 是内部 ID，仅用于数据筛选；
+                // 路由跳转需使用当前分类的 key
+                const currentKey =
+                  categories.find((c: any) => String(c.id) === selectedCategory)?.key || "";
+                if (currentKey) {
+                  navigate(`/forum/category/${currentKey}/latest`);
+                } else {
+                  navigate("/forum/latest");
+                }
               } else {
                 navigate("/forum/latest");
               }
@@ -237,7 +246,13 @@ export function ForumFilterBar({
             className={getSortTabClass(sortBy === "hot")}
             onClick={() => {
               if (selectedCategory && selectedCategory !== "all") {
-                navigate(`/forum/category/${selectedCategory}/hot`);
+                const currentKey =
+                  categories.find((c: any) => String(c.id) === selectedCategory)?.key || "";
+                if (currentKey) {
+                  navigate(`/forum/category/${currentKey}/hot`);
+                } else {
+                  navigate("/forum/hot");
+                }
               } else {
                 navigate("/forum/hot");
               }
@@ -256,7 +271,13 @@ export function ForumFilterBar({
             variant="default"
             size="icon"
             title="编辑类别"
-            onClick={() => navigate(`/forum/category/${selectedCategory}/edit`)}
+            onClick={() => {
+              const currentKey =
+                categories.find((c: any) => String(c.id) === selectedCategory)?.key || "";
+              if (currentKey) {
+                navigate(`/forum/category/${currentKey}/edit`);
+              }
+            }}
           >
             <Wrench className="h-4 w-4" />
           </Button>

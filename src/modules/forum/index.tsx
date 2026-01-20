@@ -10,7 +10,7 @@
  * - /forum/trending - 热门话题
  * - /forum/latest   - 最新发布
  * - /forum/topic/:topicId - 话题详情 (TopicDetailPage)
- * - /forum/category/:categoryId - 分类页面 (CategoryPage)
+ * - /forum/category/:categoryKey - 分类页面 (CategoryPage)
  * - /forum/tag/:tagName - 标签页面
  * - /forum/create   - 发布话题 (CreateTopicPage)
  *
@@ -22,7 +22,7 @@
  * - pages/TopicDetailPage.tsx - 话题详情页
  * - pages/CategoryPage.tsx    - 分类页面
  * - pages/CreateTopicPage.tsx - 发布话题页面
- * - components/               - 共享组件 (ForumList, TopicDetail 等)
+ * - components/               - 共享组件 (TopicList, TopicDetail 等)
  * - context/ForumThemeContext.tsx - 论坛主题上下文
  */
 
@@ -37,7 +37,7 @@ export { CategoryPage } from "./pages/CategoryPage";
 export { CreateTopicPage } from "./pages/CreateTopicPage";
 
 // 导出共享组件
-export { ForumList } from "./pages/ForumList";
+export { TopicList } from "./components/TopicList";
 export { TopicDetail } from "./pages/TopicDetail";
 
 // 导出主题上下文

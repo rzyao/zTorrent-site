@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type CategoryBySlugDto = {
+export type CategoryByKeyDto = {
     /**
-     * 分类唯一标识 (URL友好)
+     * 分类唯一标识 (key)
      */
-    slug: string;
+    key: string;
 };
 

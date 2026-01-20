@@ -105,7 +105,7 @@ export function CategoriesPage() {
         {categories?.map((category) => (
           <Link
             key={(category as any).id}
-            to={`/forum/category/${(category as any).id}`}
+            to={`/forum/category/${(category as any).key}`}
             className={`group relative block border-b border-gray-100 hover:bg-gray-50 dark:border-neutral-700/50 dark:hover:bg-neutral-800/40`}
           >
             <div className="grid grid-cols-1 items-center gap-4 py-4 md:grid-cols-12">
@@ -164,7 +164,7 @@ export function CategoriesPage() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        navigate(`/forum/category/${(category as any).id}/edit`);
+                        navigate(`/forum/category/${(category as any).key}/edit`);
                       }}
                       title="编辑类别"
                       aria-label="编辑类别"
