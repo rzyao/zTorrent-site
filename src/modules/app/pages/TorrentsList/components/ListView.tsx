@@ -1,6 +1,6 @@
-﻿import { Download, Upload, Star, MessageSquare, HardDrive, Calendar } from "lucide-react";
+import { Download, Upload, Star, MessageSquare, HardDrive, Calendar } from "lucide-react";
 import { DownloadButton } from "@/modules/app/components/ui/DownloadButton";
-import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
+import { CoverImage } from "@/modules/app/components/media/CoverImage";
 import { Badge } from "@/modules/app/components/ui/badge";
 import { formatSize } from "@/utils/format";
 import type { Torrent } from "../types";
@@ -14,8 +14,6 @@ interface ListViewProps {
   getCategoryLabel: (key?: string) => string | undefined;
   /** 下载触发（容器传入，调用 `useTorrentDownload`） */
   onDownload: (id: string, title: string) => void;
-  /** 根据视图模式选择封面字段 */
-  getCoverSrc: (item: Torrent) => string;
 }
 
 /**
@@ -34,7 +32,7 @@ const tagBadgeColor = (key?: string) => {
  * 职责：列表行视图（复用 `ImageWithFallback`、`Badge` 等）
  * 说明：纯UI组件，所有数据和事件通过 props 输入。
  */
-export function ListView({ items, getCategoryLabel, onDownload, getCoverSrc }: ListViewProps) {
+export function ListView({ items, getCategoryLabel, onDownload }: ListViewProps) {
   const navigate = useNavigate();
   return (
     <div className="mb-8 space-y-4">
@@ -51,13 +49,7 @@ export function ListView({ items, getCategoryLabel, onDownload, getCoverSrc }: L
           >
             {/* 缩略图 */}
             <div className="hidden-in-mobile relative h-25 w-25 shrink-0 overflow-hidden rounded">
-              <ImageWithFallback
-                src={getCoverSrc(torrent)}
-                alt={torrent.title}
-                className="h-full w-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
+              <CoverImage attachableType="torrent" attachableId={String(torrent.id)} size="thumb" />
             </div>
 
             {/* 信息区 */}

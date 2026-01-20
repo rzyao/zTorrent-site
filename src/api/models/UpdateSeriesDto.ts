@@ -44,13 +44,13 @@ export type UpdateSeriesDto = {
      */
     director?: string;
     /**
-     * 海报URL
+     * 海报附件ID
      */
-    posterUrl?: string;
+    posterAttachmentId?: string;
     /**
-     * 背景图URL
+     * 背景图附件ID
      */
-    backdropUrl?: string;
+    backdropAttachmentId?: string;
     /**
      * 演员列表
      */

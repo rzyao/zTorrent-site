@@ -1,4 +1,4 @@
-﻿import {
+import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
@@ -20,7 +20,7 @@ import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { useTorrentDetailLogic } from "./hooks/useTorrentDetailLogic";
 import { TorrentHeader } from "./components/TorrentHeader";
 import { TorrentDescription } from "./components/TorrentDescription";
-import { TorrentStills } from "./components/TorrentStills";
+import { StillsGallery } from "@/modules/app/components/media/StillsGallery";
 import { TorrentMediaInfo } from "./components/TorrentMediaInfo";
 import { TorrentFileList } from "./components/TorrentFileList";
 import { CommentsSection } from "@/modules/app/components/CommentsSection";
@@ -116,7 +116,9 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
                 <TorrentDescription description={safeData.description} />
 
                 {/* 2. Stills */}
-                <TorrentStills stills={data?.stills || []} />
+                {effectiveId && (
+                  <StillsGallery attachableType="torrent" attachableId={String(effectiveId)} />
+                )}
 
                 {/* 3. MediaInfo */}
                 <TorrentMediaInfo mediaInfo={data?.mediaInfo || ""} />

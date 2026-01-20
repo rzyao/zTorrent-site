@@ -8,10 +8,12 @@ import type { CategoriesListResponseDto } from '../models/CategoriesListResponse
 import type { CreatePlaylistDto } from '../models/CreatePlaylistDto';
 import type { DeletePlaylistDto } from '../models/DeletePlaylistDto';
 import type { DeletePlaylistResponseDto } from '../models/DeletePlaylistResponseDto';
+import type { FeaturedPlaylistsDto } from '../models/FeaturedPlaylistsDto';
 import type { GetPlaylistDto } from '../models/GetPlaylistDto';
 import type { ListPlaylistsDto } from '../models/ListPlaylistsDto';
 import type { ListPlaylistsResponseDto } from '../models/ListPlaylistsResponseDto';
 import type { PlaylistDTO } from '../models/PlaylistDTO';
+import type { PlaylistSummaryDTO } from '../models/PlaylistSummaryDTO';
 import type { UpdatePlaylistDto } from '../models/UpdatePlaylistDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -206,6 +208,35 @@ export class PlaylistsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/playlists/categories/list',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 精华片单推荐列表
+     * @param requestBody
+     * @returns any 片单列表
+     * @throws ApiError
+     */
+    public static playlistFeaturedControllerList(
+        requestBody: FeaturedPlaylistsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: Array<PlaylistSummaryDTO>;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/playlists/featured/list',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `参数错误`,
                 401: `未认证`,

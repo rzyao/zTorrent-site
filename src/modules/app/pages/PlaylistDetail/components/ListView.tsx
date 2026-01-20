@@ -1,5 +1,6 @@
 import { Calendar, Clock, Film, Star } from "lucide-react";
 import type { PlaylistFilm } from "../types";
+import { CoverImage } from "@/modules/app/components/media/CoverImage";
 
 interface ListViewProps {
   movies: PlaylistFilm[];
@@ -26,7 +27,11 @@ export function ListView({ movies, onOpenFilm }: ListViewProps) {
 
           {/* 海报 */}
           <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-lg border border-neutral-700/50 bg-neutral-800/40">
-            <img src={movie.poster} alt={movie.title} className="h-full w-full object-cover" />
+            <CoverImage
+              attachableType={movie.itemType === "series" ? "series" : "movie"}
+              attachableId={String(movie.id)}
+              size="thumb"
+            />
             <div className="absolute top-1 left-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] text-white backdrop-blur-sm">
               {movie.itemType === "series" ? "剧集" : "电影"}
             </div>

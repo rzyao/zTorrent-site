@@ -4,8 +4,5 @@
 /* eslint-disable */
 export type ReplyAttachmentInput = {
     attachmentId: string;
-    url: string;
-    name: string;
-    size: number;
 };
 

@@ -1,4 +1,4 @@
-﻿import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
+import { CoverImage } from "@/modules/app/components/media/CoverImage";
 import { Download, Upload, Star, CloudDownload, HardDrive } from "lucide-react";
 import { Button } from "@/modules/app/components/ui/button";
 import { Badge } from "@/modules/app/components/ui/badge";
@@ -9,7 +9,6 @@ import { cn } from "@/utils/cn";
 
 interface TorrentCardProps {
   id: string | number;
-  thumbnail: string;
   title: string;
   subTitle?: string;
   category: string;
@@ -28,7 +27,6 @@ interface TorrentCardProps {
 
 function TorrentCardInner({
   id,
-  thumbnail,
   title,
   subTitle,
   category,
@@ -64,12 +62,10 @@ function TorrentCardInner({
         onClick={handleCardClick}
       >
         <div className={cn("relative mb-2 aspect-2/3 overflow-hidden rounded-md", "sm:mb-3")}>
-          <ImageWithFallback
-            src={thumbnail}
-            alt={title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-            loading="lazy"
-            decoding="async"
+          <CoverImage
+            attachableType="torrent"
+            attachableId={String(id)}
+            size="medium"
           />
           <div className="absolute top-2 left-2 flex flex-col items-start gap-1.5 px-0.5">
             {/* 分类标签：采用专业媒体库风格的标签设计 */}

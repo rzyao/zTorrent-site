@@ -1,4 +1,4 @@
-﻿import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEpisodeDetail } from "./hooks/useEpisodeDetail";
 import { Button } from "@/modules/app/components/ui/button";
 import {
@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { PageContainer } from "@/modules/app/components/PageContainer";
 import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
+import { CoverImage } from "@/modules/app/components/media/CoverImage";
 import { Badge } from "@/modules/app/components/ui/badge";
 import { formatSize } from "@/utils/format";
 import { formatDate } from "@/modules/app/pages/Invite/utils";
@@ -117,7 +118,7 @@ export default function EpisodeDetailPage() {
               <div className="flex flex-col gap-8 md:flex-row">
                 {/* Series Poster */}
                 <div className="w-32 shrink-0 overflow-hidden rounded-lg border-2 border-white/10 shadow-2xl md:w-48 lg:w-56">
-                  <img src={posterUrl} alt={series.title} className="h-full w-full object-cover" />
+                  <CoverImage attachableType="series" attachableId={String(seriesId)} size="medium" />
                 </div>
 
                 {/* 信息区 */}
@@ -243,11 +244,7 @@ export default function EpisodeDetailPage() {
                           <div className="flex gap-4 p-4">
                             {/* 缩略图 */}
                             <div className="relative hidden h-28 w-28 shrink-0 overflow-hidden rounded-lg border border-white/10 md:block">
-                              <ImageWithFallback
-                                src={t.cover}
-                                alt={t.title || t.name}
-                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                              />
+                              <CoverImage attachableType="torrent" attachableId={String(t.id)} size="thumb" />
                             </div>
 
                             {/* 信息区 */}

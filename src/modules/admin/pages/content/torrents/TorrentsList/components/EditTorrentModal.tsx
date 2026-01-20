@@ -6,7 +6,8 @@ import { Input } from "@/modules/admin/components/ui/input";
 import { Label } from "@/modules/admin/components/ui/label";
 import { StandardSelect } from "@/modules/admin/components/ui/select";
 import { CategoryOption, TorrentItem } from "../types";
-import { useEffect } from "react";
+import { useEffect, useCallback, useState } from "react";
+import { ImagesService } from "@/api/services/ImagesService";
 
 const formSchema = z.object({
   id: z.string().optional(),
@@ -32,6 +33,8 @@ export const EditTorrentModal = ({
   editing,
   categories,
 }: EditTorrentModalProps) => {
+  const [posterAttachmentId, setPosterAttachmentId] = useState<string>("");
+  const [stillAttachmentIds, setStillAttachmentIds] = useState<string[]>([]);
   const {
     register,
     handleSubmit,
@@ -54,11 +57,67 @@ export const EditTorrentModal = ({
         category: editing.categoryId || "",
         description: editing.description || "",
       });
+      setPosterAttachmentId("");
+      setStillAttachmentIds([]);
     }
   }, [editing, reset]);
 
+  // 文件转 base64（主体）
+  const fileToBase64 = useCallback((file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const result = reader.result as string;
+        const base64 = result.split(",")[1];
+        resolve(base64);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  }, []);
+
+  const handleCoverChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const base64 = await fileToBase64(file);
+      const resp = await ImagesService.imagesControllerUpload({
+        content: base64,
+        filename: file.name,
+      });
+      const aid = resp.data?.attachmentId;
+      if (aid) setPosterAttachmentId(aid);
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      e.target.value = "";
+    }
+  }, [fileToBase64]);
+
+  const handleStillsChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    try {
+      const uploads = files.map(async (file) => {
+        const base64 = await fileToBase64(file);
+        return ImagesService.imagesControllerUpload({ content: base64, filename: file.name });
+      });
+      const results = await Promise.all(uploads);
+      const ids = results.map((r) => r.data?.attachmentId).filter((id): id is string => !!id);
+      if (ids.length) setStillAttachmentIds((prev) => [...prev, ...ids]);
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      e.target.value = "";
+    }
+  }, [fileToBase64]);
+
   const onSubmit = async (data: FormValues) => {
-    await onOk(data);
+    await onOk({
+      ...data,
+      coverAttachmentId: posterAttachmentId || undefined,
+      stillAttachmentIds: stillAttachmentIds.length ? stillAttachmentIds : undefined,
+    });
   };
 
   return (
@@ -100,6 +159,16 @@ export const EditTorrentModal = ({
             rows={3}
             placeholder="请输入描述"
           />
+        </div>
+
+        <div className="space-y-2">
+          <Label>封面（上传后自动绑定附件）</Label>
+          <Input type="file" accept="image/*" onChange={handleCoverChange} />
+        </div>
+
+        <div className="space-y-2">
+          <Label>剧照（可多选，按选择顺序排序）</Label>
+          <Input type="file" accept="image/*" multiple onChange={handleStillsChange} />
         </div>
       </form>
     </Modal>

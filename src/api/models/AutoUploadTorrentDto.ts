@@ -31,14 +31,14 @@ export type AutoUploadTorrentDto = {
      */
     description?: string;
     /**
-     * 封面URL或相对路径
+     * 封面附件ID
      */
-    cover?: string;
+    coverAttachmentId?: string;
     mediaInfo?: string;
     /**
-     * 剧照链接数组
+     * 剧照附件ID数组
      */
-    stills?: Array<string>;
+    stillAttachmentIds?: Array<string>;
     source?: string;
     price?: number;
     /**
@@ -69,10 +69,6 @@ export type AutoUploadTorrentDto = {
      * 是否匿名，字符串true/false
      */
     isAnonymous?: string;
-    /**
-     * 剧照缩略图数组
-     */
-    stillsThumbs?: Array<string>;
     /**
      * torrent文件的Base64内容
      */

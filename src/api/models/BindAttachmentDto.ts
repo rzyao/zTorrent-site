@@ -2,7 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type CreateAttachmentInput = {
+export type BindAttachmentDto = {
     attachmentId: string;
+    attachableType: string;
+    attachableId: string;
+    field: string;
+    sortOrder?: number;
 };
 

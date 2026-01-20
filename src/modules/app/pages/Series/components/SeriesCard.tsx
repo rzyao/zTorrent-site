@@ -1,5 +1,5 @@
-﻿import { Star, BookmarkPlus, Tv, Eye, Play } from "lucide-react";
-import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
+import { Star, BookmarkPlus, Tv, Eye, Play } from "lucide-react";
+import { CoverImage } from "@/modules/app/components/media/CoverImage";
 import { ToggleButton } from "@/modules/app/components/ui/ToggleButton";
 import type { SeriesCardData, SeriesStatus } from "../types";
 
@@ -31,16 +31,7 @@ export function SeriesCard({ series, onClick, onToggleCollect }: SeriesCardProps
     >
       {/* 海报区域 */}
       <div className="relative aspect-2/3 overflow-hidden">
-        <ImageWithFallback
-          src={
-            series.posterUrl ||
-            series.poster ||
-            "https://via.placeholder.com/300x450?text=No+Poster"
-          }
-          alt={series.title}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-          loading="lazy"
-        />
+        <CoverImage attachableType="series" attachableId={String(series.id)} size="medium" />
         <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent" />
 
         {/* 评分标签 */}

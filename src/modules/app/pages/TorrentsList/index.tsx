@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTorrentDownload } from "@/modules/app/hooks/useTorrentDownload";
 import { Toolbar } from "@/modules/app/pages/TorrentsList/components/Toolbar";
 import { GridView } from "@/modules/app/pages/TorrentsList/components/GridView";
@@ -95,19 +95,7 @@ export default function TorrentsPage() {
     }
   };
 
-  /**
-   * 保留原页面的封面选择逻辑：根据视图模式选择不同尺寸
-   * - list：优先 `ThumbCoverPath`
-   * - grid：优先 `MediumCoverPath`
-   * - 回退：`cover` 或空字符串
-   */
-  const getCoverSrc = (item: Torrent) => {
-    if (localViewMode === "list") {
-      return item?.ThumbCoverPath ?? item?.cover ?? "";
-    } else {
-      return item?.MediumCoverPath ?? item?.cover ?? "";
-    }
-  };
+  // 封面渲染改为统一附件组件，移除旧字段选择逻辑
 
   return (
     <div>
@@ -141,7 +129,6 @@ export default function TorrentsPage() {
                 items={displayTorrents}
                 getCategoryLabel={getCategoryLabel}
                 onDownload={handleDownload}
-                getCoverSrc={getCoverSrc}
               />
             )}
             {localViewMode === "list" && (
@@ -149,7 +136,6 @@ export default function TorrentsPage() {
                 items={displayTorrents}
                 getCategoryLabel={getCategoryLabel}
                 onDownload={handleDownload}
-                getCoverSrc={getCoverSrc}
               />
             )}
           </>

@@ -4,8 +4,8 @@
 /* eslint-disable */
 export type SetUserAvatarDto = {
     /**
-     * 头像 URL（由图片上传返回）
+     * 头像附件ID（由图片上传返回）
      */
-    url: string;
+    attachmentId: string;
 };
 

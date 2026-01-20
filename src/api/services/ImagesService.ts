@@ -20,6 +20,22 @@ export class ImagesService {
             content: string;
             filename: string;
             /**
+             * 可选：绑定目标类型
+             */
+            attachableType?: string;
+            /**
+             * 可选：绑定目标ID
+             */
+            attachableId?: string;
+            /**
+             * 可选：绑定语义字段
+             */
+            field?: string;
+            /**
+             * 可选：数组型字段排序
+             */
+            sortOrder?: number;
+            /**
              * 可选，实际以内容自动识别为准
              */
             mimeType?: string;
@@ -28,6 +44,7 @@ export class ImagesService {
         code?: number;
         message?: string;
         data?: {
+            attachmentId?: string;
             url?: string;
         };
         path?: string;

@@ -1,4 +1,4 @@
-﻿import { create } from 'zustand'
+import { create } from 'zustand'
 import { MediaInfoResult } from '@/modules/app/types/UploadTorrentPage'
 
 interface UploadState {
@@ -7,7 +7,9 @@ interface UploadState {
   selectedLanguages: string[]
   selectedSubtitles: string[]
   uploadedPoster: string
+  posterAttachmentId: string
   screenshots: string[]
+  stillAttachmentIds: string[]
   isAnonymous: boolean
   ptGenUrl: string
   ptGenLoading: boolean
@@ -36,9 +38,12 @@ interface UploadState {
   toggleLanguage: (lang: string) => void
   toggleSubtitle: (sub: string) => void
   setUploadedPoster: (url: string) => void
+  setPosterAttachmentId: (id: string) => void
   clearUploadedPoster: () => void
   addScreenshots: (urls: string[]) => void
+  addStillAttachmentIds: (ids: string[]) => void
   removeScreenshot: (index: number) => void
+  removeStillAttachmentId: (index: number) => void
   setIsAnonymous: (val: boolean) => void
   setTitle: (v: string) => void
   setSubTitle: (v: string) => void
@@ -68,7 +73,9 @@ const initialState = {
   selectedLanguages: [],
   selectedSubtitles: [],
   uploadedPoster: '',
+  posterAttachmentId: '',
   screenshots: [],
+  stillAttachmentIds: [],
   isAnonymous: false,
   ptGenUrl: '',
   ptGenLoading: false,
@@ -112,9 +119,12 @@ export const useUploadStore = create<UploadState>((set, get) => ({
     set({ selectedSubtitles: cur.includes(sub) ? cur.filter(v => v !== sub) : [...cur, sub] })
   },
   setUploadedPoster: (url) => set({ uploadedPoster: url }),
+  setPosterAttachmentId: (id) => set({ posterAttachmentId: id }),
   clearUploadedPoster: () => set({ uploadedPoster: '' }),
   addScreenshots: (urls) => set({ screenshots: [...get().screenshots, ...urls] }),
+  addStillAttachmentIds: (ids) => set({ stillAttachmentIds: [...get().stillAttachmentIds, ...ids] }),
   removeScreenshot: (index) => set({ screenshots: get().screenshots.filter((_, i) => i !== index) }),
+  removeStillAttachmentId: (index) => set({ stillAttachmentIds: get().stillAttachmentIds.filter((_, i) => i !== index) }),
   setIsAnonymous: (val) => set({ isAnonymous: val }),
   setTitle: (v) => set({ title: v }),
   setSubTitle: (v) => set({ subTitle: v }),

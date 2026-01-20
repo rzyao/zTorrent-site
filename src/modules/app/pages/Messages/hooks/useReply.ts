@@ -1,7 +1,6 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
-import { OpenAPI } from "@/api/core/OpenAPI";
-import { request as __request } from "@/api/core/request";
+import { ImagesService } from "@/api/services/ImagesService";
 import { unwrapResponse, extractErrorMessage } from "../utils/utils";
 
 export function useReply() {
@@ -10,16 +9,26 @@ export function useReply() {
   const [replyAttachments, setReplyAttachments] = useState<string[]>([]);
   const [replyToMessageId, setReplyToMessageId] = useState<string | null>(null);
 
+  const fileToBase64 = async (file: File) => {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const result = reader.result as string;
+        resolve(result.split(",")[1]);
+      };
+      reader.onerror = (e) => reject(e);
+    });
+  };
+
   const uploadImage = async (file: File) => {
     try {
-      const resp = await __request(OpenAPI, {
-        method: "POST",
-        url: "/images/upload",
-        formData: { file },
-        mediaType: "multipart/form-data",
+      const base64 = await fileToBase64(file);
+      const resp = await ImagesService.imagesControllerUpload({
+        content: base64,
+        filename: file.name,
       });
-      const data = unwrapResponse<{ url: string }>(resp);
-      const url = (data as any)?.url;
+      const url = resp?.data?.url;
       if (typeof url === "string" && url) {
         setReplyAttachments((prev) => [...prev, url]);
         toast.success("图片上传成功");

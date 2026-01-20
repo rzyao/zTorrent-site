@@ -16,9 +16,9 @@ export type UpdatePlaylistDto = {
      */
     description?: string;
     /**
-     * 封面图片URL
+     * 封面附件ID
      */
-    coverUrl?: string;
+    coverAttachmentId?: string;
     /**
      * 片单类型
      */

@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ImagesService } from '@/api/services/ImagesService';
 import { PtGenService } from '@/api/services/PtGenService';
@@ -30,7 +30,9 @@ export function useUploadTorrent() {
     selectedLanguages,
     selectedSubtitles,
     uploadedPoster,
+    posterAttachmentId,
     screenshots,
+    stillAttachmentIds,
     isAnonymous,
     ptGenUrl,
     ptGenLoading,
@@ -60,9 +62,12 @@ export function useUploadTorrent() {
     toggleLanguage,
     toggleSubtitle,
     setUploadedPoster,
+    setPosterAttachmentId,
     // clearUploadedPoster,
     addScreenshots,
+    addStillAttachmentIds,
     removeScreenshot,
+    removeStillAttachmentId,
     setIsAnonymous,
     setTitle,
     setSubTitle,
@@ -188,6 +193,33 @@ export function useUploadTorrent() {
     });
   }, []);
 
+  /**
+   * 将远程图片 URL 下载为 base64（仅主体部分）
+   * 用于用户输入外链时依旧走附件化上传流程
+   */
+  const fetchUrlToBase64 = useCallback(async (url: string): Promise<string> => {
+    const resp = await fetch(url);
+    const blob = await resp.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        const base64 = result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = (e) => reject(e);
+      reader.readAsDataURL(blob);
+    });
+  }, []);
+
+  /**
+   * 计算剧照 sortOrder：使用当前已存在剧照数量 + 索引
+   * 保证后端绑定顺序与前端展示一致
+   */
+  const getNextStillSortOrder = useCallback((idx: number): number => {
+    return (screenshots?.length ?? 0) + idx;
+  }, [screenshots]);
+
   /** 海报文件选择与上传 */
   const onPosterInputChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -201,14 +233,16 @@ export function useUploadTorrent() {
         mimeType: file.type,
       });
       const url = res.data?.url;
+      const aid = res.data?.attachmentId;
       if (url) setUploadedPoster(url);
+      if (aid) setPosterAttachmentId(aid);
     } catch (err: any) {
       customToast.error(err?.message || '上传海报失败');
     } finally {
       setPosterUploading(false);
       e.target.value = '';
     }
-  }, [fileToBase64, setUploadedPoster]);
+  }, [fileToBase64, setUploadedPoster, setPosterAttachmentId]);
 
   /** 剧照文件选择与上传（支持多选） */
   const onShotsInputChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,20 +250,27 @@ export function useUploadTorrent() {
     if (!files.length) return;
     try {
       setShotsUploading(true);
-      const uploads = files.map(async (file) => {
+      const uploads = files.map(async (file, idx) => {
         const base64 = await fileToBase64(file);
-        return ImagesService.imagesControllerUpload({ content: base64, filename: file.name, mimeType: file.type });
+        return ImagesService.imagesControllerUpload({
+          content: base64,
+          filename: file.name,
+          mimeType: file.type,
+          sortOrder: getNextStillSortOrder(idx),
+        });
       });
       const results = await Promise.all(uploads);
       const urls = results.map((r) => r.data?.url).filter((u): u is string => !!u);
+      const ids = results.map((r) => r.data?.attachmentId).filter((id): id is string => !!id);
       if (urls.length) addScreenshots(urls);
+      if (ids.length) addStillAttachmentIds(ids);
     } catch (err: any) {
       customToast.error(err?.message || '上传截图失败');
     } finally {
       setShotsUploading(false);
       e.target.value = '';
     }
-  }, [fileToBase64, addScreenshots]);
+  }, [fileToBase64, addScreenshots, addStillAttachmentIds]);
 
   /** 选择种子文件并进行去重校验（根据 infoHash 查询是否已存在） */
   const onTorrentInputChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -300,7 +341,7 @@ export function useUploadTorrent() {
     if (!title.trim()) errors.push('请输入标题');
     if (!subTitle.trim()) errors.push('请输入副标题');
     if (!description.trim()) errors.push('请输入简介');
-    if (!uploadedPoster.trim()) errors.push('请上传或填写海报');
+    if (!posterAttachmentId.trim()) errors.push('请上传海报并生成附件ID');
     if (errors.length) {
       customToast.error(errors[0]);
       return;
@@ -324,10 +365,10 @@ export function useUploadTorrent() {
         imdbUrl: imdbUrl || undefined,
         doubanUrl: doubanUrl || undefined,
         description: description,
-        cover: uploadedPoster,
+        coverAttachmentId: posterAttachmentId,
         mediaInfo: mediaInfoText || undefined,
         isAnonymous: isAnonymous ? 'true' : 'false',
-        stills: screenshots.length ? screenshots : undefined,
+        stillAttachmentIds: stillAttachmentIds.length ? stillAttachmentIds : undefined,
         tags: selectedTags.length ? selectedTags : undefined,
       };
       const resp = await TorrentsUploadService.torrentUploadControllerUpload(formData as any);
@@ -345,9 +386,9 @@ export function useUploadTorrent() {
       setSubmitting(false);
     }
   }, [
-    submitting, torrentFile, selectedCategory, title, subTitle, description, uploadedPoster,
+    submitting, torrentFile, selectedCategory, title, subTitle, description, posterAttachmentId,
     selectedTags, videoStandard, videoFormat, audioFormat, productionTeam, region,
-    selectedLanguages, selectedSubtitles, imdbUrl, doubanUrl, mediaInfoText, isAnonymous, screenshots,
+    selectedLanguages, selectedSubtitles, imdbUrl, doubanUrl, mediaInfoText, isAnonymous, stillAttachmentIds,
     setSubmitting, reset, navigate
   ]);
 
@@ -381,9 +422,40 @@ export function useUploadTorrent() {
   const handleClearTags = useCallback(() => setSelectedTags([]), [setSelectedTags]);
   const handleDescriptionChange = useCallback((v: string) => setDescription(v), [setDescription]);
   const handlePosterRemove = useCallback(() => setUploadedPoster(''), [setUploadedPoster]);
-  const handleRemoveScreenshot = useCallback((index: number) => removeScreenshot(index), [removeScreenshot]);
-  const handleAddScreenshotUrl = useCallback((url: string) => addScreenshots([url]), [addScreenshots]);
-  const handlePosterUrlChange = useCallback((url: string) => setUploadedPoster(url), [setUploadedPoster]);
+  const handleRemoveScreenshot = useCallback((index: number) => {
+    removeScreenshot(index);
+    removeStillAttachmentId(index);
+  }, [removeScreenshot, removeStillAttachmentId]);
+  const handleAddScreenshotUrl = useCallback(async (url: string) => {
+    try {
+      setShotsUploading(true);
+      const base64 = await fetchUrlToBase64(url);
+      const res = await ImagesService.imagesControllerUpload({ content: base64, filename: 'remote.jpg' });
+      const u = res.data?.url;
+      const aid = res.data?.attachmentId;
+      if (u) addScreenshots([u]);
+      if (aid) addStillAttachmentIds([aid]);
+    } catch (err: any) {
+      customToast.error(err?.message || '外链上传失败');
+    } finally {
+      setShotsUploading(false);
+    }
+  }, [addScreenshots, addStillAttachmentIds]);
+  const handlePosterUrlChange = useCallback(async (url: string) => {
+    try {
+      setPosterUploading(true);
+      const base64 = await fetchUrlToBase64(url);
+      const res = await ImagesService.imagesControllerUpload({ content: base64, filename: 'remote-cover.jpg' });
+      const u = res.data?.url;
+      const aid = res.data?.attachmentId;
+      if (u) setUploadedPoster(u);
+      if (aid) setPosterAttachmentId(aid);
+    } catch (err: any) {
+      customToast.error(err?.message || '外链海报上传失败');
+    } finally {
+      setPosterUploading(false);
+    }
+  }, [setUploadedPoster, setPosterAttachmentId, fetchUrlToBase64]);
   const handleCancel = useCallback(() => navigate('/torrents'), [navigate]);
 
   return useMemo(() => ({
