@@ -198,7 +198,7 @@ export function useUploadTorrent() {
    * 用于用户输入外链时依旧走附件化上传流程
    */
   const fetchUrlToBase64 = useCallback(async (url: string): Promise<string> => {
-    const resp = await fetch(url);
+    const resp = await fetch(url, { mode: 'cors', referrerPolicy: 'no-referrer' });
     const blob = await resp.blob();
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -210,6 +210,16 @@ export function useUploadTorrent() {
       reader.onerror = (e) => reject(e);
       reader.readAsDataURL(blob);
     });
+  }, []);
+
+  const isDirectImageUrl = useCallback((url: string): boolean => {
+    try {
+      const u = new URL(url);
+      const ext = u.pathname.toLowerCase();
+      return /\.(png|jpe?g|webp|gif)$/.test(ext);
+    } catch {
+      return false;
+    }
   }, []);
 
   /**
@@ -428,6 +438,10 @@ export function useUploadTorrent() {
   }, [removeScreenshot, removeStillAttachmentId]);
   const handleAddScreenshotUrl = useCallback(async (url: string) => {
     try {
+      if (!isDirectImageUrl(url)) {
+        customToast.error('请粘贴图片直链（以 .jpg/.png/.webp 结尾），或下载后上传');
+        return;
+      }
       setShotsUploading(true);
       const base64 = await fetchUrlToBase64(url);
       const res = await ImagesService.imagesControllerUpload({ content: base64, filename: 'remote.jpg' });
@@ -436,13 +450,17 @@ export function useUploadTorrent() {
       if (u) addScreenshots([u]);
       if (aid) addStillAttachmentIds([aid]);
     } catch (err: any) {
-      customToast.error(err?.message || '外链上传失败');
+      customToast.error('外链上传失败：目标站点可能禁止跨域或不是图片直链，请下载后上传或使用图片直链');
     } finally {
       setShotsUploading(false);
     }
-  }, [addScreenshots, addStillAttachmentIds]);
+  }, [addScreenshots, addStillAttachmentIds, isDirectImageUrl, fetchUrlToBase64]);
   const handlePosterUrlChange = useCallback(async (url: string) => {
     try {
+      if (!isDirectImageUrl(url)) {
+        customToast.error('请粘贴图片直链（以 .jpg/.png/.webp 结尾），或下载后上传');
+        return;
+      }
       setPosterUploading(true);
       const base64 = await fetchUrlToBase64(url);
       const res = await ImagesService.imagesControllerUpload({ content: base64, filename: 'remote-cover.jpg' });
@@ -451,11 +469,11 @@ export function useUploadTorrent() {
       if (u) setUploadedPoster(u);
       if (aid) setPosterAttachmentId(aid);
     } catch (err: any) {
-      customToast.error(err?.message || '外链海报上传失败');
+      customToast.error('外链海报上传失败：目标站点可能禁止跨域或不是图片直链，请下载后上传或使用图片直链');
     } finally {
       setPosterUploading(false);
     }
-  }, [setUploadedPoster, setPosterAttachmentId, fetchUrlToBase64]);
+  }, [setUploadedPoster, setPosterAttachmentId, fetchUrlToBase64, isDirectImageUrl]);
   const handleCancel = useCallback(() => navigate('/torrents'), [navigate]);
 
   return useMemo(() => ({

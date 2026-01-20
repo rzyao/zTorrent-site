@@ -1,4 +1,4 @@
-﻿import { Button } from '@/modules/app/components/ui/button';
+import { Button } from '@/modules/app/components/ui/button';
 import { Separator } from '@/modules/app/components/ui/separator';
 import { User } from 'lucide-react';
 import { useEffect, useRef } from 'react';
@@ -37,8 +37,8 @@ export function ProfileTab({ profileData, setProfileData }: ProfileTabProps) {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      const url = await uploadAvatar(file);
-      const data = await setAvatar(url);
+      const { url, attachmentId } = await uploadAvatar(file) as any;
+      const data = await setAvatar(attachmentId);
       const nextAvatar = (data as any)?.avatar ?? url;
       const next = { ...profileData, avatar: nextAvatar };
       setProfileData(next);

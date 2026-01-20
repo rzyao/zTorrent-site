@@ -233,14 +233,14 @@ export function useUserProfile() {
     }
   }, []);
 
-  const setAvatar = useCallback(async (url: string) => {
+  const setAvatar = useCallback(async (attachmentId: string) => {
     setIsLoading(true);
     setError(null);
     try {
       const UsersService = await getUsersService();
       const response = await UsersService.usersProfileControllerSetAvatar({
-        url: toAbsoluteUrl(url),
-      });
+        attachmentId: String(attachmentId),
+      } as any);
       const body =
         (response as any)?.code !== undefined
           ? response
@@ -284,10 +284,14 @@ export function useUserProfile() {
           ? response
           : ((response as any)?.data ?? (response as any));
       const url = body?.data?.url ?? body?.url ?? undefined;
-      if (!url) {
+      const aid = body?.data?.attachmentId ?? body?.attachmentId ?? undefined;
+      if (!url || !aid) {
         throw new Error("上传失败");
       }
-      return toAbsoluteUrl(String(url));
+      return {
+        url: toAbsoluteUrl(String(url)),
+        attachmentId: String(aid),
+      };
     } catch (err: any) {
       const msg = extractErrorMessage(err, "上传头像失败");
       setError(msg);
