@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+﻿import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { PlaylistsService } from "@/api/services/PlaylistsService";
 import { PlaylistsReviewService } from "@/api/services/PlaylistsReviewService";
@@ -224,7 +224,7 @@ export const usePlaylistsLogic = () => {
           <div className="flex items-center gap-1">
             <Button
               variant="link"
-              size="sm"
+              size="small"
               className="text-[14px]"
               onClick={() => openDetail(record.id)}
             >
@@ -232,7 +232,7 @@ export const usePlaylistsLogic = () => {
             </Button>
             <Button
               variant="link"
-              size="sm"
+              size="small"
               danger
               className="text-[14px]"
               onClick={() => openDeleteConfirm(record)}

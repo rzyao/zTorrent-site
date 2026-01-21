@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+﻿import { useState, useMemo, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { LevelsService } from "@/api/services/LevelsService";
 import { CreateLevelDto } from "@/api/models/CreateLevelDto";
@@ -156,12 +156,12 @@ export const useLevelsLogic = () => {
         width: 250,
         render: (_: any, record: LevelItem) => (
           <div className="flex gap-2">
-            <Button variant="link" size="sm" onClick={() => handleEdit(record)}>
+            <Button variant="link" size="small" onClick={() => handleEdit(record)}>
               编辑
             </Button>
             <Button
               variant="link"
-              size="sm"
+              size="small"
               onClick={() => {
                 setDetailData(record);
                 setDetailOpen(true);
@@ -171,7 +171,7 @@ export const useLevelsLogic = () => {
             </Button>
             <Button
               variant="link"
-              size="sm"
+              size="small"
               onClick={() => {
                 setPermTarget(record);
                 setPermOpen(true);
@@ -179,7 +179,7 @@ export const useLevelsLogic = () => {
             >
               权限
             </Button>
-            <Button variant="link" size="sm" danger onClick={() => handleDelete(record.id)}>
+            <Button variant="link" size="small" danger onClick={() => handleDelete(record.id)}>
               删除
             </Button>
           </div>

@@ -1,4 +1,4 @@
-import { Modal } from "@/modules/admin/components/ui/modal";
+﻿import { Modal } from "@/modules/admin/components/ui/modal";
 import { Input } from "@/modules/admin/components/ui/input";
 import { StandardSelect as Select } from "@/modules/admin/components/ui/select";
 import { Switch } from "@/modules/admin/components/ui/switch";

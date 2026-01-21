@@ -1,4 +1,4 @@
-import type { RecommendationConfigDto } from "@/api/models/RecommendationConfigDto";
+﻿import type { RecommendationConfigDto } from "@/api/models/RecommendationConfigDto";
 
 export type RecommendationItem = RecommendationConfigDto;
 

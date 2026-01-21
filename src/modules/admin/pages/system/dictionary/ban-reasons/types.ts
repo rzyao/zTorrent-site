@@ -1,4 +1,4 @@
-import { CreatePunishmentDictDto } from "@/api/models/CreatePunishmentDictDto";
+﻿import { CreatePunishmentDictDto } from "@/api/models/CreatePunishmentDictDto";
 
 /**
  * 封禁原因字典项类型

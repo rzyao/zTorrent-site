@@ -1,4 +1,4 @@
-export type SettingType =
+﻿export type SettingType =
   | "string"
   | "number"
   | "boolean"

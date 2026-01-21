@@ -1,4 +1,4 @@
-import { DataTable } from "@/modules/admin/components/ui/data-table";
+﻿import { DataTable } from "@/modules/admin/components/ui/data-table";
 import { Button } from "@/modules/admin/components/ui/button";
 import { Plus, Search } from "lucide-react";
 import { useTicketsLogic } from "./useTicketsLogic";

@@ -1,4 +1,4 @@
-import { AdvancedRuleDto } from "@/api/models/AdvancedRuleDto";
+﻿import { AdvancedRuleDto } from "@/api/models/AdvancedRuleDto";
 
 export type AdvField =
   | "username"

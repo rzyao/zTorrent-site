@@ -1,4 +1,4 @@
-import { useRef } from "react";
+﻿import { useRef } from "react";
 import { Button } from "@/modules/admin/components/ui/button";
 import { Upload as UploadIcon, FileJson, Trash2, Play } from "lucide-react";
 import { Textarea } from "@/modules/admin/components/ui/textarea";
@@ -102,7 +102,7 @@ export function ImportPanel({
 
         <Button
           variant="primary" // Changed to primary for main action
-          size="lg"
+          size="large"
           className="w-full"
           onClick={onSubmit}
           loading={loading}

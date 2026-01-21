@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { BonusService, CancelablePromise } from "@/api";
 import type { BonusConfigDto, SimulationRequestDto, SimulationResultDto } from "@/api";

@@ -1,11 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { ForumsReportsService } from "@/api/services/ForumsReportsService";
 import { QueryReportDto } from "@/api/models/QueryReportDto";
 import { HandleReportDto } from "@/api/models/HandleReportDto";
 
 export type ReportStatus = "pending" | "resolved" | "rejected" | "all";
 
-export function useForumReports(params: { status?: ReportStatus; keyword?: string; page?: number; limit?: number }) {
+export function useForumReports(params: {
+  status?: ReportStatus;
+  keyword?: string;
+  page?: number;
+  limit?: number;
+}) {
   const page = params.page ?? 1;
   const limit = params.limit ?? 20;
   const status = params.status && params.status !== "all" ? params.status : undefined;
@@ -15,7 +20,7 @@ export function useForumReports(params: { status?: ReportStatus; keyword?: strin
     queryFn: async () => {
       const body: QueryReportDto = { page, limit, status: status as any };
       const resp = await ForumsReportsService.reportsControllerFindAll(body);
-      const r: any = (resp as any)?.code !== undefined ? resp : (resp as any)?.data ?? resp;
+      const r: any = (resp as any)?.code !== undefined ? resp : ((resp as any)?.data ?? resp);
       const data: any = r?.data ?? r;
       const items = (data?.items ?? []).map((it: any, idx: number) => ({
         id: String(it?.id ?? it?.reportId ?? `${it?.topicId ?? ""}-${it?.postId ?? ""}-${idx}`),
@@ -25,9 +30,14 @@ export function useForumReports(params: { status?: ReportStatus; keyword?: strin
         status: it?.status,
         handlerNote: it?.handlerNote ?? null,
       }));
-      return { items, total: Number(data?.total ?? 0), page: Number(data?.page ?? page), limit: Number(data?.limit ?? limit) };
+      return {
+        items,
+        total: Number(data?.total ?? 0),
+        page: Number(data?.page ?? page),
+        limit: Number(data?.limit ?? limit),
+      };
     },
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 
   const handle = async (
@@ -37,7 +47,8 @@ export function useForumReports(params: { status?: ReportStatus; keyword?: strin
   ) => {
     const payload: HandleReportDto = {
       reportId,
-      status: action === "resolve" ? HandleReportDto.status.RESOLVED : HandleReportDto.status.REJECTED,
+      status:
+        action === "resolve" ? HandleReportDto.status.RESOLVED : HandleReportDto.status.REJECTED,
       handlerNote: options?.note,
       deleteContent: options?.deleteContent,
       lockTopic: options?.lockTopic,
@@ -59,4 +70,3 @@ export function useForumReports(params: { status?: ReportStatus; keyword?: strin
     handle,
   };
 }
-

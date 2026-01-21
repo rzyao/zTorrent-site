@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+﻿import { useState, useEffect, useMemo, useCallback } from "react";
 import { PunishmentDictsService } from "@/api/services/PunishmentDictsService";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
 import { UNBAN_REASON_CATEGORY, DEFAULT_QUERY, UnbanReason, UnbanReasonQuery } from "./types";
@@ -144,7 +144,7 @@ export const useUnbanReasonsLogic = () => {
           <div className="flex items-center justify-center gap-2">
             <Button
               variant="link"
-              size="sm"
+              size="small"
               className="text-[14px]"
               onClick={() => {
                 setEditRecord(record);
@@ -155,7 +155,7 @@ export const useUnbanReasonsLogic = () => {
             </Button>
             <Button
               variant="link"
-              size="sm"
+              size="small"
               danger
               className="text-[14px]"
               onClick={() => openDeleteConfirm(record)}

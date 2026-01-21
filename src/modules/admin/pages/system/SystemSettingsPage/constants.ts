@@ -1,4 +1,4 @@
-import type { SettingGroupInfo, SettingType } from "./types";
+﻿import type { SettingGroupInfo, SettingType } from "./types";
 
 /**
  * 静态分组元信息：用于左侧分组导航与文案说明

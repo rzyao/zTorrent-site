@@ -1,4 +1,4 @@
-import { StoreItem } from "@/modules/admin/types/store";
+﻿import { StoreItem } from "@/modules/admin/types/store";
 
 export interface StoreItemsQuery {
   searchText: string;

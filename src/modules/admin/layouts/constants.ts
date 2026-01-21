@@ -1,4 +1,4 @@
-export const SECTION_NAME_MAP: Record<string, string> = {
+﻿export const SECTION_NAME_MAP: Record<string, string> = {
   "/": "首页",
   "/system": "系统设置",
   "/recommendation-config": "推荐配置",

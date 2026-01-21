@@ -1,4 +1,4 @@
-type Props = {
+﻿type Props = {
   view: any;
   fmt: (n: number) => string;
   userDays: number;

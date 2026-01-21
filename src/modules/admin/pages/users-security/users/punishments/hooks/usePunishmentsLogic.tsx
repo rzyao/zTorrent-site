@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+﻿import { useState, useEffect, useMemo, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { PunishmentsService } from "@/api/services/PunishmentsService";
@@ -228,7 +228,7 @@ export const usePunishmentsLogic = () => {
         render: (_, record) => (
           <Button
             variant="link"
-            size="sm"
+            size="small"
             disabled={record.recordSource !== "active" || !!record.revoked}
             onClick={() => {
               setRevokeRecord(record);

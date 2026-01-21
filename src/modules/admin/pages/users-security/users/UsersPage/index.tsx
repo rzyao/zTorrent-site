@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Search } from "lucide-react";
 import { DataTable } from "@/modules/admin/components/ui/data-table";
 import { Button } from "@/modules/admin/components/ui/button";
@@ -83,14 +83,14 @@ const UsersPage: React.FC = () => {
                 }}
               />
               <Button
-                variant="ghost"
+                variant="text"
                 className="h-8 rounded-none border-l px-3 text-neutral-500 hover:text-blue-600"
                 onClick={handleSearch}
               >
                 搜索
               </Button>
             </div>
-            <Button variant="outline" className="h-8" onClick={() => setAdvOpen(true)}>
+            <Button variant="default" className="h-8" onClick={() => setAdvOpen(true)}>
               高级搜索
             </Button>
             <Button

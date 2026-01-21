@@ -194,8 +194,8 @@ export function useEditSeries() {
       title: seriesForm.title,
       originalTitle: seriesForm.originalTitle,
       year: seriesForm.year,
-      posterUrl: seriesForm.poster, // Map poster -> posterUrl
-      ...(seriesForm.backdrop ? { backdropUrl: seriesForm.backdrop } : {}),
+      posterAttachmentId: seriesForm.poster, // Map poster -> posterAttachmentId
+      ...(seriesForm.backdrop ? { backdropAttachmentId: seriesForm.backdrop } : {}),
       categories: seriesForm.categories,
       genres: seriesForm.genres,
       rating: seriesForm.rating,

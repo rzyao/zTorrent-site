@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 将字节数格式化为人类可读的单位（B、KB、MB、GB、TB）
  * @param bytes 字节数
  * @param decimals 保留小数位数，默认 2

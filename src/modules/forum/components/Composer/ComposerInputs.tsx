@@ -145,7 +145,7 @@ export const ComposerInputs: React.FC = () => {
             <SelectContent className={cn(colors.borderColor, colors.inputBg)}>
               {categories.map((cat) => (
                 <SelectItem
-                  key={cat.slug}
+                  key={cat.key}
                   value={String((cat as any).id)}
                   className={cn(
                     colors.textSecondary,
@@ -205,17 +205,17 @@ export const ComposerInputs: React.FC = () => {
             </SelectTrigger>
             <SelectContent className="border-gray-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
               {selectableTags.map((tag) => (
-                  <SelectItem
-                    key={tag.name}
-                    value={tag.name}
-                    className="text-gray-700 focus:bg-gray-100 focus:text-gray-900 dark:text-neutral-200 dark:focus:bg-neutral-700 dark:focus:text-white"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Tag className="h-3 w-3 text-neutral-400" />
-                      <span>{tag.name}</span>
-                    </div>
-                  </SelectItem>
-                ))}
+                <SelectItem
+                  key={tag.name}
+                  value={tag.name}
+                  className="text-gray-700 focus:bg-gray-100 focus:text-gray-900 dark:text-neutral-200 dark:focus:bg-neutral-700 dark:focus:text-white"
+                >
+                  <div className="flex items-center gap-2">
+                    <Tag className="h-3 w-3 text-neutral-400" />
+                    <span>{tag.name}</span>
+                  </div>
+                </SelectItem>
+              ))}
               {selectableTags.length === 0 && (
                 <div className="px-2 py-1.5 text-xs text-neutral-500">没有更多标签</div>
               )}

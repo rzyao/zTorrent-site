@@ -1,4 +1,4 @@
-import type { ListTicketsDto } from "@/api/models/ListTicketsDto";
+﻿import type { ListTicketsDto } from "@/api/models/ListTicketsDto";
 
 export type TicketItem = any; // API response items
 

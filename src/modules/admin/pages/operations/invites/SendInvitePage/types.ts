@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 发送邀请表单数据
  */
 export interface SendInviteFormData {

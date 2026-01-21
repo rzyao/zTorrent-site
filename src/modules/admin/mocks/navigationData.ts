@@ -1,4 +1,4 @@
-import type { NavigationItem } from "../types/navigation";
+﻿import type { NavigationItem } from "../types/navigation";
 
 export const mockNavigationData: NavigationItem[] = [
   {

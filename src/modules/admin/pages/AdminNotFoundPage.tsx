@@ -1,4 +1,4 @@
-import { Button } from "@/modules/admin/components/ui/button";
+﻿import { Button } from "@/modules/admin/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminNotFoundPage() {

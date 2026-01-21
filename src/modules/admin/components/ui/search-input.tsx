@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Search as SearchIcon } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { Input, InputProps } from "./input";
@@ -68,7 +68,6 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
           <Button
             type="button"
             variant="primary"
-            size="md"
             className={cn(
               "h-8 rounded-l-none px-3 transition-all duration-200",
               focused && "ring-l-0 ring-2 ring-[rgba(5,145,255,0.1)]",

@@ -1,4 +1,4 @@
-type Props = {
+﻿type Props = {
   changes: Record<string, boolean>;
   configError: string | null;
   loadingConfig: boolean;

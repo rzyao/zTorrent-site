@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+﻿import { useState, useEffect, useMemo, useCallback } from "react";
 import { PunishmentDictsService } from "@/api/services/PunishmentDictsService";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
 import { BAN_DAY_CATEGORY, DEFAULT_QUERY, BanDay, BanDayQuery } from "./types";
@@ -150,7 +150,7 @@ export const useBanDaysLogic = () => {
           <div className="flex items-center justify-center gap-2">
             <Button
               variant="link"
-              size="sm"
+              size="small"
               className="text-[14px]"
               onClick={() => {
                 setEditRecord(record);
@@ -161,7 +161,7 @@ export const useBanDaysLogic = () => {
             </Button>
             <Button
               variant="link"
-              size="sm"
+              size="small"
               danger
               className="text-[14px]"
               onClick={() => openDeleteConfirm(record)}

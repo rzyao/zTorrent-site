@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { AdvancedRuleDto } from "@/api/models/AdvancedRuleDto";
 import { Button } from "@/modules/admin/components/ui/button";
 import { Input } from "@/modules/admin/components/ui/input";
@@ -375,7 +375,7 @@ export default function AdvancedQueryBuilder({
               <Button
                 variant="text"
                 danger
-                size="sm"
+                size="small"
                 className="h-9 w-9 p-0"
                 onClick={() => removeRule(idx)}
               >

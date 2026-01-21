@@ -29,7 +29,7 @@ function DeleteButton({
 
   return (
     <>
-      <Button variant="link" size="sm" danger onClick={() => setConfirmOpen(true)}>
+      <Button variant="link" size="small" danger onClick={() => setConfirmOpen(true)}>
         删除
       </Button>
       <ConfirmModal
@@ -118,10 +118,10 @@ export const getCategoryColumns = (props: GetCategoryColumnsProps): TreeColumn<C
       align: "center",
       render: (_: any, record: CategoryItem) => (
         <div className="flex items-center justify-center gap-1">
-          <Button variant="link" size="sm" onClick={() => props.onEdit(record)}>
+          <Button variant="link" size="small" onClick={() => props.onEdit(record)}>
             编辑
           </Button>
-          <Button variant="link" size="sm" onClick={() => props.onAddSub(record.id!)}>
+          <Button variant="link" size="small" onClick={() => props.onAddSub(record.id!)}>
             子类
           </Button>
           <DeleteButton record={record} onRemove={props.onRemove} />

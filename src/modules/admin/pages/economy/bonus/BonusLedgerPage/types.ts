@@ -1,4 +1,4 @@
-export interface UserBonusLedger {
+﻿export interface UserBonusLedger {
   id?: string | number;
   userId: string;
   username?: string;

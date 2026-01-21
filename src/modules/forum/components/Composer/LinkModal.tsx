@@ -69,7 +69,7 @@ export const LinkModal: React.FC<LinkModalProps> = ({
             />
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="default" onClick={onClose}>
               取消
             </Button>
             <Button type="submit" disabled={!url}>

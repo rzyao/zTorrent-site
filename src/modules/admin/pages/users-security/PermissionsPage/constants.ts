@@ -1,4 +1,4 @@
-import { PermissionType } from "./types";
+﻿import { PermissionType } from "./types";
 
 export const PERMISSION_TYPE_OPTIONS = [
   { label: "页面", value: "page", description: "路由页面访问控制" },

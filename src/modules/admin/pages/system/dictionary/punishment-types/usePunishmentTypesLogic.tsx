@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+﻿import { useState, useEffect, useMemo, useCallback } from "react";
 import { PunishmentDictsService } from "@/api/services/PunishmentDictsService";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
 import {
@@ -131,7 +131,7 @@ export const usePunishmentTypesLogic = () => {
           <div className="flex items-center justify-center gap-2">
             <Button
               variant="link"
-              size="sm"
+              size="small"
               className="text-[14px]"
               onClick={() => {
                 setEditRecord(record);
@@ -142,7 +142,7 @@ export const usePunishmentTypesLogic = () => {
             </Button>
             <Button
               variant="link"
-              size="sm"
+              size="small"
               danger
               className="text-[14px]"
               onClick={() => {

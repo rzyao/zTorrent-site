@@ -1,4 +1,4 @@
-import { StoreItem } from "@/modules/admin/types/store";
+﻿import { StoreItem } from "@/modules/admin/types/store";
 import { formatDate } from "@/modules/admin/utils/formatDate";
 import { Column } from "@/modules/admin/components/ui/data-table";
 import { Button } from "@/modules/admin/components/ui/button";
@@ -52,12 +52,12 @@ export function getColumns({
       align: "center",
       render: (_, record: StoreItem) => (
         <div className="flex items-center justify-center space-x-2">
-          <Button variant="link" size="sm" className="h-auto p-0" onClick={() => openEdit(record)}>
+          <Button variant="link" size="small" className="h-auto p-0" onClick={() => openEdit(record)}>
             编辑
           </Button>
           <Button
             variant="link"
-            size="sm"
+            size="small"
             danger
             className="h-auto p-0"
             onClick={() => handleDelete(record)}
@@ -67,7 +67,7 @@ export function getColumns({
           {record.status === "active" ? (
             <Button
               variant="link"
-              size="sm"
+              size="small"
               className="h-auto p-0"
               onClick={() => handleToggle(record, false)}
             >
@@ -76,7 +76,7 @@ export function getColumns({
           ) : (
             <Button
               variant="link"
-              size="sm"
+              size="small"
               className="h-auto p-0"
               onClick={() => handleToggle(record, true)}
             >

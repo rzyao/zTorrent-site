@@ -1,4 +1,4 @@
-import type { BatchItem } from "../types";
+﻿import type { BatchItem } from "../types";
 
 export function parseCsv(text: string): BatchItem[] {
   const lines = text.trim().split(/\r?\n/).filter(Boolean);

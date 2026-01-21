@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+﻿import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useLocation } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -99,7 +99,7 @@ export function useBonusLedgerLogic() {
         render: (_, record) => (
           <Button
             variant="default"
-            size="sm"
+            size="small"
             onClick={() => handleReverse(record)}
             disabled={record.type === "ADMIN_REVERSE"}
           >

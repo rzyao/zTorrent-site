@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 统计行数据
  */
 export interface StatisticRow {

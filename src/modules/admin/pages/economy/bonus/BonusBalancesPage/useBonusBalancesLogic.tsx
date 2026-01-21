@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+﻿import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { BonusAdminService } from "@/api/services/BonusAdminService";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
@@ -194,23 +194,23 @@ export const useBonusBalancesLogic = () => {
         title: "操作",
         render: (_, record) => (
           <div className="flex items-center gap-2">
-            <Button variant="link" size="sm" onClick={() => handleViewLedger(record.userId)}>
+            <Button variant="link" size="small" onClick={() => handleViewLedger(record.userId)}>
               流水
             </Button>
-            <Button variant="link" size="sm" onClick={() => openAdjust(record)}>
+            <Button variant="link" size="small" onClick={() => openAdjust(record)}>
               调账
             </Button>
             {record.isFrozen === 1 ? (
               <Button
                 variant="link"
-                size="sm"
+                size="small"
                 className="text-green-600 hover:text-green-700"
                 onClick={() => openUnfreezeConfirm(record)}
               >
                 解冻
               </Button>
             ) : (
-              <Button variant="link" size="sm" danger onClick={() => openFreezeConfirm(record)}>
+              <Button variant="link" size="small" danger onClick={() => openFreezeConfirm(record)}>
                 冻结
               </Button>
             )}

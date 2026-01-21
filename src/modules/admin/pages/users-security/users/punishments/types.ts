@@ -1,4 +1,4 @@
-import { AdvancedRuleDto } from "@/api/models/AdvancedRuleDto";
+﻿import { AdvancedRuleDto } from "@/api/models/AdvancedRuleDto";
 import { ListPunishmentRecordsDto } from "@/api/models/ListPunishmentRecordsDto";
 
 /**

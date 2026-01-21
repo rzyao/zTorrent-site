@@ -1,4 +1,4 @@
-import { useRef } from "react";
+﻿import { useRef } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { ReplyFormValues, TicketAttachment } from "../hooks/useTicketDetailLogic";
 import { Button } from "@/modules/admin/components/ui/button";
@@ -83,7 +83,7 @@ export function TicketReplyForm({
               <Button
                 type="button"
                 variant="default"
-                size="sm"
+                size="small"
                 className="w-fit"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={disabled}

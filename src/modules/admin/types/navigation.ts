@@ -1,4 +1,4 @@
-export interface NavigationItem {
+﻿export interface NavigationItem {
   id: string;
   platform: 'desktop' | 'mobile'; // Enum based on PRD/Plan usually
   label: string;

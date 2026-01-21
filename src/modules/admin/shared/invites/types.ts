@@ -1,4 +1,4 @@
-export type InviteStatus = "sent" | "accepted" | "expired" | "revoked";
+﻿export type InviteStatus = "sent" | "accepted" | "expired" | "revoked";
 
 export type InviteType = "private-invitation" | "office-invitation";
 

@@ -1,4 +1,4 @@
-import type { Column } from "@/modules/admin/components/ui/data-table";
+﻿import type { Column } from "@/modules/admin/components/ui/data-table";
 import type { StatisticRow } from "./types";
 
 /**

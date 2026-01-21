@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+﻿import { useRef, useState } from 'react'
 import { BonusService, CancelablePromise } from '@/api'
 import type { SimulationRequestDto, SimulationResultDto } from '@/api'
 

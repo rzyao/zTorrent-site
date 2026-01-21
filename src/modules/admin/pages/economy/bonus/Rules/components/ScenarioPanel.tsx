@@ -1,4 +1,4 @@
-type Props = {
+﻿type Props = {
   userDays: number;
   userCount: number;
   avgSize: number;

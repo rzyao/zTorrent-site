@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+﻿import { useRef, useEffect, useState } from "react";
 
 export function useTableScroll(offset = 60) {
   const containerRef = useRef<HTMLDivElement>(null);

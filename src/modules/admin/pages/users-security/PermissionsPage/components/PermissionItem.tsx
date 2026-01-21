@@ -1,4 +1,4 @@
-import { Button } from "@/modules/admin/components/ui/button";
+﻿import { Button } from "@/modules/admin/components/ui/button";
 import { Tag } from "@/modules/admin/components/ui/tag";
 import { Plus, Edit2, Trash2, ChevronDown, ChevronRight, FolderOpen } from "lucide-react";
 import { Permission } from "../types";
@@ -41,7 +41,7 @@ export function PermissionItem({
           hasChildren ? (
             <Button
               variant="text"
-              size="sm"
+              size="small"
               className="text-muted-foreground flex h-6 w-6 items-center justify-center p-0"
               onClick={() => onToggleExpand(permission.id)}
             >
@@ -77,15 +77,15 @@ export function PermissionItem({
       </div>
 
       <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-        <Button variant="link" size="sm" onClick={() => onAdd(permission)}>
+        <Button variant="link" size="small" onClick={() => onAdd(permission)}>
           <Plus className="mr-1 h-3 w-3" />
           子权限
         </Button>
-        <Button variant="link" size="sm" onClick={() => onEdit(permission)}>
+        <Button variant="link" size="small" onClick={() => onEdit(permission)}>
           <Edit2 className="mr-1 h-3 w-3" />
           编辑
         </Button>
-        <Button variant="link" size="sm" danger onClick={() => onDelete(permission.id)}>
+        <Button variant="link" size="small" danger onClick={() => onDelete(permission.id)}>
           <Trash2 className="mr-1 h-3 w-3" />
           删除
         </Button>

@@ -145,7 +145,7 @@ export function MovieCategoriesView() {
         <div className="flex items-center gap-1">
           <Button
             variant="link"
-            size="sm"
+            size="small"
             className="text-sm"
             onClick={() => {
               setEditingItem(record);
@@ -157,7 +157,7 @@ export function MovieCategoriesView() {
           </Button>
           <Button
             variant="text"
-            size="sm"
+            size="small"
             className="text-error hover:bg-error/5 hover:text-error-hover text-sm"
             onClick={() => handleRemove(record.id)}
           >

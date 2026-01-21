@@ -1,4 +1,4 @@
-import { CreatePunishmentDictDto } from "@/api/models/CreatePunishmentDictDto";
+﻿import { CreatePunishmentDictDto } from "@/api/models/CreatePunishmentDictDto";
 
 export interface UnbanReason extends Omit<CreatePunishmentDictDto, "category"> {
   id: string;

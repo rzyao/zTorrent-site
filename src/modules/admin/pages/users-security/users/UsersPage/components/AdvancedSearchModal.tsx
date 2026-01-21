@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Modal } from "@/modules/admin/components/ui/modal";
 import AdvancedQueryBuilder from "@/modules/admin/components/AdvancedQueryBuilder";
 import type { AdvRule } from "../types";

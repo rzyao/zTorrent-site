@@ -1,4 +1,4 @@
-export const TORRENT_FIELD_OPTIONS = [
+﻿export const TORRENT_FIELD_OPTIONS = [
   { label: "标题", value: "title", type: "text" as const },
   { label: "发布者ID", value: "uploaderId", type: "text" as const },
   { label: "大小", value: "size", type: "text" as const },

@@ -1,4 +1,4 @@
-export type ISODateString = string
+﻿export type ISODateString = string
 
 export function isISODateString(value: unknown): value is ISODateString {
   if (typeof value !== 'string') return false

@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+﻿import { useState, useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { StoreService } from "@/api/services/StoreService";
@@ -141,7 +141,7 @@ export function useStoreOrdersLogic() {
         key: "action",
         width: 160,
         render: (_, r) => (
-          <Button variant="link" size="sm" onClick={() => setDetailOrder(r)}>
+          <Button variant="link" size="small" onClick={() => setDetailOrder(r)}>
             交付详情
           </Button>
         ),

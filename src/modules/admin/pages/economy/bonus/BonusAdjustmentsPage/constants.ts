@@ -1,4 +1,4 @@
-import type { Column } from "@/modules/admin/components/ui/data-table";
+﻿import type { Column } from "@/modules/admin/components/ui/data-table";
 import type { BonusAdjustment } from "@/modules/admin/types/store";
 import { formatDate } from "@/modules/admin/utils/formatDate";
 

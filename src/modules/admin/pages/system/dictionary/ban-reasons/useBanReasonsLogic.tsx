@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+﻿import { useState, useEffect, useMemo, useCallback } from "react";
 import { PunishmentDictsService } from "@/api/services/PunishmentDictsService";
 import { useAsyncAction } from "@/modules/app/hooks/useAsyncAction";
 import { BAN_REASON_CATEGORY, DEFAULT_QUERY, BanReason, BanReasonQuery } from "./types";
@@ -127,7 +127,7 @@ export const useBanReasonsLogic = () => {
           <div className="flex items-center justify-center gap-2">
             <Button
               variant="link"
-              size="sm"
+              size="small"
               className="text-[14px]"
               onClick={() => {
                 setEditRecord(record);
@@ -138,7 +138,7 @@ export const useBanReasonsLogic = () => {
             </Button>
             <Button
               variant="link"
-              size="sm"
+              size="small"
               danger
               className="text-[14px]"
               onClick={() => {

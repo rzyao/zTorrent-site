@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+﻿import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AdminLayout } from "./layouts/AdminLayout";
 import { AppToaster } from "@/modules/app/components/ui/sonner";
 import { GlobalLoader } from "@/modules/app/components/ui/GlobalLoader";

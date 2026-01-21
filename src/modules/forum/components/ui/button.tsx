@@ -24,6 +24,7 @@ const buttonVariants = cva(
           "text-neutral-900 hover:bg-red-50 hover:text-red-600 focus-visible:ring-red-500 dark:text-neutral-100 dark:hover:bg-red-900/20 dark:hover:text-red-400",
 
         // No style
+        ghost: "hover:bg-neutral-100 dark:hover:bg-neutral-800",
         none: "",
       },
       size: {

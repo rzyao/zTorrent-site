@@ -1,4 +1,4 @@
-export type StoreItem = {
+﻿export type StoreItem = {
   id?: string
   key: string
   title: string

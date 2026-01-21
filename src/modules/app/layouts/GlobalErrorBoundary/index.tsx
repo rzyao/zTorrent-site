@@ -14,7 +14,10 @@ interface ErrorBoundaryProps {
 interface ErrorBoundaryState {
   error: any;
 }
-export class AppGlobalErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class AppGlobalErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { error: null };
@@ -39,7 +42,9 @@ export class AppGlobalErrorBoundary extends React.Component<ErrorBoundaryProps, 
           <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">
             <AlertCircle className="h-10 w-10" />
           </div>
-          <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-neutral-100">页面渲染发生错误</h1>
+          <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-neutral-100">
+            页面渲染发生错误
+          </h1>
           <p className="mb-6 max-w-md text-gray-600 dark:text-neutral-400">
             很抱歉，应用在渲染过程中出现异常。您可以尝试恢复当前页面或刷新站点。
           </p>
@@ -49,7 +54,7 @@ export class AppGlobalErrorBoundary extends React.Component<ErrorBoundaryProps, 
             </span>
           </div>
           <div className="flex gap-4">
-            <Button variant="primary" onClick={() => this.setState({ error: null })}>
+            <Button variant="default" onClick={() => this.setState({ error: null })}>
               尝试恢复
             </Button>
             <Button variant="outline" onClick={() => window.location.reload()}>
@@ -62,4 +67,3 @@ export class AppGlobalErrorBoundary extends React.Component<ErrorBoundaryProps, 
     return this.props.children;
   }
 }
-

@@ -1,4 +1,4 @@
-import "./bonus.css";
+﻿import "./bonus.css";
 import { ConfigForm } from "./components/ConfigForm";
 import { ScenarioPanel } from "./components/ScenarioPanel";
 import { ResultsPanel } from "./components/ResultsPanel";

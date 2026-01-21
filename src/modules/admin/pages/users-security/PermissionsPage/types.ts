@@ -1,4 +1,4 @@
-export type PermissionType = "api" | "page" | "button";
+﻿export type PermissionType = "api" | "page" | "button";
 export type PermissionScope = "admin" | "web";
 
 export interface Permission {

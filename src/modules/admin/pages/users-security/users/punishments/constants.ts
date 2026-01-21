@@ -1,4 +1,4 @@
-import { AdvancedRuleDto } from "@/api/models/AdvancedRuleDto";
+﻿import { AdvancedRuleDto } from "@/api/models/AdvancedRuleDto";
 
 export const ADV_FIELD_OPTIONS = [
   { label: "用户ID", value: "userId", type: "text" as const },

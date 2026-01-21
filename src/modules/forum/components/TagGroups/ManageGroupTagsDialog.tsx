@@ -79,7 +79,11 @@ export function ManageGroupTagsDialog({
     const q = searchQuery.trim().toLowerCase();
     if (!q) return tags;
     // 本地过滤作为补充
-    return tags.filter((t: any) => String(t.name || "").toLowerCase().includes(q));
+    return tags.filter((t: any) =>
+      String(t.name || "")
+        .toLowerCase()
+        .includes(q),
+    );
   }, [tags, searchQuery]);
 
   const toggleSelect = (id: string) => {
@@ -178,7 +182,7 @@ export function ManageGroupTagsDialog({
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               className={cn(colors.inputBg, colors.inputBorder)}
             />
-            <Button onClick={handleSearch} disabled={searching} variant="outline">
+            <Button onClick={handleSearch} disabled={searching} variant="default">
               {searching && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               搜索
             </Button>
@@ -241,7 +245,7 @@ export function ManageGroupTagsDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} className={cn(colors.buttonSecondary)}>
+          <Button variant="default" onClick={onClose} className={cn(colors.buttonSecondary)}>
             取消
           </Button>
           <Button onClick={handleSave} disabled={saving} className={cn(colors.buttonPrimary)}>

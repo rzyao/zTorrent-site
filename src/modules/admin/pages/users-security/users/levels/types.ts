@@ -1,4 +1,4 @@
-export type LevelItem = {
+﻿export type LevelItem = {
   id: string;
   key: string;
   label: string;

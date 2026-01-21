@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from "react";
+﻿import { memo, useMemo, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/modules/admin/components/ui/button";
 
@@ -24,7 +24,7 @@ export const CodeCell = memo(function CodeCell({ code }: CodeCellProps) {
   return (
     <div className="flex items-center gap-2">
       <span className="font-mono text-sm">{show ? code : masked}</span>
-      <Button variant="text" size="sm" className="h-6 w-6 p-0" onClick={() => setShow((s) => !s)}>
+      <Button variant="text" size="small" className="h-6 w-6 p-0" onClick={() => setShow((s) => !s)}>
         {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
       </Button>
     </div>

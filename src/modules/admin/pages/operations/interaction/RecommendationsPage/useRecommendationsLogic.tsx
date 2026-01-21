@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+﻿import { useState, useCallback, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { RecommendationsService } from "@/api/services/RecommendationsService";
 import type { RecommendationTabDto } from "@/api/models/RecommendationTabDto";
@@ -276,10 +276,10 @@ export function useRecommendationsLogic() {
         width: 120,
         render: (_, record) => (
           <div className="flex items-center gap-2">
-            <Button variant="link" size="sm" onClick={() => handleEdit(record)}>
+            <Button variant="link" size="small" onClick={() => handleEdit(record)}>
               编辑
             </Button>
-            <Button variant="link" size="sm" danger onClick={() => openDeleteConfirm(record)}>
+            <Button variant="link" size="small" danger onClick={() => openDeleteConfirm(record)}>
               删除
             </Button>
           </div>

@@ -1,4 +1,4 @@
-import { DataTable } from "@/modules/admin/components/ui/data-table";
+﻿import { DataTable } from "@/modules/admin/components/ui/data-table";
 import { SearchInput } from "@/modules/admin/components/ui/search-input";
 import { Button } from "@/modules/admin/components/ui/button";
 import { ConfirmModal } from "@/modules/admin/components/ui/modal";

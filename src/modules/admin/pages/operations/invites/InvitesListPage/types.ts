@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 邀请状态类型
  */
 export type InviteStatus = "sent" | "accepted" | "expired" | "revoked";

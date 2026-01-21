@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/modules/admin/components/ui/card";
+﻿import { Card, CardContent } from "@/modules/admin/components/ui/card";
 import { Users, Cloud, Zap } from "lucide-react";
 
 export default function Dashboard() {

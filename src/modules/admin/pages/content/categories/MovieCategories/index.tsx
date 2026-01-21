@@ -1,4 +1,4 @@
-import PageContainer from "@/modules/admin/components/PageContainer";
+﻿import PageContainer from "@/modules/admin/components/PageContainer";
 import PageHeader from "@/modules/admin/components/PageHeader";
 import { MovieCategoriesView } from "./components/MovieCategoriesView";
 

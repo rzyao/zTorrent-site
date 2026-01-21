@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from "react";
+﻿import { memo, useCallback, useState } from "react";
 import { Download, Search } from "lucide-react";
 import { SearchInput } from "@/modules/admin/components/ui/search-input";
 import { StandardSelect } from "@/modules/admin/components/ui/select";
@@ -63,7 +63,7 @@ export const InvitesFilter = memo(function InvitesFilter({
   return (
     <div className="flex flex-wrap items-end gap-3 rounded-lg border bg-slate-50/50 p-4 dark:bg-slate-900/20">
       <div className="space-y-1.5">
-        <Label size="sm">状态</Label>
+        <Label size="small">状态</Label>
         <StandardSelect
           value={status}
           onValueChange={setStatus}
@@ -75,7 +75,7 @@ export const InvitesFilter = memo(function InvitesFilter({
       </div>
 
       <div className="space-y-1.5">
-        <Label size="sm">类型</Label>
+        <Label size="small">类型</Label>
         <StandardSelect
           value={type}
           onValueChange={setType}
@@ -87,7 +87,7 @@ export const InvitesFilter = memo(function InvitesFilter({
       </div>
 
       <div className="space-y-1.5">
-        <Label size="sm">被邀请邮箱</Label>
+        <Label size="small">被邀请邮箱</Label>
         <SearchInput
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -99,7 +99,7 @@ export const InvitesFilter = memo(function InvitesFilter({
       </div>
 
       <div className="space-y-1.5">
-        <Label size="sm">发起人ID</Label>
+        <Label size="small">发起人ID</Label>
         <SearchInput
           value={issuerId}
           onChange={(e) => setIssuerId(e.target.value)}
@@ -111,7 +111,7 @@ export const InvitesFilter = memo(function InvitesFilter({
       </div>
 
       <div className="space-y-1.5">
-        <Label size="sm">起止时间</Label>
+        <Label size="small">起止时间</Label>
         <div className="flex items-center gap-2">
           <Input
             type="datetime-local"

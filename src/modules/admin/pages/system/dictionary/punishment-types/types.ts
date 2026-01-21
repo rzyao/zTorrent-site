@@ -1,4 +1,4 @@
-import { CreatePunishmentDictDto } from "@/api/models/CreatePunishmentDictDto";
+﻿import { CreatePunishmentDictDto } from "@/api/models/CreatePunishmentDictDto";
 
 /**
  * 处罚类型字典项

@@ -148,7 +148,7 @@ export function TagGroupsPage() {
         </div>
         <div className="flex items-center gap-3">
           <Button
-            variant="outline"
+            variant="default"
             size="icon"
             onClick={() => refetch()}
             className="mr-2"
@@ -338,7 +338,7 @@ export function TagGroupsPage() {
               <DialogFooter>
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="default"
                   onClick={() => setIsCreateOpen(false)}
                   className={cn(colors.buttonSecondary, "border-transparent")}
                 >
@@ -416,7 +416,7 @@ export function TagGroupsPage() {
               <DialogFooter>
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="default"
                   onClick={() => setEditingGroup(null)}
                   className={cn(colors.buttonSecondary, "border-transparent")}
                 >

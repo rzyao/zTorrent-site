@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { Controller } from "react-hook-form";
 import { ShieldCheck, Mail, User, Info } from "lucide-react";
 import { useSendInviteLogic } from "./useSendInviteLogic";
@@ -118,12 +118,12 @@ export default function SendInvitePage() {
           </div>
 
           <div className="flex flex-wrap gap-4 pt-4">
-            <Button type="submit" variant="primary" size="lg" loading={submitLoading}>
+            <Button type="submit" variant="primary" size="large" loading={submitLoading}>
               <Mail className="mr-2 h-4 w-4" />
               确认发送邀请
             </Button>
             {canManageInvites && (
-              <Button type="button" variant="default" size="lg" onClick={openBatchModal}>
+              <Button type="button" variant="default" size="large" onClick={openBatchModal}>
                 批量授予名额
               </Button>
             )}

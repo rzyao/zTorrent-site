@@ -1,4 +1,4 @@
-import type { StoreOrder } from "@/modules/admin/types/store";
+﻿import type { StoreOrder } from "@/modules/admin/types/store";
 
 export type OrderStatus = StoreOrder["status"];
 

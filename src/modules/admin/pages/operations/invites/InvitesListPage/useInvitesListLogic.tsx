@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+﻿import { useCallback, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Service as InvitesService } from "@/api/services/Service";
@@ -228,7 +228,7 @@ export function useInvitesListLogic() {
           <div className="flex items-center gap-2">
             <Button
               variant="default"
-              size="sm"
+              size="small"
               disabled={!(hasPerm("manage-invites") && record.status === "sent")}
               onClick={() => handleRevoke(record)}
             >
@@ -236,7 +236,7 @@ export function useInvitesListLogic() {
             </Button>
             <Button
               variant="default"
-              size="sm"
+              size="small"
               disabled={
                 !(
                   hasPerm("manage-invites") &&

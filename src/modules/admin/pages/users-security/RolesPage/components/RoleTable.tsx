@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { DataTable, Column } from "@/modules/admin/components/ui/data-table";
 import { Tag } from "@/modules/admin/components/ui/tag";
 import { Button } from "@/modules/admin/components/ui/button";
@@ -88,7 +88,7 @@ export const RoleTable = ({
         <div className="flex items-center justify-center gap-1">
           <Button
             variant="link"
-            size="sm"
+            size="small"
             onClick={() => onAssignPermissions(record)}
             icon={<ShieldCheck className="h-4 w-4" />}
           >
@@ -96,7 +96,7 @@ export const RoleTable = ({
           </Button>
           <Button
             variant="link"
-            size="sm"
+            size="small"
             onClick={() => onEdit(record)}
             icon={<Edit2 className="h-4 w-4" />}
           >
@@ -104,7 +104,7 @@ export const RoleTable = ({
           </Button>
           <Button
             variant="link"
-            size="sm"
+            size="small"
             danger
             onClick={() => setDeletingRole(record)}
             icon={<Trash2 className="h-4 w-4" />}

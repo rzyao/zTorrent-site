@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { BarChart3, RefreshCw, Filter } from "lucide-react";
 import { useStatisticsLogic } from "./useStatisticsLogic";
 import { DataTable } from "@/modules/admin/components/ui/data-table";
@@ -33,7 +33,7 @@ export default function InvitesStatisticsPage() {
     () => (
       <div className="flex flex-wrap items-end gap-3 rounded-lg border bg-slate-50/50 p-4 dark:bg-slate-900/10">
         <div className="space-y-1.5">
-          <Label size="sm">统计时间范围</Label>
+          <Label size="small">统计时间范围</Label>
           <div className="flex items-center gap-2">
             <Input
               type="datetime-local"
@@ -52,7 +52,7 @@ export default function InvitesStatisticsPage() {
         </div>
 
         <div className="space-y-1.5">
-          <Label size="sm">粒度</Label>
+          <Label size="small">粒度</Label>
           <StandardSelect
             value={granularity}
             onValueChange={setGranularity}
@@ -63,7 +63,7 @@ export default function InvitesStatisticsPage() {
         </div>
 
         <div className="space-y-1.5">
-          <Label size="sm">发起人ID (选填)</Label>
+          <Label size="small">发起人ID (选填)</Label>
           <Input
             value={issuerId}
             onChange={(e) => setIssuerId(e.target.value)}

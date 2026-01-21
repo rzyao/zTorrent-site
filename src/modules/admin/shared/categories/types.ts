@@ -1,4 +1,4 @@
-import { UpdateCategoryDto } from "@/api/models/UpdateCategoryDto";
+﻿import { UpdateCategoryDto } from "@/api/models/UpdateCategoryDto";
 
 export type CategoryItem = {
   id?: string;

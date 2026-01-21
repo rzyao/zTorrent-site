@@ -1,4 +1,4 @@
-import type { InviteStatus, InviteType } from "./types";
+﻿import type { InviteStatus, InviteType } from "./types";
 
 /**
  * 邀请状态选项

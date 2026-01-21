@@ -1,4 +1,4 @@
-import { DataTable } from "@/modules/admin/components/ui/data-table";
+﻿import { DataTable } from "@/modules/admin/components/ui/data-table";
 import { PREVIEW_COLUMNS, RESULT_COLUMNS } from "../constants";
 import type { BatchItem, ResultItem } from "../types";
 

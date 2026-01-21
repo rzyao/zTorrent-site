@@ -1,4 +1,4 @@
-import type { StoreOrder } from "@/modules/admin/types/store";
+﻿import type { StoreOrder } from "@/modules/admin/types/store";
 
 export const STORE_ORDER_STATUS_OPTIONS = [
   { label: "Created", value: "created" },

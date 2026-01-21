@@ -2,6 +2,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ImagesService } from "@/api/services/ImagesService";
 import { unwrapResponse, extractErrorMessage } from "../utils/utils";
+import { MessagesService } from "@/api/services/MessagesService";
+import { ReplyMessageDto } from "@/api/models/ReplyMessageDto";
 
 export function useReply() {
   const [replyContent, setReplyContent] = useState("");
@@ -52,17 +54,12 @@ export function useReply() {
         toast.error("请填写回复内容");
         return;
       }
-      const resp = await __request(OpenAPI, {
-        method: "POST",
-        url: "/messages/reply",
-        body: {
-          peerUserId,
-          replyToMessageId: replyToMessageId || undefined,
-          content: replyContent,
-          format: replyFormat,
-          attachments: replyAttachments,
-        },
-        mediaType: "application/json",
+      const resp = await MessagesService.messagesControllerReply({
+        peerUserId,
+        replyToMessageId: replyToMessageId || undefined,
+        content: replyContent,
+        format: replyFormat as ReplyMessageDto.format,
+        attachments: replyAttachments,
       });
       unwrapResponse(resp);
       toast.success("回复已发送");

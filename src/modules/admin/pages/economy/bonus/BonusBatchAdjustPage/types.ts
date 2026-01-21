@@ -1,4 +1,4 @@
-export type BatchItem = {
+﻿export type BatchItem = {
   userId: string;
   delta: string;
   reason: string;

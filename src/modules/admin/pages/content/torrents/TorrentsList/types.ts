@@ -1,4 +1,4 @@
-import { AdminListTorrentsDto } from "@/api/models/AdminListTorrentsDto";
+﻿import { AdminListTorrentsDto } from "@/api/models/AdminListTorrentsDto";
 
 export interface TorrentItem {
   id?: string;

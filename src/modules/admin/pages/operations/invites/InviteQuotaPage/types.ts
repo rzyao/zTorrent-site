@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 邀请名额类型定义
  */
 export interface InviteQuota {
