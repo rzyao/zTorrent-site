@@ -27,6 +27,7 @@ import { Suspense, lazy } from "react";
 const EmojiPickerLazy = lazy(() => import("emoji-picker-react"));
 import * as Popover from "@radix-ui/react-popover";
 import { LinkModal } from "./LinkModal";
+import { ImageModal } from "./ImageModal";
 import { useForumTheme } from "../../context/ForumThemeContext"; // Assuming this path is correct
 
 /**
@@ -69,6 +70,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     isOpen: false,
     initialText: "",
   });
+  const [imageModalOpen, setImageModalOpen] = React.useState(false);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -427,15 +429,22 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             if (onImageUploadClick) {
               onImageUploadClick();
             } else {
-              const url = window.prompt("输入图片地址:");
-              if (url) {
-                editor.chain().focus().setImage({ src: url }).run();
-              }
+              setImageModalOpen(true);
             }
           }}
           disabled={isUploading}
         />
       </div>
+
+      <ImageModal
+        isOpen={imageModalOpen}
+        onClose={() => setImageModalOpen(false)}
+        onConfirm={(url) => {
+          if (editor) {
+            editor.chain().focus().setImage({ src: url }).run();
+          }
+        }}
+      />
 
       <LinkModal
         isOpen={linkModal.isOpen}

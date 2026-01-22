@@ -13,6 +13,7 @@ import { TorrentGridSkeleton } from "@/modules/app/components/skeletons/TorrentG
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useDownloadStatusStore } from "@/modules/app/stores/downloadStatusStore";
+import { toast } from "sonner";
 
 /**
  * TorrentsPage（容器组件）
@@ -21,7 +22,7 @@ import { useDownloadStatusStore } from "@/modules/app/stores/downloadStatusStore
  */
 export default function TorrentsPage() {
   const { t } = useLanguage();
-  useDynamicTitle(t('torrents.title'));
+  useDynamicTitle(t("torrents.title"));
   // 业务状态与派生数据由 hook 管理
   const {
     displayTorrents,
@@ -59,8 +60,8 @@ export default function TorrentsPage() {
 
   // 下载能力（保持与旧页面一致的回调签名）
   const { downloadByTorrentId } = useTorrentDownload({
-    onInfo: (m) => console.info(m),
-    onError: (m) => alert(m),
+    onInfo: (m) => toast.info(m),
+    onError: (m) => toast.error(m),
   });
 
   // 下载器全局状态

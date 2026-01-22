@@ -5,6 +5,7 @@ import { useComposerStore } from "./ComposerStore";
 import { EditorToggleSwitch } from "./EditorToggleSwitch";
 import { RichTextEditor } from "./RichTextEditor";
 import { cn } from "@/utils/cn";
+import { toast } from "sonner";
 import {
   Bold,
   Italic,
@@ -553,7 +554,7 @@ export const ComposerEditor: React.FC<ComposerEditorProps> = ({ className }) => 
           <ToolbarButton
             icon={<Plus className="h-4 w-4" />}
             title="更多"
-            onClick={() => alert("WIP: 更多选项")}
+            onClick={() => toast.info("功能开发中...")}
           />
         </div>
       )}

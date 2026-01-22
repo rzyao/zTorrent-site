@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+﻿import { useParams, useNavigate } from "react-router-dom";
 import { useEpisodeDetail } from "./hooks/useEpisodeDetail";
 import { Button } from "@/modules/app/components/ui/button";
 import {
@@ -23,6 +23,7 @@ import { useTorrentDownload } from "@/modules/app/hooks/useTorrentDownload";
 import { useDownloaders } from "@/modules/app/context/DownloadersContext";
 import { DownloadToDownloaderModal } from "@/modules/app/components/DownloadToDownloaderModal";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function EpisodeDetailPage() {
   const { id } = useParams<{
@@ -36,8 +37,8 @@ export default function EpisodeDetailPage() {
 
   // 下载能力
   const { downloadByTorrentId } = useTorrentDownload({
-    onInfo: (m) => console.info(m),
-    onError: (m) => alert(m),
+    onInfo: (m) => toast.info(m),
+    onError: (m) => toast.error(m),
   });
 
   // 下载器全局状态
@@ -118,7 +119,11 @@ export default function EpisodeDetailPage() {
               <div className="flex flex-col gap-8 md:flex-row">
                 {/* Series Poster */}
                 <div className="w-32 shrink-0 overflow-hidden rounded-lg border-2 border-white/10 shadow-2xl md:w-48 lg:w-56">
-                  <CoverImage attachableType="series" attachableId={String(seriesId)} size="medium" />
+                  <CoverImage
+                    attachableType="series"
+                    attachableId={String(seriesId)}
+                    size="medium"
+                  />
                 </div>
 
                 {/* 信息区 */}
@@ -244,7 +249,11 @@ export default function EpisodeDetailPage() {
                           <div className="flex gap-4 p-4">
                             {/* 缩略图 */}
                             <div className="relative hidden h-28 w-28 shrink-0 overflow-hidden rounded-lg border border-white/10 md:block">
-                              <CoverImage attachableType="torrent" attachableId={String(t.id)} size="thumb" />
+                              <CoverImage
+                                attachableType="torrent"
+                                attachableId={String(t.id)}
+                                size="thumb"
+                              />
                             </div>
 
                             {/* 信息区 */}

@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+
 // 自动退出管理器
 export class AutoLogoutManager {
   private static timeoutId: NodeJS.Timeout | null = null;
@@ -7,13 +9,12 @@ export class AutoLogoutManager {
   // 启动自动退出计时器
   static start() {
     this.stop(); // 先停止现有的计时器
-    
-    const isEnabled = localStorage.getItem('auto_logout') === 'true';
+
+    const isEnabled = localStorage.getItem("auto_logout") === "true";
     if (!isEnabled) {
       return;
     }
 
-    
     this.timeoutId = setTimeout(() => {
       this.logout();
     }, this.TIMEOUT_MS);
@@ -41,34 +42,36 @@ export class AutoLogoutManager {
   // 执行退出操作
   private static logout() {
     // 清除认证数据
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_info');
-    localStorage.removeItem('auto_logout');
-    
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("user_info");
+    localStorage.removeItem("auto_logout");
+
     // 停止计时器
     this.stop();
-    
+
     // 显示提示信息
-    alert('您已长时间无操作，为确保账户安全，系统已自动退出登录。');
-    
+    toast.warning("您已长时间无操作，为确保账户安全，系统已自动退出登录。", {
+      duration: 10000,
+    });
+
     // 跳转到登录页面
-    window.location.href = '/login';
+    window.location.href = "/login";
   }
 
   // 设置活动监听器
   private static setupActivityListeners() {
-    const events = ['mousedown', 'keydown', 'touchstart', 'scroll'];
-    
-    events.forEach(event => {
+    const events = ["mousedown", "keydown", "touchstart", "scroll"];
+
+    events.forEach((event) => {
       document.addEventListener(event, this.handleUserActivity, { passive: true });
     });
   }
 
   // 移除活动监听器
   private static removeActivityListeners() {
-    const events = ['mousedown', 'keydown', 'touchstart', 'scroll'];
-    
-    events.forEach(event => {
+    const events = ["mousedown", "keydown", "touchstart", "scroll"];
+
+    events.forEach((event) => {
       document.removeEventListener(event, this.handleUserActivity);
     });
   }
@@ -76,18 +79,18 @@ export class AutoLogoutManager {
   // 处理用户活动
   private static handleUserActivity = () => {
     this.reset();
-  }
+  };
 
   // 检查是否启用了自动退出
   static isEnabled(): boolean {
-    return localStorage.getItem('auto_logout') === 'true';
+    return localStorage.getItem("auto_logout") === "true";
   }
 }
 
 // 初始化自动退出管理器
 export function initializeAutoLogout() {
   // 页面加载时启动
-  if (typeof window !== 'undefined' && AutoLogoutManager.isEnabled()) {
+  if (typeof window !== "undefined" && AutoLogoutManager.isEnabled()) {
     AutoLogoutManager.start();
   }
 }

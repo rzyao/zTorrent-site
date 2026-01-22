@@ -3,6 +3,7 @@ import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Tv, Plus } from "lucide-react";
 import { Button } from "@/modules/app/components/ui/button";
+import { ConfirmModal } from "@/modules/app/components/ConfirmModal";
 import { useEditSeries } from "@/modules/app/pages/Edit/series/hooks/useEditSeries";
 import { SeriesList } from "@/modules/app/pages/Edit/series/components/SeriesList";
 import { StatsPanel } from "@/modules/app/pages/Edit/series/components/StatsPanel";
@@ -15,7 +16,7 @@ import type { Episode } from "@/modules/app/pages/Edit/series/types";
 
 export default function EditSeriesPage() {
   const { t } = useLanguage();
-  useDynamicTitle(t('edit.seriesTitle'));
+  useDynamicTitle(t("edit.seriesTitle"));
   const {
     seriesList,
     filteredSeries,
@@ -61,6 +62,11 @@ export default function EditSeriesPage() {
   // Local state for episode editing
   const [isEpisodeFormOpen, setIsEpisodeFormOpen] = useState(false);
   const [editingEpisode, setEditingEpisode] = useState<Episode | undefined>(undefined);
+  const [confirmState, setConfirmState] = useState<{
+    type: "series" | "episode" | "unbind";
+    id: string;
+    args?: any;
+  } | null>(null);
 
   // Local state for bind dialog
   const [isBindDialogOpen, setIsBindDialogOpen] = useState(false);
@@ -98,8 +104,8 @@ export default function EditSeriesPage() {
               <Tv className="h-5 w-5 text-white" />
             </div>
             <div className="flex items-end gap-1">
-              <h1 className="text-3xl text-white">{t('editSeries.pageTitle')}</h1>
-              <p className="mt-1 text-sm text-neutral-400">{t('editSeries.pageDesc')}</p>
+              <h1 className="text-3xl text-white">{t("editSeries.pageTitle")}</h1>
+              <p className="mt-1 text-sm text-neutral-400">{t("editSeries.pageDesc")}</p>
             </div>
           </div>
           <Button
@@ -107,7 +113,7 @@ export default function EditSeriesPage() {
             className="bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:from-amber-600 hover:to-orange-700"
           >
             <Plus className="mr-2 h-4 w-4" />
-            {t('editSeries.addSeries')}
+            {t("editSeries.addSeries")}
           </Button>
         </div>
       </div>
@@ -156,21 +162,23 @@ export default function EditSeriesPage() {
                 <SeriesDetails
                   series={selectedSeries}
                   onEdit={() => handleEdit(selectedSeries)}
-                  onDelete={() => handleDeleteSeries(selectedSeries.id)}
+                  onDelete={() => setConfirmState({ type: "series", id: selectedSeries.id })}
                 />
 
                 <div className="border-t border-neutral-700/50 pt-6">
-                  <h3 className="mb-4 text-lg font-medium text-white">{t('editSeries.episodeManagement')}</h3>
+                  <h3 className="mb-4 text-lg font-medium text-white">
+                    {t("editSeries.episodeManagement")}
+                  </h3>
                   <EpisodeList
                     seriesId={selectedSeries.id}
                     episodes={episodes}
                     seriesTorrents={seriesTorrents}
                     onAdd={onAddEpisode}
                     onEdit={onEditEpisode}
-                    onDelete={handleDeleteEpisode}
+                    onDelete={(id) => setConfirmState({ type: "episode", id })}
                     onBindTorrent={handleOpenBindDialog}
                     onUnbindTorrent={(tid, epNum) =>
-                      handleUnbindTorrent(tid, selectedSeries.id, epNum)
+                      setConfirmState({ type: "unbind", id: tid, args: { epNum } })
                     }
                   />
                 </div>
@@ -189,10 +197,10 @@ export default function EditSeriesPage() {
                   targetEpisode={
                     bindTargetEpisode
                       ? {
-                        id: bindTargetEpisode.id,
-                        episodeNumber: bindTargetEpisode.episodeNumber,
-                        title: bindTargetEpisode.title,
-                      }
+                          id: bindTargetEpisode.id,
+                          episodeNumber: bindTargetEpisode.episodeNumber,
+                          title: bindTargetEpisode.title,
+                        }
                       : undefined
                   }
                   searchTorrents={searchTorrents}
@@ -206,22 +214,44 @@ export default function EditSeriesPage() {
             {!isCreating && !isEditing && !selectedSeries && (
               <div className="py-20 text-center">
                 <Tv className="mx-auto mb-4 h-16 w-16 text-neutral-600" />
-                <h3 className="mb-2 text-lg text-white">{t('editSeries.selectSeries')}</h3>
-                <p className="mb-6 text-sm text-neutral-400">
-                  {t('editSeries.selectSeriesHint')}
-                </p>
+                <h3 className="mb-2 text-lg text-white">{t("editSeries.selectSeries")}</h3>
+                <p className="mb-6 text-sm text-neutral-400">{t("editSeries.selectSeriesHint")}</p>
                 <Button
                   onClick={handleCreateNew}
                   className="bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:from-amber-600 hover:to-orange-700"
                 >
                   <Plus className="mr-2 h-4 w-4" />
-                  {t('editSeries.addNewSeries')}
+                  {t("editSeries.addNewSeries")}
                 </Button>
               </div>
             )}
           </div>
         </div>
       </div>
+      <ConfirmModal
+        open={!!confirmState}
+        onOpenChange={(v) => !v && setConfirmState(null)}
+        title={confirmState?.type === "unbind" ? "确认解绑" : "确认删除"}
+        description={
+          confirmState?.type === "series"
+            ? "确定要删除这部剧集吗？此操作将删除所有分集和种子绑定。"
+            : confirmState?.type === "episode"
+              ? "确定要删除这个分集吗？"
+              : "确定要解绑这个种子吗？"
+        }
+        onConfirm={() => {
+          if (!confirmState || !selectedSeries) return;
+          if (confirmState.type === "series") {
+            handleDeleteSeries(confirmState.id);
+          } else if (confirmState.type === "episode") {
+            handleDeleteEpisode(confirmState.id);
+          } else if (confirmState.type === "unbind") {
+            handleUnbindTorrent(confirmState.id, selectedSeries.id, confirmState.args?.epNum);
+          }
+          setConfirmState(null);
+        }}
+        variant="destructive"
+      />
     </div>
   );
 }

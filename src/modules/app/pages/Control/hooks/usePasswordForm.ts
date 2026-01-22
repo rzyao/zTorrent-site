@@ -62,9 +62,9 @@ export function usePasswordForm() {
         if (code === 40002 || /复杂度|至少|弱|强/.test(msg)) serverErrs.new = msg;
         if (code === 40003 || /当前密码|错误/.test(msg)) serverErrs.current = msg;
         setPasswordErrors(serverErrs);
-        if (!serverErrs.current && !serverErrs.new && !serverErrs.confirm) customToast.error(msg);
+        // Global interceptor handles API errors, so no extra toast here
       } else {
-        customToast.error("网络或未知错误");
+        // Global interceptor handles API errors
       }
     } finally {
       setUpdating(false);

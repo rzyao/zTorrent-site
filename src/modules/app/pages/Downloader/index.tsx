@@ -1,15 +1,17 @@
 // 下载器页面（容器组件）
 // 说明：组合拆分后的 UI 组件与业务 Hook，负责页面布局与数据流的串联。
 
-import { useDownloaderManager } from './hooks/useDownloaderManager';
-import { Downloader } from './types';
-import { Header } from './components/Header';
-import { StatsCards } from './components/StatsCards';
-import { DownloaderCard } from './components/DownloaderCard';
-import { EmptyState } from './components/EmptyState';
-import { AddDownloaderModal } from './components/AddDownloaderModal';
-import { EditDownloaderModal } from './components/EditDownloaderModal';
-import { DownloaderDetailModal } from './components/DownloaderDetailModal';
+import { useState } from "react";
+import { ConfirmModal } from "@/modules/app/components/ConfirmModal";
+import { useDownloaderManager } from "./hooks/useDownloaderManager";
+import { Downloader } from "./types";
+import { Header } from "./components/Header";
+import { StatsCards } from "./components/StatsCards";
+import { DownloaderCard } from "./components/DownloaderCard";
+import { EmptyState } from "./components/EmptyState";
+import { AddDownloaderModal } from "./components/AddDownloaderModal";
+import { EditDownloaderModal } from "./components/EditDownloaderModal";
+import { DownloaderDetailModal } from "./components/DownloaderDetailModal";
 
 export function DownloaderPage() {
   // 通过自定义 Hook 管理业务状态与事件，UI 层只进行渲染
@@ -46,9 +48,11 @@ export function DownloaderPage() {
     openEditModal,
   } = useDownloaderManager();
 
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
   return (
     <div className="min-h-screen bg-linear-to-br from-neutral-900 via-stone-900 to-neutral-950 pt-16">
-      <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-8">
+      <div className="mx-auto max-w-[1600px] px-4 py-8 md:px-8">
         {/* 页面头部 */}
         <Header onAddClick={() => setShowAddModal(true)} />
 
@@ -56,7 +60,7 @@ export function DownloaderPage() {
         <StatsCards downloaders={downloaders} />
 
         {/* 下载器列表 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {downloaders.map((downloader) => (
             <DownloaderCard
               key={downloader.id}
@@ -65,8 +69,7 @@ export function DownloaderPage() {
               onFetchInfo={handleFetchInfo}
               onEdit={openEditModal}
               onDelete={(id) => {
-                // 统一弹出确认由容器处理，避免在 Hook 中耦合 UI
-                if (confirm('确定要删除这个下载器吗？')) handleDeleteDownloader(id);
+                setConfirmDeleteId(id);
               }}
             />
           ))}
@@ -84,7 +87,10 @@ export function DownloaderPage() {
         onTogglePassword={() => setShowPassword(!showPassword)}
         onChangeForm={(next) => setFormData({ ...formData, ...next })}
         onSubmit={handleAddDownloader}
-        onClose={() => { setShowAddModal(false); resetForm(); }}
+        onClose={() => {
+          setShowAddModal(false);
+          resetForm();
+        }}
       />
 
       {/* 编辑下载器弹窗 */}
@@ -96,7 +102,11 @@ export function DownloaderPage() {
           onTogglePassword={() => setShowPassword(!showPassword)}
           onChangeForm={(next) => setFormData({ ...formData, ...next })}
           onSubmit={handleEditDownloader}
-          onClose={() => { setShowEditModal(false); setSelectedDownloader(null); resetForm(); }}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedDownloader(null);
+            resetForm();
+          }}
         />
       )}
 
@@ -109,7 +119,12 @@ export function DownloaderPage() {
           expandedPaths={expandedPaths}
           fetchingTags={fetchingTags}
           fetchingPaths={fetchingPaths}
-          onClose={() => { setShowDetailModal(false); setSelectedDownloader(null); setExpandedTags(false); setExpandedPaths(false); }}
+          onClose={() => {
+            setShowDetailModal(false);
+            setSelectedDownloader(null);
+            setExpandedTags(false);
+            setExpandedPaths(false);
+          }}
           onToggleTags={() => setExpandedTags(!expandedTags)}
           onFetchTags={handleFetchTags}
           onDeleteTag={handleDeleteTag}
@@ -118,7 +133,17 @@ export function DownloaderPage() {
           onDeletePath={handleDeletePath}
         />
       )}
+      <ConfirmModal
+        open={!!confirmDeleteId}
+        onOpenChange={(v) => !v && setConfirmDeleteId(null)}
+        title="删除下载器"
+        description="确定要删除这个下载器吗？此操作无法撤销。"
+        onConfirm={() => {
+          if (confirmDeleteId) handleDeleteDownloader(confirmDeleteId);
+          setConfirmDeleteId(null);
+        }}
+        variant="destructive"
+      />
     </div>
   );
 }
-

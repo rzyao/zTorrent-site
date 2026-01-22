@@ -77,7 +77,13 @@ export function TopicAdminMenu({
   const [cancelOpen, setCancelOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const CANCEL_REASON_MAX = 200;
-  const QUICK_REASONS = [t('forum.bounty.quickReasonMistake'), t('forum.bounty.quickReasonChange'), t('forum.bounty.quickReasonDuplicate'), t('forum.bounty.quickReasonBudget')];
+  const QUICK_REASONS = [
+    t("forum.bounty.quickReasonMistake"),
+    t("forum.bounty.quickReasonChange"),
+    t("forum.bounty.quickReasonDuplicate"),
+    t("forum.bounty.quickReasonBudget"),
+  ];
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const bountyActions = useBountyActions(topicId, { onUpdated: onUpdate, categoryKey });
   const { colors } = useForumTheme();
 
@@ -92,12 +98,13 @@ export function TopicAdminMenu({
   const showCancelBounty =
     Boolean(
       isAuthor &&
-        !status.isArchived &&
-        bounty &&
-        bounty.status === "open" &&
-        bounty.cancelRequestStatus !== "pending",
+      !status.isArchived &&
+      bounty &&
+      bounty.status === "open" &&
+      bounty.cancelRequestStatus !== "pending",
     ) && categoryKey === "bounty";
-  const showAdminSeparator = isAdminOrMod && (showSetBounty || showIncreaseBounty || showCancelBounty);
+  const showAdminSeparator =
+    isAdminOrMod && (showSetBounty || showIncreaseBounty || showCancelBounty);
 
   const handleAction = async (
     actionName: string,
@@ -117,22 +124,23 @@ export function TopicAdminMenu({
       }
     } catch (error: any) {
       // 错误提示已由 Axios 拦截器统一处理，此处仅记录日志
-      console.error(`${actionName}${t('forum.admin.failed')}:`, error);
+      console.error(`${actionName}${t("forum.admin.failed")}:`, error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDelete = () => {
-    // 双重确认
-    if (window.confirm(t('forum.admin.confirmDelete'))) {
-      handleAction(
-        t('forum.admin.delete'),
-        () => ForumsTopicsService.topicsControllerAdminRemove({ id: topicId }),
-        t('forum.admin.topicDeleted'),
-        "/forum/latest",
-      );
-    }
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    handleAction(
+      t("forum.admin.delete"),
+      () => ForumsTopicsService.topicsControllerAdminRemove({ id: topicId }),
+      t("forum.admin.topicDeleted"),
+      "/forum/latest",
+    );
   };
 
   return (
@@ -170,7 +178,7 @@ export function TopicAdminMenu({
                 setOpenBountyDialog(true);
               }}
             >
-              <Pin className="mr-2 h-4 w-4" /> {t('forum.bounty.setBounty')}
+              <Pin className="mr-2 h-4 w-4" /> {t("forum.bounty.setBounty")}
             </DropdownMenuItem>
           )}
           {/* 作者：追加悬赏入口（进行中时显示，且分类为 bounty） */}
@@ -181,18 +189,18 @@ export function TopicAdminMenu({
                 setIncreaseOpen(true);
               }}
             >
-              <Pin className="mr-2 h-4 w-4" /> {t('forum.bounty.increaseBounty')}
+              <Pin className="mr-2 h-4 w-4" /> {t("forum.bounty.increaseBounty")}
             </DropdownMenuItem>
           )}
           {/* 作者：取消悬赏入口（进行中且未在审核时显示，且分类为 bounty） */}
           {showCancelBounty && (
-              <DropdownMenuItem
-                className="hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-                onClick={() => setCancelOpen(true)}
-              >
-                <PinOff className="mr-2 h-4 w-4" /> {t('forum.bounty.cancelBounty')}
-              </DropdownMenuItem>
-            )}
+            <DropdownMenuItem
+              className="hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+              onClick={() => setCancelOpen(true)}
+            >
+              <PinOff className="mr-2 h-4 w-4" /> {t("forum.bounty.cancelBounty")}
+            </DropdownMenuItem>
+          )}
 
           {/* 管理员操作分隔 */}
           {showAdminSeparator && (
@@ -204,19 +212,19 @@ export function TopicAdminMenu({
             className="hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
             onClick={() =>
               handleAction(
-                status.isLocked ? t('forum.admin.open') : t('forum.admin.close'),
+                status.isLocked ? t("forum.admin.open") : t("forum.admin.close"),
                 () => ForumsTopicsService.topicsControllerToggleLock({ id: topicId }),
-                status.isLocked ? t('forum.admin.topicOpened') : t('forum.admin.topicClosed'),
+                status.isLocked ? t("forum.admin.topicOpened") : t("forum.admin.topicClosed"),
               )
             }
           >
             {status.isLocked ? (
               <>
-                <Unlock className="mr-2 h-4 w-4" /> {t('forum.admin.openTopic')}
+                <Unlock className="mr-2 h-4 w-4" /> {t("forum.admin.openTopic")}
               </>
             ) : (
               <>
-                <Lock className="mr-2 h-4 w-4" /> {t('forum.admin.closeTopic')}
+                <Lock className="mr-2 h-4 w-4" /> {t("forum.admin.closeTopic")}
               </>
             )}
           </DropdownMenuItem>
@@ -226,19 +234,21 @@ export function TopicAdminMenu({
             className="hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
             onClick={() =>
               handleAction(
-                status.isArchived ? t('forum.admin.unarchive') : t('forum.admin.archive'),
+                status.isArchived ? t("forum.admin.unarchive") : t("forum.admin.archive"),
                 () => ForumsTopicsService.topicsControllerToggleArchive({ id: topicId }),
-                status.isArchived ? t('forum.admin.topicUnarchived') : t('forum.admin.topicArchived'),
+                status.isArchived
+                  ? t("forum.admin.topicUnarchived")
+                  : t("forum.admin.topicArchived"),
               )
             }
           >
             {status.isArchived ? (
               <>
-                <ArchiveRestore className="mr-2 h-4 w-4" /> {t('forum.admin.unarchiveTopic')}
+                <ArchiveRestore className="mr-2 h-4 w-4" /> {t("forum.admin.unarchiveTopic")}
               </>
             ) : (
               <>
-                <Archive className="mr-2 h-4 w-4" /> {t('forum.admin.archiveTopic')}
+                <Archive className="mr-2 h-4 w-4" /> {t("forum.admin.archiveTopic")}
               </>
             )}
           </DropdownMenuItem>
@@ -248,19 +258,19 @@ export function TopicAdminMenu({
             className="hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
             onClick={() =>
               handleAction(
-                status.isPinned ? t('forum.admin.unpin') : t('forum.admin.pin'),
+                status.isPinned ? t("forum.admin.unpin") : t("forum.admin.pin"),
                 () => ForumsTopicsService.topicsControllerTogglePin({ id: topicId }),
-                status.isPinned ? t('forum.admin.topicUnpinned') : t('forum.admin.topicPinned'),
+                status.isPinned ? t("forum.admin.topicUnpinned") : t("forum.admin.topicPinned"),
               )
             }
           >
             {status.isPinned ? (
               <>
-                <PinOff className="mr-2 h-4 w-4" /> {t('forum.admin.unpinTopic')}
+                <PinOff className="mr-2 h-4 w-4" /> {t("forum.admin.unpinTopic")}
               </>
             ) : (
               <>
-                <Pin className="mr-2 h-4 w-4" /> {t('forum.admin.pinTopic')}
+                <Pin className="mr-2 h-4 w-4" /> {t("forum.admin.pinTopic")}
               </>
             )}
           </DropdownMenuItem>
@@ -272,7 +282,7 @@ export function TopicAdminMenu({
             className="text-red-500 hover:bg-red-50 focus:bg-red-50 focus:text-red-600 dark:text-red-400 dark:hover:bg-red-950/20 dark:focus:bg-red-950/20"
             onClick={handleDelete}
           >
-            <Trash2 className="mr-2 h-4 w-4" /> {t('forum.admin.deleteTopic')}
+            <Trash2 className="mr-2 h-4 w-4" /> {t("forum.admin.deleteTopic")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -281,11 +291,13 @@ export function TopicAdminMenu({
       <Dialog open={openBountyDialog} onOpenChange={setOpenBountyDialog}>
         <DialogContent className={`rounded-lg ${colors.cardBg} ${colors.cardBorder}`}>
           <DialogHeader>
-            <DialogTitle className={colors.titleColor}>{t('forum.bounty.setBounty')}</DialogTitle>
+            <DialogTitle className={colors.titleColor}>{t("forum.bounty.setBounty")}</DialogTitle>
           </DialogHeader>
           <div className="flex flex-col gap-3">
             <div>
-              <label className={`block text-xs ${colors.textMuted}`}>{t('forum.bounty.amountLabel')}</label>
+              <label className={`block text-xs ${colors.textMuted}`}>
+                {t("forum.bounty.amountLabel")}
+              </label>
               <Input
                 type="number"
                 min={2000}
@@ -295,11 +307,15 @@ export function TopicAdminMenu({
                 placeholder="2000"
                 className={`h-9 ${colors.inputBg} ${colors.inputBorder}`}
               />
-              <div className={`mt-1 text-xs ${colors.textMuted}`}>{t('forum.bounty.minAmountTip')}</div>
+              <div className={`mt-1 text-xs ${colors.textMuted}`}>
+                {t("forum.bounty.minAmountTip")}
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className={`block text-xs ${colors.textMuted}`}>{t('forum.bounty.durationLabel')}</label>
+                <label className={`block text-xs ${colors.textMuted}`}>
+                  {t("forum.bounty.durationLabel")}
+                </label>
                 <Input
                   type="number"
                   max={30}
@@ -311,13 +327,15 @@ export function TopicAdminMenu({
                   }
                   className={`h-9 ${colors.inputBg} ${colors.inputBorder}`}
                 />
-                <div className={`mt-1 text-xs ${colors.textMuted}`}>{t('forum.bounty.durationTip')}</div>
+                <div className={`mt-1 text-xs ${colors.textMuted}`}>
+                  {t("forum.bounty.durationTip")}
+                </div>
               </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="cancel" size="sm" onClick={() => setOpenBountyDialog(false)}>
-              {t('app.cancel')}
+              {t("app.cancel")}
             </Button>
             <Button
               variant="primary"
@@ -325,11 +343,11 @@ export function TopicAdminMenu({
               onClick={async () => {
                 const amt = parseInt(amount, 10);
                 if (!amount || !/^[0-9]+$/.test(amount) || isNaN(amt) || amt < 2000) {
-                  toast.error(t('forum.bounty.minAmountError'));
+                  toast.error(t("forum.bounty.minAmountError"));
                   return;
                 }
                 if (typeof durationDays !== "number" || durationDays < 1 || durationDays > 30) {
-                  toast.error(t('forum.bounty.durationError'));
+                  toast.error(t("forum.bounty.durationError"));
                   return;
                 }
                 await bountyActions.setBounty({ amount, durationDays });
@@ -346,7 +364,7 @@ export function TopicAdminMenu({
                 (typeof durationDays === "number" && (durationDays < 1 || durationDays > 30))
               }
             >
-              {t('app.submit')}
+              {t("app.submit")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -356,11 +374,15 @@ export function TopicAdminMenu({
       <Dialog open={increaseOpen} onOpenChange={setIncreaseOpen}>
         <DialogContent className={`rounded-lg ${colors.cardBg} ${colors.cardBorder}`}>
           <DialogHeader>
-            <DialogTitle className={colors.titleColor}>{t('forum.bounty.increaseBounty')}</DialogTitle>
+            <DialogTitle className={colors.titleColor}>
+              {t("forum.bounty.increaseBounty")}
+            </DialogTitle>
           </DialogHeader>
           <div className="flex flex-col gap-3">
             <div>
-              <label className={`block text-xs ${colors.textMuted}`}>{t('forum.bounty.increaseAmountLabel')}</label>
+              <label className={`block text-xs ${colors.textMuted}`}>
+                {t("forum.bounty.increaseAmountLabel")}
+              </label>
               <Input
                 type="number"
                 min={2000}
@@ -370,12 +392,14 @@ export function TopicAdminMenu({
                 placeholder="2000"
                 className={`h-9 ${colors.inputBg} ${colors.inputBorder}`}
               />
-              <div className={`mt-1 text-xs ${colors.textMuted}`}>{t('forum.bounty.minAmountTip')}</div>
+              <div className={`mt-1 text-xs ${colors.textMuted}`}>
+                {t("forum.bounty.minAmountTip")}
+              </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="cancel" size="sm" onClick={() => setIncreaseOpen(false)}>
-              {t('app.cancel')}
+              {t("app.cancel")}
             </Button>
             <Button
               variant="primary"
@@ -383,7 +407,7 @@ export function TopicAdminMenu({
               onClick={async () => {
                 const delta = parseInt(increaseAmount, 10);
                 if (!increaseAmount || isNaN(delta) || delta < 2000) {
-                  toast.error(t('forum.bounty.increaseMinError'));
+                  toast.error(t("forum.bounty.increaseMinError"));
                   return;
                 }
                 await bountyActions.increase(String(delta));
@@ -396,7 +420,7 @@ export function TopicAdminMenu({
                 parseInt(increaseAmount, 10) < 2000
               }
             >
-              {t('app.submit')}
+              {t("app.submit")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -406,12 +430,10 @@ export function TopicAdminMenu({
       <ConfirmDialog
         open={cancelOpen}
         onClose={() => setCancelOpen(false)}
-        title={t('forum.bounty.cancelBounty')}
+        title={t("forum.bounty.cancelBounty")}
         content={
           <div className="flex flex-col gap-2">
-            <div className={`${colors.textSecondary}`}>
-              {t('forum.bounty.cancelDesc')}
-            </div>
+            <div className={`${colors.textSecondary}`}>{t("forum.bounty.cancelDesc")}</div>
             <div className="flex flex-wrap gap-2">
               {QUICK_REASONS.map((r) => (
                 <Button
@@ -429,7 +451,7 @@ export function TopicAdminMenu({
             <Textarea
               value={cancelReason}
               onChange={(e) => setCancelReason(e.target.value)}
-              placeholder={t('forum.bounty.cancelReasonPlaceholder')}
+              placeholder={t("forum.bounty.cancelReasonPlaceholder")}
               className={`${colors.inputBg} ${colors.inputBorder}`}
               maxLength={CANCEL_REASON_MAX}
             />
@@ -438,16 +460,30 @@ export function TopicAdminMenu({
             </div>
           </div>
         }
-        confirmText={t('forum.bounty.submitRequest')}
+        confirmText={t("forum.bounty.submitRequest")}
         onConfirm={async () => {
           const reason = cancelReason.trim();
           if (reason.length < 5) {
-            toast.error(t('forum.bounty.cancelReasonMinError'));
+            toast.error(t("forum.bounty.cancelReasonMinError"));
             return;
           }
           await bountyActions.requestCancel(reason);
           setCancelOpen(false);
           setCancelReason("");
+        }}
+      />
+
+      {/* 删除话题确认 */}
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        title={t("forum.admin.deleteTopic")}
+        content={t("forum.admin.confirmDelete")}
+        confirmText={t("forum.admin.delete")}
+        confirmVariant="danger"
+        onConfirm={async () => {
+          confirmDelete();
+          setDeleteConfirmOpen(false);
         }}
       />
     </>

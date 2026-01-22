@@ -10,6 +10,9 @@ export function useMovieCategories() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any | null>(null);
 
+  const [isRemoveOpen, setIsRemoveOpen] = useState(false);
+  const [removeItem, setRemoveItem] = useState<any | null>(null);
+
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
@@ -83,14 +86,20 @@ export function useMovieCategories() {
     }
   };
 
-  const handleRemove = async (id: string) => {
-    if (!id) return;
-    if (!confirm("确定要删除该分类吗？")) return;
+  const handleRemove = (item: any) => {
+    setRemoveItem(item);
+    setIsRemoveOpen(true);
+  };
+
+  const confirmRemove = async () => {
+    if (!removeItem?.id) return;
     setLoading(true);
     try {
-      const res = await CategoriesService.categoriesControllerDelete({ id });
+      const res = await CategoriesService.categoriesControllerDelete({ id: removeItem.id });
       if (res.code === 200 || res.code === 1000) {
         toast.success("删除成功");
+        setIsRemoveOpen(false);
+        setRemoveItem(null);
         loadData();
       } else {
         toast.error(res.message || "删除失败");
@@ -132,6 +141,10 @@ export function useMovieCategories() {
     handleCreate,
     handleEdit,
     handleRemove,
+    confirmRemove,
+    isRemoveOpen,
+    setIsRemoveOpen,
+    removeItem,
     toggleEnabled,
     loadData,
   };

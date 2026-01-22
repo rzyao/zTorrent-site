@@ -1,4 +1,5 @@
 ﻿import { useState } from "react";
+import { toast } from "sonner";
 import { useAuth, useTorrents } from "@/hooks/useApi";
 import { Button } from "@/modules/app/components/ui/button";
 
@@ -12,7 +13,7 @@ export function LoginExample() {
     e.preventDefault();
     try {
       await login(email, password);
-      alert("登录成功！");
+      toast.success("登录成功！");
     } catch (err) {
       console.error("登录失败:", err);
     }

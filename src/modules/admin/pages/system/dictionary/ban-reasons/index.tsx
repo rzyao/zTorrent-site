@@ -4,6 +4,8 @@ import { Input } from "@/modules/admin/components/ui/input";
 import { Button } from "@/modules/admin/components/ui/button";
 import { useBanReasonsLogic } from "./useBanReasonsLogic";
 import { BanReasonModal } from "./BanReasonModal";
+import { ConfirmModal } from "@/modules/admin/components/ui/modal";
+import { PunishmentDictsService } from "@/api/services/PunishmentDictsService";
 import {
   Select,
   SelectContent,
@@ -32,6 +34,10 @@ export default function BanReasons() {
     editOpen,
     setEditOpen,
     editRecord,
+    deleteConfirmOpen,
+    setDeleteConfirmOpen,
+    deleteRecord,
+    handleDelete,
     fetchList,
   } = useBanReasonsLogic();
 
@@ -120,6 +126,23 @@ export default function BanReasons() {
         onOpenChange={setEditOpen}
         record={editRecord}
         onSuccess={fetchList}
+      />
+
+      <ConfirmModal
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        title="确认删除"
+        content={`确定要删除封禁原因 "${deleteRecord?.label}" 吗?`}
+        onOk={async () => {
+          if (deleteRecord) {
+            await handleDelete(async () => {
+              await PunishmentDictsService.punishmentDictsControllerDelete({
+                id: deleteRecord.id,
+              });
+            });
+            setDeleteConfirmOpen(false);
+          }
+        }}
       />
     </>
   );

@@ -24,7 +24,7 @@ export default function LoginPage({
   onTestApi,
 }: LoginPageProps) {
   const { t } = useLanguage();
-  useDynamicTitle(t('auth.login'));
+  useDynamicTitle(t("auth.login"));
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -35,10 +35,10 @@ export default function LoginPage({
     e.preventDefault();
     try {
       await login(username, password, autoLogout);
-      toast.success(t('auth.loginSuccess'));
+      toast.success(t("auth.loginSuccess"));
       onLoginSuccess();
     } catch (err: any) {
-      toast.error(t('auth.loginFailed') + ": " + (err.message || t('auth.unknownError')));
+      // Global interceptor handles API errors
     }
   };
 
@@ -66,20 +66,20 @@ export default function LoginPage({
         <div className="w-full max-w-md">
           <div className="rounded-lg border border-gray-800 bg-black/60 p-8 backdrop-blur-md md:p-10">
             <div className="mb-8 text-center">
-              <h1 className="mb-2 text-3xl text-white">{t('auth.login')}</h1>
-              <p className="text-sm text-gray-400">{t('auth.welcomeBack')}</p>
+              <h1 className="mb-2 text-3xl text-white">{t("auth.login")}</h1>
+              <p className="text-sm text-gray-400">{t("auth.welcomeBack")}</p>
             </div>
 
             <form className="space-y-5" onSubmit={handleLogin}>
               <div className="space-y-2">
-                <label className="text-sm text-white">{t('auth.username')}</label>
+                <label className="text-sm text-white">{t("auth.username")}</label>
                 <div className="relative">
                   <User className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                   <Input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder={t('auth.usernamePlaceholder')}
+                    placeholder={t("auth.usernamePlaceholder")}
                     className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1]"
                     required
                   />
@@ -87,14 +87,14 @@ export default function LoginPage({
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm text-white">{t('auth.password')}</label>
+                <label className="text-sm text-white">{t("auth.password")}</label>
                 <div className="relative">
                   <Lock className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                   <Input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder={t('auth.passwordPlaceholder')}
+                    placeholder={t("auth.passwordPlaceholder")}
                     className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-12 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1]"
                     required
                   />
@@ -122,7 +122,7 @@ export default function LoginPage({
                   className="flex cursor-pointer items-center gap-2 text-sm text-gray-300"
                 >
                   <Clock className="h-4 w-4" />
-                  {t('auth.autoLogout')}
+                  {t("auth.autoLogout")}
                 </label>
               </div>
 
@@ -134,7 +134,7 @@ export default function LoginPage({
                   variant="link"
                   size="sm"
                 >
-                  {t('auth.forgotPassword')}
+                  {t("auth.forgotPassword")}
                 </Button>
               </div>
 
@@ -152,19 +152,19 @@ export default function LoginPage({
                 {isLoading ? (
                   <>
                     <div className="mr-2 h-5 w-5 animate-spin rounded-full border-b-2 border-white"></div>
-                    {t('auth.loggingIn')}
+                    {t("auth.loggingIn")}
                   </>
                 ) : (
                   <>
                     <LogIn className="mr-2 h-5 w-5" />
-                    {t('auth.login')}
+                    {t("auth.login")}
                   </>
                 )}
               </Button>
             </form>
 
             <div className="mt-8 text-center text-sm">
-              <span className="text-gray-400">{t('auth.noAccount')}</span>
+              <span className="text-gray-400">{t("auth.noAccount")}</span>
               <Button
                 type="button"
                 onClick={onRegister}
@@ -172,7 +172,7 @@ export default function LoginPage({
                 variant="link"
                 size="sm"
               >
-                {t('auth.registerNow')}
+                {t("auth.registerNow")}
               </Button>
             </div>
 
@@ -183,7 +183,7 @@ export default function LoginPage({
                   onClick={onTestApi}
                   className="text-sm text-blue-400 transition-colors hover:text-blue-300"
                 >
-                  {t('auth.apiTest')}
+                  {t("auth.apiTest")}
                 </Button>
               </div>
             )}
@@ -191,9 +191,9 @@ export default function LoginPage({
 
           <div className="mt-6 text-center text-xs text-gray-500">
             <p>
-              {t('auth.sitePrivate')}
+              {t("auth.sitePrivate")}
               <br />
-              {t('auth.noShareAccount')}
+              {t("auth.noShareAccount")}
             </p>
           </div>
         </div>

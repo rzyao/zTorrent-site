@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { DownloadsService } from '@/api/services/DownloadsService';
-import { DownloadersService } from '@/api/services/DownloadersService';
-import { customToast } from '@/hooks/useToast';
+import { useState } from "react";
+import { DownloadsService } from "@/api/services/DownloadsService";
+import { DownloadersService } from "@/api/services/DownloadersService";
+import { customToast } from "@/hooks/useToast";
 
 interface SendToDownloaderParams {
   torrentId: string;
@@ -16,9 +16,14 @@ interface SendToDownloaderParams {
 export function useSendToDownloader() {
   const [sending, setSending] = useState(false);
 
-  const sendToDownloader = async ({ torrentId, source, downloaderId, path }: SendToDownloaderParams) => {
+  const sendToDownloader = async ({
+    torrentId,
+    source,
+    downloaderId,
+    path,
+  }: SendToDownloaderParams) => {
     if (!torrentId || !downloaderId) return false;
-    
+
     setSending(true);
     try {
       // 1. 获取一次性下载链接
@@ -31,7 +36,8 @@ export function useSendToDownloader() {
       const downloadTokenUrl = String(data?.url ?? "");
 
       if (!downloadTokenUrl) {
-        throw new Error("无法生成下载链接");
+        customToast.error("无法生成下载链接");
+        return false;
       }
 
       // 2. 发送到下载器
@@ -44,8 +50,7 @@ export function useSendToDownloader() {
       customToast.success("已发送至下载器");
       return true;
     } catch (e: any) {
-      const msg = e?.message || "发送失败";
-      customToast.error(msg);
+      // Global interceptor handles API errors
       return false;
     } finally {
       setSending(false);

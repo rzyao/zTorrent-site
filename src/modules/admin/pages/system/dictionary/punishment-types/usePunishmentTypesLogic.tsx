@@ -27,6 +27,10 @@ export const usePunishmentTypesLogic = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [editRecord, setEditRecord] = useState<PunishmentType | null>(null);
 
+  // 删除确认状态
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteRecord, setDeleteRecord] = useState<PunishmentType | null>(null);
+
   // --- 异步操作 ---
   const fetchList = useCallback(async () => {
     setLoading(true);
@@ -146,13 +150,8 @@ export const usePunishmentTypesLogic = () => {
               danger
               className="text-[14px]"
               onClick={() => {
-                if (confirm(`确定要删除处罚类型 "${record.label}" 吗?`)) {
-                  handleDelete(async () => {
-                    await PunishmentDictsService.punishmentDictsControllerDelete({
-                      id: record.id,
-                    });
-                  });
-                }
+                setDeleteRecord(record);
+                setDeleteConfirmOpen(true);
               }}
             >
               删除
@@ -187,6 +186,11 @@ export const usePunishmentTypesLogic = () => {
     editOpen,
     setEditOpen,
     editRecord,
+    // 删除确认相关
+    deleteConfirmOpen,
+    setDeleteConfirmOpen,
+    deleteRecord,
+    handleDelete,
     // 方法
     fetchList,
   };

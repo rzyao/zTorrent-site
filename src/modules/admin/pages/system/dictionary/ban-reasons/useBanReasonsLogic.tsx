@@ -23,6 +23,10 @@ export const useBanReasonsLogic = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [editRecord, setEditRecord] = useState<BanReason | null>(null);
 
+  // 删除确认状态
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteRecord, setDeleteRecord] = useState<BanReason | null>(null);
+
   // --- 异步操作 ---
   const fetchList = useCallback(async () => {
     setLoading(true);
@@ -142,13 +146,8 @@ export const useBanReasonsLogic = () => {
               danger
               className="text-[14px]"
               onClick={() => {
-                if (confirm(`确定要删除封禁原因 "${record.label}" 吗?`)) {
-                  handleDelete(async () => {
-                    await PunishmentDictsService.punishmentDictsControllerDelete({
-                      id: record.id,
-                    });
-                  });
-                }
+                setDeleteRecord(record);
+                setDeleteConfirmOpen(true);
               }}
             >
               删除
@@ -183,6 +182,11 @@ export const useBanReasonsLogic = () => {
     editOpen,
     setEditOpen,
     editRecord,
+    // 删除确认
+    deleteConfirmOpen,
+    setDeleteConfirmOpen,
+    deleteRecord,
+    handleDelete,
     // 方法
     fetchList,
   };

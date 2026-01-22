@@ -4,6 +4,8 @@ import { Input } from "@/modules/admin/components/ui/input";
 import { Button } from "@/modules/admin/components/ui/button";
 import { usePunishmentTypesLogic } from "./usePunishmentTypesLogic";
 import { PunishmentTypeModal } from "./PunishmentTypeModal";
+import { ConfirmModal } from "@/modules/admin/components/ui/modal";
+import { PunishmentDictsService } from "@/api/services/PunishmentDictsService";
 import {
   Select,
   SelectContent,
@@ -31,6 +33,10 @@ export default function PunishmentTypes() {
     editOpen,
     setEditOpen,
     editRecord,
+    deleteConfirmOpen,
+    setDeleteConfirmOpen,
+    deleteRecord,
+    handleDelete,
     fetchList,
   } = usePunishmentTypesLogic();
 
@@ -118,6 +124,23 @@ export default function PunishmentTypes() {
         onOpenChange={setEditOpen}
         record={editRecord}
         onSuccess={fetchList}
+      />
+
+      <ConfirmModal
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        title="确认删除"
+        content={`确定要删除处罚类型 "${deleteRecord?.label}" 吗?`}
+        onOk={async () => {
+          if (deleteRecord) {
+            await handleDelete(async () => {
+              await PunishmentDictsService.punishmentDictsControllerDelete({
+                id: deleteRecord.id,
+              });
+            });
+            setDeleteConfirmOpen(false);
+          }
+        }}
       />
     </>
   );

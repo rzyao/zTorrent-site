@@ -1,13 +1,18 @@
-﻿import { useEffect, useRef, useState } from 'react';
-import { usePlaylists } from '@/modules/app/hooks/usePlaylists';
-import { ImagesService } from '@/api/services/ImagesService';
-import { customToast } from '@/hooks/useToast';
-import type { Playlist, Movie, Visibility, PlaylistType } from '@/modules/app/pages/Edit/playlists/types';
+﻿import { useEffect, useRef, useState } from "react";
+import { usePlaylists } from "@/modules/app/hooks/usePlaylists";
+import { ImagesService } from "@/api/services/ImagesService";
+import { customToast } from "@/hooks/useToast";
+import type {
+  Playlist,
+  Movie,
+  Visibility,
+  PlaylistType,
+} from "@/modules/app/pages/Edit/playlists/types";
 import {
   mapBackendPlaylistToLocal,
   mapBackendPlaylistSummaryToLocal,
   mapFilmListItemToMovie,
-} from '@/modules/app/pages/Edit/playlists/utils';
+} from "@/modules/app/pages/Edit/playlists/utils";
 
 /**
  * useEditPlaylist
@@ -21,15 +26,26 @@ import {
  */
 export function useEditPlaylist() {
   // 对接后端服务的通用 Hook
-  const { listPlaylists, getPlaylist, createPlaylist, updatePlaylist, deletePlaylist, addFilm, removeFilm, reorderFilm, listItems, searchAddableItems } = usePlaylists();
+  const {
+    listPlaylists,
+    getPlaylist,
+    createPlaylist,
+    updatePlaylist,
+    deletePlaylist,
+    addFilm,
+    removeFilm,
+    reorderFilm,
+    listItems,
+    searchAddableItems,
+  } = usePlaylists();
 
   // 片单列表与筛选
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const filteredPlaylists = playlists.filter(
     (p) =>
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase())
+      p.description.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // 当前选中片单与表单编辑状态
@@ -39,18 +55,18 @@ export function useEditPlaylist() {
 
   // 创建/编辑表单
   const [editForm, setEditForm] = useState<{
-    title: string,
-    description: string,
-    cover: string,
-    visibility: Visibility,
-    type: PlaylistType | undefined,
-    tags: string[],
-    category: string | undefined,
+    title: string;
+    description: string;
+    cover: string;
+    visibility: Visibility;
+    type: PlaylistType | undefined;
+    tags: string[];
+    category: string | undefined;
   }>({
-    title: '',
-    description: '',
-    cover: '',
-    visibility: 'public',
+    title: "",
+    description: "",
+    cover: "",
+    visibility: "public",
     type: undefined,
     tags: [],
     category: undefined,
@@ -62,7 +78,7 @@ export function useEditPlaylist() {
   // 添加影片面板状态
   const [showAddMovie, setShowAddMovie] = useState(false);
   const [available, setAvailable] = useState<Movie[]>([]);
-  const [addQuery, setAddQuery] = useState('');
+  const [addQuery, setAddQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<Movie[]>([]);
 
@@ -70,29 +86,42 @@ export function useEditPlaylist() {
   useEffect(() => {
     (async () => {
       try {
-        const list = await listPlaylists({ listType: 'mine', page: 1, limit: 50, keyword: searchQuery });
+        const list = await listPlaylists({
+          listType: "mine",
+          page: 1,
+          limit: 50,
+          keyword: searchQuery,
+        });
         const mapped = (list?.items ?? []).map(mapBackendPlaylistSummaryToLocal);
         setPlaylists(mapped);
-      } catch { /* 保持静默，列表失败不阻塞页面 */ }
-      
+      } catch {
+        /* 保持静默，列表失败不阻塞页面 */
+      }
+
       // 加载初始可添加项（当有选中片单时）
       if (selectedPlaylist?.id) {
         try {
-          const res = await searchAddableItems({ playlistId: selectedPlaylist.id, page: 1, limit: 50 });
+          const res = await searchAddableItems({
+            playlistId: selectedPlaylist.id,
+            page: 1,
+            limit: 50,
+          });
           const items = res?.items ?? [];
           const mapped = items.map((f: any) => ({
             id: String(f.id),
             title: f.title,
-            originalTitle: f.originalTitle || '',
-            year: String(f.year || ''),
-            poster: f.posterUrl || '',
-            category: '',
+            originalTitle: f.originalTitle || "",
+            year: String(f.year || ""),
+            poster: f.posterUrl || "",
+            category: "",
             rating: Number(f.rating || 0),
             torrentCount: 0,
             isInPlaylist: f.isInPlaylist,
           }));
           setAvailable(mapped);
-        } catch { /* 保持静默 */ }
+        } catch {
+          /* 保持静默 */
+        }
       }
     })();
   }, [searchQuery, selectedPlaylist?.id, listPlaylists, searchAddableItems]);
@@ -109,27 +138,27 @@ export function useEditPlaylist() {
     const handler = setTimeout(async () => {
       if (!selectedPlaylist?.id) return;
       try {
-        const res = await searchAddableItems({ 
+        const res = await searchAddableItems({
           playlistId: selectedPlaylist.id,
-          page: 1, 
-          limit: 50, 
-          keyword: q 
+          page: 1,
+          limit: 50,
+          keyword: q,
         });
         const items = res?.items ?? [];
         const mapped = items.map((f: any) => ({
           id: String(f.id),
           title: f.title,
-          originalTitle: f.originalTitle || '',
-          year: String(f.year || ''),
-          poster: f.posterUrl || '',
-          category: '',
+          originalTitle: f.originalTitle || "",
+          year: String(f.year || ""),
+          poster: f.posterUrl || "",
+          category: "",
           rating: Number(f.rating || 0),
           torrentCount: 0,
           isInPlaylist: f.isInPlaylist,
         }));
         setSearchResults(mapped);
       } catch (e: any) {
-        customToast.error(e?.message || '搜索失败');
+        // Global interceptor handles API errors
       } finally {
         setIsSearching(false);
       }
@@ -147,33 +176,45 @@ export function useEditPlaylist() {
         // 临时修复：后端 GET 响应缺失 category，从 playlists 数组或当前 selectedPlaylist 中回填
         if (!mapped.category) {
           const existing = playlists.find((p) => p.id === mapped.id);
-          mapped.category = existing?.category || selectedPlaylist.category || '';
+          mapped.category = existing?.category || selectedPlaylist.category || "";
         }
         setSelectedPlaylist(mapped);
-      } catch { /* 保持静默 */ }
+      } catch {
+        /* 保持静默 */
+      }
       try {
         const res = await listItems({ playlistId: selectedPlaylist.id, page: 1, limit: 100 });
         const items = res?.items ?? [];
         if (Array.isArray(items)) {
           const movies = items.map((f: any) => ({
-            id: String(f?.itemId ?? ''),
-            title: f?.title ?? '',
-            originalTitle: '', // 详情接口目前暂无此字段
-            year: String(f?.year ?? ''),
-            poster: f?.posterUrl ?? '',
-            category: '', // 详情接口目前暂无此字段
+            id: String(f?.itemId ?? ""),
+            title: f?.title ?? "",
+            originalTitle: "", // 详情接口目前暂无此字段
+            year: String(f?.year ?? ""),
+            poster: f?.posterUrl ?? "",
+            category: "", // 详情接口目前暂无此字段
             rating: Number(f?.rating ?? 0),
             torrentCount: 0,
           }));
           setSelectedPlaylist((prev) => (prev ? { ...prev, movies } : prev));
         }
-      } catch { /* 保持静默 */ }
+      } catch {
+        /* 保持静默 */
+      }
     })();
   }, [selectedPlaylist?.id, isCreating, isEditing]);
 
   /** 开始创建新片单 */
   const handleCreateNew = () => {
-    setEditForm({ title: '', description: '', cover: '', visibility: 'public', type: undefined as any, tags: [], category: undefined });
+    setEditForm({
+      title: "",
+      description: "",
+      cover: "",
+      visibility: "public",
+      type: undefined as any,
+      tags: [],
+      category: undefined,
+    });
     setIsCreating(true);
     setIsEditing(false);
     setSelectedPlaylist(null);
@@ -228,22 +269,21 @@ export function useEditPlaylist() {
         setIsEditing(false);
       }
     } catch (e: any) {
-      customToast.error(e?.message || '保存失败');
+      // Global interceptor handles API errors
     }
   };
 
   /** 删除片单 */
   const handleDelete = async (id: string) => {
-    if (confirm('确定要删除这个片单吗？')) {
-      try {
-        await deletePlaylist(id);
-        setPlaylists(playlists.filter((p) => p.id !== id));
-        if (selectedPlaylist?.id === id) {
-          setSelectedPlaylist(null);
-        }
-      } catch (e: any) {
-        customToast.error(e?.message || '删除失败');
+    try {
+      await deletePlaylist(id);
+      setPlaylists(playlists.filter((p) => p.id !== id));
+      if (selectedPlaylist?.id === id) {
+        setSelectedPlaylist(null);
       }
+      customToast.success("删除成功");
+    } catch (e: any) {
+      // Global interceptor handles API errors
     }
   };
 
@@ -252,27 +292,27 @@ export function useEditPlaylist() {
     try {
       const [detail, itemsRes] = await Promise.all([
         getPlaylist(id),
-        listItems({ playlistId: id, page: 1, limit: 100 })
+        listItems({ playlistId: id, page: 1, limit: 100 }),
       ]);
-      
+
       const mapped = mapBackendPlaylistToLocal(detail);
       const items = itemsRes?.items ?? [];
       const movies = items.map((f: any) => ({
-        id: String(f?.itemId ?? ''),
-        title: f?.title ?? '',
-        originalTitle: '',
-        year: String(f?.year ?? ''),
-        poster: f?.posterUrl ?? '',
-        category: '',
+        id: String(f?.itemId ?? ""),
+        title: f?.title ?? "",
+        originalTitle: "",
+        year: String(f?.year ?? ""),
+        poster: f?.posterUrl ?? "",
+        category: "",
         rating: Number(f?.rating ?? 0),
         torrentCount: 0,
       }));
 
       const finalPlaylist = { ...mapped, movies };
       setSelectedPlaylist(finalPlaylist);
-      setPlaylists(prev => prev.map((p) => (p.id === id ? finalPlaylist : p)));
+      setPlaylists((prev) => prev.map((p) => (p.id === id ? finalPlaylist : p)));
     } catch (e: any) {
-      customToast.error(e?.message || '刷新内容失败');
+      // Global interceptor handles API errors
     }
   };
 
@@ -283,7 +323,7 @@ export function useEditPlaylist() {
       await addFilm(selectedPlaylist.id, movie.id);
       await refreshPlaylistContents(selectedPlaylist.id);
     } catch (e: any) {
-      customToast.error(e?.message || '添加影片失败');
+      // Global interceptor handles API errors
     }
   };
 
@@ -294,15 +334,15 @@ export function useEditPlaylist() {
       await removeFilm(selectedPlaylist.id, movieId);
       await refreshPlaylistContents(selectedPlaylist.id);
     } catch (e: any) {
-      customToast.error(e?.message || '移除影片失败');
+      // Global interceptor handles API errors
     }
   };
 
   /** 上/下移动影片并提交后端排序 */
-  const handleMoveMovie = async (index: number, direction: 'up' | 'down') => {
+  const handleMoveMovie = async (index: number, direction: "up" | "down") => {
     if (!selectedPlaylist) return;
     const len = selectedPlaylist.movies.length;
-    const target = direction === 'up' ? index - 1 : index + 1;
+    const target = direction === "up" ? index - 1 : index + 1;
     if (target < 0 || target >= len) return;
     const nextMovies = [...selectedPlaylist.movies];
     const [m] = nextMovies.splice(index, 1);
@@ -312,7 +352,7 @@ export function useEditPlaylist() {
       await reorderFilm(selectedPlaylist.id, order);
       await refreshPlaylistContents(selectedPlaylist.id);
     } catch (e: any) {
-      customToast.error(e?.message || '更新排序失败');
+      // Global interceptor handles API errors
     }
   };
 
@@ -329,16 +369,20 @@ export function useEditPlaylist() {
       const reader = new FileReader();
       const asDataUrl: string = await new Promise((resolve, reject) => {
         reader.onload = () => resolve(String(reader.result));
-        reader.onerror = () => reject(new Error('读取文件失败'));
+        reader.onerror = () => reject(new Error("读取文件失败"));
         reader.readAsDataURL(file);
       });
-      const base64 = asDataUrl.split(',')[1] || '';
-      const resp = await ImagesService.imagesControllerUpload({ content: base64, filename: file.name, mimeType: file.type });
-      const url = (resp?.data?.url ?? (resp as any)?.data?.url ?? '') as string;
-      if (!url) throw new Error('上传失败');
+      const base64 = asDataUrl.split(",")[1] || "";
+      const resp = await ImagesService.imagesControllerUpload({
+        content: base64,
+        filename: file.name,
+        mimeType: file.type,
+      });
+      const url = (resp?.data?.url ?? (resp as any)?.data?.url ?? "") as string;
+      if (!url) throw new Error("上传失败");
       setEditForm((prev) => ({ ...prev, cover: url }));
     } catch (err: any) {
-      customToast.error(err?.message || '上传封面失败');
+      // Global interceptor handles API errors
     }
   };
 

@@ -24,7 +24,7 @@ interface FormData {
 
 export default function Register({ onBack, onRegisterSuccess, inviteCode }: RegisterProps) {
   const { t } = useLanguage();
-  useDynamicTitle(t('auth.register'));
+  useDynamicTitle(t("auth.register"));
   const { register, sendVerificationCode, isLoading: hookLoading, error: hookError } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,12 +55,12 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
 
   const handleRequestEmailCode = async () => {
     if (!formData.email) {
-      setErrors((prev) => ({ ...prev, email: t('auth.pleaseInputEmail') }));
+      setErrors((prev) => ({ ...prev, email: t("auth.pleaseInputEmail") }));
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setErrors((prev) => ({ ...prev, email: t('auth.invalidEmail') }));
+      setErrors((prev) => ({ ...prev, email: t("auth.invalidEmail") }));
       return;
     }
     setIsSendingCode(true);
@@ -78,9 +78,9 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
         setExpiryMinutes(minutes);
       }
       setCountdown(60);
-      toast.success(t('auth.codeSent', { minutes: minutes ?? 10 }));
+      toast.success(t("auth.codeSent", { minutes: minutes ?? 10 }));
     } catch (error: any) {
-      toast.error(error.message || t('auth.sendCodeFailed'));
+      // Global interceptor handles API errors
     } finally {
       setIsSendingCode(false);
     }
@@ -131,15 +131,15 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
   const validateStep1 = (): boolean => {
     const newErrors: Partial<FormData> = {};
     if (!formData.email) {
-      newErrors.email = t('auth.pleaseInputEmail');
+      newErrors.email = t("auth.pleaseInputEmail");
     } else {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.email)) {
-        newErrors.email = t('auth.invalidEmail');
+        newErrors.email = t("auth.invalidEmail");
       }
     }
     if (!formData.emailCode) {
-      newErrors.emailCode = t('auth.pleaseInputCode');
+      newErrors.emailCode = t("auth.pleaseInputCode");
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -147,10 +147,10 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
   const validateStep2 = (): boolean => {
     const newErrors: Partial<FormData> = {};
     if (!formData.username) {
-      newErrors.username = t('auth.pleaseInputUsername');
+      newErrors.username = t("auth.pleaseInputUsername");
     }
     if (!formData.password) {
-      newErrors.password = t('auth.pleaseInputPassword');
+      newErrors.password = t("auth.pleaseInputPassword");
     } else if (!isValidPassword(formData.password)) {
       newErrors.password = passwordErrorMessage();
     }
@@ -170,7 +170,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
       });
       const ok = res?.code === 1000;
       if (!ok) {
-        const msg = res?.message || t('auth.codeErrorOrExpired');
+        const msg = res?.message || t("auth.codeErrorOrExpired");
         toast.error(msg);
         setErrors((prev) => ({ ...prev, emailCode: msg }));
         return;
@@ -185,8 +185,8 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
           (err as any).response.data &&
           (err as any).response.data.message) ||
         err?.message ||
-        t('auth.codeErrorOrExpired');
-      toast.error(msg);
+        t("auth.codeErrorOrExpired");
+      // Global interceptor handles API errors
       setErrors((prev) => ({ ...prev, emailCode: msg }));
     } finally {
       setIsVerifyingCode(false);
@@ -205,16 +205,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
       await register(formData.email, formData.username, formData.password);
       window.location.replace("/");
     } catch (error: any) {
-      const msg =
-        (error && (error as any).body && (error as any).body.message) ||
-        (error && (error as any).data && (error as any).data.message) ||
-        (error &&
-          (error as any).response &&
-          (error as any).response.data &&
-          (error as any).response.data.message) ||
-        error?.message ||
-        t('auth.registerFailed');
-      toast.error(msg);
+      // Global interceptor handles API errors
     } finally {
       setIsSubmitting(false);
     }
@@ -225,7 +216,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
       <div className="flex min-h-screen items-center justify-center bg-[#0F171E]">
         <div className="flex flex-col items-center gap-3 text-white">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-white"></div>
-          <span className="text-sm text-gray-300">{t('auth.checkingStatus')}</span>
+          <span className="text-sm text-gray-300">{t("auth.checkingStatus")}</span>
         </div>
       </div>
     );
@@ -235,10 +226,10 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0F171E] px-4">
         <div className="w-full max-w-md rounded-md border border-gray-800 bg-black/60 p-6 text-center">
-          <h1 className="mb-2 text-2xl text-white">{t('auth.inviteOnly')}</h1>
-          <p className="text-sm text-gray-400">{t('auth.inviteOnlyDesc')}</p>
+          <h1 className="mb-2 text-2xl text-white">{t("auth.inviteOnly")}</h1>
+          <p className="text-sm text-gray-400">{t("auth.inviteOnlyDesc")}</p>
           <Button onClick={onBack} className="mt-6 text-sm text-[#00A8E1] hover:text-[#00A8E1]/80">
-            {t('auth.backToLogin')}
+            {t("auth.backToLogin")}
           </Button>
         </div>
       </div>
@@ -249,10 +240,10 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0F171E] px-4">
         <div className="w-full max-w-md rounded-md border border-gray-800 bg-black/60 p-6 text-center">
-          <h1 className="mb-2 text-2xl text-white">{t('auth.invalidInviteCode')}</h1>
-          <p className="text-sm text-gray-400">{t('auth.invalidInviteCodeDesc')}</p>
+          <h1 className="mb-2 text-2xl text-white">{t("auth.invalidInviteCode")}</h1>
+          <p className="text-sm text-gray-400">{t("auth.invalidInviteCodeDesc")}</p>
           <Button onClick={onBack} className="mt-6 text-sm text-[#00A8E1] hover:text-[#00A8E1]/80">
-            {t('auth.backToLogin')}
+            {t("auth.backToLogin")}
           </Button>
         </div>
       </div>
@@ -286,8 +277,8 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
           <div className="rounded-lg border border-gray-800 bg-black/60 p-8 md:p-10">
             {/* 标题 */}
             <div className="mb-8 text-center">
-              <h1 className="mb-2 text-3xl text-white">{t('auth.register')}</h1>
-              <p className="text-sm text-gray-400">{t('auth.joinCommunity')}</p>
+              <h1 className="mb-2 text-3xl text-white">{t("auth.register")}</h1>
+              <p className="text-sm text-gray-400">{t("auth.joinCommunity")}</p>
             </div>
             {hookError && (
               <div className="mb-4 rounded-md border border-red-800 bg-red-900/20 p-3">
@@ -308,7 +299,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                 <span
                   className={`text-xs ${currentStep === 1 ? "text-[#00A8E1]" : "text-green-500"}`}
                 >
-                  {t('auth.stepEmailVerify')}
+                  {t("auth.stepEmailVerify")}
                 </span>
               </div>
               <div
@@ -323,7 +314,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                 <span
                   className={`text-xs ${currentStep === 2 ? "text-[#00A8E1]" : "text-gray-400"}`}
                 >
-                  {t('auth.stepSetupAccount')}
+                  {t("auth.stepSetupAccount")}
                 </span>
               </div>
             </div>
@@ -333,14 +324,14 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                 <>
                   {/* 邮箱地址 */}
                   <div className="space-y-2">
-                    <label className="text-sm text-white">{t('auth.emailAddress')}</label>
+                    <label className="text-sm text-white">{t("auth.emailAddress")}</label>
                     <div className="relative">
                       <Mail className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                       <Input
                         type="email"
                         value={formData.email}
                         onChange={(e) => handleFieldChange("email", e.target.value)}
-                        placeholder={t('auth.emailPlaceholder')}
+                        placeholder={t("auth.emailPlaceholder")}
                         className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1] ${errors.email ? "border-red-500" : ""}`}
                         required
                       />
@@ -349,7 +340,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                   </div>
                   {/* 邮箱验证码 */}
                   <div className="space-y-2">
-                    <label className="text-sm text-white">{t('auth.emailCode')}</label>
+                    <label className="text-sm text-white">{t("auth.emailCode")}</label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Mail className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
@@ -357,7 +348,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                           type="text"
                           value={formData.emailCode}
                           onChange={(e) => handleFieldChange("emailCode", e.target.value)}
-                          placeholder={t('auth.inputCode')}
+                          placeholder={t("auth.inputCode")}
                           className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1] ${errors.emailCode ? "border-red-500" : ""}`}
                           required
                         />
@@ -369,10 +360,10 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                         className="rounded-md bg-gray-700 px-4 py-6 whitespace-nowrap text-white transition-colors hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {isSendingCode
-                          ? t('auth.sending')
+                          ? t("auth.sending")
                           : countdown > 0
                             ? countdown + "s"
-                            : t('auth.sendCode')}
+                            : t("auth.sendCode")}
                       </Button>
                     </div>
                     {errors.emailCode && <p className="text-xs text-red-400">{errors.emailCode}</p>}
@@ -384,7 +375,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                     disabled={isVerifyingCode}
                     className="w-full rounded-md bg-[#00A8E1] py-6 text-lg text-white transition-colors hover:bg-[#00A8E1]/90 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {isVerifyingCode ? t('auth.verifying') : t('auth.nextStep')}
+                    {isVerifyingCode ? t("auth.verifying") : t("auth.nextStep")}
                   </Button>
                 </>
               )}
@@ -393,37 +384,37 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                 <>
                   {/* 用户名 */}
                   <div className="space-y-2">
-                    <label className="text-sm text-white">{t('auth.username')}</label>
+                    <label className="text-sm text-white">{t("auth.username")}</label>
                     <div className="relative">
                       <User className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                       <Input
                         type="text"
                         value={formData.username}
                         onChange={(e) => handleFieldChange("username", e.target.value)}
-                        placeholder={t('auth.chooseUsername')}
+                        placeholder={t("auth.chooseUsername")}
                         className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-3 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1] ${errors.username ? "border-red-500" : ""}`}
                         required
                       />
                     </div>
                     {errors.username && <p className="text-xs text-red-400">{errors.username}</p>}
-                    <p className="text-xs text-gray-500">{t('auth.usernameHint')}</p>
+                    <p className="text-xs text-gray-500">{t("auth.usernameHint")}</p>
                   </div>
                   {/* 密码 */}
                   <div className="space-y-2">
-                    <label className="text-sm text-white">{t('auth.password')}</label>
+                    <label className="text-sm text-white">{t("auth.password")}</label>
                     <div className="relative">
                       <Lock className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                       <Input
                         type="password"
                         value={formData.password}
                         onChange={(e) => handleFieldChange("password", e.target.value)}
-                        placeholder={t('auth.setPassword')}
+                        placeholder={t("auth.setPassword")}
                         className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-3 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1] ${errors.password ? "border-red-500" : ""}`}
                         required
                       />
                     </div>
                     {errors.password && <p className="text-xs text-red-400">{errors.password}</p>}
-                    <p className="text-xs text-gray-500">{t('auth.passwordHint')}</p>
+                    <p className="text-xs text-gray-500">{t("auth.passwordHint")}</p>
                   </div>
                   <div className="text-xs text-gray-400">
                     <label className="flex cursor-pointer items-start gap-2">
@@ -433,13 +424,13 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                         required
                       />
                       <span>
-                        {t('auth.agreeTerms')}{" "}
+                        {t("auth.agreeTerms")}{" "}
                         <a href="#" className="text-[#00A8E1] hover:underline">
-                          {t('auth.userAgreement')}
+                          {t("auth.userAgreement")}
                         </a>{" "}
-                        {t('auth.and')}{" "}
+                        {t("auth.and")}{" "}
                         <a href="#" className="text-[#00A8E1] hover:underline">
-                          {t('auth.privacyPolicy')}
+                          {t("auth.privacyPolicy")}
                         </a>
                       </span>
                     </label>
@@ -452,7 +443,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                       className="flex-1 rounded-md bg-gray-700 py-3 text-white transition-colors hover:bg-gray-600"
                     >
                       <ArrowLeft className="mr-2 inline h-4 w-4" />
-                      {t('auth.prevStep')}
+                      {t("auth.prevStep")}
                     </Button>
                     {/* 注册按钮 */}
                     <Button
@@ -463,12 +454,12 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                       {isSubmitting || hookLoading ? (
                         <>
                           <div className="mr-2 h-5 w-5 animate-spin rounded-full border-b-2 border-white"></div>
-                          {t('auth.registering')}
+                          {t("auth.registering")}
                         </>
                       ) : (
                         <>
                           <UserPlus className="mr-2 h-5 w-5" />
-                          {t('auth.createAccount')}
+                          {t("auth.createAccount")}
                         </>
                       )}
                     </Button>
@@ -478,20 +469,20 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
             </form>
             {/* 登录提示 */}
             <div className="mt-8 text-center text-sm">
-              <span className="text-gray-400">{t('auth.hasAccount')}</span>
+              <span className="text-gray-400">{t("auth.hasAccount")}</span>
               <Button
                 onClick={onBack}
                 className="ml-2 text-[#00A8E1] transition-colors hover:text-[#00A8E1]/80"
               >
-                {t('auth.goToLogin')}
+                {t("auth.goToLogin")}
               </Button>
             </div>
           </div>
           <div className="mt-6 text-center text-xs text-gray-500">
             <p>
-              {t('auth.sitePrivateRegister')}
+              {t("auth.sitePrivateRegister")}
               <br />
-              {t('auth.noShareAccount')}
+              {t("auth.noShareAccount")}
             </p>
           </div>
         </div>

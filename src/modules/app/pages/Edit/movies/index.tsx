@@ -1,4 +1,6 @@
-﻿import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+﻿import { useState } from "react";
+import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { ConfirmModal } from "@/modules/app/components/ConfirmModal";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Film, Plus } from "lucide-react";
 import { Button } from "@/modules/app/components/ui/button";
@@ -12,7 +14,7 @@ import { TorrentList } from "@/modules/app/pages/Edit/movies/components/TorrentL
 
 export default function EditMoviePage() {
   const { t } = useLanguage();
-  useDynamicTitle(t('edit.movieTitle'));
+  useDynamicTitle(t("edit.movieTitle"));
   const {
     movies,
     filteredMovies,
@@ -48,6 +50,8 @@ export default function EditMoviePage() {
     fetchPtGenAndFill,
   } = useEditMovie();
 
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
   const clearModes = () => {
     setIsEditing(false);
     setIsCreating(false);
@@ -55,31 +59,29 @@ export default function EditMoviePage() {
   };
 
   return (
-    <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-6">
+    <div className="mx-auto max-w-[1600px] px-4 py-6 md:px-6">
       <div className="mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
-              <Film className="w-5 h-5 text-white" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30">
+              <Film className="h-5 w-5 text-white" />
             </div>
             <div className="flex items-end gap-1">
-              <h1 className="text-white text-3xl">{t('editMovie.pageTitle')}</h1>
-              <p className="text-neutral-400 text-sm mt-1">
-                {t('editMovie.pageDesc')}
-              </p>
+              <h1 className="text-3xl text-white">{t("editMovie.pageTitle")}</h1>
+              <p className="mt-1 text-sm text-neutral-400">{t("editMovie.pageDesc")}</p>
             </div>
           </div>
           <Button
             onClick={handleCreateNew}
-            className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+            className="bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:from-amber-600 hover:to-orange-700"
           >
-            <Plus className="w-4 h-4 mr-2" />
-            {t('editMovie.addMovie')}
+            <Plus className="mr-2 h-4 w-4" />
+            {t("editMovie.addMovie")}
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-1">
           <MovieList
             movies={movies}
@@ -92,21 +94,14 @@ export default function EditMoviePage() {
           />
           <StatsPanel
             total={movies.length}
-            filmsCount={
-              movies.filter((m) => m.categories?.[0] === "电影").length
-            }
-            seriesCount={
-              movies.filter((m) => m.categories?.[0] === "剧集").length
-            }
-            totalTorrents={movies.reduce(
-              (sum, m) => sum + m.torrents.length,
-              0
-            )}
+            filmsCount={movies.filter((m) => m.categories?.[0] === "电影").length}
+            seriesCount={movies.filter((m) => m.categories?.[0] === "剧集").length}
+            totalTorrents={movies.reduce((sum, m) => sum + m.torrents.length, 0)}
           />
         </div>
 
         <div className="lg:col-span-2">
-          <div className="bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6 md:p-8">
+          <div className="rounded-2xl border border-neutral-700/50 bg-linear-to-br from-neutral-800/40 to-stone-900/40 p-6 backdrop-blur-sm md:p-8">
             {(isCreating || isEditing) && (
               <MovieForm
                 isCreating={isCreating}
@@ -132,7 +127,7 @@ export default function EditMoviePage() {
                 <MovieDetails
                   movie={selectedMovie}
                   onEdit={() => handleEdit(selectedMovie)}
-                  onDelete={() => handleDeleteMovie(selectedMovie.id)}
+                  onDelete={() => setConfirmDeleteId(selectedMovie.id)}
                   onAddTorrent={() => setShowTorrentSearch(true)}
                 />
                 <TorrentSearchPanel
@@ -156,24 +151,35 @@ export default function EditMoviePage() {
             )}
 
             {!isCreating && !isEditing && !selectedMovie && (
-              <div className="text-center py-20">
-                <Film className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
-                <h3 className="text-white text-lg mb-2">{t('editMovie.selectMovie')}</h3>
-                <p className="text-neutral-400 text-sm mb-6">
-                  {t('editMovie.selectMovieHint')}
-                </p>
+              <div className="py-20 text-center">
+                <Film className="mx-auto mb-4 h-16 w-16 text-neutral-600" />
+                <h3 className="mb-2 text-lg text-white">{t("editMovie.selectMovie")}</h3>
+                <p className="mb-6 text-sm text-neutral-400">{t("editMovie.selectMovieHint")}</p>
                 <Button
                   onClick={handleCreateNew}
-                  className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25"
+                  className="bg-linear-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:from-amber-600 hover:to-orange-700"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {t('editMovie.addNewMovie')}
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t("editMovie.addNewMovie")}
                 </Button>
               </div>
             )}
           </div>
         </div>
       </div>
+      <ConfirmModal
+        open={!!confirmDeleteId}
+        onOpenChange={(v) => !v && setConfirmDeleteId(null)}
+        title="确认删除影片"
+        description="确定要删除这部影片吗？所有关联的种子也会被删除，此操作无法撤销。"
+        onConfirm={() => {
+          if (confirmDeleteId) {
+            handleDeleteMovie(confirmDeleteId);
+            setConfirmDeleteId(null);
+          }
+        }}
+        variant="destructive"
+      />
     </div>
   );
 }

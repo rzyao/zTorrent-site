@@ -2,6 +2,7 @@
 // 说明：集中管理状态与事件处理，UI 组件仅负责渲染。这样做到关注点分离、易于测试与维护。
 
 import { useState, useEffect, useCallback } from "react";
+import { toast } from "sonner";
 import { Downloader, DownloaderForm, DownloadPath, DownloaderType } from "../types";
 import { DownloadersService } from "@/api/services/DownloadersService";
 import { CreateDownloaderDto } from "@/api/models/CreateDownloaderDto";
@@ -74,7 +75,7 @@ export function useDownloaderManager() {
       resetForm();
     } catch (error) {
       console.error("Failed to create downloader:", error);
-      alert("添加失败，请检查输入或重试");
+      // Global interceptor handles API errors
     }
   };
 
@@ -96,7 +97,7 @@ export function useDownloaderManager() {
       resetForm();
     } catch (error) {
       console.error("Failed to update downloader:", error);
-      alert("更新失败，请重试");
+      // Global interceptor handles API errors
     }
   };
 
@@ -108,7 +109,6 @@ export function useDownloaderManager() {
       setDownloaders((prev) => prev.filter((d) => d.id !== id));
     } catch (error) {
       console.error("Failed to delete downloader:", error);
-      alert("删除失败，请重试");
       // 如果失败，最好重新拉取一次以保持同步
       fetchDownloaders();
     }
@@ -211,7 +211,7 @@ export function useDownloaderManager() {
       setSelectedDownloader(updatedDownloader);
     } catch (error) {
       console.error("Failed to delete tag:", error);
-      alert("删除标签失败");
+      // Global interceptor handles API errors
     }
   };
 
@@ -234,7 +234,7 @@ export function useDownloaderManager() {
       setSelectedDownloader(updatedDownloader);
     } catch (error) {
       console.error("Failed to delete path:", error);
-      alert("删除路径失败");
+      // Global interceptor handles API errors
     }
   };
 

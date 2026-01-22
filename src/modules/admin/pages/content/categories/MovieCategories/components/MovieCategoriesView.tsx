@@ -2,6 +2,7 @@
 import { Plus, Edit2, Trash2, ChevronRight, ChevronDown } from "lucide-react";
 import { useMovieCategories } from "../hooks/useMovieCategories";
 import { MovieCategoryDialog } from "./MovieCategoryDialog";
+import { ConfirmModal } from "@/modules/admin/components/ui/modal";
 import { DataTable, Column } from "@/modules/admin/components/ui/data-table";
 import { Button } from "@/modules/admin/components/ui/button";
 import { Switch } from "@/modules/admin/components/ui/switch";
@@ -33,6 +34,10 @@ export function MovieCategoriesView() {
     handleCreate,
     handleEdit,
     handleRemove,
+    confirmRemove,
+    isRemoveOpen,
+    setIsRemoveOpen,
+    removeItem,
     toggleEnabled,
   } = useMovieCategories();
 
@@ -159,7 +164,7 @@ export function MovieCategoriesView() {
             variant="text"
             size="small"
             className="text-error hover:bg-error/5 hover:text-error-hover text-sm"
-            onClick={() => handleRemove(record.id)}
+            onClick={() => handleRemove(record)}
           >
             <Trash2 className="mr-1 h-3.5 w-3.5" />
             删除
@@ -202,6 +207,15 @@ export function MovieCategoriesView() {
         onSubmit={handleEdit}
         title="编辑分类"
         loading={loading}
+      />
+
+      <ConfirmModal
+        open={isRemoveOpen}
+        onClose={() => setIsRemoveOpen(false)}
+        title="确认删除"
+        content={`确定要删除分类 "${removeItem?.label || removeItem?.name}" 吗？`}
+        onOk={confirmRemove}
+        confirmLoading={loading}
       />
     </>
   );

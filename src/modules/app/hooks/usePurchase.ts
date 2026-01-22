@@ -126,7 +126,7 @@ export function usePurchase() {
         setLastSuccess(payload);
         return payload;
       } catch (e: any) {
-        customToast.error(e?.message || "购买失败");
+        // Global interceptor handles API errors
         throw e;
       }
     },

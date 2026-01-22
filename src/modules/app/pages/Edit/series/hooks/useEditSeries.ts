@@ -1,4 +1,5 @@
 ﻿import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { useFilms } from "@/modules/app/hooks/useFilms"; // 复用 create/update (如果 SeriesService 完全独立，应封装 useSeries)
 import { SeriesService } from "@/api/services/SeriesService";
 import { EpisodesService } from "@/api/services/EpisodesService";
@@ -185,7 +186,7 @@ export function useEditSeries() {
     const { valid, errs } = validateSeriesForm(seriesForm);
     if (!valid) {
       setErrors(errs);
-      alert("请修正表单错误");
+      toast.warning("请修正表单中的错误");
       return;
     }
 
@@ -248,12 +249,11 @@ export function useEditSeries() {
         setSelectedSeries(mapped);
       }
     } catch (e: any) {
-      alert(e.message || "保存失败");
+      // Global interceptor handles API errors
     }
   };
 
   const handleDeleteSeries = async (id: string) => {
-    if (!confirm("确认删除?")) return;
     try {
       await SeriesService.seriesBaseControllerDelete({ id });
       const resp = await SeriesService.seriesBaseControllerList({
@@ -264,8 +264,9 @@ export function useEditSeries() {
       const list = resp?.message === "ok" ? resp.data?.items : (resp as any)?.items || [];
       setSeriesList((list ?? []).map(mapBackendSeriesToLocal));
       if (selectedSeries?.id === id) setSelectedSeries(null);
+      toast.success("删除成功");
     } catch (e: any) {
-      alert(e.message || "删除失败");
+      // Global interceptor handles API errors
     }
   };
 
@@ -335,7 +336,6 @@ export function useEditSeries() {
       await EpisodesService.episodeBaseControllerCreate(dto);
       if (selectedSeries) fetchEpisodes(selectedSeries.id);
     } catch (e: any) {
-      alert(e.message || "创建分集失败");
       throw e;
     }
   };
@@ -347,18 +347,17 @@ export function useEditSeries() {
       // Simplest: reload all for series
       if (selectedSeries) fetchEpisodes(selectedSeries.id);
     } catch (e: any) {
-      alert(e.message || "更新分集失败");
       throw e;
     }
   };
 
   const handleDeleteEpisode = async (id: string) => {
-    if (!confirm("确认删除?")) return;
     try {
       await EpisodesService.episodeBaseControllerDelete({ id });
       if (selectedSeries) fetchEpisodes(selectedSeries.id);
+      toast.success("删除成功");
     } catch (e: any) {
-      alert(e.message || "删除分集失败");
+      // Global interceptor handles API errors
     }
   };
 
@@ -367,7 +366,7 @@ export function useEditSeries() {
       await SeriesService.seriesTorrentsControllerBind({ seriesId, torrentId, episodeNumber });
       fetchSeriesTorrents(seriesId);
     } catch (e: any) {
-      alert(e.message || "绑定失败");
+      // Global interceptor handles API errors
     }
   };
 
@@ -376,12 +375,12 @@ export function useEditSeries() {
     seriesId: string,
     episodeNumber?: number,
   ) => {
-    if (!confirm("确认解绑?")) return;
     try {
       await SeriesService.seriesTorrentsControllerUnbind({ seriesId, torrentId, episodeNumber });
       fetchSeriesTorrents(seriesId);
+      toast.success("解绑成功");
     } catch (e: any) {
-      alert(e.message || "解绑失败");
+      // Global interceptor handles API errors
     }
   };
 

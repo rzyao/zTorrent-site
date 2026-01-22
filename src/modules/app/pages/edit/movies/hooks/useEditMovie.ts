@@ -1,62 +1,71 @@
-﻿import { useEffect, useState } from 'react';
-import { useFilms } from '@/modules/app/hooks/useFilms';
-import { TorrentsSearchService } from '@/api/services/TorrentsSearchService';
-import { MoviesService } from '@/api/services/MoviesService';
-import { MoviesTorrentsService } from '@/api/services/MoviesTorrentsService';
-import { PtGenService } from '@/api/services/PtGenService';
-import { ListTorrentsDto } from '@/api/models/ListTorrentsDto';
-import { stripBackticksAndTrim, parseDurationToMinutes, validateFilmForm, mapBackendFilmToLocal, isValidRating, mapBackendTorrentToLocal } from '@/modules/app/pages/Edit/movies/utils';
-import type { Movie, MovieFormState } from '@/modules/app/pages/Edit/movies/types';
-import { usePreferenceCategoriesStore } from '@/stores/preferenceCategoriesStore';
+﻿import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useFilms } from "@/modules/app/hooks/useFilms";
+import { TorrentsSearchService } from "@/api/services/TorrentsSearchService";
+import { MoviesService } from "@/api/services/MoviesService";
+import { MoviesTorrentsService } from "@/api/services/MoviesTorrentsService";
+import { PtGenService } from "@/api/services/PtGenService";
+import { ListTorrentsDto } from "@/api/models/ListTorrentsDto";
+import {
+  stripBackticksAndTrim,
+  parseDurationToMinutes,
+  validateFilmForm,
+  mapBackendFilmToLocal,
+  isValidRating,
+  mapBackendTorrentToLocal,
+} from "@/modules/app/pages/Edit/movies/utils";
+import type { Movie, MovieFormState } from "@/modules/app/pages/Edit/movies/types";
+import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
 
 export function useEditMovie() {
-  const { listFilms, getFilm, createFilm, updateFilm, deleteFilm, addTorrent, removeTorrent } = useFilms();
+  const { listFilms, getFilm, createFilm, updateFilm, deleteFilm, addTorrent, removeTorrent } =
+    useFilms();
 
   const [movies, setMovies] = useState<Movie[]>([]);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [showTorrentSearch, setShowTorrentSearch] = useState(false);
-  const [torrentSearchQuery, setTorrentSearchQuery] = useState('');
+  const [torrentSearchQuery, setTorrentSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searchError, setSearchError] = useState<string | null>(null);
 
   const [movieForm, setMovieForm] = useState<MovieFormState>({
-    title: '',
-    originalTitle: '',
-    year: '',
-    poster: '',
-    backdrop: '',
+    title: "",
+    originalTitle: "",
+    year: "",
+    poster: "",
+    backdrop: "",
     categories: [],
     genres: [],
     rating: 0,
-    duration: '',
-    director: '',
+    duration: "",
+    director: "",
     cast: [],
-    description: '',
+    description: "",
     awards: [],
     region: [],
     language: [],
-    doubanLink: '',
-    imdbLink: '',
+    doubanLink: "",
+    imdbLink: "",
     doubanRatingAverage: 0,
     imdbRatingAverage: 0,
   });
 
-  const [ptGenUrl, setPtGenUrl] = useState('');
+  const [ptGenUrl, setPtGenUrl] = useState("");
   const [ptGenLoading, setPtGenLoading] = useState(false);
-  const [ptGenError, setPtGenError] = useState('');
+  const [ptGenError, setPtGenError] = useState("");
 
   const filteredMovies = movies.filter(
     (m) =>
       m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       m.originalTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.director.toLowerCase().includes(searchQuery.toLowerCase())
+      m.director.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   useEffect(() => {
@@ -72,19 +81,23 @@ export function useEditMovie() {
   async function fetchMovieTorrents(filmId: string) {
     if (!filmId) return;
     try {
-      const resp: any = await MoviesTorrentsService.movieTorrentsControllerListTorrents({ id: filmId });
+      const resp: any = await MoviesTorrentsService.movieTorrentsControllerListTorrents({
+        id: filmId,
+      });
       const body = resp?.code !== undefined ? resp : (resp?.data ?? resp);
       const items = body?.data ?? body?.items ?? [];
       const mappedTorrents = Array.isArray(items) ? items.map(mapBackendTorrentToLocal) : [];
-      
-      setSelectedMovie(prev => {
+
+      setSelectedMovie((prev) => {
         if (!prev || prev.id !== filmId) return prev;
         return { ...prev, torrents: mappedTorrents };
       });
-      
-      setMovies(prev => prev.map(m => m.id === filmId ? { ...m, torrents: mappedTorrents } : m));
+
+      setMovies((prev) =>
+        prev.map((m) => (m.id === filmId ? { ...m, torrents: mappedTorrents } : m)),
+      );
     } catch (e) {
-      console.error('Failed to fetch movie torrents:', e);
+      console.error("Failed to fetch movie torrents:", e);
     }
   }
 
@@ -106,18 +119,18 @@ export function useEditMovie() {
     setSearchError(null);
     const timer = setTimeout(async () => {
       try {
-        const resp: any = await TorrentsSearchService.torrentSearchControllerPicker({ 
-          keyword: q, 
+        const resp: any = await TorrentsSearchService.torrentSearchControllerPicker({
+          keyword: q,
           bindMediaId: selectedMovie.id,
           bindMediaType: ListTorrentsDto.bindMediaType.MOVIE,
           page: 1,
-          pageSize: 50
+          pageSize: 50,
         });
-        const body = resp?.code !== undefined ? resp : resp?.data ?? resp;
+        const body = resp?.code !== undefined ? resp : (resp?.data ?? resp);
         const items = body?.data?.items ?? body?.items ?? [];
         setSearchResults(Array.isArray(items) ? items : []);
       } catch (e: any) {
-        const msg = e?.body?.data?.message || e?.body?.message || e?.message || '搜索失败';
+        const msg = e?.body?.data?.message || e?.body?.message || e?.message || "搜索失败";
         setSearchError(msg);
       } finally {
         setIsSearching(false);
@@ -158,8 +171,15 @@ export function useEditMovie() {
     const genres = Array.isArray(data?.genre) ? data.genre.filter(Boolean) : [];
     const region = Array.isArray(data?.region) ? data.region.filter(Boolean) : [];
     const language = Array.isArray(data?.language) ? data.language.filter(Boolean) : [];
-    const directors = Array.isArray(data?.director) ? data.director.map((d: any) => d?.name).filter(Boolean).join(' / ') : (data?.director ?? '');
-    const casts = Array.isArray(data?.cast) ? data.cast.map((c: any) => c?.name).filter(Boolean) : [];
+    const directors = Array.isArray(data?.director)
+      ? data.director
+          .map((d: any) => d?.name)
+          .filter(Boolean)
+          .join(" / ")
+      : (data?.director ?? "");
+    const casts = Array.isArray(data?.cast)
+      ? data.cast.map((c: any) => c?.name).filter(Boolean)
+      : [];
     const awards = Array.isArray(data?.awards) ? data.awards.filter(Boolean) : [];
 
     // 根据 genres 自动匹配 categories
@@ -169,12 +189,12 @@ export function useEditMovie() {
       ...prev,
       title: data?.chineseTitle ?? prev.title,
       originalTitle: data?.foreignTitle ?? prev.originalTitle,
-      year: String(data?.year ?? prev.year ?? ''),
+      year: String(data?.year ?? prev.year ?? ""),
       poster: cleanedPoster || prev.poster,
       genres: genres.length ? genres : prev.genres,
       // 如果匹配到了分类则使用，否则保留原值
       categories: matchedCategories.length ? matchedCategories : prev.categories,
-      duration: parseDurationToMinutes(data?.duration ?? prev.duration ?? ''),
+      duration: parseDurationToMinutes(data?.duration ?? prev.duration ?? ""),
       director: directors || prev.director,
       cast: casts.length ? casts : prev.cast,
       description: data?.introduction ?? prev.description,
@@ -185,25 +205,31 @@ export function useEditMovie() {
       imdbLink: cleanedImdb || prev.imdbLink,
       doubanRatingAverage: isNaN(avgDouban) ? prev.doubanRatingAverage : avgDouban,
       imdbRatingAverage: isNaN(avgImdb) ? prev.imdbRatingAverage : avgImdb,
-      rating: prev.rating || (!isNaN(avgDouban) && avgDouban ? avgDouban : (!isNaN(avgImdb) && avgImdb ? avgImdb : prev.rating)),
+      rating:
+        prev.rating ||
+        (!isNaN(avgDouban) && avgDouban
+          ? avgDouban
+          : !isNaN(avgImdb) && avgImdb
+            ? avgImdb
+            : prev.rating),
     }));
   }
 
   async function fetchPtGenAndFill() {
-    setPtGenError('');
+    setPtGenError("");
     if (!ptGenUrl.trim()) {
-      setPtGenError('请输入有效的影片页面链接');
+      setPtGenError("请输入有效的影片页面链接");
       return;
     }
     try {
       setPtGenLoading(true);
       const res: any = await PtGenService.ptGenControllerFetch({ url: ptGenUrl.trim() });
-      const body = res?.code !== undefined ? res : res?.data ?? res;
-      const data = body?.data?.raw ? body?.data : body?.data ?? body;
-      if (!data) throw new Error('未获取到有效数据');
+      const body = res?.code !== undefined ? res : (res?.data ?? res);
+      const data = body?.data?.raw ? body?.data : (body?.data ?? body);
+      if (!data) throw new Error("未获取到有效数据");
       applyPtGenToForm(data);
     } catch (e: any) {
-      setPtGenError(e?.message || '获取失败');
+      setPtGenError(e?.message || "获取失败");
     } finally {
       setPtGenLoading(false);
     }
@@ -211,23 +237,23 @@ export function useEditMovie() {
 
   const handleCreateNew = () => {
     setMovieForm({
-      title: '',
-      originalTitle: '',
-      year: '',
-      poster: '',
-      backdrop: '',
+      title: "",
+      originalTitle: "",
+      year: "",
+      poster: "",
+      backdrop: "",
       categories: [],
       genres: [],
       rating: 0,
-      duration: '',
-      director: '',
+      duration: "",
+      director: "",
       cast: [],
-      description: '',
+      description: "",
       awards: [],
       region: [],
       language: [],
-      doubanLink: '',
-      imdbLink: '',
+      doubanLink: "",
+      imdbLink: "",
       doubanRatingAverage: 0,
       imdbRatingAverage: 0,
     });
@@ -253,8 +279,8 @@ export function useEditMovie() {
       awards: [],
       region: [],
       language: [],
-      doubanLink: '',
-      imdbLink: '',
+      doubanLink: "",
+      imdbLink: "",
       doubanRatingAverage: 0,
       imdbRatingAverage: 0,
     });
@@ -290,7 +316,7 @@ export function useEditMovie() {
     const { valid, errs } = validateFilmForm(movieForm);
     if (!valid) {
       setErrors(errs);
-      alert('请先修正表单中的错误后再提交');
+      toast.warning("请先修正表单中的错误后再提交");
       return;
     }
     try {
@@ -311,21 +337,20 @@ export function useEditMovie() {
         setIsEditing(false);
       }
     } catch (e: any) {
-      alert(e?.message || '保存失败');
+      // Global interceptor handles API errors
     }
   };
 
   const handleDeleteMovie = async (id: string) => {
-    if (confirm('确定要删除这部影片吗？所有关联的种子也会被删除。')) {
-      try {
-        await deleteFilm(id);
-        setMovies(movies.filter((m) => m.id !== id));
-        if (selectedMovie?.id === id) {
-          setSelectedMovie(null);
-        }
-      } catch (e: any) {
-        alert(e?.message || '删除失败');
+    try {
+      await deleteFilm(id);
+      setMovies(movies.filter((m) => m.id !== id));
+      if (selectedMovie?.id === id) {
+        setSelectedMovie(null);
       }
+      toast.success("删除成功");
+    } catch (e: any) {
+      // Global interceptor handles API errors
     }
   };
 
@@ -335,10 +360,10 @@ export function useEditMovie() {
       await addTorrent(selectedMovie.id, String(torrentId));
       await fetchMovieTorrents(selectedMovie.id);
       setShowTorrentSearch(false);
-      setTorrentSearchQuery('');
+      setTorrentSearchQuery("");
       setSearchResults([]);
     } catch (e: any) {
-      alert(e?.message || '绑定失败');
+      // Global interceptor handles API errors
     }
   };
 
@@ -348,7 +373,7 @@ export function useEditMovie() {
         await removeTorrent(selectedMovie.id, torrentId);
         await fetchMovieTorrents(selectedMovie.id);
       } catch (e: any) {
-        alert(e?.message || '移除失败');
+        // Global interceptor handles API errors
       }
     }
   };

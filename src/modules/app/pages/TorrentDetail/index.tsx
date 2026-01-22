@@ -66,7 +66,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
       downloadUrl: "",
     } as TorrentData);
 
-  useDynamicTitle(safeData.title || t('torrents.detailTitle'));
+  useDynamicTitle(safeData.title || t("torrents.detailTitle"));
 
   // 发送到下载器逻辑
   const handleSendToDownloader = async (downloaderId: string, path?: string) => {
@@ -82,7 +82,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
       const downloadTokenUrl = String(resData?.url ?? "");
 
       if (!downloadTokenUrl) {
-        customToast.error(t('torrents.cannotGenerateLink'));
+        customToast.error(t("torrents.cannotGenerateLink"));
         return;
       }
 
@@ -92,9 +92,9 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
         path: path,
       });
 
-      customToast.success(t('torrents.sentToDownloader'));
+      customToast.success(t("torrents.sentToDownloader"));
     } catch (e: any) {
-      customToast.error(e?.message || t('torrents.sendFailed'));
+      // Global interceptor handles API errors
     }
   };
 
@@ -152,7 +152,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
             }
           }}
         >
-          <Download className="mr-2 h-4 w-4" /> {t('torrents.downloadTorrent')}
+          <Download className="mr-2 h-4 w-4" /> {t("torrents.downloadTorrent")}
         </ContextMenuItem>
 
         <ContextMenuSeparator />
@@ -160,7 +160,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
         {/* 发送到下载器逻辑 */}
         {downloaders.length === 0 ? (
           <ContextMenuItem disabled>
-            <Upload className="mr-2 h-4 w-4" /> {t('torrents.noDownloaders')}
+            <Upload className="mr-2 h-4 w-4" /> {t("torrents.noDownloaders")}
           </ContextMenuItem>
         ) : downloaders.length === 1 ? (
           (() => {
@@ -170,7 +170,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
               return (
                 <ContextMenuSub>
                   <ContextMenuSubTrigger>
-                    <Upload className="mr-2 h-4 w-4" /> {t('torrents.sendToDownloader')}
+                    <Upload className="mr-2 h-4 w-4" /> {t("torrents.sendToDownloader")}
                   </ContextMenuSubTrigger>
                   <ContextMenuSubContent className="w-48">
                     {paths.map((p, idx) => (
@@ -187,7 +187,8 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
             } else {
               return (
                 <ContextMenuItem onSelect={() => handleSendToDownloader(String(downloader.id))}>
-                  <Upload className="mr-2 h-4 w-4" /> {t('torrents.sendTo', { name: downloader.name })}
+                  <Upload className="mr-2 h-4 w-4" />{" "}
+                  {t("torrents.sendTo", { name: downloader.name })}
                 </ContextMenuItem>
               );
             }
@@ -195,7 +196,7 @@ export default function TorrentDetailPage({ torrentId }: TorrentDetailPageProps)
         ) : (
           <ContextMenuSub>
             <ContextMenuSubTrigger>
-              <Upload className="mr-2 h-4 w-4" /> {t('torrents.sendToDownloader')}
+              <Upload className="mr-2 h-4 w-4" /> {t("torrents.sendToDownloader")}
             </ContextMenuSubTrigger>
             <ContextMenuSubContent className="w-48">
               {downloaders.map((d) => {
