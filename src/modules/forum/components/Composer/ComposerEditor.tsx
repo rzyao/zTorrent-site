@@ -3,7 +3,7 @@ import { parseMarkdownCached } from "@/modules/forum/utils/markdownCache";
 import TurndownService from "turndown";
 import { useComposerStore } from "./ComposerStore";
 import { EditorToggleSwitch } from "./EditorToggleSwitch";
-import { RichTextEditor } from "./RichTextEditor";
+import { RichTextEditor, RichTextEditorRef } from "./RichTextEditor";
 import { cn } from "@/utils/cn";
 import { toast } from "sonner";
 import {
@@ -35,6 +35,7 @@ export const ComposerEditor: React.FC<ComposerEditorProps> = ({ className }) => 
   const { colors, theme } = useForumTheme();
   const { draft, updateDraft, isRichText, toggleEditorMode } = useComposerStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const richTextRef = useRef<RichTextEditorRef>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { execute: uploadImage, loading: isUploading } = useAsyncAction({
@@ -300,9 +301,11 @@ export const ComposerEditor: React.FC<ComposerEditorProps> = ({ className }) => 
   const onEmojiClick = (emojiData: { emoji: string }) => {
     if (isRichText) {
       // 在完成的 TipTap 链中插入
-      // 注意：RichTextEditor 目前没有暴露 editor 实例，
-      // 我们需要一种方式让它接收外部插入或通过全局 store/event 发送
-      // 暂时通过 updateDraft 处理字符串，但 TipTap 需要处理 HTML/JSON
+      if (richTextRef.current) {
+        richTextRef.current.insertContent(emojiData.emoji);
+      } else {
+        updateDraft({ body: draft.body + emojiData.emoji });
+      }
     } else {
       insertText(emojiData.emoji);
     }
@@ -330,9 +333,14 @@ export const ComposerEditor: React.FC<ComposerEditorProps> = ({ className }) => 
         const altText = file.name.replace(/\.[^/.]+$/, "") || "image";
 
         if (isRichText) {
-          // 富文本模式：将图片 HTML 追加到内容中
-          const imgHtml = `<img src="${imageUrl}" alt="${altText}" />`;
-          updateDraft({ body: draft.body + imgHtml });
+          // 富文本模式：使用 ref 插入图片
+          if (richTextRef.current) {
+            richTextRef.current.insertImage(imageUrl, altText);
+          } else {
+            // Fallback if ref is not ready (should generally be ready)
+            const imgHtml = `<img src="${imageUrl}" alt="${altText}" />`;
+            updateDraft({ body: draft.body + imgHtml });
+          }
         } else {
           // Markdown 模式：使用标准 Markdown 图片语法
           const textarea = textareaRef.current;
@@ -574,6 +582,7 @@ export const ComposerEditor: React.FC<ComposerEditorProps> = ({ className }) => 
         />
       ) : (
         <RichTextEditor
+          ref={richTextRef}
           value={(() => {
             // 将 Markdown 转换为 HTML 供 TipTap 使用
             // 如果内容已经是 HTML（以 < 开头），则直接使用

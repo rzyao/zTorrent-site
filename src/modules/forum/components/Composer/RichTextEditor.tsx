@@ -55,431 +55,454 @@ interface RichTextEditorProps {
   isUploading?: boolean;
 }
 
-export const RichTextEditor: React.FC<RichTextEditorProps> = ({
-  value,
-  onChange,
-  placeholder = "开始输入...",
-  disabled = false,
-  className,
-  toolbarPrefix,
-  onImageUploadClick,
-  isUploading = false,
-}) => {
-  const { theme } = useForumTheme();
-  const [linkModal, setLinkModal] = React.useState<{ isOpen: boolean; initialText: string }>({
-    isOpen: false,
-    initialText: "",
-  });
-  const [imageModalOpen, setImageModalOpen] = React.useState(false);
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        // 禁用部分默认扩展，使用自定义配置
-        heading: {
-          levels: [1, 2, 3, 4],
-        },
-      }),
-      Placeholder.configure({
-        placeholder,
-        emptyEditorClass: "is-editor-empty",
-      }),
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: "text-sky-400 underline hover:text-sky-300",
-        },
-      }),
-      Image.configure({
-        HTMLAttributes: {
-          class: "max-w-full rounded-lg",
-        },
-      }),
-    ],
-    content: value,
-    editable: !disabled,
-    onUpdate: ({ editor }) => {
-      // 将 HTML 转换为 Markdown 或直接输出 HTML
-      // TODO: 实现 HTML -> Markdown 转换 (参考 Discourse serializer.js)
-      onChange(editor.getHTML());
+export interface RichTextEditorRef {
+  insertImage: (url: string, alt?: string) => void;
+  insertContent: (content: string) => void;
+}
+
+export const RichTextEditor = React.forwardRef<RichTextEditorRef, RichTextEditorProps>(
+  (
+    {
+      value,
+      onChange,
+      placeholder = "开始输入...",
+      disabled = false,
+      className,
+      toolbarPrefix,
+      onImageUploadClick,
+      isUploading = false,
     },
-    editorProps: {
-      attributes: {
-        class: cn(
-          "prose dark:prose-invert max-w-none",
-          "min-h-[200px] w-full px-4 py-3 focus:outline-none",
-          "text-gray-900 dark:text-neutral-100",
-          // 标题样式
-          "prose-headings:text-gray-900 prose-headings:font-semibold dark:prose-headings:text-white",
-          "prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg",
-          // 链接样式
-          "prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline dark:prose-a:text-sky-400",
-          // 代码块样式
-          "prose-code:text-emerald-600 prose-code:bg-gray-100 prose-code:rounded prose-code:px-1 dark:prose-code:text-emerald-400 dark:prose-code:bg-neutral-800",
-          "prose-pre:bg-gray-50 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:bg-neutral-900 dark:prose-pre:border-neutral-700",
-          // 引用块样式
-          "prose-blockquote:border-l-blue-500 prose-blockquote:text-gray-600 dark:prose-blockquote:border-l-sky-500 dark:prose-blockquote:text-neutral-300",
-          // 列表样式
-          "prose-li:marker:text-gray-400 dark:prose-li:marker:text-neutral-500",
-        ),
+    ref,
+  ) => {
+    const { theme } = useForumTheme();
+    const [linkModal, setLinkModal] = React.useState<{ isOpen: boolean; initialText: string }>({
+      isOpen: false,
+      initialText: "",
+    });
+    const [imageModalOpen, setImageModalOpen] = React.useState(false);
+    const editor = useEditor({
+      extensions: [
+        StarterKit.configure({
+          // 禁用部分默认扩展，使用自定义配置
+          heading: {
+            levels: [1, 2, 3, 4],
+          },
+        }),
+        Placeholder.configure({
+          placeholder,
+          emptyEditorClass: "is-editor-empty",
+        }),
+        Link.configure({
+          openOnClick: false,
+          HTMLAttributes: {
+            class: "text-sky-400 underline hover:text-sky-300",
+          },
+        }),
+        Image.configure({
+          HTMLAttributes: {
+            class: "max-w-full rounded-lg",
+          },
+        }),
+      ],
+      content: value,
+      editable: !disabled,
+      onUpdate: ({ editor }) => {
+        // 将 HTML 转换为 Markdown 或直接输出 HTML
+        // TODO: 实现 HTML -> Markdown 转换 (参考 Discourse serializer.js)
+        onChange(editor.getHTML());
       },
-    },
-    // 编辑器创建后，将光标移动到文档末尾的引用块外部
-    onCreate: ({ editor }) => {
-      // 使用 setTimeout 确保 DOM 更新后再移动光标
-      setTimeout(() => {
-        // 先移动到文档末尾
-        editor.commands.focus("end");
+      editorProps: {
+        attributes: {
+          class: cn(
+            "prose dark:prose-invert max-w-none",
+            "min-h-[200px] w-full px-4 py-3 focus:outline-none",
+            "text-gray-900 dark:text-neutral-100",
+            // 标题样式
+            "prose-headings:text-gray-900 prose-headings:font-semibold dark:prose-headings:text-white",
+            "prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg",
+            // 链接样式
+            "prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline dark:prose-a:text-sky-400",
+            // 代码块样式
+            "prose-code:text-emerald-600 prose-code:bg-gray-100 prose-code:rounded prose-code:px-1 dark:prose-code:text-emerald-400 dark:prose-code:bg-neutral-800",
+            "prose-pre:bg-gray-50 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:bg-neutral-900 dark:prose-pre:border-neutral-700",
+            // 引用块样式
+            "prose-blockquote:border-l-blue-500 prose-blockquote:text-gray-600 dark:prose-blockquote:border-l-sky-500 dark:prose-blockquote:text-neutral-300",
+            // 列表样式
+            "prose-li:marker:text-gray-400 dark:prose-li:marker:text-neutral-500",
+          ),
+        },
+      },
+      // 编辑器创建后，将光标移动到文档末尾的引用块外部
+      onCreate: ({ editor }) => {
+        // 使用 setTimeout 确保 DOM 更新后再移动光标
+        setTimeout(() => {
+          // 先移动到文档末尾
+          editor.commands.focus("end");
 
-        // 检查当前是否在 blockquote 内
-        if (editor.isActive("blockquote")) {
-          // 退出 blockquote，在其后添加新段落
-          editor
-            .chain()
-            .focus()
-            .setTextSelection(editor.state.doc.content.size) // 移动到最后
-            .liftEmptyBlock() // 尝试退出当前块
-            .run();
-
-          // 如果仍在 blockquote 中，插入一个新段落
+          // 检查当前是否在 blockquote 内
           if (editor.isActive("blockquote")) {
+            // 退出 blockquote，在其后添加新段落
             editor
               .chain()
               .focus()
-              .insertContentAt(editor.state.doc.content.size, { type: "paragraph" })
-              .focus("end")
+              .setTextSelection(editor.state.doc.content.size) // 移动到最后
+              .liftEmptyBlock() // 尝试退出当前块
               .run();
+
+            // 如果仍在 blockquote 中，插入一个新段落
+            if (editor.isActive("blockquote")) {
+              editor
+                .chain()
+                .focus()
+                .insertContentAt(editor.state.doc.content.size, { type: "paragraph" })
+                .focus("end")
+                .run();
+            }
           }
+        }, 10);
+      },
+    });
+
+    // 暴露给父组件的方法
+    React.useImperativeHandle(
+      ref,
+      () => ({
+        insertImage: (url: string, alt?: string) => {
+          editor?.chain().focus().setImage({ src: url, alt }).run();
+        },
+        insertContent: (content: string) => {
+          editor?.chain().focus().insertContent(content).run();
+        },
+      }),
+      [editor],
+    );
+
+    // 同步外部 value 变化到编辑器
+    // 当从 Markdown 切换到富文本时，或者点击外部引用按钮时，需要更新编辑器内容
+    React.useEffect(() => {
+      if (!editor) return;
+
+      // 如果编辑器已经聚焦，说明是用户正在操作（包括点击工具栏按钮），
+      // 此时编辑器本身就是内容的源头，不需要（也不应该）从外部同步 value，
+      // 否则会导致 selection 和 focus 丢失。
+      if (editor.isFocused) return;
+
+      const currentContent = editor.getHTML();
+      if (value !== currentContent) {
+        // 检查内容是否真的不同（避免不必要的更新和光标跳动）
+        // 移除空白差异比较
+        const normalizedValue = value.replace(/\s+/g, " ").trim();
+        const normalizedContent = currentContent.replace(/\s+/g, " ").trim();
+
+        if (normalizedValue !== normalizedContent) {
+          editor.commands.setContent(value, { emitUpdate: false });
         }
-      }, 10);
-    },
-  });
-
-  // 同步外部 value 变化到编辑器
-  // 当从 Markdown 切换到富文本时，或者点击外部引用按钮时，需要更新编辑器内容
-  React.useEffect(() => {
-    if (!editor) return;
-
-    // 如果编辑器已经聚焦，说明是用户正在操作（包括点击工具栏按钮），
-    // 此时编辑器本身就是内容的源头，不需要（也不应该）从外部同步 value，
-    // 否则会导致 selection 和 focus 丢失。
-    if (editor.isFocused) return;
-
-    const currentContent = editor.getHTML();
-    if (value !== currentContent) {
-      // 检查内容是否真的不同（避免不必要的更新和光标跳动）
-      // 移除空白差异比较
-      const normalizedValue = value.replace(/\s+/g, " ").trim();
-      const normalizedContent = currentContent.replace(/\s+/g, " ").trim();
-
-      if (normalizedValue !== normalizedContent) {
-        editor.commands.setContent(value, { emitUpdate: false });
       }
+    }, [editor, value]);
+
+    if (!editor) {
+      return null;
     }
-  }, [editor, value]);
 
-  if (!editor) {
-    return null;
-  }
+    return (
+      <div className={cn("rich-text-editor flex h-full flex-col", className)}>
+        {/* 工具栏 */}
+        <div className="flex flex-wrap items-center gap-1 border-b border-gray-200 bg-gray-50 px-2 py-1.5 dark:border-neutral-700/50 dark:bg-neutral-800/50">
+          {/* 工具栏前缀 (如模式切换按钮) */}
+          {toolbarPrefix}
 
-  return (
-    <div className={cn("rich-text-editor flex h-full flex-col", className)}>
-      {/* 工具栏 */}
-      <div className="flex flex-wrap items-center gap-1 border-b border-gray-200 bg-gray-50 px-2 py-1.5 dark:border-neutral-700/50 dark:bg-neutral-800/50">
-        {/* 工具栏前缀 (如模式切换按钮) */}
-        {toolbarPrefix}
+          {/* 历史操作 */}
+          <ToolbarButton
+            icon={<Undo className="h-4 w-4" />}
+            title="撤销 (Ctrl+Z)"
+            onClick={() => editor.chain().focus().undo().run()}
+            disabled={!editor.can().undo()}
+          />
+          <ToolbarButton
+            icon={<Redo className="h-4 w-4" />}
+            title="重做 (Ctrl+Shift+Z)"
+            onClick={() => editor.chain().focus().redo().run()}
+            disabled={!editor.can().redo()}
+          />
 
-        {/* 历史操作 */}
-        <ToolbarButton
-          icon={<Undo className="h-4 w-4" />}
-          title="撤销 (Ctrl+Z)"
-          onClick={() => editor.chain().focus().undo().run()}
-          disabled={!editor.can().undo()}
-        />
-        <ToolbarButton
-          icon={<Redo className="h-4 w-4" />}
-          title="重做 (Ctrl+Shift+Z)"
-          onClick={() => editor.chain().focus().redo().run()}
-          disabled={!editor.can().redo()}
-        />
+          <ToolbarDivider />
 
-        <ToolbarDivider />
+          {/* 文本格式 */}
+          <ToolbarButton
+            icon={<Bold className="h-4 w-4" />}
+            title="粗体 (Ctrl+B)"
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            active={editor.isActive("bold")}
+          />
+          <ToolbarButton
+            icon={<Italic className="h-4 w-4" />}
+            title="斜体 (Ctrl+I)"
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            active={editor.isActive("italic")}
+          />
+          <ToolbarButton
+            icon={<Strikethrough className="h-4 w-4" />}
+            title="删除线 (Ctrl+Shift+S)"
+            onClick={() => editor.chain().focus().toggleStrike().run()}
+            active={editor.isActive("strike")}
+          />
+          <ToolbarButton
+            icon={<Code className="h-4 w-4" />}
+            title="行内代码 (Ctrl+E)"
+            onClick={() => editor.chain().focus().toggleCode().run()}
+            active={editor.isActive("code")}
+          />
 
-        {/* 文本格式 */}
-        <ToolbarButton
-          icon={<Bold className="h-4 w-4" />}
-          title="粗体 (Ctrl+B)"
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          active={editor.isActive("bold")}
-        />
-        <ToolbarButton
-          icon={<Italic className="h-4 w-4" />}
-          title="斜体 (Ctrl+I)"
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          active={editor.isActive("italic")}
-        />
-        <ToolbarButton
-          icon={<Strikethrough className="h-4 w-4" />}
-          title="删除线 (Ctrl+Shift+S)"
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          active={editor.isActive("strike")}
-        />
-        <ToolbarButton
-          icon={<Code className="h-4 w-4" />}
-          title="行内代码 (Ctrl+E)"
-          onClick={() => editor.chain().focus().toggleCode().run()}
-          active={editor.isActive("code")}
-        />
+          <ToolbarDivider />
 
-        <ToolbarDivider />
+          {/* 标题 */}
+          <ToolbarButton
+            icon={<Heading1 className="h-4 w-4" />}
+            title="标题 1"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+            active={editor.isActive("heading", { level: 1 })}
+          />
+          <ToolbarButton
+            icon={<Heading2 className="h-4 w-4" />}
+            title="标题 2"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            active={editor.isActive("heading", { level: 2 })}
+          />
+          <ToolbarButton
+            icon={<Heading3 className="h-4 w-4" />}
+            title="标题 3"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+            active={editor.isActive("heading", { level: 3 })}
+          />
 
-        {/* 标题 */}
-        <ToolbarButton
-          icon={<Heading1 className="h-4 w-4" />}
-          title="标题 1"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          active={editor.isActive("heading", { level: 1 })}
-        />
-        <ToolbarButton
-          icon={<Heading2 className="h-4 w-4" />}
-          title="标题 2"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          active={editor.isActive("heading", { level: 2 })}
-        />
-        <ToolbarButton
-          icon={<Heading3 className="h-4 w-4" />}
-          title="标题 3"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          active={editor.isActive("heading", { level: 3 })}
-        />
+          <ToolbarDivider />
 
-        <ToolbarDivider />
+          {/* 列表 */}
+          <ToolbarButton
+            icon={<List className="h-4 w-4" />}
+            title="无序列表"
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            active={editor.isActive("bulletList")}
+          />
+          <ToolbarButton
+            icon={<ListOrdered className="h-4 w-4" />}
+            title="有序列表"
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            active={editor.isActive("orderedList")}
+          />
 
-        {/* 列表 */}
-        <ToolbarButton
-          icon={<List className="h-4 w-4" />}
-          title="无序列表"
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          active={editor.isActive("bulletList")}
-        />
-        <ToolbarButton
-          icon={<ListOrdered className="h-4 w-4" />}
-          title="有序列表"
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          active={editor.isActive("orderedList")}
-        />
+          <ToolbarDivider />
 
-        <ToolbarDivider />
+          {/* 块级元素 */}
+          <ToolbarButton
+            icon={<Quote className="h-4 w-4" />}
+            title="引用块"
+            onClick={() => {
+              const { $from, $to } = editor.state.selection;
+              let externalQuoteDepth = -1;
+              let totalBlockquotes = 0;
+              let innerBlockquoteDepth = -1;
 
-        {/* 块级元素 */}
-        <ToolbarButton
-          icon={<Quote className="h-4 w-4" />}
-          title="引用块"
-          onClick={() => {
-            const { $from, $to } = editor.state.selection;
-            let externalQuoteDepth = -1;
-            let totalBlockquotes = 0;
-            let innerBlockquoteDepth = -1;
+              // 检查路径中的所有引用块
+              for (let d = $from.depth; d > 0; d--) {
+                const node = $from.node(d);
+                if (node.type.name === "blockquote") {
+                  totalBlockquotes++;
+                  if (innerBlockquoteDepth === -1) innerBlockquoteDepth = d;
 
-            // 检查路径中的所有引用块
-            for (let d = $from.depth; d > 0; d--) {
-              const node = $from.node(d);
-              if (node.type.name === "blockquote") {
-                totalBlockquotes++;
-                if (innerBlockquoteDepth === -1) innerBlockquoteDepth = d;
-
-                // 检查是否为外部引用（带用户名格式）
-                if (node.firstChild && node.firstChild.type.name === "paragraph") {
-                  let paraText = "";
-                  node.firstChild.forEach((child) => {
-                    if (child.isText || child.type.name === "text") {
-                      paraText += child.text;
+                  // 检查是否为外部引用（带用户名格式）
+                  if (node.firstChild && node.firstChild.type.name === "paragraph") {
+                    let paraText = "";
+                    node.firstChild.forEach((child) => {
+                      if (child.isText || child.type.name === "text") {
+                        paraText += child.text;
+                      }
+                    });
+                    if (/^[^:]+:\s*$/.test(paraText.trim())) {
+                      externalQuoteDepth = d;
                     }
-                  });
-                  if (/^[^:]+:\s*$/.test(paraText.trim())) {
-                    externalQuoteDepth = d;
                   }
                 }
               }
-            }
 
-            // 情况 1: 在外部引用内
-            if (externalQuoteDepth !== -1) {
-              // 如果我们在外部引用里的另一个引用内，说明是嵌套引用，现在点击应该是"取消"
-              if (totalBlockquotes > 1 && innerBlockquoteDepth > externalQuoteDepth) {
-                // 取消嵌套引用 (Lift)
-                const { from, to } = editor.state.selection;
-                editor.chain().focus().lift("blockquote").run();
-                // 尝试恢复选区（位置可能会有偏移，blockquote 开启/闭合 -1Each -> -2?
-                // 但 lift 会处理位置，通常不需要手动 set，除非失效）
-              } else {
-                // 在外部引用内，但还没嵌套：创建嵌套引用
-                const { from: selFrom, to: selTo } = editor.state.selection;
-                const isSelectionEmpty = selFrom === selTo;
-
-                if (!isSelectionEmpty) {
-                  const selectedText = editor.state.doc.textBetween(selFrom, selTo, "\n");
-                  const startPos = selFrom;
-
-                  // 处理多行文本：按换行符分割并创建段落
-                  const paragraphs = selectedText.split("\n");
-                  const content = paragraphs.map((text) => ({
-                    type: "paragraph",
-                    content: text ? [{ type: "text", text }] : [],
-                  }));
-
-                  // 计算插入内容的总长度
-                  // blockquote: start(1) + end(1) = 2
-                  // 每个段落: start(1) + end(1) + text.length = 2 + length
-                  const totalLength = 2 + paragraphs.reduce((acc, p) => acc + 2 + p.length, 0);
-
-                  editor
-                    .chain()
-                    .focus()
-                    .deleteSelection()
-                    .insertContent({
-                      type: "blockquote",
-                      content: content,
-                    })
-                    // 调整选区：+1 偏移量用于修正嵌套引用时的节点位置计算
-                    .setTextSelection({
-                      from: startPos + 1,
-                      to: startPos + totalLength - 3,
-                    })
-                    .run();
+              // 情况 1: 在外部引用内
+              if (externalQuoteDepth !== -1) {
+                // 如果我们在外部引用里的另一个引用内，说明是嵌套引用，现在点击应该是"取消"
+                if (totalBlockquotes > 1 && innerBlockquoteDepth > externalQuoteDepth) {
+                  // 取消嵌套引用 (Lift)
+                  const { from, to } = editor.state.selection;
+                  editor.chain().focus().lift("blockquote").run();
+                  // 尝试恢复选区（位置可能会有偏移，blockquote 开启/闭合 -1Each -> -2?
+                  // 但 lift 会处理位置，通常不需要手动 set，除非失效）
                 } else {
-                  // 没选文字，在当前行创建引用块
-                  editor.chain().focus().toggleBlockquote().run();
+                  // 在外部引用内，但还没嵌套：创建嵌套引用
+                  const { from: selFrom, to: selTo } = editor.state.selection;
+                  const isSelectionEmpty = selFrom === selTo;
+
+                  if (!isSelectionEmpty) {
+                    const selectedText = editor.state.doc.textBetween(selFrom, selTo, "\n");
+                    const startPos = selFrom;
+
+                    // 处理多行文本：按换行符分割并创建段落
+                    const paragraphs = selectedText.split("\n");
+                    const content = paragraphs.map((text) => ({
+                      type: "paragraph",
+                      content: text ? [{ type: "text", text }] : [],
+                    }));
+
+                    // 计算插入内容的总长度
+                    // blockquote: start(1) + end(1) = 2
+                    // 每个段落: start(1) + end(1) + text.length = 2 + length
+                    const totalLength = 2 + paragraphs.reduce((acc, p) => acc + 2 + p.length, 0);
+
+                    editor
+                      .chain()
+                      .focus()
+                      .deleteSelection()
+                      .insertContent({
+                        type: "blockquote",
+                        content: content,
+                      })
+                      // 调整选区：+1 偏移量用于修正嵌套引用时的节点位置计算
+                      .setTextSelection({
+                        from: startPos + 1,
+                        to: startPos + totalLength - 3,
+                      })
+                      .run();
+                  } else {
+                    // 没选文字，在当前行创建引用块
+                    editor.chain().focus().toggleBlockquote().run();
+                  }
                 }
+              } else {
+                // 情况 2: 不在外部引用内，使用标准 toggle
+                editor.chain().focus().toggleBlockquote().run();
               }
-            } else {
-              // 情况 2: 不在外部引用内，使用标准 toggle
-              editor.chain().focus().toggleBlockquote().run();
-            }
-          }}
-          active={editor.isActive("blockquote")}
-        />
-        <ToolbarButton
-          icon={<Minus className="h-4 w-4" />}
-          title="分隔线"
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
-        />
+            }}
+            active={editor.isActive("blockquote")}
+          />
+          <ToolbarButton
+            icon={<Minus className="h-4 w-4" />}
+            title="分隔线"
+            onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          />
 
-        <ToolbarDivider />
+          <ToolbarDivider />
 
-        {/* 表情 */}
-        <Popover.Root>
-          <Popover.Trigger asChild>
-            <button
-              className={cn(
-                "rounded p-1.5 transition-colors",
-                "text-gray-500 hover:bg-gray-200 hover:text-gray-900 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white",
-              )}
-              title="插入表情"
-            >
-              <Smile className="h-4 w-4" />
-            </button>
-          </Popover.Trigger>
-          <Popover.Portal>
-            <Popover.Content
-              className="z-100 mt-2 shadow-xl outline-none"
-              align="start"
-              sideOffset={5}
-            >
-              <Suspense
-                fallback={
-                  <div className="min-w-[280px] rounded-md border bg-white p-3 text-sm text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
-                    正在加载表情...
-                  </div>
-                }
+          {/* 表情 */}
+          <Popover.Root>
+            <Popover.Trigger asChild>
+              <button
+                className={cn(
+                  "rounded p-1.5 transition-colors",
+                  "text-gray-500 hover:bg-gray-200 hover:text-gray-900 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white",
+                )}
+                title="插入表情"
               >
-                <EmojiPickerLazy
-                  // 运行时传递字符串主题，避免类型耦合
-                  theme={theme === "dark" ? ("dark" as any) : ("light" as any)}
-                  onEmojiClick={(emojiData: any) => {
-                    editor.chain().focus().insertContent(emojiData.emoji).run();
-                  }}
-                  autoFocusSearch={false}
-                  lazyLoadEmojis={true}
-                  searchPlaceHolder="搜索表情..."
-                />
-              </Suspense>
-            </Popover.Content>
-          </Popover.Portal>
-        </Popover.Root>
+                <Smile className="h-4 w-4" />
+              </button>
+            </Popover.Trigger>
+            <Popover.Portal>
+              <Popover.Content
+                className="z-100 mt-2 shadow-xl outline-none"
+                align="start"
+                sideOffset={5}
+              >
+                <Suspense
+                  fallback={
+                    <div className="min-w-[280px] rounded-md border bg-white p-3 text-sm text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
+                      正在加载表情...
+                    </div>
+                  }
+                >
+                  <EmojiPickerLazy
+                    // 运行时传递字符串主题，避免类型耦合
+                    theme={theme === "dark" ? ("dark" as any) : ("light" as any)}
+                    onEmojiClick={(emojiData: any) => {
+                      editor.chain().focus().insertContent(emojiData.emoji).run();
+                    }}
+                    autoFocusSearch={false}
+                    lazyLoadEmojis={true}
+                    searchPlaceHolder="搜索表情..."
+                  />
+                </Suspense>
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
 
-        <ToolbarDivider />
+          <ToolbarDivider />
 
-        {/* 插入 */}
-        <ToolbarButton
-          icon={<LinkIcon className="h-4 w-4" />}
-          title="插入链接"
-          onClick={() => {
+          {/* 插入 */}
+          <ToolbarButton
+            icon={<LinkIcon className="h-4 w-4" />}
+            title="插入链接"
+            onClick={() => {
+              if (editor) {
+                const { from, to } = editor.state.selection;
+                const text = editor.state.doc.textBetween(from, to, " ");
+                setLinkModal({ isOpen: true, initialText: text });
+              }
+            }}
+            active={editor.isActive("link")}
+          />
+          <ToolbarButton
+            icon={<ImageIcon className="h-4 w-4" />}
+            title="上传图片"
+            onClick={() => {
+              if (onImageUploadClick) {
+                onImageUploadClick();
+              } else {
+                setImageModalOpen(true);
+              }
+            }}
+            disabled={isUploading}
+          />
+        </div>
+
+        <ImageModal
+          isOpen={imageModalOpen}
+          onClose={() => setImageModalOpen(false)}
+          onConfirm={(url) => {
             if (editor) {
-              const { from, to } = editor.state.selection;
-              const text = editor.state.doc.textBetween(from, to, " ");
-              setLinkModal({ isOpen: true, initialText: text });
+              editor.chain().focus().setImage({ src: url }).run();
             }
           }}
-          active={editor.isActive("link")}
         />
-        <ToolbarButton
-          icon={<ImageIcon className="h-4 w-4" />}
-          title="上传图片"
-          onClick={() => {
-            if (onImageUploadClick) {
-              onImageUploadClick();
-            } else {
-              setImageModalOpen(true);
-            }
-          }}
-          disabled={isUploading}
-        />
-      </div>
 
-      <ImageModal
-        isOpen={imageModalOpen}
-        onClose={() => setImageModalOpen(false)}
-        onConfirm={(url) => {
-          if (editor) {
-            editor.chain().focus().setImage({ src: url }).run();
-          }
-        }}
-      />
-
-      <LinkModal
-        isOpen={linkModal.isOpen}
-        initialText={linkModal.initialText}
-        onClose={() => setLinkModal({ ...linkModal, isOpen: false })}
-        onConfirm={(url, text) => {
-          if (editor) {
-            editor
-              .chain()
-              .focus()
-              .extendMarkRange("link")
-              .insertContent({
-                type: "text",
-                text: text,
-                marks: [
-                  {
-                    type: "link",
-                    attrs: {
-                      href: url,
+        <LinkModal
+          isOpen={linkModal.isOpen}
+          initialText={linkModal.initialText}
+          onClose={() => setLinkModal({ ...linkModal, isOpen: false })}
+          onConfirm={(url, text) => {
+            if (editor) {
+              editor
+                .chain()
+                .focus()
+                .extendMarkRange("link")
+                .insertContent({
+                  type: "text",
+                  text: text,
+                  marks: [
+                    {
+                      type: "link",
+                      attrs: {
+                        href: url,
+                      },
                     },
-                  },
-                ],
-              })
-              .run();
-          }
-        }}
-      />
+                  ],
+                })
+                .run();
+            }
+          }}
+        />
 
-      {/* 编辑器内容区域 */}
-      <div className="flex-1 overflow-auto bg-white dark:bg-[#1a1a1a]">
-        <EditorContent editor={editor} className="h-full" />
-      </div>
+        {/* 编辑器内容区域 */}
+        <div className="flex-1 overflow-auto bg-white dark:bg-[#1a1a1a]">
+          <EditorContent editor={editor} className="h-full" />
+        </div>
 
-      {/* 样式 - 空编辑器占位符 */}
-      <style>{`
+        {/* 样式 - 空编辑器占位符 */}
+        <style>{`
         .ProseMirror p.is-editor-empty:first-child::before {
           content: attr(data-placeholder);
           float: left;
@@ -536,9 +559,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           content: none !important;
         }
       `}</style>
-    </div>
-  );
-};
+      </div>
+    );
+  },
+);
 
 // 工具栏按钮组件
 interface ToolbarButtonProps {
@@ -578,5 +602,7 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({
 const ToolbarDivider: React.FC = () => (
   <div className="mx-1 h-5 w-px bg-gray-200 dark:bg-neutral-700" />
 );
+
+RichTextEditor.displayName = "RichTextEditor";
 
 export default RichTextEditor;
