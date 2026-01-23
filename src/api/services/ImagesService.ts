@@ -64,4 +64,61 @@ export class ImagesService {
             },
         });
     }
+    /**
+     * 保存外部图片链接
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static imagesControllerCreateExternal(
+        requestBody: {
+            /**
+             * 外部图片完整 URL
+             */
+            url: string;
+            /**
+             * 附件类型，默认 image
+             */
+            kind?: 'image' | 'file' | 'audio';
+            /**
+             * 可选：绑定目标类型
+             */
+            attachableType?: string;
+            /**
+             * 可选：绑定目标ID
+             */
+            attachableId?: string;
+            /**
+             * 可选：绑定语义字段
+             */
+            field?: string;
+            /**
+             * 可选：数组型字段排序
+             */
+            sortOrder?: number;
+        },
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: {
+            attachmentId?: string;
+            url?: string;
+        };
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/images/external',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
 }

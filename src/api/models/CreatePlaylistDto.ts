@@ -14,7 +14,7 @@ export type CreatePlaylistDto = {
     /**
      * 封面附件ID
      */
-    coverAttachmentId: string;
+    coverAttachmentId?: string;
     /**
      * 片单类型
      */

@@ -42,7 +42,7 @@ export type CreateSeriesDto = {
     /**
      * 海报附件ID
      */
-    posterAttachmentId: string;
+    posterAttachmentId?: string;
     /**
      * 背景图附件ID
      */
