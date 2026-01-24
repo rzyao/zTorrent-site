@@ -16,6 +16,7 @@ import {
 } from "@/modules/app/pages/Edit/movies/utils";
 import type { Movie, MovieFormState } from "@/modules/app/pages/Edit/movies/types";
 import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
+import { processImage } from "@/utils/imageUtils";
 
 export function useEditMovie() {
   const { listFilms, getFilm, createFilm, updateFilm, deleteFilm, addTorrent, removeTorrent } =
@@ -40,7 +41,9 @@ export function useEditMovie() {
     originalTitle: "",
     year: "",
     poster: "",
+    posterAttachmentId: "",
     backdrop: "",
+    backdropAttachmentId: "",
     categories: [],
     genres: [],
     rating: 0,
@@ -191,6 +194,7 @@ export function useEditMovie() {
       originalTitle: data?.foreignTitle ?? prev.originalTitle,
       year: String(data?.year ?? prev.year ?? ""),
       poster: cleanedPoster || prev.poster,
+      posterAttachmentId: cleanedPoster ? "" : prev.posterAttachmentId,
       genres: genres.length ? genres : prev.genres,
       // 如果匹配到了分类则使用，否则保留原值
       categories: matchedCategories.length ? matchedCategories : prev.categories,
@@ -225,6 +229,12 @@ export function useEditMovie() {
       setPtGenLoading(true);
       const res: any = await PtGenService.ptGenControllerFetch({ url: ptGenUrl.trim() });
       const body = res?.code !== undefined ? res : (res?.data ?? res);
+
+      // 检查 data.success 字段（如果存在）
+      if (body?.data?.success === false) {
+        throw new Error(body?.data?.error || "PT Gen 获取失败");
+      }
+
       const data = body?.data?.raw ? body?.data : (body?.data ?? body);
       if (!data) throw new Error("未获取到有效数据");
       applyPtGenToForm(data);
@@ -241,7 +251,9 @@ export function useEditMovie() {
       originalTitle: "",
       year: "",
       poster: "",
+      posterAttachmentId: "",
       backdrop: "",
+      backdropAttachmentId: "",
       categories: [],
       genres: [],
       rating: 0,
@@ -268,7 +280,9 @@ export function useEditMovie() {
       originalTitle: movie.originalTitle,
       year: movie.year,
       poster: movie.poster,
+      posterAttachmentId: movie.posterAttachmentId,
       backdrop: movie.backdrop,
+      backdropAttachmentId: movie.backdropAttachmentId,
       categories: movie.categories,
       genres: movie.genres,
       rating: movie.rating,
@@ -290,36 +304,69 @@ export function useEditMovie() {
   };
 
   const handleSaveMovie = async () => {
-    const payload: any = {
-      title: movieForm.title,
-      description: movieForm.description,
-      originalTitle: movieForm.originalTitle,
-      year: movieForm.year,
-      categories: movieForm.categories,
-      rating: movieForm.rating,
-      duration: movieForm.duration,
-      director: movieForm.director,
-      posterUrl: movieForm.poster,
-      backdropUrl: movieForm.backdrop,
-      genres: movieForm.genres,
-      cast: movieForm.cast,
-      awards: movieForm.awards,
-      region: movieForm.region,
-      language: movieForm.language,
-      doubanLink: movieForm.doubanLink,
-      imdbLink: movieForm.imdbLink,
-      doubanRatingAverage: movieForm.doubanRatingAverage,
-      imdbRatingAverage: movieForm.imdbRatingAverage,
-      enabled: true,
-    };
-
     const { valid, errs } = validateFilmForm(movieForm);
     if (!valid) {
       setErrors(errs);
       toast.warning("请先修正表单中的错误后再提交");
       return;
     }
+
     try {
+      // 自动处理图片：如果没有ID但有URL，尝试生成附件
+      let finalPosterId = movieForm.posterAttachmentId;
+      if (!finalPosterId && movieForm.poster) {
+        try {
+          const res = await processImage(movieForm.poster, {
+            attachableType: "movie",
+            field: "poster",
+          });
+          finalPosterId = res.attachmentId;
+        } catch (e) {
+          console.error("Failed to process poster", e);
+          toast.error("海报处理失败，请检查图片链接或重新上传");
+          return;
+        }
+      }
+
+      if (!finalPosterId) {
+        toast.error("请上传海报");
+        return;
+      }
+
+      let finalBackdropId = movieForm.backdropAttachmentId;
+      if (!finalBackdropId && movieForm.backdrop) {
+        try {
+          const res = await processImage(movieForm.backdrop, {
+            attachableType: "movie",
+            field: "backdrop",
+          });
+          finalBackdropId = res.attachmentId;
+        } catch (e) {
+          console.error("Failed to process backdrop", e);
+        }
+      }
+
+      const payload: any = {
+        title: movieForm.title,
+        description: movieForm.description,
+        originalTitle: movieForm.originalTitle,
+        year: movieForm.year,
+        categories: movieForm.categories,
+        rating: movieForm.rating,
+        duration: movieForm.duration ? parseInt(String(movieForm.duration), 10) || 0 : 0,
+        director: movieForm.director,
+        posterAttachmentId: finalPosterId,
+        backdropAttachmentId: finalBackdropId,
+        genres: movieForm.genres,
+        cast: movieForm.cast,
+        awards: movieForm.awards,
+        doubanLink: movieForm.doubanLink,
+        imdbLink: movieForm.imdbLink,
+        doubanRatingAverage: movieForm.doubanRatingAverage,
+        imdbRatingAverage: movieForm.imdbRatingAverage,
+        enabled: true,
+      };
+
       if (isCreating) {
         const res = await createFilm(payload);
         const newId = (res as any)?.id ?? res;

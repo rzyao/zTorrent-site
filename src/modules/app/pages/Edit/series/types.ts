@@ -53,44 +53,44 @@ export interface EpisodeFormState {
 }
 
 export interface SeriesTorrent {
-    id: string; // 绑定关系的ID or Torrent ID? 应该是 绑定的记录ID，或者直接是 Torrent 信息
-    torrentId: string; // 实际种子ID
-    title?: string;
-    subTitle?: string;
-    version: string;
-    size: string;
-    quality: string;
-    standard?: string;
-    source: string;
-    codec: string;
-    audio: string;
-    seeders: number;
-    leechers: number;
-    uploadDate: string;
-    isFree?: boolean;
-    isVip?: boolean;
-    
-    // 绑定信息
-    // 绑定信息
-    episodeNumber?: number;
+  id: string; // 绑定关系的ID or Torrent ID? 应该是 绑定的记录ID，或者直接是 Torrent 信息
+  torrentId: string; // 实际种子ID
+  title?: string;
+  subTitle?: string;
+  version: string;
+  size: string;
+  quality: string;
+  standard?: string;
+  source: string;
+  codec: string;
+  audio: string;
+  seeders: number;
+  leechers: number;
+  uploadDate: string;
+  isFree?: boolean;
+  isVip?: boolean;
+
+  // 绑定信息
+  // 绑定信息
+  episodeNumber?: number;
 }
 
 export interface Torrent {
-    id: string;
-    title?: string;
-    subTitle?: string;
-    version: string;
-    size: string;
-    quality: string;
-    standard?: string;
-    source: string;
-    codec: string;
-    audio: string;
-    seeders: number;
-    leechers: number;
-    uploadDate: string;
-    isFree?: boolean;
-    isVip?: boolean;
+  id: string;
+  title?: string;
+  subTitle?: string;
+  version: string;
+  size: string;
+  quality: string;
+  standard?: string;
+  source: string;
+  codec: string;
+  audio: string;
+  seeders: number;
+  leechers: number;
+  uploadDate: string;
+  isFree?: boolean;
+  isVip?: boolean;
 }
 
 export interface SeriesFormState {
@@ -114,4 +114,7 @@ export interface SeriesFormState {
   imdbLink: string;
   doubanRatingAverage: number;
   imdbRatingAverage: number;
+
+  posterAttachmentId?: string;
+  backdropAttachmentId?: string;
 }

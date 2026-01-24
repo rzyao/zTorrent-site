@@ -1,6 +1,6 @@
 ﻿import { useEffect, useRef, useState } from "react";
 import { usePlaylists } from "@/modules/app/hooks/usePlaylists";
-import { ImagesService } from "@/api/services/ImagesService";
+// import { ImagesService } from "@/api/services/ImagesService"; // Removed
 import { customToast } from "@/hooks/useToast";
 import type {
   Playlist,
@@ -54,10 +54,12 @@ export function useEditPlaylist() {
   const [isCreating, setIsCreating] = useState(false);
 
   // 创建/编辑表单
+  // 创建/编辑表单
   const [editForm, setEditForm] = useState<{
     title: string;
     description: string;
     cover: string;
+    coverAttachmentId?: string;
     visibility: Visibility;
     type: PlaylistType | undefined;
     tags: string[];
@@ -66,14 +68,15 @@ export function useEditPlaylist() {
     title: "",
     description: "",
     cover: "",
+    coverAttachmentId: undefined,
     visibility: "public",
     type: undefined,
     tags: [],
     category: undefined,
   });
 
-  // 上传封面需要的隐藏文件输入
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  // 上传封面需要的隐藏文件输入 (Removed)
+  // const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // 添加影片面板状态
   const [showAddMovie, setShowAddMovie] = useState(false);
@@ -81,6 +84,20 @@ export function useEditPlaylist() {
   const [addQuery, setAddQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<Movie[]>([]);
+
+  // (useEffect blocks remain unchanged... omitted for brevity, will assume they are kept if I don't replace them)
+  // Wait, replace_file_content replaces contiguous blocks. I need to be careful.
+  // I will target the state definition and the handlers separately or use multi_replace if they are close.
+  // They are somewhat apart. I'll do state definition first, then handlers.
+  // Actually, I can do it in chunks.
+
+  // Chunk 1: State definition
+  // Chunk 2: handleCreateNew
+  // Chunk 3: handleEdit
+  // Chunk 4: handleSave
+  // Chunk 5: Remove upload handlers and return values
+
+  // Let's use multi_replace_file_content.
 
   // 初始化与搜索时加载片单列表 + 可选影片库
   useEffect(() => {
@@ -210,6 +227,7 @@ export function useEditPlaylist() {
       title: "",
       description: "",
       cover: "",
+      coverAttachmentId: undefined, // Reset
       visibility: "public",
       type: undefined as any,
       tags: [],
@@ -226,6 +244,7 @@ export function useEditPlaylist() {
       title: playlist.title,
       description: playlist.description,
       cover: playlist.cover,
+      coverAttachmentId: playlist.coverAttachmentId, // Populate if available
       visibility: playlist.visibility,
       type: playlist.type || (undefined as any),
       tags: playlist.tags ?? [],
@@ -242,6 +261,7 @@ export function useEditPlaylist() {
       name: editForm.title,
       description: editForm.description,
       coverUrl: editForm.cover,
+      coverAttachmentId: editForm.coverAttachmentId, // Add attachment ID
       visibility: editForm.visibility,
       type: editForm.type,
       tags: editForm.tags,
@@ -356,35 +376,7 @@ export function useEditPlaylist() {
     }
   };
 
-  /** 触发隐藏的文件输入进行封面上传 */
-  const handleUploadCoverClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  /** 选择文件并上传封面到后端，成功后回写到表单 */
-  const handleUploadCoverFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const reader = new FileReader();
-      const asDataUrl: string = await new Promise((resolve, reject) => {
-        reader.onload = () => resolve(String(reader.result));
-        reader.onerror = () => reject(new Error("读取文件失败"));
-        reader.readAsDataURL(file);
-      });
-      const base64 = asDataUrl.split(",")[1] || "";
-      const resp = await ImagesService.imagesControllerUpload({
-        content: base64,
-        filename: file.name,
-        mimeType: file.type,
-      });
-      const url = (resp?.data?.url ?? (resp as any)?.data?.url ?? "") as string;
-      if (!url) throw new Error("上传失败");
-      setEditForm((prev) => ({ ...prev, cover: url }));
-    } catch (err: any) {
-      // Global interceptor handles API errors
-    }
-  };
+  // Removed unused upload handlers
 
   return {
     // 数据与状态
@@ -407,7 +399,7 @@ export function useEditPlaylist() {
     setAddQuery,
     isSearching,
     searchResults,
-    fileInputRef,
+    // fileInputRef, // Removed
     // 事件回调
     handleCreateNew,
     handleEdit,
@@ -416,7 +408,7 @@ export function useEditPlaylist() {
     handleAddMovie,
     handleRemoveMovie,
     handleMoveMovie,
-    handleUploadCoverClick,
-    handleUploadCoverFile,
+    // handleUploadCoverClick, // Removed
+    // handleUploadCoverFile, // Removed
   } as const;
 }

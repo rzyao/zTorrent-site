@@ -20,23 +20,23 @@ import { useUploadTorrent } from "@/modules/app/pages/UploadTorrent/hooks/useUpl
  */
 export default function UploadTorrentPage() {
   const { t } = useLanguage();
-  useDynamicTitle(t('upload.title'));
+  useDynamicTitle(t("upload.title"));
   const navigate = useNavigate();
   const U = useUploadTorrent();
 
   return (
     <div className="min-h-screen bg-[#0F171E]">
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8">
+      <div className="mx-auto max-w-[1400px] px-4 py-8 md:px-8">
         {/* 页面标题 */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
-              <Upload className="w-5 h-5 text-white" />
+          <div className="mb-3 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30">
+              <Upload className="h-5 w-5 text-white" />
             </div>
             <div className="flex flex-row items-center gap-3">
-              <h1 className="text-white text-3xl">{t('upload.title')}</h1>
-              <p className="text-neutral-400 text-sm mt-1">
-                <span className="text-red-400">*</span> {t('upload.requiredHint').replace('* ', '')}
+              <h1 className="text-3xl text-white">{t("upload.title")}</h1>
+              <p className="mt-1 text-sm text-neutral-400">
+                <span className="text-red-400">*</span> {t("upload.requiredHint").replace("* ", "")}
               </p>
             </div>
           </div>
@@ -101,78 +101,67 @@ export default function UploadTorrentPage() {
           />
 
           {/* 简介 */}
-          <div className="bg-neutral-800/40 backdrop-blur-sm rounded-2xl border border-neutral-700/50 shadow-2xl overflow-hidden">
-            <div className="bg-linear-to-r from-red-500/20 to-orange-500/20 border-b border-neutral-700/50 px-6 py-3.5">
-              <h2 className="text-white flex items-center gap-2">
-                {t('upload.description')} <span className="text-red-400 text-sm ml-1">*</span>
+          <div className="overflow-hidden rounded-2xl border border-neutral-700/50 bg-neutral-800/40 shadow-2xl backdrop-blur-sm">
+            <div className="border-b border-neutral-700/50 bg-linear-to-r from-red-500/20 to-orange-500/20 px-6 py-3.5">
+              <h2 className="flex items-center gap-2 text-white">
+                {t("upload.description")} <span className="ml-1 text-sm text-red-400">*</span>
               </h2>
             </div>
             <div className="p-6">
               <textarea
                 rows={15}
-                placeholder={t('upload.descriptionPlaceholder')}
-                className="w-full bg-neutral-900/60 border border-neutral-700/60 rounded-lg px-4 py-3 text-white text-sm placeholder:text-neutral-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/30 outline-none resize-none transition-all scrollbar-themed"
+                placeholder={t("upload.descriptionPlaceholder")}
+                className="scrollbar-themed w-full resize-none rounded-lg border border-neutral-700/60 bg-neutral-900/60 px-4 py-3 text-sm text-white transition-all outline-none placeholder:text-neutral-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/30"
                 value={U.description}
                 onChange={(e) => U.handleDescriptionChange(e.target.value)}
               />
-              <p className="text-neutral-500 text-xs mt-3">
-                {t('upload.descriptionHelp')}
-              </p>
+              <p className="mt-3 text-xs text-neutral-500">{t("upload.descriptionHelp")}</p>
             </div>
           </div>
 
           {/* 图片上传 */}
           <Images
-            uploadedPoster={U.uploadedPoster}
-            onPosterRemove={U.handlePosterRemove}
-            posterUploading={U.posterUploading}
-            posterInputRef={U.posterInputRef}
-            onPosterInputChange={U.onPosterInputChange}
-            onSetPosterUrl={U.handlePosterUrlChange}
+            poster={U.poster}
+            posterAttachmentId={U.posterAttachmentId}
+            onPosterChange={U.onPosterChange}
             screenshots={U.screenshots}
-            onRemoveScreenshot={U.handleRemoveScreenshot}
-            shotsUploading={U.shotsUploading}
-            shotsInputRef={U.shotsInputRef}
-            onShotsInputChange={U.onShotsInputChange}
-            onAddScreenshotUrl={U.handleAddScreenshotUrl}
+            screenshotAttachmentIds={U.screenshotAttachmentIds}
+            onScreenshotsChange={U.onScreenshotsChange}
           />
 
           {/* 发布选项 */}
-          <PublishOptions
-            isAnonymous={U.isAnonymous}
-            onAnonymousChange={U.setIsAnonymous}
-          />
+          <PublishOptions isAnonymous={U.isAnonymous} onAnonymousChange={U.setIsAnonymous} />
 
           {/* 提交按钮 */}
           <SubmitBar submitting={U.submitting} onCancel={U.handleCancel} />
         </form>
 
         {/* 发布须知 */}
-        <div className="mt-8 bg-neutral-800/30 backdrop-blur-sm rounded-2xl border border-neutral-700/50 p-6">
-          <h3 className="text-white flex items-center gap-2 mb-4">
-            <Info className="w-5 h-5 text-amber-400" />
-            {t('upload.notice')}
+        <div className="mt-8 rounded-2xl border border-neutral-700/50 bg-neutral-800/30 p-6 backdrop-blur-sm">
+          <h3 className="mb-4 flex items-center gap-2 text-white">
+            <Info className="h-5 w-5 text-amber-400" />
+            {t("upload.notice")}
           </h3>
-          <ul className="space-y-2.5 text-neutral-400 text-sm">
+          <ul className="space-y-2.5 text-sm text-neutral-400">
             <li className="flex items-start gap-3">
-              <span className="text-amber-400 mt-0.5">•</span>
-              <span>{t('upload.noticeList.item1')}</span>
+              <span className="mt-0.5 text-amber-400">•</span>
+              <span>{t("upload.noticeList.item1")}</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-amber-400 mt-0.5">•</span>
-              <span>{t('upload.noticeList.item2')}</span>
+              <span className="mt-0.5 text-amber-400">•</span>
+              <span>{t("upload.noticeList.item2")}</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-amber-400 mt-0.5">•</span>
-              <span>{t('upload.noticeList.item3')}</span>
+              <span className="mt-0.5 text-amber-400">•</span>
+              <span>{t("upload.noticeList.item3")}</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-amber-400 mt-0.5">•</span>
-              <span>{t('upload.noticeList.item4')}</span>
+              <span className="mt-0.5 text-amber-400">•</span>
+              <span>{t("upload.noticeList.item4")}</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-amber-400 mt-0.5">•</span>
-              <span>{t('upload.noticeList.item5')}</span>
+              <span className="mt-0.5 text-amber-400">•</span>
+              <span>{t("upload.noticeList.item5")}</span>
             </li>
           </ul>
         </div>

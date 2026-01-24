@@ -22,7 +22,9 @@ export interface Movie {
   originalTitle: string;
   year: string;
   poster: string;
+  posterAttachmentId?: string;
   backdrop: string;
+  backdropAttachmentId?: string;
   categories: string[];
   genres: string[];
   rating: number;
@@ -40,7 +42,9 @@ export interface MovieFormState {
   originalTitle: string;
   year: string;
   poster: string;
+  posterAttachmentId?: string;
   backdrop: string;
+  backdropAttachmentId?: string;
   categories: string[];
   genres: string[];
   rating: number;

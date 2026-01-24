@@ -55,7 +55,7 @@ import { SiteStatsService } from "@/api/services/SiteStatsService";
 import type { SiteStatsOverviewVo } from "@/api/models/SiteStatsOverviewVo";
 import { TorrentsSearchService } from "@/api/services/TorrentsSearchService";
 import { HotCarouselTorrentsDto } from "@/api/models/HotCarouselTorrentsDto";
-import { PlaylistsFeaturedService } from "@/api/services/PlaylistsFeaturedService";
+import { PlaylistsService } from "@/api/services/PlaylistsService";
 import type { FeaturedPlaylistsDto } from "@/api/models/FeaturedPlaylistsDto";
 
 dayjs.extend(relativeTime);
@@ -113,7 +113,7 @@ interface ForumPost {
 
 export default function HomePage() {
   const { t } = useLanguage();
-  useDynamicTitle(t('home.title'));
+  useDynamicTitle(t("home.title"));
   const [searchQuery, setSearchQuery] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -143,12 +143,11 @@ export default function HomePage() {
 
   const announcements: Announcement[] =
     announcementData?.data?.items?.map((item: any) => {
-      const tags: string[] =
-        Array.isArray(item?.tags)
-          ? item.tags.map((t: any) => String(t?.name ?? t))
-          : Array.isArray(item?.tagNames)
-            ? item.tagNames.map((n: any) => String(n))
-            : [];
+      const tags: string[] = Array.isArray(item?.tags)
+        ? item.tags.map((t: any) => String(t?.name ?? t))
+        : Array.isArray(item?.tagNames)
+          ? item.tagNames.map((n: any) => String(n))
+          : [];
       let type: "system" | "event" | "notice" = "notice";
       if (item.isGlobalPinned) {
         type = "system";
@@ -227,13 +226,12 @@ export default function HomePage() {
         id: Number(t?.id ?? idx + 1),
         title: String(t?.title ?? t?.name ?? ""),
         subtitle: String(t?.subTitle ?? t?.subtitle ?? ""),
-        image:
-          String(
-            t?.poster ??
+        image: String(
+          t?.poster ??
             t?.coverUrl ??
             t?.thumbnailUrl ??
             "https://images.unsplash.com/photo-1592780828756-c418d71faa1f?w=800",
-          ),
+        ),
         category: String(t?.category?.name ?? t?.categoryName ?? ""),
         size: String(t?.sizeHuman ?? t?.size ?? ""),
         seeders: Number(t?.seeders ?? t?.seederCount ?? 0),
@@ -262,7 +260,7 @@ export default function HomePage() {
   } = useQuery({
     queryKey: ["home", "featuredPlaylists", 3, "featured", "movie", "sort"],
     queryFn: () =>
-      PlaylistsFeaturedService.playlistFeaturedControllerList({
+      PlaylistsService.playlistFeaturedControllerList({
         limit: 3,
         categoryKey: "featured",
         type: "movie",
@@ -339,13 +337,13 @@ export default function HomePage() {
   const getStatusText = (status: string) => {
     switch (status) {
       case "open":
-        return t('home.requestOpen');
+        return t("home.requestOpen");
       case "filled":
-        return t('home.requestFilled');
+        return t("home.requestFilled");
       case "closed":
-        return t('home.requestClosed');
+        return t("home.requestClosed");
       default:
-        return t('error.unknown');
+        return t("error.unknown");
     }
   };
   /* 卡片背景色从bg-linear-to-br from-neutral-800/60 to-stone-900/60修改为bg-neutral-800/40 */
@@ -359,7 +357,7 @@ export default function HomePage() {
             <div className="mb-4 flex items-center justify-between">
               <h2 className="flex items-center gap-2 text-lg text-white">
                 <Bell className="h-5 w-5 text-amber-400" />
-                {t('home.siteAnnouncements')}
+                {t("home.siteAnnouncements")}
               </h2>
             </div>
 
@@ -375,12 +373,14 @@ export default function HomePage() {
                         announcement.type,
                       )} text-xs whitespace-nowrap`}
                     >
-                      {announcement.type === "system" && t('home.system')}
-                      {announcement.type === "event" && t('home.event')}
-                      {announcement.type === "notice" && t('home.notice')}
+                      {announcement.type === "system" && t("home.system")}
+                      {announcement.type === "event" && t("home.event")}
+                      {announcement.type === "notice" && t("home.notice")}
                     </Badge>
                     {announcement.isTop && (
-                      <Badge className="border-0 bg-red-500 text-xs text-white">{t('home.pinned')}</Badge>
+                      <Badge className="border-0 bg-red-500 text-xs text-white">
+                        {t("home.pinned")}
+                      </Badge>
                     )}
                   </div>
                   <h4 className="mb-2 text-sm text-white transition-colors group-hover:text-amber-400">
@@ -408,19 +408,21 @@ export default function HomePage() {
               )}
               {!!carouselError && (
                 <div className="flex h-full items-center justify-center text-sm text-red-400">
-                  {t('home.loadFailed')}：{String((carouselError as any)?.message || t('home.retryLater'))}
+                  {t("home.loadFailed")}：
+                  {String((carouselError as any)?.message || t("home.retryLater"))}
                 </div>
               )}
               {!carouselLoading && !carouselError && hotTorrents.length === 0 && (
                 <div className="flex h-full items-center justify-center text-sm text-neutral-400">
-                  {t('home.noCarouselData')}
+                  {t("home.noCarouselData")}
                 </div>
               )}
               {hotTorrents.map((torrent, index) => (
                 <div
                   key={torrent.id}
-                  className={`absolute inset-0 transition-opacity duration-700 ${index === currentSlide ? "opacity-100" : "opacity-0"
-                    }`}
+                  className={`absolute inset-0 transition-opacity duration-700 ${
+                    index === currentSlide ? "opacity-100" : "opacity-0"
+                  }`}
                 >
                   <div
                     className="absolute inset-0 bg-cover bg-center"
@@ -459,13 +461,15 @@ export default function HomePage() {
 
                     <div className="flex items-center gap-6 text-sm">
                       <span className="text-neutral-400">
-                        {t('torrent.size')}: <span className="text-white">{torrent.size}</span>
+                        {t("torrent.size")}: <span className="text-white">{torrent.size}</span>
                       </span>
                       <span className="text-neutral-400">
-                        {t('torrent.seeders')}: <span className="text-green-400">{torrent.seeders}</span>
+                        {t("torrent.seeders")}:{" "}
+                        <span className="text-green-400">{torrent.seeders}</span>
                       </span>
                       <span className="text-neutral-400">
-                        {t('torrent.leechers')}: <span className="text-red-400">{torrent.leechers}</span>
+                        {t("torrent.leechers")}:{" "}
+                        <span className="text-red-400">{torrent.leechers}</span>
                       </span>
                       <span className="flex items-center gap-1">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -496,8 +500,9 @@ export default function HomePage() {
                   <button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
-                    className={`h-2 w-2 rounded-full transition-all ${index === currentSlide ? "w-8 bg-amber-400" : "bg-white/50 hover:bg-white/70"
-                      }`}
+                    className={`h-2 w-2 rounded-full transition-all ${
+                      index === currentSlide ? "w-8 bg-amber-400" : "bg-white/50 hover:bg-white/70"
+                    }`}
                   />
                 ))}
               </div>
@@ -510,7 +515,7 @@ export default function HomePage() {
           <div className="h-full rounded-xl border border-neutral-700/50 bg-neutral-800/40 p-5">
             <h2 className="mb-4 flex items-center gap-2 text-lg text-white">
               <TrendingUp className="h-5 w-5 text-amber-400" />
-              {t('home.siteStats')}
+              {t("home.siteStats")}
             </h2>
 
             {statsLoading && (
@@ -528,7 +533,8 @@ export default function HomePage() {
             )}
             {!!statsError && (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
-                {t('home.loadFailed')}：{String((statsError as any)?.message || t('home.retryLater'))}
+                {t("home.loadFailed")}：
+                {String((statsError as any)?.message || t("home.retryLater"))}
               </div>
             )}
             {!statsLoading && !statsError && (
@@ -537,7 +543,7 @@ export default function HomePage() {
                   <div className="mb-1 text-3xl text-blue-400">
                     {siteStats.totalUsers.toLocaleString()}
                   </div>
-                  <div className="text-sm text-neutral-400">{t('home.registeredUsers')}</div>
+                  <div className="text-sm text-neutral-400">{t("home.registeredUsers")}</div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -545,25 +551,25 @@ export default function HomePage() {
                     <div className="mb-1 text-xl text-green-400">
                       {siteStats.torrents.toLocaleString()}
                     </div>
-                    <div className="text-xs text-neutral-500">{t('home.totalTorrents')}</div>
+                    <div className="text-xs text-neutral-500">{t("home.totalTorrents")}</div>
                   </div>
                   <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 text-center">
                     <div className="mb-1 text-xl text-purple-400">
                       {siteStats.seeders.toLocaleString()}
                     </div>
-                    <div className="text-xs text-neutral-500">{t('home.totalSeeders')}</div>
+                    <div className="text-xs text-neutral-500">{t("home.totalSeeders")}</div>
                   </div>
                   <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 text-center">
                     <div className="mb-1 text-xl text-red-400">
                       {siteStats.peers.toLocaleString()}
                     </div>
-                    <div className="text-xs text-neutral-500">{t('home.totalLeechers')}</div>
+                    <div className="text-xs text-neutral-500">{t("home.totalLeechers")}</div>
                   </div>
                   <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-3 text-center">
                     <div className="mb-1 text-xl text-amber-400">
                       {siteStats.onlineUsers.toLocaleString()}
                     </div>
-                    <div className="text-xs text-neutral-500">{t('home.onlineUsers')}</div>
+                    <div className="text-xs text-neutral-500">{t("home.onlineUsers")}</div>
                   </div>
                 </div>
               </div>
@@ -579,9 +585,9 @@ export default function HomePage() {
           <div className="mb-4 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-lg text-white">
               <Gift className="h-5 w-5 text-amber-400" />
-              {t('home.bountyRequests')}
+              {t("home.bountyRequests")}
               <Badge className="border-amber-500/30 bg-amber-500/20 text-xs text-amber-400">
-                {t('home.countInProgress', { count: bountyTotal })}
+                {t("home.countInProgress", { count: bountyTotal })}
               </Badge>
             </h2>
           </div>
@@ -600,12 +606,13 @@ export default function HomePage() {
             )}
             {!!bountyError && (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
-                {t('home.loadFailed')}：{String((bountyError as any)?.message || t('home.retryLater'))}
+                {t("home.loadFailed")}：
+                {String((bountyError as any)?.message || t("home.retryLater"))}
               </div>
             )}
             {!bountyLoading && !bountyError && bountyTopics.length === 0 && (
               <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-4 text-sm text-neutral-400">
-                {t('home.noBountyTopics')}
+                {t("home.noBountyTopics")}
               </div>
             )}
             {bountyTopics.map((topic) => (
@@ -617,8 +624,8 @@ export default function HomePage() {
                   <h3 className="line-clamp-2 flex-1 text-sm text-white transition-colors group-hover:text-amber-400">
                     {topic.title}
                   </h3>
-                  <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-                    {t('home.inProgress')}
+                  <Badge className="border-green-500/30 bg-green-500/20 text-green-400">
+                    {t("home.inProgress")}
                   </Badge>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-neutral-500">
@@ -646,7 +653,7 @@ export default function HomePage() {
               <div className="pt-2">
                 <Link to="/forum/latest">
                   <Button variant="outline" className="w-full border-amber-500/30 text-amber-400">
-                    {t('home.viewMoreBounty')}
+                    {t("home.viewMoreBounty")}
                   </Button>
                 </Link>
               </div>
@@ -659,7 +666,7 @@ export default function HomePage() {
           <div className="mb-4 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-lg text-white">
               <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
-              {t('home.featuredRecommend')}
+              {t("home.featuredRecommend")}
             </h2>
           </div>
 
@@ -676,12 +683,13 @@ export default function HomePage() {
             )}
             {!!featuredError && (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
-                {t('home.loadFailed')}：{String((featuredError as any)?.message || t('home.retryLater'))}
+                {t("home.loadFailed")}：
+                {String((featuredError as any)?.message || t("home.retryLater"))}
               </div>
             )}
             {!featuredLoading && !featuredError && recommendations.length === 0 && (
               <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-4 text-sm text-neutral-400">
-                {t('home.noFeaturedPlaylists')}
+                {t("home.noFeaturedPlaylists")}
               </div>
             )}
             {recommendations.map((rec) => (
@@ -727,7 +735,7 @@ export default function HomePage() {
           <div className="mb-4 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-lg text-white">
               <Flame className="h-5 w-5 text-red-400" />
-              {t('home.forumHotTopics')}
+              {t("home.forumHotTopics")}
             </h2>
           </div>
 
@@ -744,12 +752,12 @@ export default function HomePage() {
             )}
             {!!hotError && (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
-                {t('home.loadFailed')}：{String((hotError as any)?.message || t('home.retryLater'))}
+                {t("home.loadFailed")}：{String((hotError as any)?.message || t("home.retryLater"))}
               </div>
             )}
             {!hotLoading && !hotError && hotTopicItems.length === 0 && (
               <div className="rounded-lg border border-neutral-700/50 bg-neutral-900/30 p-4 text-sm text-neutral-400">
-                {t('home.noHotTopics')}
+                {t("home.noHotTopics")}
               </div>
             )}
             {hotTopicItems.map((post) => (
@@ -790,7 +798,7 @@ export default function HomePage() {
               <div className="pt-2">
                 <Link to="/forum/hot">
                   <Button variant="outline" className="w-full border-amber-500/30 text-amber-400">
-                    {t('home.viewMoreHotTopics')}
+                    {t("home.viewMoreHotTopics")}
                   </Button>
                 </Link>
               </div>

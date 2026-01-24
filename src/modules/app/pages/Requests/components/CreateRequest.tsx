@@ -1,34 +1,35 @@
-import { useState } from 'react';
-import { Upload, X, Award, AlertCircle, CheckCircle2, Image as ImageIcon } from 'lucide-react';
-import { useRequestActions } from '@/modules/app/pages/Requests/hooks/useRequestActions';
-import { ImagesService } from '@/api/services/ImagesService';
-import { extractErrorMessage } from '@/utils/errorMessage';
+import { useState } from "react";
+import { Upload, X, Award, AlertCircle, CheckCircle2, Image as ImageIcon } from "lucide-react";
+import { useRequestActions } from "@/modules/app/pages/Requests/hooks/useRequestActions";
+
+import { ImageUpload } from "@/components/ImageUpload";
+import { extractErrorMessage } from "@/utils/errorMessage";
 
 export function CreateRequest() {
   const [formData, setFormData] = useState({
-    title: '',
-    category: '',
-    description: '',
-    bounty: '',
+    title: "",
+    category: "",
+    description: "",
+    bounty: "",
     deadline: 7,
   });
 
-  const [attachments, setAttachments] = useState<string[]>([]);
+  const [attachmentIds, setAttachmentIds] = useState<string[]>([]);
+  const [attachmentUrls, setAttachmentUrls] = useState<string[]>([]);
   const [agreedToRules, setAgreedToRules] = useState(false);
 
   const userBalance = 50000; // 模拟用户余额
 
-  const categories = ['电影', '剧集', '纪录片', '音乐', '动漫', '综艺', '体育', '其他'];
+  const categories = ["电影", "剧集", "纪录片", "音乐", "动漫", "综艺", "体育", "其他"];
   const deadlineOptions = [
-    { value: 3, label: '3天' },
-    { value: 7, label: '7天' },
-    { value: 14, label: '14天' },
-    { value: 30, label: '30天' },
+    { value: 3, label: "3天" },
+    { value: 7, label: "7天" },
+    { value: 14, label: "14天" },
+    { value: 30, label: "30天" },
   ];
 
   const actions = useRequestActions();
 
-  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,12 +42,12 @@ export function CreateRequest() {
         description: formData.description,
         bounty: Number(formData.bounty || 0),
         deadlineDays: Number(formData.deadline || 7),
-        attachments,
+        attachments: attachmentIds,
       } as any);
       const newId = (created as any)?.id ?? (created as any)?.data?.id;
       if (newId) await actions.publish.mutateAsync({ id: String(newId) });
     } catch (err: any) {
-      setError(extractErrorMessage(err, '发布求种失败'));
+      setError(extractErrorMessage(err, "发布求种失败"));
     }
   };
 
@@ -59,57 +60,39 @@ export function CreateRequest() {
         description: formData.description,
         bounty: Number(formData.bounty || 0),
         deadlineDays: Number(formData.deadline || 7),
-        attachments,
+        attachments: attachmentIds,
       } as any);
     } catch (err: any) {
-      setError(extractErrorMessage(err, '保存草稿失败'));
+      setError(extractErrorMessage(err, "保存草稿失败"));
     }
   };
 
-  const addAttachment = async () => {
-    try {
-      setIsUploading(true);
-      setError(null);
-      // 简化演示：真实项目中这里应打开文件选择并读取文件内容为 base64
-      const demoContent = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB...';
-      const filename = `attachment-${attachments.length + 1}.png`;
-      const resp = await ImagesService.imagesControllerUpload({ content: demoContent, filename } as any);
-      const body = (resp as any)?.code !== undefined ? resp : (resp as any)?.data ?? resp;
-      const url = body?.data?.url ?? body?.url;
-      if (!url) throw new Error('上传失败：未返回 URL');
-      setAttachments([...attachments, url]);
-    } catch (err: any) {
-      setError(extractErrorMessage(err, '上传图片失败'));
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const removeAttachment = (index: number) => {
-    setAttachments(attachments.filter((_, i) => i !== index));
-  };
-
-  const isFormValid = formData.title && formData.category && formData.description &&
-    formData.bounty && parseInt(formData.bounty) > 0 &&
-    parseInt(formData.bounty) <= userBalance && agreedToRules;
+  const isFormValid =
+    formData.title &&
+    formData.category &&
+    formData.description &&
+    formData.bounty &&
+    parseInt(formData.bounty) > 0 &&
+    parseInt(formData.bounty) <= userBalance &&
+    agreedToRules;
 
   // 发布流程：create → publish；已在 handleSubmit 中实现
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="mx-auto max-w-4xl space-y-6">
       {/* Header */}
-      <div className="bg-linear-to-br from-amber-600/10 to-orange-600/10 border border-amber-500/20 rounded-lg p-6">
-        <h2 className="text-amber-50 mb-2">发布求种</h2>
+      <div className="rounded-lg border border-amber-500/20 bg-linear-to-br from-amber-600/10 to-orange-600/10 p-6">
+        <h2 className="mb-2 text-amber-50">发布求种</h2>
         <p className="text-amber-200/70">
           详细描述您的资源需求，设置合理的悬赏金额，让社区帮您找到想要的资源
         </p>
       </div>
 
       {/* Balance Display */}
-      <div className="bg-linear-to-r from-amber-500/20 to-orange-500/20 border border-amber-400/30 rounded-lg p-4">
+      <div className="rounded-lg border border-amber-400/30 bg-linear-to-r from-amber-500/20 to-orange-500/20 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-amber-300">
-            <Award className="w-5 h-5" />
+            <Award className="h-5 w-5" />
             <span>当前余额</span>
           </div>
           <div className="text-amber-50">{userBalance.toLocaleString()} 积分</div>
@@ -117,7 +100,7 @@ export function CreateRequest() {
       </div>
 
       {error && (
-        <div className="bg-red-500/10 border border-red-400/30 rounded-lg p-4 text-red-300">
+        <div className="rounded-lg border border-red-400/30 bg-red-500/10 p-4 text-red-300">
           {error}
         </div>
       )}
@@ -125,12 +108,12 @@ export function CreateRequest() {
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
-        <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 space-y-6">
+        <div className="space-y-6 rounded-lg border border-amber-500/20 bg-linear-to-br from-amber-600/5 to-orange-600/5 p-6">
           <h3 className="text-amber-50">基本信息</h3>
 
           {/* Title */}
-          <div className="grid grid-cols-4 gap-4 items-start">
-            <label className="text-amber-300 pt-2">
+          <div className="grid grid-cols-4 items-start gap-4">
+            <label className="pt-2 text-amber-300">
               求种标题 <span className="text-red-400">*</span>
             </label>
             <div className="col-span-3 space-y-2">
@@ -139,15 +122,15 @@ export function CreateRequest() {
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="简洁明确地描述您需要的资源"
-                className="w-full px-4 py-2.5 bg-[#0F171E]/50 border border-amber-500/30 rounded-lg text-amber-50 placeholder-amber-400/40 focus:outline-none focus:border-amber-400 transition-colors"
+                className="w-full rounded-lg border border-amber-500/30 bg-[#0F171E]/50 px-4 py-2.5 text-amber-50 placeholder-amber-400/40 transition-colors focus:border-amber-400 focus:outline-none"
               />
-              <p className="text-amber-400/50 text-sm">例如：求《星际穿越》4K HDR REMUX版本</p>
+              <p className="text-sm text-amber-400/50">例如：求《星际穿越》4K HDR REMUX版本</p>
             </div>
           </div>
 
           {/* Category */}
-          <div className="grid grid-cols-4 gap-4 items-start">
-            <label className="text-amber-300 pt-2">
+          <div className="grid grid-cols-4 items-start gap-4">
+            <label className="pt-2 text-amber-300">
               资源分类 <span className="text-red-400">*</span>
             </label>
             <div className="col-span-3">
@@ -157,10 +140,11 @@ export function CreateRequest() {
                     key={cat}
                     type="button"
                     onClick={() => setFormData({ ...formData, category: cat })}
-                    className={`px-4 py-2 rounded-lg transition-all ${formData.category === cat
-                      ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
-                      : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
-                      }`}
+                    className={`rounded-lg px-4 py-2 transition-all ${
+                      formData.category === cat
+                        ? "bg-linear-to-r from-amber-500 to-orange-500 text-white"
+                        : "border border-amber-500/30 bg-[#0F171E]/50 text-amber-300 hover:bg-amber-500/10"
+                    }`}
                   >
                     {cat}
                   </button>
@@ -170,8 +154,8 @@ export function CreateRequest() {
           </div>
 
           {/* Description */}
-          <div className="grid grid-cols-4 gap-4 items-start">
-            <label className="text-amber-300 pt-2">
+          <div className="grid grid-cols-4 items-start gap-4">
+            <label className="pt-2 text-amber-300">
               详细描述 <span className="text-red-400">*</span>
             </label>
             <div className="col-span-3 space-y-2">
@@ -180,47 +164,30 @@ export function CreateRequest() {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="详细说明资源的具体要求，包括格式、分辨率、音轨、字幕等"
                 rows={6}
-                className="w-full px-4 py-2.5 bg-[#0F171E]/50 border border-amber-500/30 rounded-lg text-amber-50 placeholder-amber-400/40 focus:outline-none focus:border-amber-400 transition-colors resize-none"
+                className="w-full resize-none rounded-lg border border-amber-500/30 bg-[#0F171E]/50 px-4 py-2.5 text-amber-50 placeholder-amber-400/40 transition-colors focus:border-amber-400 focus:outline-none"
               />
-              <p className="text-amber-400/50 text-sm">
+              <p className="text-sm text-amber-400/50">
                 建议包含：格式要求、质量要求、音轨字幕要求、特殊说明等
               </p>
             </div>
           </div>
 
           {/* Attachments */}
-          <div className="grid grid-cols-4 gap-4 items-start">
-            <label className="text-amber-300 pt-2">参考图片</label>
+          <div className="grid grid-cols-4 items-start gap-4">
+            <label className="pt-2 text-amber-300">参考图片</label>
             <div className="col-span-3 space-y-3">
-              {attachments.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {attachments.map((att, index) => (
-                    <div
-                      key={index}
-                      className="relative group bg-[#0F171E]/50 border border-amber-500/30 rounded-lg p-3 flex items-center gap-2"
-                    >
-                      <ImageIcon className="w-4 h-4 text-amber-400" />
-                      <span className="text-amber-300 text-sm">{att}</span>
-                      <button
-                        type="button"
-                        onClick={() => removeAttachment(index)}
-                        className="ml-2 p-1 hover:bg-red-500/20 rounded transition-colors"
-                      >
-                        <X className="w-4 h-4 text-red-400" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <button
-                type="button"
-                onClick={addAttachment}
-                className="px-4 py-2 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all flex items-center gap-2"
-              >
-                <Upload className="w-4 h-4" />
-                {isUploading ? '上传中...' : '上传图片'}
-              </button>
-              <p className="text-amber-400/50 text-sm">
+              <ImageUpload
+                value={attachmentIds}
+                defaultPreview={attachmentUrls}
+                onChange={(ids, urls) => {
+                  setAttachmentIds(Array.isArray(ids) ? ids : [ids]);
+                  setAttachmentUrls(Array.isArray(urls) ? urls : [urls]);
+                }}
+                maxCount={9}
+                attachableType="request"
+                placeholder="上传参考图片"
+              />
+              <p className="text-sm text-amber-400/50">
                 可上传封面图、截图等参考资料，帮助应答者更好地理解需求
               </p>
             </div>
@@ -228,12 +195,12 @@ export function CreateRequest() {
         </div>
 
         {/* Bounty Settings */}
-        <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 space-y-6">
+        <div className="space-y-6 rounded-lg border border-amber-500/20 bg-linear-to-br from-amber-600/5 to-orange-600/5 p-6">
           <h3 className="text-amber-50">悬赏设置</h3>
 
           {/* Bounty Amount */}
-          <div className="grid grid-cols-4 gap-4 items-start">
-            <label className="text-amber-300 pt-2">
+          <div className="grid grid-cols-4 items-start gap-4">
+            <label className="pt-2 text-amber-300">
               悬赏金额 <span className="text-red-400">*</span>
             </label>
             <div className="col-span-3 space-y-2">
@@ -245,9 +212,9 @@ export function CreateRequest() {
                   placeholder="输入悬赏积分"
                   min="100"
                   max={userBalance}
-                  className="w-full px-4 py-2.5 pr-16 bg-[#0F171E]/50 border border-amber-500/30 rounded-lg text-amber-50 placeholder-amber-400/40 focus:outline-none focus:border-amber-400 transition-colors"
+                  className="w-full rounded-lg border border-amber-500/30 bg-[#0F171E]/50 px-4 py-2.5 pr-16 text-amber-50 placeholder-amber-400/40 transition-colors focus:border-amber-400 focus:outline-none"
                 />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-amber-400/60">
+                <span className="absolute top-1/2 right-4 -translate-y-1/2 text-amber-400/60">
                   积分
                 </span>
               </div>
@@ -259,7 +226,7 @@ export function CreateRequest() {
                     key={amount}
                     type="button"
                     onClick={() => setFormData({ ...formData, bounty: amount.toString() })}
-                    className="px-3 py-1.5 bg-[#0F171E]/50 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded text-sm transition-all"
+                    className="rounded border border-amber-500/30 bg-[#0F171E]/50 px-3 py-1.5 text-sm text-amber-300 transition-all hover:border-amber-400"
                   >
                     {amount.toLocaleString()}
                   </button>
@@ -267,21 +234,21 @@ export function CreateRequest() {
               </div>
 
               {formData.bounty && parseInt(formData.bounty) > userBalance && (
-                <div className="flex items-start gap-2 text-red-400 text-sm">
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-2 text-sm text-red-400">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                   <span>余额不足，请降低悬赏金额</span>
                 </div>
               )}
 
-              <p className="text-amber-400/50 text-sm">
+              <p className="text-sm text-amber-400/50">
                 建议悬赏: 普通资源 1000-3000，稀缺资源 5000-10000，极度稀缺 10000+
               </p>
             </div>
           </div>
 
           {/* Deadline */}
-          <div className="grid grid-cols-4 gap-4 items-start">
-            <label className="text-amber-300 pt-2">
+          <div className="grid grid-cols-4 items-start gap-4">
+            <label className="pt-2 text-amber-300">
               截止时间 <span className="text-red-400">*</span>
             </label>
             <div className="col-span-3">
@@ -291,16 +258,17 @@ export function CreateRequest() {
                     key={option.value}
                     type="button"
                     onClick={() => setFormData({ ...formData, deadline: option.value })}
-                    className={`px-4 py-2 rounded-lg transition-all ${formData.deadline === option.value
-                      ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white'
-                      : 'bg-[#0F171E]/50 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10'
-                      }`}
+                    className={`rounded-lg px-4 py-2 transition-all ${
+                      formData.deadline === option.value
+                        ? "bg-linear-to-r from-amber-500 to-orange-500 text-white"
+                        : "border border-amber-500/30 bg-[#0F171E]/50 text-amber-300 hover:bg-amber-500/10"
+                    }`}
                   >
                     {option.label}
                   </button>
                 ))}
               </div>
-              <p className="text-amber-400/50 text-sm mt-2">
+              <p className="mt-2 text-sm text-amber-400/50">
                 超过截止时间未完成，悬赏积分将自动退回
               </p>
             </div>
@@ -308,43 +276,43 @@ export function CreateRequest() {
         </div>
 
         {/* Rules Confirmation */}
-        <div className="bg-linear-to-br from-amber-600/5 to-orange-600/5 border border-amber-500/20 rounded-lg p-6 space-y-4">
+        <div className="space-y-4 rounded-lg border border-amber-500/20 bg-linear-to-br from-amber-600/5 to-orange-600/5 p-6">
           <h3 className="text-amber-50">发布规则</h3>
 
-          <div className="bg-[#0F171E]/50 rounded-lg p-4 space-y-2 text-sm text-amber-300/70">
+          <div className="space-y-2 rounded-lg bg-[#0F171E]/50 p-4 text-sm text-amber-300/70">
             <div className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
               <span>发布后将立即从您的账户扣除悬赏积分，作为担保金冻结</span>
             </div>
             <div className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
               <span>任务完成后，悬赏积分将自动发放给认领者</span>
             </div>
             <div className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
               <span>如果超过截止时间无人完成，积分将自动退回</span>
             </div>
             <div className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
               <span>恶意求种、虚假描述将受到警告或封禁处罚</span>
             </div>
             <div className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
               <span>请合理设置悬赏金额，过高或过低都可能影响认领率</span>
             </div>
           </div>
 
-          <label className="flex items-start gap-3 cursor-pointer">
+          <label className="flex cursor-pointer items-start gap-3">
             <input
               type="checkbox"
               checked={agreedToRules}
               onChange={(e) => setAgreedToRules(e.target.checked)}
-              className="mt-1 w-4 h-4 rounded border-amber-500/30 bg-[#0F171E]/50 text-amber-500 focus:ring-amber-400 focus:ring-offset-0"
+              className="mt-1 h-4 w-4 rounded border-amber-500/30 bg-[#0F171E]/50 text-amber-500 focus:ring-amber-400 focus:ring-offset-0"
             />
             <span className="text-amber-300">
               我已阅读并同意以上规则，确认发布求种后将扣除
-              <span className="text-amber-400 mx-1">
-                {formData.bounty ? parseInt(formData.bounty).toLocaleString() : '0'}
+              <span className="mx-1 text-amber-400">
+                {formData.bounty ? parseInt(formData.bounty).toLocaleString() : "0"}
               </span>
               积分作为悬赏
             </span>
@@ -356,26 +324,27 @@ export function CreateRequest() {
           <button
             type="submit"
             disabled={!isFormValid}
-            className={`flex-1 py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${isFormValid
-              ? 'bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white'
-              : 'bg-gray-500/20 text-gray-400 cursor-not-allowed'
-              }`}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-3 transition-all ${
+              isFormValid
+                ? "bg-linear-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600"
+                : "cursor-not-allowed bg-gray-500/20 text-gray-400"
+            }`}
           >
-            <CheckCircle2 className="w-5 h-5" />
+            <CheckCircle2 className="h-5 w-5" />
             发布求种
           </button>
 
           <button
             type="button"
             onClick={handleSaveDraft}
-            className="px-6 py-3 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all"
+            className="rounded-lg border border-amber-500/30 bg-linear-to-br from-amber-600/20 to-orange-600/20 px-6 py-3 text-amber-300 transition-all hover:border-amber-400"
           >
             保存草稿
           </button>
 
           <button
             type="button"
-            className="px-6 py-3 bg-linear-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 hover:border-amber-400 text-amber-300 rounded-lg transition-all"
+            className="rounded-lg border border-amber-500/30 bg-linear-to-br from-amber-600/20 to-orange-600/20 px-6 py-3 text-amber-300 transition-all hover:border-amber-400"
           >
             取消
           </button>
@@ -384,4 +353,3 @@ export function CreateRequest() {
     </div>
   );
 }
-

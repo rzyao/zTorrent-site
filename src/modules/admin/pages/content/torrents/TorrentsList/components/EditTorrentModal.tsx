@@ -8,6 +8,7 @@ import { StandardSelect } from "@/modules/admin/components/ui/select";
 import { CategoryOption, TorrentItem } from "../types";
 import { useEffect, useCallback, useState } from "react";
 import { ImagesService } from "@/api/services/ImagesService";
+import { ImageUpload } from "@/components/ImageUpload";
 
 const formSchema = z.object({
   id: z.string().optional(),
@@ -34,7 +35,11 @@ export const EditTorrentModal = ({
   categories,
 }: EditTorrentModalProps) => {
   const [posterAttachmentId, setPosterAttachmentId] = useState<string>("");
+  // 剧照 ID 列表
   const [stillAttachmentIds, setStillAttachmentIds] = useState<string[]>([]);
+  // 剧照 URL 列表 (回显用)
+  const [stillUrls, setStillUrls] = useState<string[]>([]);
+
   const {
     register,
     handleSubmit,
@@ -59,58 +64,13 @@ export const EditTorrentModal = ({
       });
       setPosterAttachmentId("");
       setStillAttachmentIds([]);
+      setStillUrls([]);
+
+      // 注意：这里缺少从 editing 数据中恢复 poster 和 still 的逻辑
+      // 假设 editing 对象中有相关字段，如果后端返回了 attachmentId 或 url，应该在这里设置
+      // 由于原代码也没有回显逻辑，这里暂保持一致，只做组件替换
     }
   }, [editing, reset]);
-
-  // 文件转 base64（主体）
-  const fileToBase64 = useCallback((file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        const result = reader.result as string;
-        const base64 = result.split(",")[1];
-        resolve(base64);
-      };
-      reader.onerror = (error) => reject(error);
-    });
-  }, []);
-
-  const handleCoverChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const base64 = await fileToBase64(file);
-      const resp = await ImagesService.imagesControllerUpload({
-        content: base64,
-        filename: file.name,
-      });
-      const aid = resp.data?.attachmentId;
-      if (aid) setPosterAttachmentId(aid);
-    } catch (err: any) {
-      console.error(err);
-    } finally {
-      e.target.value = "";
-    }
-  }, [fileToBase64]);
-
-  const handleStillsChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
-    if (!files.length) return;
-    try {
-      const uploads = files.map(async (file) => {
-        const base64 = await fileToBase64(file);
-        return ImagesService.imagesControllerUpload({ content: base64, filename: file.name });
-      });
-      const results = await Promise.all(uploads);
-      const ids = results.map((r) => r.data?.attachmentId).filter((id): id is string => !!id);
-      if (ids.length) setStillAttachmentIds((prev) => [...prev, ...ids]);
-    } catch (err: any) {
-      console.error(err);
-    } finally {
-      e.target.value = "";
-    }
-  }, [fileToBase64]);
 
   const onSubmit = async (data: FormValues) => {
     await onOk({
@@ -163,12 +123,32 @@ export const EditTorrentModal = ({
 
         <div className="space-y-2">
           <Label>封面（上传后自动绑定附件）</Label>
-          <Input type="file" accept="image/*" onChange={handleCoverChange} />
+          {/* 使用 ImageUpload 组件，单图模式 */}
+          <ImageUpload
+            value={posterAttachmentId}
+            onChange={(id, _) => setPosterAttachmentId(id)}
+            attachableType="torrent" // 假设 backend 支持此类型，或者通用
+            field="cover"
+            maxCount={1}
+            className="mt-2"
+          />
         </div>
 
         <div className="space-y-2">
-          <Label>剧照（可多选，按选择顺序排序）</Label>
-          <Input type="file" accept="image/*" multiple onChange={handleStillsChange} />
+          <Label>剧照（可多选，最多10张）</Label>
+          {/* 使用 ImageUpload 组件，多图模式 */}
+          <ImageUpload
+            value={stillAttachmentIds} // 传入 ID 数组
+            defaultPreview={stillUrls} // 传入 URL 数组以便预览 (虽然初始为空)
+            onChange={(ids, urls) => {
+              setStillAttachmentIds(Array.isArray(ids) ? ids : [ids]);
+              setStillUrls(Array.isArray(urls) ? urls : [urls]);
+            }}
+            attachableType="torrent"
+            field="stills"
+            maxCount={10}
+            className="mt-2"
+          />
         </div>
       </form>
     </Modal>

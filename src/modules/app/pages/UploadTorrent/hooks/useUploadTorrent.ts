@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ImagesService } from "@/api/services/ImagesService";
+
 import { PtGenService } from "@/api/services/PtGenService";
 import { TorrentsUploadService } from "@/api/services/TorrentsUploadService";
 import { customToast } from "@/hooks/useToast";
@@ -63,11 +63,8 @@ export function useUploadTorrent() {
     toggleSubtitle,
     setUploadedPoster,
     setPosterAttachmentId,
-    // clearUploadedPoster,
-    addScreenshots,
-    addStillAttachmentIds,
-    removeScreenshot,
-    removeStillAttachmentId,
+    setScreenshots, // New
+    setStillAttachmentIds, // New
     setIsAnonymous,
     setTitle,
     setSubTitle,
@@ -91,11 +88,34 @@ export function useUploadTorrent() {
     reset,
   } = store;
 
-  // 本地 UI 状态（非业务数据，不需要存 Store）
-  const [posterUploading, setPosterUploading] = useState(false);
-  const [shotsUploading, setShotsUploading] = useState(false);
-  const posterInputRef = useRef<HTMLInputElement>(null);
-  const shotsInputRef = useRef<HTMLInputElement>(null);
+  // 选项常量（用 useMemo 保持稳定引用） - Omitted for brevity as they are unchanged
+  // ... (I need to keep them or use multi_replace. Since I'm replacing a huge chunk, I should be careful)
+  // Actually, I can just remove the unused parts using multi_replace.
+
+  // 1. Remove manual state
+  // 2. Remove fileToBase64, fetchUrlToBase64, isDirectImageUrl
+  // 3. Remove onPosterInputChange, onShotsInputChange, handlePosterRemove, handleRemoveScreenshot, handleAddScreenshotUrl, handlePosterUrlChange
+  // 4. Update helper functions exposed.
+
+  // Let's use handlers directly in the return object or create wrappers.
+
+  const handlePosterChange = useCallback(
+    (id: string, url: string) => {
+      setPosterAttachmentId(id);
+      setUploadedPoster(url);
+    },
+    [setPosterAttachmentId, setUploadedPoster],
+  );
+
+  const handleScreenshotsChange = useCallback(
+    (ids: string[], urls: string[]) => {
+      setStillAttachmentIds(ids);
+      setScreenshots(urls);
+    },
+    [setStillAttachmentIds, setScreenshots],
+  );
+
+  // Remove unused imports at top later.
 
   // 选项常量（用 useMemo 保持稳定引用）
   const mainCategories = useMemo(() => {
@@ -236,118 +256,6 @@ export function useUploadTorrent() {
       reset();
     }
   }, [location.hash, reset, setForm]);
-
-  /** 将文件转为 base64（移除 data: 前缀，仅保留主体） */
-  const fileToBase64 = useCallback((file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        const result = reader.result as string;
-        const base64 = result.split(",")[1];
-        resolve(base64);
-      };
-      reader.onerror = (error) => reject(error);
-    });
-  }, []);
-
-  /**
-   * 将远程图片 URL 下载为 base64（仅主体部分）
-   * 用于用户输入外链时依旧走附件化上传流程
-   */
-  const fetchUrlToBase64 = useCallback(async (url: string): Promise<string> => {
-    const resp = await fetch(url, { mode: "cors", referrerPolicy: "no-referrer" });
-    const blob = await resp.blob();
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        const base64 = result.split(",")[1];
-        resolve(base64);
-      };
-      reader.onerror = (e) => reject(e);
-      reader.readAsDataURL(blob);
-    });
-  }, []);
-
-  const isDirectImageUrl = useCallback((url: string): boolean => {
-    try {
-      const u = new URL(url);
-      const ext = u.pathname.toLowerCase();
-      return /\.(png|jpe?g|webp|gif)$/.test(ext);
-    } catch {
-      return false;
-    }
-  }, []);
-
-  /**
-   * 计算剧照 sortOrder：使用当前已存在剧照数量 + 索引
-   * 保证后端绑定顺序与前端展示一致
-   */
-  const getNextStillSortOrder = useCallback(
-    (idx: number): number => {
-      return (screenshots?.length ?? 0) + idx;
-    },
-    [screenshots],
-  );
-
-  /** 海报文件选择与上传 */
-  const onPosterInputChange = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      try {
-        setPosterUploading(true);
-        const base64 = await fileToBase64(file);
-        const res = await ImagesService.imagesControllerUpload({
-          content: base64,
-          filename: file.name,
-          mimeType: file.type,
-        });
-        const url = res.data?.url;
-        const aid = res.data?.attachmentId;
-        if (url) setUploadedPoster(url);
-        if (aid) setPosterAttachmentId(aid);
-      } catch (err: any) {
-        // Global interceptor handles API errors
-      } finally {
-        setPosterUploading(false);
-        e.target.value = "";
-      }
-    },
-    [fileToBase64, setUploadedPoster, setPosterAttachmentId],
-  );
-
-  /** 剧照文件选择与上传（支持多选） */
-  const onShotsInputChange = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(e.target.files ?? []);
-      if (!files.length) return;
-      try {
-        setShotsUploading(true);
-        const uploads = files.map(async (file, idx) => {
-          const base64 = await fileToBase64(file);
-          return ImagesService.imagesControllerUpload({
-            content: base64,
-            filename: file.name,
-            mimeType: file.type,
-            sortOrder: getNextStillSortOrder(idx),
-          });
-        });
-        const results = await Promise.all(uploads);
-        const urls = results.map((r) => r.data?.url).filter((u): u is string => !!u);
-        const ids = results.map((r) => r.data?.attachmentId).filter((id): id is string => !!id);
-        if (urls.length) addScreenshots(urls);
-        if (ids.length) addStillAttachmentIds(ids);
-      } catch (err: any) {
-        // Global interceptor handles API errors
-      } finally {
-        setShotsUploading(false);
-        e.target.value = "";
-      }
-    },
-    [fileToBase64, addScreenshots, addStillAttachmentIds],
-  );
 
   /** 选择种子文件并进行去重校验（根据 infoHash 查询是否已存在） */
   const onTorrentInputChange = useCallback(
@@ -529,68 +437,6 @@ export function useUploadTorrent() {
   // Stable handlers for child components
   const handleClearTags = useCallback(() => setSelectedTags([]), [setSelectedTags]);
   const handleDescriptionChange = useCallback((v: string) => setDescription(v), [setDescription]);
-  const handlePosterRemove = useCallback(() => setUploadedPoster(""), [setUploadedPoster]);
-  const handleRemoveScreenshot = useCallback(
-    (index: number) => {
-      removeScreenshot(index);
-      removeStillAttachmentId(index);
-    },
-    [removeScreenshot, removeStillAttachmentId],
-  );
-  const handleAddScreenshotUrl = useCallback(
-    async (url: string) => {
-      try {
-        if (!isDirectImageUrl(url)) {
-          customToast.error("请粘贴图片直链（以 .jpg/.png/.webp 结尾），或下载后上传");
-          return;
-        }
-        setShotsUploading(true);
-        const base64 = await fetchUrlToBase64(url);
-        const res = await ImagesService.imagesControllerUpload({
-          content: base64,
-          filename: "remote.jpg",
-        });
-        const u = res.data?.url;
-        const aid = res.data?.attachmentId;
-        if (u) addScreenshots([u]);
-        if (aid) addStillAttachmentIds([aid]);
-      } catch (err: any) {
-        customToast.error(
-          "外链上传失败：目标站点可能禁止跨域或不是图片直链，请下载后上传或使用图片直链",
-        );
-      } finally {
-        setShotsUploading(false);
-      }
-    },
-    [addScreenshots, addStillAttachmentIds, isDirectImageUrl, fetchUrlToBase64],
-  );
-  const handlePosterUrlChange = useCallback(
-    async (url: string) => {
-      try {
-        if (!isDirectImageUrl(url)) {
-          customToast.error("请粘贴图片直链（以 .jpg/.png/.webp 结尾），或下载后上传");
-          return;
-        }
-        setPosterUploading(true);
-        const base64 = await fetchUrlToBase64(url);
-        const res = await ImagesService.imagesControllerUpload({
-          content: base64,
-          filename: "remote-cover.jpg",
-        });
-        const u = res.data?.url;
-        const aid = res.data?.attachmentId;
-        if (u) setUploadedPoster(u);
-        if (aid) setPosterAttachmentId(aid);
-      } catch (err: any) {
-        customToast.error(
-          "外链海报上传失败：目标站点可能禁止跨域或不是图片直链，请下载后上传或使用图片直链",
-        );
-      } finally {
-        setPosterUploading(false);
-      }
-    },
-    [setUploadedPoster, setPosterAttachmentId, fetchUrlToBase64, isDirectImageUrl],
-  );
   const handleCancel = useCallback(() => navigate("/torrents"), [navigate]);
 
   return useMemo(
@@ -654,19 +500,13 @@ export function useUploadTorrent() {
       toggleSubtitle,
 
       // 图片
-      uploadedPoster,
-      setUploadedPoster,
-      posterUploading,
-      shotsUploading,
-      posterInputRef,
-      shotsInputRef,
-      onPosterInputChange,
-      onShotsInputChange,
+      poster: uploadedPoster,
+      posterAttachmentId,
+      onPosterChange: handlePosterChange,
+
       screenshots,
-      handleRemoveScreenshot,
-      handleAddScreenshotUrl,
-      handlePosterRemove,
-      handlePosterUrlChange,
+      screenshotAttachmentIds: stillAttachmentIds,
+      onScreenshotsChange: handleScreenshotsChange,
 
       // 发布与提交
       isAnonymous,
@@ -730,18 +570,11 @@ export function useUploadTorrent() {
       toggleLanguage,
       toggleSubtitle,
       uploadedPoster,
-      setUploadedPoster,
-      posterUploading,
-      shotsUploading,
-      posterInputRef,
-      shotsInputRef,
-      onPosterInputChange,
-      onShotsInputChange,
+      posterAttachmentId,
+      handlePosterChange,
       screenshots,
-      handleRemoveScreenshot,
-      handleAddScreenshotUrl,
-      handlePosterRemove,
-      handlePosterUrlChange,
+      stillAttachmentIds,
+      handleScreenshotsChange,
       isAnonymous,
       setIsAnonymous,
       description,

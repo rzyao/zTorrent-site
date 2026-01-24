@@ -1,13 +1,15 @@
-﻿import { useEffect, useRef, useState } from "react";
+﻿import { useRef, useState } from "react"; // Removed useEffect as it was only used for fetching categories, which is handled but check logic
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@/modules/app/components/ui/button";
 import { AccessControl } from "@/permissions/AccessControl";
 import { Checkbox } from "@/modules/app/components/ui/checkbox";
-import { Edit, X, Image as ImageIcon, Save } from "lucide-react";
+import { Edit, X, Save } from "lucide-react"; // Removed Image as ImageIcon
 import type { SeriesFormState } from "@/modules/app/pages/Edit/series/types";
-import { isValidUrl } from "@/modules/app/pages/Edit/movies/utils"; // reuse validUrl
+import { isValidUrl } from "@/modules/app/pages/Edit/movies/utils";
 import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
-import { ImagesService } from "@/api/services/ImagesService";
+
+import { ImageUpload } from "@/components/ImageUpload";
 
 interface SeriesFormProps {
   isCreating: boolean;
@@ -70,40 +72,7 @@ export function SeriesForm({
     }
   }, [isLoaded, fetchCategories]);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
-
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    try {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const content = reader.result as string;
-        try {
-          const res = await ImagesService.imagesControllerUpload({
-            content,
-            filename: file.name,
-            mimeType: file.type,
-          });
-          if (res?.data?.url) {
-            onChange({ ...form, poster: res.data.url });
-          }
-        } catch (error) {
-          console.error("Upload failed", error);
-          // Global interceptor handles API errors
-        } finally {
-          setUploading(false);
-          if (fileInputRef.current) fileInputRef.current.value = "";
-        }
-      };
-      reader.readAsDataURL(file);
-    } catch (error) {
-      setUploading(false);
-    }
-  };
+  // Removed manually file upload logic
 
   if (!isCreating && !isEditing) return null;
   return (
@@ -348,50 +317,28 @@ export function SeriesForm({
         <label className="text-sm text-neutral-300">
           海报图片 <span className="text-red-500">*</span>
         </label>
-        <div className="flex gap-3">
-          <input
-            type="text"
-            value={form.poster}
-            onChange={(e) => onChange({ ...form, poster: e.target.value })}
-            placeholder="输入图片URL..."
-            aria-invalid={Boolean(errors.poster)}
-            className={`flex-1 rounded-lg border bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none ${
-              errors.poster ? "border-red-500" : "border-neutral-700"
-            }`}
-          />
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            accept="image/*"
-            onChange={handleUpload}
-          />
-          {/* 上传海报按钮：默认权限，不做权限控制 */}
-          <Button
-            variant="outline"
-            disabled={uploading}
-            onClick={() => fileInputRef.current?.click()}
-            className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
-          >
-            {uploading ? (
-              <span className="mr-2 animate-spin">⏳</span>
-            ) : (
-              <ImageIcon className="mr-2 h-4 w-4" />
-            )}
-            {uploading ? "上传中" : "上传"}
-          </Button>
-        </div>
+        <ImageUpload
+          value={form.posterAttachmentId} // 假设 form 有此字段，需检查 SeriesFormState
+          defaultPreview={form.poster}
+          onChange={(id, url) => onChange({ ...form, posterAttachmentId: id, poster: url } as any)}
+          attachableType="series"
+          field="poster"
+          placeholder="输入图片URL..."
+        />
         {errors.poster && <p className="text-xs text-red-500">{errors.poster}</p>}
       </div>
 
       <div className="space-y-2">
         <label className="text-sm text-neutral-300">背景图片</label>
-        <input
-          type="text"
-          value={form.backdrop}
-          onChange={(e) => onChange({ ...form, backdrop: e.target.value })}
+        <ImageUpload
+          value={form.backdropAttachmentId} // 假设 form 有此字段
+          defaultPreview={form.backdrop}
+          onChange={(id, url) =>
+            onChange({ ...form, backdropAttachmentId: id, backdrop: url } as any)
+          }
+          attachableType="series"
+          field="backdrop"
           placeholder="输入图片URL..."
-          className="w-full rounded-lg border border-neutral-700 bg-neutral-900/50 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
         />
       </div>
 

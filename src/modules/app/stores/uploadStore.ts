@@ -1,101 +1,103 @@
-import { create } from 'zustand'
-import { MediaInfoResult } from '@/modules/app/types/UploadTorrentPage'
+import { create } from "zustand";
+import { MediaInfoResult } from "@/modules/app/types/UploadTorrentPage";
 
 interface UploadState {
-  selectedCategory: string
-  selectedTags: string[]
-  selectedLanguages: string[]
-  selectedSubtitles: string[]
-  uploadedPoster: string
-  posterAttachmentId: string
-  screenshots: string[]
-  stillAttachmentIds: string[]
-  isAnonymous: boolean
-  ptGenUrl: string
-  ptGenLoading: boolean
-  ptGenError: string | null
-  description: string
-  title: string
-  subTitle: string
-  productionTeam: string
-  region: string
-  imdbUrl: string
-  doubanUrl: string
-  torrentFile: File | null
-  submitting: boolean
-  videoResolution: string
-  videoStandard: string
-  audioFormat: string
-  videoFormat: string
-  mediaInfoText: string
-  mediaInfo: MediaInfoResult
+  selectedCategory: string;
+  selectedTags: string[];
+  selectedLanguages: string[];
+  selectedSubtitles: string[];
+  uploadedPoster: string;
+  posterAttachmentId: string;
+  screenshots: string[];
+  stillAttachmentIds: string[];
+  isAnonymous: boolean;
+  ptGenUrl: string;
+  ptGenLoading: boolean;
+  ptGenError: string | null;
+  description: string;
+  title: string;
+  subTitle: string;
+  productionTeam: string;
+  region: string;
+  imdbUrl: string;
+  doubanUrl: string;
+  torrentFile: File | null;
+  submitting: boolean;
+  videoResolution: string;
+  videoStandard: string;
+  audioFormat: string;
+  videoFormat: string;
+  mediaInfoText: string;
+  mediaInfo: MediaInfoResult;
 
-  setSelectedCategory: (id: string) => void
-  setSelectedTags: (ids: string[]) => void
-  setSelectedLanguages: (langs: string[]) => void
-  setSelectedSubtitles: (subs: string[]) => void
-  toggleTag: (id: string) => void
-  toggleLanguage: (lang: string) => void
-  toggleSubtitle: (sub: string) => void
-  setUploadedPoster: (url: string) => void
-  setPosterAttachmentId: (id: string) => void
-  clearUploadedPoster: () => void
-  addScreenshots: (urls: string[]) => void
-  addStillAttachmentIds: (ids: string[]) => void
-  removeScreenshot: (index: number) => void
-  removeStillAttachmentId: (index: number) => void
-  setIsAnonymous: (val: boolean) => void
-  setTitle: (v: string) => void
-  setSubTitle: (v: string) => void
-  setDescription: (v: string) => void
-  setProductionTeam: (v: string) => void
-  setRegion: (v: string) => void
-  setImdbUrl: (v: string) => void
-  setDoubanUrl: (v: string) => void
-  setPtGenUrl: (v: string) => void
-  setPtGenLoading: (v: boolean) => void
-  setPtGenError: (v: string | null) => void
-  setTorrentFile: (f: File | null) => void
-  setSubmitting: (v: boolean) => void
-  setVideoResolution: (v: string) => void
-  setVideoStandard: (v: string) => void
-  setAudioFormat: (v: string) => void
-  setVideoFormat: (v: string) => void
-  setMediaInfoText: (v: string) => void
-  setMediaInfo: (v: MediaInfoResult) => void
-  setForm: (v: Partial<UploadState>) => void
-  reset: () => void
+  setSelectedCategory: (id: string) => void;
+  setSelectedTags: (ids: string[]) => void;
+  setSelectedLanguages: (langs: string[]) => void;
+  setSelectedSubtitles: (subs: string[]) => void;
+  toggleTag: (id: string) => void;
+  toggleLanguage: (lang: string) => void;
+  toggleSubtitle: (sub: string) => void;
+  setUploadedPoster: (url: string) => void;
+  setPosterAttachmentId: (id: string) => void;
+  clearUploadedPoster: () => void;
+  addScreenshots: (urls: string[]) => void;
+  addStillAttachmentIds: (ids: string[]) => void;
+  setScreenshots: (urls: string[]) => void;
+  setStillAttachmentIds: (ids: string[]) => void;
+  removeScreenshot: (index: number) => void;
+  removeStillAttachmentId: (index: number) => void;
+  setIsAnonymous: (val: boolean) => void;
+  setTitle: (v: string) => void;
+  setSubTitle: (v: string) => void;
+  setDescription: (v: string) => void;
+  setProductionTeam: (v: string) => void;
+  setRegion: (v: string) => void;
+  setImdbUrl: (v: string) => void;
+  setDoubanUrl: (v: string) => void;
+  setPtGenUrl: (v: string) => void;
+  setPtGenLoading: (v: boolean) => void;
+  setPtGenError: (v: string | null) => void;
+  setTorrentFile: (f: File | null) => void;
+  setSubmitting: (v: boolean) => void;
+  setVideoResolution: (v: string) => void;
+  setVideoStandard: (v: string) => void;
+  setAudioFormat: (v: string) => void;
+  setVideoFormat: (v: string) => void;
+  setMediaInfoText: (v: string) => void;
+  setMediaInfo: (v: MediaInfoResult) => void;
+  setForm: (v: Partial<UploadState>) => void;
+  reset: () => void;
 }
 
 const initialState = {
-  selectedCategory: '',
+  selectedCategory: "",
   selectedTags: [],
   selectedLanguages: [],
   selectedSubtitles: [],
-  uploadedPoster: '',
-  posterAttachmentId: '',
+  uploadedPoster: "",
+  posterAttachmentId: "",
   screenshots: [],
   stillAttachmentIds: [],
   isAnonymous: false,
-  ptGenUrl: '',
+  ptGenUrl: "",
   ptGenLoading: false,
   ptGenError: null,
-  description: '',
-  title: '',
-  subTitle: '',
-  productionTeam: '',
-  region: '',
-  imdbUrl: '',
-  doubanUrl: '',
+  description: "",
+  title: "",
+  subTitle: "",
+  productionTeam: "",
+  region: "",
+  imdbUrl: "",
+  doubanUrl: "",
   torrentFile: null,
   submitting: false,
-  videoResolution: '',
-  videoStandard: '',
-  audioFormat: '',
-  videoFormat: '',
-  mediaInfoText: '',
+  videoResolution: "",
+  videoStandard: "",
+  audioFormat: "",
+  videoFormat: "",
+  mediaInfoText: "",
   mediaInfo: {},
-}
+};
 
 export const useUploadStore = create<UploadState>((set, get) => ({
   ...initialState,
@@ -105,26 +107,31 @@ export const useUploadStore = create<UploadState>((set, get) => ({
   setSelectedLanguages: (langs) => set({ selectedLanguages: langs }),
   setSelectedSubtitles: (subs) => set({ selectedSubtitles: subs }),
   toggleTag: (id) => {
-    const cur = get().selectedTags
+    const cur = get().selectedTags;
     set({
-      selectedTags: cur.includes(id) ? cur.filter(v => v !== id) : [...cur, id],
-    })
+      selectedTags: cur.includes(id) ? cur.filter((v) => v !== id) : [...cur, id],
+    });
   },
   toggleLanguage: (lang) => {
-    const cur = get().selectedLanguages
-    set({ selectedLanguages: cur.includes(lang) ? cur.filter(v => v !== lang) : [...cur, lang] })
+    const cur = get().selectedLanguages;
+    set({ selectedLanguages: cur.includes(lang) ? cur.filter((v) => v !== lang) : [...cur, lang] });
   },
   toggleSubtitle: (sub) => {
-    const cur = get().selectedSubtitles
-    set({ selectedSubtitles: cur.includes(sub) ? cur.filter(v => v !== sub) : [...cur, sub] })
+    const cur = get().selectedSubtitles;
+    set({ selectedSubtitles: cur.includes(sub) ? cur.filter((v) => v !== sub) : [...cur, sub] });
   },
   setUploadedPoster: (url) => set({ uploadedPoster: url }),
   setPosterAttachmentId: (id) => set({ posterAttachmentId: id }),
-  clearUploadedPoster: () => set({ uploadedPoster: '' }),
+  clearUploadedPoster: () => set({ uploadedPoster: "" }),
   addScreenshots: (urls) => set({ screenshots: [...get().screenshots, ...urls] }),
-  addStillAttachmentIds: (ids) => set({ stillAttachmentIds: [...get().stillAttachmentIds, ...ids] }),
-  removeScreenshot: (index) => set({ screenshots: get().screenshots.filter((_, i) => i !== index) }),
-  removeStillAttachmentId: (index) => set({ stillAttachmentIds: get().stillAttachmentIds.filter((_, i) => i !== index) }),
+  addStillAttachmentIds: (ids) =>
+    set({ stillAttachmentIds: [...get().stillAttachmentIds, ...ids] }),
+  setScreenshots: (urls) => set({ screenshots: urls }),
+  setStillAttachmentIds: (ids) => set({ stillAttachmentIds: ids }),
+  removeScreenshot: (index) =>
+    set({ screenshots: get().screenshots.filter((_, i) => i !== index) }),
+  removeStillAttachmentId: (index) =>
+    set({ stillAttachmentIds: get().stillAttachmentIds.filter((_, i) => i !== index) }),
   setIsAnonymous: (val) => set({ isAnonymous: val }),
   setTitle: (v) => set({ title: v }),
   setSubTitle: (v) => set({ subTitle: v }),
@@ -146,4 +153,4 @@ export const useUploadStore = create<UploadState>((set, get) => ({
   setMediaInfo: (v) => set({ mediaInfo: v }),
   setForm: (v) => set((state) => ({ ...state, ...v })),
   reset: () => set(initialState),
-}))
+}));
