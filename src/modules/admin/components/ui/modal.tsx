@@ -115,9 +115,16 @@ export function Modal({
     );
   };
 
+  // 确保在客户端挂载后才获取 container
+  const [container, setContainer] = React.useState<HTMLElement | null>(null);
+
+  React.useEffect(() => {
+    setContainer(document.getElementById("root-admin"));
+  }, []);
+
   return (
     <DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
-      <DialogPrimitive.Portal container={document.getElementById("root-admin")}>
+      <DialogPrimitive.Portal container={container}>
         <DialogPrimitive.Overlay
           className={cn(
             "fixed inset-0 z-50 bg-black/45",
