@@ -34,7 +34,9 @@ export class GlobalErrorBoundary extends React.Component<ErrorBoundaryProps, Err
           </div>
           <h1 className="mb-2 text-2xl font-bold text-gray-900">页面渲染崩溃</h1>
           <p className="mb-8 max-w-md text-gray-600">
-            很抱歉，当前模块在渲染时发生了未知错误。我们已经记录了此问题。
+            {this.state.error?.message?.includes("Failed to fetch dynamically imported module")
+              ? "检测到版本更新，页面资源加载失败。请刷新页面以加载最新版本。"
+              : "很抱歉，当前模块在渲染时发生了未知错误。我们已经记录了此问题。"}
             <br />
             <span className="mt-2 block rounded bg-gray-100 p-2 font-mono text-xs text-red-500">
               {String(this.state.error?.message || this.state.error)}

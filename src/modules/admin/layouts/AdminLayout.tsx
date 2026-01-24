@@ -11,6 +11,7 @@ import { KeepAliveTabs } from "./KeepAlive/KeepAliveTabs";
 import KeepAliveContent from "./KeepAlive/KeepAliveContent";
 import { KeepAliveContext } from "./KeepAlive/KeepAliveContext";
 import { useDynamicTitle } from "@/hooks/useDynamicTitle";
+import { GlobalErrorBoundary } from "./GlobalErrorBoundary";
 
 function FaviconInjector() {
   useDynamicFavicon();
@@ -52,41 +53,43 @@ export function AdminLayout() {
         如果页面中同时存在 #root-app (App Shell) 和 #root-admin (Content)，样式可以共存。
       */}
       <KeepAliveContext.Provider value={{ setTabSaved }}>
-        <div id="root-admin" className="h-full w-full">
-          <div className="admin-layout text-antd-text flex h-screen w-full overflow-hidden bg-white">
-            {/* 侧边栏 */}
-            <AdminSidebar collapsed={collapsed} onCollapse={setCollapsed} />
+        <GlobalErrorBoundary>
+          <div id="root-admin" className="h-full w-full">
+            <div className="admin-layout text-antd-text flex h-screen w-full overflow-hidden bg-white">
+              {/* 侧边栏 */}
+              <AdminSidebar collapsed={collapsed} onCollapse={setCollapsed} />
 
-            {/* 主内容区域 */}
-            <motion.main
-              initial={false}
-              animate={{ paddingLeft: collapsed ? 64 : 256 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="flex min-h-0 min-w-0 flex-1 flex-col"
-            >
-              {/* 顶部标签页导航 */}
-              <KeepAliveTabs
-                items={items}
-                activeKey={activeKey}
-                onEdit={onEdit}
-                removeTabs={removeTabs}
-                onTabClick={handleTabClick}
-                handleRefresh={handleRefresh}
-                handleLogout={handleLogout}
-              />
+              {/* 主内容区域 */}
+              <motion.main
+                initial={false}
+                animate={{ paddingLeft: collapsed ? 64 : 256 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="flex min-h-0 min-w-0 flex-1 flex-col"
+              >
+                {/* 顶部标签页导航 */}
+                <KeepAliveTabs
+                  items={items}
+                  activeKey={activeKey}
+                  onEdit={onEdit}
+                  removeTabs={removeTabs}
+                  onTabClick={handleTabClick}
+                  handleRefresh={handleRefresh}
+                  handleLogout={handleLogout}
+                />
 
-              <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-                <AnimatePresence mode="wait">
-                  <Suspense fallback={<RouteProgressBar />}>
-                    <KeepAliveContent items={items} activeKey={activeKey}>
-                      <Outlet />
-                    </KeepAliveContent>
-                  </Suspense>
-                </AnimatePresence>
-              </div>
-            </motion.main>
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                  <AnimatePresence mode="wait">
+                    <Suspense fallback={<RouteProgressBar />}>
+                      <KeepAliveContent items={items} activeKey={activeKey}>
+                        <Outlet />
+                      </KeepAliveContent>
+                    </Suspense>
+                  </AnimatePresence>
+                </div>
+              </motion.main>
+            </div>
           </div>
-        </div>
+        </GlobalErrorBoundary>
       </KeepAliveContext.Provider>
     </SiteConfigProvider>
   );
