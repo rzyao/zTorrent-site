@@ -41,7 +41,7 @@ export const CoverImage: React.FC<CoverImageProps> = ({
   return (
     <ImageWithFallback
       src={src}
-      className={className}
+      className={`h-full w-full object-cover ${className || ""}`}
       alt={alt || `${attachableType} cover`}
     />
   );

@@ -64,11 +64,7 @@ function TorrentCardInner({
         onClick={handleCardClick}
       >
         <div className={cn("relative mb-2 aspect-2/3 overflow-hidden rounded-md", "sm:mb-3")}>
-          <CoverImage
-            attachableType="torrent"
-            attachableId={String(id)}
-            size="medium"
-          />
+          <CoverImage attachableType="torrent" attachableId={String(id)} size="medium" />
           <div className="absolute top-2 left-2 flex flex-col items-start gap-1.5 px-0.5">
             {/* 分类标签：采用专业媒体库风格的标签设计 */}
             <div
@@ -120,38 +116,36 @@ function TorrentCardInner({
             )}
           </div>
 
-          {/* 悬浮下载层 */}
+          {/* 悬浮下载按钮 - 右上角 */}
           <div
             className={cn(
-              "absolute inset-0 hidden items-center justify-center opacity-0 transition-all duration-300",
+              "absolute top-2 right-2 hidden opacity-0 transition-all duration-300",
               "group-hover:opacity-100 md:flex",
             )}
           >
-            <div className="space-y-2 text-center">
-              <Button
-                className={cn(
-                  "flex items-center gap-2 rounded-full border-none bg-linear-to-r from-amber-400 to-amber-600 px-6 py-2.5",
-                  "font-semibold text-slate-950 shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all duration-300",
-                  "hover:scale-105 hover:from-amber-300 hover:to-amber-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.5)]",
-                )}
-                onClick={(e) => {
-                  e.stopPropagation(); // 阻止事件冒泡，防止触发卡片点击跳转
-                  if (onDownloadByIdTitle) {
-                    onDownloadByIdTitle(String(id), title);
-                  } else if (onDownload) {
-                    onDownload();
-                  }
-                }}
-                title={!onDownload && !onDownloadByIdTitle ? t('torrents.noDownloadPermission') : undefined}
-                style={{
-                  fontFamily: '"Source Han Serif CN", "STSong", "SimSun", serif',
-                  fontWeight: 700,
-                }}
-              >
-                <CloudDownload className="h-5 w-5" />
-                <span>{t('torrents.download')}</span>
-              </Button>
-            </div>
+            <Button
+              size="icon"
+              className={cn(
+                "h-8 w-8 rounded-full border-none bg-linear-to-r from-amber-400 to-amber-600",
+                "text-slate-950 shadow-[0_0_10px_rgba(245,158,11,0.4)] transition-all duration-300",
+                "hover:scale-110 hover:from-amber-300 hover:to-amber-500 hover:shadow-[0_0_15px_rgba(245,158,11,0.6)]",
+              )}
+              onClick={(e) => {
+                e.stopPropagation(); // 阻止事件冒泡，防止触发卡片点击跳转
+                if (onDownloadByIdTitle) {
+                  onDownloadByIdTitle(String(id), title);
+                } else if (onDownload) {
+                  onDownload();
+                }
+              }}
+              title={
+                !onDownload && !onDownloadByIdTitle
+                  ? t("torrents.noDownloadPermission")
+                  : t("torrents.download")
+              }
+            >
+              <CloudDownload className="h-4 w-4" />
+            </Button>
           </div>
         </div>
 

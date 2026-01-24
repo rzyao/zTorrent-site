@@ -1,5 +1,5 @@
 ﻿import { Star, BookmarkPlus, Users, Clock, Eye, Film } from "lucide-react";
-import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallback";
+import { CoverImage } from "@/modules/app/components/media/CoverImage";
 import type { MovieCardData } from "../types";
 
 interface MovieCardProps {
@@ -15,30 +15,27 @@ interface MovieCardProps {
 export function MovieCard({ movie, onClick, onToggleCollect }: MovieCardProps) {
   return (
     <div
-      className="group bg-neutral-900 border border-neutral-700 rounded-2xl overflow-hidden hover:border-amber-500/50 transition-all hover:shadow-lg hover:shadow-amber-500/10 cursor-pointer"
+      className="group cursor-pointer overflow-hidden rounded-2xl border border-neutral-700 bg-neutral-900 transition-all hover:border-amber-500/50 hover:shadow-lg hover:shadow-amber-500/10"
       onClick={() => onClick(movie)}
     >
       {/* 海报区域 */}
       <div className="relative aspect-2/3 overflow-hidden">
-        <ImageWithFallback
-          src={
-            movie.posterUrl ||
-            movie.poster ||
-            "https://via.placeholder.com/300x450?text=No+Poster"
-          }
+        <CoverImage
+          attachableType="movie"
+          attachableId={String(movie.id)}
+          size="medium"
           alt={movie.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent" />
 
         {/* 评分与年份标签 */}
-        <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-sm flex items-center gap-1">
-          <Star className="w-3.5 h-3.5 text-amber-400" fill="currentColor" />
-          <span className="text-white text-sm">{movie.rating}</span>
+        <div className="absolute top-3 right-3 flex items-center gap-1 rounded-lg bg-black/70 px-2.5 py-1 backdrop-blur-sm">
+          <Star className="h-3.5 w-3.5 text-amber-400" fill="currentColor" />
+          <span className="text-sm text-white">{movie.rating}</span>
         </div>
-        <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-sm">
-          <span className="text-white text-sm">{movie.year}</span>
+        <div className="absolute top-3 left-3 rounded-lg bg-black/70 px-2.5 py-1 backdrop-blur-sm">
+          <span className="text-sm text-white">{movie.year}</span>
         </div>
 
         {/* 收藏按钮 */}
@@ -48,43 +45,39 @@ export function MovieCard({ movie, onClick, onToggleCollect }: MovieCardProps) {
               e.stopPropagation();
               onToggleCollect(movie.id);
             }}
-            className={`absolute bottom-3 right-3 w-10 h-10 md:w-8 md:h-8 rounded-lg backdrop-blur-sm flex items-center justify-center transition-all ${
+            className={`absolute right-3 bottom-3 flex h-10 w-10 items-center justify-center rounded-lg backdrop-blur-sm transition-all md:h-8 md:w-8 ${
               movie.isCollected
                 ? "bg-amber-500/80 text-white"
                 : "bg-black/60 text-neutral-400 hover:bg-black/80 hover:text-white"
             }`}
           >
             <BookmarkPlus
-              className={`w-5 h-5 md:w-4 md:h-4 ${
-                movie.isCollected ? "fill-current" : ""
-              }`}
+              className={`h-5 w-5 md:h-4 md:w-4 ${movie.isCollected ? "fill-current" : ""}`}
             />
           </button>
         )}
 
         {/* 底部标题 */}
-        <div className="absolute bottom-0 left-0 right-0 p-3">
-          <h3 className="text-white text-sm mb-1 line-clamp-1 group-hover:text-amber-400 transition-colors">
+        <div className="absolute right-0 bottom-0 left-0 p-3">
+          <h3 className="mb-1 line-clamp-1 text-sm text-white transition-colors group-hover:text-amber-400">
             {movie.title}
           </h3>
-          <p className="text-neutral-400 text-xs line-clamp-1">
-            {movie.originalTitle}
-          </p>
+          <p className="line-clamp-1 text-xs text-neutral-400">{movie.originalTitle}</p>
         </div>
       </div>
 
       {/* 详细信息（卡片下半部分） */}
-      <div className="p-3 md:p-4 space-y-2 md:space-y-3">
+      <div className="space-y-2 p-3 md:space-y-3 md:p-4">
         {/* 导演 */}
         <div className="flex items-center gap-2 text-xs md:text-sm">
-          <Users className="w-3 md:w-3.5 h-3 md:h-3.5 text-amber-400 shrink-0" />
-          <span className="text-neutral-400 truncate">{movie.director}</span>
+          <Users className="h-3 w-3 shrink-0 text-amber-400 md:h-3.5 md:w-3.5" />
+          <span className="truncate text-neutral-400">{movie.director}</span>
         </div>
 
         {/* 时长与国家 */}
-        <div className="flex items-center gap-2 md:gap-3 text-[10px] md:text-xs text-neutral-500">
+        <div className="flex items-center gap-2 text-[10px] text-neutral-500 md:gap-3 md:text-xs">
           <div className="flex items-center gap-1">
-            <Clock className="w-2.5 h-2.5 md:w-3 md:h-3" />
+            <Clock className="h-2.5 w-2.5 md:h-3 md:w-3" />
             <span>{movie.duration}分钟</span>
           </div>
           <span>•</span>
@@ -96,7 +89,7 @@ export function MovieCard({ movie, onClick, onToggleCollect }: MovieCardProps) {
           {(movie.genre || []).slice(0, 3).map((g, index) => (
             <span
               key={index}
-              className="px-1.5 md:px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 text-[10px] md:text-xs border border-amber-500/20"
+              className="rounded-md border border-amber-500/20 bg-amber-500/10 px-1.5 py-0.5 text-[10px] text-amber-400 md:px-2 md:text-xs"
             >
               {g}
             </span>
@@ -104,13 +97,13 @@ export function MovieCard({ movie, onClick, onToggleCollect }: MovieCardProps) {
         </div>
 
         {/* 统计信息 */}
-        <div className="flex items-center justify-between pt-2 md:pt-3 border-t border-neutral-800 text-[10px] md:text-xs">
+        <div className="flex items-center justify-between border-t border-neutral-800 pt-2 text-[10px] md:pt-3 md:text-xs">
           <div className="flex items-center gap-1 text-neutral-500">
-            <Film className="w-2.5 h-2.5 md:w-3 md:h-3" />
+            <Film className="h-2.5 w-2.5 md:h-3 md:w-3" />
             <span>{movie.torrentsCount} 种子</span>
           </div>
           <div className="flex items-center gap-1 text-neutral-500">
-            <Eye className="w-2.5 h-2.5 md:w-3 md:h-3" />
+            <Eye className="h-2.5 w-2.5 md:h-3 md:w-3" />
             <span>{Number((movie.viewsCount || 0) / 1000).toFixed(1)}k</span>
           </div>
         </div>
