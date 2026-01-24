@@ -154,8 +154,9 @@
   background: transparent; /* 轨道完全透明 */
 }
 
+/* Light Theme Default */
 #root-forum::-webkit-scrollbar-thumb {
-  background-color: #3c3c3c; /* 深灰色滑块 */
+  background-color: rgba(0, 0, 0, 0.2); /* 浅色模式：半透明黑 */
   background-clip: padding-box;
   border: 3px solid transparent; /* 利用透明边框制造间距，使滑块视觉变细 */
   border-radius: 99px;
@@ -163,32 +164,63 @@
 }
 
 #root-forum::-webkit-scrollbar-thumb:hover {
-  background-color: #4a4a4a; /* 悬停高亮 */
+  background-color: rgba(0, 0, 0, 0.3); /* 浅色模式悬停 */
 }
 
 #root-forum::-webkit-scrollbar-corner {
   background: transparent;
 }
 
-/* 向上箭头 */
+/* 向上箭头 (Light) */
 #root-forum::-webkit-scrollbar-button:vertical:start:decrement {
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
-  border-bottom: 9px solid #3c3c3c;
+  border-bottom: 9px solid rgba(0, 0, 0, 0.2);
   margin-bottom: 2px;
 }
 
-/* 向下箭头 */
+/* 向下箭头 (Light) */
 #root-forum::-webkit-scrollbar-button:vertical:end:increment {
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
-  border-top: 9px solid #3c3c3c;
+  border-top: 9px solid rgba(0, 0, 0, 0.2);
   margin-top: 2px;
 }
 
-/* 按钮悬停时 - 箭头颜色变亮 */
+/* 按钮悬停时 (Light) */
 #root-forum::-webkit-scrollbar-button:vertical:decrement:single-button:hover,
 #root-forum::-webkit-scrollbar-button:vertical:increment:single-button:hover {
+  border-bottom-color: rgba(0, 0, 0, 0.4);
+  border-top-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Dark Theme Overrides */
+.dark #root-forum::-webkit-scrollbar-thumb,
+:root[data-theme="forum"].dark #root-forum::-webkit-scrollbar-thumb {
+  background-color: #3c3c3c; /* 深灰色滑块 */
+}
+
+.dark #root-forum::-webkit-scrollbar-thumb:hover,
+:root[data-theme="forum"].dark #root-forum::-webkit-scrollbar-thumb:hover {
+  background-color: #4a4a4a; /* 悬停高亮 */
+}
+
+.dark #root-forum::-webkit-scrollbar-button:vertical:start:decrement,
+:root[data-theme="forum"].dark #root-forum::-webkit-scrollbar-button:vertical:start:decrement {
+  border-bottom: 9px solid #3c3c3c;
+}
+
+.dark #root-forum::-webkit-scrollbar-button:vertical:end:increment,
+:root[data-theme="forum"].dark #root-forum::-webkit-scrollbar-button:vertical:end:increment {
+  border-top: 9px solid #3c3c3c;
+}
+
+.dark #root-forum::-webkit-scrollbar-button:vertical:decrement:single-button:hover,
+.dark #root-forum::-webkit-scrollbar-button:vertical:increment:single-button:hover,
+:root[data-theme="forum"].dark
+  #root-forum::-webkit-scrollbar-button:vertical:decrement:single-button:hover,
+:root[data-theme="forum"].dark
+  #root-forum::-webkit-scrollbar-button:vertical:increment:single-button:hover {
   border-bottom-color: #4a4a4a;
   border-top-color: #4a4a4a;
 }
