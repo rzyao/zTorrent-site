@@ -21,6 +21,7 @@ import { SettingItem } from "./components/SettingItem";
 import { CreateSettingModal } from "./components/CreateSettingModal";
 import { EditSettingModal } from "./components/EditSettingModal";
 import { MailToolsModals } from "./components/MailToolsModals";
+import React from "react";
 
 const SettingsSkeleton = () => (
   <div className="space-y-4 p-4">
@@ -36,15 +37,49 @@ const SettingsSkeleton = () => (
   </div>
 );
 
+// --- Local Error Boundary for Debugging ---
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("SystemSettingsPage crashed:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="m-4 rounded-lg border border-red-200 bg-red-50 p-8 text-red-600">
+          <h2 className="mb-2 text-lg font-bold">页面崩溃 (SystemSettingsPage)</h2>
+          <pre className="font-mono text-sm whitespace-pre-wrap">
+            {this.state.error?.toString()}
+          </pre>
+          <p className="mt-4 text-sm text-gray-500">
+            请截图反馈此错误信息。
+            <br />
+            Debugging: Check console for full stack trace.
+          </p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 /**
- * 系统设置页面 (SystemSettings)
- *
- * 职责：
- * - 组装各个子模块 (Sidebar, List, Modals)
- * - 通过 useSystemSettings Hook 获取状态与操作
- * - 保持页面主要布局结构
+ * 系统设置页面内容组件 (Inner)
+ * 包含实际的业务逻辑和 Hooks
  */
-export default function SystemSettingsPage() {
+function SystemSettingsContent() {
   const {
     // Data
     settings,
@@ -287,5 +322,17 @@ export default function SystemSettingsPage() {
         onCloseVerifyReport={() => setMailVerifyReport(null)}
       />
     </div>
+  );
+}
+
+/**
+ * 系统设置页面 (Default Export)
+ * 包装了 ErrorBoundary 以捕获 Hooks 和子组件的运行时错误
+ */
+export default function SystemSettingsPage() {
+  return (
+    <ErrorBoundary>
+      <SystemSettingsContent />
+    </ErrorBoundary>
   );
 }
