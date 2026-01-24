@@ -1,5 +1,5 @@
-import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { customToast } from '@/hooks/useToast';
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import { customToast } from "@/hooks/useToast";
 
 // ---------- 类型定义 ----------
 
@@ -39,7 +39,7 @@ export interface RequestMeta {
 }
 
 // 扩展 Axios 类型
-declare module 'axios' {
+declare module "axios" {
   interface InternalAxiosRequestConfig {
     meta?: RequestMeta;
   }
@@ -76,14 +76,14 @@ let installed = false;
  */
 function extractErrorMessage(
   responseOrError: AxiosResponse<ApiResponse> | AxiosError<ApiResponse>,
-  meta?: RequestMeta
+  meta?: RequestMeta,
 ): string {
   // 1. 尝试获取后端返回的 message
   let backendMessage: string | undefined;
   let code: number | undefined;
 
   // 判断是 AxiosResponse (业务错误但 HTTP 200) 还是 AxiosError (HTTP 4xx/5xx)
-  if ('data' in responseOrError && !('isAxiosError' in responseOrError)) {
+  if ("data" in responseOrError && !("isAxiosError" in responseOrError)) {
     // AxiosResponse
     const res = responseOrError as AxiosResponse<ApiResponse>;
     backendMessage = res.data?.message;
@@ -108,25 +108,25 @@ function extractErrorMessage(
   // 3. 根据 Code 返回默认描述
   const codeMessages: Record<number, string> = {
     // HTTP Status
-    400: '请求参数错误',
-    401: '登录已过期，请重新登录',
-    403: '没有权限执行此操作',
-    404: '请求的资源不存在',
-    405: '请求方法不被允许',
-    408: '请求超时',
-    429: '请求过于频繁，请稍后再试',
-    500: '服务器内部错误',
-    502: '网关错误',
-    503: '服务暂时不可用',
-    504: '网关超时',
+    400: "请求参数错误",
+    401: "登录已过期，请重新登录",
+    403: "没有权限执行此操作",
+    404: "请求的资源不存在",
+    405: "请求方法不被允许",
+    408: "请求超时",
+    429: "请求过于频繁，请稍后再试",
+    500: "服务器内部错误",
+    502: "网关错误",
+    503: "服务暂时不可用",
+    504: "网关超时",
 
     // Business Codes (API Standards)
-    [BUSINESS_ERRORS.BAD_REQUEST]: '请求参数校验失败',
-    [BUSINESS_ERRORS.UNAUTHORIZED]: '登录已过期，请重新登录',
-    [BUSINESS_ERRORS.FORBIDDEN]: '没有权限执行此操作',
-    [BUSINESS_ERRORS.NOT_FOUND]: '资源不存在',
-    [BUSINESS_ERRORS.ACCOUNT_DISABLED]: '账号已被禁用',
-    [BUSINESS_ERRORS.INTERNAL_ERROR]: '系统内部错误',
+    [BUSINESS_ERRORS.BAD_REQUEST]: "请求参数校验失败",
+    [BUSINESS_ERRORS.UNAUTHORIZED]: "登录已过期，请重新登录",
+    [BUSINESS_ERRORS.FORBIDDEN]: "没有权限执行此操作",
+    [BUSINESS_ERRORS.NOT_FOUND]: "资源不存在",
+    [BUSINESS_ERRORS.ACCOUNT_DISABLED]: "账号已被禁用",
+    [BUSINESS_ERRORS.INTERNAL_ERROR]: "系统内部错误",
   };
 
   if (code && codeMessages[code]) {
@@ -134,23 +134,37 @@ function extractErrorMessage(
   }
 
   // 4. 网络错误处理 (仅针对 AxiosError)
-  if ('code' in responseOrError && (responseOrError as AxiosError).code) {
+  if ("code" in responseOrError && (responseOrError as AxiosError).code) {
     const errorCode = (responseOrError as AxiosError).code;
-    if (errorCode === 'ECONNABORTED') return '请求超时，请检查网络连接';
-    if (errorCode === 'ERR_NETWORK') return '网络连接失败，请检查网络';
+    if (errorCode === "ECONNABORTED") return "请求超时，请检查网络连接";
+    if (errorCode === "ERR_NETWORK") return "网络连接失败，请检查网络";
   }
 
-  return '请求失败，请稍后重试';
+  return "请求失败，请稍后重试";
 }
+
+// 需静默处理的接口 URL（不显示错误 Toast）
+const SILENT_URLS = ["/dashboard/me/summary"];
 
 /**
  * 判断是否需要显示 toast
  */
 function shouldShowToast(
   code: number | undefined,
-  meta?: RequestMeta
+  meta?: RequestMeta,
+  config?: InternalAxiosRequestConfig,
 ): boolean {
   if (meta?.silent) return false;
+
+  // 检查 URL 是否在静默列表中
+  if (config?.url) {
+    // 移除 baseURL 和 query 参数进行匹配，或者简单包含匹配
+    const url = config.url;
+    if (SILENT_URLS.some((silentUrl) => url.includes(silentUrl))) {
+      return false;
+    }
+  }
+
   if (!code) return true; // 无法识别 code 时默认显示
 
   // 跳过指定错误码 (同时检查 HTTP 状态码和业务码)
@@ -164,28 +178,26 @@ function shouldShowToast(
  * 处理 401/9401 认证失败
  */
 function handleUnauthorized(): void {
-  const path = typeof window !== 'undefined' ? window.location.pathname : '';
-  const hasToken = typeof window !== 'undefined' ? !!localStorage.getItem('accessToken') : false;
-  const publicPaths = ['/login', '/register', '/forgot-password', '/reset-password'];
+  const path = typeof window !== "undefined" ? window.location.pathname : "";
+  const hasToken = typeof window !== "undefined" ? !!localStorage.getItem("accessToken") : false;
+  const publicPaths = ["/login", "/register", "/forgot-password", "/reset-password"];
 
   // 清除 token
   try {
-    localStorage.removeItem('accessToken');
+    localStorage.removeItem("accessToken");
   } catch {}
 
   // 触发全局事件
   try {
-    window.dispatchEvent(new Event('authChange'));
+    window.dispatchEvent(new Event("authChange"));
   } catch {}
 
   // 跳转登录
   if (!redirecting && hasToken && !publicPaths.includes(path)) {
     redirecting = true;
     const from =
-      typeof window !== 'undefined'
-        ? window.location.pathname + window.location.search
-        : '/';
-    if (typeof window !== 'undefined') {
+      typeof window !== "undefined" ? window.location.pathname + window.location.search : "/";
+    if (typeof window !== "undefined") {
       window.location.href = `/login?from=${encodeURIComponent(from)}`;
     }
   }
@@ -195,7 +207,7 @@ function handleUnauthorized(): void {
 
 export function setupAxiosInterceptors() {
   if (installed) {
-    console.warn('setupAxiosInterceptors() should be called only once');
+    console.warn("setupAxiosInterceptors() should be called only once");
     return;
   }
   installed = true;
@@ -208,27 +220,31 @@ export function setupAxiosInterceptors() {
       const meta = config.meta;
 
       // 检查业务状态码
-      if (data && typeof data.code === 'number' && data.code !== SUCCESS_CODE) {
+      if (data && typeof data.code === "number" && data.code !== SUCCESS_CODE) {
         // 业务失败处理
         const businessCode = data.code;
         const description = (data.data as ApiErrorData)?.description;
 
         // 开发环境下打印详细错误信息
         if (description) {
-          console.groupCollapsed(`[API Error] ${config.url || 'Unknown Path'}`);
-          console.error('Code:', businessCode);
-          console.error('Message:', data.message);
-          console.error('Description:', description);
+          console.groupCollapsed(`[API Error] ${config.url || "Unknown Path"}`);
+          console.error("Code:", businessCode);
+          console.error("Message:", data.message);
+          console.error("Description:", description);
           console.groupEnd();
         }
+
+        // 特殊处理 9401 未鉴权
+        let isToastShown = false;
 
         // 特殊处理 9401 未鉴权
         if (businessCode === BUSINESS_ERRORS.UNAUTHORIZED) {
           handleUnauthorized();
         } else {
           // 其他业务错误，显示 Toast
-          if (shouldShowToast(businessCode, meta)) {
+          if (shouldShowToast(businessCode, meta, config)) {
             customToast.error(extractErrorMessage(response, meta));
+            isToastShown = true;
           }
         }
 
@@ -239,12 +255,13 @@ export function setupAxiosInterceptors() {
         // 抛出错误，中断后续 Promise 链，让 catch 或 useAsyncAction 捕获
         // 将原始 response 作为 mistake 抛出，或者构建一个新的 Error
         const error = new AxiosError(
-          data.message || 'Business Error',
+          data.message || "Business Error",
           String(businessCode),
           config,
           response.request,
-          response
+          response,
         );
+        (error as any).isToastShown = isToastShown;
         return Promise.reject(error);
       }
 
@@ -265,11 +282,11 @@ export function setupAxiosInterceptors() {
 
       // 开发环境下打印详细错误信息
       if (description) {
-        console.groupCollapsed(`[HTTP Error] ${config?.url || 'Unknown Path'}`);
-        console.error('Status:', httpStatus);
-        console.error('Code:', businessCode);
-        console.error('Message:', responseData?.message);
-        console.error('Description:', description);
+        console.groupCollapsed(`[HTTP Error] ${config?.url || "Unknown Path"}`);
+        console.error("Status:", httpStatus);
+        console.error("Code:", businessCode);
+        console.error("Message:", responseData?.message);
+        console.error("Description:", description);
         console.groupEnd();
       }
 
@@ -281,13 +298,13 @@ export function setupAxiosInterceptors() {
       }
 
       // 显示错误 toast
-      if (shouldShowToast(effectiveCode, meta)) {
+      if (shouldShowToast(effectiveCode, meta, config)) {
         const message = extractErrorMessage(error, meta);
         customToast.error(message);
+        (error as any).isToastShown = true;
       }
 
       return Promise.reject(error);
-    }
+    },
   );
 }
-

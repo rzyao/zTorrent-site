@@ -30,10 +30,12 @@ export function useAsyncAction(options: UseAsyncActionOptions = {}) {
     } catch (error: any) {
       if (toastId) customToast.dismiss(toastId);
 
-      const errorMessage =
-        error.response?.data?.message || error.data?.message || error.message || "操作失败";
+      if (!error.isToastShown) {
+        const errorMessage =
+          error.response?.data?.message || error.data?.message || error.message || "操作失败";
 
-      customToast.error(errorMessage);
+        customToast.error(errorMessage);
+      }
       options.onError?.(error);
       return undefined;
     } finally {
