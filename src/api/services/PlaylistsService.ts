@@ -4,6 +4,8 @@
 /* eslint-disable */
 import type { AdminListPlaylistsDto } from '../models/AdminListPlaylistsDto';
 import type { AdminListPlaylistsResponseDto } from '../models/AdminListPlaylistsResponseDto';
+import type { BatchDeletePlaylistDto } from '../models/BatchDeletePlaylistDto';
+import type { BatchDeletePlaylistResponseDto } from '../models/BatchDeletePlaylistResponseDto';
 import type { CategoriesListResponseDto } from '../models/CategoriesListResponseDto';
 import type { CreatePlaylistDto } from '../models/CreatePlaylistDto';
 import type { DeletePlaylistDto } from '../models/DeletePlaylistDto';
@@ -95,6 +97,35 @@ export class PlaylistsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/playlists/delete',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 批量删除片单
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static playlistCoreControllerBatchDelete(
+        requestBody: BatchDeletePlaylistDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: BatchDeletePlaylistResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/playlists/batch-delete',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

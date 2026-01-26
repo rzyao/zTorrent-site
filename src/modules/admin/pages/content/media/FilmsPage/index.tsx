@@ -2,6 +2,7 @@
 import { useFilmsLogic } from "./hooks/useFilmsLogic";
 import { ListMoviesDto } from "@/api/models/ListMoviesDto";
 import { DataTable } from "@/modules/admin/components/ui/data-table";
+import { Button } from "@/modules/admin/components/ui/button";
 import { Input } from "@/modules/admin/components/ui/input";
 import {
   Select,
@@ -42,11 +43,15 @@ export default function FilmsList() {
     setSelectedRowKeys,
     deleteOpen,
     setDeleteOpen,
+    batchDeleteOpen,
+    setBatchDeleteOpen,
     categoryOptions,
     handleSearch,
     openRemove,
     remove,
     openDetail,
+    openBatchDelete,
+    batchRemove,
   } = useFilmsLogic();
 
   // 获取列定义 (无编辑)
@@ -129,6 +134,13 @@ export default function FilmsList() {
     </>
   );
 
+  // 批量操作工具栏
+  const toolbarRight = selectedRowKeys.length > 0 && (
+    <Button variant="primary" danger size="small" onClick={openBatchDelete}>
+      批量删除 ({selectedRowKeys.length})
+    </Button>
+  );
+
   return (
     <div>
       <DataTable
@@ -137,6 +149,7 @@ export default function FilmsList() {
         rowKey="id"
         loading={loading}
         toolbarLeft={toolbarLeft}
+        toolbarRight={toolbarRight}
         onSortChange={handleSortChange}
         rowSelection={{
           selectedRowKeys,
@@ -159,6 +172,14 @@ export default function FilmsList() {
         open={deleteOpen}
         onCancel={() => setDeleteOpen(false)}
         onOk={remove}
+      />
+
+      <ConfirmModal
+        title="确认批量删除"
+        content={`确定要删除选中的 ${selectedRowKeys.length} 部电影吗？此操作不可撤销。`}
+        open={batchDeleteOpen}
+        onCancel={() => setBatchDeleteOpen(false)}
+        onOk={batchRemove}
       />
     </div>
   );

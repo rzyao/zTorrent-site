@@ -36,6 +36,7 @@ export const useTorrentsLogic = () => {
   const [reviewAction, setReviewAction] = useState<ReviewDto.action | "approve" | "reject">(
     "approve",
   );
+  const [batchDeleteOpen, setBatchDeleteOpen] = useState(false);
 
   // 高级搜索状态
   const [advRules, setAdvRules] = useState<
@@ -165,6 +166,20 @@ export const useTorrentsLogic = () => {
     },
   });
 
+  // 批量删除
+  const batchDeleteMutation = useMutation({
+    mutationFn: (ids: string[]) => AdminTorrentsService.torrentAdminControllerBatchDelete({ ids }),
+    onSuccess: () => {
+      toast.success("批量删除成功");
+      setBatchDeleteOpen(false);
+      setSelectedRowKeys([]);
+      queryClient.invalidateQueries({ queryKey: ["admin", "torrents", "list"] });
+    },
+    onError: (e: any) => {
+      toast.error(e?.message || "批量删除失败");
+    },
+  });
+
   // 4. 辅助函数
   const openCreate = () => setCreateOpen(true);
 
@@ -188,6 +203,16 @@ export const useTorrentsLogic = () => {
 
   const doReview = async (ids: string[], action: ReviewDto.action, note?: string) => {
     await reviewMutation.mutateAsync({ ids, action, note });
+  };
+
+  const openBatchDelete = () => {
+    if (selectedRowKeys.length === 0) return;
+    setBatchDeleteOpen(true);
+  };
+
+  const batchRemove = async () => {
+    if (selectedRowKeys.length === 0) return;
+    await batchDeleteMutation.mutateAsync(selectedRowKeys);
   };
 
   return {
@@ -228,6 +253,10 @@ export const useTorrentsLogic = () => {
     setReviewAction,
     selectedRowKeys,
     setSelectedRowKeys,
+    batchDeleteOpen,
+    setBatchDeleteOpen,
+    openBatchDelete,
+    batchRemove,
     openCreate,
     submitCreate,
     openEdit,

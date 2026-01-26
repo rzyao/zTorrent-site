@@ -2,6 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { BatchDeleteMovieDto } from '../models/BatchDeleteMovieDto';
+import type { BatchDeleteMovieResponseDto } from '../models/BatchDeleteMovieResponseDto';
 import type { CreateMovieDto } from '../models/CreateMovieDto';
 import type { DeleteMovieDto } from '../models/DeleteMovieDto';
 import type { DeleteMovieResponseDto } from '../models/DeleteMovieResponseDto';
@@ -90,6 +92,35 @@ export class MoviesService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/movies/delete',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 批量删除电影
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static movieBaseControllerBatchDelete(
+        requestBody: BatchDeleteMovieDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: BatchDeleteMovieResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/movies/batch-delete',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

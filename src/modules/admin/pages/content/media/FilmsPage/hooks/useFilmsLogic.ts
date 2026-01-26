@@ -46,6 +46,7 @@ export const useFilmsLogic = () => {
   // --- 删除弹窗状态 ---
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [batchDeleteOpen, setBatchDeleteOpen] = useState(false);
 
   const categoryOptions = FILM_CATEGORY_OPTIONS;
 
@@ -96,6 +97,15 @@ export const useFilmsLogic = () => {
     },
   });
 
+  const { execute: executeBatchDelete } = useAsyncAction({
+    successMessage: "批量删除成功",
+    onSuccess: () => {
+      setBatchDeleteOpen(false);
+      setSelectedRowKeys([]);
+      queryClient.invalidateQueries({ queryKey: ["films-list"] });
+    },
+  });
+
   // --- 事件处理 (使用 useCallback 稳定引用) ---
   const handleSearch = useCallback(() => {
     setQuery((prev) => ({ ...prev, page: 1 }));
@@ -123,6 +133,18 @@ export const useFilmsLogic = () => {
       await MoviesService.movieBaseControllerDelete({ id: deleteId } as any);
     });
   }, [deleteId, executeDelete]);
+
+  const openBatchDelete = useCallback(() => {
+    if (selectedRowKeys.length === 0) return;
+    setBatchDeleteOpen(true);
+  }, [selectedRowKeys]);
+
+  const batchRemove = useCallback(async () => {
+    if (selectedRowKeys.length === 0) return;
+    await executeBatchDelete(async () => {
+      await MoviesService.movieBaseControllerBatchDelete({ ids: selectedRowKeys });
+    });
+  }, [selectedRowKeys, executeBatchDelete]);
 
   const openDetail = useCallback(
     (id: string) => {
@@ -162,6 +184,8 @@ export const useFilmsLogic = () => {
     // 弹窗状态
     deleteOpen,
     setDeleteOpen,
+    batchDeleteOpen,
+    setBatchDeleteOpen,
     // 常量
     categoryOptions,
     // 操作方法
@@ -169,5 +193,7 @@ export const useFilmsLogic = () => {
     openRemove,
     remove,
     openDetail,
+    openBatchDelete,
+    batchRemove,
   };
 };

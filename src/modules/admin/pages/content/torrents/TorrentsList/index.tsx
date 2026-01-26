@@ -6,6 +6,7 @@ import { EditTorrentModal } from "./components/EditTorrentModal";
 import { ReviewModal } from "./components/ReviewModal";
 import { AdvancedSearchModal } from "./components/AdvancedSearchModal";
 import { ReviewDto } from "@/api/models/ReviewDto";
+import { ConfirmModal } from "@/modules/admin/components/ui/modal";
 import { toast } from "sonner";
 
 /**
@@ -58,6 +59,10 @@ export default function TorrentsList() {
     remove,
     doReview,
     fetchAdminWithRules,
+    batchDeleteOpen,
+    setBatchDeleteOpen,
+    openBatchDelete,
+    batchRemove,
   } = useTorrentsLogic();
 
   // 处理分页变化
@@ -91,6 +96,7 @@ export default function TorrentsList() {
       setReviewAction(action);
       setReviewOpen(true);
     },
+    onBatchDelete: openBatchDelete,
   });
 
   return (
@@ -159,6 +165,14 @@ export default function TorrentsList() {
           setAdvRules(nextRules);
           setAdvLogic(nextLogic);
         }}
+      />
+
+      <ConfirmModal
+        title="确认批量删除"
+        content={`确定要删除选中的 ${selectedRowKeys.length} 个种子吗？此操作不可撤销。`}
+        open={batchDeleteOpen}
+        onCancel={() => setBatchDeleteOpen(false)}
+        onOk={batchRemove}
       />
     </>
   );

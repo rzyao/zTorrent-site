@@ -49,6 +49,8 @@ export function useAuth() {
         // 登录成功后刷新路由配置和导航菜单
         // 这一步至关重要：useRouteConfig 的 enabled 依赖 accessToken，
         // 登录前未获取路由配置，登录后必须手动触发重新获取
+        // 同时也强制刷新所有其他查询（如片单列表等），确保从“未登录”状态切换到“登录”状态后数据显示正确
+        await queryClient.invalidateQueries();
         queryClient.invalidateQueries({ queryKey: ["routeConfig"] });
         queryClient.invalidateQueries({ queryKey: ["navigation"] });
 

@@ -175,18 +175,6 @@ export default function LoginPage({
                 {t("auth.registerNow")}
               </Button>
             </div>
-
-            {onTestApi && (
-              <div className="mt-4 text-center">
-                <Button
-                  type="button"
-                  onClick={onTestApi}
-                  className="text-sm text-blue-400 transition-colors hover:text-blue-300"
-                >
-                  {t("auth.apiTest")}
-                </Button>
-              </div>
-            )}
           </div>
 
           <div className="mt-6 text-center text-xs text-gray-500">

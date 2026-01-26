@@ -4,6 +4,8 @@
 /* eslint-disable */
 import type { AdminListTorrentsDto } from '../models/AdminListTorrentsDto';
 import type { AdminListTorrentsResponseDto } from '../models/AdminListTorrentsResponseDto';
+import type { BatchDeleteTorrentsDto } from '../models/BatchDeleteTorrentsDto';
+import type { BatchDeleteTorrentsResponseDto } from '../models/BatchDeleteTorrentsResponseDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -26,6 +28,35 @@ export class AdminTorrentsService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/admin/torrents/list',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 批量删除种子
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static torrentAdminControllerBatchDelete(
+        requestBody: BatchDeleteTorrentsDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: BatchDeleteTorrentsResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/admin/torrents/batch-delete',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

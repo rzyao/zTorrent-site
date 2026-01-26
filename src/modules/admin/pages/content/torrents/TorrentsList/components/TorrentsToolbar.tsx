@@ -23,6 +23,7 @@ interface TorrentsToolbarProps {
   onCreate: () => void;
   onAdvSearch: () => void;
   onBatchReview: (action: "approve" | "reject") => void;
+  onBatchDelete: () => void;
   items: TorrentItem[];
   selectedCount: number;
 }
@@ -43,6 +44,7 @@ export const TorrentsToolbar = ({
   onCreate,
   onAdvSearch,
   onBatchReview,
+  onBatchDelete,
   selectedCount,
 }: TorrentsToolbarProps) => {
   // 回车触发搜索
@@ -134,6 +136,9 @@ export const TorrentsToolbar = ({
       <Button variant="primary" onClick={onCreate}>
         <Plus className="mr-1 h-4 w-4" />
         新增种子
+      </Button>
+      <Button variant="primary" danger onClick={onBatchDelete} disabled={selectedCount === 0}>
+        批量删除 ({selectedCount})
       </Button>
     </div>
   );

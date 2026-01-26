@@ -2,6 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { BatchDeleteEpisodeDto } from '../models/BatchDeleteEpisodeDto';
+import type { BatchDeleteEpisodeResponseDto } from '../models/BatchDeleteEpisodeResponseDto';
 import type { CreateEpisodeDto } from '../models/CreateEpisodeDto';
 import type { DeleteEpisodeDto } from '../models/DeleteEpisodeDto';
 import type { EmptyObjectDto } from '../models/EmptyObjectDto';
@@ -154,6 +156,35 @@ export class EpisodesService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/series/episodes/delete',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `参数错误`,
+                401: `未认证`,
+                403: `禁止访问或账号禁用`,
+                404: `资源不存在`,
+                500: `服务器错误`,
+            },
+        });
+    }
+    /**
+     * 批量删除分集
+     * @param requestBody
+     * @returns any 成功
+     * @throws ApiError
+     */
+    public static episodeBaseControllerBatchDelete(
+        requestBody: BatchDeleteEpisodeDto,
+    ): CancelablePromise<{
+        code?: number;
+        message?: string;
+        data?: BatchDeleteEpisodeResponseDto;
+        path?: string;
+        timestamp?: string;
+    }> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/series/episodes/batch-delete',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
