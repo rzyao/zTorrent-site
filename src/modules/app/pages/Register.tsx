@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useApi";
 import { isValidPassword, passwordErrorMessage } from "@/utils/validation";
 import { toast } from "sonner";
 import { getAuthService } from "@/api/lazy";
+import Logo from "@/assets/logo.svg";
 
 interface RegisterProps {
   onBack: () => void;
@@ -228,7 +229,11 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
         <div className="w-full max-w-md rounded-md border border-gray-800 bg-black/60 p-6 text-center">
           <h1 className="mb-2 text-2xl text-white">{t("auth.inviteOnly")}</h1>
           <p className="text-sm text-gray-400">{t("auth.inviteOnlyDesc")}</p>
-          <Button onClick={onBack} className="mt-6 text-sm text-[#00A8E1] hover:text-[#00A8E1]/80">
+          <Button
+            variant="link"
+            onClick={onBack}
+            className="mt-6 text-sm text-[#00A8E1] hover:text-[#00A8E1]/80"
+          >
             {t("auth.backToLogin")}
           </Button>
         </div>
@@ -242,7 +247,11 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
         <div className="w-full max-w-md rounded-md border border-gray-800 bg-black/60 p-6 text-center">
           <h1 className="mb-2 text-2xl text-white">{t("auth.invalidInviteCode")}</h1>
           <p className="text-sm text-gray-400">{t("auth.invalidInviteCodeDesc")}</p>
-          <Button onClick={onBack} className="mt-6 text-sm text-[#00A8E1] hover:text-[#00A8E1]/80">
+          <Button
+            variant="link"
+            onClick={onBack}
+            className="mt-6 text-sm text-[#00A8E1] hover:text-[#00A8E1]/80"
+          >
             {t("auth.backToLogin")}
           </Button>
         </div>
@@ -262,17 +271,16 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
         <div className="absolute inset-0 bg-linear-to-b from-[#0F171E]/95 via-[#0F171E]/85 to-[#0F171E]/95" />
         <div className="absolute inset-0 bg-linear-to-r from-[#0F171E] via-transparent to-[#0F171E]" />
       </div>
-      {/* 顶部logo */}
+      {/* Logo 头部区域 */}
       <div className="relative z-10 px-4 py-6 md:px-8">
-        <div className="flex items-center justify-between">
-          <a href="#" className="flex items-center gap-1">
-            <span className="text-3xl text-white">PT</span>
-            <span className="text-3xl text-[#00A8E1]">Tracker</span>
-          </a>
-        </div>
+        <a href="#" className="flex items-center gap-2">
+          <img src={Logo} alt="Logo" className="h-10 w-10 md:h-12 md:w-12" />
+          <span className="text-3xl text-white">PT</span>
+          <span className="text-3xl text-[#00A8E1]">Tracker</span>
+        </a>
       </div>
       {/* 注册表单 */}
-      <div className="relative z-10 flex items-center justify-center px-4 py-12 md:py-16">
+      <div className="absolute inset-0 z-10 flex items-center justify-center">
         <div className="w-full max-w-md">
           <div className="rounded-lg border border-gray-800 bg-black/60 p-8 md:p-10">
             {/* 标题 */}
@@ -332,7 +340,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                         value={formData.email}
                         onChange={(e) => handleFieldChange("email", e.target.value)}
                         placeholder={t("auth.emailPlaceholder")}
-                        className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1] ${errors.email ? "border-red-500" : ""}`}
+                        className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-1 focus:ring-[#00A8E1] ${errors.email ? "border-red-500" : ""}`}
                         required
                       />
                     </div>
@@ -349,7 +357,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                           value={formData.emailCode}
                           onChange={(e) => handleFieldChange("emailCode", e.target.value)}
                           placeholder={t("auth.inputCode")}
-                          className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1] ${errors.emailCode ? "border-red-500" : ""}`}
+                          className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-1 focus:ring-[#00A8E1] ${errors.emailCode ? "border-red-500" : ""}`}
                           required
                         />
                       </div>
@@ -392,7 +400,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                         value={formData.username}
                         onChange={(e) => handleFieldChange("username", e.target.value)}
                         placeholder={t("auth.chooseUsername")}
-                        className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-3 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1] ${errors.username ? "border-red-500" : ""}`}
+                        className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-3 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-1 focus:ring-[#00A8E1] ${errors.username ? "border-red-500" : ""}`}
                         required
                       />
                     </div>
@@ -409,7 +417,7 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
                         value={formData.password}
                         onChange={(e) => handleFieldChange("password", e.target.value)}
                         placeholder={t("auth.setPassword")}
-                        className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-3 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1] ${errors.password ? "border-red-500" : ""}`}
+                        className={`w-full rounded-md border-gray-700 bg-gray-900/50 py-3 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-1 focus:ring-[#00A8E1] ${errors.password ? "border-red-500" : ""}`}
                         required
                       />
                     </div>
@@ -471,6 +479,8 @@ export default function Register({ onBack, onRegisterSuccess, inviteCode }: Regi
             <div className="mt-8 text-center text-sm">
               <span className="text-gray-400">{t("auth.hasAccount")}</span>
               <Button
+                variant="link"
+                size="sm"
                 onClick={onBack}
                 className="ml-2 text-[#00A8E1] transition-colors hover:text-[#00A8E1]/80"
               >

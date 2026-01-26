@@ -58,7 +58,7 @@ export function TopicDetail({
   } = useTopicDetail(topicId, { nearPost: targetPostNumber });
 
   // 设置页面动态标题
-  useDynamicTitle(topicData?.title || t('forum.topic.topicDetail'));
+  useDynamicTitle(topicData?.title || t("forum.topic.topicDetail"));
 
   // NProgress 联动
   useEffect(() => {
@@ -221,7 +221,10 @@ export function TopicDetail({
         return;
       }
 
-      if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - 1) {
+      if (
+        scrollContainer.scrollTop + scrollContainer.clientHeight >=
+        scrollContainer.scrollHeight - 1
+      ) {
         if (!hasNextPage && loadedMax !== null && loadedMax === total) {
           if (currentPost !== total) setCurrentPost(total);
         } else if (loadedMax !== null && currentPost !== loadedMax) {
@@ -264,7 +267,14 @@ export function TopicDetail({
 
     scrollContainer.addEventListener("scroll", handleScroll);
     return () => scrollContainer.removeEventListener("scroll", handleScroll);
-  }, [isProgrammaticScroll, currentPost, totalPostsCount, regularPosts.length, hasNextPage, hasPreviousPage]);
+  }, [
+    isProgrammaticScroll,
+    currentPost,
+    totalPostsCount,
+    regularPosts.length,
+    hasNextPage,
+    hasPreviousPage,
+  ]);
 
   // 注意：移除了加载时 scrollTo(0,0) 的逻辑
   // 因为当从中间位置加载时（如 /150），我们不应该滚动到顶部
@@ -368,7 +378,11 @@ export function TopicDetail({
 
   // 话题不存在
   if (!topicId) {
-    return <div className="flex h-64 items-center justify-center text-neutral-400">{t('forum.topic.notExist')}</div>;
+    return (
+      <div className="flex h-64 items-center justify-center text-neutral-400">
+        {t("forum.topic.notExist")}
+      </div>
+    );
   }
 
   // 加载中状态
@@ -380,9 +394,9 @@ export function TopicDetail({
   if (isError || !topicData) {
     return (
       <div className="flex h-64 flex-col items-center justify-center gap-4 text-neutral-400">
-        <span>{(error as any)?.message || t('forum.topic.loadFailed')}</span>
+        <span>{(error as any)?.message || t("forum.topic.loadFailed")}</span>
         <Button variant="primary" onClick={() => window.location.reload()}>
-          {t('app.retry')}
+          {t("app.retry")}
         </Button>
       </div>
     );
@@ -394,7 +408,9 @@ export function TopicDetail({
         {/* Title Section */}
         <TopicHeader
           topicData={topicData}
-          canEdit={Boolean(access?.username && access.username === (topicData.posts?.[0]?.username || ""))}
+          canEdit={Boolean(
+            access?.username && access.username === (topicData.posts?.[0]?.username || ""),
+          )}
           onEdit={() => setEditOpen(true)}
         />
 
@@ -411,7 +427,7 @@ export function TopicDetail({
                 {isFetchingPreviousPage && (
                   <div className="flex items-center justify-center gap-2 py-4">
                     <Loader2 className="h-5 w-5 animate-spin text-blue-600 dark:text-amber-400" />
-                    <span className={colors.textMuted}>{t('forum.topic.loadEarlier')}</span>
+                    <span className={colors.textMuted}>{t("forum.topic.loadEarlier")}</span>
                   </div>
                 )}
               </div>
@@ -433,7 +449,8 @@ export function TopicDetail({
                     incomingReplies={post.incomingReplies}
                     bounty={topicData.bounty}
                     isAuthor={Boolean(
-                      access?.username && access.username === (topicData.posts?.[0]?.username || ""),
+                      access?.username &&
+                      access.username === (topicData.posts?.[0]?.username || ""),
                     )}
                     onUpdated={updateTopic}
                     categoryKey={topicData.categoryKey}
@@ -447,12 +464,12 @@ export function TopicDetail({
               {isFetchingNextPage && (
                 <div className="flex items-center justify-center gap-2 py-4">
                   <Loader2 className="h-5 w-5 animate-spin text-blue-600 dark:text-amber-400" />
-                  <span className={colors.textMuted}>{t('forum.topic.loadMore')}</span>
+                  <span className={colors.textMuted}>{t("forum.topic.loadMore")}</span>
                 </div>
               )}
               {!hasNextPage && topicData.posts.length > 20 && (
                 <div className={`py-4 text-center text-sm ${colors.textMuted}`}>
-                  — {t('forum.topic.allLoaded')} —
+                  — {t("forum.topic.allLoaded")} —
                 </div>
               )}
             </div>
@@ -478,7 +495,9 @@ export function TopicDetail({
             topicTitle={topicData.title}
             topicStatus={topicData.status}
             onTopicUpdate={updateTopic}
-            isAuthor={Boolean(access?.username && access.username === (topicData.posts?.[0]?.username || ""))}
+            isAuthor={Boolean(
+              access?.username && access.username === (topicData.posts?.[0]?.username || ""),
+            )}
             bounty={topicData.bounty}
             categoryKey={topicData.categoryKey}
           />

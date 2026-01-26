@@ -74,7 +74,11 @@ const getDraftKey = (mode: ComposerMode, topicId?: string) => {
   // 注意：编辑模式通常针对某个帖子，但 PRD 决定与回复共享话题草稿或简化处理
   // 这里按照 PRD 要求：reply_topic_{topicId}
   if (topicId) return `reply_topic_${topicId}`;
-  return "create_topic"; // Fallback
+
+  // Fallback: 如果没有 topicId，也不要使用 create_topic，避免污染发帖草稿
+  // 这确保了即使 ID 丢失，回复草稿也不会出现在“创建话题”中，也不会跨话题共享（除非都丢失 ID）
+  console.warn("[ComposerStore] Missing topicId for REPLY mode, using generic reply draft.");
+  return "reply_general_fallback";
 };
 
 export const useComposerStore = create<ComposerState>()(

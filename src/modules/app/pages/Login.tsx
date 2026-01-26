@@ -10,13 +10,19 @@ import { ImageWithFallback } from "@/modules/app/components/figma/ImageWithFallb
 import { useAuth } from "@/hooks/useApi";
 import { toast } from "sonner";
 
+// 登录页面组件属性定义
 interface LoginPageProps {
+  // 点击忘记密码的回调
   onForgotPassword: () => void;
+  // 点击注册的回调
   onRegister: () => void;
+  // 登录成功后的回调
   onLoginSuccess: () => void;
+  // 测试 API 的回调（可选）
   onTestApi?: () => void;
 }
 
+// 登录页面组件
 export default function LoginPage({
   onForgotPassword,
   onRegister,
@@ -24,36 +30,48 @@ export default function LoginPage({
   onTestApi,
 }: LoginPageProps) {
   const { t } = useLanguage();
+  // 设置页面标题
   useDynamicTitle(t("auth.login"));
-  const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [autoLogout, setAutoLogout] = useState(false);
+
+  // 状态管理
+  const [showPassword, setShowPassword] = useState(false); // 是否显示密码
+  const [username, setUsername] = useState(""); // 用户名
+  const [password, setPassword] = useState(""); // 密码
+  const [autoLogout, setAutoLogout] = useState(false); // 是否自动登出
+
+  // 使用 auth hook 处理登录逻辑
   const { login, isLoading, error: authError } = useAuth();
 
+  // 处理登录表单提交
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // 调用登录接口，传入用户名、密码和自动登出选项
       await login(username, password, autoLogout);
       toast.success(t("auth.loginSuccess"));
+      // 执行登录成功回调
       onLoginSuccess();
     } catch (err: any) {
+      // 全局拦截器会处理 API 错误
       // Global interceptor handles API errors
     }
   };
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0F171E]">
+      {/* 背景图片区域 */}
       <div className="absolute inset-0">
         <ImageWithFallback
           src="https://images.unsplash.com/photo-1739433437912-cca661ba902f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1920"
           alt="Background"
           className="h-full w-full object-cover"
         />
+        {/* 背景遮罩层 */}
         <div className="absolute inset-0 bg-linear-to-b from-[#0F171E]/95 via-[#0F171E]/85 to-[#0F171E]/95" />
         <div className="absolute inset-0 bg-linear-to-r from-[#0F171E] via-transparent to-[#0F171E]" />
       </div>
 
+      {/* Logo 头部区域 */}
       <div className="relative z-10 px-4 py-6 md:px-8">
         <a href="#" className="flex items-center gap-2">
           <img src={Logo} alt="Logo" className="h-10 w-10 md:h-12 md:w-12" />
@@ -62,7 +80,8 @@ export default function LoginPage({
         </a>
       </div>
 
-      <div className="relative z-10 flex items-center justify-center px-4 py-12 md:py-16">
+      {/* 登录表单主体区域 */}
+      <div className="absolute inset-0 z-10 flex items-center justify-center">
         <div className="w-full max-w-md">
           <div className="rounded-lg border border-gray-800 bg-black/60 p-8 backdrop-blur-md md:p-10">
             <div className="mb-8 text-center">
@@ -80,7 +99,7 @@ export default function LoginPage({
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder={t("auth.usernamePlaceholder")}
-                    className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1]"
+                    className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-1 focus:ring-[#00A8E1]"
                     required
                   />
                 </div>
@@ -95,7 +114,7 @@ export default function LoginPage({
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={t("auth.passwordPlaceholder")}
-                    className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-12 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1]"
+                    className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-12 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-1 focus:ring-[#00A8E1]"
                     required
                   />
                   <Button

@@ -13,7 +13,7 @@ interface ForgotPasswordPageProps {
 
 export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) {
   const { t } = useLanguage();
-  useDynamicTitle(t('auth.resetPassword'));
+  useDynamicTitle(t("auth.resetPassword"));
   const [step, setStep] = useState<"email" | "verify" | "reset" | "success">("email");
   const [countdown, setCountdown] = useState(0);
   const [email, setEmail] = useState("");
@@ -60,7 +60,7 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
       errs.newPassword = passwordErrorMessage();
     }
     if (confirmPassword !== newPassword) {
-      errs.confirmPassword = t('auth.passwordMismatch');
+      errs.confirmPassword = t("auth.passwordMismatch");
     }
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
@@ -91,11 +91,12 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
           <div className="rounded-lg border border-gray-800 bg-black/60 p-8 backdrop-blur-md md:p-10">
             {step !== "success" && (
               <Button
+                variant="ghost"
                 onClick={onBack}
-                className="mb-6 flex items-center gap-2 text-gray-400 transition-colors hover:text-white"
+                className="mb-6 h-auto p-0 text-gray-400 hover:bg-transparent hover:text-white sm:h-9 sm:px-4 sm:py-2 sm:hover:bg-white/10"
               >
                 <ArrowLeft className="h-4 w-4" />
-                <span className="text-xs">{t('auth.backToLogin')}</span>
+                {t("auth.backToLogin")}
               </Button>
             )}
 
@@ -128,30 +129,30 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
             {step === "email" && (
               <>
                 <div className="mb-8 text-center">
-                  <h1 className="mb-2 text-3xl text-white">{t('auth.resetPassword')}</h1>
-                  <p className="text-sm text-gray-400">{t('auth.resetByEmail')}</p>
+                  <h1 className="mb-2 text-3xl text-white">{t("auth.resetPassword")}</h1>
+                  <p className="text-sm text-gray-400">{t("auth.resetByEmail")}</p>
                 </div>
                 <form onSubmit={handleSendCode} className="space-y-5">
                   <div className="space-y-2">
-                    <label className="text-sm text-white">{t('auth.registeredEmail')}</label>
+                    <label className="text-sm text-white">{t("auth.registeredEmail")}</label>
                     <div className="relative">
                       <Mail className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                       <Input
                         type="email"
-                        placeholder={t('auth.inputRegisteredEmail')}
+                        placeholder={t("auth.inputRegisteredEmail")}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1]"
+                        className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-1 focus:ring-[#00A8E1]"
                       />
                     </div>
-                    <p className="text-xs text-gray-500">{t('auth.inputRegisteredEmailHint')}</p>
+                    <p className="text-xs text-gray-500">{t("auth.inputRegisteredEmailHint")}</p>
                   </div>
                   <Button
                     type="submit"
                     className="w-full rounded-md bg-[#00A8E1] py-6 text-lg text-white transition-colors hover:bg-[#00A8E1]/90"
                   >
-                    {t('auth.sendCode')}
+                    {t("auth.sendCode")}
                   </Button>
                 </form>
               </>
@@ -160,27 +161,31 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
             {step === "verify" && (
               <>
                 <div className="mb-8 text-center">
-                  <h1 className="mb-2 text-3xl text-white">{t('auth.verifyIdentity')}</h1>
-                  <p className="text-sm text-gray-400">{t('auth.codeSentTo')}</p>
+                  <h1 className="mb-2 text-3xl text-white">{t("auth.verifyIdentity")}</h1>
+                  <p className="text-sm text-gray-400">{t("auth.codeSentTo")}</p>
                   <p className="mt-1 text-sm text-[#00A8E1]">{email}</p>
                 </div>
                 <form onSubmit={handleVerifyCode} className="space-y-5">
                   <div className="space-y-2">
-                    <label className="text-sm text-white">{t('auth.verificationCode')}</label>
+                    <label className="text-sm text-white">{t("auth.verificationCode")}</label>
                     <div className="flex gap-2">
                       <Input
                         type="text"
-                        placeholder={t('auth.input6DigitCode')}
+                        placeholder={t("auth.input6DigitCode")}
                         maxLength={6}
                         required
-                        className="flex-1 rounded-md border-gray-700 bg-gray-900/50 px-4 py-6 text-center text-2xl tracking-widest text-white placeholder:text-base placeholder:tracking-normal placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1]"
+                        className="flex-1 rounded-md border-gray-700 bg-gray-900/50 px-4 py-6 text-center text-2xl tracking-widest text-white placeholder:text-base placeholder:tracking-normal placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-1 focus:ring-[#00A8E1]"
                       />
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2 text-gray-400">
                       <Clock className="h-4 w-4" />
-                      <span>{countdown > 0 ? t('auth.canResendIn', { seconds: countdown }) : t('auth.codeExpired')}</span>
+                      <span>
+                        {countdown > 0
+                          ? t("auth.canResendIn", { seconds: countdown })
+                          : t("auth.codeExpired")}
+                      </span>
                     </div>
                     <Button
                       type="button"
@@ -188,14 +193,14 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
                       disabled={countdown > 0}
                       className={`${countdown > 0 ? "cursor-not-allowed text-gray-600" : "text-[#00A8E1] hover:text-[#00A8E1]/80"} transition-colors`}
                     >
-                      {t('auth.resend')}
+                      {t("auth.resend")}
                     </Button>
                   </div>
                   <Button
                     type="submit"
                     className="w-full rounded-md bg-[#00A8E1] py-6 text-lg text-white transition-colors hover:bg-[#00A8E1]/90"
                   >
-                    {t('auth.verifyAndContinue')}
+                    {t("auth.verifyAndContinue")}
                   </Button>
                 </form>
               </>
@@ -204,39 +209,39 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
             {step === "reset" && (
               <>
                 <div className="mb-8 text-center">
-                  <h1 className="mb-2 text-3xl text-white">{t('auth.setNewPassword')}</h1>
-                  <p className="text-sm text-gray-400">{t('auth.setSecurePassword')}</p>
+                  <h1 className="mb-2 text-3xl text-white">{t("auth.setNewPassword")}</h1>
+                  <p className="text-sm text-gray-400">{t("auth.setSecurePassword")}</p>
                 </div>
                 <form onSubmit={handleResetPassword} className="space-y-5">
                   <div className="space-y-2">
-                    <label className="text-sm text-white">{t('auth.newPassword')}</label>
+                    <label className="text-sm text-white">{t("auth.newPassword")}</label>
                     <div className="relative">
                       <Lock className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                       <Input
                         type="password"
-                        placeholder={t('auth.inputNewPassword')}
+                        placeholder={t("auth.inputNewPassword")}
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         required
-                        className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1]"
+                        className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-1 focus:ring-[#00A8E1]"
                       />
                     </div>
                     {errors.newPassword && (
                       <p className="text-xs text-red-400">{errors.newPassword}</p>
                     )}
-                    <p className="text-xs text-gray-500">{t('auth.passwordHint')}</p>
+                    <p className="text-xs text-gray-500">{t("auth.passwordHint")}</p>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm text-white">{t('auth.confirmNewPassword')}</label>
+                    <label className="text-sm text-white">{t("auth.confirmNewPassword")}</label>
                     <div className="relative">
                       <Lock className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                       <Input
                         type="password"
-                        placeholder={t('auth.reInputNewPassword')}
+                        placeholder={t("auth.reInputNewPassword")}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
-                        className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-[#00A8E1]"
+                        className="w-full rounded-md border-gray-700 bg-gray-900/50 py-6 pr-4 pl-11 text-white placeholder:text-gray-500 focus:border-[#00A8E1] focus:ring-1 focus:ring-[#00A8E1]"
                       />
                     </div>
                     {errors.confirmPassword && (
@@ -245,17 +250,17 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
                   </div>
                   <div className="rounded-md border border-blue-800/30 bg-blue-900/20 p-4">
                     <p className="text-xs text-blue-300">
-                      <strong>{t('auth.passwordSecurityTip')}</strong>
-                      <br />• {t('auth.passwordTip1')}
-                      <br />• {t('auth.passwordTip2')}
-                      <br />• {t('auth.passwordTip3')}
+                      <strong>{t("auth.passwordSecurityTip")}</strong>
+                      <br />• {t("auth.passwordTip1")}
+                      <br />• {t("auth.passwordTip2")}
+                      <br />• {t("auth.passwordTip3")}
                     </p>
                   </div>
                   <Button
                     type="submit"
                     className="w-full rounded-md bg-[#00A8E1] py-6 text-lg text-white transition-colors hover:bg-[#00A8E1]/90"
                   >
-                    {t('auth.resetPasswordBtn')}
+                    {t("auth.resetPasswordBtn")}
                   </Button>
                 </form>
               </>
@@ -267,17 +272,17 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
                   <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full bg-green-500/20">
                     <CheckCircle className="h-12 w-12 text-green-500" />
                   </div>
-                  <h1 className="mb-3 text-3xl text-white">{t('auth.passwordResetSuccess')}</h1>
+                  <h1 className="mb-3 text-3xl text-white">{t("auth.passwordResetSuccess")}</h1>
                   <p className="mb-8 text-sm text-gray-400">
-                    {t('auth.passwordResetSuccessDesc1')}
+                    {t("auth.passwordResetSuccessDesc1")}
                     <br />
-                    {t('auth.passwordResetSuccessDesc2')}
+                    {t("auth.passwordResetSuccessDesc2")}
                   </p>
                   <Button
                     onClick={onBack}
                     className="w-full rounded-md bg-[#00A8E1] py-6 text-lg text-white transition-colors hover:bg-[#00A8E1]/90"
                   >
-                    {t('auth.backToLogin')}
+                    {t("auth.backToLogin")}
                   </Button>
                 </div>
               </>
@@ -286,9 +291,9 @@ export default function ForgotPasswordPage({ onBack }: ForgotPasswordPageProps) 
           {step !== "success" && (
             <div className="mt-6 text-center text-xs text-gray-500">
               <p>
-                {t('auth.securityNote1')}
+                {t("auth.securityNote1")}
                 <br />
-                {t('auth.securityNote2')}
+                {t("auth.securityNote2")}
               </p>
             </div>
           )}
