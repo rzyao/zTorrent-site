@@ -1,11 +1,56 @@
-.vscode
-.trae
-.vercel
-.git
-.gitignore
-node_modules
+# 依赖目录 (Dependencies)
+node_modules/
+.pnpm-store/
+
+# 构建输出 (Build Output)
+dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+
+# 日志文件 (Logs)
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+tsc.log
 openapi-ts-error-*.log
+
+# 环境变量 (Environment Environment)
+# 包含敏感信息，绝不应提交
+.env
+.env.*
+!.env.example
+
+# IDE 和 编辑器配置 (IDE & Editors)
+.vscode/
+.idea/
+.DS_Store
+*.suo
+*.ntvs
+*.njsproj
+*.sln
+*.sw?
+.trae/
+
+
+# 系统文件 (OS Files)
+Thumbs.db
+ehthumbs.db
+abesktop.ini
+
+# Vercel 部署配置
+.vercel/
+
+# 临时文件和缓存 (Temp & Cache)
+.history/
+coverage/
+.temp/
+diff_output*.txt
+
+# 脚本生成的临时文件
 auto_seed.js
 auto_seed_dev.js
-dist/
-.history/
