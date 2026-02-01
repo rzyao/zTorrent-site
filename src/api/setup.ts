@@ -1,4 +1,4 @@
-import { OpenAPI } from './core/OpenAPI';
+import { OpenAPI } from "./core/OpenAPI";
 // OpenAPI 运行时配置集中初始化
 // 目的：
 // 1) 统一读取 Vite 环境变量 `VITE_BASE_URL` 作为后端请求基础地址（Base URL）
@@ -21,7 +21,19 @@ export async function initOpenAPI(): Promise<void> {
     if (w.__openapi_inited) return;
     w.__openapi_inited = true;
   }
-  const base = import.meta.env.VITE_BASE_URL || "";
+
+  let base = import.meta.env.VITE_BASE_URL || "/api";
+
+  // [Fix] 开发环境下强制使用 /api 走代理
+  // 解决可能因 .env 配置错误导致请求直接发往远程域名 (如 t-forum.xyz) 出现 404/CORS 问题
+  if (import.meta.env.DEV) {
+    console.log("[Setup] Dev mode detected. Original VITE_BASE_URL:", base);
+    if (base !== "/api") {
+      console.warn("[Setup] Forcing BASE to '/api' to ensure proxy usage.");
+      base = "/api";
+    }
+  }
+
   const normalized = String(base).trim().replace(/\/$/, "");
   /*
    * [Fix] Vite reporter warning: OpenAPI is statically imported elsewhere.

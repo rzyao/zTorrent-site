@@ -14,7 +14,7 @@ export async function getOpenAPI() {
     const w = window as any;
     if (!w.__openapi_inited_lazy) {
       w.__openapi_inited_lazy = true;
-      const base = (import.meta as any).env?.VITE_BASE_URL || "";
+      const base = (import.meta as any).env?.VITE_BASE_URL || "/api";
       const normalized = String(base).trim().replace(/\/$/, "");
       OpenAPI.BASE = normalized;
       OpenAPI.TOKEN = async () => localStorage.getItem("accessToken") || "";
