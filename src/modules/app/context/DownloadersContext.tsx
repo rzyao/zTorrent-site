@@ -34,13 +34,7 @@ export function DownloadersProvider({ children }: { children: React.ReactNode })
   const { access } = useAccess();
 
   const refresh = async () => {
-    // If not logged in, don't fetch or clear list
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      setDownloaders([]);
-      return;
-    }
-
+    // 凭证由 HttpOnly Cookie 携带；未登录时接口 401 由下方 catch 处理
     setLoading(true);
     try {
       const resp = await DownloadersService.downloadersControllerList();

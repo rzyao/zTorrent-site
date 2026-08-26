@@ -2,25 +2,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { getAuthService, getPermissionsService } from "../api/lazy";
 
 /**
- * 从 JWT token 解析用户名（Fallback 机制）
- * 当后端 API 不可用时，从本地存储的 token 中提取用户名
- */
-function parseUsernameFromToken(token: string | null): string {
-  if (!token) return "";
-  try {
-    // JWT token 格式: header.payload.signature
-    const base64Payload = token.split(".")[1];
-    if (!base64Payload) return "";
-    // 解码 Base64 URL 编码的 payload
-    const payload = JSON.parse(atob(base64Payload.replace(/-/g, "+").replace(/_/g, "/")));
-    // 兼容不同的 payload 结构：username / sub / name
-    return payload.username || payload.sub || payload.name || "";
-  } catch {
-    return "";
-  }
-}
-
-/**
  * 用户访问权限类型定义
  * @property roles 用户角色列表
  * @property permissions 用户权限列表
@@ -36,15 +17,17 @@ export type UserAccess = {
 
 /**
  * Access Context 状态定义
- * @property access 当前用户的访问权限信息
+ * @property access 当前用户的访问权限信息（服务端校验后）
  * @property loading 是否正在加载权限信息
  * @property error 加载过程中的错误信息
+ * @property isAuthenticated 是否已通过服务端校验（权威，不再依赖前端 localStorage）
  * @property reload 重新加载权限信息的方法
  */
 type AccessState = {
   access: UserAccess;
   loading: boolean;
   error: string | null;
+  isAuthenticated: boolean;
   reload: () => void;
 };
 
@@ -53,6 +36,7 @@ const AccessContext = createContext<AccessState>({
   access: { roles: [], permissions: [], username: "", avatar: null },
   loading: false,
   error: null,
+  isAuthenticated: false,
   reload: () => {},
 });
 
@@ -70,25 +54,19 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
     avatar: null,
   });
 
-  // 初始化加载状态：如果本地有 accessToken，则初始 loading 为 true，避免未加载完时的页面闪烁或错误跳转
-  const [loading, setLoading] = useState(() => !!localStorage.getItem("accessToken"));
+  // 首屏即尝试拉取（凭证由 HttpOnly Cookie 携带），loading 为 true 直到服务端给出明确结论，
+  // 避免未登录用户被短暂误判为已登录。真正的鉴权仍由后端对每个接口强制。
+  const [loading, setLoading] = useState(true);
 
   // 错误状态管理
   const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   /**
    * 加载用户信息的异步函数
-   * 同时获取用户 Profile 和 聚合权限信息
+   * 同时获取用户 Profile 和 聚合权限信息（均由服务端校验）
    */
   const load = async () => {
-    const token = localStorage.getItem("accessToken");
-    // 如果没有 token，清空状态并结束加载
-    if (!token) {
-      setAccess({ roles: [], permissions: [], username: "", avatar: null });
-      setLoading(false);
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
@@ -107,50 +85,47 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
         const profileRes = results[0];
         const aggregateRes = results[1];
 
-        let roles: string[] = [];
-        let username: string = "";
-        let permissionsFromProfile: string[] = [];
-        let permissionsFromAggregate: string[] = [];
-        let avatar: string | null = null;
-
-        // 处理 Profile 请求结果（包含基础信息和角色）
-        if (profileRes.status === "fulfilled") {
-          const resp: any = profileRes.value;
-          // 兼容后端不同的响应结构 (code/data 包装)
-          const body = resp?.code !== undefined ? resp : resp?.data;
-          const data = body?.data ?? body;
-          roles = Array.isArray(data?.roles) ? data.roles : [];
-          permissionsFromProfile = Array.isArray(data?.permissions) ? data.permissions : [];
-          username = String(data?.username ?? data?.user?.username ?? "");
-          const rawAvatar = (data?.avatar ?? data?.user?.avatar ?? null) as any;
-          // 确保头像为非空字符串
-          avatar = typeof rawAvatar === "string" && rawAvatar.trim().length > 0 ? rawAvatar : null;
-        } else {
-          // Profile API 失败时，尝试从 JWT token 解析用户名（仅用于 UI 显示）
-          // 注意：权限控制由后端动态路由 API 负责，此处解析仅为显示用途
-          username = parseUsernameFromToken(token);
-          console.warn("[AccessContext] Profile API 失败，使用 token 解析用户名:", username);
+        // Profile 失败（401 / 网络错误）-> 未登录或会话失效
+        if (profileRes.status !== "fulfilled") {
+          setAccess({ roles: [], permissions: [], username: "", avatar: null });
+          setIsAuthenticated(false);
           setError((profileRes as any)?.reason?.message || "获取用户信息失败");
+          return;
         }
 
-        // 处理聚合权限请求结果（包含细粒度权限）
+        const resp: any = profileRes.value;
+        // 兼容后端不同的响应结构 (code/data 包装)
+        const body = resp?.code !== undefined ? resp : resp?.data;
+        const data = body?.data ?? body;
+        const roles = Array.isArray(data?.roles) ? data.roles : [];
+        const permissionsFromProfile = Array.isArray(data?.permissions) ? data.permissions : [];
+        const username = String(data?.username ?? data?.user?.username ?? "");
+        const rawAvatar = (data?.avatar ?? data?.user?.avatar ?? null) as any;
+        const avatar =
+          typeof rawAvatar === "string" && rawAvatar.trim().length > 0 ? rawAvatar : null;
+
+        let permissionsFromAggregate: string[] = [];
         if (aggregateRes.status === "fulfilled") {
-          const resp: any = aggregateRes.value;
-          const body = resp?.code !== undefined ? resp : resp?.data;
-          const data = body?.data ?? body;
-          permissionsFromAggregate = Array.isArray(data?.permissions) ? data.permissions : [];
-        } else {
-          // 若聚合失败，后续保底逻辑会使用 profile 中的 permissions
+          const aggResp: any = aggregateRes.value;
+          const aggBody = aggResp?.code !== undefined ? aggResp : aggResp?.data;
+          const aggData = aggBody?.data ?? aggBody;
+          permissionsFromAggregate = Array.isArray(aggData?.permissions)
+            ? aggData.permissions
+            : [];
         }
 
         // 优先使用聚合接口返回的权限，若没有则回退到 Profile 接口的权限
         const permissions =
           permissionsFromAggregate.length > 0 ? permissionsFromAggregate : permissionsFromProfile;
 
-        // 更新全局 Access 状态
         setAccess({ roles, permissions, username, avatar });
+        setIsAuthenticated(true);
       })
-      .catch((e: any) => setError(e?.message || "获取权限数据失败"))
+      .catch((e: any) => {
+        setAccess({ roles: [], permissions: [], username: "", avatar: null });
+        setIsAuthenticated(false);
+        setError(e?.message || "获取权限数据失败");
+      })
       .finally(() => setLoading(false));
   };
 
@@ -165,7 +140,9 @@ export function AccessProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AccessContext.Provider value={{ access, loading, error, reload: load }}>
+    <AccessContext.Provider
+      value={{ access, loading, error, isAuthenticated, reload: load }}
+    >
       {children}
     </AccessContext.Provider>
   );

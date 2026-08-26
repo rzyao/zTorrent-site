@@ -179,21 +179,17 @@ function shouldShowToast(
  */
 function handleUnauthorized(): void {
   const path = typeof window !== "undefined" ? window.location.pathname : "";
-  const hasToken = typeof window !== "undefined" ? !!localStorage.getItem("accessToken") : false;
   const publicPaths = ["/login", "/register", "/forgot-password", "/reset-password"];
 
-  // 清除 token
-  try {
-    localStorage.removeItem("accessToken");
-  } catch {}
-
-  // 触发全局事件
+  // 凭证已改为 HttpOnly Cookie，JS 无法读取/清除；登出由后端 /auth/logout 清除 Cookie。
+  // 这里仅触发全局事件，让 AccessProvider 重新向后端核验（后端会返回未登录态），
+  // 并视情况跳转登录页。
   try {
     window.dispatchEvent(new Event("authChange"));
   } catch {}
 
-  // 跳转登录
-  if (!redirecting && hasToken && !publicPaths.includes(path)) {
+  // 非公开页面且尚未跳转时，跳转到登录页（携带来源以便登录后回跳）
+  if (!redirecting && !publicPaths.includes(path)) {
     redirecting = true;
     const from =
       typeof window !== "undefined" ? window.location.pathname + window.location.search : "/";

@@ -1,4 +1,5 @@
 import { marked } from "marked";
+import { sanitizeHtml } from "@/utils/sanitizeHtml";
 
 /**
  * Markdown 解析结果缓存（LRU 简易实现）
@@ -18,7 +19,7 @@ export function parseMarkdownCached(markdown: string): string {
   if (cached) {
     return cached;
   }
-  const html = marked.parse(markdown, { async: false }) as string;
+  const html = sanitizeHtml(marked.parse(markdown, { async: false }) as string);
   htmlCache.set(key, html);
   if (htmlCache.size > MAX_ENTRIES) {
     const firstKey = htmlCache.keys().next().value;

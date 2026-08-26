@@ -7,6 +7,7 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { FullScreenLoader } from "@/modules/app/components/ui/FullScreenLoader";
 import { useDynamicRouteElements } from "./DynamicRoutes";
 import { useGlobalLoader } from "@/stores/globalLoaderStore";
+import { useAccess } from "@/context/AccessContext";
 
 // 公开页面（无需登录）
 const LoginPage = lazy(() => import("@/modules/app/pages/Login"));
@@ -18,12 +19,12 @@ const ForgotPasswordPage = lazy(() => import("@/modules/app/pages/ForgotPassword
  */
 function LoginPageWrapper() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAccess();
   const search = typeof window !== "undefined" ? window.location.search : "";
   const params = new URLSearchParams(search);
-  const isLoggedIn = typeof window !== "undefined" && !!localStorage.getItem("accessToken");
   const from = params.get("from") || "/app/home";
 
-  if (isLoggedIn) {
+  if (isAuthenticated) {
     return <Navigate to={from.startsWith("/app") ? from : "/app/home"} replace />;
   }
 
@@ -102,9 +103,9 @@ const NotFoundPage = lazy(() => import("@/modules/app/pages/NotFoundPage"));
 
 function NotFoundRedirect() {
   const location = window.location;
-  const isLoggedIn = !!localStorage.getItem("accessToken");
+  const { isAuthenticated } = useAccess();
 
-  if (!isLoggedIn) {
+  if (!isAuthenticated) {
     const from = location.pathname + location.search;
     return <Navigate to={`/login?from=${encodeURIComponent(from)}`} replace />;
   }

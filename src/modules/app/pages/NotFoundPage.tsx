@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useAccess } from "@/context/AccessContext";
 import { Button } from "@/modules/app/components/ui/button";
 
 /**
@@ -9,9 +10,9 @@ import { Button } from "@/modules/app/components/ui/button";
 export default function NotFoundPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { isAuthenticated: isLoggedIn } = useAccess();
 
   const handleBackHome = () => {
-    const isLoggedIn = !!localStorage.getItem("accessToken");
     navigate(isLoggedIn ? "/app/home" : "/login", { replace: true });
   };
 

@@ -33,14 +33,7 @@ export function UserSummaryProvider({ children }: { children: React.ReactNode })
   // 获取用户统计数据
   const fetchSummary = useCallback(async () => {
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-      if (!token) {
-        setError(null);
-        setData(null);
-        setIsLoading(false);
-        return;
-      }
-
+      // 凭证由 HttpOnly Cookie 携带；未登录时接口返回 401，被下方 catch 处理
       setError(null);
       const response = await DashboardService.dashboardControllerSummary({});
 

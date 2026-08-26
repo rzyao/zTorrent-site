@@ -2,6 +2,7 @@
 import { ChevronDown, ChevronUp, ArrowUpRight, MessageSquareQuote, Loader2 } from "lucide-react";
 import { marked } from "marked";
 import { cn } from "@/utils/cn";
+import { sanitizeHtml } from "@/utils/sanitizeHtml";
 import { ForumsPostsService } from "@/api/services/ForumsPostsService";
 import { scrollToPost } from "../utils/domUtils";
 
@@ -67,13 +68,13 @@ export function QuoteBlock({ quote, onNavigate, colors }: QuoteBlockProps) {
 
   // 本地引用的 HTML (始终会被渲染，除非完全展开且已加载)
   const localQuoteHtml = useMemo(() => {
-    return marked.parse(quote.content) as string;
+    return sanitizeHtml(marked.parse(quote.content) as string);
   }, [quote.content]);
 
   // 远程完整内容的 HTML
   const remoteFullHtml = useMemo(() => {
     if (!fullPostContent) return null;
-    return marked.parse(fullPostContent) as string;
+    return sanitizeHtml(marked.parse(fullPostContent) as string);
   }, [fullPostContent]);
 
   const handleExpand = async () => {

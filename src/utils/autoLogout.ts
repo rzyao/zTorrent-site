@@ -41,19 +41,28 @@ export class AutoLogoutManager {
 
   // 执行退出操作
   private static logout() {
-    // 清除认证数据
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("user_info");
-    localStorage.removeItem("auto_logout");
-
+    // 调用后端 /auth/logout 清除 HttpOnly Cookie（凭证已不在前端）
+    try {
+      const base =
+        (typeof import.meta !== "undefined" && (import.meta as any)?.env?.VITE_BASE_URL) ||
+        "/api";
+      void fetch(`${base}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+    } catch {}
+    // 保留 auto_logout 用户偏好（否则仅触发一次）；触发全局事件通知 AccessProvider 重置态
+    try {
+      window.dispatchEvent(new Event("authChange"));
+    } catch {}
     // 停止计时器
     this.stop();
-
     // 显示提示信息
     toast.warning("您已长时间无操作，为确保账户安全，系统已自动退出登录。", {
       duration: 10000,
     });
-
     // 跳转到登录页面
     window.location.href = "/login";
   }

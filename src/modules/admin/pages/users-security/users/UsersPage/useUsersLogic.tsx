@@ -1,4 +1,5 @@
 ﻿import { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import { useAccess } from "@/context/AccessContext";
 import { MoreHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -42,17 +43,15 @@ export const useUsersLogic = () => {
     pageOffsetRef.current = (page - 1) * pageSize;
   }, [page, pageSize]);
 
-  // 权限检查
-  const can = useCallback((key: string): boolean => {
-    try {
-      const raw = localStorage.getItem("permissions");
-      const perms = raw ? JSON.parse(raw) : [];
-      const isSuperAdmin = (localStorage.getItem("username") || "") === "admin";
-      return isSuperAdmin || (Array.isArray(perms) && perms.includes(key));
-    } catch {
-      return false;
-    }
-  }, []);
+  // 权限检查：统一从服务端校验后的 AccessContext 读取（不再信任前端 localStorage，避免篡改提权）
+  const { access } = useAccess();
+  const can = useCallback(
+    (key: string): boolean => {
+      const isSuperAdmin = access.username === "admin";
+      return isSuperAdmin || access.permissions.includes(key);
+    },
+    [access],
+  );
 
   // 弹窗状态
   const [editOpen, setEditOpen] = useState(false);

@@ -41,6 +41,9 @@ export async function initOpenAPI(): Promise<void> {
   // const { OpenAPI } = await import('./core/OpenAPI');
 
   OpenAPI.BASE = normalized;
-  OpenAPI.TOKEN = async () => localStorage.getItem("accessToken") || "";
+  // 凭证由后端写入 HttpOnly Cookie，随请求自动携带（withCredentials）。
+  // 不再从 localStorage 读取 Bearer 令牌，避免 XSS 窃取与前端篡改权限。
+  OpenAPI.WITH_CREDENTIALS = true;
+  OpenAPI.TOKEN = async () => "";
   console.debug("[OpenAPI] BASE =", OpenAPI.BASE);
 }

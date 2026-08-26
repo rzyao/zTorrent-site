@@ -17,7 +17,9 @@ export async function getOpenAPI() {
       const base = (import.meta as any).env?.VITE_BASE_URL || "/api";
       const normalized = String(base).trim().replace(/\/$/, "");
       OpenAPI.BASE = normalized;
-      OpenAPI.TOKEN = async () => localStorage.getItem("accessToken") || "";
+      // 凭证由后端写入 HttpOnly Cookie 携带；不再从 localStorage 读取 Bearer
+      OpenAPI.WITH_CREDENTIALS = true;
+      OpenAPI.TOKEN = async () => "";
     }
   }
   return OpenAPI;

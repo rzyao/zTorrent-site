@@ -12,9 +12,9 @@ export function useAuth() {
   const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    Boolean(localStorage.getItem("accessToken")),
-  );
+  // 初始态不依赖 localStorage（凭证已迁至 HttpOnly Cookie，JS 不可读）。
+  // 真正鉴权由 AccessProvider 向后端核验；本态仅反映本 hook 的 login/logout 操作结果。
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const login = useCallback(
     async (username: string, password: string, autoLogout: boolean = false) => {
@@ -40,10 +40,10 @@ export function useAuth() {
         if (!token) {
           throw new Error(body?.message || "登录失败：未返回令牌");
         }
-        localStorage.setItem("accessToken", token);
+        // 凭证已由后端写入 HttpOnly Cookie，前端不再持有令牌
         setIsAuthenticated(true);
 
-        // 触发认证事件，通知路由守卫更新状态
+        // 触发认证事件，通知路由守卫 / AccessContext 重新加载服务端校验态
         window.dispatchEvent(new Event("authChange"));
 
         // 登录成功后刷新路由配置和导航菜单
@@ -94,8 +94,10 @@ export function useAuth() {
       if (!token) {
         throw new Error(body?.message || "注册失败：未返回令牌");
       }
-      localStorage.setItem("accessToken", token);
+      // 凭证已由后端写入 HttpOnly Cookie，前端不再持有令牌
       setIsAuthenticated(true);
+      // 通知 AccessContext 重新加载服务端校验态
+      window.dispatchEvent(new Event("authChange"));
       return response;
     } catch (err: any) {
       const msg = extractErrorMessage(err, "注册失败");
@@ -124,8 +126,19 @@ export function useAuth() {
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem("accessToken");
+    // 调用后端 /auth/logout 清除 HttpOnly Cookie（凭证不再存于前端）
+    try {
+      const base = (import.meta as any)?.env?.VITE_BASE_URL || "/api";
+      void fetch(`${base}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+    } catch {}
     setIsAuthenticated(false);
+    // 通知 AccessContext 重置服务端校验态
+    window.dispatchEvent(new Event("authChange"));
 
     // 登出后刷新导航菜单
     queryClient.invalidateQueries({ queryKey: ["navigation"] });

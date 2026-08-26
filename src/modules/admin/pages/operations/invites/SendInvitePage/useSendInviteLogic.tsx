@@ -1,4 +1,5 @@
-﻿import { useState, useMemo, useCallback } from "react";
+﻿import { useState, useCallback } from "react";
+import { useAccess } from "@/context/AccessContext";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -61,19 +62,11 @@ export function useSendInviteLogic() {
     },
   });
 
-  // 权限检查
-  const perms = useMemo(() => {
-    try {
-      return JSON.parse(localStorage.getItem("permissions") || "[]") as string[];
-    } catch {
-      return [];
-    }
-  }, []);
-
-  const isSuperAdmin = (localStorage.getItem("username") || "") === "admin";
+  // 权限检查：统一从服务端校验后的 AccessContext 读取（不再信任前端 localStorage，避免篡改提权）
+  const { access } = useAccess();
   const hasPerm = useCallback(
-    (key: string) => isSuperAdmin || perms.includes(key),
-    [isSuperAdmin, perms],
+    (key: string) => access.username === "admin" || access.permissions.includes(key),
+    [access],
   );
   const canOfficial = hasPerm("send-official-invite");
   const canManageInvites = hasPerm("manage-invites");

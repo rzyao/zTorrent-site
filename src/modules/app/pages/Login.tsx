@@ -72,7 +72,7 @@ export default function LoginPage({
       </div>
 
       {/* Logo 头部区域 */}
-      <div className="relative z-10 px-4 py-6 md:px-8">
+      <div className="relative z-10 hidden px-4 py-6 md:block md:px-8">
         <a href="#" className="flex items-center gap-2">
           <img src={Logo} alt="Logo" className="h-10 w-10 md:h-12 md:w-12" />
           <span className="text-3xl text-white">PT</span>
@@ -82,8 +82,8 @@ export default function LoginPage({
 
       {/* 登录表单主体区域 */}
       <div className="absolute inset-0 z-10 flex items-center justify-center">
-        <div className="w-full max-w-md">
-          <div className="rounded-lg border border-gray-800 bg-black/60 p-8 backdrop-blur-md md:p-10">
+        <div className="flex h-full w-full flex-col md:block md:h-auto md:max-w-md">
+          <div className="flex flex-1 flex-col justify-center rounded-none border-0 bg-black/60 p-8 backdrop-blur-md md:block md:rounded-lg md:border md:border-gray-800 md:p-10">
             <div className="mb-8 text-center">
               <h1 className="mb-2 text-3xl text-white">{t("auth.login")}</h1>
               <p className="text-sm text-gray-400">{t("auth.welcomeBack")}</p>
@@ -195,8 +195,8 @@ export default function LoginPage({
               </Button>
             </div>
           </div>
-
-          <div className="mt-6 text-center text-xs text-gray-500">
+          {/* 说明区域 */}
+          <div className="hidden p-4 text-center text-xs text-gray-500 md:mt-6 md:block md:p-0">
             <p>
               {t("auth.sitePrivate")}
               <br />

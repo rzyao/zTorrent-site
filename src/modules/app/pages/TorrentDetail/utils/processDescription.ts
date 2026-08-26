@@ -1,3 +1,5 @@
+import { sanitizeHtml } from "@/utils/sanitizeHtml";
+
 export const processDescription = (description: string) => {
   if (!description) return '';
 
@@ -106,13 +108,7 @@ export const processDescription = (description: string) => {
     '<span style="color: #F59E0B; font-weight: bold;">$1</span>$2'
   );
 
-
-  // 恢复之前可能被转义的 HTML 标签（如果 description 本身可能混合了 HTML 和 BBCode，这步很危险）
-  // 假设输入主要是 BBCode。如果输入混合了，上述转义逻辑可能需要调整。
-  // 鉴于用户提供的 description 例子是纯文本 + BBCode，转义 < > 是对的。
-  // 但是我们上面生成的 html 标签也包含 < >，在第一步转义后，现在我们生成的标签是直接字符串拼接的，
-  // 所以返回的 result string 里既有 &lt; (原始内容) 也有 < (我们生成的)。
-  // dangerouslySetInnerHTML 会解析 < 为标签，显示 &lt; 为字符。这是正确的。
-
-  return processed;
+  // 统一净化：剥离 on* 事件处理器、script/iframe 等危险标签与 javascript: 协议，
+  // 杜绝存储型 XSS（dangerouslySetInnerHTML 会执行 <img onerror> / <svg onload> 等注入）。
+  return sanitizeHtml(processed);
 };

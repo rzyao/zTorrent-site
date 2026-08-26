@@ -1,4 +1,5 @@
 ﻿import { useCallback, useMemo, useState } from "react";
+import { useAccess } from "@/context/AccessContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Service as InvitesService } from "@/api/services/Service";
@@ -33,19 +34,11 @@ export function useInvitesListLogic() {
     content: string;
   } | null>(null);
 
-  // 权限检查
-  const perms = useMemo(() => {
-    try {
-      return JSON.parse(localStorage.getItem("permissions") || "[]") as string[];
-    } catch {
-      return [];
-    }
-  }, []);
-
-  const isSuperAdmin = (localStorage.getItem("username") || "") === "admin";
+  // 权限检查：统一从服务端校验后的 AccessContext 读取（不再信任前端 localStorage，避免篡改提权）
+  const { access } = useAccess();
   const hasPerm = useCallback(
-    (key: string) => isSuperAdmin || perms.includes(key),
-    [isSuperAdmin, perms],
+    (key: string) => access.username === "admin" || access.permissions.includes(key),
+    [access],
   );
 
   // 构建查询参数

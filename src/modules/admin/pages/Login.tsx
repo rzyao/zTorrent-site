@@ -53,8 +53,9 @@ export default function Login() {
         toast.error("登录失败：未返回令牌");
         return;
       }
-      localStorage.setItem("accessToken", token);
+      // 凭证已由后端写入 HttpOnly Cookie，前端不再持有令牌
       toast.success("登录成功");
+      window.dispatchEvent(new Event("authChange"));
       navigate("/", { replace: true });
     } catch (e: any) {
       if (e?.status === 401) {

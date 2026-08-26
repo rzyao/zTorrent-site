@@ -8,10 +8,12 @@ import { formatDate } from "@/modules/admin/utils/formatDate";
 import type { UserBonusLedger, BonusLedgerQuery } from "./types";
 import { Button } from "@/modules/admin/components/ui/button";
 import type { Column } from "@/modules/admin/components/ui/data-table";
+import { useAccess } from "@/context/AccessContext";
 
 export function useBonusLedgerLogic() {
   const { search } = useLocation();
   const queryClient = useQueryClient();
+  const { access } = useAccess();
   const initUserId = useMemo(
     () => new URLSearchParams(search).get("userId") || undefined,
     [search],
@@ -48,7 +50,7 @@ export function useBonusLedgerLogic() {
   const handleReverse = useCallback(
     (record: UserBonusLedger) => {
       executeReverse(async () => {
-        const adminUserId = localStorage.getItem("userId") || "0";
+        const adminUserId = access.username || "0";
         await BonusAdminService.bonusAccountControllerAdminReverse({
           ledgerId: String(record.id || ""),
           adminUserId,

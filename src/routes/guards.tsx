@@ -9,8 +9,9 @@ import { useAccess } from "@/context/AccessContext";
  * 基础登录态守卫：仅判断是否已登录
  */
 export function AuthRoute({ children }: { children: React.ReactNode }) {
-  const isLoggedIn = !!localStorage.getItem("accessToken");
-  if (!isLoggedIn) return <Navigate to="/login" replace />;
+  const { isAuthenticated, loading } = useAccess();
+  if (loading) return <div style={{ padding: 24, color: "#ccc" }}>加载中…</div>;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
 
@@ -32,11 +33,9 @@ export function PermissionRoute({
   combine?: "AND" | "OR";
   name?: string;
 }) {
-  const isLoggedIn = !!localStorage.getItem("accessToken");
-  if (!isLoggedIn) return <Navigate to="/login" replace />;
-
-  const { access, loading } = useAccess();
+  const { access, loading, isAuthenticated } = useAccess();
   if (loading) return <div style={{ padding: 24, color: "#ccc" }}>加载中…</div>;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
 
   // 检查角色与权限是否满足要求
   const hasRequired = () => {

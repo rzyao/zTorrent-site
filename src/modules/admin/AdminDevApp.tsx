@@ -2,7 +2,7 @@
 import { AdminLayout } from "./layouts/AdminLayout";
 import { AppToaster } from "@/modules/app/components/ui/sonner";
 import { GlobalLoader } from "@/modules/app/components/ui/GlobalLoader";
-import { AccessProvider } from "@/context/AccessContext";
+import { AccessProvider, useAccess } from "@/context/AccessContext";
 import { UserSummaryProvider } from "@/modules/app/context/UserSummaryContext";
 import { DownloadersProvider } from "@/modules/app/context/DownloadersContext";
 import { Suspense, lazy } from "react";
@@ -19,12 +19,12 @@ const LoginPage = lazy(() => import("@/modules/app/pages/Login"));
  */
 function LoginPageWrapper() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAccess();
   const search = typeof window !== "undefined" ? window.location.search : "";
   const params = new URLSearchParams(search);
-  const isLoggedIn = typeof window !== "undefined" && !!localStorage.getItem("accessToken");
   const from = params.get("from") || "/admin";
 
-  if (isLoggedIn) {
+  if (isAuthenticated) {
     return <Navigate to={from} replace />;
   }
 
@@ -43,14 +43,14 @@ import { useDynamicRouteElements } from "@/routes/DynamicRoutes";
 
 function AdminRoutesRenderer() {
   const { routeElements, isLoading } = useDynamicRouteElements();
-  const isLoggedIn = !!localStorage.getItem("accessToken");
+  const { isAuthenticated } = useAccess();
 
   if (isLoading) {
     return <RouteProgressBar />;
   }
 
   // 未登录时的路由配置
-  if (!isLoggedIn) {
+  if (!isAuthenticated) {
     return (
       <Routes>
         <Route path="/login" element={<LoginPageWrapper />} />

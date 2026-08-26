@@ -39,22 +39,19 @@ export default function App() {
           usePreferenceCategoriesStore.getState().fetchCategories(),
         ]);
 
-        // 加载用户语言偏好
-        const token = localStorage.getItem("accessToken");
-        if (token) {
-          try {
-            const UsersService = await getUsersService();
-            const resp = await UsersService.usersPreferencesControllerGet();
-            const data = resp?.data;
+        // 加载用户语言偏好（凭证由 HttpOnly Cookie 携带；未登录时接口 401 被下方 catch 吞掉）
+        try {
+          const UsersService = await getUsersService();
+          const resp = await UsersService.usersPreferencesControllerGet();
+          const data = resp?.data;
 
-            if (data?.language && isSupportedLanguage(data.language)) {
-              // 应用用户偏好的语言设置
-              await changeLanguage(data.language as SupportedLanguage);
-            }
-          } catch (error) {
-            // 失败时使用 localStorage 中的语言或默认语言
-            console.warn("加载用户语言偏好失败，使用本地语言设置", error);
+          if (data?.language && isSupportedLanguage(data.language)) {
+            // 应用用户偏好的语言设置
+            await changeLanguage(data.language as SupportedLanguage);
           }
+        } catch (error) {
+          // 失败时使用 localStorage 中的语言或默认语言
+          console.warn("加载用户语言偏好失败，使用本地语言设置", error);
         }
       } catch (error) {
         console.error("应用初始化失败", error);

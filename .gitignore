@@ -54,3 +54,5 @@ diff_output*.txt
 # 脚本生成的临时文件
 auto_seed.js
 auto_seed_dev.js
+
+extension/

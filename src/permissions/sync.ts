@@ -19,18 +19,8 @@ export async function syncPermissionsOnStartup(): Promise<void> {
     // 1) 在启动阶段进行一次全项目扫描
     await scanProjectForPermissions();
 
-    // 2) 如果尚未登录，则在登录事件后再同步
-    const hasToken = !!localStorage.getItem("accessToken");
-    if (!hasToken) {
-      const onAuth = () => {
-        window.removeEventListener("authChange", onAuth);
-        void sendBatchCreate();
-      };
-      window.addEventListener("authChange", onAuth);
-      return;
-    }
-
-    // 3) 已登录则直接发送
+    // 2) 直接尝试同步；未登录时后端返回 401，由下方 catch 静默处理。
+    //    凭证由 HttpOnly Cookie 携带，不再依赖前端 localStorage。
     await sendBatchCreate();
   } catch (e) {
     console.warn("[permissions-sync] 启动同步异常：", e);
