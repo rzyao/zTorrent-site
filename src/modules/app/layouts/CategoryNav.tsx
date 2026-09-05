@@ -6,6 +6,8 @@ import { cn } from "@/utils/cn";
 export interface CategoryNavItem {
   label: string;
   value: string;
+  key?: string;
+  isAll?: boolean;
   /** 可选：用于排序的权重 */
   sort?: number;
   /** 可选：跳转路由路径，未提供时默认使用 onSelect */
@@ -17,7 +19,7 @@ export interface CategoryNavItem {
 interface CategoryNavProps {
   /** 导航项列表 (必须提供) */
   items: CategoryNavItem[];
-  /** 当前选中的值（对应 item.value） */
+  /** 当前选中的值（对应 item.value 或 item.key） */
   active?: string;
   /** 选中回调 */
   onSelect?: (value: string, item: CategoryNavItem) => void;
@@ -50,16 +52,18 @@ export function CategoryNav({
 }: CategoryNavProps) {
   const navigate = useNavigate();
 
-  // 默认排序逻辑：如果有 '全部' 标签，尽量放前面；否则按 sort 字段排序
+  // 默认排序逻辑：如果有 'isAll' 或 key/value 为 'all'，置顶排在最前；否则按 sort 字段排序
   const sortedList = [...items].sort((a, b) => {
-    if (a.label === "全部") return -1;
-    if (b.label === "全部") return 1;
+    const isAAll = a.isAll || a.key === "all" || a.value === "all" || a.label === "全部";
+    const isBAll = b.isAll || b.key === "all" || b.value === "all" || b.label === "全部";
+    if (isAAll && !isBAll) return -1;
+    if (!isAAll && isBAll) return 1;
     return (a.sort ?? Number.POSITIVE_INFINITY) - (b.sort ?? Number.POSITIVE_INFINITY);
   });
 
   const handleItemClick = (item: CategoryNavItem) => {
     if (onSelect) {
-      onSelect(item.value, item);
+      onSelect(item.key || item.value, item);
     } else if (item.path) {
       navigate(item.path);
     }
@@ -82,17 +86,23 @@ export function CategoryNav({
 
   const renderContent = (
     <div className="scrollbar-hide flex gap-4 overflow-x-auto">
-      {sortedList.map((c) => (
-        <Button
-          key={c.value}
-          variant={null}
-          className={commonButtonClass(c.label === active || c.value === active)}
-          onClick={() => handleItemClick(c)}
-        >
-          {c.icon && <span className="flex h-4 w-4 items-center">{c.icon}</span>}
-          {c.label}
-        </Button>
-      ))}
+      {sortedList.map((c) => {
+        const itemKey = c.key || c.value;
+        const isCurrentActive =
+          c.key === active || c.value === active || c.label === active;
+        return (
+          <Button
+            key={itemKey}
+            variant={null}
+            aria-pressed={isCurrentActive}
+            className={commonButtonClass(isCurrentActive)}
+            onClick={() => handleItemClick(c)}
+          >
+            {c.icon && <span className="flex h-4 w-4 items-center">{c.icon}</span>}
+            {c.label}
+          </Button>
+        );
+      })}
     </div>
   );
 

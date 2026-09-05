@@ -70,6 +70,8 @@ export default function App() {
   useEffect(() => {
     const handleAuthChange = () => {
       setAuthKey((prev) => prev + 1);
+      // 登录/登出时重新拉取分类偏好，免刷新更新导航
+      usePreferenceCategoriesStore.getState().fetchCategories();
     };
     window.addEventListener("authChange", handleAuthChange);
     return () => {

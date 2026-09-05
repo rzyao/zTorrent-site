@@ -118,8 +118,25 @@ export const usePreferenceCategoriesStore = create<PreferenceCategoriesState>((s
 
       set({ torrent, movie, series, playlist, isLoaded: true, isLoading: false });
     } catch (error) {
-      console.error("获取分类数据失败:", error);
-      set({ isLoading: false });
+      console.warn("获取用户分类偏好失败或未登录，使用公共字典降级兜底:", error);
+
+      // 401 或异常降级：从 dictionaryStore 获取全量分类，并将所有分类设为可见 (show: true)
+      const dictStore = useDictionaryStore.getState();
+      const dictCategories = dictStore.dictionaries?.categories || [];
+      const fallbackCategories: CategoryItem[] = dictCategories.map((c) => ({
+        key: String(c.key),
+        label: String(c.label || c.key),
+        show: true,
+      }));
+
+      set({
+        torrent: fallbackCategories,
+        movie: fallbackCategories,
+        series: fallbackCategories,
+        playlist: fallbackCategories,
+        isLoaded: true,
+        isLoading: false,
+      });
     }
   },
 

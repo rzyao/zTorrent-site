@@ -2,6 +2,19 @@
   "common": {
     "loading": "載入中..."
   },
+  "category": {
+    "Movie": "電影",
+    "TV Series": "影集",
+    "Short TV Series": "短劇",
+    "Documentary": "紀錄片",
+    "Anime": "動漫",
+    "TV Show": "綜藝",
+    "Music": "音樂",
+    "Ebook": "電子書",
+    "Software": "軟體",
+    "Game": "遊戲",
+    "Sport": "體育"
+  },
   "app": {
     "title": "zTorrent",
     "loading": "載入中...",

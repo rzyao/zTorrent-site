@@ -2,6 +2,19 @@
   "common": {
     "loading": "Loading..."
   },
+  "category": {
+    "Movie": "Movie",
+    "TV Series": "TV Series",
+    "Short TV Series": "Short Drama",
+    "Documentary": "Documentary",
+    "Anime": "Anime",
+    "TV Show": "TV Show",
+    "Music": "Music",
+    "Ebook": "E-Book",
+    "Software": "Software",
+    "Game": "Game",
+    "Sport": "Sports"
+  },
   "app": {
     "title": "zTorrent",
     "loading": "Loading...",
