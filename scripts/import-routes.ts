@@ -994,7 +994,7 @@ const routesData = [
 ];
 
 async function login() {
-  const LOGIN_URL = "http://localhost:8890/auth/login";
+  const LOGIN_URL = "http://localhost:48230/auth/login";
   try {
     console.log("正在尝试登录以获取授权 token...");
     const response = await axios.post(LOGIN_URL, {
@@ -1019,7 +1019,7 @@ async function login() {
 }
 
 async function main() {
-  const API_URL = "http://localhost:8890/routes/import";
+  const API_URL = "http://localhost:48230/routes/import";
 
   console.log("准备导入路由配置...");
   console.log(`目标 API: ${API_URL}`);
@@ -1055,7 +1055,7 @@ async function main() {
 
     // 自动清理缓存
     console.log("\n正在尝试清理路由缓存...");
-    const clearUrl = "http://localhost:8890/routes/clear-cache";
+    const clearUrl = "http://localhost:48230/routes/clear-cache";
     try {
       await axios.post(clearUrl, {}, config);
       console.log("✅ 缓存清理成功");
@@ -1066,7 +1066,7 @@ async function main() {
     // 验证：查询完整路由树
     console.log("\n========== 验证：查询数据库中的路由树 ==========");
     try {
-      const treeResp = await axios.post("http://localhost:8890/admin/routes/tree", {}, config);
+      const treeResp = await axios.post("http://localhost:48230/admin/routes/tree", {}, config);
       const treeData = treeResp.data?.data;
       const routes = Array.isArray(treeData) ? treeData : [treeData];
 

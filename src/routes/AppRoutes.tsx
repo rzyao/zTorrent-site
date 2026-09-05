@@ -73,9 +73,12 @@ function RouteConfigLoader() {
  */
 export default function AppRoutes() {
   const { routeElements, isLoading } = useDynamicRouteElements();
+  const { loading: authLoading } = useAccess();
 
-  // 路由配置加载中
-  if (isLoading) {
+  // 认证状态或路由配置加载中：避免在 AccessContext 解析完成前渲染空路由列表，
+  // 否则 /forum、/admin 等受保护路径会先落到 * 兜底路由，被 NotFoundRedirect
+  // 误判为未登录而重定向到登录页（表现为直接访问/刷新时跳回原页面）。
+  if (isLoading || authLoading) {
     return <RouteConfigLoader />;
   }
 

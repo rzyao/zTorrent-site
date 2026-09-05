@@ -8,6 +8,10 @@ export type CategoryShowItemDto = {
      */
     key: string;
     /**
+     * 显示名称（来自数据库 categories 表）
+     */
+    label?: string;
+    /**
      * 是否显示
      */
     show: boolean;

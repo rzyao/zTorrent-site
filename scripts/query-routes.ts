@@ -5,7 +5,7 @@
 import axios from "axios";
 
 async function main() {
-  const BASE_URL = "http://localhost:8890";
+  const BASE_URL = "http://localhost:48230";
 
   console.log("========================================");
   console.log("查询数据库中的路由配置...");

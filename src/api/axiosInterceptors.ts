@@ -181,21 +181,30 @@ function handleUnauthorized(): void {
   const path = typeof window !== "undefined" ? window.location.pathname : "";
   const publicPaths = ["/login", "/register", "/forgot-password", "/reset-password"];
 
+  // 公开认证页（登录/注册/找回密码）：未登录是正常态，profile 返回 401 属预期。
+  // 若此处仍派发 authChange，会触发 AccessProvider 重新拉取 -> 再次 401 ->
+  // 再次派发，形成无限循环（页面持续“自动点击/刷新”）。因此公开页直接返回，不做任何处理。
+  if (publicPaths.includes(path)) {
+    return;
+  }
+
+  // 防止 401 -> authChange -> load -> 401 的重入循环：先置位 redirecting 锁。
+  if (redirecting) {
+    return;
+  }
+  redirecting = true;
+
   // 凭证已改为 HttpOnly Cookie，JS 无法读取/清除；登出由后端 /auth/logout 清除 Cookie。
-  // 这里仅触发全局事件，让 AccessProvider 重新向后端核验（后端会返回未登录态），
-  // 并视情况跳转登录页。
+  // 这里仅触发全局事件，让 AccessProvider 重置为未登录态，并跳转登录页。
   try {
     window.dispatchEvent(new Event("authChange"));
   } catch {}
 
-  // 非公开页面且尚未跳转时，跳转到登录页（携带来源以便登录后回跳）
-  if (!redirecting && !publicPaths.includes(path)) {
-    redirecting = true;
-    const from =
-      typeof window !== "undefined" ? window.location.pathname + window.location.search : "/";
-    if (typeof window !== "undefined") {
-      window.location.href = `/login?from=${encodeURIComponent(from)}`;
-    }
+  // 非公开页面：跳转到登录页（携带来源以便登录后回跳）
+  const from =
+    typeof window !== "undefined" ? window.location.pathname + window.location.search : "/";
+  if (typeof window !== "undefined") {
+    window.location.href = `/login?from=${encodeURIComponent(from)}`;
   }
 }
 

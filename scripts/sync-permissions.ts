@@ -3,13 +3,13 @@
  *
  * 用法：
  * 1) 配置环境变量：
- *    - API_BASE_URL：后端地址，例如 http://localhost:8890
+ *    - API_BASE_URL：后端地址，例如 http://localhost:48230
  *    - ACCESS_TOKEN：管理员账号的 JWT
  *    可在项目根目录创建 .env 文件或通过命令行设置
  *
  * 2) 运行：
  *    - Windows PowerShell:
- *      $env:API_BASE_URL="http://localhost:8890"; $env:ACCESS_TOKEN="<你的token>"; npm run permissions:sync
+ *      $env:API_BASE_URL="http://localhost:48230"; $env:ACCESS_TOKEN="<你的token>"; npm run permissions:sync
  *    - 或在 .env 中写入后直接：
  *      npm run permissions:sync
  *
@@ -60,7 +60,7 @@ const publicPaths = new Set<string>(["/login", "/register", "/forgot-password", 
 const pageClosures: Record<string, Set<string>> = {};
 
 async function main() {
-  const base = (process.env.API_BASE_URL || "").trim() || "http://localhost:8890";
+  const base = (process.env.API_BASE_URL || "").trim() || "http://localhost:48230";
   const token = (process.env.ACCESS_TOKEN || "").trim();
 
   OpenAPI.BASE = base.replace(/\/$/, "");

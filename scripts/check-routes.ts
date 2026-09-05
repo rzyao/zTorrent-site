@@ -2,9 +2,9 @@
 import { fetch } from 'undici';
 
 async function checkRoutes() {
-    console.log('Fetching API definition from http://localhost:8890/api-docs-json ...');
+    console.log('Fetching API definition from http://localhost:48230/api-docs-json ...');
     try {
-        const response = await fetch('http://localhost:8890/api-docs-json');
+        const response = await fetch('http://localhost:48230/api-docs-json');
         const spec = await response.json() as any;
         console.log('Global Prefix / Servers:', spec.servers); // Check base url definition
         

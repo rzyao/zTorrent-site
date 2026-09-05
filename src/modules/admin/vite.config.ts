@@ -27,11 +27,11 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      port: 5174, // 使用不同于主项目的端口，避免冲突
+      port: 48518, // 使用不同于主项目的端口，避免冲突
       strictPort: false,
       proxy: {
         "/api": {
-          target: "http://localhost:8890",
+          target: "http://localhost:48230",
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, ""),

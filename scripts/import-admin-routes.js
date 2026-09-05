@@ -11,7 +11,7 @@ const https = require("https");
 const http = require("http");
 
 // 配置
-const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:8890";
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:48230";
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN || "";
 
 // 读取路由配置

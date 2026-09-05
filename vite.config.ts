@@ -15,9 +15,12 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react({
-        babel: {
-          plugins: [["babel-plugin-react-compiler", ReactCompilerConfig]],
-        },
+        babel:
+          mode === "production"
+            ? {
+                plugins: [["babel-plugin-react-compiler", ReactCompilerConfig]],
+              }
+            : undefined,
       }),
       // visualizer({
       //   open: true, // 打包后自动在浏览器打开分析图
@@ -33,25 +36,39 @@ export default defineConfig(({ mode }) => {
       },
     },
     optimizeDeps: {
-      include: ["react", "react-dom", "sonner"],
+      include: [
+        "react",
+        "react-dom",
+        "react-router-dom",
+        "@tanstack/react-query",
+        "zustand",
+        "axios",
+        "lucide-react",
+        "sonner",
+        "framer-motion",
+        "clsx",
+        "tailwind-merge",
+        "dayjs",
+        "es-toolkit",
+        "crypto-js",
+      ],
       dedupe: ["react", "react-dom"],
     },
     server: {
-      port: 3000,
+      port: 48300,
       watch: {
-        usePolling: true,
-        interval: 300,
+        usePolling: false,
         ignored: ["**/node_modules/**"],
       },
       proxy: {
         "/api": {
-          target: "http://localhost:8890",
+          target: "http://localhost:48230",
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, ""),
         },
         "/uploads": {
-          target: "http://localhost:8890",
+          target: "http://localhost:48230",
           changeOrigin: true,
           secure: false,
         },

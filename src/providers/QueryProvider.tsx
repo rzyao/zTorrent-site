@@ -5,15 +5,13 @@ export function QueryProvider({ children }: { children: ReactNode }) {
     const [queryClient] = useState(() => new QueryClient({
         defaultOptions: {
             queries: {
-                // 数据立即视为过期，因此在窗口聚焦或组件挂载时会在后台重新获取（静默更新）
-                staleTime: 0,
-                // 将数据在缓存中保留 10 分钟（比默认的 5 分钟更长）
-                // 这确保了用户返回页面时数据仍然可用，实现"秒开"体验
+                // 默认 2 分钟内数据视为新鲜，避免每次切换路由都出现界面加载闪烁和重复请求
+                staleTime: 1000 * 60 * 2,
+                // 将数据在缓存中保留 10 分钟，确保返回页面时实现秒开
                 gcTime: 1000 * 60 * 10,
-                // 挂载时重新获取确保了如果组件重新挂载（例如点击后退按钮），
-                // 我们会检查更新。由于缓存中有数据（gcTime），它会立即显示。
+                // 仅在数据过期时重新获取
                 refetchOnMount: true,
-                // 可选：避免用户频繁切换标签页时进行过多的重新获取
+                // 避免用户切换窗口时重复触发请求
                 refetchOnWindowFocus: false,
                 // 请求失败重试 1 次
                 retry: 1,

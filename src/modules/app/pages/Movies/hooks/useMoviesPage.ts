@@ -3,7 +3,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { MoviesService } from "@/api/services/MoviesService";
 import { ListMoviesDto } from "@/api/models/ListMoviesDto";
-import { useDictionaryLabels } from "@/hooks/useDictionary";
 import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
 import type { GenreOption, SortKey } from "../types";
 
@@ -21,18 +20,20 @@ export function useMoviesPage() {
   const [sortBy, setSortBy] = useState<SortKey>("rating");
   const [selectedGenre, setSelectedGenre] = useState<string>("all");
 
-  const { getCategoryLabel } = useDictionaryLabels();
-
   // 从全局 store 获取电影分类数据（优先使用 movie，兼容旧版 film）
   const movieCategories = usePreferenceCategoriesStore((state) => state.movie || state.film || []);
 
   // 根据 store 中的分类数据生成筛选选项
+  // label 直接取自数据库 categories 表（经 preferenceCategoriesStore 解析）
   const genres: GenreOption[] = useMemo(() => {
     const visibleCategories = movieCategories
       .filter((c) => c.show)
-      .map((c) => ({ key: c.key, label: c.label || getCategoryLabel(c.key) || c.key }));
+      .map((c) => ({
+        key: c.key,
+        label: c.label || c.key,
+      }));
     return [{ key: "all", label: "全部" }, ...visibleCategories];
-  }, [movieCategories, getCategoryLabel]);
+  }, [movieCategories]);
 
   // 电影列表查询
   const {

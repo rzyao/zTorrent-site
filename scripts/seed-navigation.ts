@@ -1,7 +1,7 @@
 import { fetch } from "undici";
 
 // 尝试去掉 /api，因为 Swagger 显示路径为 /admin/navigation/import
-const API_BASE_URL = "http://localhost:8890";
+const API_BASE_URL = "http://localhost:48230";
 
 interface NavigationWithChildren {
   label: string;

@@ -10,6 +10,7 @@ import { extractDataFromHash, mapDataToForm } from "@/modules/app/utils/hashPars
 import { extractErrorMessage } from "@/utils/errorMessage";
 import { extractInfoBytes } from "@/modules/app/utils/torrentParser";
 import { usePreferenceCategoriesStore } from "@/stores/preferenceCategoriesStore";
+import { processImage } from "@/utils/imageUtils";
 
 /**
  * useUploadTorrent
@@ -407,6 +408,34 @@ export function useUploadTorrent() {
       navigate,
     ],
   );
+
+  /**
+   * 监听 uploadedPoster 变化，如果是外部链接且没有 ID，则自动上传
+   */
+  useEffect(() => {
+    // 只有当有 URL 但没有 ID 时才需要处理
+    if (uploadedPoster && !posterAttachmentId && /^https?:\/\//.test(uploadedPoster)) {
+      const uploadExternalImage = async () => {
+        try {
+          // 这里可以加一个局部 loading 状态，如果需要的话
+          const res = await processImage(uploadedPoster, {
+            attachableType: "torrent",
+            field: "poster",
+          });
+          if (res.attachmentId) {
+            setPosterAttachmentId(res.attachmentId);
+            // 可选：如果后端返回了新的 URL（如转存后的），也可以更新 uploadedPoster
+            // setUploadedPoster(res.url);
+          }
+        } catch (error) {
+          console.error("Auto upload external poster failed:", error);
+          // 可以选择是否提示用户，或者静默失败让用户手动处理
+          // customToast.error("自动抓取外部海报失败，请手动上传");
+        }
+      };
+      uploadExternalImage();
+    }
+  }, [uploadedPoster, posterAttachmentId, setPosterAttachmentId]);
 
   /** 通过 PT-GEN 获取简介并填充到描述文本 */
   const fetchPtGen = useCallback(async () => {
